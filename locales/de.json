@@ -1,0 +1,112 @@
+{
+    "commands": {
+        "admin": {
+            "addrole": {
+                "missingPermission": {
+                    "title": "Fehlende Rechte",
+                    "description": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen hinzuzufügen."
+                },
+                "missingPermissionBot": {
+                    "title": "Fehlende Rechte",
+                    "description": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen hinzuzufügen."
+                },
+                "alreadyHasRole": {
+                    "title": "Rolle bereits vergeben",
+                    "description": "Dieser Benutzer hat bereits diese Rolle."
+                },
+                "roleTooHigh": {
+                    "title": "Rolle zu hoch",
+                    "description": "Die Rolle die du hinzufügen möchtest ist höher als deine höchste Rolle. Du darfst diese Rolle nicht vergeben."
+                },
+                "roleTooHighBot": {
+                    "title": "Rolle zu hoch",
+                    "description": "Die Rolle die du hinzufügen möchtest ist höher als meine höchste Rolle. Ich darf diese Rolle nicht vergeben."
+                },
+                "noUser": {
+                    "title": "Kein Benutzer angegeben",
+                    "description": "Du musst einen Benutzer angeben dem du die Rolle hinzufügen möchtest."
+                },
+                "noRole": {
+                    "title": "Keine Rolle angegeben",
+                    "description": "Du musst eine Rolle angeben die du hinzufügen möchtest."
+                },
+                "success": {
+                    "title": "Rolle hinzugefügt",
+                    "description": "Die Rolle wurde erfolgreich hinzugefügt."
+                }
+            },
+            "removerole": {
+                "missingPermission": {
+                    "title": "Fehlende Rechte",
+                    "description": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen zu entfernen."
+                },
+                "missingPermissionBot": {
+                    "title": "Fehlende Rechte",
+                    "description": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen zu entfernen."
+                },
+                "roleTooHigh": {
+                    "title": "Rolle zu hoch",
+                    "description": "Die Rolle die du entfernen möchtest ist höher als deine höchste Rolle. Du darfst diese Rolle nicht entfernen."
+                },
+                "roleTooHighBot": {
+                    "title": "Rolle zu hoch",
+                    "description": "Die Rolle die du entfernen möchtest ist höher als meine höchste Rolle. Ich darf diese Rolle nicht entfernen."
+                },
+                "noUser": {
+                    "title": "Kein Benutzer angegeben",
+                    "description": "Du musst einen Benutzer angeben dem du die Rolle entfernen möchtest."
+                },
+                "noRole": {
+                    "title": "Keine Rolle angegeben",
+                    "description": "Du musst eine Rolle angeben die du entfernen möchtest."
+                },
+                "success": {
+                    "title": "Rolle entfernt",
+                    "description": "Die Rolle wurde erfolgreich entfernt."
+                }
+            },
+            "createrole": {
+                "missingPermission": {
+                    "title": "Fehlende Rechte",
+                    "description": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen zu erstellen."
+                },
+                "missingPermissionBot": {
+                    "title": "Fehlende Rechte",
+                    "description": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen zu erstellen."
+                },
+                "missingName": {
+                    "title": "Fehlender Name",
+                    "description": "Du musst einen Namen für die Rolle angeben."
+                },
+                "nameTooLong": {
+                    "title": "Name zu lang",
+                    "description": "Der Name der Rolle darf maximal 100 Zeichen lang sein."
+                },
+                "reasonTooLong": {
+                    "title": "Grund zu lang",
+                    "description": "Der Grund darf maximal 1024 Zeichen lang sein."
+                },
+                "invalidColor": {
+                    "title": "Ungültige Farbe",
+                    "description": "Die Farbe die du angegeben hast ist ungültig. Bitte gib einen gültigen Hexadezimalcode als Farbe an. Diesen kannst du beispielsweise [hier](https://htmlcolorcodes.com) generieren."
+                },
+                "roleIconsNotEnabled": {
+                    "title": "Rollen Icons nicht verfügbar",
+                    "description": "Rollen Icons sind auf diesem Server nicht verfügbar. Der Server muss Boost level 2 erreicht haben, bevor du Rollen Icons festsetzen darfst."
+                },
+                "invalidIcon": {
+                    "title": "Ungültiges Icon",
+                    "description": "Die dateiendung deines Icons ist ungültig. Aktuell werden nur `.png`, `.gif`, `.jpg` und `.jpeg` Dateien unterstützt."
+                },
+                "iconTooLarge": {
+                    "title": "Icon zu groß",
+                    "description": "Das Icon darf maximal 256kb groß sein."
+                },
+                "success": {
+                    "title": "Rolle erstellt",
+                    "description": "Die Rolle wurde erfolgreich erstellt."
+                }
+            }
+        }
+    }
+}
