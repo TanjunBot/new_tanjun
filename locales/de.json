@@ -331,6 +331,36 @@
                     "title": "Fehler bei der Änderung",
                     "description": "Beim Versuch, den Nickname zu ändern, ist ein Fehler aufgetreten."
                 }
+            },
+            "slowmode": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um den Slowmodus zu ändern."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um den Slowmodus zu ändern."
+                },
+                "invalidDuration": {
+                    "title": "Ungültige Dauer",
+                    "description": "Die Slowmodus-Dauer muss zwischen 0 und 21600 Sekunden (6 Stunden) liegen."
+                },
+                "enabled": {
+                    "title": "Slowmodus aktiviert",
+                    "description": "Der Slowmodus für ${channel} wurde auf ${seconds} Sekunden gesetzt."
+                },
+                "disabled": {
+                    "title": "Slowmodus deaktiviert",
+                    "description": "Der Slowmodus für ${channel} wurde deaktiviert."
+                },
+                "forbidden": {
+                    "title": "Änderung nicht möglich",
+                    "description": "Der Bot konnte den Slowmodus nicht ändern. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler bei der Änderung",
+                    "description": "Beim Versuch, den Slowmodus zu ändern, ist ein Fehler aufgetreten."
+                }
             }
         }
     },
@@ -512,6 +542,20 @@
                 "nickname": {
                     "name": "nickname",
                     "description": "Der neue Nickname (leer lassen, um den Nickname zu entfernen)"
+                }
+            }
+        },
+        "slowmode": {
+            "name": "slowmodus",
+            "description": "Setzt den Slowmodus für einen Kanal",
+            "params": {
+                "seconds": {
+                    "name": "sekunden",
+                    "description": "Die Dauer des Slowmodus in Sekunden (0 zum Deaktivieren)"
+                },
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, für den der Slowmodus gesetzt werden soll (optional)"
                 }
             }
         }
