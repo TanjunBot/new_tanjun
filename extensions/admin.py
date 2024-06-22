@@ -14,6 +14,7 @@ from commands.admin.unban import unban as unbanCommand
 from commands.admin.timeout import timeout as timeoutCommand
 from commands.admin.removetimeout import remove_timeout as removeTimeoutCommand
 from commands.admin.purge import purge as purgeCommand
+from commands.admin.nickname import change_nickname as changeNicknameCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -313,6 +314,30 @@ class administrationCommands(discord.app_commands.Group):
         await purgeCommand(commandInfo=commandInfo, amount=amount, channel=channel)
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_nickname_name"),
+        description=app_commands.locale_str("admin_nickname_description"),
+    )
+    @app_commands.describe(
+        member=app_commands.locale_str("admin_nickname_params_member_description"),
+        nickname=app_commands.locale_str("admin_nickname_params_nickname_description"),
+    )
+    async def nickname(self, ctx, member: discord.Member, nickname: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await changeNicknameCommand(commandInfo=commandInfo, member=member, nickname=nickname)
+        return
 
 
 class adminCog(commands.Cog):
@@ -603,6 +628,23 @@ class adminCog(commands.Cog):
         )
 
         await purgeCommand(commandInfo=commandInfo, amount=amount, channel=channel)
+        return
+
+    @commands.command()
+    async def nickname(self, ctx, member: discord.Member, *, nickname: str = None):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await changeNicknameCommand(commandInfo=commandInfo, member=member, nickname=nickname)
         return
 
 

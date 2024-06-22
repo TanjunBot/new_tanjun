@@ -301,6 +301,36 @@
                     "title": "Fehler beim Löschen",
                     "description": "Beim Versuch, die Nachrichten zu löschen, ist ein Fehler aufgetreten."
                 }
+            },
+            "nickname": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Nicknamen zu ändern."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nicknamen zu ändern."
+                },
+                "targetTooHigh": {
+                    "title": "Ziel hat zu hohe Rolle",
+                    "description": "Du kannst den Nicknamen dieses Mitglieds nicht ändern, da es eine höhere oder gleiche Rolle wie du hat."
+                },
+                "changed": {
+                    "title": "Nickname geändert",
+                    "description": "Der Nickname von ${user} wurde von '${old_nick}' zu '${new_nick}' geändert."
+                },
+                "removed": {
+                    "title": "Nickname entfernt",
+                    "description": "Der Nickname '${old_nick}' von ${user} wurde entfernt."
+                },
+                "forbidden": {
+                    "title": "Änderung nicht möglich",
+                    "description": "Der Bot konnte den Nickname nicht ändern. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler bei der Änderung",
+                    "description": "Beim Versuch, den Nickname zu ändern, ist ein Fehler aufgetreten."
+                }
             }
         }
     },
@@ -468,6 +498,20 @@
                 "channel": {
                     "name": "kanal",
                     "description": "Der Kanal, in dem die Nachrichten gelöscht werden sollen (optional, Standard: aktueller Kanal)"
+                }
+            }
+        },
+        "nickname": {
+            "name": "nickname",
+            "description": "Ändert oder entfernt den Nickname eines Mitglieds",
+            "params": {
+                "member": {
+                    "name": "mitglied",
+                    "description": "Das Mitglied, dessen Nickname geändert werden soll"
+                },
+                "nickname": {
+                    "name": "nickname",
+                    "description": "Der neue Nickname (leer lassen, um den Nickname zu entfernen)"
                 }
             }
         }
