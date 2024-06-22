@@ -475,6 +475,24 @@
                 "forbiddenError": "Der Bot konnte den Kanal nicht löschen oder neu erstellen. Bitte überprüfe die Berechtigungen.",
                 "httpError": "Beim Versuch, den Kanal zu löschen oder neu zu erstellen, ist ein Fehler aufgetreten.",
                 "unauthorizedUser": "Du bist nicht berechtigt, mit diesen Schaltflächen zu interagieren."
+            },
+            "say": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um den Bot Nachrichten senden zu lassen."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu senden."
+                },
+                "success": {
+                    "title": "Nachricht gesendet",
+                    "description": "Die Nachricht wurde erfolgreich in ${channel} gesendet."
+                },
+                "error": {
+                    "title": "Fehler beim Senden",
+                    "description": "Beim Versuch, die Nachricht zu senden, ist ein Fehler aufgetreten."
+                }
             }
         }
     },
@@ -724,6 +742,20 @@
                 "channel": {
                     "name": "kanal",
                     "description": "Der zu nukende Kanal (optional, Standard: aktueller Kanal)"
+                }
+            }
+        },
+        "say": {
+            "name": "sagen",
+            "description": "Lässt den Bot eine Nachricht in einem bestimmten Kanal senden",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem die Nachricht gesendet werden soll"
+                },
+                "message": {
+                    "name": "nachricht",
+                    "description": "Die zu sendende Nachricht"
                 }
             }
         }

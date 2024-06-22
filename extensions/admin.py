@@ -21,6 +21,7 @@ from commands.admin.unlock import unlock_channel as unlockChannelCommand
 from commands.admin.warn import warn_user as warnUserCommand
 from commands.admin.viewwarns import view_warnings as viewWarningsCommand
 from commands.admin.nuke import nuke_channel as nukeChannelCommand
+from commands.admin.say import say as sayCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -494,6 +495,31 @@ class administrationCommands(discord.app_commands.Group):
         await nukeChannelCommand(commandInfo=commandInfo, channel=channel)
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_say_name"),
+        description=app_commands.locale_str("admin_say_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("admin_say_params_channel_description"),
+        message=app_commands.locale_str("admin_say_params_message_description"),
+    )
+    async def say(self, ctx, channel: discord.TextChannel, *, message: str):
+        await ctx.response.defer(ephemeral=True)
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await sayCommand(commandInfo=commandInfo, channel=channel, message=message)
+        return
+
 
 class adminCog(commands.Cog):
 
@@ -914,6 +940,23 @@ class adminCog(commands.Cog):
             name="admin", description="Administriere den Server"
         )
         self.bot.tree.add_command(admincmds)
+
+    @commands.command()
+    async def say(self, ctx, channel: discord.TextChannel, *, message: str):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await sayCommand(commandInfo=commandInfo, channel=channel, message=message)
+        return
 
 
 async def setup(bot):
