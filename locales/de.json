@@ -415,6 +415,25 @@
                     "description": "Beim Versuch, den Kanal zu entsperren, ist ein Fehler aufgetreten."
                 },
                 "channelUnlockedMessage": "🔓 Dieser Kanal wurde von einem Moderator entsperrt. Die ursprünglichen Berechtigungen wurden wiederhergestellt."
+            },
+            "warn": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Verwarnungen auszusprechen."
+                },
+                "targetTooHigh": {
+                    "title": "Ziel hat zu hohe Rolle",
+                    "description": "Du kannst keine Verwarnung für ein Mitglied aussprechen, das eine höhere oder gleiche Rolle wie du hat."
+                },
+                "success": {
+                    "title": "Verwarnung ausgesprochen",
+                    "description": "${user} wurde verwarnt. Grund: ${reason}\nDies ist die ${count}. Verwarnung für diesen Benutzer."
+                },
+                "noReasonProvided": "Kein Grund angegeben",
+                "dmNotification": {
+                    "title": "Du wurdest verwarnt",
+                    "description": "Du hast eine Verwarnung auf dem Server ${guild} erhalten.\nGrund: ${reason}\nDies ist deine ${count}. Verwarnung auf diesem Server."
+                }
             }
         }
     },
@@ -630,6 +649,20 @@
                 "channel": {
                     "name": "kanal",
                     "description": "Der zu entsperrende Kanal (optional, Standard: aktueller Kanal)"
+                }
+            }
+        },
+        "warn": {
+            "name": "verwarnen",
+            "description": "Spricht eine Verwarnung für ein Mitglied aus",
+            "params": {
+                "member": {
+                    "name": "mitglied",
+                    "description": "Das zu verwarnende Mitglied"
+                },
+                "reason": {
+                    "name": "grund",
+                    "description": "Der Grund für die Verwarnung (optional)"
                 }
             }
         }

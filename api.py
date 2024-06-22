@@ -7,6 +7,7 @@ def create_tables():
     tables['warnings'] = (
         "CREATE TABLE IF NOT EXISTS `warnings` ("
         "  `id` INT AUTO_INCREMENT PRIMARY KEY,"
+        "  `guild_id` BIGINT NOT NULL,"
         "  `user_id` BIGINT NOT NULL,"
         "  `reason` VARCHAR(255),"
         "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
@@ -66,20 +67,22 @@ def execute_action(query, params=None):
     cursor.close()
     connection.close()
 
-def add_warning(user_id, reason):
-    query = "INSERT INTO warnings (user_id, reason) VALUES (%s, %s)"
-    params = (user_id, reason)
+def add_warning(guild_id, user_id, reason):
+    query = "INSERT INTO warnings (guild_id, user_id, reason) VALUES (%s, %s, %s)"
+    params = (guild_id, user_id, reason)
     execute_action(query, params)
 
-def get_warnings(user_id):
-    query = "SELECT COUNT(*) FROM warnings WHERE user_id = %s"
-    params = (user_id,)
+def get_warnings(guild_id, user_id):
+    query = "SELECT COUNT(*), GROUP_CONCAT(reason SEPARATOR '|') FROM warnings WHERE guild_id = %s AND user_id = %s"
+    params = (guild_id, user_id)
     result = execute_query(query, params)
-    return result[0][0]
+    count, reasons = result[0]
+    reasons_list = reasons.split('|') if reasons else []
+    return count, reasons_list
 
-def clear_warnings(user_id):
-    query = "DELETE FROM warnings WHERE user_id = %s"
-    params = (user_id,)
+def clear_warnings(guild_id, user_id):
+    query = "DELETE FROM warnings WHERE guild_id = %s AND user_id = %s"
+    params = (guild_id, user_id)
     execute_action(query, params)
 
 def save_channel_overwrites(channel_id, role_id, overwrites):

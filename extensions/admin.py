@@ -18,6 +18,7 @@ from commands.admin.nickname import change_nickname as changeNicknameCommand
 from commands.admin.slowmode import set_slowmode as setSlowmodeCommand
 from commands.admin.lock import lock_channel as lockChannelCommand
 from commands.admin.unlock import unlock_channel as unlockChannelCommand
+from commands.admin.warn import warn_user as warnUserCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -415,6 +416,31 @@ class administrationCommands(discord.app_commands.Group):
         await unlockChannelCommand(commandInfo=commandInfo, channel=channel)
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_warn_name"),
+        description=app_commands.locale_str("admin_warn_description"),
+    )
+    @app_commands.describe(
+        member=app_commands.locale_str("admin_warn_params_member_description"),
+        reason=app_commands.locale_str("admin_warn_params_reason_description"),
+    )
+    async def warn(self, ctx, member: discord.Member, reason: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
+        return
+
 
 class adminCog(commands.Cog):
 
@@ -772,6 +798,23 @@ class adminCog(commands.Cog):
         )
 
         await unlockChannelCommand(commandInfo=commandInfo, channel=channel)
+        return
+
+    @commands.command()
+    async def warn(self, ctx, member: discord.Member, *, reason: str = None):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
         return
 
 
