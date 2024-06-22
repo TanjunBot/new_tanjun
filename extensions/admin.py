@@ -8,7 +8,7 @@ from commands.admin.addrole import addrole as addroleCommand
 from commands.admin.removerole import removerole as removeroleCommand
 from commands.admin.createrole import createrole as createroleCommand
 from commands.admin.deleterole import deleterole as deleteroleCommand
-
+from commands.admin.kick import kick as kickCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -132,7 +132,31 @@ class administrationCommands(discord.app_commands.Group):
 
         await deleteroleCommand(commandInfo=commandInfo, role=role)
         return
+    
+    @app_commands.command(
+        name=app_commands.locale_str("admin_kick_name"),
+        description=app_commands.locale_str("admin_kick_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str("admin_kick_params_user_description"),
+        reason=app_commands.locale_str("admin_kick_params_reason_description"),
+    )
+    async def kick(self, ctx, user: discord.Member, reason: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
 
+        await kickCommand(commandInfo=commandInfo, target=user, reason=reason)
+        return
 
 class adminCog(commands.Cog):
 
@@ -289,6 +313,23 @@ class adminCog(commands.Cog):
         for r in role:
             await deleteroleCommand(commandInfo=commandInfo, role=r)
 
+        return
+    
+    @commands.command()
+    async def kick(self, ctx, member: discord.Member, *, reason: str = None):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await kickCommand(commandInfo=commandInfo, target=member, reason=reason)
         return
 
     @commands.Cog.listener()

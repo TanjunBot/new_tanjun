@@ -129,6 +129,32 @@
                     "description": "Die Rolle '{role}' wurde erfolgreich gelöscht."
                 },
                 "noRole": "Bitte erwähne eine Rolle, die gelöscht werden soll."
+            },
+            "kick": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Mitglieder zu kicken."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Mitglieder zu kicken."
+                },
+                "targetTooHigh": {
+                    "title": "Ziel hat zu hohe Rolle",
+                    "description": "Du kannst kein Mitglied kicken, das eine höhere oder gleiche Rolle wie du hat."
+                },
+                "success": {
+                    "title": "Mitglied gekickt",
+                    "description": "{user} wurde erfolgreich gekickt. Grund: {reason}"
+                },
+                "forbidden": {
+                    "title": "Kick nicht möglich",
+                    "description": "Der Bot konnte das Mitglied nicht kicken. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler beim Kicken",
+                    "description": "Beim Versuch, das Mitglied zu kicken, ist ein Fehler aufgetreten."
+                }
             }
         }
     },
@@ -204,6 +230,20 @@
                 "role": {
                     "name": "rolle",
                     "description": "Die zu löschende Rolle"
+                }
+            }
+        },
+        "kick": {
+            "name": "kick",
+            "description": "Kickt ein Mitglied vom Server",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Das zu kickende Mitglied"
+                },
+                "reason": {
+                    "name": "grund",
+                    "description": "Der Grund für den Kick (optional)"
                 }
             }
         }
