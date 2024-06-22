@@ -10,6 +10,7 @@ from commands.admin.createrole import createrole as createroleCommand
 from commands.admin.deleterole import deleterole as deleteroleCommand
 from commands.admin.kick import kick as kickCommand
 from commands.admin.ban import ban as banCommand
+from commands.admin.unban import unban as unbanCommand
 
 
 class administrationCommands(discord.app_commands.Group):
@@ -203,6 +204,31 @@ class administrationCommands(discord.app_commands.Group):
             reason=reason,
             delete_message_days=delete_message_days,
         )
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_unban_name"),
+        description=app_commands.locale_str("admin_unban_description"),
+    )
+    @app_commands.describe(
+        username=app_commands.locale_str("admin_unban_params_username_description"),
+        reason=app_commands.locale_str("admin_unban_params_reason_description"),
+    )
+    async def unban(self, ctx, username: str, reason: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await unbanCommand(commandInfo=commandInfo, username=username, reason=reason)
         return
 
 
@@ -422,6 +448,23 @@ class adminCog(commands.Cog):
             reason=reason,
             delete_message_days=delete_message_days,
         )
+        return
+
+    @commands.command()
+    async def unban(self, ctx, username: str, *, reason: str = None):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await unbanCommand(commandInfo=commandInfo, username=username, reason=reason)
         return
 
     @commands.Cog.listener()

@@ -182,6 +182,33 @@
                     "description": "Beim Versuch, das Mitglied zu bannen, ist ein Fehler aufgetreten."
                 },
                 "noReasonProvided": "Kein Grund angegeben"
+            },
+            "unban": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Mitglieder zu entbannen."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Mitglieder zu entbannen."
+                },
+                "userNotFound": {
+                    "title": "Benutzer nicht gefunden",
+                    "description": "Es wurde kein gebannter Benutzer mit dem Namen ${username} gefunden."
+                },
+                "success": {
+                    "title": "Bann aufgehoben",
+                    "description": "Der Bann für ${user} wurde erfolgreich aufgehoben. Grund: ${reason}"
+                },
+                "forbidden": {
+                    "title": "Entbannen nicht möglich",
+                    "description": "Der Bot konnte das Mitglied nicht entbannen. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler beim Entbannen",
+                    "description": "Beim Versuch, das Mitglied zu entbannen, ist ein Fehler aufgetreten."
+                },
+                "noReasonProvided": "Kein Grund angegeben"
             }
         }
     },
@@ -289,6 +316,20 @@
                 "delete_message_days": {
                     "name": "nachrichten_löschen_tage",
                     "description": "Anzahl der Tage, für die Nachrichten gelöscht werden sollen (0-7, optional)"
+                }
+            }
+        },
+        "unban": {
+            "name": "entbannen",
+            "description": "Hebt den Bann eines Mitglieds auf",
+            "params": {
+                "username": {
+                    "name": "benutzername",
+                    "description": "Der Benutzername des zu entbannenden Mitglieds"
+                },
+                "reason": {
+                    "name": "grund",
+                    "description": "Der Grund für die Aufhebung des Banns (optional)"
                 }
             }
         }
