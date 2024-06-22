@@ -9,6 +9,8 @@ from commands.admin.removerole import removerole as removeroleCommand
 from commands.admin.createrole import createrole as createroleCommand
 from commands.admin.deleterole import deleterole as deleteroleCommand
 from commands.admin.kick import kick as kickCommand
+from commands.admin.ban import ban as banCommand
+
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -68,11 +70,17 @@ class administrationCommands(discord.app_commands.Group):
     @app_commands.describe(
         name=app_commands.locale_str("admin_createrole_params_name_description"),
         color=app_commands.locale_str("admin_createrole_params_color_description"),
-        display_icon=app_commands.locale_str("admin_createrole_params_display_icon_description"),
+        display_icon=app_commands.locale_str(
+            "admin_createrole_params_display_icon_description"
+        ),
         hoist=app_commands.locale_str("admin_createrole_params_hoist_description"),
-        mentionable=app_commands.locale_str("admin_createrole_params_mentionable_description"),
+        mentionable=app_commands.locale_str(
+            "admin_createrole_params_mentionable_description"
+        ),
         reason=app_commands.locale_str("admin_createrole_params_reason_description"),
-        display_emoji=app_commands.locale_str("admin_createrole_params_display_emoji_description"),
+        display_emoji=app_commands.locale_str(
+            "admin_createrole_params_display_emoji_description"
+        ),
     )
     async def createrole(
         self,
@@ -132,7 +140,7 @@ class administrationCommands(discord.app_commands.Group):
 
         await deleteroleCommand(commandInfo=commandInfo, role=role)
         return
-    
+
     @app_commands.command(
         name=app_commands.locale_str("admin_kick_name"),
         description=app_commands.locale_str("admin_kick_description"),
@@ -157,6 +165,46 @@ class administrationCommands(discord.app_commands.Group):
 
         await kickCommand(commandInfo=commandInfo, target=user, reason=reason)
         return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_ban_name"),
+        description=app_commands.locale_str("admin_ban_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str("admin_ban_params_user_description"),
+        reason=app_commands.locale_str("admin_ban_params_reason_description"),
+        delete_message_days=app_commands.locale_str(
+            "admin_ban_params_delete_message_days_description"
+        ),
+    )
+    async def ban(
+        self,
+        ctx,
+        user: discord.Member,
+        reason: str = None,
+        delete_message_days: int = 0,
+    ):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await banCommand(
+            commandInfo=commandInfo,
+            target=user,
+            reason=reason,
+            delete_message_days=delete_message_days,
+        )
+        return
+
 
 class adminCog(commands.Cog):
 
@@ -251,7 +299,15 @@ class adminCog(commands.Cog):
         return
 
     @commands.command()
-    async def createrole(self, ctx, name: str, color: str = None, hoist: bool = False, mentionable: bool = False, emoji: str = None):
+    async def createrole(
+        self,
+        ctx,
+        name: str,
+        color: str = None,
+        hoist: bool = False,
+        mentionable: bool = False,
+        emoji: str = None,
+    ):
         commandInfo = utility.commandInfo(
             user=ctx.author,
             channel=ctx.channel,
@@ -281,7 +337,14 @@ class adminCog(commands.Cog):
         elif emoji:
             display_icon = emoji
 
-        await createroleCommand(commandInfo=commandInfo, name=name, color=color, hoist=hoist, mentionable=mentionable, display_icon=display_icon)
+        await createroleCommand(
+            commandInfo=commandInfo,
+            name=name,
+            color=color,
+            hoist=hoist,
+            mentionable=mentionable,
+            display_icon=display_icon,
+        )
         return
 
     @commands.command()
@@ -314,7 +377,7 @@ class adminCog(commands.Cog):
             await deleteroleCommand(commandInfo=commandInfo, role=r)
 
         return
-    
+
     @commands.command()
     async def kick(self, ctx, member: discord.Member, *, reason: str = None):
         commandInfo = utility.commandInfo(
@@ -330,6 +393,35 @@ class adminCog(commands.Cog):
         )
 
         await kickCommand(commandInfo=commandInfo, target=member, reason=reason)
+        return
+
+    @commands.command()
+    async def ban(
+        self,
+        ctx,
+        member: discord.Member,
+        delete_message_days: int = 0,
+        *,
+        reason: str = None
+    ):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await banCommand(
+            commandInfo=commandInfo,
+            target=member,
+            reason=reason,
+            delete_message_days=delete_message_days,
+        )
         return
 
     @commands.Cog.listener()
