@@ -388,6 +388,33 @@
                     "description": "Beim Versuch, den Kanal zu sperren, ist ein Fehler aufgetreten."
                 },
                 "channelLockedMessage": "🔒 Dieser Kanal wurde von einem Moderator gesperrt. Nur Administratoren können hier Nachrichten senden."
+            },
+            "unlock": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Kanäle zu entsperren."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Kanäle zu entsperren."
+                },
+                "notLocked": {
+                    "title": "Kanal nicht gesperrt",
+                    "description": "Der Kanal ${channel} ist nicht gesperrt oder es wurden keine gespeicherten Berechtigungen gefunden."
+                },
+                "success": {
+                    "title": "Kanal entsperrt",
+                    "description": "Der Kanal ${channel} wurde erfolgreich entsperrt und die ursprünglichen Berechtigungen wurden wiederhergestellt."
+                },
+                "forbidden": {
+                    "title": "Entsperren nicht möglich",
+                    "description": "Der Bot konnte den Kanal nicht entsperren. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler beim Entsperren",
+                    "description": "Beim Versuch, den Kanal zu entsperren, ist ein Fehler aufgetreten."
+                },
+                "channelUnlockedMessage": "🔓 Dieser Kanal wurde von einem Moderator entsperrt. Die ursprünglichen Berechtigungen wurden wiederhergestellt."
             }
         }
     },
@@ -593,6 +620,16 @@
                 "channel": {
                     "name": "kanal",
                     "description": "Der zu sperrende Kanal (optional, Standard: aktueller Kanal)"
+                }
+            }
+        },
+        "unlock": {
+            "name": "entsperren",
+            "description": "Entsperrt einen zuvor gesperrten Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der zu entsperrende Kanal (optional, Standard: aktueller Kanal)"
                 }
             }
         }

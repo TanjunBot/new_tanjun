@@ -17,6 +17,7 @@ from commands.admin.purge import purge as purgeCommand
 from commands.admin.nickname import change_nickname as changeNicknameCommand
 from commands.admin.slowmode import set_slowmode as setSlowmodeCommand
 from commands.admin.lock import lock_channel as lockChannelCommand
+from commands.admin.unlock import unlock_channel as unlockChannelCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -390,6 +391,30 @@ class administrationCommands(discord.app_commands.Group):
         await lockChannelCommand(commandInfo=commandInfo, channel=channel)
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_unlock_name"),
+        description=app_commands.locale_str("admin_unlock_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("admin_unlock_params_channel_description"),
+    )
+    async def unlock(self, ctx, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await unlockChannelCommand(commandInfo=commandInfo, channel=channel)
+        return
+
 
 class adminCog(commands.Cog):
 
@@ -730,6 +755,23 @@ class adminCog(commands.Cog):
         )
 
         await lockChannelCommand(commandInfo=commandInfo, channel=channel)
+        return
+
+    @commands.command()
+    async def unlock(self, ctx, channel: discord.TextChannel = None):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await unlockChannelCommand(commandInfo=commandInfo, channel=channel)
         return
 
 
