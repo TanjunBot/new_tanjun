@@ -493,6 +493,57 @@
                     "title": "Fehler beim Senden",
                     "description": "Beim Versuch, die Nachricht zu senden, ist ein Fehler aufgetreten."
                 }
+            },
+            "embed": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Embeds zu erstellen und zu senden."
+                },
+                "unauthorizedUser": "Du bist nicht berechtigt, mit diesem Embed-Creator zu interagieren.",
+                "creatorTitle": "Embed-Creator",
+                "creatorDescription": "Verwende die Schaltflächen unten, um dein Embed zu erstellen. Klicke auf 'Vorschau', um das aktuelle Embed anzuzeigen, und auf 'Senden', wenn du fertig bist. Das Embed wird in ${channel} gesendet.",
+                "titleUpdated": "Titel wurde aktualisiert!",
+                "descriptionUpdated": "Beschreibung wurde aktualisiert!",
+                "fieldAdded": "Feld wurde hinzugefügt!",
+                "footerUpdated": "Fußzeile wurde aktualisiert!",
+                "colorUpdated": "Farbe wurde aktualisiert!",
+                "invalidColorCode": "Ungültiger Farbcode. Bitte verwende einen gültigen Hex-Farbcode.",
+                "previewSent": "Vorschau wurde gesendet!",
+                "embedSent": "Embed wurde in ${channel} gesendet!",
+                "true": "wahr",
+                "buttons": {
+                    "setTitle": "Titel festlegen",
+                    "setDescription": "Beschreibung festlegen",
+                    "addField": "Feld hinzufügen",
+                    "setFooter": "Fußzeile festlegen",
+                    "setColor": "Farbe festlegen",
+                    "preview": "Vorschau",
+                    "send": "Senden"
+                },
+                "modals": {
+                    "titleModal": {
+                        "title": "Embed-Titel festlegen",
+                        "label": "Titel"
+                    },
+                    "descriptionModal": {
+                        "title": "Embed-Beschreibung festlegen",
+                        "label": "Beschreibung"
+                    },
+                    "fieldModal": {
+                        "title": "Embed-Feld hinzufügen",
+                        "nameLabel": "Feldname",
+                        "valueLabel": "Feldwert",
+                        "inlineLabel": "Inline (wahr/falsch)"
+                    },
+                    "footerModal": {
+                        "title": "Embed-Fußzeile festlegen",
+                        "label": "Fußzeilentext"
+                    },
+                    "colorModal": {
+                        "title": "Embed-Farbe festlegen",
+                        "label": "Farbe (Hex-Code)"
+                    }
+                }
             }
         }
     },
@@ -756,6 +807,16 @@
                 "message": {
                     "name": "nachricht",
                     "description": "Die zu sendende Nachricht"
+                }
+            }
+        },
+        "embed": {
+            "name": "embed",
+            "description": "Öffnet den Embed-Creator, um ein benutzerdefiniertes Embed zu erstellen und zu senden",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in den das Embed gesendet werden soll"
                 }
             }
         }

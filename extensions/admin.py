@@ -22,6 +22,7 @@ from commands.admin.warn import warn_user as warnUserCommand
 from commands.admin.viewwarns import view_warnings as viewWarningsCommand
 from commands.admin.nuke import nuke_channel as nukeChannelCommand
 from commands.admin.say import say as sayCommand
+from commands.admin.embedcreator import create_embed as createEmbedCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -520,6 +521,31 @@ class administrationCommands(discord.app_commands.Group):
         await sayCommand(commandInfo=commandInfo, channel=channel, message=message)
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_embed_name"),
+        description=app_commands.locale_str("admin_embed_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("admin_embed_params_channel_description"),
+    )
+    async def embed(self, ctx, channel: discord.TextChannel):
+        await ctx.response.defer(ephemeral=True)
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await createEmbedCommand(commandInfo=commandInfo, channel=channel)
+        return
+
+
 
 class adminCog(commands.Cog):
 
@@ -957,6 +983,24 @@ class adminCog(commands.Cog):
 
         await sayCommand(commandInfo=commandInfo, channel=channel, message=message)
         return
+
+    @commands.command()
+    async def embed(self, ctx, channel: discord.TextChannel):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await createEmbedCommand(commandInfo=commandInfo, channel=channel)
+        return
+
 
 
 async def setup(bot):
