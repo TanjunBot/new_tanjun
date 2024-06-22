@@ -17,6 +17,17 @@ class WarningView(View):
         self.message = None
         self.update_buttons()
 
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user != self.commandInfo.user:
+            await interaction.response.send_message(
+                tanjunLocalizer.localize(
+                    self.commandInfo.locale, "commands.admin.viewwarns.unauthorizedUser"
+                ),
+                ephemeral=True
+            )
+            return False
+        return True
+
     def update_buttons(self):
         self.clear_items()
         start = self.page * WARNINGS_PER_PAGE

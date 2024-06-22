@@ -452,7 +452,8 @@
                 "pageFooter": "Seite ${current}/${total}",
                 "prevButton": "Vorherige",
                 "nextButton": "Nächste",
-                "removeButton": "Verwarnung ${number} entfernen"
+                "removeButton": "Verwarnung ${number} entfernen",
+                "unauthorizedUser": "Du bist nicht berechtigt, mit diesen Schaltflächen zu interagieren."
             },
             "nuke": {
                 "missingPermission": {
@@ -472,7 +473,8 @@
                 "incorrectConfirmation": "Falsche Bestätigung. Nuke-Vorgang abgebrochen.",
                 "nukeSuccessMessage": "Dieser Kanal wurde von ${user} gelöscht und neu erstellt.",
                 "forbiddenError": "Der Bot konnte den Kanal nicht löschen oder neu erstellen. Bitte überprüfe die Berechtigungen.",
-                "httpError": "Beim Versuch, den Kanal zu löschen oder neu zu erstellen, ist ein Fehler aufgetreten."
+                "httpError": "Beim Versuch, den Kanal zu löschen oder neu zu erstellen, ist ein Fehler aufgetreten.",
+                "unauthorizedUser": "Du bist nicht berechtigt, mit diesen Schaltflächen zu interagieren."
             }
         }
     },

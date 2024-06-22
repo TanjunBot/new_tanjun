@@ -10,12 +10,24 @@ class ConfirmView(View):
         self.commandInfo = commandInfo
         self.value = None
 
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user != self.commandInfo.user:
+            await interaction.response.send_message(
+                tanjunLocalizer.localize(
+                    self.commandInfo.locale, "commands.admin.nuke.unauthorizedUser"
+                ),
+                ephemeral=True
+            )
+            return False
+        return True
+
     @discord.ui.button(label="Confirm", style=discord.ButtonStyle.danger)
     async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message(tanjunLocalizer.localize(
             self.commandInfo.locale, "commands.admin.nuke.confirmationPrompt"
         ))
         self.value = True
+        await self.message.edit(view=None)
         self.stop()
 
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary)
@@ -24,7 +36,12 @@ class ConfirmView(View):
             self.commandInfo.locale, "commands.admin.nuke.cancelledMessage"
         ))
         self.value = False
+        await self.message.edit(view=None)
         self.stop()
+
+    async def on_timeout(self):
+        if self.message:
+            await self.message.edit(view=None)
 
 async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel = None):
     if not commandInfo.user.guild_permissions.manage_channels:
