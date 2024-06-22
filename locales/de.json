@@ -106,6 +106,105 @@
                     "title": "Rolle erstellt",
                     "description": "Die Rolle wurde erfolgreich erstellt."
                 }
+            },
+            "deleterole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Rollen zu löschen."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Rollen zu löschen."
+                },
+                "roleTooHigh": {
+                    "title": "Rolle zu hoch",
+                    "description": "Du kannst keine Rolle löschen, die höher oder gleich deiner höchsten Rolle ist."
+                },
+                "roleTooHighBot": {
+                    "title": "Rolle zu hoch für Bot",
+                    "description": "Der Bot kann keine Rolle löschen, die höher oder gleich seiner höchsten Rolle ist."
+                },
+                "success": {
+                    "title": "Rolle gelöscht",
+                    "description": "Die Rolle '{role}' wurde erfolgreich gelöscht."
+                },
+                "noRole": "Bitte erwähne eine Rolle, die gelöscht werden soll."
+            }
+        }
+    },
+    "admin": {
+        "name": "Administration",
+        "description": "Befehle zur Serververwaltung",
+        "addrole": {
+            "name": "rolle_hinzufügen",
+            "description": "Fügt einem Benutzer eine Rolle hinzu",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Der Benutzer, dem die Rolle hinzugefügt werden soll"
+                },
+                "role": {
+                    "name": "rolle",
+                    "description": "Die Rolle, die hinzugefügt werden soll"
+                }
+            }
+        },
+        "removerole": {
+            "name": "rolle_entfernen",
+            "description": "Entfernt eine Rolle von einem Benutzer",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Der Benutzer, von dem die Rolle entfernt werden soll"
+                },
+                "role": {
+                    "name": "rolle",
+                    "description": "Die Rolle, die entfernt werden soll"
+                }
+            }
+        },
+        "createrole": {
+            "name": "rolle_erstellen",
+            "description": "Erstellt eine neue Rolle",
+            "params": {
+                "name": {
+                    "name": "name",
+                    "description": "Der Name der neuen Rolle"
+                },
+                "color": {
+                    "name": "farbe",
+                    "description": "Die Farbe der neuen Rolle"
+                },
+                "display_icon": {
+                    "name": "symbol",
+                    "description": "Das Symbol für die neue Rolle"
+                },
+                "hoist": {
+                    "name": "getrennt_anzeigen",
+                    "description": "Ob die Rolle getrennt von den anderen Rollen angezeigt werden soll"
+                },
+                "mentionable": {
+                    "name": "erwähnbar",
+                    "description": "Ob die Rolle erwähnbar sein soll"
+                },
+                "reason": {
+                    "name": "grund",
+                    "description": "Der Grund für das Erstellen der Rolle"
+                },
+                "display_emoji": {
+                    "name": "emoji",
+                    "description": "Das Emoji, das neben dem Rollennamen angezeigt werden soll"
+                }
+            }
+        },
+        "deleterole": {
+            "name": "rolle_löschen",
+            "description": "Löscht eine Rolle",
+            "params": {
+                "role": {
+                    "name": "rolle",
+                    "description": "Die zu löschende Rolle"
+                }
             }
         }
     }

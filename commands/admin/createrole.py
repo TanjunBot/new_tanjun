@@ -4,7 +4,7 @@ from localizer import tanjunLocalizer
 from typing import Union
 
 async def createrole(
-    commandInfo: utility.commandInfo, name: str, color: discord.Color = None, reason: str = None, hoist: bool = False, mentionable: bool = False, display_icon: Union[discord.Attachment, str] = None
+    commandInfo: utility.commandInfo, name: str, color: Union[discord.Color, str] = None, reason: str = None, hoist: bool = False, mentionable: bool = False, display_icon: Union[discord.Attachment, str] = None
 ):
         
         if not commandInfo.user.guild_permissions.manage_roles:
@@ -64,8 +64,9 @@ async def createrole(
             return
         
         if color:
-             if not color.startswith("#"):
-                color = "#" + color
+            if isinstance(color, str):
+                if not color.startswith("#"):
+                    color = "#" + color
                 try:
                     color = discord.Color(int(color.replace("#", ""), 16))
                 except ValueError:
@@ -78,7 +79,7 @@ async def createrole(
                             "commands.admin.createrole.invalidColor.description",
                         ),
                     )
-        
+
                     await commandInfo.reply(embed=embed)
                     return
                     

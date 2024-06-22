@@ -3,6 +3,8 @@ from discord.ext import commands
 import os 
 import asyncio
 import config
+from translator import TanjunTranslator
+import api
 
 async def loadextension(bot, extensionname):
     extensionname = f"extensions.{extensionname}"
@@ -13,16 +15,24 @@ async def loadextension(bot, extensionname):
         print(f"Failed to load extension {extensionname}")
         raise
 
+async def loadTranslator(bot):
+    print("loading translator...")
+    translator = TanjunTranslator()
+    await bot.tree.set_translator(translator)
+    print("translator loaded!")
+
 bot = commands.Bot("t.", intents=discord.Intents.all(),
                    application_id=config.applicationId)
 
 if __name__ == "__main__":
     print("starting bot...")
     print("discord.py version: ", discord.__version__)
+    api.create_tables()
     for extension in os.listdir(os.fsencode("extensions")):
         if os.fsdecode(extension).endswith(".py"):
             extension = os.fsdecode(extension).replace(".py", "")
             asyncio.run(loadextension(bot, extension))
+    asyncio.run(loadTranslator(bot))
 
 @bot.event
 async def on_ready():
