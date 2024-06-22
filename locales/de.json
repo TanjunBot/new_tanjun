@@ -244,6 +244,37 @@
                     "description": "Die angegebene Dauer ist ungültig. Bitte gib eine gültige Anzahl von Minuten an."
                 },
                 "noReasonProvided": "Kein Grund angegeben"
+            },
+            "remove_timeout": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Timeouts aufzuheben."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Timeouts aufzuheben."
+                },
+                "targetTooHigh": {
+                    "title": "Ziel hat zu hohe Rolle",
+                    "description": "Du kannst kein Timeout für ein Mitglied aufheben, das eine höhere oder gleiche Rolle wie du hat."
+                },
+                "notTimedOut": {
+                    "title": "Kein aktiver Timeout",
+                    "description": "${user} hat keinen aktiven Timeout."
+                },
+                "success": {
+                    "title": "Timeout aufgehoben",
+                    "description": "Der Timeout für ${user} wurde erfolgreich aufgehoben. Grund: ${reason}"
+                },
+                "forbidden": {
+                    "title": "Timeout-Aufhebung nicht möglich",
+                    "description": "Der Bot konnte den Timeout nicht aufheben. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler beim Aufheben des Timeouts",
+                    "description": "Beim Versuch, den Timeout aufzuheben, ist ein Fehler aufgetreten."
+                },
+                "noReasonProvided": "Kein Grund angegeben"
             }
         }
     },
@@ -383,6 +414,20 @@
                 "reason": {
                     "name": "grund",
                     "description": "Der Grund für den Ausschluss (optional)"
+                }
+            }
+        },
+        "removetimeout": {
+            "name": "timeout_aufheben",
+            "description": "Hebt den Timeout eines Mitglieds auf",
+            "params": {
+                "member": {
+                    "name": "mitglied",
+                    "description": "Das Mitglied, dessen Timeout aufgehoben werden soll"
+                },
+                "reason": {
+                    "name": "grund",
+                    "description": "Der Grund für die Aufhebung des Timeouts (optional)"
                 }
             }
         }
