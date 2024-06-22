@@ -453,6 +453,26 @@
                 "prevButton": "Vorherige",
                 "nextButton": "Nächste",
                 "removeButton": "Verwarnung ${number} entfernen"
+            },
+            "nuke": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal zu löschen und neu zu erstellen."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um einen Kanal zu löschen und neu zu erstellen."
+                },
+                "confirmationTitle": "Kanal-Nuke Bestätigung",
+                "confirmationDescription": "Bist du sicher, dass du alle Nachrichten in ${channel} löschen möchtest? Dies kann nicht rückgängig gemacht werden!",
+                "confirmationPrompt": "Bitte gib 'NUKE' ein, um zu bestätigen.",
+                "cancelledMessage": "Nuke-Vorgang abgebrochen.",
+                "timeoutMessage": "Zeit abgelaufen. Nuke-Vorgang abgebrochen.",
+                "confirmationWord": "NUKE",
+                "incorrectConfirmation": "Falsche Bestätigung. Nuke-Vorgang abgebrochen.",
+                "nukeSuccessMessage": "Dieser Kanal wurde von ${user} gelöscht und neu erstellt.",
+                "forbiddenError": "Der Bot konnte den Kanal nicht löschen oder neu erstellen. Bitte überprüfe die Berechtigungen.",
+                "httpError": "Beim Versuch, den Kanal zu löschen oder neu zu erstellen, ist ein Fehler aufgetreten."
             }
         }
     },
@@ -692,6 +712,16 @@
                 "member": {
                     "name": "mitglied",
                     "description": "Das Mitglied, dessen Verwarnungen angezeigt werden sollen"
+                }
+            }
+        },
+        "nuke": {
+            "name": "nuke",
+            "description": "Löscht alle Nachrichten in einem Kanal, indem er gelöscht und neu erstellt wird",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der zu nukende Kanal (optional, Standard: aktueller Kanal)"
                 }
             }
         }

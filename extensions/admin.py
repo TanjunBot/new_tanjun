@@ -20,6 +20,7 @@ from commands.admin.lock import lock_channel as lockChannelCommand
 from commands.admin.unlock import unlock_channel as unlockChannelCommand
 from commands.admin.warn import warn_user as warnUserCommand
 from commands.admin.viewwarns import view_warnings as viewWarningsCommand
+from commands.admin.nuke import nuke_channel as nukeChannelCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -466,6 +467,30 @@ class administrationCommands(discord.app_commands.Group):
         await viewWarningsCommand(commandInfo=commandInfo, member=member)
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_nuke_name"),
+        description=app_commands.locale_str("admin_nuke_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("admin_nuke_params_channel_description"),
+    )
+    async def nuke(self, ctx, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await nukeChannelCommand(commandInfo=commandInfo, channel=channel)
+        return
+
 
 class adminCog(commands.Cog):
 
@@ -857,6 +882,23 @@ class adminCog(commands.Cog):
         )
 
         await viewWarningsCommand(commandInfo=commandInfo, member=member)
+        return
+
+    @commands.command()
+    async def nuke(self, ctx, channel: discord.TextChannel = None):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await nukeChannelCommand(commandInfo=commandInfo, channel=channel)
         return
 
 
