@@ -275,6 +275,32 @@
                     "description": "Beim Versuch, den Timeout aufzuheben, ist ein Fehler aufgetreten."
                 },
                 "noReasonProvided": "Kein Grund angegeben"
+            },
+            "purge": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Nachrichten zu löschen."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu löschen."
+                },
+                "invalidAmount": {
+                    "title": "Ungültige Anzahl",
+                    "description": "Bitte gib eine positive Zahl von zu löschenden Nachrichten an."
+                },
+                "success": {
+                    "title": "Nachrichten gelöscht",
+                    "description": "${amount} Nachrichten wurden erfolgreich in ${channel} gelöscht."
+                },
+                "forbidden": {
+                    "title": "Löschen nicht möglich",
+                    "description": "Der Bot konnte die Nachrichten nicht löschen. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler beim Löschen",
+                    "description": "Beim Versuch, die Nachrichten zu löschen, ist ein Fehler aufgetreten."
+                }
             }
         }
     },
@@ -428,6 +454,20 @@
                 "reason": {
                     "name": "grund",
                     "description": "Der Grund für die Aufhebung des Timeouts (optional)"
+                }
+            }
+        },
+        "purge": {
+            "name": "löschen",
+            "description": "Löscht eine bestimmte Anzahl von Nachrichten in einem Kanal",
+            "params": {
+                "amount": {
+                    "name": "anzahl",
+                    "description": "Die Anzahl der zu löschenden Nachrichten"
+                },
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem die Nachrichten gelöscht werden sollen (optional, Standard: aktueller Kanal)"
                 }
             }
         }

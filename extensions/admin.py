@@ -13,6 +13,7 @@ from commands.admin.ban import ban as banCommand
 from commands.admin.unban import unban as unbanCommand
 from commands.admin.timeout import timeout as timeoutCommand
 from commands.admin.removetimeout import remove_timeout as removeTimeoutCommand
+from commands.admin.purge import purge as purgeCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -285,6 +286,31 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await removeTimeoutCommand(commandInfo=commandInfo, member=member, reason=reason)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_purge_name"),
+        description=app_commands.locale_str("admin_purge_description"),
+    )
+    @app_commands.describe(
+        amount=app_commands.locale_str("admin_purge_params_amount_description"),
+        channel=app_commands.locale_str("admin_purge_params_channel_description"),
+    )
+    async def purge(self, ctx, amount: int, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await purgeCommand(commandInfo=commandInfo, amount=amount, channel=channel)
         return
 
 
@@ -560,6 +586,23 @@ class adminCog(commands.Cog):
         )
 
         await removeTimeoutCommand(commandInfo=commandInfo, member=member, reason=reason)
+        return
+
+    @commands.command()
+    async def purge(self, ctx, amount: int, channel: discord.TextChannel = None):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await purgeCommand(commandInfo=commandInfo, amount=amount, channel=channel)
         return
 
 
