@@ -544,6 +544,21 @@
                         "label": "Farbe (Hex-Code)"
                     }
                 }
+            },
+            "createEmoji": {
+                "roleSelectPlaceholder": "Wähle Rollen aus, die dieses Emoji verwenden dürfen",
+                "roleSelect": "Wähle Rollen aus, die dieses Emoji verwenden dürfen",
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Emojis zu erstellen."
+                },
+                "imageDownloadError": "Fehler beim Herunterladen des Bildes. Bitte überprüfe die URL und versuche es erneut.",
+                "success": {
+                    "title": "Emoji erfolgreich erstellt",
+                    "description": "Das Emoji ${emoji} wurde erfolgreich erstellt.\nName: ${name}\nVerwendbar von: ${roles}"
+                },
+                "error": "Fehler beim Erstellen des Emojis: ${error}",
+                "allRoles": "Allen Rollen"
             }
         }
     },
@@ -817,6 +832,24 @@
                 "channel": {
                     "name": "kanal",
                     "description": "Der Kanal, in den das Embed gesendet werden soll"
+                }
+            }
+        },
+        "createemoji": {
+            "name": "emoji_erstellen",
+            "description": "Erstellt ein neues Emoji mit optionalen Rollenbeschränkungen",
+            "params": {
+                "name": {
+                    "name": "name",
+                    "description": "Der Name des neuen Emojis"
+                },
+                "imageUrl": {
+                    "name": "bild_url",
+                    "description": "Die URL des Bildes für das neue Emoji"
+                },
+                "roles": {
+                    "name": "rollen",
+                    "description": "Die Rollen, die das Emoji verwenden dürfen (optional, leer lassen für alle Rollen)"
                 }
             }
         }

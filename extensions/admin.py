@@ -23,6 +23,7 @@ from commands.admin.viewwarns import view_warnings as viewWarningsCommand
 from commands.admin.nuke import nuke_channel as nukeChannelCommand
 from commands.admin.say import say as sayCommand
 from commands.admin.embedcreator import create_embed as createEmbedCommand
+from commands.admin.createemoji import create_emoji as createEmojiCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -545,6 +546,40 @@ class administrationCommands(discord.app_commands.Group):
         await createEmbedCommand(commandInfo=commandInfo, channel=channel)
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_createemoji_name"),
+        description=app_commands.locale_str("admin_createemoji_description"),
+    )
+    @app_commands.describe(
+        name=app_commands.locale_str("admin_createemoji_params_name_description"),
+        image_url=app_commands.locale_str("admin_createemoji_params_imageUrl_description"),
+    )
+    async def createemoji(self, ctx, name: str, image_url: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        view = discord.ui.View()
+        role_select = discord.ui.RoleSelect(placeholder=tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelectPlaceholder"), default_values=[ctx.guild.default_role], min_values=1, max_values=25)
+
+        async def role_select_callback(interaction: discord.Interaction):
+            roles = [ctx.guild.get_role(int(r)) for r in interaction.data["values"]]
+            commandInfo.message = interaction.message
+            commandInfo.reply = interaction.response.send_message
+            await createEmojiCommand(commandInfo=commandInfo, name=name, image_url=image_url, roles=roles)
+
+        role_select.callback = role_select_callback
+        view.add_item(role_select)
+        await ctx.followup.send(tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelect"), view=view)
 
 
 class adminCog(commands.Cog):
@@ -1000,6 +1035,22 @@ class adminCog(commands.Cog):
 
         await createEmbedCommand(commandInfo=commandInfo, channel=channel)
         return
+
+    @commands.command()
+    async def createemoji(self, ctx, name: str, image_url: str, *roles: discord.Role):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await createEmojiCommand(commandInfo=commandInfo, name=name, image_url=image_url, roles=list(roles))
 
 
 
