@@ -11,6 +11,7 @@ from commands.admin.deleterole import deleterole as deleteroleCommand
 from commands.admin.kick import kick as kickCommand
 from commands.admin.ban import ban as banCommand
 from commands.admin.unban import unban as unbanCommand
+from commands.admin.timeout import timeout as timeoutCommand
 
 
 class administrationCommands(discord.app_commands.Group):
@@ -229,6 +230,36 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await unbanCommand(commandInfo=commandInfo, username=username, reason=reason)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_timeout_name"),
+        description=app_commands.locale_str("admin_timeout_description"),
+    )
+    @app_commands.describe(
+        member=app_commands.locale_str("admin_timeout_params_member_description"),
+        duration=app_commands.locale_str("admin_timeout_params_duration_description"),
+        reason=app_commands.locale_str("admin_timeout_params_reason_description"),
+    )
+    async def timeout(
+        self, ctx, member: discord.Member, duration: int, reason: str = None
+    ):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await timeoutCommand(
+            commandInfo=commandInfo, member=member, duration=duration, reason=reason
+        )
         return
 
 
@@ -465,6 +496,27 @@ class adminCog(commands.Cog):
         )
 
         await unbanCommand(commandInfo=commandInfo, username=username, reason=reason)
+        return
+
+    @commands.command()
+    async def timeout(
+        self, ctx, member: discord.Member, duration: int, *, reason: str = None
+    ):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await timeoutCommand(
+            commandInfo=commandInfo, member=member, duration=duration, reason=reason
+        )
         return
 
     @commands.Cog.listener()

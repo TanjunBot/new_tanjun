@@ -209,6 +209,41 @@
                     "description": "Beim Versuch, das Mitglied zu entbannen, ist ein Fehler aufgetreten."
                 },
                 "noReasonProvided": "Kein Grund angegeben"
+            },
+            "timeout": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Mitglieder auszuschließen."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Mitglieder auszuschließen."
+                },
+                "targetTooHigh": {
+                    "title": "Ziel hat zu hohe Rolle",
+                    "description": "Du kannst kein Mitglied ausschließen, das eine höhere oder gleiche Rolle wie du hat."
+                },
+                "alreadyTimedOut": {
+                    "title": "Bereits ausgeschlossen",
+                    "description": "${user} ist bereits ausgeschlossen."
+                },
+                "success": {
+                    "title": "Mitglied ausgeschlossen",
+                    "description": "${user} wurde für ${duration} ausgeschlossen. Grund: ${reason}"
+                },
+                "forbidden": {
+                    "title": "Ausschluss nicht möglich",
+                    "description": "Der Bot konnte das Mitglied nicht ausschließen. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler beim Ausschließen",
+                    "description": "Beim Versuch, das Mitglied auszuschließen, ist ein Fehler aufgetreten."
+                },
+                "invalidDuration": {
+                    "title": "Ungültige Dauer",
+                    "description": "Die angegebene Dauer ist ungültig. Bitte gib eine gültige Anzahl von Minuten an."
+                },
+                "noReasonProvided": "Kein Grund angegeben"
             }
         }
     },
@@ -330,6 +365,24 @@
                 "reason": {
                     "name": "grund",
                     "description": "Der Grund für die Aufhebung des Banns (optional)"
+                }
+            }
+        },
+        "timeout": {
+            "name": "ausschließen",
+            "description": "Schließt ein Mitglied temporär aus",
+            "params": {
+                "member": {
+                    "name": "mitglied",
+                    "description": "Das auszuschließende Mitglied"
+                },
+                "duration": {
+                    "name": "dauer",
+                    "description": "Die Dauer des Ausschlusses in Minuten"
+                },
+                "reason": {
+                    "name": "grund",
+                    "description": "Der Grund für den Ausschluss (optional)"
                 }
             }
         }
