@@ -27,7 +27,6 @@ class ConfirmView(View):
             self.commandInfo.locale, "commands.admin.nuke.confirmationPrompt"
         ))
         self.value = True
-        await self.message.edit(view=None)
         self.stop()
 
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary)
@@ -36,7 +35,6 @@ class ConfirmView(View):
             self.commandInfo.locale, "commands.admin.nuke.cancelledMessage"
         ))
         self.value = False
-        await self.message.edit(view=None)
         self.stop()
 
     async def on_timeout(self):
