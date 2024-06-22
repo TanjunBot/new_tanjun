@@ -85,6 +85,17 @@ def clear_warnings(guild_id, user_id):
     params = (guild_id, user_id)
     execute_action(query, params)
 
+def get_detailed_warnings(guild_id, user_id):
+    query = "SELECT id, reason, created_at FROM warnings WHERE guild_id = %s AND user_id = %s ORDER BY created_at DESC"
+    params = (guild_id, user_id)
+    result = execute_query(query, params)
+    return [(row[0], row[1], row[2]) for row in result]
+
+def remove_warning(warning_id):
+    query = "DELETE FROM warnings WHERE id = %s"
+    params = (warning_id,)
+    execute_action(query, params)
+
 def save_channel_overwrites(channel_id, role_id, overwrites):
     query = "INSERT INTO channel_overwrites (channel_id, role_id, overwrites) VALUES (%s, %s, %s)"
     params = (channel_id, role_id, json.dumps(overwrites))

@@ -434,6 +434,25 @@
                     "title": "Du wurdest verwarnt",
                     "description": "Du hast eine Verwarnung auf dem Server ${guild} erhalten.\nGrund: ${reason}\nDies ist deine ${count}. Verwarnung auf diesem Server."
                 }
+            },
+            "viewwarns": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Verwarnungen anzuzeigen."
+                },
+                "noWarnings": {
+                    "title": "Keine Verwarnungen",
+                    "description": "${user} hat keine Verwarnungen auf diesem Server."
+                },
+                "title": "Verwarnungen für ${user}",
+                "description": "Insgesamt ${count} Verwarnung(en)",
+                "warningEntry": "Verwarnung ${number}",
+                "warningDetails": "Grund: ${reason}\nDatum: ${date}",
+                "noReason": "Kein Grund angegeben",
+                "pageFooter": "Seite ${current}/${total}",
+                "prevButton": "Vorherige",
+                "nextButton": "Nächste",
+                "removeButton": "Verwarnung ${number} entfernen"
             }
         }
     },
@@ -663,6 +682,16 @@
                 "reason": {
                     "name": "grund",
                     "description": "Der Grund für die Verwarnung (optional)"
+                }
+            }
+        },
+        "viewwarns": {
+            "name": "verwarnungen",
+            "description": "Zeigt die Verwarnungen eines Mitglieds an",
+            "params": {
+                "member": {
+                    "name": "mitglied",
+                    "description": "Das Mitglied, dessen Verwarnungen angezeigt werden sollen"
                 }
             }
         }

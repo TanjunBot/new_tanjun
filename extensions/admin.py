@@ -19,6 +19,7 @@ from commands.admin.slowmode import set_slowmode as setSlowmodeCommand
 from commands.admin.lock import lock_channel as lockChannelCommand
 from commands.admin.unlock import unlock_channel as unlockChannelCommand
 from commands.admin.warn import warn_user as warnUserCommand
+from commands.admin.viewwarns import view_warnings as viewWarningsCommand
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -441,6 +442,30 @@ class administrationCommands(discord.app_commands.Group):
         await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_viewwarns_name"),
+        description=app_commands.locale_str("admin_viewwarns_description"),
+    )
+    @app_commands.describe(
+        member=app_commands.locale_str("admin_viewwarns_params_member_description"),
+    )
+    async def viewwarns(self, ctx, member: discord.Member):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await viewWarningsCommand(commandInfo=commandInfo, member=member)
+        return
+
 
 class adminCog(commands.Cog):
 
@@ -815,6 +840,23 @@ class adminCog(commands.Cog):
         )
 
         await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
+        return
+
+    @commands.command()
+    async def viewwarns(self, ctx, member: discord.Member):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await viewWarningsCommand(commandInfo=commandInfo, member=member)
         return
 
 
