@@ -361,6 +361,33 @@
                     "title": "Fehler bei der Änderung",
                     "description": "Beim Versuch, den Slowmodus zu ändern, ist ein Fehler aufgetreten."
                 }
+            },
+            "lock": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Kanäle zu sperren."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Kanäle zu sperren."
+                },
+                "alreadyLocked": {
+                    "title": "Kanal bereits gesperrt",
+                    "description": "Der Kanal ${channel} ist bereits gesperrt."
+                },
+                "success": {
+                    "title": "Kanal gesperrt",
+                    "description": "Der Kanal ${channel} wurde erfolgreich gesperrt."
+                },
+                "forbidden": {
+                    "title": "Sperrung nicht möglich",
+                    "description": "Der Bot konnte den Kanal nicht sperren. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler bei der Sperrung",
+                    "description": "Beim Versuch, den Kanal zu sperren, ist ein Fehler aufgetreten."
+                },
+                "channelLockedMessage": "🔒 Dieser Kanal wurde von einem Moderator gesperrt. Nur Administratoren können hier Nachrichten senden."
             }
         }
     },
@@ -556,6 +583,16 @@
                 "channel": {
                     "name": "kanal",
                     "description": "Der Kanal, für den der Slowmodus gesetzt werden soll (optional)"
+                }
+            }
+        },
+        "lock": {
+            "name": "sperren",
+            "description": "Sperrt einen Kanal für normale Benutzer",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der zu sperrende Kanal (optional, Standard: aktueller Kanal)"
                 }
             }
         }

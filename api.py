@@ -1,5 +1,6 @@
 import mysql.connector
 from config import database_ip, database_password, database_user, database_schema
+import json
 
 def create_tables():
     tables = {}
@@ -8,6 +9,15 @@ def create_tables():
         "  `id` INT AUTO_INCREMENT PRIMARY KEY,"
         "  `user_id` BIGINT NOT NULL,"
         "  `reason` VARCHAR(255),"
+        "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+        ") ENGINE=InnoDB"
+    )
+    tables['channel_overwrites'] = (
+        "CREATE TABLE IF NOT EXISTS `channel_overwrites` ("
+        "  `id` INT AUTO_INCREMENT PRIMARY KEY,"
+        "  `channel_id` BIGINT NOT NULL,"
+        "  `role_id` BIGINT NOT NULL,"
+        "  `overwrites` JSON,"
         "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
         ") ENGINE=InnoDB"
     )
@@ -43,10 +53,23 @@ def execute_query(query, params=None):
     connection.close()
     return result
 
+def execute_action(query, params=None):
+    connection = mysql.connector.connect(
+        host=database_ip,
+        user=database_user,
+        password=database_password,
+        database=database_schema
+    )
+    cursor = connection.cursor()
+    cursor.execute(query, params)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
 def add_warning(user_id, reason):
     query = "INSERT INTO warnings (user_id, reason) VALUES (%s, %s)"
     params = (user_id, reason)
-    execute_query(query, params)
+    execute_action(query, params)
 
 def get_warnings(user_id):
     query = "SELECT COUNT(*) FROM warnings WHERE user_id = %s"
@@ -57,4 +80,20 @@ def get_warnings(user_id):
 def clear_warnings(user_id):
     query = "DELETE FROM warnings WHERE user_id = %s"
     params = (user_id,)
-    execute_query(query, params)
+    execute_action(query, params)
+
+def save_channel_overwrites(channel_id, role_id, overwrites):
+    query = "INSERT INTO channel_overwrites (channel_id, role_id, overwrites) VALUES (%s, %s, %s)"
+    params = (channel_id, role_id, json.dumps(overwrites))
+    execute_action(query, params)
+
+def get_channel_overwrites(channel_id):
+    query = "SELECT role_id, overwrites FROM channel_overwrites WHERE channel_id = %s"
+    params = (channel_id,)
+    result = execute_query(query, params)
+    return {row[0]: json.loads(row[1]) for row in result}
+
+def clear_channel_overwrites(channel_id):
+    query = "DELETE FROM channel_overwrites WHERE channel_id = %s"
+    params = (channel_id,)
+    execute_action(query, params)
