@@ -41,6 +41,9 @@ jobs:
     needs: build
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Extract commit information
         id: commit_info
         run: |
@@ -63,7 +66,7 @@ jobs:
           echo "::set-output name=commit_hash::${COMMIT_HASH}"
           echo "::set-output name=commit_timestamp::${COMMIT_TIMESTAMP}"
 
-      - name: Send message to Discord Webhook
+      - name: Post update on Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           COMMIT_TITLE: ${{ steps.commit_info.outputs.commit_title }}
