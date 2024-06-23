@@ -13,7 +13,7 @@ jobs:
         run: |
           echo "title=[Fertiggestellt]: ${{ github.event.issue.title }}" >> $GITHUB_ENV
           description_raw="${{ github.event.issue.body }}"
-          description_raw=$(echo "$description_raw" | sed 's/`/\\\\/g')
+          description_raw=$(echo "$description_raw" | sed 's/`/\\/g')
           description=$(echo "$description_raw" | jq -sRr @json)
           echo "description=$description" >> $GITHUB_ENV
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
