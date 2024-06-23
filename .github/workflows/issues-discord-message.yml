@@ -13,7 +13,7 @@ jobs:
       - name: Extract event information
         id: event_info
         run: |
-          echo "title=[Fertiggestellt]: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}" >> $GITHUB_ENV
+          echo "title=[Fertiggestellt]: ${{ github.event.issue.title }}" >> $GITHUB_ENV
 
           # Store the description with proper escaping
           description_raw="${{ github.event.issue.body }}"
