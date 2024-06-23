@@ -1,4 +1,5 @@
 name: Notify discord on closed issues
+
 on:
   issues:
     types: [closed]
@@ -12,8 +13,8 @@ jobs:
       - name: Extract event information
         id: event_info
         run: |
-          echo "title=[Fertiggestellt]: `#${{ github.event.issue.number }}` - ${{ github.event.issue.title }}" >> $GITHUB_ENV
-          echo "description=${{ github.event.issue.body }}" >> $GITHUB_ENV
+          echo "title=[Fertiggestellt]: \`#${{ github.event.issue.number }}\` - ${{ github.event.issue.title }}" >> $GITHUB_ENV
+          echo "description=$(echo "${{ github.event.issue.body }}" | sed ':a;N;$!ba;s/\n/\\n/g')" >> $GITHUB_ENV
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
@@ -22,7 +23,6 @@ jobs:
           echo "color=5763719" >> $GITHUB_ENV
           echo "username=Tanjun Issue Tracker" >> $GITHUB_ENV
       - name: Post update on Discord
-        if: env.skip_discord_notification != 'true'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
