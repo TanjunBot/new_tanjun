@@ -1,3 +1,4 @@
+from __future__ import division
 import discord
 from typing import (
     Any,
@@ -11,14 +12,13 @@ from typing import (
     Union,
 )
 import datetime
-from __future__ import division
 from pyparsing import (
     Literal,
     CaselessLiteral,
     Word,
+    Optional as Opt,
     Combine,
     Group,
-    Optional,
     ZeroOrMore,
     Forward,
     nums,
@@ -823,8 +823,8 @@ class NumericStringParser(object):
         e = CaselessLiteral("E")
         fnumber = Combine(
             Word("+-" + nums, nums)
-            + Optional(point + Optional(Word(nums)))
-            + Optional(e + Word("+-" + nums, nums))
+            + Opt(point + Opt(Word(nums)))
+            + Opt(e + Word("+-" + nums, nums))
         )
         ident = Word(alphas, alphas + nums + "_$")
         plus = Literal("+")
@@ -840,12 +840,12 @@ class NumericStringParser(object):
         expr = Forward()
         atom = (
             (
-                Optional(oneOf("- +"))
+                Opt(oneOf("- +"))
                 + (ident + lpar + expr + rpar | pi | e | fnumber).setParseAction(
                     self.pushFirst
                 )
             )
-            | Optional(oneOf("- +")) + Group(lpar + expr + rpar)
+            | Opt(oneOf("- +")) + Group(lpar + expr + rpar)
         ).setParseAction(self.pushUMinus)
         # by defining exponentiation as "atom [ ^ factor ]..." instead of
         # "atom [ ^ atom ]...", we get right-to-left exponents, instead of left-to-right

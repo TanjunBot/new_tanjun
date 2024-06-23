@@ -560,6 +560,18 @@
                 "error": "Fehler beim Erstellen des Emojis: ${error}",
                 "allRoles": "Allen Rollen"
             }
+        },
+        "math": {
+            "calc": {
+                "success": {
+                    "title": "Berechnung erfolgreich",
+                    "description": "`${expression}` ergibt:\n```${result}\n```"
+                },
+                "error": {
+                    "title": "Berechnungsfehler",
+                    "description": "Es gab einen Fehler bei der Berechnung: ${error}"
+                }
+            }
         }
     },
     "admin": {
@@ -850,6 +862,20 @@
                 "roles": {
                     "name": "rollen",
                     "description": "Die Rollen, die das Emoji verwenden dürfen (optional, leer lassen für alle Rollen)"
+                }
+            }
+        }
+    },
+    "math": {
+        "name": "Mathe",
+        "description": "Mathe macht spaß!",
+        "calc": {
+            "name": "berechnen",
+            "description": "Berechnet einen mathematischen Ausdruck",
+            "params": {
+                "expression": {
+                    "name": "ausdruck",
+                    "description": "Der zu berechnende mathematische Ausdruck"
                 }
             }
         }
