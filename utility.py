@@ -27,6 +27,9 @@ from pyparsing import (
 )
 import math
 import operator
+from config import tenorAPIKey, tenorCKey
+import aiohttp
+import random
 
 
 class EmbedProxy:
@@ -792,8 +795,10 @@ class commandInfo:
         self.reply = reply
         self.client = client
 
+
 def cmp(a, b):
-    return (a > b) - (a < b) 
+    return (a > b) - (a < b)
+
 
 class NumericStringParser(object):
     """
@@ -805,15 +810,17 @@ class NumericStringParser(object):
         self.exprStack.append(toks[0])
 
     def pushUMinus(self, strg, loc, toks):
-        if toks and toks[0] == '-':
-            self.exprStack.append('unary -')
+        if toks and toks[0] == "-":
+            self.exprStack.append("unary -")
 
     def __init__(self):
         point = Literal(".")
         e = CaselessLiteral("E")
-        fnumber = Combine(Word("+-" + nums, nums) +
-                          Opt(point + Opt(Word(nums))) +
-                          Opt(e + Word("+-" + nums, nums)))
+        fnumber = Combine(
+            Word("+-" + nums, nums)
+            + Opt(point + Opt(Word(nums)))
+            + Opt(e + Word("+-" + nums, nums))
+        )
         ident = Word(alphas, alphas + nums + "_$")
 
         plus, minus, mult, div = map(Literal, "+-*/")
@@ -823,10 +830,9 @@ class NumericStringParser(object):
         expop = Literal("^")
 
         expr = Forward()
-        atom = (
-            (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(self.pushFirst) |
-            (lpar + expr.suppress() + rpar).setParseAction(self.pushUMinus)
-        )
+        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(
+            self.pushFirst
+        ) | (lpar + expr.suppress() + rpar).setParseAction(self.pushUMinus)
 
         factor = Forward()
         factor << atom + ZeroOrMore((expop + factor).setParseAction(self.pushFirst))
@@ -876,12 +882,12 @@ class NumericStringParser(object):
             "-": operator.sub,
             "*": operator.mul,
             "/": operator.truediv,
-            "^": operator.pow
+            "^": operator.pow,
         }
 
     def evaluateStack(self, s):
         op = s.pop()
-        if op == 'unary -':
+        if op == "unary -":
             return -self.evaluateStack(s)
         if op in "+-*/^":
             op2 = self.evaluateStack(s)
@@ -903,3 +909,25 @@ class NumericStringParser(object):
         results = self.bnf.parseString(num_string, parseAll)
         val = self.evaluateStack(self.exprStack[:])
         return val
+
+
+async def getGif(query: str, amount: int = 1, limit: int = 10):
+    async with aiohttp.ClientSession() as session:
+
+        async def fetch(url):
+            async with session.get(url) as response:
+                if response.status != 200:
+                    return None
+                return await response.json()
+
+        r = await fetch(
+            "https://tenor.googleapis.com/v2/search?q=%s&key=%s&client_key=%s&limit=%s"
+            % (query, tenorAPIKey, tenorCKey, limit)
+        )
+
+        if r is None:
+            return []
+        
+        random.shuffle(r["results"])
+
+        return [r["results"][i]["itemurl"] for i in range(amount)]
