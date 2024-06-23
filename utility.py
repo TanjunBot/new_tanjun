@@ -812,8 +812,8 @@ class NumericStringParser(object):
         point = Literal(".")
         e = CaselessLiteral("E")
         fnumber = Combine(Word("+-" + nums, nums) +
-                          Optional(point + Optional(Word(nums))) +
-                          Optional(e + Word("+-" + nums, nums)))
+                          Opt(point + Opt(Word(nums))) +
+                          Opt(e + Word("+-" + nums, nums)))
         ident = Word(alphas, alphas + nums + "_$")
 
         plus, minus, mult, div = map(Literal, "+-*/")
@@ -824,7 +824,7 @@ class NumericStringParser(object):
 
         expr = Forward()
         atom = (
-            (Optional("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(self.pushFirst) |
+            (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(self.pushFirst) |
             (lpar + expr.suppress() + rpar).setParseAction(self.pushUMinus)
         )
 
@@ -863,6 +863,11 @@ class NumericStringParser(object):
             "factorial": math.factorial,
             "degrees": math.degrees,
             "radians": math.radians,
+            "ceil": math.ceil,
+            "floor": math.floor,
+            "pi": math.pi,
+            "e": math.e,
+            "fac": math.factorial,
         }
 
         # Operator map

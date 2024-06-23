@@ -571,6 +571,17 @@
                     "title": "Berechnungsfehler",
                     "description": "Es gab einen Fehler bei der Berechnung: ${error}"
                 }
+            },
+            "calculator": {
+                "title": "Taschenrechner",
+                "equation": "Gleichung",
+                "result": "Ergebnis",
+                "history": "Verlauf",
+                "variables": "Variablen",
+                "error": "Fehler: ${error}",
+                "invalid_assignment": "Ungültige Zuweisung",
+                "command_name": "taschenrechner",
+                "command_description": "Öffnet einen interaktiven Taschenrechner"
             }
         }
     },
@@ -876,6 +887,16 @@
                 "expression": {
                     "name": "ausdruck",
                     "description": "Der zu berechnende mathematische Ausdruck"
+                }
+            }
+        },
+        "calculator": {
+            "name": "taschenrechner",
+            "description": "Öffnet einen interaktiven Taschenrechner",
+            "params": {
+                "equation": {
+                    "name": "gleichung",
+                    "description": "Die Anfangsgleichung für den Taschenrechner (optional)"
                 }
             }
         }
