@@ -32,7 +32,7 @@ jobs:
             --arg author_profileicon "${{ env.author_profileicon }}" \
             --arg timestamp "${{ env.timestamp }}" \
             --arg footer_text "${{ env.footer_text }}" \
-            --arg color "${{ env.color }}" \
+            --argjson color "${{ env.color }}" \
             --arg username "${{ env.username }}" \
             '{
               "content": null,
@@ -40,7 +40,7 @@ jobs:
                 {
                   "title": $title,
                   "description": $description,
-                  "color": ($color | tonumber),
+                  "color": $color,
                   "author": {
                     "name": $author_name,
                     "url": $author_url,
@@ -55,5 +55,7 @@ jobs:
               "username": $username,
               "attachments": []
             }')
+          
+          echo "$payload" | jq '.'
           
           curl -X POST -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL"
