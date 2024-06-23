@@ -40,42 +40,28 @@ jobs:
       - name: Extract event information
         id: event_info
         run: |
-          if [ "${{ github.event_name }}" == "issues" ]; then
-            echo "title=Issue Closed: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}" >> $GITHUB_ENV
-            echo "description=${{ github.event.issue.body }}" >> $GITHUB_ENV
-            echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-            echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-            echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-            echo "timestamp=${{ github.event.issue.closed_at }}" >> $GITHUB_ENV
-            echo "footer_text=Issue #${{ github.event.issue.number }}" >> $GITHUB_ENV
-            echo "color=5763719" >> $GITHUB_ENV
-            echo "username=Tanjun Issue Tracker" >> $GITHUB_ENV
-          else
-            COMMIT_TITLE=$(git log --format=%s -1)
-            COMMIT_DESCRIPTION=$(git log --format=%b -1)
-            GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
-            GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
-            GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
-            COMMIT_HASH=$(git log -1 --pretty=format:'%H')
-            COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
-            echo "title=${COMMIT_TITLE}" >> $GITHUB_ENV
-            echo "description=${COMMIT_DESCRIPTION}" >> $GITHUB_ENV
-            echo "author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
-            echo "author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
-            echo "author_profileicon=${GITHUB_AUTHOR_PROFILE_ICON}" >> $GITHUB_ENV
-            echo "timestamp=${COMMIT_TIMESTAMP}" >> $GITHUB_ENV
-            echo "footer_text=${COMMIT_HASH}" >> $GITHUB_ENV
-            echo "color=13317109" >> $GITHUB_ENV
-            echo "username=Tanjun Changelog" >> $GITHUB_ENV
-          fi
+          COMMIT_TITLE=$(git log --format=%s -1)
+          COMMIT_DESCRIPTION=$(git log --format=%b -1)
+          GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
+          GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+          GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
+          COMMIT_HASH=$(git log -1 --pretty=format:'%H')
+          COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
+          echo "title=${COMMIT_TITLE}" >> $GITHUB_ENV
+          echo "description=${COMMIT_DESCRIPTION}" >> $GITHUB_ENV
+          echo "author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
+          echo "author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
+          echo "author_profileicon=${GITHUB_AUTHOR_PROFILE_ICON}" >> $GITHUB_ENV
+          echo "timestamp=${COMMIT_TIMESTAMP}" >> $GITHUB_ENV
+          echo "footer_text=${COMMIT_HASH}" >> $GITHUB_ENV
+          echo "color=13317109" >> $GITHUB_ENV
+          echo "username=Tanjun Changelog" >> $GITHUB_ENV
       - name: Check commit message
         id: check_commit_message
         run: |
-          if [ "${{ github.event_name }}" == "issues" ]; then
-            echo "skip_discord_notification=false" >> $GITHUB_ENV
-          elif [[ "${{ env.description }}" == *"[ignore changelog]"* ]]; then
+          if [[ "${{ env.description }}" == *"[ignore changelog]"* ]]; then
             echo "skip_discord_notification=true" >> $GITHUB_ENV
-          elif [[ "${{ env.title }}" == "[ignore changelog]"* ]]; then
+          elif [[ "${{ env.title }}" == *"[ignore changelog]"* ]]; then
             echo "::error::Commit message starts with '[ignore changelog]'. Skipping Discord notification."
             exit 1
           else
