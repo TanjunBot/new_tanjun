@@ -35,3 +35,14 @@ jobs:
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  notify_discord:
+    runs-on: ubuntu-latest
+    needs: build  # Ensure this job runs after the 'build' job completes successfully
+
+    steps:
+      - name: Send message to Discord Webhook
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}  # Make sure to set this secret in your repository settings
+        run: |
+          curl -X POST -H 'Content-Type: application/json' -d '{"content": "Build successful for branch: ${{ github.ref }}"}' $DISCORD_WEBHOOK_URL
