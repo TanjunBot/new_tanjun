@@ -14,7 +14,7 @@ jobs:
         id: event_info
         run: |
           echo "title=[Fertiggestellt]: \`#${{ github.event.issue.number }}\` - ${{ github.event.issue.title }}" >> $GITHUB_ENV
-          echo "description=$(echo "${{ github.event.issue.body }}" | sed ':a;N;$!ba;s/\n/\\n/g')" >> $GITHUB_ENV
+          echo "description=$(echo "${{ github.event.issue.body }}" | jq --slurp --raw-input --raw-output 'gsub("\\n"; "\n")')" >> $GITHUB_ENV
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
@@ -25,6 +25,15 @@ jobs:
       - name: Post update on Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          title: ${{ env.title }}
+          description: ${{ env.description }}
+          author_name: ${{ env.author_name }}
+          author_url: ${{ env.author_url }}
+          author_profileicon: ${{ env.author_profileicon }}
+          timestamp: ${{ env.timestamp }}
+          footer_text: ${{ env.footer_text }}
+          color: ${{ env.color }}
+          username: ${{ env.username }}
         run: |
           curl -X POST -H 'Content-Type: application/json' -d '{
             "content": null,
