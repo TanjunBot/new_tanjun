@@ -1,0 +1,92 @@
+name: Security Vulnerability Report
+description: Report a security vulnerability in the Discord Bot.
+labels: 'security/vulnerability'
+body:
+- type: markdown
+  attributes:
+    value: |
+      > [!IMPORTANT]  
+      > Please read our [security policy](https://github.com/TanjunBot/new-tanjun/blob/master/SECURITY.md) before creating security-related issues.
+
+      **IMPORTANT:**
+      Please do not disclose critical security vulnerabilities publicly. If the issue is sensitive, consider contacting us through a private ticket on [our discord server](https://discord.arion2000.xyz).
+
+- type: textarea
+  id: vulnerability-description
+  attributes:
+    label: Describe the Vulnerability
+    description: A clear and detailed description of the security vulnerability.
+  validations:
+    required: true
+
+- type: markdown
+  attributes:
+    value: |
+      ## Steps to Reproduce
+      Please provide the steps to reproduce the vulnerability:
+
+- type: textarea
+  id: repro-steps
+  attributes:
+    label: Steps to Reproduce
+    description: "List the steps to reproduce the vulnerability."
+    value: |
+      1.
+      2.
+      3.
+      ...
+  validations:
+    required: true
+
+- type: dropdown
+  id: impact
+  attributes:
+    label: Impact
+    description: "Describe the potential impact of this vulnerability."
+    options:
+      - **Level 0 - Negligible**: Minor issue with no practical impact on security.
+      - Level 1 - Low
+      - Level 2 - Medium
+      - Level 3 - Moderate
+      - Level 4 - Significant
+      - Level 5 - High
+      - Level 6 - Critical
+      - Level 7 - Severe
+      - Level 8 - Destructive
+      - Level 9 - Devastating
+  validations:
+    required: true
+
+- type: textarea
+  id: mitigation
+  attributes:
+    label: Mitigation
+    description: "Suggest any mitigation or workaround for this vulnerability, if known."
+  validations:
+    required: false
+
+- type: input
+  id: bot-version
+  attributes:
+    label: Bot Version
+    description: "Which version of the bot are you using?"
+    placeholder: e.g., v1.2.3
+  validations:
+    required: true
+
+- type: textarea
+  id: additional-context
+  attributes:
+    label: Additional Context
+    description: "Provide any other context or information about the vulnerability (e.g. link to CVE advisory)."
+  validations:
+    required: false
+
+- type: input
+  id: contact-info
+  attributes:
+    label: Contact Information
+    description: "Provide your contact information if you would like us to reach out for more details."
+    placeholder: e.g., email@example.com
+  validations:
+    required: false
