@@ -1,0 +1,26 @@
+name: 'Inaktive Issues und Pull Requests schließen'
+permissions:
+  issues: write
+  pull-requests: write
+
+on:
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9.0.0
+        with:
+          stale-pr-message: 'Diese Pull Request wurde als inaktiv markiert, weil sie seit 30 Tagen offen ist und keine Aktivität aufweist. Entferne das "stale"-Label oder diesen Kommentar, sonst wird diese Pull Request in 5 Tagen geschlossen.'
+          close-pr-message: 'Diese Pull Request wurde geschlossen, weil sie seit 5 Tagen keine Aktivität aufweist.'
+          stale-issue-message: 'Dieses Issue wurde als inaktiv markiert, weil es seit 30 Tagen offen ist und keine Aktivität aufweist. Entferne das "stale"-Label oder diesen Kommentar, sonst wird dieses Issue in 5 Tagen geschlossen.'
+          close-issue-message: 'Dieses Issue wurde geschlossen, weil es seit 5 Tagen keine Aktivität aufweist.'
+          days-before-stale: 30
+          days-before-close: 5
+          exempt-issue-labels: 'help wanted, question, deferred'
+          exempt-pr-labels: 'help wanted, question, deferred'
+          exempt-all-milestones: true
+          operations-per-run: 100
+          stale-issue-label: 'stale'
