@@ -15,6 +15,8 @@ jobs:
         run: |
           # Store title with issue number and title
           echo "title=[Fertiggestellt]: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}" >> $GITHUB_ENV
+
+          echo "description=${{ github.event.issue.body }}" >> $GITHUB_ENV
           
           # Store author information
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
