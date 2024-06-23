@@ -1,3 +1,6 @@
+on:
+  issues:
+    types: [closed]
 jobs:
   notify_discord:
     runs-on: ubuntu-latest
