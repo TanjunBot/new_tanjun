@@ -33,7 +33,7 @@ jobs:
             "embeds": [
               {
                 "title": "${{ env.title }}",
-                "description": "${{ env.description }}",
+                "description": ${{ env.description }},
                 "color": ${{ env.color }},
                 "author": {
                   "name": "${{ env.author_name }}",
