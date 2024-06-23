@@ -51,7 +51,7 @@ jobs:
           COMMIT_DESCRIPTION=$(git log --format=%b -1)
           GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
           GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
-          GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_AUTHOR_NAME}"
+          GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
 
           # Get the commit hash and timestamp in ISO 8601 format
           COMMIT_HASH=$(git log -1 --pretty=format:'%H')
@@ -78,7 +78,7 @@ jobs:
           COMMIT_TIMESTAMP: ${{ steps.commit_info.outputs.commit_timestamp }}
         run: |
           curl -X POST -H 'Content-Type: application/json' -d '{
-            "content": null,
+            "content": "<@&1098903180760330292>",
             "embeds": [
               {
                 "title": "'"$COMMIT_TITLE"'",
