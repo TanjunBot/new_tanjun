@@ -17,6 +17,8 @@ body:
     description: If there is already an issue/pr for this, you should participate there instead of creating a new one.
     options:
       - label: Yes, I have checked that there are no other issues or pull requests for this feature/idea.
+  validations:
+    required: true
 
 - type: markdown
   attributes:
