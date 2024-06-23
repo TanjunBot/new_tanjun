@@ -13,7 +13,9 @@ jobs:
         run: |
           echo "title=[Fertiggestellt]: ${{ github.event.issue.title }}" >> $GITHUB_ENV
           # Store the description with proper escaping
+          # Store the description with proper escaping
           description_raw="${{ github.event.issue.body }}"
+          # Properly escape the string using jq and handle it carefully in the echo command
           description=$(echo "$description_raw" | jq -sRr @json)
           echo "description=$description" >> $GITHUB_ENV
           # Use the username of the person who closed the issue as author_name
