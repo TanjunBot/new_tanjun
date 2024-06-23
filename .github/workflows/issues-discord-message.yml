@@ -17,7 +17,7 @@ jobs:
 
           description_raw="${{ github.event.issue.body }}"
 
-          description=$(jq -n --arg mt "$description_raw" '$mt')
+          description=$(echo "$description_raw" | sed ':a;N;$!ba;s/\n/\\n/g')
 
           echo $description >> $GITHUB_ENV
           
