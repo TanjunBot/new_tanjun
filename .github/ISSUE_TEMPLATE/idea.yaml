@@ -1,0 +1,78 @@
+name: Feature Request/Idea
+description: Share your ideas for new features or improvements for the Discord Bot!
+labels: 'suggestion'
+body:
+- type: textarea
+  id: feature-description
+  attributes:
+    label: Describe the Feature/Idea
+    description: A clear and concise description of the idea.
+  validations:
+    required: true
+
+- type: checkboxes
+  id: already-exists
+  attributes:
+    label: Have you checked if there is already an issue/pr for this feature/idea?
+    description: If there is already an issue/pr for this, you should participate there instead of creating a new one.
+    options:
+      - label: Yes, I have checked that there are no other issues or pull requests for this feature/idea.
+
+- type: markdown
+  attributes:
+    value: |
+      ## Motivation
+      Explain the reasoning behind this feature/idea:
+      
+- type: textarea
+  id: motivation
+  attributes:
+    label: Motivation
+    description: "Why do you think this feature/idea should be implemented? What problem does it solve or what improvement does it bring?"
+  validations:
+    required: true
+
+- type: markdown
+  attributes:
+    value: |
+      ## Detailed Description
+      Provide a detailed description of how the feature should work:
+
+- type: textarea
+  id: detailed-description
+  attributes:
+    label: Detailed Description
+    description: "Explain how the feature should be implemented, including any specific details or examples."
+  validations:
+    required: true
+
+- type: input
+  id: examples
+  attributes:
+    label: Examples (if applicable)
+    description: "Provide examples or mockups if applicable."
+    placeholder: e.g., screenshots, code snippets, etc.
+  validations:
+    required: false
+
+- type: markdown
+  attributes:
+    value: |
+      ## Alternatives
+      Describe any alternative solutions or features you've considered:
+
+- type: textarea
+  id: alternatives
+  attributes:
+    label: Alternatives
+    description: "Have you considered any alternative solutions or features? If so, describe them here."
+  validations:
+    required: false
+
+- type: textarea
+  id: additional-context
+  attributes:
+    label: Additional Context
+    description: "Provide any other context or information about the feature request."
+  validations:
+    required: false
