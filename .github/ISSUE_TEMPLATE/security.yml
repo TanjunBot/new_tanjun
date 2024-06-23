@@ -44,16 +44,16 @@ body:
     label: Impact
     description: "Describe the potential impact of this vulnerability."
     options:
-      - '**Level 0 - Negligible**: Minor issue with no practical impact on security.'
-      - Level 1 - Low
-      - Level 2 - Medium
-      - Level 3 - Moderate
-      - Level 4 - Significant
-      - Level 5 - High
-      - Level 6 - Critical
-      - Level 7 - Severe
-      - Level 8 - Destructive
-      - Level 9 - Devastating
+      - Level 0 - Negligible (Minor issue with no practical impact on security.)
+      - Level 1 - Low (Minor security issue; unlikely to be exploited.)
+      - Level 2 - Medium (Potential for exploit exists but difficult to exploit or limited impact.)
+      - Level 3 - Moderate (Likely to be exploited under certain circumstances; moderate impact.)
+      - Level 4 - Significant (Likely to be exploited; significant impact on confidentiality, integrity, or availability.)
+      - Level 5 - High (Easily exploitable vulnerability; significant impact on security, requires immediate attention.)
+      - Level 6 - Critical (Easily exploitable vulnerability with widespread impact; requires immediate action.)
+      - Level 7 - Severe (Extremely dangerous vulnerability; active exploitation likely; urgent response required.)
+      - Level 8 - Destructive (Catastrophic vulnerability; immediate and comprehensive response needed to mitigate damage.)
+      - Level 9 - Devastating (Immediate and widespread exploitation occurring; critical systems compromised; emergency response critical.)
   validations:
     required: true
 
