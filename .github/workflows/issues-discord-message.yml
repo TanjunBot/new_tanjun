@@ -13,16 +13,24 @@ jobs:
       - name: Extract event information
         id: event_info
         run: |
+          # Store title with issue number and title
           echo "title=[Fertiggestellt]: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}" >> $GITHUB_ENV
-          # Store description with proper JSON escaping for newlines
-          echo "description=$(echo "${{ github.event.issue.body }}" | jq --slurp --raw-input --raw-output 'gsub("\\n"; "\\n")')" >> $GITHUB_ENV
+          
+          # Store description with proper JSON escaping and no newlines
+          description=$(echo "${{ github.event.issue.body }}" | tr -d '\n' | jq --slurp --raw-input --raw-output 'gsub("\\n"; "\\n")')
+          echo "description=$description" >> $GITHUB_ENV
+          
+          # Store author information
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+          
+          # Store timestamp, footer, color, and username
           echo "timestamp=${{ github.event.issue.closed_at }}" >> $GITHUB_ENV
           echo "footer_text=Issue #${{ github.event.issue.number }}" >> $GITHUB_ENV
           echo "color=5763719" >> $GITHUB_ENV
           echo "username=Tanjun Issue Tracker" >> $GITHUB_ENV
+          
       - name: Post update on Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -36,6 +44,7 @@ jobs:
           color: ${{ env.color }}
           username: ${{ env.username }}
         run: |
+          # Post JSON payload to Discord webhook
           curl -X POST -H 'Content-Type: application/json' -d '{
             "content": null,
             "embeds": [
