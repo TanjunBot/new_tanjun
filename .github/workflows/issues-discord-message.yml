@@ -21,6 +21,7 @@ jobs:
 
           echo "description=$description" >> $GITHUB_ENV
 
+          # Use the username of the person who closed the issue as author_name
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
@@ -30,7 +31,6 @@ jobs:
           echo "color=5763719" >> $GITHUB_ENV
           echo "username=Tanjun Issue Tracker" >> $GITHUB_ENV
 
-          
       - name: Post update on Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
