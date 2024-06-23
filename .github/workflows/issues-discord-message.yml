@@ -33,6 +33,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           title: ${{ env.title }}
+          description: ${{ env.description }}
           author_name: ${{ env.author_name }}
           author_url: ${{ env.author_url }}
           author_profileicon: ${{ env.author_profileicon }}
@@ -47,7 +48,7 @@ jobs:
             "embeds": [
               {
                 "title": "${{ env.title }}",
-                "description": null,
+                "description": ${{ env.description }},
                 "color": ${{ env.color }},
                 "author": {
                   "name": "${{ env.author_name }}",
