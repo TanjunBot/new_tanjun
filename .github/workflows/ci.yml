@@ -36,7 +36,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
       - name: Extract event information
         id: event_info
         run: |
