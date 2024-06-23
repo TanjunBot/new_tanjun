@@ -1,5 +1,4 @@
 name: Tanjun CI
-
 on:
   push:
     branches:
@@ -14,25 +13,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: python:3.11  # Specify a Docker container with Python 3.11 if available, or use ubuntu-latest
-
+      image: python:3.11
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
         with:
           ref: ${{ github.sha }}
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.11
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install flake8
-
       - name: Lint with flake8
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -41,42 +36,53 @@ jobs:
   notify_discord:
     runs-on: ubuntu-latest
     needs: build
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@main
-
-      - name: Extract commit information
-        id: commit_info
+        uses: actions/checkout@v2
+      - name: Extract event information
+        id: event_info
         run: |
-          COMMIT_TITLE=$(git log --format=%s -1)
-          COMMIT_DESCRIPTION=$(git log --format=%b -1)
-          GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
-          GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
-          GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
-          COMMIT_HASH=$(git log -1 --pretty=format:'%H')
-          COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
-
-          echo "commit_title=${COMMIT_TITLE}" >> $GITHUB_ENV
-          echo "commit_description=${COMMIT_DESCRIPTION}" >> $GITHUB_ENV
-          echo "github_author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
-          echo "github_author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
-          echo "github_author_profileicon=${GITHUB_AUTHOR_PROFILE_ICON}" >> $GITHUB_ENV
-          echo "commit_hash=${COMMIT_HASH}" >> $GITHUB_ENV
-          echo "commit_timestamp=${COMMIT_TIMESTAMP}" >> $GITHUB_ENV
-
+          if [ "${{ github.event_name }}" == "issues" ]; then
+            echo "title=Issue Closed: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}" >> $GITHUB_ENV
+            echo "description=${{ github.event.issue.body }}" >> $GITHUB_ENV
+            echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+            echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+            echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+            echo "timestamp=${{ github.event.issue.closed_at }}" >> $GITHUB_ENV
+            echo "footer_text=Issue #${{ github.event.issue.number }}" >> $GITHUB_ENV
+            echo "color=5763719" >> $GITHUB_ENV
+            echo "username=Tanjun Issue Tracker" >> $GITHUB_ENV
+          else
+            COMMIT_TITLE=$(git log --format=%s -1)
+            COMMIT_DESCRIPTION=$(git log --format=%b -1)
+            GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
+            GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+            GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
+            COMMIT_HASH=$(git log -1 --pretty=format:'%H')
+            COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
+            echo "title=${COMMIT_TITLE}" >> $GITHUB_ENV
+            echo "description=${COMMIT_DESCRIPTION}" >> $GITHUB_ENV
+            echo "author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
+            echo "author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
+            echo "author_profileicon=${GITHUB_AUTHOR_PROFILE_ICON}" >> $GITHUB_ENV
+            echo "timestamp=${COMMIT_TIMESTAMP}" >> $GITHUB_ENV
+            echo "footer_text=${COMMIT_HASH}" >> $GITHUB_ENV
+            echo "color=13317109" >> $GITHUB_ENV
+            echo "username=Tanjun Changelog" >> $GITHUB_ENV
+          fi
       - name: Check commit message
         id: check_commit_message
         run: |
-          if [[ "${COMMIT_DESCRIPTION}" == *"[ignore changelog]"* ]]; then
+          if [ "${{ github.event_name }}" == "issues" ]; then
+            echo "skip_discord_notification=false" >> $GITHUB_ENV
+          elif [[ "${{ env.description }}" == *"[ignore changelog]"* ]]; then
             echo "skip_discord_notification=true" >> $GITHUB_ENV
-          elif [[ "${COMMIT_TITLE}" == "[ignore changelog]"* ]]; then
+          elif [[ "${{ env.title }}" == "[ignore changelog]"* ]]; then
             echo "::error::Commit message starts with '[ignore changelog]'. Skipping Discord notification."
             exit 1
           else
             echo "skip_discord_notification=false" >> $GITHUB_ENV
           fi
-
       - name: Post update on Discord
         if: env.skip_discord_notification != 'true'
         env:
@@ -86,20 +92,20 @@ jobs:
             "content": null,
             "embeds": [
               {
-                "title": "'"${{ env.commit_title }}"'",
-                "description": "'"${{ env.commit_description }}"'",
-                "color": 13317109,
+                "title": "${{ env.title }}",
+                "description": "${{ env.description }}",
+                "color": ${{ env.color }},
                 "author": {
-                  "name": "'"${{ env.github_author_name }}"'",
-                  "url": "'"${{ env.github_author_url }}"'",
-                  "icon_url": "'"${{ env.github_author_profileicon }}"'"
+                  "name": "${{ env.author_name }}",
+                  "url": "${{ env.author_url }}",
+                  "icon_url": "${{ env.author_profileicon }}"
                 },
                 "footer": {
-                  "text": "'"${{ env.commit_hash }}"'"
+                  "text": "${{ env.footer_text }}"
                 },
-                "timestamp": "'"${{ env.commit_timestamp }}"'"
+                "timestamp": "${{ env.timestamp }}"
               }
             ],
-            "username": "Tanjun Changelog",
+            "username": "${{ env.username }}",
             "attachments": []
           }' $DISCORD_WEBHOOK_URL
