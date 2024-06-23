@@ -12,13 +12,9 @@ jobs:
         id: event_info
         run: |
           echo "title=[Fertiggestellt]: ${{ github.event.issue.title }}" >> $GITHUB_ENV
-          # Store the description with proper escaping
-          # Store the description with proper escaping
           description_raw="${{ github.event.issue.body }}"
-          # Properly escape the string using jq and handle it carefully in the echo command
           description=$(echo "$description_raw" | jq -sRr @json)
           echo "description=$description" >> $GITHUB_ENV
-          # Use the username of the person who closed the issue as author_name
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
@@ -29,22 +25,14 @@ jobs:
       - name: Post update on Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          title: ${{ env.title }}
-          description: ${{ env.description }}
-          author_name: ${{ env.author_name }}
-          author_url: ${{ env.author_url }}
-          author_profileicon: ${{ env.author_profileicon }}
-          timestamp: ${{ env.timestamp }}
-          footer_text: ${{ env.footer_text }}
-          color: ${{ env.color }}
-          username: ${{ env.username }}
         run: |
-          curl -X POST -H 'Content-Type: application/json' -d '{
+          payload=$(cat <<EOF
+          {
             "content": null,
             "embeds": [
               {
                 "title": "${{ env.title }}",
-                "description": ${{ env.description }},
+                "description": ${description},  # Use the variable directly here, jq already JSON-escaped
                 "color": ${{ env.color }},
                 "author": {
                   "name": "${{ env.author_name }}",
@@ -59,4 +47,7 @@ jobs:
             ],
             "username": "${{ env.username }}",
             "attachments": []
-          }' $DISCORD_WEBHOOK_URL
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-Type: application/json' -d "$payload" $DISCORD_WEBHOOK_URL
