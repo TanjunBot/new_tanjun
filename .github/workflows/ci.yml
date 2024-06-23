@@ -6,8 +6,6 @@ on:
   pull_request:
     branches:
       - '**'
-  issues:
-    types: [closed]
 
 jobs:
   build:
@@ -20,7 +18,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@main
         with:
           python-version: 3.11
       - name: Install dependencies
