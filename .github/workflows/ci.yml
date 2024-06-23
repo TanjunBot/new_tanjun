@@ -48,7 +48,11 @@ jobs:
           COMMIT_HASH=$(git log -1 --pretty=format:'%H')
           COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
           echo "title=${COMMIT_TITLE}" >> $GITHUB_ENV
-          echo "description=${COMMIT_DESCRIPTION}" >> $GITHUB_ENV
+          
+          description_raw=${COMMIT_DESCRIPTION}
+          description=$(echo "$description_raw" | jq -sRr @json)  # Use jq for proper JSON escaping
+          echo "description=$description" >> $GITHUB_ENV
+          
           echo "author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
           echo "author_profileicon=${GITHUB_AUTHOR_PROFILE_ICON}" >> $GITHUB_ENV
@@ -77,7 +81,7 @@ jobs:
             "embeds": [
               {
                 "title": "${{ env.title }}",
-                "description": "${{ env.description }}",
+                "description": ${{ env.description }},
                 "color": ${{ env.color }},
                 "author": {
                   "name": "${{ env.author_name }}",
