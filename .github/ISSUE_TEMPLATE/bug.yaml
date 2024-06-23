@@ -10,6 +10,14 @@ body:
   validations:
     required: true
 
+- type: checkboxes
+  id: already-exists
+  attributes:
+    label: Have you checked if there is already an issue/pr for this bug?
+    description: If there is already an issue/pr for this, you should participate there instead of creating a new one.
+    options:
+      - label: Yes, I have checked that there are no other issues or pull requests for this bug.
+
 - type: markdown
   attributes:
     value: |
