@@ -15,7 +15,7 @@ jobs:
         run: |
           echo "title=[Fertiggestellt]: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}" >> $GITHUB_ENV
 
-          description_raw=${{ github.event.issue.body }}
+          description_raw="${{ github.event.issue.body }}"
 
           description=$(jq -n --arg mt "$description_raw" '$mt')
 
