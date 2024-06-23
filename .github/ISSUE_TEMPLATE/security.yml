@@ -44,7 +44,7 @@ body:
     label: Impact
     description: "Describe the potential impact of this vulnerability."
     options:
-      - **Level 0 - Negligible**: Minor issue with no practical impact on security.
+      - '**Level 0 - Negligible**: Minor issue with no practical impact on security.'
       - Level 1 - Low
       - Level 2 - Medium
       - Level 3 - Moderate
