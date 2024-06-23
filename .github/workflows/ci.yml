@@ -36,7 +36,7 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-  notify_discord:
+    notify_discord:
     runs-on: ubuntu-latest
     needs: build
 
@@ -52,60 +52,50 @@ jobs:
           GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
           GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
           GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
-
-          # Get the commit hash and timestamp in ISO 8601 format
           COMMIT_HASH=$(git log -1 --pretty=format:'%H')
           COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
 
-          # Set output variables for later use
-          echo "::set-output name=commit_title::${COMMIT_TITLE}"
-          echo "::set-output name=commit_description::${COMMIT_DESCRIPTION}"
-          echo "::set-output name=github_author_name::${GITHUB_AUTHOR_NAME}"
-          echo "::set-output name=github_author_url::https://github.com/${GITHUB_ACTOR}"
-          echo "::set-output name=github_author_profileicon::${GITHUB_AUTHOR_PROFILE_ICON}"
-          echo "::set-output name=commit_hash::${COMMIT_HASH}"
-          echo "::set-output name=commit_timestamp::${COMMIT_TIMESTAMP}"
+          echo "commit_title=${COMMIT_TITLE}" >> $GITHUB_ENV
+          echo "commit_description=${COMMIT_DESCRIPTION}" >> $GITHUB_ENV
+          echo "github_author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
+          echo "github_author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
+          echo "github_author_profileicon=${GITHUB_AUTHOR_PROFILE_ICON}" >> $GITHUB_ENV
+          echo "commit_hash=${COMMIT_HASH}" >> $GITHUB_ENV
+          echo "commit_timestamp=${COMMIT_TIMESTAMP}" >> $GITHUB_ENV
 
       - name: Check commit message
         id: check_commit_message
         run: |
           if [[ "${COMMIT_DESCRIPTION}" == *"[ignore changelog]"* ]]; then
-            echo "::set-output name=skip_discord_notification::true"
+            echo "skip_discord_notification=true" >> $GITHUB_ENV
           elif [[ "${COMMIT_TITLE}" == "[ignore changelog]"* ]]; then
             echo "::error::Commit message starts with '[ignore changelog]'. Skipping Discord notification."
             exit 1
           else
-            echo "::set-output name=skip_discord_notification::false"
+            echo "skip_discord_notification=false" >> $GITHUB_ENV
           fi
 
       - name: Post update on Discord
-        if: steps.check_commit_message.outputs.skip_discord_notification != 'true'
+        if: env.skip_discord_notification != 'true'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          COMMIT_TITLE: ${{ steps.commit_info.outputs.commit_title }}
-          COMMIT_DESCRIPTION: ${{ steps.commit_info.outputs.commit_description }}
-          GITHUB_AUTHOR_NAME: ${{ steps.commit_info.outputs.github_author_name }}
-          GITHUB_AUTHOR_URL: ${{ steps.commit_info.outputs.github_author_url }}
-          GITHUB_AUTHOR_PROFILEICON: ${{ steps.commit_info.outputs.github_author_profileicon }}
-          COMMIT_HASH: ${{ steps.commit_info.outputs.commit_hash }}
-          COMMIT_TIMESTAMP: ${{ steps.commit_info.outputs.commit_timestamp }}
         run: |
           curl -X POST -H 'Content-Type: application/json' -d '{
             "content": null,
             "embeds": [
               {
-                "title": "'"$COMMIT_TITLE"'",
-                "description": "'"$COMMIT_DESCRIPTION"'",
+                "title": "'"${{ env.commit_title }}"'",
+                "description": "'"${{ env.commit_description }}"'",
                 "color": 13317109,
                 "author": {
-                  "name": "'"$GITHUB_AUTHOR_NAME"'",
-                  "url": "'"$GITHUB_AUTHOR_URL"'",
-                  "icon_url": "'"$GITHUB_AUTHOR_PROFILEICON"'"
+                  "name": "'"${{ env.github_author_name }}"'",
+                  "url": "'"${{ env.github_author_url }}"'",
+                  "icon_url": "'"${{ env.github_author_profileicon }}"'"
                 },
                 "footer": {
-                  "text": "'"$COMMIT_HASH"'"
+                  "text": "'"${{ env.commit_hash }}"'"
                 },
-                "timestamp": "'"$COMMIT_TIMESTAMP"'"
+                "timestamp": "'"${{ env.commit_timestamp }}"'"
               }
             ],
             "username": "Tanjun Changelog",
