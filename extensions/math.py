@@ -30,10 +30,27 @@ class mathCommands(discord.app_commands.Group):
 
         await calcCommand(commandInfo=commandInfo, expression=expression)
 
+
 class mathCog(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command()
+    async def calc(self, ctx, expression: str):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.send,
+            client=ctx.bot,
+        )
+
+        await calcCommand(commandInfo=commandInfo, expression=expression)
 
     @commands.Cog.listener()
     async def on_ready(self):
