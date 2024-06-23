@@ -17,8 +17,8 @@ jobs:
           echo "title=[Fertiggestellt]: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}" >> $GITHUB_ENV
           
           # Store description with proper JSON escaping and no newlines
-          description=$(echo "${{ github.event.issue.body }}" | tr -d '\n' | jq --slurp --raw-input --raw-output 'gsub("\\n"; "\\n")')
-          echo "description=$description" >> $GITHUB_ENV
+          # description=$(echo "${{ github.event.issue.body }}" | tr -d '\n' | jq --slurp --raw-input --raw-output 'gsub("\\n"; "\\n")')
+          # echo "description=$description" >> $GITHUB_ENV
           
           # Store author information
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
@@ -35,7 +35,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           title: ${{ env.title }}
-          description: ${{ env.description }}
+          # description: ${{ env.description }}
           author_name: ${{ env.author_name }}
           author_url: ${{ env.author_url }}
           author_profileicon: ${{ env.author_profileicon }}
@@ -50,7 +50,7 @@ jobs:
             "embeds": [
               {
                 "title": "${{ env.title }}",
-                "description": "${{ env.description }}",
+                "description": null,
                 "color": ${{ env.color }},
                 "author": {
                   "name": "${{ env.author_name }}",
