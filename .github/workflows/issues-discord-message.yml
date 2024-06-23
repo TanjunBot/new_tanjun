@@ -1,9 +1,7 @@
 name: Notify discord on closed issues
-
 on:
   issues:
     types: [closed]
-
 jobs:
   notify_discord:
     runs-on: ubuntu-latest
@@ -13,55 +11,49 @@ jobs:
       - name: Extract event information
         id: event_info
         run: |
-          echo "title=[Fertiggestellt]: ${{ github.event.issue.title }}" >> $GITHUB_ENV
-
-          # Store the description with proper escaping
-          description_raw="${{ github.event.issue.body }}"
-          description=$(echo "$description_raw" | jq -sRr @json)  # Use jq for proper JSON escaping
-
-          echo "description=$description" >> $GITHUB_ENV
-
-          # Use the username of the person who closed the issue as author_name
-          echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-          echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-          echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-
-          echo "timestamp=${{ github.event.issue.closed_at }}" >> $GITHUB_ENV
-          echo "footer_text=Issue #${{ github.event.issue.number }}" >> $GITHUB_ENV
+          echo "title=$(echo "[Fertiggestellt]: ${{ github.event.issue.title }}" | jq -sRr @json)" >> $GITHUB_ENV
+          echo "description=$(echo "${{ github.event.issue.body }}" | jq -sRr @json)" >> $GITHUB_ENV
+          echo "author_name=$(echo "${{ github.event.issue.user.login }}" | jq -sRr @json)" >> $GITHUB_ENV
+          echo "author_url=$(echo "https://github.com/${{ github.event.issue.user.login }}" | jq -sRr @json)" >> $GITHUB_ENV
+          echo "author_profileicon=$(echo "https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" | jq -sRr @json)" >> $GITHUB_ENV
+          echo "timestamp=$(echo "${{ github.event.issue.closed_at }}" | jq -sRr @json)" >> $GITHUB_ENV
+          echo "footer_text=$(echo "Issue #${{ github.event.issue.number }}" | jq -sRr @json)" >> $GITHUB_ENV
           echo "color=5763719" >> $GITHUB_ENV
-          echo "username=Tanjun Issue Tracker" >> $GITHUB_ENV
-
+          echo "username=$(echo "Tanjun Issue Tracker" | jq -sRr @json)" >> $GITHUB_ENV
       - name: Post update on Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          title: ${{ env.title }}
-          description: ${{ env.description }}
-          author_name: ${{ env.author_name }}
-          author_url: ${{ env.author_url }}
-          author_profileicon: ${{ env.author_profileicon }}
-          timestamp: ${{ env.timestamp }}
-          footer_text: ${{ env.footer_text }}
-          color: ${{ env.color }}
-          username: ${{ env.username }}
         run: |
-          curl -X POST -H 'Content-Type: application/json' -d '{
-            "content": null,
-            "embeds": [
-              {
-                "title": "${{ env.title }}",
-                "description": ${{ env.description }},
-                "color": ${{ env.color }},
-                "author": {
-                  "name": "${{ env.author_name }}",
-                  "url": "${{ env.author_url }}",
-                  "icon_url": "${{ env.author_profileicon }}"
-                },
-                "footer": {
-                  "text": "${{ env.footer_text }}"
-                },
-                "timestamp": "${{ env.timestamp }}"
-              }
-            ],
-            "username": "${{ env.username }}",
-            "attachments": []
-          }' $DISCORD_WEBHOOK_URL
+          payload=$(jq -n \
+            --arg title "${{ env.title }}" \
+            --arg description "${{ env.description }}" \
+            --arg author_name "${{ env.author_name }}" \
+            --arg author_url "${{ env.author_url }}" \
+            --arg author_profileicon "${{ env.author_profileicon }}" \
+            --arg timestamp "${{ env.timestamp }}" \
+            --arg footer_text "${{ env.footer_text }}" \
+            --arg color "${{ env.color }}" \
+            --arg username "${{ env.username }}" \
+            '{
+              "content": null,
+              "embeds": [
+                {
+                  "title": $title,
+                  "description": $description,
+                  "color": ($color | tonumber),
+                  "author": {
+                    "name": $author_name,
+                    "url": $author_url,
+                    "icon_url": $author_profileicon
+                  },
+                  "footer": {
+                    "text": $footer_text
+                  },
+                  "timestamp": $timestamp
+                }
+              ],
+              "username": $username,
+              "attachments": []
+            }')
+          
+          curl -X POST -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL"
