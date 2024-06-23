@@ -13,8 +13,9 @@ jobs:
       - name: Extract event information
         id: event_info
         run: |
-          echo "title=[Fertiggestellt]: \`#${{ github.event.issue.number }}\` - ${{ github.event.issue.title }}" >> $GITHUB_ENV
-          echo "description=$(echo "${{ github.event.issue.body }}" | jq --slurp --raw-input --raw-output 'gsub("\\n"; "\n")')" >> $GITHUB_ENV
+          echo "title=[Fertiggestellt]: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}" >> $GITHUB_ENV
+          # Store description with proper JSON escaping for newlines
+          echo "description=$(echo "${{ github.event.issue.body }}" | jq --slurp --raw-input --raw-output 'gsub("\\n"; "\\n")')" >> $GITHUB_ENV
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
