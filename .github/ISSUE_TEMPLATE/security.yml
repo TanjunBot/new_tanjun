@@ -8,8 +8,8 @@ body:
       > [!IMPORTANT]  
       > Please read our [security policy](https://github.com/TanjunBot/new-tanjun/blob/master/SECURITY.md) before creating security-related issues.
 
-      **IMPORTANT:**
-      Please do not disclose critical security vulnerabilities publicly. If the issue is sensitive, consider contacting us through a private ticket on [our discord server](https://discord.arion2000.xyz).
+      > [!WARNING]
+      > Please do not disclose critical security vulnerabilities publicly. If the issue is sensitive, consider contacting us through a private ticket on [our discord server](https://discord.arion2000.xyz).
 
 - type: textarea
   id: vulnerability-description
