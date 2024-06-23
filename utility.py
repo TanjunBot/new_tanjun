@@ -1,6 +1,33 @@
 import discord
-from typing import Any, Dict, List, Mapping, Optional, Protocol, TYPE_CHECKING, TypeVar, Union
+from typing import (
+    Any,
+    Dict,
+    List,
+    Mapping,
+    Optional,
+    Protocol,
+    TYPE_CHECKING,
+    TypeVar,
+    Union,
+)
 import datetime
+from __future__ import division
+from pyparsing import (
+    Literal,
+    CaselessLiteral,
+    Word,
+    Combine,
+    Group,
+    Optional,
+    ZeroOrMore,
+    Forward,
+    nums,
+    alphas,
+    oneOf,
+)
+import math
+import operator
+
 
 class EmbedProxy:
     def __init__(self, layer: Dict[str, Any]):
@@ -10,8 +37,10 @@ class EmbedProxy:
         return len(self.__dict__)
 
     def __repr__(self) -> str:
-        inner = ', '.join((f'{k}={v!r}' for k, v in self.__dict__.items() if not k.startswith('_')))
-        return f'EmbedProxy({inner})'
+        inner = ", ".join(
+            (f"{k}={v!r}" for k, v in self.__dict__.items() if not k.startswith("_"))
+        )
+        return f"EmbedProxy({inner})"
 
     def __getattr__(self, attr: str) -> None:
         return None
@@ -19,18 +48,22 @@ class EmbedProxy:
     def __eq__(self, other: object) -> bool:
         return isinstance(other, EmbedProxy) and self.__dict__ == other.__dict__
 
+
 from typing_extensions import Self
 
-T = TypeVar('T')
+T = TypeVar("T")
+
 
 class _EmbedFooterProxy(Protocol):
     text: Optional[str]
     icon_url: Optional[str]
 
+
 class _EmbedFieldProxy(Protocol):
     name: Optional[str]
     value: Optional[str]
     inline: bool
+
 
 class _EmbedMediaProxy(Protocol):
     url: Optional[str]
@@ -38,20 +71,24 @@ class _EmbedMediaProxy(Protocol):
     height: Optional[int]
     width: Optional[int]
 
+
 class _EmbedVideoProxy(Protocol):
     url: Optional[str]
     height: Optional[int]
     width: Optional[int]
 
+
 class _EmbedProviderProxy(Protocol):
     name: Optional[str]
     url: Optional[str]
+
 
 class _EmbedAuthorProxy(Protocol):
     name: Optional[str]
     url: Optional[str]
     icon_url: Optional[str]
     proxy_icon_url: Optional[str]
+
 
 class tanjunEmbed:
     """Represents a Discord embed.
@@ -109,19 +146,19 @@ class tanjunEmbed:
     """
 
     __slots__ = (
-        'title',
-        'url',
-        'type',
-        '_timestamp',
-        '_colour',
-        '_footer',
-        '_image',
-        '_thumbnail',
-        '_video',
-        '_provider',
-        '_author',
-        '_fields',
-        'description',
+        "title",
+        "url",
+        "type",
+        "_timestamp",
+        "_colour",
+        "_footer",
+        "_image",
+        "_thumbnail",
+        "_video",
+        "_provider",
+        "_author",
+        "_fields",
+        "description",
     )
 
     def __init__(
@@ -130,7 +167,7 @@ class tanjunEmbed:
         colour: Optional[Union[int, discord.Colour]] = 0xCB33F5,
         color: Optional[Union[int, discord.Colour]] = 0xCB33F5,
         title: Optional[Any] = None,
-        type = 'rich',
+        type="rich",
         url: Optional[Any] = None,
         description: Optional[Any] = None,
         timestamp: Optional[datetime.datetime] = None,
@@ -171,10 +208,10 @@ class tanjunEmbed:
 
         # fill in the basic fields
 
-        self.title = data.get('title', None)
-        self.type = data.get('type', None)
-        self.description = data.get('description', None)
-        self.url = data.get('url', None)
+        self.title = data.get("title", None)
+        self.type = data.get("type", None)
+        self.description = data.get("description", None)
+        self.url = data.get("url", None)
 
         if self.title is not None:
             self.title = str(self.title)
@@ -188,22 +225,30 @@ class tanjunEmbed:
         # try to fill in the more rich fields
 
         try:
-            self._colour = discord.Colour(value=data['color'])
+            self._colour = discord.Colour(value=data["color"])
         except KeyError:
             pass
 
         try:
-            self._timestamp = discord.utils.parse_time(data['timestamp'])
+            self._timestamp = discord.utils.parse_time(data["timestamp"])
         except KeyError:
             pass
 
-        for attr in ('thumbnail', 'video', 'provider', 'author', 'fields', 'image', 'footer'):
+        for attr in (
+            "thumbnail",
+            "video",
+            "provider",
+            "author",
+            "fields",
+            "image",
+            "footer",
+        ):
             try:
                 value = data[attr]
             except KeyError:
                 continue
             else:
-                setattr(self, '_' + attr, value)
+                setattr(self, "_" + attr, value)
 
         return self
 
@@ -212,12 +257,12 @@ class tanjunEmbed:
         return self.__class__.from_dict(self.to_dict())
 
     def __len__(self) -> int:
-        total = len(self.title or '') + len(self.description or '')
-        for field in getattr(self, '_fields', []):
-            total += len(field['name']) + len(field['value'])
+        total = len(self.title or "") + len(self.description or "")
+        for field in getattr(self, "_fields", []):
+            total += len(field["name"]) + len(field["value"])
 
         try:
-            footer_text = self._footer['text']
+            footer_text = self._footer["text"]
         except (AttributeError, KeyError):
             pass
         else:
@@ -228,7 +273,7 @@ class tanjunEmbed:
         except AttributeError:
             pass
         else:
-            total += len(author['name'])
+            total += len(author["name"])
 
         return total
 
@@ -269,7 +314,7 @@ class tanjunEmbed:
 
     @property
     def colour(self) -> Optional[discord.Colour]:
-        return getattr(self, '_colour', None)
+        return getattr(self, "_colour", None)
 
     @colour.setter
     def colour(self, value: Optional[Union[int, discord.Colour]]) -> None:
@@ -280,13 +325,15 @@ class tanjunEmbed:
         elif isinstance(value, int):
             self._colour = discord.Colour(value=value)
         else:
-            raise TypeError(f'Expected discord.Colour, int, or None but received {value.__class__.__name__} instead.')
+            raise TypeError(
+                f"Expected discord.Colour, int, or None but received {value.__class__.__name__} instead."
+            )
 
     color = colour
 
     @property
     def timestamp(self) -> Optional[datetime.datetime]:
-        return getattr(self, '_timestamp', None)
+        return getattr(self, "_timestamp", None)
 
     @timestamp.setter
     def timestamp(self, value: Optional[datetime.datetime]) -> None:
@@ -297,7 +344,9 @@ class tanjunEmbed:
         elif value is None:
             self._timestamp = None
         else:
-            raise TypeError(f"Expected datetime.datetime or None received {value.__class__.__name__} instead")
+            raise TypeError(
+                f"Expected datetime.datetime or None received {value.__class__.__name__} instead"
+            )
 
     @property
     def footer(self) -> _EmbedFooterProxy:
@@ -308,9 +357,11 @@ class tanjunEmbed:
         If the attribute has no value then ``None`` is returned.
         """
         # Lying to the type checker for better developer UX.
-        return EmbedProxy(getattr(self, '_footer', {}))  # type: ignore
+        return EmbedProxy(getattr(self, "_footer", {}))  # type: ignore
 
-    def set_footer(self, *, text: Optional[Any] = None, icon_url: Optional[Any] = None) -> Self:
+    def set_footer(
+        self, *, text: Optional[Any] = None, icon_url: Optional[Any] = None
+    ) -> Self:
         """Sets the footer for the embed content.
 
         This function returns the class instance to allow for fluent-style
@@ -327,10 +378,10 @@ class tanjunEmbed:
 
         self._footer = {}
         if text is not None:
-            self._footer['text'] = str(text)
+            self._footer["text"] = str(text)
 
         if icon_url is not None:
-            self._footer['icon_url'] = str(icon_url)
+            self._footer["icon_url"] = str(icon_url)
 
         return self
 
@@ -363,7 +414,7 @@ class tanjunEmbed:
         If the attribute has no value then ``None`` is returned.
         """
         # Lying to the type checker for better developer UX.
-        return EmbedProxy(getattr(self, '_image', {}))  # type: ignore
+        return EmbedProxy(getattr(self, "_image", {}))  # type: ignore
 
     def set_image(self, *, url: Optional[Any]) -> Self:
         """Sets the image for the embed content.
@@ -385,7 +436,7 @@ class tanjunEmbed:
                 pass
         else:
             self._image = {
-                'url': str(url),
+                "url": str(url),
             }
 
         return self
@@ -404,7 +455,7 @@ class tanjunEmbed:
         If the attribute has no value then ``None`` is returned.
         """
         # Lying to the type checker for better developer UX.
-        return EmbedProxy(getattr(self, '_thumbnail', {}))  # type: ignore
+        return EmbedProxy(getattr(self, "_thumbnail", {}))  # type: ignore
 
     def set_thumbnail(self, *, url: Optional[Any]) -> Self:
         """Sets the thumbnail for the embed content.
@@ -429,7 +480,7 @@ class tanjunEmbed:
                 pass
         else:
             self._thumbnail = {
-                'url': str(url),
+                "url": str(url),
             }
 
         return self
@@ -447,7 +498,7 @@ class tanjunEmbed:
         If the attribute has no value then ``None`` is returned.
         """
         # Lying to the type checker for better developer UX.
-        return EmbedProxy(getattr(self, '_video', {}))  # type: ignore
+        return EmbedProxy(getattr(self, "_video", {}))  # type: ignore
 
     @property
     def provider(self) -> _EmbedProviderProxy:
@@ -458,7 +509,7 @@ class tanjunEmbed:
         If the attribute has no value then ``None`` is returned.
         """
         # Lying to the type checker for better developer UX.
-        return EmbedProxy(getattr(self, '_provider', {}))  # type: ignore
+        return EmbedProxy(getattr(self, "_provider", {}))  # type: ignore
 
     @property
     def author(self) -> _EmbedAuthorProxy:
@@ -469,9 +520,11 @@ class tanjunEmbed:
         If the attribute has no value then ``None`` is returned.
         """
         # Lying to the type checker for better developer UX.
-        return EmbedProxy(getattr(self, '_author', {}))  # type: ignore
+        return EmbedProxy(getattr(self, "_author", {}))  # type: ignore
 
-    def set_author(self, *, name: Any, url: Optional[Any] = None, icon_url: Optional[Any] = None) -> Self:
+    def set_author(
+        self, *, name: Any, url: Optional[Any] = None, icon_url: Optional[Any] = None
+    ) -> Self:
         """Sets the author for the embed content.
 
         This function returns the class instance to allow for fluent-style
@@ -489,14 +542,14 @@ class tanjunEmbed:
         """
 
         self._author = {
-            'name': str(name),
+            "name": str(name),
         }
 
         if url is not None:
-            self._author['url'] = str(url)
+            self._author["url"] = str(url)
 
         if icon_url is not None:
-            self._author['icon_url'] = str(icon_url)
+            self._author["icon_url"] = str(icon_url)
 
         return self
 
@@ -524,7 +577,7 @@ class tanjunEmbed:
         If the attribute has no value then ``None`` is returned.
         """
         # Lying to the type checker for better developer UX.
-        return [EmbedProxy(d) for d in getattr(self, '_fields', [])]  # type: ignore
+        return [EmbedProxy(d) for d in getattr(self, "_fields", [])]  # type: ignore
 
     def add_field(self, *, name: Any, value: Any, inline: bool = True) -> Self:
         """Adds a field to the embed object.
@@ -543,9 +596,9 @@ class tanjunEmbed:
         """
 
         field = {
-            'inline': inline,
-            'name': str(name),
-            'value': str(value),
+            "inline": inline,
+            "name": str(name),
+            "value": str(value),
         }
 
         try:
@@ -555,7 +608,9 @@ class tanjunEmbed:
 
         return self
 
-    def insert_field_at(self, index: int, *, name: Any, value: Any, inline: bool = True) -> Self:
+    def insert_field_at(
+        self, index: int, *, name: Any, value: Any, inline: bool = True
+    ) -> Self:
         """Inserts a field before a specified index to the embed.
 
         This function returns the class instance to allow for fluent-style
@@ -576,9 +631,9 @@ class tanjunEmbed:
         """
 
         field = {
-            'inline': inline,
-            'name': str(name),
-            'value': str(value),
+            "inline": inline,
+            "name": str(name),
+            "value": str(value),
         }
 
         try:
@@ -633,7 +688,9 @@ class tanjunEmbed:
 
         return self
 
-    def set_field_at(self, index: int, *, name: Any, value: Any, inline: bool = True) -> Self:
+    def set_field_at(
+        self, index: int, *, name: Any, value: Any, inline: bool = True
+    ) -> Self:
         """Modifies a field to the embed object.
 
         The index must point to a valid pre-existing field. Can only be up to 25 fields.
@@ -661,11 +718,11 @@ class tanjunEmbed:
         try:
             field = self._fields[index]
         except (TypeError, IndexError, AttributeError):
-            raise IndexError('field index out of range')
+            raise IndexError("field index out of range")
 
-        field['name'] = str(name)
-        field['value'] = str(value)
-        field['inline'] = inline
+        field["name"] = str(name)
+        field["value"] = str(value)
+        field["inline"] = inline
         return self
 
     def to_dict(self) -> discord.Embed:
@@ -683,41 +740,48 @@ class tanjunEmbed:
         # deal with basic convenience wrappers
 
         try:
-            colour = result.pop('colour')
+            colour = result.pop("colour")
         except KeyError:
             pass
         else:
             if colour:
-                result['color'] = colour.value
+                result["color"] = colour.value
 
         try:
-            timestamp = result.pop('timestamp')
+            timestamp = result.pop("timestamp")
         except KeyError:
             pass
         else:
             if timestamp:
                 if timestamp.tzinfo:
-                    result['timestamp'] = timestamp.astimezone(tz=datetime.timezone.utc).isoformat()
+                    result["timestamp"] = timestamp.astimezone(
+                        tz=datetime.timezone.utc
+                    ).isoformat()
                 else:
-                    result['timestamp'] = timestamp.replace(tzinfo=datetime.timezone.utc).isoformat()
+                    result["timestamp"] = timestamp.replace(
+                        tzinfo=datetime.timezone.utc
+                    ).isoformat()
 
         # add in the non raw attribute ones
         if self.type:
-            result['type'] = self.type
+            result["type"] = self.type
 
         if self.description:
-            result['description'] = self.description
+            result["description"] = self.description
 
         if self.url:
-            result['url'] = self.url
+            result["url"] = self.url
 
         if self.title:
-            result['title'] = self.title
+            result["title"] = self.title
 
         return result  # type: ignore # This payload is equivalent to the EmbedData type
-    
+
+
 class commandInfo:
-    def __init__(self, user, channel, guild, command, locale, message, permissions, reply, client):
+    def __init__(
+        self, user, channel, guild, command, locale, message, permissions, reply, client
+    ):
         self.user = user
         self.channel = channel
         self.guild = guild
@@ -727,3 +791,114 @@ class commandInfo:
         self.permissions = permissions
         self.reply = reply
         self.client = client
+
+def cmp(a, b):
+    return (a > b) - (a < b) 
+
+class NumericStringParser(object):
+    """
+    Most of this code comes from the fourFn.py pyparsing example
+
+    """
+
+    def pushFirst(self, strg, loc, toks):
+        self.exprStack.append(toks[0])
+
+    def pushUMinus(self, strg, loc, toks):
+        if toks and toks[0] == "-":
+            self.exprStack.append("unary -")
+
+    def __init__(self):
+        """
+        expop   :: '^'
+        multop  :: '*' | '/'
+        addop   :: '+' | '-'
+        integer :: ['+' | '-'] '0'..'9'+
+        atom    :: PI | E | real | fn '(' expr ')' | '(' expr ')'
+        factor  :: atom [ expop factor ]*
+        term    :: factor [ multop factor ]*
+        expr    :: term [ addop term ]*
+        """
+        point = Literal(".")
+        e = CaselessLiteral("E")
+        fnumber = Combine(
+            Word("+-" + nums, nums)
+            + Optional(point + Optional(Word(nums)))
+            + Optional(e + Word("+-" + nums, nums))
+        )
+        ident = Word(alphas, alphas + nums + "_$")
+        plus = Literal("+")
+        minus = Literal("-")
+        mult = Literal("*")
+        div = Literal("/")
+        lpar = Literal("(").suppress()
+        rpar = Literal(")").suppress()
+        addop = plus | minus
+        multop = mult | div
+        expop = Literal("^")
+        pi = CaselessLiteral("PI")
+        expr = Forward()
+        atom = (
+            (
+                Optional(oneOf("- +"))
+                + (ident + lpar + expr + rpar | pi | e | fnumber).setParseAction(
+                    self.pushFirst
+                )
+            )
+            | Optional(oneOf("- +")) + Group(lpar + expr + rpar)
+        ).setParseAction(self.pushUMinus)
+        # by defining exponentiation as "atom [ ^ factor ]..." instead of
+        # "atom [ ^ atom ]...", we get right-to-left exponents, instead of left-to-right
+        # that is, 2^3^2 = 2^(3^2), not (2^3)^2.
+        factor = Forward()
+        factor << atom + ZeroOrMore((expop + factor).setParseAction(self.pushFirst))
+        term = factor + ZeroOrMore((multop + factor).setParseAction(self.pushFirst))
+        expr << term + ZeroOrMore((addop + term).setParseAction(self.pushFirst))
+        # addop_term = ( addop + term ).setParseAction( self.pushFirst )
+        # general_term = term + ZeroOrMore( addop_term ) | OneOrMore( addop_term)
+        # expr <<  general_term
+        self.bnf = expr
+        # map operator symbols to corresponding arithmetic operations
+        epsilon = 1e-12
+        self.opn = {
+            "+": operator.add,
+            "-": operator.sub,
+            "*": operator.mul,
+            "/": operator.truediv,
+            "^": operator.pow,
+        }
+        self.fn = {
+            "sin": math.sin,
+            "cos": math.cos,
+            "tan": math.tan,
+            "exp": math.exp,
+            "abs": abs,
+            "trunc": lambda a: int(a),
+            "round": round,
+            "sgn": lambda a: abs(a) > epsilon and cmp(a, 0) or 0,
+        }
+
+    def evaluateStack(self, s):
+        op = s.pop()
+        if op == "unary -":
+            return -self.evaluateStack(s)
+        if op in "+-*/^":
+            op2 = self.evaluateStack(s)
+            op1 = self.evaluateStack(s)
+            return self.opn[op](op1, op2)
+        elif op == "PI":
+            return math.pi  # 3.1415926535
+        elif op == "E":
+            return math.e  # 2.718281828
+        elif op in self.fn:
+            return self.fn[op](self.evaluateStack(s))
+        elif op[0].isalpha():
+            return 0
+        else:
+            return float(op)
+
+    def eval(self, num_string, parseAll=True):
+        self.exprStack = []
+        results = self.bnf.parseString(num_string, parseAll)
+        val = self.evaluateStack(self.exprStack[:])
+        return val
