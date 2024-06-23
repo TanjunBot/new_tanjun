@@ -15,20 +15,21 @@ jobs:
         run: |
           echo "title=[Fertiggestellt]: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}" >> $GITHUB_ENV
 
+          # Store the description with proper escaping
           description_raw="${{ github.event.issue.body }}"
+          description=$(echo "$description_raw" | jq -sRr @json)  # Use jq for proper JSON escaping
 
-          description=$(echo "$description_raw" | sed ':a;N;$!ba;s/\n/\\n/g')
+          echo "description=$description" >> $GITHUB_ENV
 
-          echo $description >> $GITHUB_ENV
-          
           echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
           echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-          
+
           echo "timestamp=${{ github.event.issue.closed_at }}" >> $GITHUB_ENV
           echo "footer_text=Issue #${{ github.event.issue.number }}" >> $GITHUB_ENV
           echo "color=5763719" >> $GITHUB_ENV
           echo "username=Tanjun Issue Tracker" >> $GITHUB_ENV
+
           
       - name: Post update on Discord
         env:
