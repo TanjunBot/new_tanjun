@@ -71,6 +71,9 @@ jobs:
         run: |
           if [[ "${COMMIT_DESCRIPTION}" == *"[ignore changelog]"* ]]; then
             echo "::set-output name=skip_discord_notification::true"
+          elif [[ "${COMMIT_TITLE}" == "[ignore changelog]"* ]]; then
+            echo "::error::Commit message starts with '[ignore changelog]'. Skipping Discord notification."
+            exit 1
           else
             echo "::set-output name=skip_discord_notification::false"
           fi
