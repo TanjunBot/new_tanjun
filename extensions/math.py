@@ -10,6 +10,7 @@ from commands.math.calculator import calculator_command
 from commands.math.num2word import num2word as num2word_command
 from commands.math.randomnumber import random_number_command
 from commands.math.plot_function import plot_function_command
+from commands.math.faculty import faculty_command
 
 
 async def num2wordLocaleAutocomplete(
@@ -206,6 +207,29 @@ class mathCommands(discord.app_commands.Group):
 
         await plot_function_command(commandInfo, func, x_min, x_max)
 
+    @app_commands.command(
+        name=app_commands.locale_str("math_faculty_name"),
+        description=app_commands.locale_str("math_faculty_description"),
+    )
+    @app_commands.describe(
+        number=app_commands.locale_str("math_faculty_params_number_description"),
+    )
+    async def faculty(self, ctx, number: app_commands.Range[int, 0, 100]):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.user.guild_permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await faculty_command(commandInfo, number)
+
 
 class mathCog(commands.Cog):
 
@@ -298,6 +322,24 @@ class mathCog(commands.Cog):
     async def on_ready(self):
         mathcmds = mathCommands(name="math", description="Math is fun!")
         self.bot.tree.add_command(mathcmds)
+    
+    @commands.command(name="faculty", aliases=["fac"])
+    async def faculty(self, ctx, number: int):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.send,
+            client=ctx.bot,
+        )
+
+        await faculty_command(commandInfo, number)
+
+    
 
 
 async def setup(bot):

@@ -776,6 +776,18 @@
                     "error_occurred": "Ein Fehler ist aufgetreten",
                     "no_permission": "Du hast keine Berechtigung, diese Aktion auszuführen"
                 }
+            },
+            "faculty": {
+                "success": {
+                    "title": "Fakultät berechnet",
+                    "description": "Die Fakultät von ${number} ist:\n```\n${result}\n```"
+                },
+                "error": {
+                    "title": "Fehler bei der Berechnung der Fakultät",
+                    "invalid_number": "Die angegebene Ziffer darf nicht kleiner als 0 sein",
+                    "invalid_number2": "Die angegebene Ziffer ist zu groß",
+                    "invalid_input": "Ungültige Eingabe. Bitte geben Sie eine ganze Zahl für die gewünschte Nummer ein"
+                }
             }
         }
     },
@@ -1162,6 +1174,16 @@
                 "x_max": {
                     "name": "x_max",
                     "description": "Der maximale x-Wert für den Plot"
+                }
+            }
+        },
+        "faculty": {
+            "name": "fakultät",
+            "description": "Berechne die Fakultät einer Zahl",
+            "params": {
+                "number": {
+                    "name": "nummer",
+                    "description": "Die Zahl von der die Fakultät berechnet werden soll"
                 }
             }
         }
