@@ -25,6 +25,7 @@ from commands.admin.say import say as sayCommand
 from commands.admin.embedcreator import create_embed as createEmbedCommand
 from commands.admin.createemoji import create_emoji as createEmojiCommand
 
+
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_addrole_name"),
@@ -272,7 +273,7 @@ class administrationCommands(discord.app_commands.Group):
             commandInfo=commandInfo, member=member, duration=duration, reason=reason
         )
         return
-    
+
     @app_commands.command(
         name=app_commands.locale_str("admin_removetimeout_name"),
         description=app_commands.locale_str("admin_removetimeout_description"),
@@ -295,7 +296,9 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await removeTimeoutCommand(commandInfo=commandInfo, member=member, reason=reason)
+        await removeTimeoutCommand(
+            commandInfo=commandInfo, member=member, reason=reason
+        )
         return
 
     @app_commands.command(
@@ -306,8 +309,66 @@ class administrationCommands(discord.app_commands.Group):
         amount=app_commands.locale_str("admin_purge_params_amount_description"),
         channel=app_commands.locale_str("admin_purge_params_channel_description"),
     )
-    async def purge(self, ctx, amount: int, channel: discord.TextChannel = None):
-        await ctx.response.defer()
+    @app_commands.choices(
+        setting=[
+            app_commands.Choice(
+                value="all",
+                name=app_commands.locale_str("admin_purge_params_setting_all"),
+            ),
+            app_commands.Choice(
+                value="bot",
+                name=app_commands.locale_str("admin_purge_params_setting_bot"),
+            ),
+            app_commands.Choice(
+                value="user",
+                name=app_commands.locale_str("admin_purge_params_setting_user"),
+            ),
+            app_commands.Choice(
+                value="notPinned",
+                name=app_commands.locale_str("admin_purge_params_setting_notPinned"),
+            ),
+            app_commands.Choice(
+                value="userNotPinned",
+                name=app_commands.locale_str(
+                    "admin_purge_params_setting_userNotPinned"
+                ),
+            ),
+            app_commands.Choice(
+                value="botNotPinned",
+                name=app_commands.locale_str("admin_purge_params_setting_botNotPinned"),
+            ),
+            app_commands.Choice(
+                value="notadmin",
+                name=app_commands.locale_str("admin_purge_params_setting_notAdmin"),
+            ),
+            app_commands.Choice(
+                value="notUserAdmin",
+                name=app_commands.locale_str("admin_purge_params_setting_notUserAdmin"),
+            ),
+            app_commands.Choice(
+                value="embeds",
+                name=app_commands.locale_str("admin_purge_params_setting_embeds"),
+            ),
+            app_commands.Choice(
+                value="files",
+                name=app_commands.locale_str("admin_purge_params_setting_files"),
+            ),
+            app_commands.Choice(
+                value="notAdminNotPinned",
+                name=app_commands.locale_str(
+                    "admin_purge_params_setting_notAdminNotPinned"
+                ),
+            ),
+        ]
+    )
+    async def purge(
+        self,
+        ctx,
+        limit: int,
+        channel: discord.TextChannel = None,
+        setting: app_commands.Choice[str] = "all",
+    ):
+        await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
             channel=ctx.channel,
@@ -320,7 +381,9 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await purgeCommand(commandInfo=commandInfo, amount=amount, channel=channel)
+        await purgeCommand(
+            commandInfo=commandInfo, amount=limit, channel=channel, setting=setting.value
+        )
         return
 
     @app_commands.command(
@@ -345,7 +408,9 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await changeNicknameCommand(commandInfo=commandInfo, member=member, nickname=nickname)
+        await changeNicknameCommand(
+            commandInfo=commandInfo, member=member, nickname=nickname
+        )
         return
 
     @app_commands.command(
@@ -370,9 +435,11 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await setSlowmodeCommand(commandInfo=commandInfo, seconds=seconds, channel=channel)
+        await setSlowmodeCommand(
+            commandInfo=commandInfo, seconds=seconds, channel=channel
+        )
         return
-    
+
     @app_commands.command(
         name=app_commands.locale_str("admin_lock_name"),
         description=app_commands.locale_str("admin_lock_description"),
@@ -552,7 +619,9 @@ class administrationCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         name=app_commands.locale_str("admin_createemoji_params_name_description"),
-        image_url=app_commands.locale_str("admin_createemoji_params_imageUrl_description"),
+        image_url=app_commands.locale_str(
+            "admin_createemoji_params_imageUrl_description"
+        ),
     )
     async def createemoji(self, ctx, name: str, image_url: str):
         await ctx.response.defer()
@@ -569,17 +638,31 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         view = discord.ui.View()
-        role_select = discord.ui.RoleSelect(placeholder=tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelectPlaceholder"), default_values=[ctx.guild.default_role], min_values=1, max_values=25)
+        role_select = discord.ui.RoleSelect(
+            placeholder=tanjunLocalizer.localize(
+                ctx.locale, "commands.admin.createEmoji.roleSelectPlaceholder"
+            ),
+            default_values=[ctx.guild.default_role],
+            min_values=1,
+            max_values=25,
+        )
 
         async def role_select_callback(interaction: discord.Interaction):
             roles = [ctx.guild.get_role(int(r)) for r in interaction.data["values"]]
             commandInfo.message = interaction.message
             commandInfo.reply = interaction.response.send_message
-            await createEmojiCommand(commandInfo=commandInfo, name=name, image_url=image_url, roles=roles)
+            await createEmojiCommand(
+                commandInfo=commandInfo, name=name, image_url=image_url, roles=roles
+            )
 
         role_select.callback = role_select_callback
         view.add_item(role_select)
-        await ctx.followup.send(tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelect"), view=view)
+        await ctx.followup.send(
+            tanjunLocalizer.localize(
+                ctx.locale, "commands.admin.createEmoji.roleSelect"
+            ),
+            view=view,
+        )
 
 
 class adminCog(commands.Cog):
@@ -837,7 +920,7 @@ class adminCog(commands.Cog):
             commandInfo=commandInfo, member=member, duration=duration, reason=reason
         )
         return
-    
+
     @commands.command()
     async def untimeout(self, ctx, member: discord.Member, *, reason: str = None):
         commandInfo = utility.commandInfo(
@@ -852,7 +935,9 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        await removeTimeoutCommand(commandInfo=commandInfo, member=member, reason=reason)
+        await removeTimeoutCommand(
+            commandInfo=commandInfo, member=member, reason=reason
+        )
         return
 
     @commands.command()
@@ -869,7 +954,9 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        await purgeCommand(commandInfo=commandInfo, amount=amount, channel=channel)
+        await purgeCommand(
+            commandInfo=commandInfo, amount=amount, channel=channel, setting="all"
+        )
         return
 
     @commands.command()
@@ -886,7 +973,9 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        await changeNicknameCommand(commandInfo=commandInfo, member=member, nickname=nickname)
+        await changeNicknameCommand(
+            commandInfo=commandInfo, member=member, nickname=nickname
+        )
         return
 
     @commands.command()
@@ -903,7 +992,9 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        await setSlowmodeCommand(commandInfo=commandInfo, seconds=seconds, channel=channel)
+        await setSlowmodeCommand(
+            commandInfo=commandInfo, seconds=seconds, channel=channel
+        )
         return
 
     @commands.command()
@@ -994,7 +1085,6 @@ class adminCog(commands.Cog):
         await nukeChannelCommand(commandInfo=commandInfo, channel=channel)
         return
 
-
     @commands.Cog.listener()
     async def on_ready(self):
         admincmds = administrationCommands(
@@ -1050,8 +1140,9 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        await createEmojiCommand(commandInfo=commandInfo, name=name, image_url=image_url, roles=list(roles))
-
+        await createEmojiCommand(
+            commandInfo=commandInfo, name=name, image_url=image_url, roles=list(roles)
+        )
 
 
 async def setup(bot):

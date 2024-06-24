@@ -2,7 +2,7 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 
-async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.TextChannel = None):
+async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.TextChannel = None, setting: str = "all"):
     if channel is None:
         channel = commandInfo.channel
 
@@ -46,7 +46,34 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
         return
 
     try:
-        deleted = await channel.purge(limit=amount)
+        def check(m: discord.Message):
+            if setting == "all":
+                return True
+            elif setting == "bot":
+                print(m.author.bot)
+                return m.author.bot
+            elif setting == "user":
+                return not m.author.bot
+            elif setting == "notPinned":
+                return not m.pinned
+            elif setting == "userNotPinned":
+                return not m.pinned and not m.author.bot
+            elif setting == "botNotPinned":
+                return not m.pinned and m.author.bot
+            elif setting == "notAdmin":
+                return not m.author.guild_permissions.administrator
+            elif setting == "userNotAdmin":
+                return not m.author.guild_permissions.administrator and not m.author.bot
+            elif setting == "embeds":
+                return m.embeds
+            elif setting == "files":
+                return m.attachments
+            elif setting == "notAdminNotPinned":
+                return not m.author.guild_permissions.administrator and not m.pinned
+            
+        print(setting)
+            
+        deleted = await channel.purge(limit=amount, check=check, bulk=False)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.purge.success.title"
@@ -58,7 +85,7 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
                 channel=channel.mention
             ),
         )
-        await channel.send(embed=embed, delete_after=15)
+        await commandInfo.reply(embed=embed)
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

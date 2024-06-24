@@ -743,12 +743,25 @@
             "description": "Löscht eine bestimmte Anzahl von Nachrichten in einem Kanal",
             "params": {
                 "amount": {
-                    "name": "anzahl",
-                    "description": "Die Anzahl der zu löschenden Nachrichten"
+                    "name": "limit",
+                    "description": "Das limit der zu löschenden Nachrichten"
                 },
                 "channel": {
                     "name": "kanal",
                     "description": "Der Kanal, in dem die Nachrichten gelöscht werden sollen (optional, Standard: aktueller Kanal)"
+                },
+                "setting": {
+                    "all": "alle Nachrichten löschen",
+                    "user": "nur Nachrichten von usern löschen",
+                    "bot": "nur Nachrichten von Bots löschen",
+                    "notPinned": "nur nicht angeheftete Nachrichten löschen",
+                    "userNotPinned": "nur nicht angeheftete Nachrichten von Benutzern löschen",
+                    "botNotPinned": "nur nicht angeheftete Nachrichten von Bots löschen",
+                    "notAdmin": "nur Nachrichten von Nicht-Administratoren löschen (inkl. Bots)",
+                    "notUserAdmin": "nur Nachrichten von Nicht-Administratoren löschen außer Bots",
+                    "embeds": "nur Nachrichten mit Embed löschen",
+                    "files": "nur Nachrichten mit Dateianhängen löschen",
+                    "notAdminNotPinned": "nur nicht angeheftete Nachrichten von Nicht-Administratoren löschen (inkl. Bots)"
                 }
             }
         },
