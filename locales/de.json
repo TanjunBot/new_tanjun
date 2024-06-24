@@ -582,6 +582,64 @@
                 "invalid_assignment": "Ungültige Zuweisung",
                 "command_name": "taschenrechner",
                 "command_description": "Öffnet einen interaktiven Taschenrechner"
+            },
+            "num2word": {
+                "title": "Zahl zu Wort",
+                "description": "Die Zahl `${number}` in Wortform ist `${word}`.",
+                "locales": {
+                    "en": "Englisch",
+                    "am": "Amharisch",
+                    "ar": "Arabisch",
+                    "az": "Aserbaidschanisch",
+                    "by": "Belarussisch",
+                    "ce": "Tschetschenisch",
+                    "cy": "Walisisch",
+                    "cz": "Tschechisch",
+                    "de": "Deutsch",
+                    "dk": "Dänisch",
+                    "en_GB": "Britisches Englisch",
+                    "en_IN": "Indisches Englisch",
+                    "en_NG": "Nigerianisches Englisch",
+                    "es": "Spanisch",
+                    "es_CO": "Kolumbianisches Spanisch",
+                    "es_CR": "Costa-Ricanisches Spanisch",
+                    "es_VE": "Venezolanisches Spanisch",
+                    "es_GT": "Guatemaltekisches Spanisch",
+                    "eu": "Baskisch",
+                    "fa": "Persisch",
+                    "fi": "Finnisch",
+                    "fr": "Französisch",
+                    "fr_CH": "Schweizer Französisch",
+                    "fr_BE": "Belgisches Französisch",
+                    "fr_DZ": "Algerisches Französisch",
+                    "he": "Hebräisch",
+                    "hu": "Ungarisch",
+                    "id": "Indonesisch",
+                    "is": "Isländisch",
+                    "it": "Italienisch",
+                    "ja": "Japanisch",
+                    "kn": "Kannada",
+                    "ko": "Koreanisch",
+                    "kz": "Kasachisch",
+                    "lt": "Litauisch",
+                    "lv": "Lettisch",
+                    "no": "Norwegisch",
+                    "pl": "Polnisch",
+                    "pt": "Portugiesisch",
+                    "pt_BR": "Brasilianisches Portugiesisch",
+                    "sl": "Slowenisch",
+                    "sr": "Serbisch",
+                    "sv": "Schwedisch",
+                    "ro": "Rumänisch",
+                    "ru": "Russisch",
+                    "te": "Telugu",
+                    "tg": "Tadschikisch",
+                    "tr": "Türkisch",
+                    "th": "Thailändisch",
+                    "vi": "Vietnamesisch",
+                    "nl": "Niederländisch",
+                    "uk": "Ukrainisch"
+                }
             }
         }
     },
@@ -910,6 +968,20 @@
                 "equation": {
                     "name": "gleichung",
                     "description": "Die Anfangsgleichung für den Taschenrechner (optional)"
+                }
+            }
+        },
+        "num2word": {
+            "name": "zahl_zu_wort",
+            "description": "Konvertiert eine Zahl in ihre Wortform",
+            "params": {
+                "number": {
+                    "name": "zahl",
+                    "description": "Die zu konvertierende Zahl"
+                },
+                "locale": {
+                    "name": "sprache",
+                    "description": "Die Sprache, in der die Zahl konvertiert werden soll"
                 }
             }
         }
