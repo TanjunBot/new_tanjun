@@ -596,7 +596,7 @@ class administrationCommands(discord.app_commands.Group):
     @app_commands.describe(
         channel=app_commands.locale_str("admin_embed_params_channel_description"),
     )
-    async def embed(self, ctx, channel: discord.TextChannel):
+    async def embed(self, ctx, channel: discord.TextChannel = None):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -609,6 +609,9 @@ class administrationCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
+
+        if channel == None:
+            channel = ctx.channel
 
         await createEmbedCommand(commandInfo=commandInfo, channel=channel)
         return
