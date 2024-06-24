@@ -78,3 +78,9 @@ body:
     description: "Provide any other context or information about the feature request."
   validations:
     required: false
+
+- type: markdown
+  attributes:
+    value: |
+      > [!TIP]
+      > Please check again whether you have chosen a suitable title that describes/summarizes this suggestion well!
