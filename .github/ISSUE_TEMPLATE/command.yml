@@ -1,0 +1,60 @@
+name: New Command
+description: A new Command that will be added to the Bot
+labels: 'feature'
+body:
+- type: textarea
+  id: command-explanation
+  attributes:
+    label: Brief command explanation
+    description: A simple explanation on what the command should do.
+  validations:
+    required: true
+
+- type: textarea
+  id: command-description
+  attributes:
+    label: Describe the command
+    description: A clear and concise description of the command.
+  validations:
+    required: true
+
+- type: markdown
+  attributes:
+    value: |
+      ## Motivation
+      Explain the reasoning behind this feature/idea:
+
+- type: markdown
+  attributes:
+    value: |
+      ## Notes
+      Things that should be considered during the developement of the command:
+
+- type: textarea
+  id: notes
+  attributes:
+    label: Notes
+    description: "Things that should be considered during the developement of the command:"
+  validations:
+    required: true
+
+- type: input
+  id: examples
+  attributes:
+    label: Examples (if applicable)
+    description: "Provide examples or mockups if applicable."
+    placeholder: e.g., screenshots, code snippets, etc.
+  validations:
+    required: false
+
+- type: markdown
+  attributes:
+    value: |
+      ## Alternatives
+      Describe any alternative solutions or features you've considered:
+
+- type: markdown
+  attributes:
+    value: |
+      > [!TIP]
+      > ### Please check again whether you have chosen a suitable title that describes/summarizes this command well!
