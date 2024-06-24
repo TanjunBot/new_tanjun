@@ -819,6 +819,10 @@
                 "role": {
                     "name": "rolle",
                     "description": "Die zu löschende Rolle"
+                },
+                "reason": {
+                    "name": "grund",
+                    "description": "Der Grund für das Löschen der Rolle"
                 }
             }
         },

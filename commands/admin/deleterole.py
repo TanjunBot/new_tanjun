@@ -3,7 +3,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def deleterole(commandInfo: utility.commandInfo, role: discord.Role):
+async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reason: str = None):
     if not commandInfo.user.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -63,7 +63,7 @@ async def deleterole(commandInfo: utility.commandInfo, role: discord.Role):
         return
 
     role_name = role.name
-    await role.delete()
+    await role.delete(reason=reason)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.admin.deleterole.success.title"
@@ -72,6 +72,7 @@ async def deleterole(commandInfo: utility.commandInfo, role: discord.Role):
             commandInfo.locale,
             "commands.admin.deleterole.success.description",
             role=role_name,
+            reason=reason,
         ),
     )
     await commandInfo.reply(embed=embed)

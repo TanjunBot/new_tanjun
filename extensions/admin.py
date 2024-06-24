@@ -136,9 +136,10 @@ class administrationCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_deleterole_description"),
     )
     @app_commands.describe(
-        role=app_commands.locale_str("admin_deleterole_params_role_description")
+        role=app_commands.locale_str("admin_deleterole_params_role_description"),
+        role=app_commands.locale_str("admin_deleterole_params_reason_description"),
     )
-    async def deleterole(self, ctx, role: discord.Role):
+    async def deleterole(self, ctx, role: discord.Role, reason: str):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -152,7 +153,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await deleteroleCommand(commandInfo=commandInfo, role=role)
+        await deleteroleCommand(commandInfo=commandInfo, role=role, reason=reason)
         return
 
     @app_commands.command(
