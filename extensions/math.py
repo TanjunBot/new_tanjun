@@ -8,6 +8,7 @@ from typing import List
 from commands.math.calc import calc as calcCommand
 from commands.math.calculator import calculator_command
 from commands.math.num2word import num2word as num2word_command
+from commands.math.randomnumber import random_number_command
 
 
 async def num2wordLocaleAutocomplete(
@@ -70,9 +71,7 @@ async def num2wordLocaleAutocomplete(
     ]
 
     filtered_locales = [
-        locale
-        for locale in locales
-        if current.lower() in locale.lower()
+        locale for locale in locales if current.lower() in locale.lower()
     ]
 
     return [
@@ -127,7 +126,6 @@ class mathCommands(discord.app_commands.Group):
         )
 
         await calculator_command(commandInfo, equation)
-    
 
     @app_commands.command(
         name=app_commands.locale_str("math_num2word_name"),
@@ -155,8 +153,32 @@ class mathCommands(discord.app_commands.Group):
         if locale is None:
             locale = str(ctx.locale)
 
-
         await num2word_command(commandInfo, number, locale)
+
+    @app_commands.command(
+        name=app_commands.locale_str("math_randomnumber_name"),
+        description=app_commands.locale_str("mathrandom_number_description"),
+    )
+    @app_commands.describe(
+        min=app_commands.locale_str("math_randomnumber_params_min_description"),
+        max=app_commands.locale_str("math_randomnumber_params_max_description"),
+        amount=app_commands.locale_str("math_randomnumber_params_amount_description"),
+    )
+    async def random_number(self, ctx, min: int, max: int, amount: int = 1):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await random_number_command(commandInfo, min, max, amount)
 
 
 class mathCog(commands.Cog):
@@ -213,6 +235,22 @@ class mathCog(commands.Cog):
             locale = ctx.locale
 
         await num2word_command(commandInfo, number, locale)
+
+    @commands.command(name="randomnumber", aliases=["randnum"])
+    async def random_number(self, ctx, min: int, max: int, amount: int = 1):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.send,
+            client=ctx.bot,
+        )
+
+        await random_number_command(commandInfo, min, max, amount)
 
     @commands.Cog.listener()
     async def on_ready(self):

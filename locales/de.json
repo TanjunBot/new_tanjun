@@ -640,6 +640,19 @@
                     "nl": "Niederländisch",
                     "uk": "Ukrainisch"
                 }
+            },
+            "randomnumber": {
+                "success": {
+                    "title": "Zufallszahlen generiert",
+                    "description": "${amount} Zufallszahl(en) zwischen ${min} und ${max} generiert:\n${numbers}"
+                },
+                "error": {
+                    "title": "Fehler bei der Generierung von Zufallszahlen",
+                    "invalid_range": "Der Maximalwert muss größer oder gleich dem Minimalwert sein.",
+                    "invalid_amount": "Die Anzahl der zu generierenden Zahlen muss mindestens 1 sein.",
+                    "invalid_input": "Ungültige Eingabe. Bitte geben Sie ganze Zahlen für Minimum, Maximum und Anzahl ein."
+                },
+                "not_truly_random": "Hinweis: Diese Zahlen sind nicht wirklich zufällig. Sie werden durch einen Pseudozufallszahlengenerator erzeugt."
             }
         }
     },
@@ -982,6 +995,24 @@
                 "locale": {
                     "name": "sprache",
                     "description": "Die Sprache, in der die Zahl konvertiert werden soll"
+                }
+            }
+        },
+        "randomnumber": {
+            "name": "zufallszahl",
+            "description": "Generiert eine oder mehrere Zufallszahlen innerhalb eines bestimmten Bereichs",
+            "params": {
+                "min": {
+                    "name": "minimum",
+                    "description": "Die kleinste mögliche Zahl (kann negativ sein)"
+                },
+                "max": {
+                    "name": "maximum",
+                    "description": "Die größte mögliche Zahl (kann negativ sein)"
+                },
+                "amount": {
+                    "name": "anzahl",
+                    "description": "Die Anzahl der zu generierenden Zufallszahlen (Standard: 1)"
                 }
             }
         }
