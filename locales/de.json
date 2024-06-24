@@ -33,6 +33,10 @@
                 "success": {
                     "title": "Rolle hinzugefügt",
                     "description": "Die Rolle wurde erfolgreich hinzugefügt."
+                },
+                "managedRole": {
+                    "title": "Rolle nicht vergeben",
+                    "description": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell vergeben werden."
                 }
             },
             "removerole": {
@@ -63,6 +67,10 @@
                 "success": {
                     "title": "Rolle entfernt",
                     "description": "Die Rolle wurde erfolgreich entfernt."
+                },
+                "managedRole": {
+                    "title": "Rolle nicht entfernt",
+                    "description": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell entfernt werden."
                 }
             },
             "createrole": {

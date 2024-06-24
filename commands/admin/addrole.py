@@ -75,6 +75,20 @@ async def addrole(
 
         await commandInfo.reply(embed=embed)
         return
+    
+    if role.managed:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.admin.addrole.managedRole.title"
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.admin.addrole.managedRole.description",
+            ),
+        )
+
+        await commandInfo.reply(embed=embed)
+        return
 
     await target.add_roles(role)
     embed = utility.tanjunEmbed(
