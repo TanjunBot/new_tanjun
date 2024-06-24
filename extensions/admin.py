@@ -306,7 +306,7 @@ class administrationCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_purge_description"),
     )
     @app_commands.describe(
-        amount=app_commands.locale_str("admin_purge_params_amount_description"),
+        limit=app_commands.locale_str("admin_purge_params_amount_description"),
         channel=app_commands.locale_str("admin_purge_params_channel_description"),
     )
     @app_commands.choices(
