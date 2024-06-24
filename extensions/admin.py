@@ -383,7 +383,10 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await purgeCommand(
-            commandInfo=commandInfo, amount=limit, channel=channel, setting=setting.value
+            commandInfo=commandInfo,
+            amount=limit,
+            channel=channel,
+            setting=setting.value,
         )
         return
 
@@ -595,9 +598,15 @@ class administrationCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_embed_description"),
     )
     @app_commands.describe(
+        title=app_commands.locale_str("admin_embed_params_title_description"),
         channel=app_commands.locale_str("admin_embed_params_channel_description"),
     )
-    async def embed(self, ctx, channel: discord.TextChannel = None):
+    async def embed(
+        self,
+        ctx,
+        title: app_commands.Range[str, 1, 256],
+        channel: discord.TextChannel = None,
+    ):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -614,7 +623,7 @@ class administrationCommands(discord.app_commands.Group):
         if channel == None:
             channel = ctx.channel
 
-        await createEmbedCommand(commandInfo=commandInfo, channel=channel)
+        await createEmbedCommand(commandInfo=commandInfo, channel=channel, title=title)
         return
 
     @app_commands.command(
@@ -1114,7 +1123,7 @@ class adminCog(commands.Cog):
         return
 
     @commands.command()
-    async def embed(self, ctx, channel: discord.TextChannel):
+    async def embed(self, ctx, channel: discord.TextChannel, *, title: str):
         commandInfo = utility.commandInfo(
             user=ctx.author,
             channel=ctx.channel,
@@ -1127,7 +1136,24 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        await createEmbedCommand(commandInfo=commandInfo, channel=channel)
+        if channel == None:
+            channel = ctx.channel
+
+        if not title:
+            embed = utility.tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.admin.embed.missingTitle.title",
+                ),
+                description=tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.admin.embed.missingTitle.description",
+                ),
+            )
+            await ctx.reply(embed=embed)
+            return
+
+        await createEmbedCommand(commandInfo=commandInfo, channel=channel, title=title)
         return
 
     @commands.command()

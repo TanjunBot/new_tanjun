@@ -499,31 +499,46 @@
                     "title": "Fehlende Berechtigung",
                     "description": "Du hast nicht die erforderlichen Berechtigungen, um Embeds zu erstellen und zu senden."
                 },
+                "missingTitle": {
+                    "title": "Kein Titel angegeben",
+                    "description": "Du musst einen Titel für das Embed angeben."
+                },
                 "unauthorizedUser": "Du bist nicht berechtigt, mit diesem Embed-Creator zu interagieren.",
                 "creatorTitle": "Embed-Creator",
                 "creatorDescription": "Verwende die Schaltflächen unten, um dein Embed zu erstellen. Klicke auf 'Vorschau', um das aktuelle Embed anzuzeigen, und auf 'Senden', wenn du fertig bist. Das Embed wird in ${channel} gesendet.",
                 "titleUpdated": "Titel wurde aktualisiert!",
                 "descriptionUpdated": "Beschreibung wurde aktualisiert!",
                 "fieldAdded": "Feld wurde hinzugefügt!",
+                "fieldEdited": "Feld wurde bearbeitet!",
+                "fieldRemoved": "Feld wurde entfernt!",
                 "footerUpdated": "Fußzeile wurde aktualisiert!",
                 "colorUpdated": "Farbe wurde aktualisiert!",
+                "imageUpdated": "Bild wurde aktualisiert!",
+                "thumbnailUpdated": "Thumbnail wurde aktualisiert!",
                 "invalidColorCode": "Ungültiger Farbcode. Bitte verwende einen gültigen Hex-Farbcode.",
                 "previewSent": "Vorschau wurde gesendet!",
                 "embedSent": "Embed wurde in ${channel} gesendet!",
-                "true": "wahr",
+                "maxFieldsReached": "Die maximale Anzahl von Feldern (25) wurde erreicht.",
+                "noFieldsToEdit": "Es gibt keine Felder zum Bearbeiten.",
+                "noFieldsToRemove": "Es gibt keine Felder zum Entfernen.",
                 "buttons": {
                     "setTitle": "Titel festlegen",
                     "setDescription": "Beschreibung festlegen",
                     "addField": "Feld hinzufügen",
+                    "editField": "Feld bearbeiten",
+                    "removeField": "Feld entfernen",
                     "setFooter": "Fußzeile festlegen",
                     "setColor": "Farbe festlegen",
+                    "setImage": "Bild festlegen",
+                    "setThumbnail": "Thumbnail festlegen",
                     "preview": "Vorschau",
                     "send": "Senden"
                 },
                 "modals": {
                     "titleModal": {
                         "title": "Embed-Titel festlegen",
-                        "label": "Titel"
+                        "label": "Titel",
+                        "urlLabel": "Titel-URL (optional)"
                     },
                     "descriptionModal": {
                         "title": "Embed-Beschreibung festlegen",
@@ -533,15 +548,32 @@
                         "title": "Embed-Feld hinzufügen",
                         "nameLabel": "Feldname",
                         "valueLabel": "Feldwert",
-                        "inlineLabel": "Inline (wahr/falsch)"
+                        "inlineLabel": "Inline (true/false)"
+                    },
+                    "editFieldModal": {
+                        "title": "Embed-Feld bearbeiten",
+                        "selectField": "Wähle ein Feld zum Bearbeiten"
+                    },
+                    "removeFieldModal": {
+                        "title": "Embed-Feld entfernen",
+                        "selectField": "Wähle ein Feld zum Entfernen"
                     },
                     "footerModal": {
                         "title": "Embed-Fußzeile festlegen",
-                        "label": "Fußzeilentext"
+                        "label": "Fußzeilentext",
+                        "iconLabel": "Fußzeilen-Icon-URL (optional)"
                     },
                     "colorModal": {
                         "title": "Embed-Farbe festlegen",
                         "label": "Farbe (Hex-Code)"
+                    },
+                    "imageModal": {
+                        "title": "Embed-Bild festlegen",
+                        "label": "Bild-URL"
+                    },
+                    "thumbnailModal": {
+                        "title": "Embed-Thumbnail festlegen",
+                        "label": "Thumbnail-URL"
                     }
                 }
             },
@@ -1034,6 +1066,10 @@
                 "channel": {
                     "name": "kanal",
                     "description": "Der Kanal, in den das Embed gesendet werden soll"
+                },
+                "title": {
+                    "name": "titel",
+                    "description": "Der Titel des Embed"
                 }
             }
         },
