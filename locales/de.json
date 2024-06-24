@@ -464,6 +464,8 @@
                     "title": "Bot hat fehlende Berechtigung",
                     "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um einen Kanal zu löschen und neu zu erstellen."
                 },
+                "confirm": "bestätigen",
+                "cancel": "abbrechen",
                 "confirmationTitle": "Kanal-Nuke Bestätigung",
                 "confirmationDescription": "Bist du sicher, dass du alle Nachrichten in ${channel} löschen möchtest? Dies kann nicht rückgängig gemacht werden!",
                 "confirmationPrompt": "Bitte gib 'NUKE' ein, um zu bestätigen.",
