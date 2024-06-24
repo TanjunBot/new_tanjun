@@ -64,6 +64,10 @@
                     "title": "Keine Rolle angegeben",
                     "description": "Du musst eine Rolle angeben die du entfernen möchtest."
                 },
+                "doesNotHaveRole": {
+                    "title": "Benutzer hat Rolle nicht",
+                    "description": "Dieser Benutzer hat diese Rolle nicht."
+                },
                 "success": {
                     "title": "Rolle entfernt",
                     "description": "Die Rolle wurde erfolgreich entfernt."
