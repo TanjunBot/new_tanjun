@@ -90,3 +90,9 @@ body:
     placeholder: e.g., email@example.com
   validations:
     required: false
+
+- type: markdown
+  attributes:
+    value: |
+      > [!TIP]
+      > ### Please check again whether you have chosen a suitable title that describes/summarizes this report well!

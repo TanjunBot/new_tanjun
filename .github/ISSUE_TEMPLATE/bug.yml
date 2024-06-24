@@ -89,3 +89,10 @@ body:
     description: "Provide any other context about the problem here."
   validations:
     required: false
+
+- type: markdown
+  attributes:
+    value: |
+      > [!TIP]
+      > ### Please check again whether you have chosen a suitable title that describes/summarizes this bug report well!
+
