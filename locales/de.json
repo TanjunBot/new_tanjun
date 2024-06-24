@@ -653,6 +653,97 @@
                     "invalid_input": "Ungültige Eingabe. Bitte geben Sie ganze Zahlen für Minimum, Maximum und Anzahl ein."
                 },
                 "not_truly_random": "Hinweis: Diese Zahlen sind nicht wirklich zufällig. Sie werden durch einen Pseudozufallszahlengenerator erzeugt."
+            },
+            "plotfunction": {
+                "default_title": "Funktionsplot",
+                "default_x_label": "x",
+                "default_y_label": "y",
+                "description": "Plot der Funktion im Bereich [${x_min}, ${x_max}]",
+                "zeros": "Nullstellen",
+                "extrema": "Extrempunkte",
+                "inflection_points": "Wendepunkte",
+                "zero": "Nullstelle",
+                "extremum": "Extrempunkt",
+                "inflection": "Wendepunkt",
+                "x_axis": "x",
+                "y_axis": "y",
+                "plot_title": "Plot von f(x) = {func}",
+                "error": {
+                    "title": "Fehler beim Erstellen des Funktionsplots",
+                    "description": "Es ist ein Fehler aufgetreten: ${er}"
+                },
+                "buttons": {
+                    "zoom_in": "Vergrößern",
+                    "zoom_out": "Verkleinern",
+                    "move_up": "Nach oben",
+                    "move_down": "Nach unten",
+                    "move_left": "Nach links",
+                    "move_right": "Nach rechts",
+                    "add_function": "Funktion hinzufügen",
+                    "integrate": "Integrieren",
+                    "derive": "Ableiten",
+                    "rename_plot": "Plot umbenennen",
+                    "change_x_label": "X-Achsenbeschriftung ändern",
+                    "change_y_label": "Y-Achsenbeschriftung ändern",
+                    "change_style": "Stil ändern",
+                    "rename_function": "Funktion umbenennen"
+                },
+                "modals": {
+                    "add_function": {
+                        "title": "Funktion hinzufügen",
+                        "function_expression": "Funktionsausdruck",
+                        "function_expression_placeholder": "Gib eine Funktion ein, z.B. x**2 + sin(x)",
+                        "function_name": "Funktionsname",
+                        "function_name_placeholder": "Gib einen Namen für die Funktion ein, z.B. g"
+                    },
+                    "change_title": {
+                        "title": "Plottitel ändern",
+                        "new_title": "Neuer Plottitel",
+                        "new_title_placeholder": "Gib den neuen Titel für den Plot ein"
+                    },
+                    "change_x_label": {
+                        "title": "X-Achsenbeschriftung ändern",
+                        "new_label": "Neue X-Achsenbeschriftung",
+                        "new_label_placeholder": "Gib die neue Beschriftung für die X-Achse ein"
+                    },
+                    "change_y_label": {
+                        "title": "Y-Achsenbeschriftung ändern",
+                        "new_label": "Neue Y-Achsenbeschriftung",
+                        "new_label_placeholder": "Gib die neue Beschriftung für die Y-Achse ein"
+                    },
+                    "rename_function": {
+                        "title": "Funktion umbenennen",
+                        "new_name": "Neuer Funktionsname",
+                        "new_name_placeholder": "Gib den neuen Namen für die Funktion ein"
+                    }
+                },
+                "select_menus": {
+                    "integrate": {
+                        "placeholder": "Wähle eine Funktion zum Integrieren"
+                    },
+                    "derive": {
+                        "placeholder": "Wähle eine Funktion zum Ableiten"
+                    },
+                    "style": {
+                        "placeholder": "Wähle einen Plotstil"
+                    },
+                    "rename_function": {
+                        "placeholder": "Wähle eine Funktion zum Umbenennen"
+                    }
+                },
+                "messages": {
+                    "function_added": "Funktion hinzugefügt",
+                    "plot_updated": "Plot aktualisiert",
+                    "title_changed": "Plottitel geändert",
+                    "x_label_changed": "X-Achsenbeschriftung geändert",
+                    "y_label_changed": "Y-Achsenbeschriftung geändert",
+                    "style_changed": "Plotstil geändert",
+                    "function_renamed": "Funktion umbenannt",
+                    "function_integrated": "Funktion integriert",
+                    "function_derived": "Funktion abgeleitet",
+                    "error_occurred": "Ein Fehler ist aufgetreten",
+                    "no_permission": "Du hast keine Berechtigung, diese Aktion auszuführen"
+                }
             }
         }
     },
@@ -1013,6 +1104,24 @@
                 "amount": {
                     "name": "anzahl",
                     "description": "Die Anzahl der zu generierenden Zufallszahlen (Standard: 1)"
+                }
+            }
+        },
+        "plotfunction": {
+            "name": "funktionsplot",
+            "description": "Erstellt einen Plot einer mathematischen Funktion",
+            "params": {
+                "func": {
+                    "name": "funktion",
+                    "description": "Die zu plottende Funktion (z.B. 'x**2 + 2*x + 1')"
+                },
+                "x_min": {
+                    "name": "x_min",
+                    "description": "Der minimale x-Wert für den Plot"
+                },
+                "x_max": {
+                    "name": "x_max",
+                    "description": "Der maximale x-Wert für den Plot"
                 }
             }
         }

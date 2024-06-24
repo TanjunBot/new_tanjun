@@ -30,7 +30,7 @@ import operator
 from config import tenorAPIKey, tenorCKey
 import aiohttp
 import random
-
+import re
 
 class EmbedProxy:
     def __init__(self, layer: Dict[str, Any]):
@@ -931,3 +931,26 @@ async def getGif(query: str, amount: int = 1, limit: int = 10):
         random.shuffle(r["results"])
 
         return [r["results"][i]["itemurl"] for i in range(amount)]
+    
+def get_highest_exponent(polynomial):
+    # Remove spaces
+    polynomial = polynomial.replace(' ', '')
+    
+    # Regular expression to match terms
+    term_pattern = re.compile(r'([+-]?\d*)(x(\^(\d+))?)?')
+    
+    # Find all matches
+    terms = term_pattern.findall(polynomial)
+    
+    highest_exponent = 0
+    
+    for term in terms:
+        coefficient, variable, _, exponent = term
+        
+        if variable:  # term contains 'x'
+            if exponent:  # term contains 'x^n'
+                highest_exponent = max(highest_exponent, int(exponent))
+            else:  # term is 'x' which is x^1
+                highest_exponent = max(highest_exponent, 1)
+    
+    return highest_exponent

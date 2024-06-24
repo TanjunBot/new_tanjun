@@ -3,12 +3,13 @@ from discord.ext import commands
 from discord import app_commands
 import utility
 from localizer import tanjunLocalizer
-from typing import List
+from typing import List, Optional
 
 from commands.math.calc import calc as calcCommand
 from commands.math.calculator import calculator_command
 from commands.math.num2word import num2word as num2word_command
 from commands.math.randomnumber import random_number_command
+from commands.math.plot_function import plot_function_command
 
 
 async def num2wordLocaleAutocomplete(
@@ -180,6 +181,31 @@ class mathCommands(discord.app_commands.Group):
 
         await random_number_command(commandInfo, min, max, amount)
 
+    @app_commands.command(
+        name=app_commands.locale_str("math_plotfunction_name"),
+        description=app_commands.locale_str("math_plotfunction_description"),
+    )
+    @app_commands.describe(
+        func=app_commands.locale_str("math_plot_functionparams_func_description"),
+        x_min=app_commands.locale_str("math_plot_functionparams_x_min_description"),
+        x_max=app_commands.locale_str("math_plot_functionparams_x_max_description"),
+    )
+    async def plot_function(self, ctx, func: str, x_min: float = None, x_max: float = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await plot_function_command(commandInfo, func, x_min, x_max)
+
 
 class mathCog(commands.Cog):
 
@@ -251,6 +277,22 @@ class mathCog(commands.Cog):
         )
 
         await random_number_command(commandInfo, min, max, amount)
+
+    @commands.command(name="plotfunction", aliases=["plot"])
+    async def plot_function(self, ctx, func: str, x_min: float, x_max: float):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.send,
+            client=ctx.bot,
+        )
+
+        await plot_function_command(commandInfo, func, x_min, x_max)
 
     @commands.Cog.listener()
     async def on_ready(self):
