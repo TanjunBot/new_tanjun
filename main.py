@@ -21,7 +21,17 @@ async def loadTranslator(bot):
     await bot.tree.set_translator(translator)
     print("translator loaded!")
 
-bot = commands.Bot("t.", intents=discord.Intents.all(),
+intents = discord.Intents.none()  
+intents.guilds = True
+intents.members = True
+intents.emojis_and_stickers = True
+intents.voice_states = True
+intents.messages = True
+intents.typing = True
+intents.message_content = True
+intents.presences = False
+
+bot = commands.Bot("t.", intents=intents,
                    application_id=config.applicationId)
 
 if __name__ == "__main__":
