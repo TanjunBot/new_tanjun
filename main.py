@@ -28,7 +28,7 @@ intents.emojis_and_stickers = True
 intents.voice_states = True
 intents.messages = True
 intents.typing = True
-intents.message_content = True
+intents.message_content = False
 intents.presences = False
 
 bot = commands.Bot("t.", intents=intents,
