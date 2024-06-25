@@ -10,7 +10,7 @@ body:
       description: Please specify the environment where the bug occurred (e.g., OS, browser, Node.js version).
       placeholder: "e.g., Windows 10, Chrome 90, Node.js 14.16.1"
     validations:
-    required: true
+      required: true
 
   - type: textarea
     id: description
@@ -18,17 +18,17 @@ body:
       label: Description
       description: A clear and concise description of what the bug is about.
     validations:
-    required: true
+      required: true
 
-- type: checkboxes
-  id: already-exists
-  attributes:
-    label: Have you checked if there is already an issue/pr for this feature/idea?
-    description: If there is already an issue/pr for this, you should participate there instead of creating a new one.
-    options:
-      - label: Yes, I have checked that there are no other issues or pull requests for this feature/idea.
-  validations:
-    required: true
+  - type: checkboxes
+    id: already-exists
+    attributes:
+      label: Have you checked if there is already an issue/pr for this feature/idea?
+      description: If there is already an issue/pr for this, you should participate there instead of creating a new one.
+      options:
+        - label: Yes, I have checked that there are no other issues or pull requests for this feature/idea.
+    validations:
+      required: true
 
   - type: textarea
     id: steps
@@ -84,8 +84,8 @@ body:
     validations:
       required: false
 
-- type: markdown
-  attributes:
-    value: |
-      > [!TIP]
-      > ### Please check again whether you have chosen a suitable title that describes/summarizes this command well!
+  - type: markdown
+    attributes:
+      value: |
+        > [!TIP]
+        > ### Please check again whether you have chosen a suitable title that describes/summarizes this command well!
