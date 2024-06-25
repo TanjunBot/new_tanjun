@@ -1,4 +1,4 @@
-aiohttp==3.9.3
+aiohttp==3.9.5
 discord.py==2.4.0
 matplotlib==3.8.4
 mysql-connector-python==8.3.0
