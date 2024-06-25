@@ -1,6 +1,6 @@
 name: New Command
-description: A new Command that will be added to the Bot
-labels: 'feature'
+description: A new command that should be added to the Discord Bot.
+labels: ['feature', 'suggestion']
 body:
 - type: textarea
   id: command-explanation
@@ -10,11 +10,21 @@ body:
   validations:
     required: true
 
+- type: checkboxes
+  id: already-exists
+  attributes:
+    label: Have you checked if there is already an issue/pr for this feature/idea?
+    description: If there is already an issue/pr for this, you should participate there instead of creating a new one.
+    options:
+      - label: Yes, I have checked that there are no other issues or pull requests for this feature/idea.
+  validations:
+    required: true
+
 - type: textarea
   id: command-description
   attributes:
     label: Describe the command
-    description: A clear and concise description of the command.
+    description: A description of the command and its parameters.
   validations:
     required: true
 
@@ -23,6 +33,14 @@ body:
     value: |
       ## Motivation
       Explain the reasoning behind this feature/idea:
+
+- type: textarea
+  id: motivation
+  attributes:
+    label: Motivation
+    description: "Why do you think this feature/idea should be implemented? What problem does it solve or what improvement does it bring?"
+  validations:
+    required: true
 
 - type: markdown
   attributes:
@@ -34,7 +52,6 @@ body:
   id: notes
   attributes:
     label: Notes
-    description: "Things that should be considered during the developement of the command:"
   validations:
     required: true
 
@@ -52,6 +69,22 @@ body:
     value: |
       ## Alternatives
       Describe any alternative solutions or features you've considered:
+
+- type: textarea
+  id: alternatives
+  attributes:
+    label: Alternatives
+    description: "Have you considered any alternative solutions or features? If so, describe them here."
+  validations:
+    required: false
+
+- type: textarea
+  id: additional-context
+  attributes:
+    label: Additional Context
+    description: "Provide any other context or information about the feature request."
+  validations:
+    required: false
 
 - type: markdown
   attributes:
