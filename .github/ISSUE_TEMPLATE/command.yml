@@ -52,7 +52,6 @@ body:
   id: notes
   attributes:
     label: Notes
-    description: "Things that should be considered during the developement of the command:"
   validations:
     required: true
 
