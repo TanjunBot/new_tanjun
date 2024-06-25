@@ -1,5 +1,5 @@
 name: New Command
-description: A new command that should be added to the bot
+description: A new command that should be added to the Discord Bot.
 labels: ['feature', 'suggestion']
 body:
 - type: textarea
