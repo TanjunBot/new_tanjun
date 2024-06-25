@@ -1,9 +1,7 @@
 name: Tanjun Dashboard Bug Report
-description: Create a bug report to help us improve the Tanjun Dashboard
+about: Create a report to help us improve the Tanjun Dashboard.
 title: "[Dashboard] "
-labels: ['dashboard', 'bug']
-assignees: ''
-
+labels: ['bug', 'dashboard']
 body:
   - type: input
     id: environment
