@@ -889,6 +889,16 @@
                     "title": "Fehler beim Deaktivieren der Nachrichtenverfolgung",
                     "already_opted_out": "Du hast die Nachrichtenverfolgung bereits deaktiviert."
                 }
+            },
+            "messagetrackingoptin": {
+                "success": {
+                    "title": "Nachrichtenverfolgung aktiviert",
+                    "description": "Nachrichtenverfolgung wurde aktiviert.\nDer Bot wird deine Nachrichten lesen. Das heißt auch, dass der Bots wieder vollständig funktionieren sollte."
+                },
+                "error": {
+                    "title": "Fehler beim Aktivieren der Nachrichtenverfolgung",
+                    "already_opted_in": "Du hast die Nachrichtenverfolgung bereits aktiviert."
+                }
             }
         }
     },
@@ -1320,8 +1330,16 @@
     },
     "utility": {
         "messageoptout": {
-            "name": "keine_nachrichtenverfolgung",
+            "name": "deaktivieren",
             "description": "Deaktiviert die Nachrichtenverfolgung für den Bot"
+        },
+        "messageoptin": {
+            "name": "aktivieren",
+            "description": "Aktiviert die Nachrichtenverfolgung für den Bot"
+        },
+        "messagetracking": {
+            "name": "nachrichtenverfolgung",
+            "description": "Aktiviert oder deaktiviert die Nachrichtenverfolgung für den Bot"
         }
     },
     "Administrate the Server": "Verwalte den Server",
