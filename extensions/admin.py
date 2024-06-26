@@ -105,7 +105,7 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_addrole_params_user_name"),
         role=app_commands.locale_str("admin_addrole_params_role_name"),
     )
-    async def addrole(self, ctx, user: discord.Member, role: discord.Role):
+    async def addrole(self, ctx, user: discord.Member = None, role: discord.Role = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -119,7 +119,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await addroleCommand(commandInfo=commandInfo, target=user, role=role)
+        await addroleCommand(commandInfo=commandInfo, user=user, role=role)
         return
 
     @app_commands.command(
@@ -130,7 +130,7 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_removerole_params_user_description"),
         role=app_commands.locale_str("admin_removerole_params_role_description"),
     )
-    async def removerole(self, ctx, user: discord.Member, role: discord.Role):
+    async def removerole(self, ctx, user: discord.Member = None, role: discord.Role = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -144,7 +144,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await removeroleCommand(commandInfo=commandInfo, target=user, role=role)
+        await removeroleCommand(commandInfo=commandInfo, user=user, role=role)
         return
 
     @app_commands.command(

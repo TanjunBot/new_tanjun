@@ -37,7 +37,11 @@
                 "managedRole": {
                     "title": "Rolle nicht vergeben",
                     "description": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell vergeben werden."
-                }
+                },
+                "multiplePrompt": "Bitte wähle die Rollen und Benutzer aus, denen du Rollen hinzufügen möchtest.",
+                "noSelection": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
+                "multipleSuccess": "${count} Rollen wurden erfolgreich vergeben.",
+                "cancelled": "Vorgang abgebrochen."
             },
             "removerole": {
                 "missingPermission": {
@@ -75,7 +79,11 @@
                 "managedRole": {
                     "title": "Rolle nicht entfernt",
                     "description": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell entfernt werden."
-                }
+                },
+                "multiplePrompt": "Bitte wähle die Rollen und Benutzer aus, von denen du Rollen entfernen möchtest.",
+                "noSelection": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
+                "multipleSuccess": "${count} Rollen wurden erfolgreich entfernt.",
+                "cancelled": "Vorgang abgebrochen."
             },
             "createrole": {
                 "missingPermission": {
