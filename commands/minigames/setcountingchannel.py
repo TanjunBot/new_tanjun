@@ -49,6 +49,12 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
 
     set_counting_progress(channel_id=channel.id, guild_id=commandInfo.guild.id, progress=0)
 
+    introductionEmbed = tanjunEmbed(
+        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.introduction.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.introduction.description"),
+    )
+    await channel.send(embed=introductionEmbed)
+
     embed = tanjunEmbed(    
         title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.success.title"),
         description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.success.description").format(channel.mention),
