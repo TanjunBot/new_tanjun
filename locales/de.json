@@ -923,7 +923,7 @@
                     "name": "farbe",
                     "description": "Die Farbe der neuen Rolle"
                 },
-                "display_icon": {
+                "displayicon": {
                     "name": "symbol",
                     "description": "Das Symbol für die neue Rolle"
                 },
@@ -939,7 +939,7 @@
                     "name": "grund",
                     "description": "Der Grund für das Erstellen der Rolle"
                 },
-                "display_emoji": {
+                "displayemoji": {
                     "name": "emoji",
                     "description": "Das Emoji, das neben dem Rollennamen angezeigt werden soll"
                 }
@@ -1000,7 +1000,7 @@
             }
         },
         "ban": {
-            "name": "bann",
+            "name": "ban",
             "description": "Bannt ein Mitglied vom Server",
             "params": {
                 "user": {
@@ -1011,8 +1011,8 @@
                     "name": "grund",
                     "description": "Der Grund für den Bann (optional)"
                 },
-                "delete_message_days": {
-                    "name": "nachrichten_löschen_tage",
+                "deletemessagedays": {
+                    "name": "nachrichten_loschen_tage",
                     "description": "Anzahl der Tage, für die Nachrichten gelöscht werden sollen (0-7, optional)"
                 }
             }
@@ -1285,11 +1285,11 @@
                     "name": "funktion",
                     "description": "Die zu plottende Funktion (z.B. 'x**2 + 2*x + 1')"
                 },
-                "x_min": {
+                "xmin": {
                     "name": "x_min",
                     "description": "Der minimale x-Wert für den Plot"
                 },
-                "x_max": {
+                "xmax": {
                     "name": "x_max",
                     "description": "Der maximale x-Wert für den Plot"
                 }
@@ -1305,5 +1305,44 @@
                 }
             }
         }
-    }
+    },
+    "Administrate the Server": "Verwalte den Server",
+    "user": "benutzer",
+    "role": "rolle",
+    "name": "name",
+    "color": "farbe",
+    "display_icon": "anzeige_icon",
+    "hoist": "getrennt_anzeigen",
+    "mentionable": "erwähnbar",
+    "reason": "grund",
+    "display_emoji": "anzeige_emoji",
+    "target_role": "ziel_rolle",
+    "position": "position",
+    "delete_message_days": "nachricht löschen tage",
+    "username": "benutzername",
+    "member": "mitglied",
+    "limit": "limit",
+    "channel": "kanal",
+    "setting": "einstellung",
+    "nickname": "nickname",
+    "...": "...",
+    "seconds": "sekunden",
+    "message": "nachricht",
+    "title": "titel",
+    "image_url": "bild_url",
+    "warn": "warnen",
+    "Manage Warns": "Warnungen verwalten",
+    "Math is fun!": "Mathe macht spaß!",
+    "expression": "ausdruck",
+    "equation": "gleichung",
+    "number": "zahl",
+    "locale": "sprache",
+    "min": "minimum",
+    "max": "maximum",
+    "amount": "anzahl",
+    "func": "funktion",
+    "duration": "dauer",
+    "…": "…",
+    "x_min": "x_min",
+    "x_max": "x_max"
 }

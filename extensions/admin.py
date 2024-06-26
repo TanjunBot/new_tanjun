@@ -162,7 +162,7 @@ class administrationCommands(discord.app_commands.Group):
         name=app_commands.locale_str("admin_createrole_params_name_description"),
         color=app_commands.locale_str("admin_createrole_params_color_description"),
         display_icon=app_commands.locale_str(
-            "admin_createrole_params_display_icon_description"
+            "admin_createrole_params_displayicon_description"
         ),
         hoist=app_commands.locale_str("admin_createrole_params_hoist_description"),
         mentionable=app_commands.locale_str(
@@ -170,7 +170,7 @@ class administrationCommands(discord.app_commands.Group):
         ),
         reason=app_commands.locale_str("admin_createrole_params_reason_description"),
         display_emoji=app_commands.locale_str(
-            "admin_createrole_params_display_emoji_description"
+            "admin_createrole_params_displayemoji_description"
         ),
     )
     async def createrole(
@@ -312,7 +312,7 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_ban_params_user_description"),
         reason=app_commands.locale_str("admin_ban_params_reason_description"),
         delete_message_days=app_commands.locale_str(
-            "admin_ban_params_delete_message_days_description"
+            "admin_ban_params_deletemessagedays_description"
         ),
     )
     async def ban(
@@ -1244,9 +1244,9 @@ class adminCog(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         admincmds = administrationCommands(
-            name="admin", description="Administriere den Server"
+            name="admin", description="Administrate the Server"
         )
-        warncmds = WarnCommands(name="warn", description="Verwalte Warnungen")
+        warncmds = WarnCommands(name="warn", description="Manage Warns")
         admincmds.add_command(warncmds)
         self.bot.tree.add_command(admincmds)
 
