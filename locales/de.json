@@ -428,44 +428,85 @@
                 },
                 "channelUnlockedMessage": "🔓 Dieser Kanal wurde von einem Moderator entsperrt. Die ursprünglichen Berechtigungen wurden wiederhergestellt."
             },
-            "warn": {
+            "warnconfig": {
+                "success": {
+                    "title": "Warnkonfiguration erfolgreich",
+                    "description": "Die Warnungseinstellungen wurden erfolgreich aktualisiert."
+                },
+                "error": {
+                    "title": "Fehler bei der Warnkonfiguration",
+                    "invalidInput": "Ungültige Eingabe. Bitte überprüfen Sie die eingegebenen Werte und versuchen Sie es erneut."
+                },
                 "missingPermission": {
                     "title": "Fehlende Berechtigung",
-                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Verwarnungen auszusprechen."
+                    "description": "Sie benötigen Administratorrechte, um diese Einstellungen zu ändern."
                 },
-                "targetTooHigh": {
-                    "title": "Ziel hat zu hohe Rolle",
-                    "description": "Du kannst keine Verwarnung für ein Mitglied aussprechen, das eine höhere oder gleiche Rolle wie du hat."
+                "currentConfig": {
+                    "title": "Aktuelle Warnkonfiguration",
+                    "description": "Hier sind die aktuellen Einstellungen: Verfallstage: {expiration_days}, Schwellenwert für Timeout: {timeout_threshold}, Dauer des Timeouts: {timeout_duration} Minuten, Schwellenwert für Kick: {kick_threshold}, Schwellenwert für Bann: {ban_threshold}."
                 },
-                "success": {
-                    "title": "Verwarnung ausgesprochen",
-                    "description": "${user} wurde verwarnt. Grund: ${reason}\nDies ist die ${count}. Verwarnung für diesen Benutzer."
-                },
-                "noReasonProvided": "Kein Grund angegeben",
-                "dmNotification": {
-                    "title": "Du wurdest verwarnt",
-                    "description": "Du hast eine Verwarnung auf dem Server ${guild} erhalten.\nGrund: ${reason}\nDies ist deine ${count}. Verwarnung auf diesem Server."
+                "modal": {
+                    "title": "Warnkonfiguration",
+                    "warn_expiration": {
+                        "label": "Verfallstage",
+                        "placeholder": "Anzahl der Tage, nach denen eine Warnung automatisch verfällt. 0 = nie."
+                    },
+                    "timeout_threshold": {
+                        "label": "Schwellenwert für Timeout",
+                        "placeholder": "Anzahl der Warnungen, nach denen ein Timeout ausgelöst wird."
+                    },
+                    "timeout_duration": {
+                        "label": "Dauer des Timeouts",
+                        "placeholder": "Dauer des Timeouts in Minuten."
+                    },
+                    "kick_threshold": {
+                        "label": "Schwellenwert für Kick",
+                        "placeholder": "Anzahl der Warnungen, nach denen ein Kick ausgelöst wird."
+                    },
+                    "ban_threshold": {
+                        "label": "Schwellenwert für Bann",
+                        "placeholder": "Anzahl der Warnungen, nach denen ein Bann ausgelöst wird."
+                    }
                 }
             },
             "viewwarns": {
-                "missingPermission": {
-                    "title": "Fehlende Berechtigung",
-                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Verwarnungen anzuzeigen."
-                },
-                "noWarnings": {
-                    "title": "Keine Verwarnungen",
-                    "description": "${user} hat keine Verwarnungen auf diesem Server."
-                },
-                "title": "Verwarnungen für ${user}",
-                "description": "Insgesamt ${count} Verwarnung(en)",
-                "warningEntry": "Verwarnung ${number}",
-                "warningDetails": "Grund: ${reason}\nDatum: ${date}",
-                "noReason": "Kein Grund angegeben",
-                "pageFooter": "Seite ${current}/${total}",
+                "unauthorizedUser": "Unbefugter Benutzer. Sie sind nicht berechtigt, diese Aktion durchzuführen.",
                 "prevButton": "Vorherige",
                 "nextButton": "Nächste",
-                "removeButton": "Verwarnung ${number} entfernen",
-                "unauthorizedUser": "Du bist nicht berechtigt, mit diesen Schaltflächen zu interagieren."
+                "removeButton": "Entfernen ${number}",
+                "noWarnings": {
+                    "title": "Keine Warnungen",
+                    "description": "Es gibt keine Warnungen für den Benutzer ${user}."
+                },
+                "title": "Warnungen für ${user}",
+                "description": "Aktuelle Warnungen: ${count}",
+                "warningEntry": "Warnung ${number}",
+                "warningDetails": "Grund: ${reason}, Ausgestellt am: ${date}, Läuft ab: ${expiration}",
+                "pageFooter": "Seite ${current} von ${total}",
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Sie benötigen die Berechtigung, Mitglieder zu kicken, um Warnungen anzuzeigen."
+                },
+                "never": "Nie"
+            },
+            "warn": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Sie benötigen die Berechtigung, Mitglieder zu kicken, um diese Aktion durchzuführen."
+                },
+                "targetTooHigh": {
+                    "title": "Zielrang zu hoch",
+                    "description": "Sie können keine Warnungen für Benutzer mit einem höheren oder gleichrangigen Rang ausstellen."
+                },
+                "success": {
+                    "title": "Warnung erfolgreich",
+                    "description": "Der Benutzer {user} wurde erfolgreich verwarnt. Grund: {reason}. Dies ist seine {count}. Warnung."
+                },
+                "noReasonProvided": "Kein Grund angegeben",
+                "dmNotification": {
+                    "title": "Warnbenachrichtigung",
+                    "description": "Sie wurden auf dem Server {guild} verwarnt. Grund: {reason}. Dies ist Ihre {count}. Warnung."
+                }
             },
             "nuke": {
                 "missingPermission": {
@@ -1038,27 +1079,30 @@
             }
         },
         "warn": {
-            "name": "verwarnen",
-            "description": "Spricht eine Verwarnung für ein Mitglied aus",
-            "params": {
-                "member": {
-                    "name": "mitglied",
-                    "description": "Das zu verwarnende Mitglied"
-                },
-                "reason": {
-                    "name": "grund",
-                    "description": "Der Grund für die Verwarnung (optional)"
+            "add": {
+                "name": "hinzufügen",
+                "description": "Verwarnt einen Benutzer",
+                "params": {
+                    "member": {
+                        "description": "Der zu verwarnende Benutzer"
+                    },
+                    "reason": {
+                        "description": "Grund für die Verwarnung (optional)"
+                    }
                 }
-            }
-        },
-        "viewwarns": {
-            "name": "verwarnungen",
-            "description": "Zeigt die Verwarnungen eines Mitglieds an",
-            "params": {
-                "member": {
-                    "name": "mitglied",
-                    "description": "Das Mitglied, dessen Verwarnungen angezeigt werden sollen"
+            },
+            "view": {
+                "name": "anzeigen",
+                "description": "Zeigt die Verwarnungen eines Benutzers an",
+                "params": {
+                    "member": {
+                        "description": "Der Benutzer, dessen Verwarnungen angezeigt werden sollen"
+                    }
                 }
+            },
+            "config": {
+                "name": "konfigurieren",
+                "description": "Konfiguriert die Einstellungen für Verwarnungen"
             }
         },
         "nuke": {

@@ -63,7 +63,6 @@ async def timeout(commandInfo: utility.commandInfo, member: discord.Member, dura
             return
 
         until = discord.utils.utcnow() + duration
-        print(until)
         await member.timeout(until, reason=reason)
 
         embed = utility.tanjunEmbed(
