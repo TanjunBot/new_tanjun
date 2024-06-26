@@ -1348,6 +1348,22 @@
                 "no_pro": {
                     "title": "Es gibt bereits einen Counting Channel.",
                     "description": "Es gibt bereits einen Counting Channel in diesem Server. Entferne ihn bevor du einen neuen setzt. \n## Tanjun Pro Server können mehrere Counting Channels haben."
+                },
+                "no_send_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu senden."
+                },
+                "no_message_delete_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu löschen."
+                },
+                "no_read_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
+                },
+                "no_view_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
                 }
             },
             "success": {
