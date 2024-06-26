@@ -878,6 +878,18 @@
                     "invalid_input": "Ungültige Eingabe. Bitte geben Sie eine ganze Zahl für die gewünschte Nummer ein"
                 }
             }
+        },
+        "utility": {
+            "messagetrackingoptout": {
+                "success": {
+                    "title": "Nachrichtenverfolgung deaktiviert",
+                    "description": "Nachrichtenverfolgung wurde deaktiviert.\nDer Bot wird deine Nachrichten nicht mehr lesen. **Das heißt auch, dass einige Funktionen des Bots nicht mehr funktionieren.**"
+                },
+                "error": {
+                    "title": "Fehler beim Deaktivieren der Nachrichtenverfolgung",
+                    "already_opted_out": "Du hast die Nachrichtenverfolgung bereits deaktiviert."
+                }
+            }
         }
     },
     "admin": {
@@ -1306,6 +1318,12 @@
             }
         }
     },
+    "utility": {
+        "messageoptout": {
+            "name": "keine_nachrichtenverfolgung",
+            "description": "Deaktiviert die Nachrichtenverfolgung für den Bot"
+        }
+    },
     "Administrate the Server": "Verwalte den Server",
     "user": "benutzer",
     "role": "rolle",
@@ -1318,7 +1336,7 @@
     "display_emoji": "anzeige_emoji",
     "target_role": "ziel_rolle",
     "position": "position",
-    "delete_message_days": "nachricht löschen tage",
+    "delete_message_days": "nachricht_löschen_tage",
     "username": "benutzername",
     "member": "mitglied",
     "limit": "limit",
@@ -1344,5 +1362,7 @@
     "duration": "dauer",
     "…": "…",
     "x_min": "x_min",
-    "x_max": "x_max"
+    "x_max": "x_max",
+    "utilitycmd": "verschiedenes",
+    "Utility Commands": "Verschiedene Befehle"
 }
