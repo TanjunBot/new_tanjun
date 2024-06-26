@@ -187,9 +187,9 @@ class mathCommands(discord.app_commands.Group):
         description=app_commands.locale_str("math_plotfunction_description"),
     )
     @app_commands.describe(
-        func=app_commands.locale_str("math_plot_functionparams_func_description"),
-        x_min=app_commands.locale_str("math_plot_functionparams_xmin_description"),
-        x_max=app_commands.locale_str("math_plot_functionparams_xmax_description"),
+        func=app_commands.locale_str("math_plot_function_params_func_description"),
+        x_min=app_commands.locale_str("math_plot_function_params_xmin_description"),
+        x_max=app_commands.locale_str("math_plot_function_params_xmax_description"),
     )
     async def plot_function(self, ctx, func: str, x_min: float = None, x_max: float = None):
         await ctx.response.defer()

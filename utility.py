@@ -27,10 +27,11 @@ from pyparsing import (
 )
 import math
 import operator
-from config import tenorAPIKey, tenorCKey
+from config import tenorAPIKey, tenorCKey, GithubAuthToken
 import aiohttp
 import random
 import re
+from github import Github
 
 class EmbedProxy:
     def __init__(self, layer: Dict[str, Any]):
@@ -954,3 +955,9 @@ def get_highest_exponent(polynomial):
                 highest_exponent = max(highest_exponent, 1)
     
     return highest_exponent
+
+def missingLocalization(locale: str):
+    g = Github(GithubAuthToken)
+    repo = g.get_repo("TanjunBot/new-Tanjun")
+    label = repo.get_label("missing localization")
+    repo.create_issue(title="Missing localization", body=f"Missing localization for {locale}", labels=[label])
