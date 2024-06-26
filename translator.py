@@ -3,6 +3,7 @@ import discord
 from discord import app_commands
 import json
 
+
 class TanjunTranslator(app_commands.Translator):
     def __init__(self):
         self.translations = {}

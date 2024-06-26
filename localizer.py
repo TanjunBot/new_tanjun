@@ -1,12 +1,16 @@
 import json
 from string import Template
 
+
 class Localizer:
     def __init__(self):
         self.translations = {}
-    
+
     def load_translations(self, locale):
-        """ Load the translations from a JSON file based on the specified locale. """
+        """
+        Load the translations from a
+        JSON file based on the specified locale.
+        """
         try:
             with open(f"locales/{locale}.json", "r", encoding="utf-8") as file:
                 return json.load(file)
@@ -18,7 +22,10 @@ class Localizer:
             return {}
 
     def get_nested_translation(self, translations, key):
-        """ Retrieve a nested translation using dot notation for nested keys. """
+        """
+        Retrieve a nested translation
+        using dot notation for nested keys.
+        """
         keys = key.split('.')
         translation = translations
         for k in keys:
@@ -29,12 +36,17 @@ class Localizer:
         return translation
 
     def localize(self, locale, key, **args):
-        """ Retrieve the localized text for the specified locale and format it with any arguments provided. """
+        """
+        Retrieve the localized text for the specified locale and
+        format it with any arguments provided.
+        """
+
         translations = self.load_translations(locale)
         template_string = self.get_nested_translation(translations, key)
         if template_string is None:
             return f"[{key}] not found in {locale} translations."
         template = Template(template_string)
         return template.safe_substitute(args)
+
 
 tanjunLocalizer = Localizer()

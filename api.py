@@ -1,5 +1,10 @@
 import mysql.connector
-from config import database_ip, database_password, database_user, database_schema
+from config import (
+    database_ip,
+    database_password,
+    database_user,
+    database_schema
+)
 import json
 
 
@@ -84,13 +89,22 @@ def execute_action(query, params=None):
 
 
 def add_warning(guild_id, user_id, reason, expiration_date=None):
-    query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at) VALUES (%s, %s, %s, %s)"
+    query = (
+        "INSERT INTO warnings (guild_id, user_id, reason, expires_at) "
+        "VALUES (%s, %s, %s, %s)"
+    )
+
     params = (guild_id, user_id, reason, expiration_date)
     execute_action(query, params)
 
 
 def get_warnings(guild_id, user_id):
-    query = "SELECT COUNT(*), GROUP_CONCAT(reason SEPARATOR '|') FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
+    query = (
+        "SELECT COUNT(*), GROUP_CONCAT(reason SEPARATOR '|') "
+        "FROM warnings "
+        "WHERE guild_id = %s AND user_id = %s "
+        "AND (expires_at IS NULL OR expires_at > NOW())"
+    )
     params = (guild_id, user_id)
     result = execute_query(query, params)
     count, reasons = result[0]
@@ -105,7 +119,12 @@ def clear_warnings(guild_id, user_id):
 
 
 def get_detailed_warnings(guild_id, user_id):
-    query = "SELECT id, reason, created_at, expires_at FROM warnings WHERE guild_id = %s AND user_id = %s ORDER BY created_at DESC"
+    query = (
+        "SELECT id, reason, created_at, expires_at "
+        "FROM warnings "
+        "WHERE guild_id = %s AND user_id = %s "
+        "ORDER BY created_at DESC"
+    )
     params = (guild_id, user_id)
     result = execute_query(query, params)
     return [(row[0], row[1], row[2], row[3]) for row in result]
@@ -126,7 +145,8 @@ def set_warn_config(
     ban_threshold,
 ):
     query = (
-        "INSERT INTO warn_config (guild_id, expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold) "
+        "INSERT INTO warn_config (guild_id, expiration_days, "
+        "timeout_threshold, timeout_duration, kick_threshold, ban_threshold) "
         "VALUES (%s, %s, %s, %s, %s, %s) "
         "ON DUPLICATE KEY UPDATE "
         "expiration_days = VALUES(expiration_days), "
@@ -171,13 +191,20 @@ def get_warn_config(guild_id):
 
 
 def save_channel_overwrites(channel_id, role_id, overwrites):
-    query = "INSERT INTO channel_overwrites (channel_id, role_id, overwrites) VALUES (%s, %s, %s)"
+    query = (
+        "INSERT INTO channel_overwrites (channel_id, role_id, overwrites) "
+        "VALUES (%s, %s, %s)"
+    )
     params = (channel_id, role_id, json.dumps(overwrites))
     execute_action(query, params)
 
 
 def get_channel_overwrites(channel_id):
-    query = "SELECT role_id, overwrites FROM channel_overwrites WHERE channel_id = %s"
+    query = (
+        "SELECT role_id, overwrites "
+        "FROM channel_overwrites "
+        "WHERE channel_id = %s"
+    )
     params = (channel_id,)
     result = execute_query(query, params)
     return {row[0]: json.loads(row[1]) for row in result}

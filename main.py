@@ -1,19 +1,21 @@
 import discord
 from discord.ext import commands
-import os 
+import os
 import asyncio
 import config
 from translator import TanjunTranslator
 import api
+
 
 async def loadextension(bot, extensionname):
     extensionname = f"extensions.{extensionname}"
     try:
         await bot.load_extension(extensionname)
         print(f"{extensionname} loaded!")
-    except Exception as e:
+    except Exception:
         print(f"Failed to load extension {extensionname}")
         raise
+
 
 async def loadTranslator(bot):
     print("loading translator...")
@@ -44,9 +46,12 @@ if __name__ == "__main__":
             asyncio.run(loadextension(bot, extension))
     asyncio.run(loadTranslator(bot))
 
+
 @bot.event
 async def on_ready():
     print("Bot is running!")
-    await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
+    await bot.change_presence(activity=discord.Game(
+        name=config.activity.format(version=config.version)
+        ))
 
 bot.run(config.token)

@@ -7,7 +7,6 @@ from typing import (
     Mapping,
     Optional,
     Protocol,
-    TYPE_CHECKING,
     TypeVar,
     Union,
 )
@@ -18,12 +17,10 @@ from pyparsing import (
     Word,
     Optional as Opt,
     Combine,
-    Group,
     ZeroOrMore,
     Forward,
     nums,
     alphas,
-    oneOf,
 )
 import math
 import operator
@@ -31,6 +28,8 @@ from config import tenorAPIKey, tenorCKey
 import aiohttp
 import random
 import re
+from typing_extensions import Self
+
 
 class EmbedProxy:
     def __init__(self, layer: Dict[str, Any]):
@@ -41,7 +40,8 @@ class EmbedProxy:
 
     def __repr__(self) -> str:
         inner = ", ".join(
-            (f"{k}={v!r}" for k, v in self.__dict__.items() if not k.startswith("_"))
+            (f"{k}={v!r}" for k, v in self.__dict__.items()
+             if not k.startswith("_"))
         )
         return f"EmbedProxy({inner})"
 
@@ -51,8 +51,6 @@ class EmbedProxy:
     def __eq__(self, other: object) -> bool:
         return isinstance(other, EmbedProxy) and self.__dict__ == other.__dict__
 
-
-from typing_extensions import Self
 
 T = TypeVar("T")
 
@@ -196,10 +194,12 @@ class tanjunEmbed:
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> Self:
-        """Converts a :class:`dict` to a :class:`Embed` provided it is in the
+        """
+        Converts a :class:`dict` to a :class:`Embed` provided it is in the
         format that Discord expects it to be in.
 
-        You can find out about this format in the :ddocs:`official Discord documentation <resources/channel#embed-object>`.
+        You can find out about this format in the :ddocs:`official
+        Discord documentation <resources/channel#embed-object>`.
 
         Parameters
         -----------
@@ -329,7 +329,8 @@ class tanjunEmbed:
             self._colour = discord.Colour(value=value)
         else:
             raise TypeError(
-                f"Expected discord.Colour, int, or None but received {value.__class__.__name__} instead."
+                f"Expected discord.Colour, int,"
+                f"or None but received {value.__class__.__name__} instead."
             )
 
     color = colour
@@ -348,7 +349,8 @@ class tanjunEmbed:
             self._timestamp = None
         else:
             raise TypeError(
-                f"Expected datetime.datetime or None received {value.__class__.__name__} instead"
+                f"Expected datetime.datetime or None"
+                f"received {value.__class__.__name__} instead"
             )
 
     @property
@@ -526,7 +528,11 @@ class tanjunEmbed:
         return EmbedProxy(getattr(self, "_author", {}))  # type: ignore
 
     def set_author(
-        self, *, name: Any, url: Optional[Any] = None, icon_url: Optional[Any] = None
+    self,
+    *,
+    name: Any,
+    url: Optional[Any] = None,
+    icon_url: Optional[Any] = None
     ) -> Self:
         """Sets the author for the embed content.
 
@@ -573,14 +579,17 @@ class tanjunEmbed:
 
     @property
     def fields(self) -> List[_EmbedFieldProxy]:
-        """List[``EmbedProxy``]: Returns a :class:`list` of ``EmbedProxy`` denoting the field contents.
+        """
+        List[``EmbedProxy``]: Returns a :class:`list`
+        of ``EmbedProxy`` denoting the field contents.
 
         See :meth:`add_field` for possible values you can access.
 
         If the attribute has no value then ``None`` is returned.
         """
         # Lying to the type checker for better developer UX.
-        return [EmbedProxy(d) for d in getattr(self, "_fields", [])]  # type: ignore
+        return [EmbedProxy(d) for d in getattr(self, "_fields", [])]
+        # type: ignore
 
     def add_field(self, *, name: Any, value: Any, inline: bool = True) -> Self:
         """Adds a field to the embed object.
@@ -694,9 +703,11 @@ class tanjunEmbed:
     def set_field_at(
         self, index: int, *, name: Any, value: Any, inline: bool = True
     ) -> Self:
-        """Modifies a field to the embed object.
+        """
+        Modifies a field to the embed object.
 
-        The index must point to a valid pre-existing field. Can only be up to 25 fields.
+        The index must point to a valid pre-existing field.
+        Can only be up to 25 fields.
 
         This function returns the class instance to allow for fluent-style
         chaining.
@@ -778,12 +789,14 @@ class tanjunEmbed:
         if self.title:
             result["title"] = self.title
 
-        return result  # type: ignore # This payload is equivalent to the EmbedData type
+        return result  # type: ignore
+        # This payload is equivalent to the EmbedData type
 
 
 class commandInfo:
     def __init__(
-        self, user, channel, guild, command, locale, message, permissions, reply, client
+        self, user, channel, guild, command, locale,
+        message, permissions, reply, client
     ):
         self.user = user
         self.channel = channel
@@ -835,9 +848,13 @@ class NumericStringParser(object):
         ) | (lpar + expr.suppress() + rpar).setParseAction(self.pushUMinus)
 
         factor = Forward()
-        factor << atom + ZeroOrMore((expop + factor).setParseAction(self.pushFirst))
+        factor << atom + ZeroOrMore((expop + factor).setParseAction(
+            self.pushFirst
+            ))
 
-        term = factor + ZeroOrMore((multop + factor).setParseAction(self.pushFirst))
+        term = factor + ZeroOrMore((multop + factor).setParseAction(
+            self.pushFirst
+            ))
         expr << term + ZeroOrMore((addop + term).setParseAction(self.pushFirst))
 
         self.bnf = expr
@@ -927,30 +944,31 @@ async def getGif(query: str, amount: int = 1, limit: int = 10):
 
         if r is None:
             return []
-        
+
         random.shuffle(r["results"])
 
         return [r["results"][i]["itemurl"] for i in range(amount)]
-    
+
+
 def get_highest_exponent(polynomial):
     # Remove spaces
     polynomial = polynomial.replace(' ', '')
-    
+
     # Regular expression to match terms
     term_pattern = re.compile(r'([+-]?\d*)(x(\^(\d+))?)?')
-    
+
     # Find all matches
     terms = term_pattern.findall(polynomial)
-    
+
     highest_exponent = 0
-    
+
     for term in terms:
         coefficient, variable, _, exponent = term
-        
+
         if variable:  # term contains 'x'
             if exponent:  # term contains 'x^n'
                 highest_exponent = max(highest_exponent, int(exponent))
             else:  # term is 'x' which is x^1
                 highest_exponent = max(highest_exponent, 1)
-    
+
     return highest_exponent
