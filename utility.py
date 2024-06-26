@@ -956,6 +956,11 @@ def get_highest_exponent(polynomial):
     
     return highest_exponent
 
+def checkIfHasPro(guildid: int):
+    if guildid == 0:
+        return False
+    return True
+
 def missingLocalization(locale: str):
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new-Tanjun")

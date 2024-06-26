@@ -1343,6 +1343,18 @@
         }
     },
     "minigames": {
+        "setcountingchannel": {
+            "error": {
+                "no_pro": {
+                    "title": "Es gibt bereits einen Counting Channel.",
+                    "description": "Es gibt bereits einen Counting Channel in diesem Server. Entferne ihn bevor du einen neuen setzt. \n## Tanjun Pro Server können mehrere Counting Channels haben."
+                }
+            },
+            "success": {
+                "title": "Counting Kanal gesetzt",
+                "description": "Der Kanal ${channel} ist jetzt ein Counting Kanal."
+            }
+        },
         "counting": {
             "opted_out": "Du hast die Nachrichtenverfolgung ausgeschaltet. Das heißt dass der Bot deine Nachrichten nicht lesen wird. Solltest du mit counten, musst du die Nachrichtenverfolgung wieder anschalten. Andernfalls kannst du nicht mit machen.",
             "reasons": {
@@ -1351,6 +1363,18 @@
                 "not_number": "Die Nachricht enthielt keine Zahl.",
                 "wrong_number": "Die Zahl war nicht die nächste in der Reihe.",
                 "double_counter": "Die Person hat bereits gezählt."
+            }
+        }
+    },
+    "games": {
+        "setcountingch": {
+            "name": "setcountingch",
+            "description": "Setzt den Counting-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "channel",
+                    "description": "Der Kanal, in dem das Counting-Spiel stattfinden soll"
+                }
             }
         }
     },
