@@ -7,9 +7,8 @@ from localizer import tanjunLocalizer
 from typing import List, Optional
 
 from commands.minigames.setcountingchannel import setCountingChannel as setCountingChannelCommand
-
 from commands.minigames.removecountingchannel import removeCountingChannel as removeCountingChannelCommand
-
+from commands.minigames.setcountingprogress import setCountingProgress as setCountingProgressCommand
 
 
 class CountingCommands(discord.app_commands.Group):
@@ -68,6 +67,33 @@ class CountingCommands(discord.app_commands.Group):
             channel = ctx.channel
 
         await removeCountingChannelCommand(commandInfo, channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("games_setcountingprogress_name"),
+        description=app_commands.locale_str("games_setcountingprogress_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("games_setcountingprogress_params_channel_description"),
+        progress=app_commands.locale_str("games_setcountingprogress_params_progress_description"),
+    )
+    async def setcountingprogress(self, ctx, channel: discord.TextChannel = None, progress: int = 0):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await setCountingProgressCommand(commandInfo, channel, progress)
 
 
 class minigameCommands(discord.app_commands.Group): ...

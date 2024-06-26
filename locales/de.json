@@ -1404,6 +1404,26 @@
                 "title": "Dieser Kanal ist kein Counting-Kanal mehr",
                 "description": "Ein Moderator hat diesen Kanal als Counting-Kanal entfernt. Normale Nachrichten können jetzt wieder geschrieben werden."
             }
+        },
+        "setcountingprogress": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Counting-Kanal",
+                    "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                },
+                "invalid_progress": {
+                    "title": "Ungültiger Fortschritt",
+                    "description": "Der Fortschritt muss eine nicht-negative Zahl sein."
+                }
+            },
+            "success": {
+                "title": "Counting-Fortschritt gesetzt",
+                "description": "Der Fortschritt für den Kanal {channel} wurde auf {progress} gesetzt."
+            },
+            "channel_message": {
+                "title": "Neuer Counting-Fortschritt",
+                "description": "Ein Moderator hat den Counting-Fortschritt auf {progress} gesetzt. Bitte fahrt mit dieser Zahl fort!"
+            }
         }
     },
     "games": {
@@ -1424,6 +1444,20 @@
                 "channel": {
                     "name": "channel",
                     "description": "Der Kanal, der als Counting-Kanal entfernt werden soll"
+                }
+            }
+        },
+        "setcountingprogress": {
+            "name": "setcountingprogress",
+            "description": "Setzt den Fortschritt für einen Counting-Kanal",
+            "params": {
+                "channel": {
+                    "name": "channel",
+                    "description": "Der Counting-Kanal, dessen Fortschritt gesetzt werden soll"
+                },
+                "progress": {
+                    "name": "fortschritt",
+                    "description": "Der neue Fortschritt für den Counting-Kanal"
                 }
             }
         }
