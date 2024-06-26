@@ -35,6 +35,11 @@ def create_tables():
         "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
         ") ENGINE=InnoDB"
     )
+    tables["message_tracking_opt_out"] = (
+        "CREATE TABLE IF NOT EXISTS `message_tracking_opt_out` ("
+        "  `user_id` VARCHAR(20) PRIMARY KEY"
+        ") ENGINE=InnoDB"
+    )
 
     connection = mysql.connector.connect(
         host=database_ip,
@@ -186,4 +191,20 @@ def get_channel_overwrites(channel_id):
 def clear_channel_overwrites(channel_id):
     query = "DELETE FROM channel_overwrites WHERE channel_id = %s"
     params = (channel_id,)
+    execute_action(query, params)
+
+def check_if_opted_out(user_id):
+    query = "SELECT * FROM message_tracking_opt_out WHERE user_id = %s"
+    params = (user_id,)
+    result = execute_query(query, params)
+    return len(result) > 0
+
+def opt_out(user_id):
+    query = "INSERT INTO message_tracking_opt_out (user_id) VALUES (%s)"
+    params = (user_id,)
+    execute_action(query, params)
+
+def opt_in(user_id):
+    query = "DELETE FROM message_tracking_opt_out WHERE user_id = %s"
+    params = (user_id,)
     execute_action(query, params)
