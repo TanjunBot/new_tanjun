@@ -46,6 +46,7 @@ def create_tables():
         "  `progress` INT UNSIGNED DEFAULT 0,"
         "  `last_counter_id` VARCHAR(20) DEFAULT NULL,"
         "  `guild_id` VARCHAR(20)"
+        ") ENGINE=InnoDB"
     )
 
     connection = mysql.connector.connect(

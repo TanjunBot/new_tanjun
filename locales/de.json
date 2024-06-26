@@ -1384,6 +1384,22 @@
                 "wrong_number": "Die Zahl war nicht die nächste in der Reihe.",
                 "double_counter": "Die Person hat bereits gezählt."
             }
+        },
+        "removecountingchannel": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Counting-Kanal",
+                    "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                }
+            },
+            "success": {
+                "title": "Counting-Kanal entfernt",
+                "description": "Der Kanal {channel} ist jetzt kein Counting-Kanal mehr."
+            },
+            "channel_message": {
+                "title": "Dieser Kanal ist kein Counting-Kanal mehr",
+                "description": "Ein Moderator hat diesen Kanal als Counting-Kanal entfernt. Normale Nachrichten können jetzt wieder geschrieben werden."
+            }
         }
     },
     "games": {
@@ -1394,6 +1410,16 @@
                 "channel": {
                     "name": "channel",
                     "description": "Der Kanal, in dem das Counting-Spiel stattfinden soll"
+                }
+            }
+        },
+        "removecountingch": {
+            "name": "removecountingch",
+            "description": "Entfernt den Counting-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "channel",
+                    "description": "Der Kanal, der als Counting-Kanal entfernt werden soll"
                 }
             }
         }
