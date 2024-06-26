@@ -2,8 +2,8 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from localizer import tanjunLocalizer
-from typing import List, Optional
+# from localizer import tanjunLocalizer
+from typing import List  # , Optional
 
 from commands.math.calc import calc as calcCommand
 from commands.math.calculator import calculator_command
@@ -88,7 +88,9 @@ class mathCommands(discord.app_commands.Group):
         description=app_commands.locale_str("math_calc_description"),
     )
     @app_commands.describe(
-        expression=app_commands.locale_str("math_calc_params_expression_description"),
+        expression=app_commands.locale_str(
+            "math_calc_params_expression_description"
+        ),
     )
     async def calc(self, ctx, expression: str):
         await ctx.response.defer()
@@ -111,7 +113,9 @@ class mathCommands(discord.app_commands.Group):
         description=app_commands.locale_str("math_calculator_description"),
     )
     @app_commands.describe(
-        equation=app_commands.locale_str("math_calculator_params_equation_description"),
+        equation=app_commands.locale_str(
+            "math_calculator_params_equation_description"
+        ),
     )
     async def calculator(self, ctx, equation: str = ""):
         await ctx.response.defer()
@@ -134,8 +138,12 @@ class mathCommands(discord.app_commands.Group):
         description=app_commands.locale_str("math_num2word_description"),
     )
     @app_commands.describe(
-        number=app_commands.locale_str("math_num2word_params_number_description"),
-        locale=app_commands.locale_str("math_num2word_params_locale_description"),
+        number=app_commands.locale_str(
+            "math_num2word_params_number_description"
+        ),
+        locale=app_commands.locale_str(
+            "math_num2word_params_locale_description"
+        ),
     )
     @app_commands.autocomplete(locale=num2wordLocaleAutocomplete)
     async def num2word(self, ctx, number: int, locale: str = None):
@@ -162,9 +170,15 @@ class mathCommands(discord.app_commands.Group):
         description=app_commands.locale_str("mathrandom_number_description"),
     )
     @app_commands.describe(
-        min=app_commands.locale_str("math_randomnumber_params_min_description"),
-        max=app_commands.locale_str("math_randomnumber_params_max_description"),
-        amount=app_commands.locale_str("math_randomnumber_params_amount_description"),
+        min=app_commands.locale_str(
+            "math_randomnumber_params_min_description"
+        ),
+        max=app_commands.locale_str(
+            "math_randomnumber_params_max_description"
+        ),
+        amount=app_commands.locale_str(
+            "math_randomnumber_params_amount_description"
+        ),
     )
     async def random_number(self, ctx, min: int, max: int, amount: int = 1):
         await ctx.response.defer()
@@ -187,11 +201,19 @@ class mathCommands(discord.app_commands.Group):
         description=app_commands.locale_str("math_plotfunction_description"),
     )
     @app_commands.describe(
-        func=app_commands.locale_str("math_plot_functionparams_func_description"),
-        x_min=app_commands.locale_str("math_plot_functionparams_x_min_description"),
-        x_max=app_commands.locale_str("math_plot_functionparams_x_max_description"),
+        func=app_commands.locale_str(
+            "math_plot_functionparams_func_description"
+        ),
+        x_min=app_commands.locale_str(
+            "math_plot_functionparams_x_min_description"
+        ),
+        x_max=app_commands.locale_str(
+            "math_plot_functionparams_x_max_description"
+        ),
     )
-    async def plot_function(self, ctx, func: str, x_min: float = None, x_max: float = None):
+    async def plot_function(
+        self, ctx, func: str, x_min: float = None, x_max: float = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -212,7 +234,9 @@ class mathCommands(discord.app_commands.Group):
         description=app_commands.locale_str("math_faculty_description"),
     )
     @app_commands.describe(
-        number=app_commands.locale_str("math_faculty_params_number_description"),
+        number=app_commands.locale_str(
+            "math_faculty_params_number_description"
+        ),
     )
     async def faculty(self, ctx, number: app_commands.Range[int, 0, 100]):
         await ctx.response.defer()
@@ -322,7 +346,7 @@ class mathCog(commands.Cog):
     async def on_ready(self):
         mathcmds = mathCommands(name="math", description="Math is fun!")
         self.bot.tree.add_command(mathcmds)
-    
+
     @commands.command(name="faculty", aliases=["fac"])
     async def faculty(self, ctx, number: int):
         commandInfo = utility.commandInfo(
@@ -330,7 +354,9 @@ class mathCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.locale if hasattr(
+                ctx.guild, "locale"
+            ) else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.send,
@@ -338,8 +364,6 @@ class mathCog(commands.Cog):
         )
 
         await faculty_command(commandInfo, number)
-
-    
 
 
 async def setup(bot):
