@@ -1,7 +1,8 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from api import add_warning, get_warnings
+from api import add_warning, get_warnings, get_warn_config
+from datetime import timedelta
 
 async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, reason: str = None):
     if not commandInfo.user.guild_permissions.kick_members:
@@ -49,6 +50,22 @@ async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, re
         ),
     )
     await commandInfo.reply(embed=embed)
+
+    # Check for escalated actions based on warn count
+    warn_config = get_warn_config(guild_id)
+    if warn_config:
+        if warn_count >= warn_config['ban_threshold']:
+            # Ban the user
+            await member.ban(reason=f"Reached {warn_count} warnings")
+        elif warn_count >= warn_config['kick_threshold']:
+            # Kick the user 
+            await member.kick(reason=f"Reached {warn_count} warnings")
+        elif warn_count >= warn_config['timeout_threshold']:
+            # Timeout the user
+            timeout_duration = warn_config['timeout_duration']
+            duration = timedelta(minutes=timeout_duration)
+            until = discord.utils.utcnow() + duration
+            await member.timeout(until, reason=f"Reached {warn_count} warnings")
 
     # DM the warned user
     try:

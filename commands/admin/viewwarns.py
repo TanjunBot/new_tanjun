@@ -1,9 +1,10 @@
 import discord
-from discord.ui import View, Button
+from discord.ui import View, Button 
 import utility
 from localizer import tanjunLocalizer
-from api import get_detailed_warnings, remove_warning
+from api import get_detailed_warnings, remove_warning, get_warn_config
 import math
+from datetime import datetime
 
 WARNINGS_PER_PAGE = 5
 
@@ -38,7 +39,7 @@ class WarningView(View):
             prev_button.callback = self.prev_page
             self.add_item(prev_button)
 
-        for i, (warning_id, _, _) in enumerate(self.warnings[start:end], start=start+1):
+        for i, (warning_id, _, _, expires_at) in enumerate(self.warnings[start:end], start=start+1):
             button = Button(
                 label=tanjunLocalizer.localize(
                     self.commandInfo.locale, 
@@ -46,7 +47,8 @@ class WarningView(View):
                     number=i
                 ),
                 custom_id=f"remove_{warning_id}", 
-                style=discord.ButtonStyle.danger
+                style=discord.ButtonStyle.danger,
+                disabled=expires_at is not None and datetime.now() > expires_at
             )
             button.callback = self.remove_warning_callback
             self.add_item(button)
@@ -108,11 +110,15 @@ def create_warnings_embed(commandInfo, member, warnings, page):
         ),
         description=tanjunLocalizer.localize(
             commandInfo.locale, "commands.admin.viewwarns.description",
-            count=len(warnings)
+            count=len(warnings)  
         )
     )
     
-    for i, (_, reason, created_at) in enumerate(current_warnings, start=start+1):
+    for i, (_, reason, created_at, expires_at) in enumerate(current_warnings, start=start+1):
+        expired = expires_at is not None and datetime.now() > expires_at
+        expiration_str = f"<t:{int(expires_at.timestamp())}:D>" if expires_at else "Never" 
+        expiration_str = f"~~{expiration_str}~~" if expired else expiration_str
+
         embed.add_field(
             name=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.viewwarns.warningEntry",
@@ -121,7 +127,8 @@ def create_warnings_embed(commandInfo, member, warnings, page):
             value=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.viewwarns.warningDetails",
                 reason=reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.noReason"),
-                date=f"<t:{int(created_at.timestamp())}:D>"
+                date=f"<t:{int(created_at.timestamp())}:D>",
+                expiration=expiration_str
             ),
             inline=False
         )
@@ -129,8 +136,9 @@ def create_warnings_embed(commandInfo, member, warnings, page):
     embed.set_footer(text=tanjunLocalizer.localize(
         commandInfo.locale, "commands.admin.viewwarns.pageFooter",
         current=page+1,
-        total=math.ceil(len(warnings)/WARNINGS_PER_PAGE)
+        total=math.ceil(len(warnings)/WARNINGS_PER_PAGE)   
     ))
+
     return embed
 
 async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member):
@@ -158,7 +166,7 @@ async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member
                 commandInfo.locale, "commands.admin.viewwarns.noWarnings.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                commandInfo.locale,  
                 "commands.admin.viewwarns.noWarnings.description",
                 user=member.name
             ),

@@ -429,43 +429,31 @@
                 "channelUnlockedMessage": "🔓 Dieser Kanal wurde von einem Moderator entsperrt. Die ursprünglichen Berechtigungen wurden wiederhergestellt."
             },
             "warn": {
-                "missingPermission": {
-                    "title": "Fehlende Berechtigung",
-                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Verwarnungen auszusprechen."
+                "add": {
+                    "name": "hinzufügen",
+                    "description": "Verwarnt einen Benutzer",
+                    "params": {
+                        "member": {
+                            "description": "Der zu verwarnende Benutzer"
+                        },
+                        "reason": {
+                            "description": "Grund für die Verwarnung (optional)"
+                        }
+                    }
                 },
-                "targetTooHigh": {
-                    "title": "Ziel hat zu hohe Rolle",
-                    "description": "Du kannst keine Verwarnung für ein Mitglied aussprechen, das eine höhere oder gleiche Rolle wie du hat."
+                "view": {
+                    "name": "anzeigen",
+                    "description": "Zeigt die Verwarnungen eines Benutzers an",
+                    "params": {
+                        "member": {
+                            "description": "Der Benutzer, dessen Verwarnungen angezeigt werden sollen"
+                        }
+                    }
                 },
-                "success": {
-                    "title": "Verwarnung ausgesprochen",
-                    "description": "${user} wurde verwarnt. Grund: ${reason}\nDies ist die ${count}. Verwarnung für diesen Benutzer."
-                },
-                "noReasonProvided": "Kein Grund angegeben",
-                "dmNotification": {
-                    "title": "Du wurdest verwarnt",
-                    "description": "Du hast eine Verwarnung auf dem Server ${guild} erhalten.\nGrund: ${reason}\nDies ist deine ${count}. Verwarnung auf diesem Server."
+                "config": {
+                    "name": "konfigurieren",
+                    "description": "Konfiguriert die Einstellungen für Verwarnungen"
                 }
-            },
-            "viewwarns": {
-                "missingPermission": {
-                    "title": "Fehlende Berechtigung",
-                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Verwarnungen anzuzeigen."
-                },
-                "noWarnings": {
-                    "title": "Keine Verwarnungen",
-                    "description": "${user} hat keine Verwarnungen auf diesem Server."
-                },
-                "title": "Verwarnungen für ${user}",
-                "description": "Insgesamt ${count} Verwarnung(en)",
-                "warningEntry": "Verwarnung ${number}",
-                "warningDetails": "Grund: ${reason}\nDatum: ${date}",
-                "noReason": "Kein Grund angegeben",
-                "pageFooter": "Seite ${current}/${total}",
-                "prevButton": "Vorherige",
-                "nextButton": "Nächste",
-                "removeButton": "Verwarnung ${number} entfernen",
-                "unauthorizedUser": "Du bist nicht berechtigt, mit diesen Schaltflächen zu interagieren."
             },
             "nuke": {
                 "missingPermission": {

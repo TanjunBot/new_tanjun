@@ -18,13 +18,83 @@ from commands.admin.nickname import change_nickname as changeNicknameCommand
 from commands.admin.slowmode import set_slowmode as setSlowmodeCommand
 from commands.admin.lock import lock_channel as lockChannelCommand
 from commands.admin.unlock import unlock_channel as unlockChannelCommand
-from commands.admin.warn import warn_user as warnUserCommand
-from commands.admin.viewwarns import view_warnings as viewWarningsCommand
 from commands.admin.nuke import nuke_channel as nukeChannelCommand
 from commands.admin.say import say as sayCommand
 from commands.admin.embedcreator import create_embed as createEmbedCommand
 from commands.admin.createemoji import create_emoji as createEmojiCommand
+from commands.admin.warn import warn_user as warnUserCommand
+from commands.admin.viewwarns import view_warnings as viewWarningsCommand
+from commands.admin.warnconfig import warn_config as warnConfigCommand
 
+class WarnCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("admin_warn_add_name"),
+        description=app_commands.locale_str("admin_warn_add_description"),
+    )
+    @app_commands.describe(
+        member=app_commands.locale_str("admin_warn_add_params_member_description"),
+        reason=app_commands.locale_str("admin_warn_add_params_reason_description"),
+    )
+    async def add(self, ctx, member: discord.Member, reason: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_warn_view_name"),
+        description=app_commands.locale_str("admin_warn_view_description"),
+    )
+    @app_commands.describe(
+        member=app_commands.locale_str("admin_warn_view_params_member_description"),
+    )
+    async def view(self, ctx, member: discord.Member):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await viewWarningsCommand(commandInfo=commandInfo, member=member)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_warn_config_name"),
+        description=app_commands.locale_str("admin_warn_config_description"),
+    )
+    async def config(self, ctx):
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.response.send_modal,
+            client=ctx.client,
+        )
+
+        await warnConfigCommand(commandInfo=commandInfo)
+        return
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -490,55 +560,6 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await unlockChannelCommand(commandInfo=commandInfo, channel=channel)
-        return
-
-    @app_commands.command(
-        name=app_commands.locale_str("admin_warn_name"),
-        description=app_commands.locale_str("admin_warn_description"),
-    )
-    @app_commands.describe(
-        member=app_commands.locale_str("admin_warn_params_member_description"),
-        reason=app_commands.locale_str("admin_warn_params_reason_description"),
-    )
-    async def warn(self, ctx, member: discord.Member, reason: str = None):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
-        )
-
-        await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
-        return
-
-    @app_commands.command(
-        name=app_commands.locale_str("admin_viewwarns_name"),
-        description=app_commands.locale_str("admin_viewwarns_description"),
-    )
-    @app_commands.describe(
-        member=app_commands.locale_str("admin_viewwarns_params_member_description"),
-    )
-    async def viewwarns(self, ctx, member: discord.Member):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
-        )
-
-        await viewWarningsCommand(commandInfo=commandInfo, member=member)
         return
 
     @app_commands.command(
@@ -1098,13 +1119,6 @@ class adminCog(commands.Cog):
         await nukeChannelCommand(commandInfo=commandInfo, channel=channel)
         return
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        admincmds = administrationCommands(
-            name="admin", description="Administriere den Server"
-        )
-        self.bot.tree.add_command(admincmds)
-
     @commands.command()
     async def say(self, ctx, channel: discord.TextChannel, *, message: str):
         commandInfo = utility.commandInfo(
@@ -1174,6 +1188,15 @@ class adminCog(commands.Cog):
             commandInfo=commandInfo, name=name, image_url=image_url, roles=list(roles)
         )
 
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        admincmds = administrationCommands(
+            name="admin", description="Administriere den Server"
+        )
+        warncmds = WarnCommands(name="warn", description="Verwalte Warnungen")
+        admincmds.add_command(warncmds)
+        self.bot.tree.add_command(admincmds)
 
 async def setup(bot):
     await bot.add_cog(adminCog(bot))
