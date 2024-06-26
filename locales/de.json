@@ -1000,7 +1000,7 @@
             }
         },
         "ban": {
-            "name": "bann",
+            "name": "ban",
             "description": "Bannt ein Mitglied vom Server",
             "params": {
                 "user": {
@@ -1012,7 +1012,7 @@
                     "description": "Der Grund für den Bann (optional)"
                 },
                 "deletemessagedays": {
-                    "name": "nachrichten_löschen_tage",
+                    "name": "nachrichten_loschen_tage",
                     "description": "Anzahl der Tage, für die Nachrichten gelöscht werden sollen (0-7, optional)"
                 }
             }
@@ -1342,5 +1342,7 @@
     "amount": "anzahl",
     "func": "funktion",
     "duration": "dauer",
-    "…": "…"
+    "…": "…",
+    "x_min": "x_min",
+    "x_max": "x_max"
 }
