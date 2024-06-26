@@ -1342,6 +1342,18 @@
             "description": "Aktiviert oder deaktiviert die Nachrichtenverfolgung für den Bot"
         }
     },
+    "minigames": {
+        "counting": {
+            "opted_out": "Du hast die Nachrichtenverfolgung ausgeschaltet. Das heißt dass der Bot deine Nachrichten nicht lesen wird. Solltest du mit counten, musst du die Nachrichtenverfolgung wieder anschalten. Andernfalls kannst du nicht mit machen.",
+            "reasons": {
+                "opted_out": "Die Person hat die Nachrichtenverfolgung ausgeschaltet.",
+                "empty": "Die Nachricht enthielt nichts.",
+                "not_number": "Die Nachricht enthielt keine Zahl.",
+                "wrong_number": "Die Zahl war nicht die nächste in der Reihe.",
+                "double_counter": "Die Person hat bereits gezählt."
+            }
+        }
+    },
     "Administrate the Server": "Verwalte den Server",
     "user": "benutzer",
     "role": "rolle",
