@@ -8,8 +8,8 @@ def create_tables():
     tables["warnings"] = (
         "CREATE TABLE IF NOT EXISTS `warnings` ("
         "  `id` INT AUTO_INCREMENT PRIMARY KEY,"
-        "  `guild_id` BIGINT NOT NULL,"
-        "  `user_id` BIGINT NOT NULL,"
+        "  `guild_id` VARCHAR(20) NOT NULL,"
+        "  `user_id` VARCHAR(20) NOT NULL,"
         "  `reason` VARCHAR(255),"
         "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
         "  `expires_at` TIMESTAMP NULL,"
@@ -18,7 +18,7 @@ def create_tables():
     )
     tables["warn_config"] = (
         "CREATE TABLE IF NOT EXISTS `warn_config` ("
-        "  `guild_id` BIGINT PRIMARY KEY,"
+        "  `guild_id` VARCHAR(20) PRIMARY KEY,"
         "  `expiration_days` INT DEFAULT 0,"
         "  `timeout_threshold` INT DEFAULT 0,"
         "  `timeout_duration` INT DEFAULT 0,"
@@ -29,8 +29,8 @@ def create_tables():
     tables["channel_overwrites"] = (
         "CREATE TABLE IF NOT EXISTS `channel_overwrites` ("
         "  `id` INT AUTO_INCREMENT PRIMARY KEY,"
-        "  `channel_id` BIGINT NOT NULL,"
-        "  `role_id` BIGINT NOT NULL,"
+        "  `channel_id` VARCHAR(20) NOT NULL,"
+        "  `role_id` VARCHAR(20) NOT NULL,"
         "  `overwrites` JSON,"
         "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
         ") ENGINE=InnoDB"
@@ -39,6 +39,12 @@ def create_tables():
         "CREATE TABLE IF NOT EXISTS `message_tracking_opt_out` ("
         "  `user_id` VARCHAR(20) PRIMARY KEY"
         ") ENGINE=InnoDB"
+    )
+    tables["counting"] = (
+        "CREATE TABLE IF NOT EXISTS `counting` ("
+        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
+        "  `progress` INT UNSIGNED DEFAULT 0,"
+        "  `last_counter_id` VARCHAR(20) DEFAULT NULL,"
     )
 
     connection = mysql.connector.connect(
@@ -193,18 +199,53 @@ def clear_channel_overwrites(channel_id):
     params = (channel_id,)
     execute_action(query, params)
 
+
 def check_if_opted_out(user_id):
     query = "SELECT * FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     result = execute_query(query, params)
     return len(result) > 0
 
+
 def opt_out(user_id):
     query = "INSERT INTO message_tracking_opt_out (user_id) VALUES (%s)"
     params = (user_id,)
     execute_action(query, params)
 
+
 def opt_in(user_id):
     query = "DELETE FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
+    execute_action(query, params)
+
+
+def set_counting_progress(channel_id, progress):
+    query = "INSERT INTO counting (channel_id, progress) VALUES (%s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress)"
+    params = (channel_id, progress)
+    execute_action(query, params)
+
+
+def get_counting_progress(channel_id):
+    query = "SELECT progress FROM counting WHERE channel_id = %s"
+    params = (channel_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else 0
+
+
+def increase_counting_progress(channel_id, last_counter_id):
+    query = "UPDATE counting SET progress = progress + 1, last_counter_id = %s WHERE channel_id = %s"
+    params = (last_counter_id, channel_id)
+    execute_action(query, params)
+
+
+def get_last_counter_id(channel_id):
+    query = "SELECT last_counter_id FROM counting WHERE channel_id = %s"
+    params = (channel_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else None
+
+
+def clear_counting(channel_id):
+    query = "DELETE FROM counting WHERE channel_id = %s"
+    params = (channel_id,)
     execute_action(query, params)
