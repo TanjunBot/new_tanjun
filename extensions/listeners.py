@@ -5,7 +5,7 @@ import utility
 from localizer import tanjunLocalizer
 from typing import List, Optional
 
-from minigames import counting
+from minigames.counting import counting
 
 class ListenerCog(commands.Cog):
 
