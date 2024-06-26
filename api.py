@@ -237,7 +237,7 @@ def get_counting_progress(channel_id):
     query = "SELECT progress FROM counting WHERE channel_id = %s"
     params = (channel_id,)
     result = execute_query(query, params)
-    return result[0][0] if result else 0
+    return result[0][0] if result else None
 
 
 def increase_counting_progress(channel_id, last_counter_id):

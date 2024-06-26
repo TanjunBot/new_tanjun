@@ -14,11 +14,18 @@ async def setCountingProgress(commandInfo: commandInfo, channel: discord.TextCha
         await commandInfo.reply(embed=embed)
         return
 
-    # Check if the new progress is valid (non-negative)
     if progress < 0:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.error.invalid_progress.title"),
             description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.error.invalid_progress.description"),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+
+    if progress > 1_000_000_000:
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.error.too_high.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.error.too_high.description"),
         )
         await commandInfo.reply(embed=embed)
         return

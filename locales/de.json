@@ -1398,7 +1398,7 @@
             },
             "success": {
                 "title": "Counting-Kanal entfernt",
-                "description": "Der Kanal {channel} ist jetzt kein Counting-Kanal mehr."
+                "description": "Der Kanal ${channel} ist jetzt kein Counting-Kanal mehr."
             },
             "channel_message": {
                 "title": "Dieser Kanal ist kein Counting-Kanal mehr",
@@ -1414,15 +1414,19 @@
                 "invalid_progress": {
                     "title": "Ungültiger Fortschritt",
                     "description": "Der Fortschritt muss eine nicht-negative Zahl sein."
+                },
+                "too_high": {
+                    "title": "Zu hoher Fortschritt",
+                    "description": "Der Fortschritt ist zu hoch. Bitte fahre mit einer niedrigeren Zahl fort. ||Es würde über 31 Jahre mit einer Nachricht pro Sekunde dauern, um bis zu `1.000.000.000` zu Zählen!||"
                 }
             },
             "success": {
                 "title": "Counting-Fortschritt gesetzt",
-                "description": "Der Fortschritt für den Kanal {channel} wurde auf {progress} gesetzt."
+                "description": "Der Fortschritt für den Kanal ${channel} wurde auf ${progress} gesetzt."
             },
             "channel_message": {
                 "title": "Neuer Counting-Fortschritt",
-                "description": "Ein Moderator hat den Counting-Fortschritt auf {progress} gesetzt. Bitte fahrt mit dieser Zahl fort!"
+                "description": "Ein Moderator hat den Counting-Fortschritt auf ${progress} gesetzt. Bitte fahrt mit dieser Zahl fort!"
             }
         }
     },
