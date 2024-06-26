@@ -1343,8 +1343,10 @@
         }
     },
     "minigames": {
-        "name": "Minispiele",
-        "description": "Spiele, die du mit allen Usern auf den Server spielen kannst",
+        "countingcmds": {
+            "name": "countingcmds",
+            "description": "Befehle für das Counting-Spiel"
+        },
         "setcountingchannel": {
             "error": {
                 "no_pro": {

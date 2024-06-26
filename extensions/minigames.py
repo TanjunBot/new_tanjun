@@ -84,8 +84,8 @@ class minigameCog(commands.Cog):
             name="minigame", description="Minigame Commands"
         )
         countingCmds = CountingCommands(
-            name=app_commands.locale_str("minigame_countingcmds_name"),
-            description=app_commands.locale_str("minigame_countingcmds_description"),
+            name=app_commands.locale_str("minigames_countingcmds_name"),
+            description=app_commands.locale_str("minigames_countingcmds_description"),
         )
         minigameCmds.add_command(countingCmds)
         self.bot.tree.add_command(minigameCmds)
