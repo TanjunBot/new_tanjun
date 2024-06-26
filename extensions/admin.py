@@ -25,6 +25,8 @@ from commands.admin.createemoji import create_emoji as createEmojiCommand
 from commands.admin.warn import warn_user as warnUserCommand
 from commands.admin.viewwarns import view_warnings as viewWarningsCommand
 from commands.admin.warnconfig import warn_config as warnConfigCommand
+from commands.admin.moverole import moverole as moveroleCommand
+
 
 class WarnCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -96,6 +98,7 @@ class WarnCommands(discord.app_commands.Group):
         await warnConfigCommand(commandInfo=commandInfo)
         return
 
+
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_addrole_name"),
@@ -105,7 +108,9 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_addrole_params_user_name"),
         role=app_commands.locale_str("admin_addrole_params_role_name"),
     )
-    async def addrole(self, ctx, user: discord.Member = None, role: discord.Role = None):
+    async def addrole(
+        self, ctx, user: discord.Member = None, role: discord.Role = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -130,7 +135,9 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_removerole_params_user_description"),
         role=app_commands.locale_str("admin_removerole_params_role_description"),
     )
-    async def removerole(self, ctx, user: discord.Member = None, role: discord.Role = None):
+    async def removerole(
+        self, ctx, user: discord.Member = None, role: discord.Role = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -225,6 +232,52 @@ class administrationCommands(discord.app_commands.Group):
 
         await deleteroleCommand(commandInfo=commandInfo, role=role, reason=reason)
         return
+
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_moverole_name"),
+        description=app_commands.locale_str("admin_moverole_description"),
+    )
+    @app_commands.describe(
+        role=app_commands.locale_str("admin_moverole_params_role_description"),
+        target_role=app_commands.locale_str(
+            "admin_moverole_params_targetrole_description"
+        ),
+        position=app_commands.locale_str("admin_moverole_params_position_description"),
+    )
+    @app_commands.choices(
+        position=[
+            app_commands.Choice(name=app_commands.locale_str("admin_moverole_params_position_above"), value="above"),
+            app_commands.Choice(name=app_commands.locale_str("admin_moverole_params_position_below"), value="below"),
+        ]
+    )
+    async def moverole(
+        self,
+        ctx,
+        role: discord.Role,
+        target_role: discord.Role,
+        position: app_commands.Choice[str],
+    ):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+
+        await moveroleCommand(
+            commandInfo=commandInfo,
+            role=role,
+            target_role=target_role,
+            position=position.value,
+    )
 
     @app_commands.command(
         name=app_commands.locale_str("admin_kick_name"),
@@ -1188,7 +1241,6 @@ class adminCog(commands.Cog):
             commandInfo=commandInfo, name=name, image_url=image_url, roles=list(roles)
         )
 
-
     @commands.Cog.listener()
     async def on_ready(self):
         admincmds = administrationCommands(
@@ -1197,6 +1249,7 @@ class adminCog(commands.Cog):
         warncmds = WarnCommands(name="warn", description="Verwalte Warnungen")
         admincmds.add_command(warncmds)
         self.bot.tree.add_command(admincmds)
+
 
 async def setup(bot):
     await bot.add_cog(adminCog(bot))

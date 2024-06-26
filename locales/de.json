@@ -150,6 +150,32 @@
                 },
                 "noRole": "Bitte erwähne eine Rolle, die gelöscht werden soll."
             },
+            "moverole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um Rollen zu verschieben."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Rollen zu verschieben."
+                },
+                "roleTooHigh": {
+                    "title": "Rolle zu hoch",
+                    "description": "Du kannst keine Rolle verschieben, die höher oder gleich deiner höchsten Rolle ist."
+                },
+                "success": {
+                    "title": "Rolle verschoben",
+                    "description": "Die Rolle ${role} wurde erfolgreich ${position} die Rolle ${target_role} verschoben."
+                },
+                "forbidden": {
+                    "title": "Verschieben nicht möglich",
+                    "description": "Der Bot konnte die Rolle nicht verschieben. Möglicherweise fehlen die erforderlichen Berechtigungen."
+                },
+                "error": {
+                    "title": "Fehler beim Verschieben",
+                    "description": "Beim Versuch, die Rolle zu verschieben, ist ein Fehler aufgetreten."
+                }
+            },
             "kick": {
                 "missingPermission": {
                     "title": "Fehlende Berechtigung",
@@ -930,6 +956,32 @@
                 "reason": {
                     "name": "grund",
                     "description": "Der Grund für das Löschen der Rolle"
+                }
+            }
+        },
+        "moverole": {
+            "name": "rolle_verschieben",
+            "description": "Verschiebt eine Rolle über oder unter eine andere Rolle",
+            "params": {
+                "role": {
+                    "name": "rolle",
+                    "description": "Die Rolle, die verschoben werden soll"
+                },
+                "targetrole": {
+                    "name": "zielrolle",
+                    "description": "Die Rolle, über oder unter die verschoben werden soll"
+                },
+                "position": {
+                    "name": "position",
+                    "description": "Ob die Rolle über oder unter die Zielrolle verschoben werden soll",
+                    "above": {
+                        "name": "über",
+                        "description": "Die Rolle wird über die Zielrolle verschoben"
+                    },
+                    "below": {
+                        "name": "unter",
+                        "description": "Die Rolle wird unter die Zielrolle verschoben"
+                    }
                 }
             }
         },
