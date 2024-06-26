@@ -22,11 +22,14 @@ class TanjunTranslator(app_commands.Translator):
             return None
 
         path = string.message.split('_')
+
         current = self.translations
         for part in path:
             if part in current:
                 current = current[part]
             else:
+                if string in current:
+                    return current[string]
                 return None
 
         if isinstance(current, str):

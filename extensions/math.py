@@ -159,7 +159,7 @@ class mathCommands(discord.app_commands.Group):
 
     @app_commands.command(
         name=app_commands.locale_str("math_randomnumber_name"),
-        description=app_commands.locale_str("mathrandom_number_description"),
+        description=app_commands.locale_str("math_randomnumber_description"),
     )
     @app_commands.describe(
         min=app_commands.locale_str("math_randomnumber_params_min_description"),
@@ -188,8 +188,8 @@ class mathCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         func=app_commands.locale_str("math_plot_functionparams_func_description"),
-        x_min=app_commands.locale_str("math_plot_functionparams_x_min_description"),
-        x_max=app_commands.locale_str("math_plot_functionparams_x_max_description"),
+        x_min=app_commands.locale_str("math_plot_functionparams_xmin_description"),
+        x_max=app_commands.locale_str("math_plot_functionparams_xmax_description"),
     )
     async def plot_function(self, ctx, func: str, x_min: float = None, x_max: float = None):
         await ctx.response.defer()
