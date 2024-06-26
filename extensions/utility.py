@@ -14,7 +14,7 @@ class MessageTrackingCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_messageoptout_description"),
     )
     async def messagetrackingoptout(self, ctx):
-        await ctx.response.defer()
+        await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
             channel=ctx.channel,
@@ -34,7 +34,7 @@ class MessageTrackingCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_messageoptin_description"),
     )
     async def messagetrackingoptin(self, ctx):
-        await ctx.response.defer()
+        await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
             channel=ctx.channel,

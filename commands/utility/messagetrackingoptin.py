@@ -11,7 +11,7 @@ async def optIn(commandInfo: commandInfo):
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.utility.messagetrackingoptin.error.not_opted_out",
+                "commands.utility.messagetrackingoptin.error.already_opted_in",
             ),
         )
         await commandInfo.reply(embed=embed)
