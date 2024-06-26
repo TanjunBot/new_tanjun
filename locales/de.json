@@ -1342,6 +1342,130 @@
             "description": "Aktiviert oder deaktiviert die Nachrichtenverfolgung für den Bot"
         }
     },
+    "minigames": {
+        "countingcmds": {
+            "name": "countingcmds",
+            "description": "Befehle für das Counting-Spiel"
+        },
+        "setcountingchannel": {
+            "error": {
+                "no_pro": {
+                    "title": "Es gibt bereits einen Counting Channel.",
+                    "description": "Es gibt bereits einen Counting Channel in diesem Server. Entferne ihn bevor du einen neuen setzt. \n## Tanjun Pro Server können mehrere Counting Channels haben."
+                },
+                "no_send_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu senden."
+                },
+                "no_message_delete_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu löschen."
+                },
+                "no_read_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
+                },
+                "no_view_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
+                }
+            },
+            "success": {
+                "title": "Counting Kanal gesetzt",
+                "description": "Der Kanal ${channel} ist jetzt ein Counting Kanal."
+            },
+            "introduction": {
+                "title": "Dies ist jetzt ein Counting Channel!",
+                "description": "Hier kann ab jetzt bis in die Unendlichkeit und noch viel weiter gezählt werden! ||theoretisch nur bis `4.294.967.295`||\nZähle dafür einfach immer um 1 hoch. Wenn du dich vertippst, lösche ich deine Nachricht. Normale Nachrichten können hier nicht mehr geschrieben werden!\n\nViel Spaß beim Zählen!"
+            }
+        },
+        "counting": {
+            "opted_out": "Du hast die Nachrichtenverfolgung ausgeschaltet. Das heißt dass der Bot deine Nachrichten nicht lesen wird. Solltest du mit counten, musst du die Nachrichtenverfolgung wieder anschalten. Andernfalls kannst du nicht mit machen.",
+            "reasons": {
+                "opted_out": "Die Person hat die Nachrichtenverfolgung ausgeschaltet.",
+                "empty": "Die Nachricht enthielt nichts.",
+                "not_number": "Die Nachricht enthielt keine Zahl.",
+                "wrong_number": "Die Zahl war nicht die nächste in der Reihe.",
+                "double_counter": "Die Person hat bereits gezählt."
+            }
+        },
+        "removecountingchannel": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Counting-Kanal",
+                    "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                }
+            },
+            "success": {
+                "title": "Counting-Kanal entfernt",
+                "description": "Der Kanal ${channel} ist jetzt kein Counting-Kanal mehr."
+            },
+            "channel_message": {
+                "title": "Dieser Kanal ist kein Counting-Kanal mehr",
+                "description": "Ein Moderator hat diesen Kanal als Counting-Kanal entfernt. Normale Nachrichten können jetzt wieder geschrieben werden."
+            }
+        },
+        "setcountingprogress": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Counting-Kanal",
+                    "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                },
+                "invalid_progress": {
+                    "title": "Ungültiger Fortschritt",
+                    "description": "Der Fortschritt muss eine nicht-negative Zahl sein."
+                },
+                "too_high": {
+                    "title": "Zu hoher Fortschritt",
+                    "description": "Der Fortschritt ist zu hoch. Bitte fahre mit einer niedrigeren Zahl fort. ||Es würde über 31 Jahre mit einer Nachricht pro Sekunde dauern, um bis zu `1.000.000.000` zu Zählen!||"
+                }
+            },
+            "success": {
+                "title": "Counting-Fortschritt gesetzt",
+                "description": "Der Fortschritt für den Kanal ${channel} wurde auf ${progress} gesetzt."
+            },
+            "channel_message": {
+                "title": "Neuer Counting-Fortschritt",
+                "description": "Ein Moderator hat den Counting-Fortschritt auf ${progress} gesetzt. Bitte fahrt mit dieser Zahl fort!"
+            }
+        }
+    },
+    "games": {
+        "setcountingch": {
+            "name": "setcountingch",
+            "description": "Setzt den Counting-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "channel",
+                    "description": "Der Kanal, in dem das Counting-Spiel stattfinden soll"
+                }
+            }
+        },
+        "removecountingch": {
+            "name": "removecountingch",
+            "description": "Entfernt den Counting-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "channel",
+                    "description": "Der Kanal, der als Counting-Kanal entfernt werden soll"
+                }
+            }
+        },
+        "setcountingprogress": {
+            "name": "setcountingprogress",
+            "description": "Setzt den Fortschritt für einen Counting-Kanal",
+            "params": {
+                "channel": {
+                    "name": "channel",
+                    "description": "Der Counting-Kanal, dessen Fortschritt gesetzt werden soll"
+                },
+                "progress": {
+                    "name": "fortschritt",
+                    "description": "Der neue Fortschritt für den Counting-Kanal"
+                }
+            }
+        }
+    },
     "Administrate the Server": "Verwalte den Server",
     "user": "benutzer",
     "role": "rolle",
@@ -1382,5 +1506,8 @@
     "x_min": "x_min",
     "x_max": "x_max",
     "utilitycmd": "verschiedenes",
-    "Utility Commands": "Verschiedene Befehle"
+    "Utility Commands": "Verschiedene Befehle",
+    "minigame": "minispiel",
+    "Minigame Commands": "Minispiel Befehle",
+    "progress": "fortschritt"
 }

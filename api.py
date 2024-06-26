@@ -45,6 +45,8 @@ def create_tables():
         "  `channel_id` VARCHAR(20) PRIMARY KEY,"
         "  `progress` INT UNSIGNED DEFAULT 0,"
         "  `last_counter_id` VARCHAR(20) DEFAULT NULL,"
+        "  `guild_id` VARCHAR(20)"
+        ") ENGINE=InnoDB"
     )
 
     connection = mysql.connector.connect(
@@ -219,17 +221,23 @@ def opt_in(user_id):
     execute_action(query, params)
 
 
-def set_counting_progress(channel_id, progress):
-    query = "INSERT INTO counting (channel_id, progress) VALUES (%s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress)"
-    params = (channel_id, progress)
+def set_counting_progress(channel_id, progress, guild_id):
+    query = "INSERT INTO counting (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress)"
+    params = (channel_id, progress, guild_id)
     execute_action(query, params)
+
+def get_counting_channel_amount(guild_id):
+    query = "SELECT COUNT(progress) FROM counting WHERE guild_id = %s"
+    params = (guild_id,)
+    result = execute_query(query, params)
+    return len(result) if result else 0
 
 
 def get_counting_progress(channel_id):
     query = "SELECT progress FROM counting WHERE channel_id = %s"
     params = (channel_id,)
     result = execute_query(query, params)
-    return result[0][0] if result else 0
+    return result[0][0] if result else None
 
 
 def increase_counting_progress(channel_id, last_counter_id):
