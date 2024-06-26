@@ -39,7 +39,7 @@ class CountingCommands(discord.app_commands.Group):
         if not channel:
             channel = ctx.channel
 
-        setCountingChannelCommand(commandInfo, channel)
+        await setCountingChannelCommand(commandInfo, channel)
 
     @app_commands.command(
         name=app_commands.locale_str("games_removecountingch_name"),
@@ -67,7 +67,7 @@ class CountingCommands(discord.app_commands.Group):
         if not channel:
             channel = ctx.channel
 
-        removeCountingChannelCommand(commandInfo, channel)
+        await removeCountingChannelCommand(commandInfo, channel)
 
 
 class minigameCommands(discord.app_commands.Group): ...

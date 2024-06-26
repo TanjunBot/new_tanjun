@@ -19,7 +19,7 @@ async def removeCountingChannel(commandInfo: commandInfo, channel: discord.TextC
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(commandInfo.locale, "minigames.removecountingchannel.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "minigames.removecountingchannel.success.description").format(channel=channel.mention),
+        description=tanjunLocalizer.localize(commandInfo.locale, "minigames.removecountingchannel.success.description", channel=channel.mention),
     )
     await commandInfo.reply(embed=embed)
 

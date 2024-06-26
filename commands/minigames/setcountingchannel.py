@@ -57,6 +57,6 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
 
     embed = tanjunEmbed(    
         title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.success.description").format(channel.mention),
+        description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.success.description", channel=channel.mention),
     )
     await commandInfo.reply(embed=embed)
