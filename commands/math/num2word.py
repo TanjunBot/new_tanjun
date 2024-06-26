@@ -2,7 +2,6 @@ import num2words
 import utility
 from localizer import tanjunLocalizer
 
-
 async def num2word(commandInfo: utility.commandInfo, number: int, locale: str):
     validLocales = [
         "en",
@@ -61,7 +60,7 @@ async def num2word(commandInfo: utility.commandInfo, number: int, locale: str):
 
     if locale == "en_US":
         locale = "en"
-
+    
     if locale not in validLocales:
         locale = "en"
 
