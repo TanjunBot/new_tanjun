@@ -100,11 +100,11 @@ class CountingCommands(discord.app_commands.Group):
 class CountingChallengeCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("games_setcmodesch_name"),
-        description=app_commands.locale_str("games_setcmodes_description"),
+        description=app_commands.locale_str("games_setcmodesch_description"),
     )
     @app_commands.describe(
         channel=app_commands.locale_str(
-            "games_setcmodes_params_channel_description"
+            "games_setcmodesch_params_channel_description"
         ),
     )
     async def setcountingmodeschannel(self, ctx, channel: discord.TextChannel = None):
@@ -202,12 +202,12 @@ class minigameCog(commands.Cog):
             description=app_commands.locale_str("minigames_countingcmds_description"),
         )
         countingChallengeCmds = CountingChallengeCommands(
-            name=app_commands.locale_str("minigames_countingchallengecmds_name"),
-            description=app_commands.locale_str("minigames_countingchallengecmds_description"),
+            name=app_commands.locale_str("minigames_cchallengecmds_name"),
+            description=app_commands.locale_str("minigames_cchallengecmds_description"),
         )
         countingModesCmds = CountingModesCommands(
-            name=app_commands.locale_str("minigames_countingmodescmds_name"),
-            description=app_commands.locale_str("minigames_countingmodescmds_description"),
+            name=app_commands.locale_str("minigames_cmodescmds_name"),
+            description=app_commands.locale_str("minigames_cmodescmds_description"),
         )
         minigameCmds.add_command(countingCmds)
         minigameCmds.add_command(countingChallengeCmds)

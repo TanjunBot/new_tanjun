@@ -6,6 +6,7 @@ from localizer import tanjunLocalizer
 from typing import List, Optional
 
 from minigames.counting import counting
+from minigames.countingChallenge import counting as countingChallenge
 
 class ListenerCog(commands.Cog):
 
@@ -15,6 +16,7 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         await counting(message)
+        await countingChallenge(message)
 
 async def setup(bot):
     await bot.add_cog(ListenerCog(bot))

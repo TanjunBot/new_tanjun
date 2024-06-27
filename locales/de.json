@@ -1347,11 +1347,11 @@
             "name": "counting",
             "description": "Befehle für das Counting-Spiel. Zähle von 1 hoch zur unendlichkeit!"
         },
-        "countingchallangecmds": {
+        "cchallengecmds": {
             "name": "countingchallenge",
             "description": "Befehle für das Counting-Challenge-Spiel. Zähle von 1 hoch. aber mache nur keine Fehler!"
         },
-        "countingmodescmds": {
+        "cmodescmds": {
             "name": "countingmodes",
             "description": "Befehle für das Counting-Modes-Spiel. Zähle in verschiedenen Modi!"
         },
@@ -1389,6 +1389,10 @@
             "introduction": {
                 "title": "Dies ist jetzt ein Counting Channel!",
                 "description": "Hier kann ab jetzt bis in die Unendlichkeit und noch viel weiter gezählt werden! ||theoretisch nur bis `4.294.967.295`||\nZähle dafür einfach immer um 1 hoch. Wenn du dich vertippst, lösche ich deine Nachricht. Normale Nachrichten können hier nicht mehr geschrieben werden!\n\nViel Spaß beim Zählen!"
+            },
+            "challengeintroduction": {
+                "title": "Dies ist jetzt ein Counting Challenge Channel!",
+                "description": "Hier kann ab jetzt bis in die Unendlichkeit und noch viel weiter gezählt werden! ||theoretisch nur bis `4.294.967.295`||\nZähle dafür einfach immer um 1 hoch. Vertippe dich aber besser nicht <:duck_knife:1255769052245262439>\nDenk dran, dass nur abwechselnd gezählt werden darf!"
             }
         },
         "setcountingchallengechannel": {
@@ -1544,7 +1548,7 @@
     },
     "games": {
         "setcountingch": {
-            "name": "setcountingch",
+            "name": "kanal_setzen",
             "description": "Setzt den Counting-Kanal für den Server",
             "params": {
                 "channel": {
@@ -1554,8 +1558,8 @@
             }
         },
         "removecountingch": {
-            "name": "removecountingch",
-            "description": "Entfernt den Counting-Kanal für den Server",
+            "name": "kanal_entfernen",
+            "description": "Entfernt den Counting-Kanal",
             "params": {
                 "channel": {
                     "name": "channel",
@@ -1564,7 +1568,7 @@
             }
         },
         "setcountingprogress": {
-            "name": "setcountingprogress",
+            "name": "fortschritt_setzen",
             "description": "Setzt den Fortschritt für einen Counting-Kanal",
             "params": {
                 "channel": {
@@ -1574,6 +1578,74 @@
                 "progress": {
                     "name": "fortschritt",
                     "description": "Der neue Fortschritt für den Counting-Kanal"
+                }
+            }
+        },
+        "setcchallengech":{
+            "name": "kanal_setzen",
+            "description": "Setzt den Counting-Challenge-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem das Counting-Challenge-Spiel stattfinden soll"
+                }
+            }
+        },
+        "removecchallengech": {
+            "name": "kanal_entfernen",
+            "description": "Entfernt den Counting-Challenge-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der als Counting-Challenge-Kanal entfernt werden soll"
+                }
+            }
+        },
+        "setcountingchallengeprogress": {
+            "name": "fortschritt_setzen",
+            "description": "Setzt den Fortschritt für einen Counting-Challenge-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Counting-Challenge-Kanal, dessen Fortschritt gesetzt werden soll"
+                },
+                "progress": {
+                    "name": "fortschritt",
+                    "description": "Der neue Fortschritt für den Counting-Challenge-Kanal"
+                }
+            }
+        },
+        "setcmodesch": {
+            "name": "kanal_setzen",
+            "description": "Setzt den Counting-Modes-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem das Counting-Modes-Spiel stattfinden soll"
+                }
+            }
+        },
+        "removecmodesch": {
+            "name": "kanal_entfernen",
+            "description": "Entfernt den Counting-Modes-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der als Counting-Modes-Kanal entfernt werden soll"
+                }
+            }
+        },
+        "setcmodesprogress": {
+            "name": "fortschritt_setzen",
+            "description": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Counting-Modes-Kanal, dessen Fortschritt gesetzt werden soll"
+                },
+                "progress": {
+                    "name": "fortschritt",
+                    "description": "Der neue Fortschritt für den Counting-Modes-Kanal"
                 }
             }
         }

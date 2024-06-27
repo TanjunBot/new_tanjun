@@ -60,7 +60,7 @@ def create_tables():
         "CREATE TABLE IF NOT EXISTS `counting_modes` ("
         "  `channel_id` VARCHAR(20) PRIMARY KEY,"
         "  `progress` INT DEFAULT 0,"
-        "  `mode` TINYINT UNSIGNED DEFAULT 'normal',"
+        "  `mode` TINYINT UNSIGNED DEFAULT 0,"
         "  `last_counter_id` VARCHAR(20) DEFAULT NULL,"
         "  `guild_id` VARCHAR(20)"
         ") ENGINE=InnoDB"

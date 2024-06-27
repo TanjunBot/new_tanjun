@@ -3,6 +3,7 @@ from api import (
     get_last_challenge_counter_id,
     check_if_opted_out,
     increase_counting_challenge_progress,
+    set_counting_challenge_progress,
 )
 import discord
 from localizer import tanjunLocalizer
@@ -44,6 +45,7 @@ async def counting(message: discord.Message):
             ),
         )
         await message.reply(embed=embed)
+        set_counting_challenge_progress(message.channel.id, 0)
         return
 
     if not content.isdigit():
@@ -57,6 +59,7 @@ async def counting(message: discord.Message):
             ),
         )
         await message.reply(embed=embed)
+        set_counting_challenge_progress(message.channel.id, 0)
         return
 
     number = int(content)
@@ -72,6 +75,7 @@ async def counting(message: discord.Message):
             ),
         )
         await message.reply(embed=embed)
+        set_counting_challenge_progress(message.channel.id, 0)
         return
 
     last_counter_id = get_last_challenge_counter_id(message.channel.id)
@@ -87,6 +91,7 @@ async def counting(message: discord.Message):
             ),
         )
         await message.reply(embed=embed)
+        set_counting_challenge_progress(message.channel.id, 0)
         return
 
     increase_counting_challenge_progress(message.channel.id, message.author.id)
