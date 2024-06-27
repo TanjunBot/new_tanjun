@@ -39,7 +39,7 @@ async def change_levelup_message(commandInfo: commandInfo, new_message: str):
         await commandInfo.reply(embed=embed)
         return
 
-    set_levelup_message(str(commandInfo.guild.id), new_message)
+    await set_levelup_message(str(commandInfo.guild.id), new_message)
     
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(

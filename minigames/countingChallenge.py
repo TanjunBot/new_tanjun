@@ -15,14 +15,14 @@ async def counting(message: discord.Message):
     if message.author.bot:
         return
 
-    progress = get_counting_challenge_progress(message.channel.id)
+    progress = await get_counting_challenge_progress(message.channel.id)
 
     locale = message.guild.locale if hasattr(message.guild, "locale") else "en_US"
 
     if not progress and progress != 0:
         return
 
-    if check_if_opted_out(message.author.id):
+    if await check_if_opted_out(message.author.id):
         try:
             await message.author.send(
                 tanjunLocalizer.localize(locale, "minigames.counting.opted_out")
@@ -45,7 +45,7 @@ async def counting(message: discord.Message):
             ),
         )
         await message.reply(embed=embed)
-        set_counting_challenge_progress(message.channel.id, 0)
+        await set_counting_challenge_progress(message.channel.id, 0)
         return
 
     if not content.isdigit():
@@ -59,7 +59,7 @@ async def counting(message: discord.Message):
             ),
         )
         await message.reply(embed=embed)
-        set_counting_challenge_progress(message.channel.id, 0)
+        await set_counting_challenge_progress(message.channel.id, 0)
         return
 
     number = int(content)
@@ -75,10 +75,10 @@ async def counting(message: discord.Message):
             ),
         )
         await message.reply(embed=embed)
-        set_counting_challenge_progress(message.channel.id, 0)
+        await set_counting_challenge_progress(message.channel.id, 0)
         return
 
-    last_counter_id = get_last_challenge_counter_id(message.channel.id)
+    last_counter_id = await get_last_challenge_counter_id(message.channel.id)
 
     if last_counter_id == str(message.author.id):
         await message.add_reaction("💀")
@@ -91,10 +91,10 @@ async def counting(message: discord.Message):
             ),
         )
         await message.reply(embed=embed)
-        set_counting_challenge_progress(message.channel.id, 0)
+        await set_counting_challenge_progress(message.channel.id, 0)
         return
 
-    increase_counting_challenge_progress(message.channel.id, message.author.id)
+    await increase_counting_challenge_progress(message.channel.id, message.author.id)
     if random.randint(1, 100) == 1:
         await message.channel.send(progress + 2)
-        increase_counting_challenge_progress(message.channel.id, "me")
+        await increase_counting_challenge_progress(message.channel.id, "me")

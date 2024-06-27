@@ -25,25 +25,25 @@ async def addLevelXp(message: discord.Message):
     if message.author.bot:
         return
 
-    if not get_level_system_status(str(message.guild.id)):
+    if not await get_level_system_status(str(message.guild.id)):
         return
 
     # Check if the user has opted out of message tracking
-    if check_if_opted_out(str(message.author.id)):
+    if await check_if_opted_out(str(message.author.id)):
         return
 
     # Check blacklist
-    if is_blacklisted(message):
+    if await is_blacklisted(message):
         return
 
-    scaling = get_xp_scaling(str(message.guild.id))
-    custom_formula = get_custom_formula(str(message.guild.id))
+    scaling = await get_xp_scaling(str(message.guild.id))
+    custom_formula = await get_custom_formula(str(message.guild.id))
 
     # Calculate XP to add
-    xp_to_add = calculate_xp(message)
+    xp_to_add = await calculate_xp(message)
 
     # Get current XP and level
-    current_xp = get_user_xp(str(message.guild.id), str(message.author.id))
+    current_xp = await get_user_xp(str(message.guild.id), str(message.author.id))
     current_level = get_level_for_xp(
         current_xp if current_xp else 0, scaling, custom_formula
     )
@@ -53,15 +53,15 @@ async def addLevelXp(message: discord.Message):
     new_level = get_level_for_xp(new_xp if new_xp else 0, scaling, custom_formula)
 
     # Update XP in database
-    update_user_xp(str(message.guild.id), str(message.author.id), new_xp)
+    await update_user_xp(str(message.guild.id), str(message.author.id), new_xp)
 
     # Check for level up
     if new_level > current_level:
         await handle_level_up(message, new_level)
 
 
-def is_blacklisted(message: discord.Message) -> bool:
-    blacklist = get_blacklist(str(message.guild.id))
+async def is_blacklisted(message: discord.Message) -> bool:
+    blacklist = await get_blacklist(str(message.guild.id))
 
     # Check if channel is blacklisted
     if str(message.channel.id) in [channel[0] for channel in blacklist["channels"]]:
@@ -81,13 +81,13 @@ def is_blacklisted(message: discord.Message) -> bool:
     return False
 
 
-def calculate_xp(message: discord.Message) -> int:
+async def calculate_xp(message: discord.Message) -> int:
     base_xp = random.randint(1, 3)
-    user_boost = get_user_boost(str(message.guild.id), str(message.author.id))
-    role_boosts = get_user_roles_boosts(
+    user_boost = await get_user_boost(str(message.guild.id), str(message.author.id))
+    role_boosts = await get_user_roles_boosts(
         str(message.guild.id), [str(role.id) for role in message.author.roles]
     )
-    channel_boost = get_channel_boost(str(message.guild.id), str(message.channel.id))
+    channel_boost = await get_channel_boost(str(message.guild.id), str(message.channel.id))
 
     total_additive_boost = 0
     total_multiplicative_boost = 1
@@ -119,8 +119,8 @@ async def handle_level_up(message: discord.Message, new_level: int):
     guild_id = str(message.guild.id)
 
     # Check if level up messages are enabled
-    if get_levelup_message_status(guild_id):
-        level_up_message = get_levelup_message(guild_id)
+    if await get_levelup_message_status(guild_id):
+        level_up_message = await get_levelup_message(guild_id)
         if level_up_message:
             level_up_message = level_up_message.replace(
                 "{user}", message.author.mention
@@ -128,7 +128,7 @@ async def handle_level_up(message: discord.Message, new_level: int):
             level_up_message = level_up_message.replace("{level}", str(new_level))
 
             # Get the channel to send the level up message
-            level_up_channel_id = get_levelup_channel(guild_id)
+            level_up_channel_id = await get_levelup_channel(guild_id)
             if level_up_channel_id:
                 channel = message.guild.get_channel(int(level_up_channel_id))
             else:
@@ -136,7 +136,7 @@ async def handle_level_up(message: discord.Message, new_level: int):
 
             await channel.send(level_up_message)
 
-    level_roles = get_level_roles(guild_id)
+    level_roles = await get_level_roles(guild_id)
     roles_to_add = [
         role_id for level, role_id in level_roles.items() if level <= new_level
     ]

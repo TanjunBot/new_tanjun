@@ -16,9 +16,9 @@ import discord
 
 
 async def calculate_user_channel_boost_command(commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel):
-    user_boost = get_user_boost(str(commandInfo.guild.id), str(user.id))
-    role_boosts = get_user_roles_boosts(str(commandInfo.guild.id), [str(role.id) for role in user.roles])
-    channel_boost = get_channel_boost(str(commandInfo.guild.id), str(channel.id))
+    user_boost = await get_user_boost(str(commandInfo.guild.id), str(user.id))
+    role_boosts = await get_user_roles_boosts(str(commandInfo.guild.id), [str(role.id) for role in user.roles])
+    channel_boost = await get_channel_boost(str(commandInfo.guild.id), str(channel.id))
 
     total_additive_boost = 0
     total_multiplicative_boost = 1
@@ -72,7 +72,7 @@ async def add_role_boost_command(
         await commandInfo.reply(embed=embed)
         return
 
-    add_role_boost(str(commandInfo.guild.id), str(role.id), boost, additive)
+    await add_role_boost(str(commandInfo.guild.id), str(role.id), boost, additive)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.boosts.add_role.success.title"
@@ -111,7 +111,7 @@ async def add_channel_boost_command(
         await commandInfo.reply(embed=embed)
         return
 
-    add_channel_boost(str(commandInfo.guild.id), str(channel.id), boost, additive)
+    await add_channel_boost(str(commandInfo.guild.id), str(channel.id), boost, additive)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.boosts.add_channel.success.title"
@@ -150,7 +150,7 @@ async def add_user_boost_command(
         await commandInfo.reply(embed=embed)
         return
 
-    add_user_boost(str(commandInfo.guild.id), str(user.id), boost, additive)
+    await add_user_boost(str(commandInfo.guild.id), str(user.id), boost, additive)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.boosts.add_user.success.title"
@@ -175,7 +175,7 @@ async def add_user_boost_command(
 
 
 async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role):
-    remove_role_boost(str(commandInfo.guild.id), str(role.id))
+    await remove_role_boost(str(commandInfo.guild.id), str(role.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.boosts.remove_role.success.title"
@@ -192,7 +192,7 @@ async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role
 async def remove_channel_boost_command(
     commandInfo: commandInfo, channel: discord.TextChannel
 ):
-    remove_channel_boost(str(commandInfo.guild.id), str(channel.id))
+    await remove_channel_boost(str(commandInfo.guild.id), str(channel.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.boosts.remove_channel.success.title"
@@ -207,7 +207,7 @@ async def remove_channel_boost_command(
 
 
 async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Member):
-    remove_user_boost(str(commandInfo.guild.id), str(user.id))
+    await remove_user_boost(str(commandInfo.guild.id), str(user.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.boosts.remove_user.success.title"
@@ -222,7 +222,7 @@ async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Memb
 
 
 async def show_boosts_command(commandInfo: commandInfo):
-    boosts = get_all_boosts(str(commandInfo.guild.id))
+    boosts = await get_all_boosts(str(commandInfo.guild.id))
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(

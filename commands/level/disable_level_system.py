@@ -53,7 +53,7 @@ async def disable_level_system(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
-    current_status = get_level_system_status(str(commandInfo.guild.id))
+    current_status = await get_level_system_status(str(commandInfo.guild.id))
 
     if not current_status:
         embed = tanjunEmbed(
@@ -88,8 +88,8 @@ async def disable_level_system(commandInfo: commandInfo):
             content="Timed out. The level system was not disabled.", view=None
         )
     elif view.value:
-        delete_level_system_data(str(commandInfo.guild.id))
-        set_level_system_status(str(commandInfo.guild.id), False)
+        await delete_level_system_data(str(commandInfo.guild.id))
+        await set_level_system_status(str(commandInfo.guild.id), False)
 
         success_embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

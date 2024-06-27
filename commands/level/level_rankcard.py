@@ -46,7 +46,7 @@ async def upload_image_to_imgbb(image_bytes, file_extension):
 
 
 async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
-    user_info = get_user_level_info(str(commandInfo.guild.id), str(user.id))
+    user_info = await get_user_level_info(str(commandInfo.guild.id), str(user.id))
 
     if not user_info:
         embed = tanjunEmbed(
@@ -109,7 +109,7 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
 
     print(uploaded_image)
 
-    set_custom_background(
+    await set_custom_background(
         str(commandInfo.guild.id),
         str(commandInfo.user.id),
         uploaded_image["data"]["url"],

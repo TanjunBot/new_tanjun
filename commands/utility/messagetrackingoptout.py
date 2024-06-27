@@ -3,7 +3,7 @@ from localizer import tanjunLocalizer
 from api import check_if_opted_out, opt_in, opt_out
 
 async def optOut(commandInfo: commandInfo):
-    if check_if_opted_out(commandInfo.user.id):
+    if await check_if_opted_out(commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.utility.messagetrackingoptout.error.title"
@@ -15,7 +15,7 @@ async def optOut(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
     
-    opt_out(commandInfo.user.id)
+    await opt_out(commandInfo.user.id)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.utility.messagetrackingoptout.success.title"
