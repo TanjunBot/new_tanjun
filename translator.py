@@ -32,8 +32,10 @@ class TanjunTranslator(app_commands.Translator):
                 if str(string) in current:
                     return current[str(string)]
                 else:
-                    print("Missing translation for string: " + string.message, ". Will open a issue on GitHub. Please fix ASAP!")
-                    missingLocalization(string)
+                    print("Missing translation for string: " + string.message, ". Please fix ASAP!")
+                    text = input("Should I open a Issue on GitHub? (y/n): ")  
+                    if text.lower() == 'y':
+                        missingLocalization(string)
                     return None
 
         if isinstance(current, str):

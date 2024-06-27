@@ -1344,8 +1344,16 @@
     },
     "minigames": {
         "countingcmds": {
-            "name": "countingcmds",
-            "description": "Befehle für das Counting-Spiel"
+            "name": "counting",
+            "description": "Befehle für das Counting-Spiel. Zähle von 1 hoch zur unendlichkeit!"
+        },
+        "cchallengecmds": {
+            "name": "countingchallenge",
+            "description": "Befehle für das Counting-Challenge-Spiel. Zähle von 1 hoch. aber mache nur keine Fehler!"
+        },
+        "cmodescmds": {
+            "name": "countingmodes",
+            "description": "Befehle für das Counting-Modes-Spiel. Zähle in verschiedenen Modi!"
         },
         "setcountingchannel": {
             "error": {
@@ -1368,6 +1376,54 @@
                 "no_view_perms": {
                     "title": "Fehlende Berechtigungen",
                     "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die erforderlichen Rechte, dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
+                }
+            },
+            "success": {
+                "title": "Counting Kanal gesetzt",
+                "description": "Der Kanal ${channel} ist jetzt ein Counting Kanal."
+            },
+            "introduction": {
+                "title": "Dies ist jetzt ein Counting Channel!",
+                "description": "Hier kann ab jetzt bis in die Unendlichkeit und noch viel weiter gezählt werden! ||theoretisch nur bis `4.294.967.295`||\nZähle dafür einfach immer um 1 hoch. Wenn du dich vertippst, lösche ich deine Nachricht. Normale Nachrichten können hier nicht mehr geschrieben werden!\n\nViel Spaß beim Zählen!"
+            },
+            "challengeintroduction": {
+                "title": "Dies ist jetzt ein Counting Challenge Channel!",
+                "description": "Hier kann ab jetzt bis in die Unendlichkeit und noch viel weiter gezählt werden! ||theoretisch nur bis `4.294.967.295`||\nZähle dafür einfach immer um 1 hoch. Vertippe dich aber besser nicht <:duck_knife:1255769052245262439>\nDenk dran, dass nur abwechselnd gezählt werden darf!"
+            },
+            "modesintroduction": {
+                "title": "Dies ist jetzt ein Counting Modes Channel!",
+                "description": "Hier kann jetzt in verschiedenen Modi gezählt werden. Es gibt verschiedene Modi, die das Zählen erschweren oder erleichtern.\nFangen wir mal einfach an; Zähle in bis zu `128`. Also zähle `1`, `2`, `4`, `8`, etc. Wenn die `128` erreicht ist, fangen wir mit einem anderen Modus neu an!\nViel Spaß beim Zählen!"
+            }
+        },
+        "setcountingchallengechannel": {
+            "error": {
+                "no_pro": {
+                    "title": "Tanjun Pro benötigt.",
+                    "description": "Dieser Spielmodus ist nur für Tanjun Pro Server verfügbar. Spiele das normale Counting-Spiel, wenn du kein Tanjun Pro kaufen möchtest/kannst."
+                },
+                "no_send_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu senden."
+                },
+                "no_message_delete_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu löschen."
+                },
+                "no_read_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
+                },
+                "no_view_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die erforderlichen Rechte, dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
                 }
             },
             "success": {
@@ -1380,6 +1436,78 @@
             }
         },
         "counting": {
+            "modes": {
+                "failed": {
+                    "title": "Das war wohl nix.",
+                    "description": "Die Gezähle zahl war leider Falsch. Richtig wäre gewesen: `${number}`.\nFangen wir mit einem anderen Modus an.\n\n# Neuer Modus: ${mode_name}\n${mode_description}\n\nDas Ziel ist: ${goal}.\nViel Erfolg!"
+                },
+                "failed_double": {
+                    "title": "Das war wohl nix.",
+                    "description": "Du warst noch nicht dran mit zählen. Richtig wäre gewesen: `${number}`.\nFangen wir mit einem anderen Modus an.\n\n# Neuer Modus: ${mode_name}\n${mode_description}\n\nDas Ziel ist: ${goal}.\nViel Erfolg!"
+                },
+                "won": {
+                    "title": "Gewonnen!",
+                    "description": "Herzlichen Glückwunsch! Ihr habt das Ziel erreicht und das Spiel gewonnen.\n\nDas Ziel war: ${goal}.\n\nFangen wir mit einem neuen Ziel an.\n\n# Neuer Modus: ${mode_name}\n${mode_description}\n\nDas Ziel ist: ${new_goal}.\nViel Erfolg!"
+                },
+                "modes": {
+                    "normal": {
+                        "name": "Normal",
+                        "description": "Zähle einfach immer um 1 hoch."
+                    },
+                    "negative": {
+                        "name": "Negativ",
+                        "description": "Zähle ins Negative."
+                    },
+                    "reverse": {
+                        "name": "Reverse",
+                        "description": "Zähle rückwärts zur 0."
+                    },
+                    "prime": {
+                        "name": "Primzahlen",
+                        "description": "Zähle nur Primzahlen."
+                    },
+                    "even": {
+                        "name": "Gerade",
+                        "description": "Zähle nur gerade Zahlen."
+                    },
+                    "odd": {
+                        "name": "Ungerade",
+                        "description": "Zähle nur ungerade Zahlen."
+                    },
+                    "fibonacci": {
+                        "name": "Fibonacci",
+                        "description": "Zähle die Fibonacci-Zahlen."
+                    },
+                    "square": {
+                        "name": "Quadratzahlen",
+                        "description": "Zähle die Quadratzahlen."
+                    },
+                    "cube": {
+                        "name": "Kubikzahlen",
+                        "description": "Zähle die Kubikzahlen."
+                    },
+                    "houndreds": {
+                        "name": "Hunderter",
+                        "description": "Zähle nur Zahlen, die auf 00 enden."
+                    },
+                    "binary": {
+                        "name": "Binär",
+                        "description": "Zähle in Binärzahlen."
+                    },
+                    "romean": {
+                        "name": "Römisch",
+                        "description": "Zähle in römischen Zahlen."
+                    }
+                }
+            },
+            "failed": {
+                "title": "Das war wohl nix.",
+                "description": "Die Gezähle zahl war leider Falsch. Ihr müsst wohl nochmal von vorne anfangen :("
+            },
+            "failed_double": {
+                "title": "Das war wohl nix.",
+                "description": "Du warst noch nicht dran mit zählen. Ihr müsst wohl nochmal von vorne anfangen :("
+            },
             "opted_out": "Du hast die Nachrichtenverfolgung ausgeschaltet. Das heißt dass der Bot deine Nachrichten nicht lesen wird. Solltest du mit counten, musst du die Nachrichtenverfolgung wieder anschalten. Andernfalls kannst du nicht mit machen.",
             "reasons": {
                 "opted_out": "Die Person hat die Nachrichtenverfolgung ausgeschaltet.",
@@ -1394,6 +1522,10 @@
                 "not_counting_channel": {
                     "title": "Kein Counting-Kanal",
                     "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
                 }
             },
             "success": {
@@ -1403,6 +1535,46 @@
             "channel_message": {
                 "title": "Dieser Kanal ist kein Counting-Kanal mehr",
                 "description": "Ein Moderator hat diesen Kanal als Counting-Kanal entfernt. Normale Nachrichten können jetzt wieder geschrieben werden."
+            }
+        },
+        "removecountingchallengechannel": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Counting-Kanal",
+                    "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
+                }
+            },
+            "success": {
+                "title": "Counting-Challenge-Kanal entfernt",
+                "description": "Der Kanal ${channel} ist jetzt kein Counting-Challenge-Kanal mehr."
+            },
+            "channel_message": {
+                "title": "Dieser Kanal ist kein Counting-Challenge-Kanal mehr",
+                "description": "Ein Moderator hat diesen Kanal als Counting-Challenge-Kanal entfernt. Normale Nachrichten können jetzt wieder geschrieben werden."
+            }
+        },
+        "removecountingmodeschannel": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Counting-Kanal",
+                    "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
+                }
+            },
+            "success": {
+                "title": "Counting-Challenge-Kanal entfernt",
+                "description": "Der Kanal ${channel} ist jetzt kein Counting-Challenge-Kanal mehr."
+            },
+            "channel_message": {
+                "title": "Dieser Kanal ist kein Counting-Challenge-Kanal mehr",
+                "description": "Ein Moderator hat diesen Kanal als Counting-Challenge-Kanal entfernt. Normale Nachrichten können jetzt wieder geschrieben werden."
             }
         },
         "setcountingprogress": {
@@ -1418,6 +1590,38 @@
                 "too_high": {
                     "title": "Zu hoher Fortschritt",
                     "description": "Der Fortschritt ist zu hoch. Bitte fahre mit einer niedrigeren Zahl fort. ||Es würde über 31 Jahre mit einer Nachricht pro Sekunde dauern, um bis zu `1.000.000.000` zu Zählen!||"
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
+                }
+            },
+            "success": {
+                "title": "Counting-Fortschritt gesetzt",
+                "description": "Der Fortschritt für den Kanal ${channel} wurde auf ${progress} gesetzt."
+            },
+            "channel_message": {
+                "title": "Neuer Counting-Fortschritt",
+                "description": "Ein Moderator hat den Counting-Fortschritt auf ${progress} gesetzt. Bitte fahrt mit dieser Zahl fort!"
+            }
+        },
+        "setcountingchallengeprogress": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Counting-Kanal",
+                    "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                },
+                "invalid_progress": {
+                    "title": "Ungültiger Fortschritt",
+                    "description": "Der Fortschritt muss eine nicht-negative Zahl sein."
+                },
+                "too_high": {
+                    "title": "Zu hoher Fortschritt",
+                    "description": "Der Fortschritt ist zu hoch. Bitte fahre mit einer niedrigeren Zahl fort. ||Es würde über 31 Jahre mit einer Nachricht pro Sekunde dauern, um bis zu `1.000.000.000` zu Zählen!||"
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
                 }
             },
             "success": {
@@ -1432,7 +1636,7 @@
     },
     "games": {
         "setcountingch": {
-            "name": "setcountingch",
+            "name": "kanal_setzen",
             "description": "Setzt den Counting-Kanal für den Server",
             "params": {
                 "channel": {
@@ -1442,8 +1646,8 @@
             }
         },
         "removecountingch": {
-            "name": "removecountingch",
-            "description": "Entfernt den Counting-Kanal für den Server",
+            "name": "kanal_entfernen",
+            "description": "Entfernt den Counting-Kanal",
             "params": {
                 "channel": {
                     "name": "channel",
@@ -1452,7 +1656,7 @@
             }
         },
         "setcountingprogress": {
-            "name": "setcountingprogress",
+            "name": "fortschritt_setzen",
             "description": "Setzt den Fortschritt für einen Counting-Kanal",
             "params": {
                 "channel": {
@@ -1462,6 +1666,98 @@
                 "progress": {
                     "name": "fortschritt",
                     "description": "Der neue Fortschritt für den Counting-Kanal"
+                }
+            }
+        },
+        "setcchallengech":{
+            "name": "kanal_setzen",
+            "description": "Setzt den Counting-Challenge-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem das Counting-Challenge-Spiel stattfinden soll"
+                }
+            }
+        },
+        "removecchallengech": {
+            "name": "kanal_entfernen",
+            "description": "Entfernt den Counting-Challenge-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der als Counting-Challenge-Kanal entfernt werden soll"
+                }
+            }
+        },
+        "setcountingchallengeprogress": {
+            "name": "fortschritt_setzen",
+            "description": "Setzt den Fortschritt für einen Counting-Challenge-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Counting-Challenge-Kanal, dessen Fortschritt gesetzt werden soll"
+                },
+                "progress": {
+                    "name": "fortschritt",
+                    "description": "Der neue Fortschritt für den Counting-Challenge-Kanal"
+                }
+            }
+        },
+        "setcchallengechannel": {
+            "name": "kanal_setzen",
+            "description": "Setzt den Counting-Modes-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem das Counting-Modes-Spiel stattfinden soll"
+                }
+            }
+        },
+        "setcmodesch": {
+            "name": "kanal_setzen",
+            "description": "Setzt den Counting-Modes-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem das Counting-Modes-Spiel stattfinden soll"
+                }
+            }
+        },
+        "removecmodesch": {
+            "name": "kanal_entfernen",
+            "description": "Entfernt den Counting-Modes-Kanal für den Server",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der als Counting-Modes-Kanal entfernt werden soll"
+                }
+            }
+        },
+        "setcchallengeprogress": {
+            "name": "fortschritt_setzen",
+            "description": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Counting-Modes-Kanal, dessen Fortschritt gesetzt werden soll"
+                },
+                "progress": {
+                    "name": "fortschritt",
+                    "description": "Der neue Fortschritt für den Counting-Modes-Kanal"
+                }
+            }
+        },
+        "setcmodesprogress": {
+            "name": "fortschritt_setzen",
+            "description": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Counting-Modes-Kanal, dessen Fortschritt gesetzt werden soll"
+                },
+                "progress": {
+                    "name": "fortschritt",
+                    "description": "Der neue Fortschritt für den Counting-Modes-Kanal"
                 }
             }
         }

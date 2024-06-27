@@ -1,14 +1,23 @@
-from api import set_counting_progress, get_counting_channel_amount
+from api import set_counting_challenge_progress
 from utility import commandInfo, checkIfHasPro, tanjunEmbed
 from localizer import tanjunLocalizer
 import discord
 
 async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChannel):
 
-    if get_counting_channel_amount(commandInfo.guild.id) != 0 and not checkIfHasPro(commandInfo.guild.id):
+
+    if not commandInfo.user.guild_permissions.moderate_members:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_pro_title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_pro_description"),
+            title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_moderate_members_perms.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_moderate_members_perms.description"),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+
+    if not checkIfHasPro(commandInfo.guild.id):
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_pro.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_pro.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -47,11 +56,11 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
-    set_counting_progress(channel_id=channel.id, guild_id=commandInfo.guild.id, progress=0)
+    set_counting_challenge_progress(channel_id=channel.id, guild_id=commandInfo.guild.id, progress=0)
 
     introductionEmbed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.introduction.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.introduction.description"),
+        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.challengeintroduction.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.challengeintroduction.description"),
     )
     await channel.send(embed=introductionEmbed)
 

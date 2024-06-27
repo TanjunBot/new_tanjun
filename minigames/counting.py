@@ -9,8 +9,6 @@ async def counting(message: discord.Message):
 
     progress = get_counting_progress(message.channel.id)
 
-    print(progress)
-
     locale = message.guild.locale if hasattr(message.guild, "locale") else "en_US"
 
     if not progress and progress != 0:
