@@ -98,11 +98,12 @@ async def calculate_xp(message: discord.Message) -> int:
         else:
             total_multiplicative_boost *= user_boost[0]
 
-    for role_boost in role_boosts:
-        if role_boost[1]:  # if additive
-            total_additive_boost += role_boost[0] - 1
-        else:
-            total_multiplicative_boost *= role_boost[0]
+    if role_boost:
+        for role_boost in role_boosts:
+            if role_boost[1]:  # if additive
+                total_additive_boost += role_boost[0] - 1
+            else:
+                total_multiplicative_boost *= role_boost[0]
 
     if channel_boost:
         if channel_boost[1]:  # if additive
