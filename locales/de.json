@@ -1153,6 +1153,64 @@
                 "remove_role_confirm": "Bist du sicher, dass du {count} Level-Rolle(n) entfernen möchtest?",
                 "remove_role_success": "{count} Level-Rolle(n) wurden erfolgreich entfernt.",
                 "remove_role_cancelled": "Entfernen der Level-Rolle(n) abgebrochen."
+            },
+            "boosts": {
+                "additive": "Additiv",
+                "multiplicative": "Multiplikativ",
+                "calculate_user_channel": {
+                    "title": "XP-Boost Berechnung für Benutzer in Kanal",
+                    "description": "Der Gesamt-XP-Boost für ${user} im Kanal ${channel} beträgt ${boost}x."
+                },
+                "error": {
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "XP-Boosts sind nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    }
+                },
+                "add_role": {
+                    "success": {
+                        "title": "Rollen-Boost hinzugefügt",
+                        "description": "Ein ${type} Boost von ${boost} wurde erfolgreich zur Rolle ${role} hinzugefügt."
+                    }
+                },
+                "add_channel": {
+                    "success": {
+                        "title": "Kanal-Boost hinzugefügt",
+                        "description": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Kanal ${channel} hinzugefügt."
+                    }
+                },
+                "add_user": {
+                    "success": {
+                        "title": "Benutzer-Boost hinzugefügt",
+                        "description": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Benutzer ${user} hinzugefügt."
+                    }
+                },
+                "remove_role": {
+                    "success": {
+                        "title": "Rollen-Boost entfernt",
+                        "description": "Der Boost für die Rolle ${role} wurde erfolgreich entfernt."
+                    }
+                },
+                "remove_channel": {
+                    "success": {
+                        "title": "Kanal-Boost entfernt",
+                        "description": "Der Boost für den Kanal ${channel} wurde erfolgreich entfernt."
+                    }
+                },
+                "remove_user": {
+                    "success": {
+                        "title": "Benutzer-Boost entfernt",
+                        "description": "Der Boost für den Benutzer ${user} wurde erfolgreich entfernt."
+                    }
+                },
+                "show": {
+                    "title": "Aktuelle XP-Boosts",
+                    "description": "Hier sind alle aktiven XP-Boosts für diesen Server:",
+                    "roles": "Rollen-Boosts",
+                    "channels": "Kanal-Boosts",
+                    "users": "Benutzer-Boosts",
+                    "no_boosts": "Es sind keine XP-Boosts für diesen Server konfiguriert."
+                }
             }
         }
     },
@@ -2203,6 +2261,122 @@
         "showlevelroles": {
             "name": "level_rollen_anzeigen",
             "description": "Zeigt alle konfigurierten Level-Rollen an"
+        },
+        "boosts": {
+            "name": "boosts",
+            "description": "Befehle zum Hinzufügen, Entfernen und Anzeigen von XP-Boosts",
+            "calculate_user": {
+                "name": "benutzer_berechnen",
+                "description": "Berechnet den Gesamt-XP-Boost für einen Benutzer",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, für den der Boost berechnet werden soll"
+                    }
+                }
+            },
+            "calculate": {
+                "name": "berechnen",
+                "description": "Berechnet den Gesamt-XP-Boost für einen Benutzer in einem bestimmten Kanal",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, für den der Boost berechnet werden soll"
+                    },
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, für den der Boost berechnet werden soll"
+                    }
+                }
+            },
+            "addrole": {
+                "name": "rolle_hinzufügen",
+                "description": "Fügt einen XP-Boost zu einer Rolle hinzu",
+                "params": {
+                    "role": {
+                        "name": "rolle",
+                        "description": "Die Rolle, zu der der Boost hinzugefügt werden soll"
+                    },
+                    "boost": {
+                        "name": "boost",
+                        "description": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)"
+                    },
+                    "additive": {
+                        "name": "additiv",
+                        "description": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll"
+                    }
+                }
+            },
+            "addchannel": {
+                "name": "kanal_hinzufügen",
+                "description": "Fügt einen XP-Boost zu einem Kanal hinzu",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, zu dem der Boost hinzugefügt werden soll"
+                    },
+                    "boost": {
+                        "name": "boost",
+                        "description": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)"
+                    },
+                    "additive": {
+                        "name": "additiv",
+                        "description": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll"
+                    }
+                }
+            },
+            "adduser": {
+                "name": "benutzer_hinzufügen",
+                "description": "Fügt einen XP-Boost zu einem Benutzer hinzu",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, zu dem der Boost hinzugefügt werden soll"
+                    },
+                    "boost": {
+                        "name": "boost",
+                        "description": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)"
+                    },
+                    "additive": {
+                        "name": "additiv",
+                        "description": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll"
+                    }
+                }
+            },
+            "removerole": {
+                "name": "rolle_entfernen",
+                "description": "Entfernt einen XP-Boost von einer Rolle",
+                "params": {
+                    "role": {
+                        "name": "rolle",
+                        "description": "Die Rolle, von der der Boost entfernt werden soll"
+                    }
+                }
+            },
+            "removechannel": {
+                "name": "kanal_entfernen",
+                "description": "Entfernt einen XP-Boost von einem Kanal",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, von dem der Boost entfernt werden soll"
+                    }
+                }
+            },
+            "removeuser": {
+                "name": "benutzer_entfernen",
+                "description": "Entfernt einen XP-Boost von einem Benutzer",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, von dem der Boost entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt alle aktiven XP-Boosts für den Server an"
+            }
         }
     },
     "Administrate the Server": "Verwalte den Server",
@@ -2260,5 +2434,7 @@
     "custom": "benutzerdefiniert",
     "customformula": "benutzerdefinierte_formel",
     "startlevel": "start_level",
-    "endlevel": "end_level"
+    "endlevel": "end_level",
+    "boost": "boost",
+    "additive": "additiv"
 }

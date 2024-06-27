@@ -656,11 +656,13 @@ def get_level_role(guild_id: str, level: int) -> Optional[str]:
     result = execute_query(query, params)
     return result[0][0] if result else None
 
+
 def get_level_roles(guild_id: str) -> dict[int, str]:
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
     params = (guild_id,)
     result = execute_query(query, params)
     return {row[0]: row[1] for row in result}
+
 
 def add_level_role(guild_id: str, role_id: str, level: int):
     query = """
@@ -670,6 +672,7 @@ def add_level_role(guild_id: str, role_id: str, level: int):
     params = (guild_id, role_id, level)
     execute_action(query, params)
 
+
 def remove_level_role(guild_id: str, role_id: str, level: int):
     query = """
     DELETE FROM levelRole 
@@ -678,11 +681,13 @@ def remove_level_role(guild_id: str, role_id: str, level: int):
     params = (guild_id, role_id, level)
     execute_action(query, params)
 
+
 def get_level_roles(guild_id: str, level: int) -> List[str]:
     query = "SELECT role_id FROM levelRole WHERE guild_id = %s AND level = %s"
     params = (guild_id, level)
     result = execute_query(query, params)
     return [row[0] for row in result]
+
 
 def get_all_level_roles(guild_id: str) -> Dict[int, List[str]]:
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s ORDER BY level"
@@ -694,3 +699,88 @@ def get_all_level_roles(guild_id: str) -> Dict[int, List[str]]:
             level_roles[level] = []
         level_roles[level].append(role_id)
     return level_roles
+
+
+def add_role_boost(guild_id: str, role_id: str, boost: float, additive: bool):
+    query = """
+    INSERT INTO roleXpBoost (guild_id, role_id, boost, additive) 
+    VALUES (%s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
+    """
+    params = (guild_id, role_id, boost, additive)
+    execute_action(query, params)
+
+
+def add_channel_boost(guild_id: str, channel_id: str, boost: float, additive: bool):
+    query = """
+    INSERT INTO channelXpBoost (guild_id, channel_id, boost, additive) 
+    VALUES (%s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
+    """
+    params = (guild_id, channel_id, boost, additive)
+    execute_action(query, params)
+
+
+def add_user_boost(guild_id: str, user_id: str, boost: float, additive: bool):
+    query = """
+    INSERT INTO userXpBoost (guild_id, user_id, boost, additive) 
+    VALUES (%s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
+    """
+    params = (guild_id, user_id, boost, additive)
+    execute_action(query, params)
+
+
+def remove_role_boost(guild_id: str, role_id: str):
+    query = "DELETE FROM roleXpBoost WHERE guild_id = %s AND role_id = %s"
+    params = (guild_id, role_id)
+    execute_action(query, params)
+
+
+def remove_channel_boost(guild_id: str, channel_id: str):
+    query = "DELETE FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
+    params = (guild_id, channel_id)
+    execute_action(query, params)
+
+
+def remove_user_boost(guild_id: str, user_id: str):
+    query = "DELETE FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
+    params = (guild_id, user_id)
+    execute_action(query, params)
+
+
+def get_all_boosts(guild_id: str):
+    role_query = "SELECT role_id, boost, additive FROM roleXpBoost WHERE guild_id = %s"
+    channel_query = (
+        "SELECT channel_id, boost, additive FROM channelXpBoost WHERE guild_id = %s"
+    )
+    user_query = "SELECT user_id, boost, additive FROM userXpBoost WHERE guild_id = %s"
+
+    roles = execute_query(role_query, (guild_id,))
+    channels = execute_query(channel_query, (guild_id,))
+    users = execute_query(user_query, (guild_id,))
+
+    return {"roles": roles, "channels": channels, "users": users}
+
+
+def get_user_boost(guild_id: str, user_id: str):
+    query = (
+        "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
+    )
+    params = (guild_id, user_id)
+    result = execute_query(query, params)
+    return result[0] if result else None
+
+
+def get_user_roles_boosts(guild_id: str, role_ids: List[str]):
+    placeholders = ", ".join(["%s"] * len(role_ids))
+    query = f"SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN ({placeholders})"
+    params = (guild_id,) + tuple(role_ids)
+    return execute_query(query, params)
+
+
+def get_channel_boost(guild_id: str, channel_id: str):
+    query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
+    params = (guild_id, channel_id)
+    result = execute_query(query, params)
+    return result[0] if result else None
