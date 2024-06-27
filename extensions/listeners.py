@@ -8,6 +8,7 @@ from typing import List, Optional
 from minigames.counting import counting
 from minigames.countingChallenge import counting as countingChallenge
 from minigames.countingmodes import counting as countingModes
+from minigames.wordchain import wordchain
 
 class ListenerCog(commands.Cog):
 
@@ -19,6 +20,7 @@ class ListenerCog(commands.Cog):
         await counting(message)
         await countingChallenge(message)
         await countingModes(message)
+        await wordchain(message)
 
 async def setup(bot):
     await bot.add_cog(ListenerCog(bot))

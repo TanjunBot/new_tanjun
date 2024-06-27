@@ -1395,6 +1395,13 @@
                 "description": "Hier kann ab jetzt ein Satz erstellt werden! Jeder Spieler fügt *ein* Wort hinzu, um einen Satz zu erstellen. Ihr müsst abwechselnd Schreiben. kommata zählen als eigenes Wort. Satzzeichen wie `.`, `!`, `?` uvm. beenden den Satz. Normale Nachrichten können hier nicht mehr geschrieben werden!\n\nViel Spaß beim Satz erstellen!"
             }
         },
+        "wordchain": {
+            "opted_out": "Du hast die Nachrichtenverfolgung ausgeschaltet. Das heißt dass der Bot deine Nachrichten nicht lesen wird. Solltest du mitspielen wollen, musst du die Nachrichtenverfolgung wieder anschalten. Andernfalls kannst du nicht mit machen.",
+            "finished": {
+                "title": "Wortkette beendet",
+                "description": "Die Wortkette wurde beendet! Der Satz lautet:\n\n## ${sentence}"
+            }
+        },
         "removewordchainchannel": {
             "error": {
                 "not_counting_channel": {
