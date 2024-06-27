@@ -33,10 +33,12 @@ from commands.minigames.countingModes.setcountingchannel import (
 from commands.minigames.countingModes.setcountingprogress import (
     setCountingProgress as setCountingModesProgressCommand,
 )
-from commands.minigames.wordchain.setcountingchannel import (
+from commands.minigames.wordchain.setwordchainchannel import (
     setwordchainchannel as setWordChainChannelCommand,
 )
-
+from commands.minigames.wordchain.removewordchainchannel import (
+    removewordchainchannel as removeWordChainChannelCommand,
+)
 
 class CountingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -370,7 +372,7 @@ class WordChainCommands(discord.app_commands.Group):
         if not channel:
             channel = ctx.channel
 
-        await removeCountingModesChannelCommand(commandInfo, channel)
+        await removeWordChainChannelCommand(commandInfo, channel)
 
 
 class minigameCommands(discord.app_commands.Group): ...

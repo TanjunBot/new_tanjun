@@ -1395,6 +1395,26 @@
                 "description": "Hier kann ab jetzt ein Satz erstellt werden! Jeder Spieler fügt *ein* Wort hinzu, um einen Satz zu erstellen. Ihr müsst abwechselnd Schreiben. kommata zählen als eigenes Wort. Satzzeichen wie `.`, `!`, `?` uvm. beenden den Satz. Normale Nachrichten können hier nicht mehr geschrieben werden!\n\nViel Spaß beim Satz erstellen!"
             }
         },
+        "removewordchainchannel": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Wortkette-Kanal",
+                    "description": "Der angegebene Kanal ist kein Wortkette-Kanal."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
+                }
+            },
+            "success": {
+                "title": "Wortkette Kanal entfernt",
+                "description": "Der Kanal ${channel} ist jetzt kein Wortkette-Kanal mehr."
+            },
+            "channel_message": {
+                "title": "Wortkette Kanal entfernt",
+                "description": "Dieser Kanal ist jetzt kein Wortkette-Kanal mehr."
+            }
+        },
         "setcountingchannel": {
             "error": {
                 "no_pro": {
@@ -1729,7 +1749,7 @@
                 }
             }
         },
-        "setcchallengech":{
+        "setcchallengech": {
             "name": "kanal_setzen",
             "description": "Setzt den Counting-Challenge-Kanal für den Server",
             "params": {
