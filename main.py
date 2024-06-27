@@ -54,8 +54,8 @@ async def create_pool():
         user=database_user,
         password=database_password,
         db=database_schema,
-        minsize=5,
-        maxsize=20,
+        minsize=50,
+        maxsize=1000,
     )
     return p
 
