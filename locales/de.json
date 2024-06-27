@@ -1428,6 +1428,14 @@
             }
         },
         "counting": {
+            "failed": {
+                "title": "Das war wohl nix.",
+                "description": "Die Gezähle zahl war leider Falsch. Ihr müsst wohl nochmal von vorne anfangen :("
+            },
+            "failed_double": {
+                "title": "Das war wohl nix.",
+                "description": "Du warst noch nicht dran mit zählen. Ihr müsst wohl nochmal von vorne anfangen :("
+            },
             "opted_out": "Du hast die Nachrichtenverfolgung ausgeschaltet. Das heißt dass der Bot deine Nachrichten nicht lesen wird. Solltest du mit counten, musst du die Nachrichtenverfolgung wieder anschalten. Andernfalls kannst du nicht mit machen.",
             "reasons": {
                 "opted_out": "Die Person hat die Nachrichtenverfolgung ausgeschaltet.",
