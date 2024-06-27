@@ -9,7 +9,9 @@ from typing import List, Optional
 from commands.minigames.counting.setcountingchannel import setCountingChannel as setCountingChannelCommand
 from commands.minigames.counting.removecountingchannel import removeCountingChannel as removeCountingChannelCommand
 from commands.minigames.counting.setcountingprogress import setCountingProgress as setCountingProgressCommand
-
+from commands.minigames.countingChallenge.setcountingchannel import setCountingChannel as setCountingChallengeChannelCommand
+from commands.minigames.countingChallenge.removecountingchannel import removecountingmodeschannel as removeCountingChallengeChannelCommand
+from commands.minigames.countingChallenge.setcountingprogress import setCountingProgress as setCountingChallengeProgressCommand
 
 class CountingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -96,7 +98,88 @@ class CountingCommands(discord.app_commands.Group):
         await setCountingProgressCommand(commandInfo, channel, progress)
 
 class CountingChallengeCommands(discord.app_commands.Group):
-    ...
+    @app_commands.command(
+        name=app_commands.locale_str("games_setcmodesch_name"),
+        description=app_commands.locale_str("games_setcmodes_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "games_setcmodes_params_channel_description"
+        ),
+    )
+    async def setcountingmodeschannel(self, ctx, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await setCountingChallengeChannelCommand(commandInfo, channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("games_removecmodesch_name"),
+        description=app_commands.locale_str("games_removecmodesch_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "games_removecmodesch_params_channel_description"
+        ),
+    )
+    async def removecountingmodeschannel(self, ctx, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await removeCountingChallengeChannelCommand(commandInfo, channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("games_setcmodesprogress_name"),
+        description=app_commands.locale_str("games_setcmodesprogress_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("games_setcmodesprogress_params_channel_description"),
+        progress=app_commands.locale_str("games_setcmodesprogress_params_progress_description"),
+    )
+    async def setcountingmodesprogress(self, ctx, channel: discord.TextChannel = None, progress: int = 0):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await setCountingChallengeProgressCommand(commandInfo, channel, progress)
 
 class CountingModesCommands(discord.app_commands.Group):
     ...
