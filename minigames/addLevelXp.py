@@ -22,7 +22,9 @@ from utility import get_level_for_xp
 
 
 async def addLevelXp(message: discord.Message):
-    # Check if the level system is enabled for this guild
+    if message.author.bot:
+        return
+
     if not get_level_system_status(str(message.guild.id)):
         return
 
@@ -33,7 +35,7 @@ async def addLevelXp(message: discord.Message):
     # Check blacklist
     if is_blacklisted(message):
         return
-    
+
     scaling = get_xp_scaling(str(message.guild.id))
     custom_formula = get_custom_formula(str(message.guild.id))
 
@@ -42,11 +44,13 @@ async def addLevelXp(message: discord.Message):
 
     # Get current XP and level
     current_xp = get_user_xp(str(message.guild.id), str(message.author.id))
-    current_level = get_level_for_xp(current_xp, scaling, custom_formula)
+    current_level = get_level_for_xp(
+        current_xp if current_xp else 0, scaling, custom_formula
+    )
 
     # Add XP
-    new_xp = current_xp + xp_to_add
-    new_level = get_level_for_xp(new_xp, scaling, custom_formula)
+    new_xp = current_xp if current_xp else 0 + xp_to_add if xp_to_add else 0
+    new_level = get_level_for_xp(new_xp if new_xp else 0, scaling, custom_formula)
 
     # Update XP in database
     update_user_xp(str(message.guild.id), str(message.author.id), new_xp)
@@ -109,6 +113,7 @@ def calculate_xp(message: discord.Message) -> int:
     total_boost = (1 + total_additive_boost) * total_multiplicative_boost
 
     return int(base_xp * total_boost)
+
 
 async def handle_level_up(message: discord.Message, new_level: int):
     guild_id = str(message.guild.id)

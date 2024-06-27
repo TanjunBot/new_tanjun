@@ -11,23 +11,30 @@ from typing import Tuple
 import tempfile
 import asyncio
 import os
+from io import BytesIO
+import aiohttp
 
-async def upload_image_to_imgur(image_bytes, file_extension, user_name):
-    imgur_client = ImgurClient(config.imgurClientID, config.imgurClientSecret)
-
+async def upload_image_to_imgbb(image_bytes, file_extension):
     # Create a temporary file with the appropriate file extension
     with tempfile.NamedTemporaryFile(delete=False, suffix="." + file_extension, mode='wb') as temp_file:
         temp_file.write(image_bytes)
         temp_file_path = temp_file.name
 
-    # Upload the image to Imgur
-    loop = asyncio.get_event_loop()
-    uploaded_image = await loop.run_in_executor(None, imgur_client.upload_from_path, temp_file_path, {'title': f'Rankcard background for {user_name}'})
-    
+    # Upload the image to ImgBB
+    async with aiohttp.ClientSession() as session:
+        with open(temp_file_path, 'rb') as image_file:
+            form_data = aiohttp.FormData()
+            form_data.add_field('key', config.ImgBBApiKey)
+            form_data.add_field('image', image_file)
+            form_data.add_field('name', f'tbg')
+
+            async with session.post('https://api.imgbb.com/1/upload', data=form_data) as response:
+                response_data = await response.json()
+
     # Optionally, delete the temporary file if you want to clean up
     os.remove(temp_file_path)
-    
-    return uploaded_image
+
+    return response_data
 
 
 async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
@@ -84,10 +91,11 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
         await commandInfo.reply(embed=embed)
         return
 
-    uploaded_image = await upload_image_to_imgur(await image.read(), image.content_type.split("/")[1], commandInfo.user.name)
+    uploaded_image = await upload_image_to_imgbb(await image.read(), image.content_type.split("/")[1])
 
+    print(uploaded_image)
 
-    set_custom_background(str(commandInfo.guild.id), str(commandInfo.user.id), uploaded_image['link'])
+    set_custom_background(str(commandInfo.guild.id), str(commandInfo.user.id), uploaded_image["data"]["url"])
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -97,16 +105,19 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
             commandInfo.locale, "commands.level.setbackground.success.description"
         ),
     )
-    embed.set_image(url=uploaded_image['link'])
+    embed.set_image(url=uploaded_image["data"]["url"])
     
     await commandInfo.reply(embed=embed)
 
 async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO:
     # Load background image
     if user_info['customBackground']:
-        background = Image.open(requests.get(user_info['customBackground'], stream=True).raw)
+        response = requests.get(user_info['customBackground'])
+        image_data = BytesIO(response.content)
+        background = Image.open(image_data).convert("RGBA")
+
     else:
-        background = Image.open("assets/rankCard.png")
+        background = Image.open("assets/rankCard.png").convert("RGBA")
 
     # Resize background to 1000x300 if needed
     background = background.resize((1000, 300))
@@ -119,11 +130,11 @@ async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO
     info_font = ImageFont.truetype("assets/fonts/Arial.ttf", 30)
 
     # Draw username
-    draw.text((250, 50), user.name, font=username_font, fill=(255, 255, 255))
+    draw.text((250, 50), user.name, font=username_font, fill=(255, 255, 255, 128))
 
     # Draw level and XP
-    draw.text((250, 100), f"Level: {user_info['level']}", font=info_font, fill=(255, 255, 255))
-    draw.text((250, 150), f"XP: {user_info['xp']}/{user_info['xp_needed']}", font=info_font, fill=(255, 255, 255))
+    draw.text((250, 100), f"Level: {user_info['level']}", font=info_font, fill=(255, 255, 255, 128))
+    draw.text((250, 150), f"XP: {user_info['xp']}/{user_info['xp_needed']}", font=info_font, fill=(255, 255, 255, 128))
 
     # Draw XP bar
     bar_width = 700
@@ -131,8 +142,8 @@ async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO
     xp_percentage = user_info['xp'] / user_info['xp_needed']
     filled_width = int(bar_width * xp_percentage)
 
-    draw.rectangle([250, 200, 250 + bar_width, 200 + bar_height], fill=(100, 100, 100))
-    draw.rectangle([250, 200, 250 + filled_width, 200 + bar_height], fill=(0, 255, 0))
+    draw.rectangle([250, 200, 250 + bar_width, 200 + bar_height], fill=(100, 100, 100, 128))
+    draw.rectangle([250, 200, 250 + filled_width, 200 + bar_height], fill=(0, 255, 0, 128))
 
     # Add user avatar
     avatar_url = str(user.display_avatar.url)
