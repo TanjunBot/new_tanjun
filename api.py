@@ -887,3 +887,14 @@ def set_custom_background(guild_id: str, user_id: str, background_url: str):
     """
     params = (guild_id, user_id, background_url)
     execute_action(query, params)
+
+def get_user_xp(guild_id: str, user_id: str):
+    query = "SELECT xp FROM level WHERE guild_id = %s AND user_id = %s"
+    params = (guild_id, user_id)
+    result = execute_query(query, params)
+    return result[0][0] if result else None
+
+def update_user_xp(guild_id: str, user_id: str, xp: int):
+    query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = %s"
+    params = (guild_id, user_id, xp, xp)
+    execute_action(query, params)
