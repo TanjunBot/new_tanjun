@@ -25,6 +25,8 @@ from commands.admin.createemoji import create_emoji as createEmojiCommand
 from commands.admin.warn import warn_user as warnUserCommand
 from commands.admin.viewwarns import view_warnings as viewWarningsCommand
 from commands.admin.warnconfig import warn_config as warnConfigCommand
+from commands.admin.moverole import moverole as moveroleCommand
+
 
 class WarnCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -96,6 +98,7 @@ class WarnCommands(discord.app_commands.Group):
         await warnConfigCommand(commandInfo=commandInfo)
         return
 
+
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_addrole_name"),
@@ -105,7 +108,9 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_addrole_params_user_name"),
         role=app_commands.locale_str("admin_addrole_params_role_name"),
     )
-    async def addrole(self, ctx, user: discord.Member, role: discord.Role):
+    async def addrole(
+        self, ctx, user: discord.Member = None, role: discord.Role = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -119,7 +124,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await addroleCommand(commandInfo=commandInfo, target=user, role=role)
+        await addroleCommand(commandInfo=commandInfo, user=user, role=role)
         return
 
     @app_commands.command(
@@ -130,7 +135,9 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_removerole_params_user_description"),
         role=app_commands.locale_str("admin_removerole_params_role_description"),
     )
-    async def removerole(self, ctx, user: discord.Member, role: discord.Role):
+    async def removerole(
+        self, ctx, user: discord.Member = None, role: discord.Role = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -144,7 +151,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await removeroleCommand(commandInfo=commandInfo, target=user, role=role)
+        await removeroleCommand(commandInfo=commandInfo, user=user, role=role)
         return
 
     @app_commands.command(
@@ -155,7 +162,7 @@ class administrationCommands(discord.app_commands.Group):
         name=app_commands.locale_str("admin_createrole_params_name_description"),
         color=app_commands.locale_str("admin_createrole_params_color_description"),
         display_icon=app_commands.locale_str(
-            "admin_createrole_params_display_icon_description"
+            "admin_createrole_params_displayicon_description"
         ),
         hoist=app_commands.locale_str("admin_createrole_params_hoist_description"),
         mentionable=app_commands.locale_str(
@@ -163,7 +170,7 @@ class administrationCommands(discord.app_commands.Group):
         ),
         reason=app_commands.locale_str("admin_createrole_params_reason_description"),
         display_emoji=app_commands.locale_str(
-            "admin_createrole_params_display_emoji_description"
+            "admin_createrole_params_displayemoji_description"
         ),
     )
     async def createrole(
@@ -226,6 +233,52 @@ class administrationCommands(discord.app_commands.Group):
         await deleteroleCommand(commandInfo=commandInfo, role=role, reason=reason)
         return
 
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_moverole_name"),
+        description=app_commands.locale_str("admin_moverole_description"),
+    )
+    @app_commands.describe(
+        role=app_commands.locale_str("admin_moverole_params_role_description"),
+        target_role=app_commands.locale_str(
+            "admin_moverole_params_targetrole_description"
+        ),
+        position=app_commands.locale_str("admin_moverole_params_position_description"),
+    )
+    @app_commands.choices(
+        position=[
+            app_commands.Choice(name=app_commands.locale_str("admin_moverole_params_position_above"), value="above"),
+            app_commands.Choice(name=app_commands.locale_str("admin_moverole_params_position_below"), value="below"),
+        ]
+    )
+    async def moverole(
+        self,
+        ctx,
+        role: discord.Role,
+        target_role: discord.Role,
+        position: app_commands.Choice[str],
+    ):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+
+        await moveroleCommand(
+            commandInfo=commandInfo,
+            role=role,
+            target_role=target_role,
+            position=position.value,
+    )
+
     @app_commands.command(
         name=app_commands.locale_str("admin_kick_name"),
         description=app_commands.locale_str("admin_kick_description"),
@@ -259,7 +312,7 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_ban_params_user_description"),
         reason=app_commands.locale_str("admin_ban_params_reason_description"),
         delete_message_days=app_commands.locale_str(
-            "admin_ban_params_delete_message_days_description"
+            "admin_ban_params_deletemessagedays_description"
         ),
     )
     async def ban(
@@ -597,7 +650,7 @@ class administrationCommands(discord.app_commands.Group):
         channel=app_commands.locale_str("admin_say_params_channel_description"),
         message=app_commands.locale_str("admin_say_params_message_description"),
     )
-    async def say(self, ctx, channel: discord.TextChannel, *, message: str):
+    async def say(self, ctx, message: str, channel: discord.TextChannel = None):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -610,6 +663,9 @@ class administrationCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
+
+        if not channel:
+            channel = ctx.channel
 
         await sayCommand(commandInfo=commandInfo, channel=channel, message=message)
         return
@@ -1188,15 +1244,15 @@ class adminCog(commands.Cog):
             commandInfo=commandInfo, name=name, image_url=image_url, roles=list(roles)
         )
 
-
     @commands.Cog.listener()
     async def on_ready(self):
         admincmds = administrationCommands(
-            name="admin", description="Administriere den Server"
+            name="admin", description="Administrate the Server"
         )
-        warncmds = WarnCommands(name="warn", description="Verwalte Warnungen")
+        warncmds = WarnCommands(name="warn", description="Manage Warns")
         admincmds.add_command(warncmds)
         self.bot.tree.add_command(admincmds)
+
 
 async def setup(bot):
     await bot.add_cog(adminCog(bot))

@@ -3,8 +3,9 @@ import utility
 from localizer import tanjunLocalizer
 import aiohttp
 import io
+from typing import List
 
-async def create_emoji(commandInfo: utility.commandInfo, name: str, image_url: str, roles: list[discord.Role] = None):
+async def create_emoji(commandInfo: utility.commandInfo, name: str, image_url: str, roles: List[discord.Role] = None):
     if not commandInfo.user.guild_permissions.manage_emojis:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

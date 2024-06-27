@@ -33,7 +33,7 @@ class Localizer:
         translations = self.load_translations(locale)
         template_string = self.get_nested_translation(translations, key)
         if template_string is None:
-            return f"[{key}] not found in {locale} translations."
+            return self.localize("de", key, **args)
         template = Template(template_string)
         return template.safe_substitute(args)
 

@@ -1,0 +1,56 @@
+from api import get_wordchain_last_user_id, get_wordchain_word, check_if_opted_out, clear_wordchain, set_wordchain_word
+import discord
+from localizer import tanjunLocalizer
+from utility import tanjunEmbed
+import random
+
+async def wordchain(message: discord.Message):
+    if message.author.bot:
+        return  
+
+    wordchain_word = get_wordchain_word(message.channel.id)
+    if wordchain_word is None:
+        return
+    
+    locale = message.guild.locale if hasattr(message.guild, "locale") else "en_US"
+
+    if check_if_opted_out(message.author.id):
+        try:
+            await message.author.send(tanjunLocalizer.localize(locale, "minigames.wordchain.opted_out"))
+        except discord.Forbidden:
+            pass
+        await message.delete()
+        return
+    
+    content = message.content
+
+    if not content:
+        await message.delete()
+        return
+    
+    if content.count(" ") > 0:
+        await message.delete()
+        return
+    
+    if get_wordchain_last_user_id(message.channel.id) == message.author.id:
+        await message.delete()
+        return
+    
+    endChars = (".", "?", "!", ";", ":")
+
+    for char in content:
+        if char in endChars:
+            clear_wordchain(message.channel.id)
+            set_wordchain_word(channel_id=message.channel.id, guild_id=message.guild.id, word="", worder_id="nobody")
+            embed = tanjunEmbed(
+                title=tanjunLocalizer.localize(locale, "minigames.wordchain.finished.title"),
+                description=tanjunLocalizer.localize(locale, "minigames.wordchain.finished.description", sentence = wordchain_word + content,),
+            )
+            await message.channel.send(embed=embed)
+            return
+        
+    if content == ",":
+        set_wordchain_word(channel_id=message.channel.id, guild_id=message.guild.id, word=wordchain_word + ",", worder_id="nobody")
+        return
+    
+    set_wordchain_word(channel_id=message.channel.id, guild_id=message.guild.id, word=wordchain_word + " " + content, worder_id=message.author.id)
