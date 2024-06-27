@@ -66,6 +66,14 @@ def create_tables():
         "  `guild_id` VARCHAR(20)"
         ") ENGINE=InnoDB"
     )
+    tables["wordchain"] = (
+        "CREATE TABLE IF NOT EXISTS `wordchain` ("
+        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
+        "  `word` VARCHAR(1028) DEFAULT NULL,"
+        "  `last_user_id` VARCHAR(20) DEFAULT NULL,"
+        "  `guild_id` VARCHAR(20)"
+        ") ENGINE=InnoDB"
+    )
 
     connection = mysql.connector.connect(
         host=database_ip,
@@ -365,6 +373,23 @@ def get_counting_mode_mode(channel_id):
 
 def get_count_mode_goal(channel_id):
     query = "SELECT goal FROM counting_modes WHERE channel_id = %s"
+    params = (channel_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else None
+
+def get_wordchain_word(channel_id):
+    query = "SELECT word FROM wordchain WHERE channel_id = %s"
+    params = (channel_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else None
+
+def set_wordchain_word(channel_id, word, guild_id, worder_id):
+    query = "INSERT INTO wordchain (channel_id, word, last_user_id, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE word = %s, last_user_id = %s"
+    params = (channel_id, word, worder_id, guild_id, word, worder_id)
+    execute_action(query, params)
+
+def get_wordchain_last_user_id(channel_id):
+    query = "SELECT last_user_id FROM wordchain WHERE channel_id = %s"
     params = (channel_id,)
     result = execute_query(query, params)
     return result[0][0] if result else None
