@@ -961,6 +961,11 @@ def checkIfHasPro(guildid: int):
         return False
     return True
 
+def checkIfhasPlus(userid: int):
+    if userid == 0:
+        return False
+    return True
+
 def missingLocalization(locale: str):
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new-Tanjun")

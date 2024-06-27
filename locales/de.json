@@ -900,6 +900,50 @@
                     "already_opted_in": "Du hast die Nachrichtenverfolgung bereits aktiviert."
                 }
             }
+        },
+        "level": {
+            "disablelevelsystem": {
+                "confirm": "bestätigen",
+                "cancel": "abbrechen",
+                "name": "levelsystem_deaktivieren",
+                "description": "Deaktiviert das Levelsystem für diesen Server",
+                "confirmation": {
+                    "title": "Levelsystem deaktivieren?",
+                    "description": "Achtung: Wenn Sie das Levelsystem deaktivieren, werden alle damit verbundenen Informationen gelöscht und können nicht wiederhergestellt werden. Möchten Sie fortfahren?"
+                },
+                "success": {
+                    "title": "Levelsystem deaktiviert",
+                    "description": "Das Levelsystem wurde erfolgreich deaktiviert und alle zugehörigen Daten wurden gelöscht."
+                },          
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um das Levelsystem zu deaktivieren."
+                    },
+                    "already_disabled": {
+                        "title": "Bereits deaktiviert",
+                        "description": "Das Levelsystem ist für diesen Server bereits deaktiviert."
+                    }
+                }
+            },
+            "enablelevelsystem": {
+                "name": "levelsystem_aktivieren",
+                "description": "Aktiviert das Levelsystem für diesen Server",
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um das Levelsystem zu aktivieren."
+                    },
+                    "already_enabled": {
+                        "title": "Bereits aktiviert",
+                        "description": "Das Levelsystem ist für diesen Server bereits aktiviert."
+                    }
+                },
+                "success": {
+                    "title": "Levelsystem aktiviert",
+                    "description": "Das Levelsystem wurde erfolgreich für diesen Server aktiviert."
+                }
+            }
         }
     },
     "admin": {
@@ -1849,6 +1893,20 @@
             }
         }
     },
+    "level": {
+        "disable": {
+            "name": "deaktivieren",
+            "description": "Deaktiviert das Levelsystem für den Server"
+        },
+        "config": {
+            "name": "settings",
+            "description": "Konfiguriert das Levelsystem für den Server"
+        },
+        "enable": {
+            "name": "aktivieren",
+            "description": "Aktiviert das Levelsystem für den Server"
+        }
+    },
     "Administrate the Server": "Verwalte den Server",
     "user": "benutzer",
     "role": "rolle",
@@ -1892,5 +1950,7 @@
     "Utility Commands": "Verschiedene Befehle",
     "minigame": "minispiel",
     "Minigame Commands": "Minispiel Befehle",
-    "progress": "fortschritt"
+    "progress": "fortschritt",
+    "levelcommands": "level",
+    "Level Commands": "Level Befehle"
 }

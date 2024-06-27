@@ -80,72 +80,72 @@ def create_tables():
         "  `guild_id` VARCHAR(20) NOT NULL,"
         "  `xp` INT UNSIGNED DEFAULT 0,"
         "  `customBackground` VARCHAR(255) DEFAULT NULL,"
-        "  PRIMARY KEY (`user_id`, `guild_id`)"
+        "  PRIMARY KEY(`user_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["blacklistedUser"] = (
         "CREATE TABLE IF NOT EXISTS `blacklistedUser` ("
-        "  `user_id` VARCHAR(20) PRIMARY KEY,"
+        "  `user_id` VARCHAR(20) NOT NULL,"
         "  `guild_id` VARCHAR(20) NOT NULL,"
         "  `reason` VARCHAR(255) DEFAULT NULL,"
-        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-        "  PRIMARY KEY (`user_id`, `guild_id`)"
+        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+        "  PRIMARY KEY(`user_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["blacklistedRole"] = (
         "CREATE TABLE IF NOT EXISTS `blacklistedRole` ("
-        "  `role_id` VARCHAR(20) PRIMARY KEY,"
+        "  `role_id` VARCHAR(20) NOT NULL,"
         "  `guild_id` VARCHAR(20) NOT NULL,"
         "  `reason` VARCHAR(255) DEFAULT NULL,"
-        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-        "  PRIMARY KEY (`role_id`, `guild_id`)"
+        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+        "  PRIMARY KEY(`role_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["blacklistedChannel"] = (
         "CREATE TABLE IF NOT EXISTS `blacklistedChannel` ("
-        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
+        "  `channel_id` VARCHAR(20) NOT NULL,"
         "  `guild_id` VARCHAR(20) NOT NULL,"
         "  `reason` VARCHAR(255) DEFAULT NULL,"
-        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-        "  PRIMARY KEY (`channel_id`, `guild_id`)"
+        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+        "  PRIMARY KEY(`channel_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["userXpBoost"] = (
         "CREATE TABLE IF NOT EXISTS `userXpBoost` ("
-        "  `user_id` VARCHAR(20) PRIMARY KEY,"
+        "  `user_id` VARCHAR(20) NOT NULL,"
         "  `guild_id` VARCHAR(20) NOT NULL,"
         "  `boost` DECIMAL(4, 2) UNSIGNED DEFAULT 1,"
         "  `additive` TINYINT(1) DEFAULT 0,"
-        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-        "  PRIMARY KEY (`user_id`, `guild_id`)"
+        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+        "  PRIMARY KEY(`user_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["roleXpBoost"] = (
         "CREATE TABLE IF NOT EXISTS `roleXpBoost` ("
-        "  `role_id` VARCHAR(20) PRIMARY KEY,"
+        "  `role_id` VARCHAR(20) NOT NULL,"
         "  `guild_id` VARCHAR(20) NOT NULL,"
         "  `boost` DECIMAL(4, 2) UNSIGNED DEFAULT 1,"
         "  `additive` TINYINT(1) DEFAULT 0,"
-        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-        "  PRIMARY KEY (`role_id`, `guild_id`)"
+        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+        "  PRIMARY KEY(`role_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["channelXpBoost"] = (
         "CREATE TABLE IF NOT EXISTS `channelXpBoost` ("
-        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
+        "  `channel_id` VARCHAR(20) NOT NULL,"
         "  `guild_id` VARCHAR(20) NOT NULL,"
         "  `boost` DECIMAL(4, 2) UNSIGNED DEFAULT 1,"
         "  `additive` TINYINT(1) DEFAULT 0,"
-        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-        "  PRIMARY KEY (`channel_id`, `guild_id`)"
+        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+        "  PRIMARY KEY(`channel_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["levelRole"] = (
         "CREATE TABLE IF NOT EXISTS `levelRole` ("
-        "  `role_id` VARCHAR(20) PRIMARY KEY,"
+        "  `role_id` VARCHAR(20) NOT NULL,"
         "  `guild_id` VARCHAR(20) NOT NULL,"
         "  `level` INT UNSIGNED DEFAULT 0,"
-        "  PRIMARY KEY (`role_id`, `guild_id`)"
+        "  PRIMARY KEY(`role_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["levelConfig"] = (
@@ -154,7 +154,7 @@ def create_tables():
         "  `difficulty` TINYINT(4) UNSIGNED DEFAULT 0,"
         "  `levelUpMessageActive` TINYINT(1) DEFAULT 1,"
         "  `levelUpMessage` VARCHAR(255) DEFAULT NULL,"
-        "  `active` TINYINT(1) DEFAULT 1"
+        "  `active` TINYINT(1) DEFAULT 1,"
         "  `textCooldown` TINYINT(4) DEFAULT 1,"
         "  `voiceCooldown` TINYINT(4) DEFAULT 1"
         ") ENGINE=InnoDB"
@@ -176,6 +176,7 @@ def create_tables():
     cursor.close()
     connection.close()
 
+
 connection = mysql.connector.connect(
     host=database_ip,
     user=database_user,
@@ -183,6 +184,7 @@ connection = mysql.connector.connect(
     database=database_schema,
 )
 cursor = connection.cursor()
+
 
 def execute_query(query, params=None):
     cursor.execute(query, params)
@@ -335,6 +337,7 @@ def set_counting_progress(channel_id, progress, guild_id):
     params = (channel_id, progress, guild_id)
     execute_action(query, params)
 
+
 def get_counting_channel_amount(guild_id):
     query = "SELECT COUNT(progress) FROM counting WHERE guild_id = %s"
     params = (guild_id,)
@@ -367,10 +370,12 @@ def clear_counting(channel_id):
     params = (channel_id,)
     execute_action(query, params)
 
+
 def set_counting_challenge_progress(channel_id, progress, guild_id):
     query = "INSERT INTO counting_challenge (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress)"
     params = (channel_id, progress, guild_id)
     execute_action(query, params)
+
 
 def get_counting_challenge_progress(channel_id):
     query = "SELECT progress FROM counting_challenge WHERE channel_id = %s"
@@ -378,10 +383,12 @@ def get_counting_challenge_progress(channel_id):
     result = execute_query(query, params)
     return result[0][0] if result else None
 
+
 def increase_counting_challenge_progress(channel_id, last_counter_id):
     query = "UPDATE counting_challenge SET progress = progress + 1, last_counter_id = %s WHERE channel_id = %s"
     params = (last_counter_id, channel_id)
     execute_action(query, params)
+
 
 def get_last_challenge_counter_id(channel_id):
     query = "SELECT last_counter_id FROM counting_challenge WHERE channel_id = %s"
@@ -389,10 +396,12 @@ def get_last_challenge_counter_id(channel_id):
     result = execute_query(query, params)
     return result[0][0] if result else None
 
+
 def clear_counting_challenge(channel_id):
     query = "DELETE FROM counting_challenge WHERE channel_id = %s"
     params = (channel_id,)
     execute_action(query, params)
+
 
 def get_counting_challenge_channel_amount(guild_id):
     query = "SELECT COUNT(progress) FROM counting_challenge WHERE guild_id = %s"
@@ -400,10 +409,12 @@ def get_counting_challenge_channel_amount(guild_id):
     result = execute_query(query, params)
     return len(result) if result else 0
 
+
 def set_counting_mode(channel_id, progress, mode, guild_id):
     query = "INSERT INTO counting_modes (channel_id, progress, mode, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress), mode = VALUES(mode)"
     params = (channel_id, progress, mode, guild_id)
     execute_action(query, params)
+
 
 def get_counting_mode_mode(channel_id):
     query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
@@ -411,16 +422,19 @@ def get_counting_mode_mode(channel_id):
     result = execute_query(query, params)
     return result[0] if result else None
 
+
 def get_counting_mode_progress(channel_id):
     query = "SELECT progress FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = execute_query(query, params)
     return result[0][0] if result else None
 
+
 def increase_counting_mode_progress(channel_id, last_counter_id):
     query = "UPDATE counting_modes SET progress = progress + 1, last_counter_id = %s WHERE channel_id = %s"
     params = (last_counter_id, channel_id)
     execute_action(query, params)
+
 
 def get_last_mode_counter_id(channel_id):
     query = "SELECT last_counter_id FROM counting_modes WHERE channel_id = %s"
@@ -428,16 +442,19 @@ def get_last_mode_counter_id(channel_id):
     result = execute_query(query, params)
     return result[0][0] if result else None
 
+
 def clear_counting_mode(channel_id):
     query = "DELETE FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     execute_action(query, params)
+
 
 def get_counting_mode_mode(channel_id):
     query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = execute_query(query, params)
     return result[0][0] if result else None
+
 
 def get_counting_mode_channel_amount(guild_id):
     query = "SELECT COUNT(progress) FROM counting_modes WHERE guild_id = %s"
@@ -445,10 +462,21 @@ def get_counting_mode_channel_amount(guild_id):
     result = execute_query(query, params)
     return len(result) if result else 0
 
+
 def set_counting_mode_progress(channel_id, progress, guild_id, mode, goal, counter_id):
     query = "INSERT INTO counting_modes (channel_id, progress, guild_id, mode, goal, last_counter_id) VALUES (%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s, last_counter_id = %s"
-    params = (channel_id, progress, guild_id, mode, goal, counter_id, progress, counter_id)
+    params = (
+        channel_id,
+        progress,
+        guild_id,
+        mode,
+        goal,
+        counter_id,
+        progress,
+        counter_id,
+    )
     execute_action(query, params)
+
 
 def get_counting_mode_mode(channel_id):
     query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
@@ -456,11 +484,13 @@ def get_counting_mode_mode(channel_id):
     result = execute_query(query, params)
     return result[0][0] if result else None
 
+
 def get_count_mode_goal(channel_id):
     query = "SELECT goal FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = execute_query(query, params)
     return result[0][0] if result else None
+
 
 def get_wordchain_word(channel_id):
     query = "SELECT word FROM wordchain WHERE channel_id = %s"
@@ -468,10 +498,12 @@ def get_wordchain_word(channel_id):
     result = execute_query(query, params)
     return result[0][0] if result else None
 
+
 def set_wordchain_word(channel_id, word, guild_id, worder_id):
     query = "INSERT INTO wordchain (channel_id, word, last_user_id, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE word = %s, last_user_id = %s"
     params = (channel_id, word, worder_id, guild_id, word, worder_id)
     execute_action(query, params)
+
 
 def get_wordchain_last_user_id(channel_id):
     query = "SELECT last_user_id FROM wordchain WHERE channel_id = %s"
@@ -479,7 +511,44 @@ def get_wordchain_last_user_id(channel_id):
     result = execute_query(query, params)
     return result[0][0] if result else None
 
+
 def clear_wordchain(channel_id):
     query = "DELETE FROM wordchain WHERE channel_id = %s"
     params = (channel_id,)
     execute_action(query, params)
+
+
+def set_level_system_status(guild_id: str, active: bool):
+    query = """
+    INSERT INTO levelConfig (guild_id, active) 
+    VALUES (%s, %s) 
+    ON DUPLICATE KEY UPDATE active = VALUES(active)
+    """
+    params = (guild_id, active)
+    execute_action(query, params)
+
+
+def get_level_system_status(guild_id: str) -> bool:
+    query = "SELECT active FROM levelConfig WHERE guild_id = %s"
+    params = (guild_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else True  # Default to True if no record exists
+
+
+def delete_level_system_data(guild_id: str):
+    connection = mysql.connector.connect(
+        host=database_ip,
+        user=database_user,
+        password=database_password,
+        database=database_schema,
+    )
+    cursor = connection.cursor()
+
+    tables = ["level", "blacklistedUser", "blacklistedRole", "blacklistedChannel", "userXpBoost", "roleXpBoost", "channelXpBoost", "levelRole", "levelConfig"]
+    for table in tables:
+        query = f"DELETE FROM {table} WHERE guild_id = %s"
+        cursor.execute(query, (guild_id,))
+
+    connection.commit()
+    cursor.close()
+    connection.close()
