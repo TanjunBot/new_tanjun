@@ -4,6 +4,15 @@ from localizer import tanjunLocalizer
 import discord
 
 async def setCountingProgress(commandInfo: commandInfo, channel: discord.TextChannel, progress: int):
+
+    if not commandInfo.user.guild_permissions.moderate_members:
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.error.no_moderate_members_perms.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.error.no_moderate_members_perms.description"),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+
     # Check if the channel is a counting channel
     current_progress = get_counting_progress(channel.id)
     if current_progress is None:

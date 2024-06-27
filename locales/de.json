@@ -1368,6 +1368,10 @@
                 "no_view_perms": {
                     "title": "Fehlende Berechtigungen",
                     "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die erforderlichen Rechte, dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
                 }
             },
             "success": {
@@ -1394,6 +1398,10 @@
                 "not_counting_channel": {
                     "title": "Kein Counting-Kanal",
                     "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
                 }
             },
             "success": {
@@ -1418,6 +1426,10 @@
                 "too_high": {
                     "title": "Zu hoher Fortschritt",
                     "description": "Der Fortschritt ist zu hoch. Bitte fahre mit einer niedrigeren Zahl fort. ||Es würde über 31 Jahre mit einer Nachricht pro Sekunde dauern, um bis zu `1.000.000.000` zu Zählen!||"
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
                 }
             },
             "success": {

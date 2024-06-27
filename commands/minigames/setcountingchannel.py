@@ -5,6 +5,15 @@ import discord
 
 async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChannel):
 
+
+    if not commandInfo.user.guild_permissions.moderate_members:
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_moderate_members_perms.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_moderate_members_perms.description"),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+
     if get_counting_channel_amount(commandInfo.guild.id) != 0 and not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_pro_title"),
