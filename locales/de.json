@@ -914,7 +914,7 @@
                 "success": {
                     "title": "Levelsystem deaktiviert",
                     "description": "Das Levelsystem wurde erfolgreich deaktiviert und alle zugehörigen Daten wurden gelöscht."
-                },          
+                },
                 "error": {
                     "no_permission": {
                         "title": "Fehlende Berechtigung",
@@ -942,6 +942,26 @@
                 "success": {
                     "title": "Levelsystem aktiviert",
                     "description": "Das Levelsystem wurde erfolgreich für diesen Server aktiviert."
+                }
+            },
+            "changelevelupmessage": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die Level-Up-Nachricht zu ändern."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "message_too_long": {
+                        "title": "Nachricht zu lang",
+                        "description": "Die Level-Up-Nachricht darf maximal 255 Zeichen lang sein."
+                    }
+                },
+                "success": {
+                    "title": "Level-Up-Nachricht geändert",
+                    "description": "Die Level-Up-Nachricht wurde erfolgreich auf folgendes geändert:\n\n${new_message}"
                 }
             }
         }
@@ -1905,6 +1925,16 @@
         "enable": {
             "name": "aktivieren",
             "description": "Aktiviert das Levelsystem für den Server"
+        },
+        "changelevelupmessage": {
+            "name": "levelup_nachricht_ändern",
+            "description": "Ändert die Nachricht, die beim Level-Up angezeigt wird",
+            "params": {
+                "newmessage": {
+                    "name": "neue_nachricht",
+                    "description": "Die neue Level-Up-Nachricht. Verwende {user} für den Benutzernamen und {level} für das neue Level."
+                }
+            }
         }
     },
     "Administrate the Server": "Verwalte den Server",
@@ -1952,5 +1982,6 @@
     "Minigame Commands": "Minispiel Befehle",
     "progress": "fortschritt",
     "levelcommands": "level",
-    "Level Commands": "Level Befehle"
+    "Level Commands": "Level Befehle",
+    "new_message": "neue_nachricht"
 }

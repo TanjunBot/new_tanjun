@@ -536,19 +536,32 @@ def get_level_system_status(guild_id: str) -> bool:
 
 
 def delete_level_system_data(guild_id: str):
-    connection = mysql.connector.connect(
-        host=database_ip,
-        user=database_user,
-        password=database_password,
-        database=database_schema,
-    )
-    cursor = connection.cursor()
-
-    tables = ["level", "blacklistedUser", "blacklistedRole", "blacklistedChannel", "userXpBoost", "roleXpBoost", "channelXpBoost", "levelRole", "levelConfig"]
+    tables = [
+        "level",
+        "blacklistedUser",
+        "blacklistedRole",
+        "blacklistedChannel",
+        "userXpBoost",
+        "roleXpBoost",
+        "channelXpBoost",
+        "levelRole",
+        "levelConfig",
+    ]
     for table in tables:
         query = f"DELETE FROM {table} WHERE guild_id = %s"
-        cursor.execute(query, (guild_id,))
+        execute_action(query, (guild_id,))
 
-    connection.commit()
-    cursor.close()
-    connection.close()
+def set_levelup_message(guild_id: str, message: str):
+    query = """
+    INSERT INTO levelConfig (guild_id, levelUpMessage) 
+    VALUES (%s, %s) 
+    ON DUPLICATE KEY UPDATE levelUpMessage = VALUES(levelUpMessage)
+    """
+    execute_action(query, (guild_id, message))
+
+
+def get_levelup_message(guild_id: str) -> str:
+    query = "SELECT levelUpMessage FROM levelConfig WHERE guild_id = %s"
+    result = execute_query(query, (guild_id,))
+
+    return result[0] if result else None
