@@ -16,18 +16,6 @@ async def set_levelup_channel_command(commandInfo: commandInfo, channel: discord
         await commandInfo.reply(embed=embed)
         return
 
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.setlevelupchannel.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.setlevelupchannel.error.no_pro.description"
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     if channel:
         set_levelup_channel(str(commandInfo.guild.id), str(channel.id))
         embed = tanjunEmbed(

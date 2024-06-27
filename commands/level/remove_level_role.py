@@ -15,19 +15,7 @@ async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role
         )
         await commandInfo.reply(embed=embed)
         return
-
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.removelevelrole.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.removelevelrole.error.no_pro.description"
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
+    
     existing_roles = get_level_roles(str(commandInfo.guild.id), level)
     if str(role.id) not in existing_roles:
         embed = tanjunEmbed(

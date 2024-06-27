@@ -300,20 +300,7 @@ async def show_level_roles_command(commandInfo: commandInfo):
         )
         await commandInfo.reply(embed=embed)
         return
-
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.showlevelroles.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.level.showlevelroles.error.no_pro.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
+    
     level_roles = get_all_level_roles(str(commandInfo.guild.id))
 
     if not level_roles:

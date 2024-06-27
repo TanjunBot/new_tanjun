@@ -15,18 +15,6 @@ async def enable_levelup_message(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.enablelevelupmessage.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.enablelevelupmessage.error.no_pro.description"
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     current_status = get_levelup_message_status(str(commandInfo.guild.id))
     if current_status:
         embed = tanjunEmbed(

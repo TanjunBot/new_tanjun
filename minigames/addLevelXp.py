@@ -136,21 +136,19 @@ async def handle_level_up(message: discord.Message, new_level: int):
 
             await channel.send(level_up_message)
 
-    # Handle level roles
-    if checkIfHasPro(guild_id):
-        level_roles = get_level_roles(guild_id)
-        roles_to_add = [
-            role_id for level, role_id in level_roles.items() if level <= new_level
-        ]
+    level_roles = get_level_roles(guild_id)
+    roles_to_add = [
+        role_id for level, role_id in level_roles.items() if level <= new_level
+    ]
 
-        for role_id in roles_to_add:
-            role = message.guild.get_role(int(role_id))
-            if role and role not in message.author.roles:
-                try:
-                    await message.author.add_roles(
-                        role, reason=f"Reached level {new_level}"
-                    )
-                except discord.Forbidden:
-                    print(
-                        f"Bot doesn't have permission to add role {role.name} to {message.author.name}"
-                    )
+    for role_id in roles_to_add:
+        role = message.guild.get_role(int(role_id))
+        if role and role not in message.author.roles:
+            try:
+                await message.author.add_roles(
+                    role, reason=f"Reached level {new_level}"
+                )
+            except discord.Forbidden:
+                print(
+                    f"Bot doesn't have permission to add role {role.name} to {message.author.name}"
+                )

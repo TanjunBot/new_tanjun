@@ -138,6 +138,18 @@ async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.
         await commandInfo.reply(embed=embed)
         return
 
+    if not checkIfHasPro(commandInfo.guild.id):
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.level.blacklist.add_channel.error.no_pro.title"
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.level.blacklist.add_channel.error.no_pro.description"
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+
     add_user_to_blacklist(str(commandInfo.guild.id), str(user.id), reason)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(

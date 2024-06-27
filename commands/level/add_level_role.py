@@ -16,18 +16,6 @@ async def add_level_role_command(commandInfo: commandInfo, role: discord.Role, l
         await commandInfo.reply(embed=embed)
         return
 
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.addlevelrole.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.addlevelrole.error.no_pro.description"
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     if level < 1:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
