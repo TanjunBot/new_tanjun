@@ -70,10 +70,16 @@ async def fetch_xp_details(message: discord.Message, guild_id: str):
 async def calculate_xp(message: discord.Message, guild_id: str) -> int:
     base_xp = random.randint(1, 3)
     user_boost = await get_user_boost(guild_id, str(message.author.id))
+    if not user_boost:
+        user_boost = []
     role_boosts = await get_user_roles_boosts(
         guild_id, [str(role.id) for role in message.author.roles]
     )
+    if not role_boosts:
+        role_boosts = []
     channel_boost = await get_channel_boost(guild_id, str(message.channel.id))
+    if not channel_boost:
+        channel_boost = []
 
     total_additive_boost = sum(boost[0] - 1 for boost in role_boosts if boost[1])
     total_multiplicative_boost = math.prod(
@@ -86,7 +92,7 @@ async def calculate_xp(message: discord.Message, guild_id: str) -> int:
         else:
             total_multiplicative_boost *= user_boost[0]
 
-    if role_boost:
+    if role_boosts:
         for role_boost in role_boosts:
             if role_boost[1]:  # if additive
                 total_additive_boost += role_boost[0] - 1
