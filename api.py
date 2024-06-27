@@ -2,6 +2,7 @@ import mysql.connector
 from config import database_ip, database_password, database_user, database_schema
 import json
 from typing import Optional, List, Dict
+from utility import get_xp_for_level, get_level_for_xp
 
 
 def create_tables():
@@ -846,3 +847,43 @@ def get_blacklist(guild_id: str):
     users = execute_query(users_query, (guild_id,))
 
     return {"channels": channels, "roles": roles, "users": users}
+
+
+def get_user_level_info(guild_id: str, user_id: str):
+    query = """
+    SELECT xp, customBackground FROM level 
+    WHERE guild_id = %s AND user_id = %s
+    """
+    params = (guild_id, user_id)
+    result = execute_query(query, params)
+    scaling = get_xp_scaling(guild_id)
+    custom_formula = get_custom_formula(guild_id)
+    if result:
+        xp, custom_background = result[0]
+        level = get_level_for_xp(
+            xp,
+            scaling,
+            custom_formula
+        )
+        xp_needed = get_xp_for_level(
+            level,
+            scaling,
+            custom_formula
+        ) 
+        return {
+            "xp": xp,
+            "level": level,
+            "xp_needed": xp_needed,
+            "customBackground": custom_background,
+        }
+    return None
+
+
+def set_custom_background(guild_id: str, user_id: str, background_url: str):
+    query = """
+    INSERT INTO level (guild_id, user_id, customBackground) 
+    VALUES (%s, %s, %s)
+    ON DUPLICATE KEY UPDATE customBackground = VALUES(customBackground)
+    """
+    params = (guild_id, user_id, background_url)
+    execute_action(query, params)

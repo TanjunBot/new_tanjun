@@ -47,7 +47,10 @@ from commands.level.level_blacklist import (
     remove_user_from_blacklist_command,
     show_blacklist_command,
 )
-
+from commands.level.level_rankcard import (
+    show_rankcard_command,
+    set_background_command,
+)
 
 class BlacklistCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -697,7 +700,51 @@ class LevelConfigCommands(discord.app_commands.Group):
         await show_level_roles_command(commandInfo)
 
 
-class levelCommands(discord.app_commands.Group): ...
+class levelCommands(discord.app_commands.Group):
+    @app_commands.command(
+    name=app_commands.locale_str("level_rank_name"),
+    description=app_commands.locale_str("level_rank_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str("level_rank_params_user_description"),
+    )
+    async def rankcard(self, ctx, user: discord.Member = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await show_rankcard_command(commandInfo, user or ctx.user)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_setbackground_name"),
+        description=app_commands.locale_str("level_setbackground_description"),
+    )
+    @app_commands.describe(
+        image=app_commands.locale_str("level_setbackground_params_image_description"),
+    )
+    async def set_background(self, ctx, image: discord.Attachment):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await set_background_command(commandInfo, image)
+
 
 
 class levelCog(commands.Cog):

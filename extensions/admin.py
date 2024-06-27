@@ -709,11 +709,11 @@ class administrationCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         name=app_commands.locale_str("admin_createemoji_params_name_description"),
-        image_url=app_commands.locale_str(
+        imageurl=app_commands.locale_str(
             "admin_createemoji_params_imageUrl_description"
         ),
     )
-    async def createemoji(self, ctx, name: str, image_url: str):
+    async def createemoji(self, ctx, name: str, imageurl: str):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -742,7 +742,7 @@ class administrationCommands(discord.app_commands.Group):
             commandInfo.message = interaction.message
             commandInfo.reply = interaction.response.send_message
             await createEmojiCommand(
-                commandInfo=commandInfo, name=name, image_url=image_url, roles=roles
+                commandInfo=commandInfo, name=name, image_url=imageurl, roles=roles
             )
 
         role_select.callback = role_select_callback

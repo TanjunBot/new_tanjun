@@ -902,6 +902,33 @@
             }
         },
         "level": {
+            "rank": {
+                "error": {
+                    "no_data": {
+                        "title": "Keine Daten verfügbar",
+                        "description": "Es sind keine Leveldaten für ${user} verfügbar."
+                    }
+                },
+                "success": {
+                    "title": "Rangkarte von ${user}"
+                }
+            },
+            "setbackground": {
+                "error": {
+                    "no_plus": {
+                        "title": "Tanjun Plus erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Plus Benutzer verfügbar."
+                    },
+                    "invalid_format": {
+                        "title": "Ungültiges Bildformat",
+                        "description": "Bitte lade ein Bild im PNG-, JPEG- oder GIF-Format hoch."
+                    }
+                },
+                "success": {
+                    "title": "Hintergrund gesetzt",
+                    "description": "Dein benutzerdefinierter Hintergrund wurde erfolgreich gesetzt."
+                }
+            },
             "blacklist": {
                 "add_channel": {
                     "error": {
@@ -2249,6 +2276,26 @@
         }
     },
     "level": {
+        "rank": {
+            "name": "rang",
+            "description": "Zeigt die Rangkarte eines Benutzers an",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Der Benutzer, dessen Rangkarte angezeigt werden soll (optional)"
+                }
+            }
+        },
+        "setbackground": {
+            "name": "hintergrund_setzen",
+            "description": "Setzt ein benutzerdefiniertes Hintergrundbild für die Rangkarte",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das als Hintergrund verwendet werden soll"
+                }
+            }
+        },
         "blacklist": {
             "name": "blacklist",
             "description": "Verwaltet die Blacklist für das Levelsystem",
@@ -2609,5 +2656,7 @@
     "startlevel": "start_level",
     "endlevel": "end_level",
     "boost": "boost",
-    "additive": "additiv"
+    "additive": "additiv",
+    "image": "bild",
+    "imageurl": "bild_url"
 }
