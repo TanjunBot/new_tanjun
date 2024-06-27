@@ -74,6 +74,91 @@ def create_tables():
         "  `guild_id` VARCHAR(20)"
         ") ENGINE=InnoDB"
     )
+    tables["level"] = (
+        "CREATE TABLE IF NOT EXISTS `level` ("
+        "  `user_id` VARCHAR(20) NOT NULL,"
+        "  `guild_id` VARCHAR(20) NOT NULL,"
+        "  `xp` INT UNSIGNED DEFAULT 0,"
+        "  `customBackground` VARCHAR(255) DEFAULT NULL,"
+        "  PRIMARY KEY (`user_id`, `guild_id`)"
+        ") ENGINE=InnoDB"
+    )
+    tables["blacklistedUser"] = (
+        "CREATE TABLE IF NOT EXISTS `blacklistedUser` ("
+        "  `user_id` VARCHAR(20) PRIMARY KEY,"
+        "  `guild_id` VARCHAR(20) NOT NULL,"
+        "  `reason` VARCHAR(255) DEFAULT NULL,"
+        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+        "  PRIMARY KEY (`user_id`, `guild_id`)"
+        ") ENGINE=InnoDB"
+    )
+    tables["blacklistedRole"] = (
+        "CREATE TABLE IF NOT EXISTS `blacklistedRole` ("
+        "  `role_id` VARCHAR(20) PRIMARY KEY,"
+        "  `guild_id` VARCHAR(20) NOT NULL,"
+        "  `reason` VARCHAR(255) DEFAULT NULL,"
+        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+        "  PRIMARY KEY (`role_id`, `guild_id`)"
+        ") ENGINE=InnoDB"
+    )
+    tables["blacklistedChannel"] = (
+        "CREATE TABLE IF NOT EXISTS `blacklistedChannel` ("
+        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
+        "  `guild_id` VARCHAR(20) NOT NULL,"
+        "  `reason` VARCHAR(255) DEFAULT NULL,"
+        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+        "  PRIMARY KEY (`channel_id`, `guild_id`)"
+        ") ENGINE=InnoDB"
+    )
+    tables["userXpBoost"] = (
+        "CREATE TABLE IF NOT EXISTS `userXpBoost` ("
+        "  `user_id` VARCHAR(20) PRIMARY KEY,"
+        "  `guild_id` VARCHAR(20) NOT NULL,"
+        "  `boost` DECIMAL(4, 2) UNSIGNED DEFAULT 1,"
+        "  `additive` TINYINT(1) DEFAULT 0,"
+        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+        "  PRIMARY KEY (`user_id`, `guild_id`)"
+        ") ENGINE=InnoDB"
+    )
+    tables["roleXpBoost"] = (
+        "CREATE TABLE IF NOT EXISTS `roleXpBoost` ("
+        "  `role_id` VARCHAR(20) PRIMARY KEY,"
+        "  `guild_id` VARCHAR(20) NOT NULL,"
+        "  `boost` DECIMAL(4, 2) UNSIGNED DEFAULT 1,"
+        "  `additive` TINYINT(1) DEFAULT 0,"
+        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+        "  PRIMARY KEY (`role_id`, `guild_id`)"
+        ") ENGINE=InnoDB"
+    )
+    tables["channelXpBoost"] = (
+        "CREATE TABLE IF NOT EXISTS `channelXpBoost` ("
+        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
+        "  `guild_id` VARCHAR(20) NOT NULL,"
+        "  `boost` DECIMAL(4, 2) UNSIGNED DEFAULT 1,"
+        "  `additive` TINYINT(1) DEFAULT 0,"
+        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+        "  PRIMARY KEY (`channel_id`, `guild_id`)"
+        ") ENGINE=InnoDB"
+    )
+    tables["levelRole"] = (
+        "CREATE TABLE IF NOT EXISTS `levelRole` ("
+        "  `role_id` VARCHAR(20) PRIMARY KEY,"
+        "  `guild_id` VARCHAR(20) NOT NULL,"
+        "  `level` INT UNSIGNED DEFAULT 0,"
+        "  PRIMARY KEY (`role_id`, `guild_id`)"
+        ") ENGINE=InnoDB"
+    )
+    tables["levelConfig"] = (
+        "CREATE TABLE IF NOT EXISTS `levelConfig` ("
+        "  `guild_id` VARCHAR(20) PRIMARY KEY,"
+        "  `difficulty` TINYINT(4) UNSIGNED DEFAULT 0,"
+        "  `levelUpMessageActive` TINYINT(1) DEFAULT 1,"
+        "  `levelUpMessage` VARCHAR(255) DEFAULT NULL,"
+        "  `active` TINYINT(1) DEFAULT 1"
+        "  `textCooldown` TINYINT(4) DEFAULT 1,"
+        "  `voiceCooldown` TINYINT(4) DEFAULT 1"
+        ") ENGINE=InnoDB"
+    )
 
     connection = mysql.connector.connect(
         host=database_ip,
