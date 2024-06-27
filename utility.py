@@ -32,6 +32,8 @@ import aiohttp
 import random
 import re
 from github import Github
+import ast
+import operator as op
 
 class EmbedProxy:
     def __init__(self, layer: Dict[str, Any]):
@@ -961,8 +963,55 @@ def checkIfHasPro(guildid: int):
         return False
     return True
 
+def checkIfhasPlus(userid: int):
+    if userid == 0:
+        return False
+    return True
+
 def missingLocalization(locale: str):
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new-Tanjun")
     label = repo.get_label("missing localization")
     repo.create_issue(title="Missing localization", body=f"Missing localization for {locale}", labels=[label])
+
+LEVEL_SCALINGS = {
+    "easy": lambda level: 100 * level,
+    "medium": lambda level: 100 * (level ** 1.5),
+    "hard": lambda level: 100 * (level ** 2),
+    "extreme": lambda level: 100 * (level ** 2.5),
+}
+
+# Define allowed operators
+operators = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
+             ast.Div: op.truediv, ast.Pow: op.pow, ast.BitXor: op.xor,
+             ast.USub: op.neg}
+
+def eval_expr(expr):
+    return eval_(ast.parse(expr, mode='eval').body)
+
+def eval_(node):
+    if isinstance(node, ast.Num):
+        return node.n
+    elif isinstance(node, ast.BinOp):
+        return operators[type(node.op)](eval_(node.left), eval_(node.right))
+    elif isinstance(node, ast.UnaryOp):
+        return operators[type(node.op)](eval_(node.operand))
+    else:
+        raise TypeError(node)
+
+def get_xp_for_level(level: int, scaling: str, custom_formula: str = None) -> int:
+    if scaling == "custom" and custom_formula:
+        try:
+            return math.floor(eval_expr(custom_formula.replace('level', str(level))))
+        except:
+            return 0  # Return 0 if there's an error in the custom formula
+    elif scaling in LEVEL_SCALINGS:
+        return math.floor(LEVEL_SCALINGS[scaling](level))
+    else:
+        return math.floor(LEVEL_SCALINGS["medium"](level))  # Default to medium if invalid scaling is provided
+
+def get_level_for_xp(xp: int, scaling: str, custom_formula: str = None) -> int:
+    level = 1
+    while get_xp_for_level(level + 1, scaling, custom_formula) <= xp:
+        level += 1
+    return level

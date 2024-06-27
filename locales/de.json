@@ -900,6 +900,432 @@
                     "already_opted_in": "Du hast die Nachrichtenverfolgung bereits aktiviert."
                 }
             }
+        },
+        "level": {
+            "rank": {
+                "error": {
+                    "no_data": {
+                        "title": "Keine Daten verfügbar",
+                        "description": "Es sind keine Leveldaten für ${user} verfügbar."
+                    }
+                },
+                "success": {
+                    "title": "Rangkarte von ${user}"
+                }
+            },
+            "setbackground": {
+                "error": {
+                    "no_plus": {
+                        "title": "Tanjun Plus erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Plus Benutzer verfügbar."
+                    },
+                    "invalid_format": {
+                        "title": "Ungültiges Bildformat",
+                        "description": "Bitte lade ein Bild im PNG-, JPEG- oder GIF-Format hoch."
+                    }
+                },
+                "success": {
+                    "title": "Hintergrund gesetzt",
+                    "description": "Dein benutzerdefinierter Hintergrund wurde erfolgreich gesetzt."
+                }
+            },
+            "blacklist": {
+                "add_channel": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        },
+                        "no_pro": {
+                            "title": "Tanjun Pro erforderlich",
+                            "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar."
+                        }
+                    },
+                    "success": {
+                        "title": "Kanal zur Blacklist hinzugefügt",
+                        "description": "Der Kanal ${channel} wurde zur Blacklist hinzugefügt. Grund: ${reason}"
+                    }
+                },
+                "remove_channel": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Kanal von der Blacklist entfernt",
+                        "description": "Der Kanal ${channel} wurde von der Blacklist entfernt."
+                    }
+                },
+                "add_role": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Rolle zur Blacklist hinzugefügt",
+                        "description": "Die Rolle ${role} wurde zur Blacklist hinzugefügt. Grund: ${reason}"
+                    }
+                },
+                "remove_role": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Rolle von der Blacklist entfernt",
+                        "description": "Die Rolle ${role} wurde von der Blacklist entfernt."
+                    }
+                },
+                "add_user": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Benutzer zur Blacklist hinzugefügt",
+                        "description": "Der Benutzer ${user} wurde zur Blacklist hinzugefügt. Grund: ${reason}"
+                    }
+                },
+                "remove_user": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Benutzer von der Blacklist entfernt",
+                        "description": "Der Benutzer ${user} wurde von der Blacklist entfernt."
+                    }
+                },
+                "show": {
+                    "title": "Blacklist",
+                    "description": "Hier ist die aktuelle Blacklist für das Levelsystem:",
+                    "channels": "Blacklisted Kanäle:",
+                    "roles": "Blacklisted Rollen:",
+                    "users": "Blacklisted Benutzer:",
+                    "empty": "Die Blacklist ist leer."
+                },
+                "no_reason": "Kein Grund angegeben"
+            },
+            "disablelevelsystem": {
+                "confirm": "bestätigen",
+                "cancel": "abbrechen",
+                "name": "levelsystem_deaktivieren",
+                "description": "Deaktiviert das Levelsystem für diesen Server",
+                "confirmation": {
+                    "title": "Levelsystem deaktivieren?",
+                    "description": "Achtung: Wenn Sie das Levelsystem deaktivieren, werden alle damit verbundenen Informationen gelöscht und können nicht wiederhergestellt werden. Möchten Sie fortfahren?"
+                },
+                "success": {
+                    "title": "Levelsystem deaktiviert",
+                    "description": "Das Levelsystem wurde erfolgreich deaktiviert und alle zugehörigen Daten wurden gelöscht."
+                },
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um das Levelsystem zu deaktivieren."
+                    },
+                    "already_disabled": {
+                        "title": "Bereits deaktiviert",
+                        "description": "Das Levelsystem ist für diesen Server bereits deaktiviert."
+                    }
+                }
+            },
+            "enablelevelsystem": {
+                "name": "levelsystem_aktivieren",
+                "description": "Aktiviert das Levelsystem für diesen Server",
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um das Levelsystem zu aktivieren."
+                    },
+                    "already_enabled": {
+                        "title": "Bereits aktiviert",
+                        "description": "Das Levelsystem ist für diesen Server bereits aktiviert."
+                    }
+                },
+                "success": {
+                    "title": "Levelsystem aktiviert",
+                    "description": "Das Levelsystem wurde erfolgreich für diesen Server aktiviert."
+                }
+            },
+            "changelevelupmessage": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die Level-Up-Nachricht zu ändern."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "message_too_long": {
+                        "title": "Nachricht zu lang",
+                        "description": "Die Level-Up-Nachricht darf maximal 255 Zeichen lang sein."
+                    }
+                },
+                "success": {
+                    "title": "Level-Up-Nachricht geändert",
+                    "description": "Die Level-Up-Nachricht wurde erfolgreich auf folgendes geändert:\n\n${new_message}"
+                }
+            },
+            "disablelevelupmessage": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die Level-Up-Nachricht zu deaktivieren."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "already_disabled": {
+                        "title": "Bereits deaktiviert",
+                        "description": "Die Level-Up-Nachricht ist bereits deaktiviert."
+                    }
+                },
+                "success": {
+                    "title": "Level-Up-Nachricht deaktiviert",
+                    "description": "Die Level-Up-Nachricht wurde erfolgreich deaktiviert. Benutzer werden keine Benachrichtigungen mehr erhalten, wenn sie ein Level aufsteigen."
+                }
+            },
+            "enablelevelupmessage": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die Level-Up-Nachricht zu aktivieren."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "already_enabled": {
+                        "title": "Bereits aktiviert",
+                        "description": "Die Level-Up-Nachricht ist bereits aktiviert."
+                    }
+                },
+                "success": {
+                    "title": "Level-Up-Nachricht aktiviert",
+                    "description": "Die Level-Up-Nachricht wurde erfolgreich aktiviert. Benutzer werden nun Benachrichtigungen erhalten, wenn sie ein Level aufsteigen."
+                }
+            },
+            "setlevelupchannel": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um den Level-Up-Kanal festzulegen."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    }
+                },
+                "success": {
+                    "title": "Level-Up-Kanal festgelegt",
+                    "description": "Level-Up-Nachrichten werden nun in ${channel} gesendet."
+                },
+                "reset": {
+                    "title": "Level-Up-Kanal zurückgesetzt",
+                    "description": "Level-Up-Nachrichten werden nun in dem Kanal gesendet, in dem das Level-Up erreicht wurde."
+                }
+            },
+            "changexpscaling": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die XP-Skalierung zu ändern."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Die benutzerdefinierte Skalierung ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "no_custom_formula": {
+                        "title": "Keine benutzerdefinierte Formel angegeben",
+                        "description": "Bitte gib eine benutzerdefinierte Formel an, wenn du die benutzerdefinierte Skalierung verwendest."
+                    },
+                    "invalid_scaling": {
+                        "title": "Ungültige Skalierung",
+                        "description": "Die angegebene Skalierung ist ungültig. Verfügbare Skalierungen sind: ${available_scalings}"
+                    }
+                },
+                "success": {
+                    "title": "XP-Skalierung geändert",
+                    "description": "Die XP-Skalierung wurde erfolgreich auf ${scaling} geändert. Formel: ${formula}"
+                },
+                "xp_examples": "XP-Beispiele für die ersten 5 Level:",
+                "formulas": {
+                    "easy": "100 * level",
+                    "medium": "100 * (level ^ 1.5)",
+                    "hard": "100 * (level ^ 2)",
+                    "extreme": "100 * (level ^ 2.5)"
+                },
+                "scalings": {
+                    "easy": "Einfach",
+                    "medium": "Mittel",
+                    "hard": "Schwer",
+                    "extreme": "Extrem",
+                    "custom": "Benutzerdefiniert"
+                }
+            },
+            "showxpscalings": {
+                "title": "Verfügbare XP-Skalierungen",
+                "description": "Hier sind die verfügbaren XP-Skalierungen und Beispiele für die Level ${start_level} bis ${end_level}:"
+            },
+            "addlevelrole": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Rollen verwalten', um Level-Rollen hinzuzufügen."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Level-Rollen sind nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "invalid_level": {
+                        "title": "Ungültiges Level",
+                        "description": "Das Level muss eine positive Zahl sein."
+                    },
+                    "role_exists": {
+                        "title": "Rolle bereits vorhanden",
+                        "description": "Die Rolle {role} ist bereits für Level {level} zugewiesen."
+                    }
+                },
+                "success": {
+                    "title": "Level-Rolle hinzugefügt",
+                    "description": "Die Rolle {role} wurde erfolgreich für Level {level} hinzugefügt."
+                }
+            },
+            "removelevelrole": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Rollen verwalten', um Level-Rollen zu entfernen."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Level-Rollen sind nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "role_not_found": {
+                        "title": "Rolle nicht gefunden",
+                        "description": "Die Rolle {role} ist nicht für Level {level} zugewiesen."
+                    }
+                },
+                "success": {
+                    "title": "Level-Rolle entfernt",
+                    "description": "Die Rolle {role} wurde erfolgreich von Level {level} entfernt."
+                }
+            },
+            "showlevelroles": {
+                "level": "Level ${level}",
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Rollen verwalten', um Level-Rollen anzuzeigen."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Level-Rollen sind nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    }
+                },
+                "no_roles": {
+                    "title": "Keine Level-Rollen",
+                    "description": "Es sind keine Level-Rollen für diesen Server konfiguriert."
+                },
+                "title": "Level-Rollen",
+                "description": "Hier sind alle konfigurierten Level-Rollen für diesen Server:",
+                "selected_level": {
+                    "title": "Level {level} Rollen",
+                    "description": "Folgende Rollen sind für Level {level} konfiguriert:\n{roles}"
+                },
+                "select_placeholder": "Wähle ein Level aus, um es anzuzeigen",
+                "previous_button": "Zurück",
+                "next_button": "Weiter",
+                "add_button": "Rolle hinzufügen",
+                "remove_button": "Rolle entfernen",
+                "add_role_prompt": "Wähle eine Rolle aus, die du als Level-Rolle hinzufügen möchtest:",
+                "role_select_placeholder": "Wähle eine Rolle",
+                "cancel_button": "Abbrechen",
+                "add_role_cancelled": "Hinzufügen der Level-Rolle abgebrochen.",
+                "add_role_modal": {
+                    "title": "Level für die Rolle festlegen",
+                    "level_label": "Level",
+                    "level_placeholder": "Gib das Level ein (z.B. 10)",
+                    "invalid_level": "Ungültiges Level. Bitte gib eine positive Ganzzahl ein.",
+                    "success": "Die Rolle {role} wurde erfolgreich als Level-Rolle für Level {level} hinzugefügt."
+                },
+                "remove_role_prompt": "Wähle die Level-Rollen aus, die du entfernen möchtest:",
+                "remove_role_select_placeholder": "Wähle Level-Rollen zum Entfernen",
+                "remove_role_confirm": "Bist du sicher, dass du {count} Level-Rolle(n) entfernen möchtest?",
+                "remove_role_success": "{count} Level-Rolle(n) wurden erfolgreich entfernt.",
+                "remove_role_cancelled": "Entfernen der Level-Rolle(n) abgebrochen."
+            },
+            "boosts": {
+                "additive": "Additiv",
+                "multiplicative": "Multiplikativ",
+                "calculate_user_channel": {
+                    "title": "XP-Boost Berechnung für Benutzer in Kanal",
+                    "description": "Der Gesamt-XP-Boost für ${user} im Kanal ${channel} beträgt ${boost}x."
+                },
+                "error": {
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "XP-Boosts sind nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    }
+                },
+                "add_role": {
+                    "success": {
+                        "title": "Rollen-Boost hinzugefügt",
+                        "description": "Ein ${type} Boost von ${boost} wurde erfolgreich zur Rolle ${role} hinzugefügt."
+                    }
+                },
+                "add_channel": {
+                    "success": {
+                        "title": "Kanal-Boost hinzugefügt",
+                        "description": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Kanal ${channel} hinzugefügt."
+                    }
+                },
+                "add_user": {
+                    "success": {
+                        "title": "Benutzer-Boost hinzugefügt",
+                        "description": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Benutzer ${user} hinzugefügt."
+                    }
+                },
+                "remove_role": {
+                    "success": {
+                        "title": "Rollen-Boost entfernt",
+                        "description": "Der Boost für die Rolle ${role} wurde erfolgreich entfernt."
+                    }
+                },
+                "remove_channel": {
+                    "success": {
+                        "title": "Kanal-Boost entfernt",
+                        "description": "Der Boost für den Kanal ${channel} wurde erfolgreich entfernt."
+                    }
+                },
+                "remove_user": {
+                    "success": {
+                        "title": "Benutzer-Boost entfernt",
+                        "description": "Der Boost für den Benutzer ${user} wurde erfolgreich entfernt."
+                    }
+                },
+                "show": {
+                    "title": "Aktuelle XP-Boosts",
+                    "description": "Hier sind alle aktiven XP-Boosts für diesen Server:",
+                    "roles": "Rollen-Boosts",
+                    "channels": "Kanal-Boosts",
+                    "users": "Benutzer-Boosts",
+                    "no_boosts": "Es sind keine XP-Boosts für diesen Server konfiguriert."
+                }
+            }
         }
     },
     "admin": {
@@ -1849,6 +2275,330 @@
             }
         }
     },
+    "level": {
+        "rank": {
+            "name": "rang",
+            "description": "Zeigt die Rangkarte eines Benutzers an",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Der Benutzer, dessen Rangkarte angezeigt werden soll (optional)"
+                }
+            }
+        },
+        "setbackground": {
+            "name": "hintergrund_setzen",
+            "description": "Setzt ein benutzerdefiniertes Hintergrundbild für die Rangkarte",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das als Hintergrund verwendet werden soll"
+                }
+            }
+        },
+        "blacklist": {
+            "name": "blacklist",
+            "description": "Verwaltet die Blacklist für das Levelsystem",
+            "removec": {
+                "name": "kanal_entfernen",
+                "description": "Entfernt einen Kanal von der Blacklist",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, der von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "addr": {
+                "name": "rolle_hinzufügen",
+                "description": "Fügt eine Rolle zur Blacklist hinzu",
+                "params": {
+                    "role": {
+                        "name": "rolle",
+                        "description": "Die Rolle, die zur Blacklist hinzugefügt werden soll"
+                    },
+                    "reason": {
+                        "name": "grund",
+                        "description": "Der Grund für das Hinzufügen zur Blacklist (optional)"
+                    }
+                }
+            },
+            "remover": {
+                "name": "rolle_entfernen",
+                "description": "Entfernt eine Rolle von der Blacklist",
+                "params": {
+                    "role": {
+                        "name": "rolle",
+                        "description": "Die Rolle, die von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "addu": {
+                "name": "benutzer_hinzufügen",
+                "description": "Fügt einen Benutzer zur Blacklist hinzu",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, der zur Blacklist hinzugefügt werden soll"
+                    },
+                    "reason": {
+                        "name": "grund",
+                        "description": "Der Grund für das Hinzufügen zur Blacklist (optional)"
+                    }
+                }
+            },
+            "addc": {
+                "name": "kanal_hinzufügen",
+                "description": "Fügt einen Kanal zur Blacklist hinzu",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, der zur Blacklist hinzugefügt werden soll"
+                    },
+                    "reason": {
+                        "name": "grund",
+                        "description": "Der Grund für das Hinzufügen zur Blacklist (optional)"
+                    }
+                }
+            },
+            "removeu": {
+                "name": "benutzer_entfernen",
+                "description": "Entfernt einen Benutzer von der Blacklist",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, der von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt die aktuelle Blacklist an",
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                    }
+                }
+            }
+        },
+        "disable": {
+            "name": "deaktivieren",
+            "description": "Deaktiviert das Levelsystem für den Server"
+        },
+        "config": {
+            "name": "settings",
+            "description": "Konfiguriert das Levelsystem für den Server"
+        },
+        "enable": {
+            "name": "aktivieren",
+            "description": "Aktiviert das Levelsystem für den Server"
+        },
+        "changelevelupmessage": {
+            "name": "levelup_nachricht_ändern",
+            "description": "Ändert die Nachricht, die beim Level-Up angezeigt wird",
+            "params": {
+                "newmessage": {
+                    "name": "neue_nachricht",
+                    "description": "Die neue Level-Up-Nachricht. Verwende {user} für den Benutzernamen und {level} für das neue Level."
+                }
+            }
+        },
+        "disablelevelupmessage": {
+            "name": "levelup_nachricht_deaktivieren",
+            "description": "Deaktiviert die Level-Up-Nachricht"
+        },
+        "enablelevelupmessage": {
+            "name": "levelup_nachricht_aktivieren",
+            "description": "Aktiviert die Level-Up-Nachricht"
+        },
+        "setlevelupchannel": {
+            "name": "levelup_kanal_festlegen",
+            "description": "Legt den Kanal fest, in dem Level-Up-Nachrichten gesendet werden",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem Level-Up-Nachrichten gesendet werden sollen (leer lassen um zurückzusetzen)."
+                }
+            }
+        },
+        "changexpscaling": {
+            "name": "xp_skalierung_ändern",
+            "description": "Ändert die XP-Skalierung für das Levelsystem",
+            "params": {
+                "scaling": {
+                    "name": "skalierung",
+                    "description": "Die zu verwendende XP-Skalierung (easy, medium, hard, extreme, custom)"
+                },
+                "customformula": {
+                    "name": "benutzerdefinierte_formel",
+                    "description": "Die benutzerdefinierte Formel für die XP-Berechnung (x für level)"
+                }
+            }
+        },
+        "showxpscalings": {
+            "name": "xp_skalierungen_anzeigen",
+            "description": "Zeigt alle verfügbaren XP-Skalierungen an",
+            "params": {
+                "startlevel": {
+                    "name": "start_level",
+                    "description": "Das Startlevel für die Beispiele (Standard: 1)"
+                },
+                "endlevel": {
+                    "name": "end_level",
+                    "description": "Das Endlevel für die Beispiele (Standard: 5)"
+                }
+            }
+        },
+        "addlevelrole": {
+            "name": "level_rolle_hinzufügen",
+            "description": "Fügt eine Rolle hinzu, die bei Erreichen eines bestimmten Levels vergeben wird",
+            "params": {
+                "role": {
+                    "name": "rolle",
+                    "description": "Die Rolle, die vergeben werden soll"
+                },
+                "level": {
+                    "name": "level",
+                    "description": "Das Level, bei dem die Rolle vergeben werden soll"
+                }
+            }
+        },
+        "removelevelrole": {
+            "name": "level_rolle_entfernen",
+            "description": "Entfernt eine Rolle, die bei Erreichen eines bestimmten Levels vergeben wird",
+            "params": {
+                "role": {
+                    "name": "rolle",
+                    "description": "Die Rolle, die entfernt werden soll"
+                },
+                "level": {
+                    "name": "level",
+                    "description": "Das Level, von dem die Rolle entfernt werden soll"
+                }
+            }
+        },
+        "showlevelroles": {
+            "name": "level_rollen_anzeigen",
+            "description": "Zeigt alle konfigurierten Level-Rollen an"
+        },
+        "boosts": {
+            "name": "boosts",
+            "description": "Befehle zum Hinzufügen, Entfernen und Anzeigen von XP-Boosts",
+            "calculate_user": {
+                "name": "benutzer_berechnen",
+                "description": "Berechnet den Gesamt-XP-Boost für einen Benutzer",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, für den der Boost berechnet werden soll"
+                    }
+                }
+            },
+            "calculate": {
+                "name": "berechnen",
+                "description": "Berechnet den Gesamt-XP-Boost für einen Benutzer in einem bestimmten Kanal",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, für den der Boost berechnet werden soll"
+                    },
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, für den der Boost berechnet werden soll"
+                    }
+                }
+            },
+            "addrole": {
+                "name": "rolle_hinzufügen",
+                "description": "Fügt einen XP-Boost zu einer Rolle hinzu",
+                "params": {
+                    "role": {
+                        "name": "rolle",
+                        "description": "Die Rolle, zu der der Boost hinzugefügt werden soll"
+                    },
+                    "boost": {
+                        "name": "boost",
+                        "description": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)"
+                    },
+                    "additive": {
+                        "name": "additiv",
+                        "description": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll"
+                    }
+                }
+            },
+            "addchannel": {
+                "name": "kanal_hinzufügen",
+                "description": "Fügt einen XP-Boost zu einem Kanal hinzu",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, zu dem der Boost hinzugefügt werden soll"
+                    },
+                    "boost": {
+                        "name": "boost",
+                        "description": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)"
+                    },
+                    "additive": {
+                        "name": "additiv",
+                        "description": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll"
+                    }
+                }
+            },
+            "adduser": {
+                "name": "benutzer_hinzufügen",
+                "description": "Fügt einen XP-Boost zu einem Benutzer hinzu",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, zu dem der Boost hinzugefügt werden soll"
+                    },
+                    "boost": {
+                        "name": "boost",
+                        "description": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)"
+                    },
+                    "additive": {
+                        "name": "additiv",
+                        "description": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll"
+                    }
+                }
+            },
+            "removerole": {
+                "name": "rolle_entfernen",
+                "description": "Entfernt einen XP-Boost von einer Rolle",
+                "params": {
+                    "role": {
+                        "name": "rolle",
+                        "description": "Die Rolle, von der der Boost entfernt werden soll"
+                    }
+                }
+            },
+            "removechannel": {
+                "name": "kanal_entfernen",
+                "description": "Entfernt einen XP-Boost von einem Kanal",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, von dem der Boost entfernt werden soll"
+                    }
+                }
+            },
+            "removeuser": {
+                "name": "benutzer_entfernen",
+                "description": "Entfernt einen XP-Boost von einem Benutzer",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, von dem der Boost entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt alle aktiven XP-Boosts für den Server an"
+            }
+        }
+    },
     "Administrate the Server": "Verwalte den Server",
     "user": "benutzer",
     "role": "rolle",
@@ -1892,5 +2642,21 @@
     "Utility Commands": "Verschiedene Befehle",
     "minigame": "minispiel",
     "Minigame Commands": "Minispiel Befehle",
-    "progress": "fortschritt"
+    "progress": "fortschritt",
+    "levelcommands": "level",
+    "Level Commands": "Level Befehle",
+    "new_message": "neue_nachricht",
+    "scaling": "skalierung",
+    "easy": "einfach",
+    "medium": "mittel",
+    "hard": "schwer",
+    "extreme": "extrem",
+    "custom": "benutzerdefiniert",
+    "customformula": "benutzerdefinierte_formel",
+    "startlevel": "start_level",
+    "endlevel": "end_level",
+    "boost": "boost",
+    "additive": "additiv",
+    "image": "bild",
+    "imageurl": "bild_url"
 }
