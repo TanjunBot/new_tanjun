@@ -650,7 +650,7 @@ class administrationCommands(discord.app_commands.Group):
         channel=app_commands.locale_str("admin_say_params_channel_description"),
         message=app_commands.locale_str("admin_say_params_message_description"),
     )
-    async def say(self, ctx, channel: discord.TextChannel, *, message: str):
+    async def say(self, ctx, message: str, channel: discord.TextChannel = None):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -663,6 +663,9 @@ class administrationCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
+
+        if not channel:
+            channel = ctx.channel
 
         await sayCommand(commandInfo=commandInfo, channel=channel, message=message)
         return
