@@ -1023,6 +1023,48 @@
                     "title": "Level-Up-Kanal zurückgesetzt",
                     "description": "Level-Up-Nachrichten werden nun in dem Kanal gesendet, in dem das Level-Up erreicht wurde."
                 }
+            },
+            "changexpscaling": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die XP-Skalierung zu ändern."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Die benutzerdefinierte Skalierung ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "no_custom_formula": {
+                        "title": "Keine benutzerdefinierte Formel angegeben",
+                        "description": "Bitte gib eine benutzerdefinierte Formel an, wenn du die benutzerdefinierte Skalierung verwendest."
+                    },
+                    "invalid_scaling": {
+                        "title": "Ungültige Skalierung",
+                        "description": "Die angegebene Skalierung ist ungültig. Verfügbare Skalierungen sind: ${available_scalings}"
+                    }
+                },
+                "success": {
+                    "title": "XP-Skalierung geändert",
+                    "description": "Die XP-Skalierung wurde erfolgreich auf ${scaling} geändert. Formel: ${formula}"
+                },
+                "xp_examples": "XP-Beispiele für die ersten 5 Level:",
+                "formulas": {
+                    "easy": "100 * level",
+                    "medium": "100 * (level ^ 1.5)",
+                    "hard": "100 * (level ^ 2)",
+                    "extreme": "100 * (level ^ 2.5)"
+                },
+                "scalings": {
+                    "easy": "Einfach",
+                    "medium": "Mittel",
+                    "hard": "Schwer",
+                    "extreme": "Extrem",
+                    "custom": "Benutzerdefiniert"
+                }
+            },
+            "showxpscalings": {
+                "title": "Verfügbare XP-Skalierungen",
+                "description": "Hier sind die verfügbaren XP-Skalierungen und Beispiele für die Level ${start_level} bis ${end_level}:"
             }
         }
     },
@@ -2013,6 +2055,34 @@
                     "description": "Der Kanal, in dem Level-Up-Nachrichten gesendet werden sollen (leer lassen um zurückzusetzen)."
                 }
             }
+        },
+        "changexpscaling": {
+            "name": "xp_skalierung_ändern",
+            "description": "Ändert die XP-Skalierung für das Levelsystem",
+            "params": {
+                "scaling": {
+                    "name": "skalierung",
+                    "description": "Die zu verwendende XP-Skalierung (easy, medium, hard, extreme, custom)"
+                },
+                "customformula": {
+                    "name": "benutzerdefinierte_formel",
+                    "description": "Die benutzerdefinierte Formel für die XP-Berechnung (x für level)"
+                }
+            }
+        },
+        "showxpscalings": {
+            "name": "xp_skalierungen_anzeigen",
+            "description": "Zeigt alle verfügbaren XP-Skalierungen an",
+            "params": {
+                "startlevel": {
+                    "name": "start_level",
+                    "description": "Das Startlevel für die Beispiele (Standard: 1)"
+                },
+                "endlevel": {
+                    "name": "end_level",
+                    "description": "Das Endlevel für die Beispiele (Standard: 5)"
+                }
+            }
         }
     },
     "Administrate the Server": "Verwalte den Server",
@@ -2061,5 +2131,14 @@
     "progress": "fortschritt",
     "levelcommands": "level",
     "Level Commands": "Level Befehle",
-    "new_message": "neue_nachricht"
+    "new_message": "neue_nachricht",
+    "scaling": "skalierung",
+    "easy": "einfach",
+    "medium": "mittel",
+    "hard": "schwer",
+    "extreme": "extrem",
+    "custom": "benutzerdefiniert",
+    "customformula": "benutzerdefinierte_formel",
+    "startlevel": "start_level",
+    "endlevel": "end_level"
 }

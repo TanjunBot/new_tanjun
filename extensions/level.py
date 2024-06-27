@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from utility import tanjunEmbed
+from utility import tanjunEmbed, LEVEL_SCALINGS
 from localizer import tanjunLocalizer
 from typing import List, Optional
 
@@ -24,6 +24,7 @@ from commands.level.enable_levelup_message import (
 from commands.level.set_levelup_channel import (
     set_levelup_channel_command as setLevelupChannelCommand,
 )
+from commands.level.change_xp_scaling import change_xp_scaling_command, show_xp_scalings
 
 
 class LevelConfigCommands(discord.app_commands.Group):
@@ -160,6 +161,57 @@ class LevelConfigCommands(discord.app_commands.Group):
         )
 
         await setLevelupChannelCommand(commandInfo, channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_changexpscaling_name"),
+        description=app_commands.locale_str("level_changexpscaling_description"),
+    )
+    @app_commands.describe(
+        scaling=app_commands.locale_str("level_changexpscaling_params_scaling_description"),
+        customformula=app_commands.locale_str("level_changexpscaling_params_customformula_description"),
+    )
+    @app_commands.choices(scaling=[
+        app_commands.Choice(name=key, value=key) for key in list(LEVEL_SCALINGS.keys()) + ["custom"]
+    ])
+    async def changexpscaling(self, ctx, scaling: str, customformula: Optional[str] = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await change_xp_scaling_command(commandInfo, scaling, customformula)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_showxpscalings_name"),
+        description=app_commands.locale_str("level_showxpscalings_description"),
+    )
+    @app_commands.describe(
+        startlevel=app_commands.locale_str("level_showxpscalings_params_startlevel_description"),
+        endlevel=app_commands.locale_str("level_showxpscalings_params_endlevel_description"),
+    )
+    async def showxpscalings(self, ctx, startlevel: int = 1, endlevel: int = 5):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=await ctx.original_response(),
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await show_xp_scalings(commandInfo, startlevel, endlevel)
 
 
 class levelCommands(discord.app_commands.Group): ...

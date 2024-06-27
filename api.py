@@ -3,6 +3,7 @@ from config import database_ip, database_password, database_user, database_schem
 import json
 from typing import Optional
 
+
 def create_tables():
     tables = {}
     tables["warnings"] = (
@@ -151,14 +152,15 @@ def create_tables():
     tables["levelConfig"] = (
         "CREATE TABLE IF NOT EXISTS `levelConfig` ("
         "  `guild_id` VARCHAR(20) PRIMARY KEY,"
-        "  `difficulty` TINYINT(4) UNSIGNED DEFAULT 0,"
+        "  `difficulty` ENUM('easy', 'medium', 'hard', 'extreme', 'custom') DEFAULT 'medium',"
+        "  `customFormula` VARCHAR(255) DEFAULT NULL,"
         "  `levelUpMessageActive` TINYINT(1) DEFAULT 1,"
-        "  `levelUpMessage` VARCHAR(255) DEFAULT NULL,"
+        "  `levelUpMessage` VARCHAR(1000) DEFAULT NULL,"
+        "  `levelUpChannelId` VARCHAR(20) DEFAULT NULL,"
         "  `active` TINYINT(1) DEFAULT 1,"
-        "  `textCooldown` TINYINT(4) DEFAULT 1,"
-        "  `voiceCooldown` TINYINT(4) DEFAULT 1,"
-        "  `levelUpChannelId` VARCHAR(20) DEFAULT NULL"
-        ") ENGINE=InnoDB"
+        "  `textCooldown` INT DEFAULT 60,"
+        "  `voiceCooldown` INT DEFAULT 60"
+        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     )
 
     connection = mysql.connector.connect(
@@ -599,6 +601,40 @@ def set_levelup_channel(guild_id: str, channel_id: Optional[str]):
 
 def get_levelup_channel(guild_id: str) -> Optional[str]:
     query = "SELECT levelUpChannelId FROM levelConfig WHERE guild_id = %s"
+    params = (guild_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else None
+
+
+def set_xp_scaling(guild_id: str, scaling: str):
+    query = """
+    INSERT INTO levelConfig (guild_id, difficulty) 
+    VALUES (%s, %s) 
+    ON DUPLICATE KEY UPDATE difficulty = VALUES(difficulty)
+    """
+    params = (guild_id, scaling)
+    execute_action(query, params)
+
+
+def get_xp_scaling(guild_id: str) -> str:
+    query = "SELECT difficulty FROM levelConfig WHERE guild_id = %s"
+    params = (guild_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else "medium"
+
+
+def set_custom_formula(guild_id: str, formula: str):
+    query = """
+    INSERT INTO levelConfig (guild_id, customFormula) 
+    VALUES (%s, %s) 
+    ON DUPLICATE KEY UPDATE customFormula = VALUES(customFormula)
+    """
+    params = (guild_id, formula)
+    execute_action(query, params)
+
+
+def get_custom_formula(guild_id: str) -> str:
+    query = "SELECT customFormula FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = execute_query(query, params)
     return result[0][0] if result else None
