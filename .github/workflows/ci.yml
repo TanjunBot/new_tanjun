@@ -38,17 +38,12 @@ jobs:
         id: event_info
         run: |
           COMMIT_TITLE=$(git log --format=%s -1)
-          COMMIT_DESCRIPTION=$(git log --format=%b -1)
           GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
           GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
           GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
           COMMIT_HASH=$(git log -1 --pretty=format:'%H')
           COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
           echo "title=${COMMIT_TITLE}" >> $GITHUB_ENV
-          
-          description_raw=${COMMIT_DESCRIPTION}
-          description=$(echo "$description_raw" | jq -sRr @json)  # Use jq for proper JSON escaping
-          echo "description=$description" >> $GITHUB_ENV
           
           echo "author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
@@ -60,9 +55,7 @@ jobs:
       - name: Check commit message
         id: check_commit_message
         run: |
-          if [[ "${{ env.description }}" == *"[ignore changelog]"* ]]; then
-            echo "skip_discord_notification=true" >> $GITHUB_ENV
-          elif [[ "${{ env.title }}" == *"[ignore changelog]"* ]]; then
+          if [[ "${{ env.title }}" == *"[ignore changelog]"* ]]; then
             echo "::error::Commit message starts with '[ignore changelog]'. Skipping Discord notification."
             exit 1
           else
@@ -78,7 +71,7 @@ jobs:
             "embeds": [
               {
                 "title": "${{ env.title }}",
-                "description": ${{ env.description }},
+                "description": null,
                 "color": ${{ env.color }},
                 "author": {
                   "name": "${{ env.author_name }}",
