@@ -1,7 +1,7 @@
 import mysql.connector
 from config import database_ip, database_password, database_user, database_schema
 import json
-from typing import Optional
+from typing import Optional, List, Dict
 
 
 def create_tables():
@@ -638,3 +638,59 @@ def get_custom_formula(guild_id: str) -> str:
     params = (guild_id,)
     result = execute_query(query, params)
     return result[0][0] if result else None
+
+
+def add_level_role(guild_id: str, role_id: str, level: int):
+    query = """
+    INSERT INTO levelRole (guild_id, role_id, level) 
+    VALUES (%s, %s, %s) 
+    ON DUPLICATE KEY UPDATE role_id = VALUES(role_id)
+    """
+    params = (guild_id, role_id, level)
+    execute_action(query, params)
+
+
+def get_level_role(guild_id: str, level: int) -> Optional[str]:
+    query = "SELECT role_id FROM levelRole WHERE guild_id = %s AND level = %s"
+    params = (guild_id, level)
+    result = execute_query(query, params)
+    return result[0][0] if result else None
+
+def get_level_roles(guild_id: str) -> dict[int, str]:
+    query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
+    params = (guild_id,)
+    result = execute_query(query, params)
+    return {row[0]: row[1] for row in result}
+
+def add_level_role(guild_id: str, role_id: str, level: int):
+    query = """
+    INSERT INTO levelRole (guild_id, role_id, level) 
+    VALUES (%s, %s, %s)
+    """
+    params = (guild_id, role_id, level)
+    execute_action(query, params)
+
+def remove_level_role(guild_id: str, role_id: str, level: int):
+    query = """
+    DELETE FROM levelRole 
+    WHERE guild_id = %s AND role_id = %s AND level = %s
+    """
+    params = (guild_id, role_id, level)
+    execute_action(query, params)
+
+def get_level_roles(guild_id: str, level: int) -> List[str]:
+    query = "SELECT role_id FROM levelRole WHERE guild_id = %s AND level = %s"
+    params = (guild_id, level)
+    result = execute_query(query, params)
+    return [row[0] for row in result]
+
+def get_all_level_roles(guild_id: str) -> Dict[int, List[str]]:
+    query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s ORDER BY level"
+    params = (guild_id,)
+    result = execute_query(query, params)
+    level_roles = {}
+    for level, role_id in result:
+        if level not in level_roles:
+            level_roles[level] = []
+        level_roles[level].append(role_id)
+    return level_roles
