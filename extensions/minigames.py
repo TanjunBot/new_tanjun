@@ -6,12 +6,34 @@ from utility import tanjunEmbed
 from localizer import tanjunLocalizer
 from typing import List, Optional
 
-from commands.minigames.counting.setcountingchannel import setCountingChannel as setCountingChannelCommand
-from commands.minigames.counting.removecountingchannel import removeCountingChannel as removeCountingChannelCommand
-from commands.minigames.counting.setcountingprogress import setCountingProgress as setCountingProgressCommand
-from commands.minigames.countingChallenge.setcountingchannel import setCountingChannel as setCountingChallengeChannelCommand
-from commands.minigames.countingChallenge.removecountingchannel import removecountingmodeschannel as removeCountingChallengeChannelCommand
-from commands.minigames.countingChallenge.setcountingprogress import setCountingProgress as setCountingChallengeProgressCommand
+from commands.minigames.counting.setcountingchannel import (
+    setCountingChannel as setCountingChannelCommand,
+)
+from commands.minigames.counting.removecountingchannel import (
+    removeCountingChannel as removeCountingChannelCommand,
+)
+from commands.minigames.counting.setcountingprogress import (
+    setCountingProgress as setCountingProgressCommand,
+)
+from commands.minigames.countingChallenge.setcountingchannel import (
+    setCountingChannel as setCountingChallengeChannelCommand,
+)
+from commands.minigames.countingChallenge.removecountingchannel import (
+    removecountingchallengechannel as removeCountingChallengeChannelCommand,
+)
+from commands.minigames.countingChallenge.setcountingprogress import (
+    setCountingProgress as setCountingChallengeProgressCommand,
+)
+from commands.minigames.countingModes.removecountingchannel import (
+    removecountingmodeschannel as removeCountingModesChannelCommand,
+)
+from commands.minigames.countingModes.setcountingchannel import (
+    setCountingChannel as setCountingModesChannelCommand,
+)
+from commands.minigames.countingModes.setcountingprogress import (
+    setCountingProgress as setCountingModesProgressCommand,
+)
+
 
 class CountingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -75,10 +97,16 @@ class CountingCommands(discord.app_commands.Group):
         description=app_commands.locale_str("games_setcountingprogress_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str("games_setcountingprogress_params_channel_description"),
-        progress=app_commands.locale_str("games_setcountingprogress_params_progress_description"),
+        channel=app_commands.locale_str(
+            "games_setcountingprogress_params_channel_description"
+        ),
+        progress=app_commands.locale_str(
+            "games_setcountingprogress_params_progress_description"
+        ),
     )
-    async def setcountingprogress(self, ctx, channel: discord.TextChannel = None, progress: int = 0):
+    async def setcountingprogress(
+        self, ctx, channel: discord.TextChannel = None, progress: int = 0
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -97,17 +125,20 @@ class CountingCommands(discord.app_commands.Group):
 
         await setCountingProgressCommand(commandInfo, channel, progress)
 
+
 class CountingChallengeCommands(discord.app_commands.Group):
     @app_commands.command(
-        name=app_commands.locale_str("games_setcmodesch_name"),
-        description=app_commands.locale_str("games_setcmodesch_description"),
+        name=app_commands.locale_str("games_setcchallengech_name"),
+        description=app_commands.locale_str("games_setcchallengech_description"),
     )
     @app_commands.describe(
         channel=app_commands.locale_str(
-            "games_setcmodesch_params_channel_description"
+            "games_setcchallengech_params_channel_description"
         ),
     )
-    async def setcountingmodeschannel(self, ctx, channel: discord.TextChannel = None):
+    async def setcountingchallengechannel(
+        self, ctx, channel: discord.TextChannel = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -127,15 +158,17 @@ class CountingChallengeCommands(discord.app_commands.Group):
         await setCountingChallengeChannelCommand(commandInfo, channel)
 
     @app_commands.command(
-        name=app_commands.locale_str("games_removecmodesch_name"),
-        description=app_commands.locale_str("games_removecmodesch_description"),
+        name=app_commands.locale_str("games_removecchallengech_name"),
+        description=app_commands.locale_str("games_removecchallengech_description"),
     )
     @app_commands.describe(
         channel=app_commands.locale_str(
-            "games_removecmodesch_params_channel_description"
+            "games_removecchallengech_params_channel_description"
         ),
     )
-    async def removecountingmodeschannel(self, ctx, channel: discord.TextChannel = None):
+    async def removecountingchallengechannel(
+        self, ctx, channel: discord.TextChannel = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -155,14 +188,20 @@ class CountingChallengeCommands(discord.app_commands.Group):
         await removeCountingChallengeChannelCommand(commandInfo, channel)
 
     @app_commands.command(
-        name=app_commands.locale_str("games_setcmodesprogress_name"),
-        description=app_commands.locale_str("games_setcmodesprogress_description"),
+        name=app_commands.locale_str("games_setcchallengeprogress_name"),
+        description=app_commands.locale_str("games_setcchallengeprogress_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str("games_setcmodesprogress_params_channel_description"),
-        progress=app_commands.locale_str("games_setcmodesprogress_params_progress_description"),
+        channel=app_commands.locale_str(
+            "games_setcchallengeprogress_params_channel_description"
+        ),
+        progress=app_commands.locale_str(
+            "games_setcchallengeprogress_params_progress_description"
+        ),
     )
-    async def setcountingmodesprogress(self, ctx, channel: discord.TextChannel = None, progress: int = 0):
+    async def setcountingchallengeprogress(
+        self, ctx, channel: discord.TextChannel = None, progress: int = 0
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -181,8 +220,97 @@ class CountingChallengeCommands(discord.app_commands.Group):
 
         await setCountingChallengeProgressCommand(commandInfo, channel, progress)
 
+
 class CountingModesCommands(discord.app_commands.Group):
-    ...
+    @app_commands.command(
+        name=app_commands.locale_str("games_setcmodesch_name"),
+        description=app_commands.locale_str("games_setcmodesch_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("games_setcmodesch_params_channel_description"),
+    )
+    async def setcountingmodeschannel(self, ctx, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await setCountingModesChannelCommand(commandInfo, channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("games_removecmodesch_name"),
+        description=app_commands.locale_str("games_removecmodesch_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "games_removecmodesch_params_channel_description"
+        ),
+    )
+    async def removecountingmodeschannel(
+        self, ctx, channel: discord.TextChannel = None
+    ):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await removeCountingModesChannelCommand(commandInfo, channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("games_setcmodesprogress_name"),
+        description=app_commands.locale_str("games_setcmodesprogress_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "games_setcmodesprogress_params_channel_description"
+        ),
+        progress=app_commands.locale_str(
+            "games_setcmodesprogress_params_progress_description"
+        ),
+    )
+    async def setcountingmodesprogress(
+        self, ctx, channel: discord.TextChannel = None, progress: int = 0
+    ):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await setCountingModesProgressCommand(commandInfo, channel, progress)
+
 
 class minigameCommands(discord.app_commands.Group): ...
 

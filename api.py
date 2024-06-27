@@ -352,3 +352,8 @@ def get_counting_mode_channel_amount(guild_id):
     params = (guild_id,)
     result = execute_query(query, params)
     return len(result) if result else 0
+
+def set_counting_mode_progress(channel_id, progress, guild_id):
+    query = "INSERT INTO counting_modes (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress)"
+    params = (channel_id, progress, guild_id)
+    execute_action(query, params)

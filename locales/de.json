@@ -1393,6 +1393,10 @@
             "challengeintroduction": {
                 "title": "Dies ist jetzt ein Counting Challenge Channel!",
                 "description": "Hier kann ab jetzt bis in die Unendlichkeit und noch viel weiter gezählt werden! ||theoretisch nur bis `4.294.967.295`||\nZähle dafür einfach immer um 1 hoch. Vertippe dich aber besser nicht <:duck_knife:1255769052245262439>\nDenk dran, dass nur abwechselnd gezählt werden darf!"
+            },
+            "modesintroduction": {
+                "title": "Dies ist jetzt ein Counting Modes Channel!",
+                "description": "Hier kann jetzt in verschiedenen Modi gezählt werden. Es gibt verschiedene Modi, die das Zählen erschweren oder erleichtern.\nFangen wir mal einfach an; Zähle in bis zu `128`. Also zähle `1`, `2`, `4`, `8`, etc. Wenn die `128` erreicht ist, fangen wir mit einem anderen Modus neu an!\nViel Spaß beim Zählen!"
             }
         },
         "setcountingchallengechannel": {
@@ -1467,6 +1471,26 @@
             "channel_message": {
                 "title": "Dieser Kanal ist kein Counting-Kanal mehr",
                 "description": "Ein Moderator hat diesen Kanal als Counting-Kanal entfernt. Normale Nachrichten können jetzt wieder geschrieben werden."
+            }
+        },
+        "removecountingchallengechannel": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Counting-Kanal",
+                    "description": "Der angegebene Kanal ist kein Counting-Kanal."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
+                }
+            },
+            "success": {
+                "title": "Counting-Challenge-Kanal entfernt",
+                "description": "Der Kanal ${channel} ist jetzt kein Counting-Challenge-Kanal mehr."
+            },
+            "channel_message": {
+                "title": "Dieser Kanal ist kein Counting-Challenge-Kanal mehr",
+                "description": "Ein Moderator hat diesen Kanal als Counting-Challenge-Kanal entfernt. Normale Nachrichten können jetzt wieder geschrieben werden."
             }
         },
         "removecountingmodeschannel": {
@@ -1615,6 +1639,16 @@
                 }
             }
         },
+        "setcchallengechannel": {
+            "name": "kanal_setzen",
+            "description": "Setzt den Counting-Modes-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem das Counting-Modes-Spiel stattfinden soll"
+                }
+            }
+        },
         "setcmodesch": {
             "name": "kanal_setzen",
             "description": "Setzt den Counting-Modes-Kanal",
@@ -1632,6 +1666,20 @@
                 "channel": {
                     "name": "kanal",
                     "description": "Der Kanal, der als Counting-Modes-Kanal entfernt werden soll"
+                }
+            }
+        },
+        "setcchallengeprogress": {
+            "name": "fortschritt_setzen",
+            "description": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Counting-Modes-Kanal, dessen Fortschritt gesetzt werden soll"
+                },
+                "progress": {
+                    "name": "fortschritt",
+                    "description": "Der neue Fortschritt für den Counting-Modes-Kanal"
                 }
             }
         },
