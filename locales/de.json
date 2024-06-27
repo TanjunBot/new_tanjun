@@ -902,6 +902,93 @@
             }
         },
         "level": {
+            "blacklist": {
+                "add_channel": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        },
+                        "no_pro": {
+                            "title": "Tanjun Pro erforderlich",
+                            "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar."
+                        }
+                    },
+                    "success": {
+                        "title": "Kanal zur Blacklist hinzugefügt",
+                        "description": "Der Kanal ${channel} wurde zur Blacklist hinzugefügt. Grund: ${reason}"
+                    }
+                },
+                "remove_channel": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Kanal von der Blacklist entfernt",
+                        "description": "Der Kanal ${channel} wurde von der Blacklist entfernt."
+                    }
+                },
+                "add_role": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Rolle zur Blacklist hinzugefügt",
+                        "description": "Die Rolle ${role} wurde zur Blacklist hinzugefügt. Grund: ${reason}"
+                    }
+                },
+                "remove_role": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Rolle von der Blacklist entfernt",
+                        "description": "Die Rolle ${role} wurde von der Blacklist entfernt."
+                    }
+                },
+                "add_user": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Benutzer zur Blacklist hinzugefügt",
+                        "description": "Der Benutzer ${user} wurde zur Blacklist hinzugefügt. Grund: ${reason}"
+                    }
+                },
+                "remove_user": {
+                    "error": {
+                        "no_permission": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        }
+                    },
+                    "success": {
+                        "title": "Benutzer von der Blacklist entfernt",
+                        "description": "Der Benutzer ${user} wurde von der Blacklist entfernt."
+                    }
+                },
+                "show": {
+                    "title": "Blacklist",
+                    "description": "Hier ist die aktuelle Blacklist für das Levelsystem:",
+                    "channels": "Blacklisted Kanäle:",
+                    "roles": "Blacklisted Rollen:",
+                    "users": "Blacklisted Benutzer:",
+                    "empty": "Die Blacklist ist leer."
+                },
+                "no_reason": "Kein Grund angegeben"
+            },
             "disablelevelsystem": {
                 "confirm": "bestätigen",
                 "cancel": "abbrechen",
@@ -2162,6 +2249,92 @@
         }
     },
     "level": {
+        "blacklist": {
+            "name": "blacklist",
+            "description": "Verwaltet die Blacklist für das Levelsystem",
+            "removec": {
+                "name": "kanal_entfernen",
+                "description": "Entfernt einen Kanal von der Blacklist",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, der von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "addr": {
+                "name": "rolle_hinzufügen",
+                "description": "Fügt eine Rolle zur Blacklist hinzu",
+                "params": {
+                    "role": {
+                        "name": "rolle",
+                        "description": "Die Rolle, die zur Blacklist hinzugefügt werden soll"
+                    },
+                    "reason": {
+                        "name": "grund",
+                        "description": "Der Grund für das Hinzufügen zur Blacklist (optional)"
+                    }
+                }
+            },
+            "remover": {
+                "name": "rolle_entfernen",
+                "description": "Entfernt eine Rolle von der Blacklist",
+                "params": {
+                    "role": {
+                        "name": "rolle",
+                        "description": "Die Rolle, die von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "addu": {
+                "name": "benutzer_hinzufügen",
+                "description": "Fügt einen Benutzer zur Blacklist hinzu",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, der zur Blacklist hinzugefügt werden soll"
+                    },
+                    "reason": {
+                        "name": "grund",
+                        "description": "Der Grund für das Hinzufügen zur Blacklist (optional)"
+                    }
+                }
+            },
+            "addc": {
+                "name": "kanal_hinzufügen",
+                "description": "Fügt einen Kanal zur Blacklist hinzu",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, der zur Blacklist hinzugefügt werden soll"
+                    },
+                    "reason": {
+                        "name": "grund",
+                        "description": "Der Grund für das Hinzufügen zur Blacklist (optional)"
+                    }
+                }
+            },
+            "removeu": {
+                "name": "benutzer_entfernen",
+                "description": "Entfernt einen Benutzer von der Blacklist",
+                "params": {
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, der von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt die aktuelle Blacklist an",
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                    }
+                }
+            }
+        },
         "disable": {
             "name": "deaktivieren",
             "description": "Deaktiviert das Levelsystem für den Server"

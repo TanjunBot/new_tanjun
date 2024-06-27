@@ -38,6 +38,191 @@ from commands.level.level_boosts import (
     show_boosts_command,
     calculate_user_channel_boost_command,
 )
+from commands.level.level_blacklist import (
+    add_channel_to_blacklist_command,
+    remove_channel_from_blacklist_command,
+    add_role_to_blacklist_command,
+    remove_role_from_blacklist_command,
+    add_user_to_blacklist_command,
+    remove_user_from_blacklist_command,
+    show_blacklist_command,
+)
+
+
+class BlacklistCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("level_blacklist_addc_name"),
+        description=app_commands.locale_str("level_blacklist_addc_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "level_blacklist_addc_params_channel_description"
+        ),
+        reason=app_commands.locale_str(
+            "level_blacklist_addc_params_reason_description"
+        ),
+    )
+    async def add_channel(self, ctx, channel: discord.TextChannel, reason: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await add_channel_to_blacklist_command(commandInfo, channel, reason)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_blacklist_removec_name"),
+        description=app_commands.locale_str(
+            "level_blacklist_removec_description"
+        ),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "level_blacklist_removec_params_channel_description"
+        ),
+    )
+    async def remove_channel(self, ctx, channel: discord.TextChannel):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await remove_channel_from_blacklist_command(commandInfo, channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_blacklist_addr_name"),
+        description=app_commands.locale_str("level_blacklist_addr_description"),
+    )
+    @app_commands.describe(
+        role=app_commands.locale_str(
+            "level_blacklist_addr_params_role_description"
+        ),
+        reason=app_commands.locale_str(
+            "level_blacklist_addr_params_reason_description"
+        ),
+    )
+    async def add_role(self, ctx, role: discord.Role, reason: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await add_role_to_blacklist_command(commandInfo, role, reason)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_blacklist_remover_name"),
+        description=app_commands.locale_str("level_blacklist_remover_description"),
+    )
+    @app_commands.describe(
+        role=app_commands.locale_str(
+            "level_blacklist_remover_params_role_description"
+        ),
+    )
+    async def remove_role(self, ctx, role: discord.Role):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await remove_role_from_blacklist_command(commandInfo, role)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_blacklist_addu_name"),
+        description=app_commands.locale_str("level_blacklist_addu_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str(
+            "level_blacklist_addu_params_user_description"
+        ),
+        reason=app_commands.locale_str(
+            "level_blacklist_addu_params_reason_description"
+        ),
+    )
+    async def add_user(self, ctx, user: discord.Member, reason: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await add_user_to_blacklist_command(commandInfo, user, reason)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_blacklist_removeu_name"),
+        description=app_commands.locale_str("level_blacklist_removeu_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str(
+            "level_blacklist_removeu_params_user_description"
+        ),
+    )
+    async def remove_user(self, ctx, user: discord.Member):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await remove_user_from_blacklist_command(commandInfo, user)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_blacklist_show_name"),
+        description=app_commands.locale_str("level_blacklist_show_description"),
+    )
+    async def show(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await show_blacklist_command(commandInfo)
 
 
 class LevelBoostCommands(discord.app_commands.Group):
@@ -218,14 +403,10 @@ class LevelBoostCommands(discord.app_commands.Group):
 
     @app_commands.command(
         name=app_commands.locale_str("level_boosts_calculate_name"),
-        description=app_commands.locale_str(
-            "level_boosts_calculate_description"
-        ),
+        description=app_commands.locale_str("level_boosts_calculate_description"),
     )
     @app_commands.describe(
-        user=app_commands.locale_str(
-            "level_boosts_calculate_params_user_description"
-        ),
+        user=app_commands.locale_str("level_boosts_calculate_params_user_description"),
         channel=app_commands.locale_str(
             "level_boosts_calculate_params_channel_description"
         ),
@@ -535,8 +716,14 @@ class levelCog(commands.Cog):
             name=app_commands.locale_str("level_boosts_name"),
             description=app_commands.locale_str("level_boosts_description"),
         )
+
+        blacklist = BlacklistCommands(
+            name=app_commands.locale_str("level_blacklist_name"),
+            description=app_commands.locale_str("level_blacklist_description"),
+        )
         levelCmds.add_command(levelConfigCmds)
         levelCmds.add_command(levelBoostCmds)
+        levelCmds.add_command(blacklist)
         self.bot.tree.add_command(levelCmds)
 
 

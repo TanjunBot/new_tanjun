@@ -784,3 +784,65 @@ def get_channel_boost(guild_id: str, channel_id: str):
     params = (guild_id, channel_id)
     result = execute_query(query, params)
     return result[0] if result else None
+
+
+def add_channel_to_blacklist(guild_id: str, channel_id: str, reason: str = None):
+    query = """
+    INSERT INTO blacklistedChannel (guild_id, channel_id, reason) 
+    VALUES (%s, %s, %s)
+    ON DUPLICATE KEY UPDATE reason = VALUES(reason)
+    """
+    params = (guild_id, channel_id, reason)
+    execute_action(query, params)
+
+
+def remove_channel_from_blacklist(guild_id: str, channel_id: str):
+    query = "DELETE FROM blacklistedChannel WHERE guild_id = %s AND channel_id = %s"
+    params = (guild_id, channel_id)
+    execute_action(query, params)
+
+
+def add_role_to_blacklist(guild_id: str, role_id: str, reason: str = None):
+    query = """
+    INSERT INTO blacklistedRole (guild_id, role_id, reason) 
+    VALUES (%s, %s, %s)
+    ON DUPLICATE KEY UPDATE reason = VALUES(reason)
+    """
+    params = (guild_id, role_id, reason)
+    execute_action(query, params)
+
+
+def remove_role_from_blacklist(guild_id: str, role_id: str):
+    query = "DELETE FROM blacklistedRole WHERE guild_id = %s AND role_id = %s"
+    params = (guild_id, role_id)
+    execute_action(query, params)
+
+
+def add_user_to_blacklist(guild_id: str, user_id: str, reason: str = None):
+    query = """
+    INSERT INTO blacklistedUser (guild_id, user_id, reason) 
+    VALUES (%s, %s, %s)
+    ON DUPLICATE KEY UPDATE reason = VALUES(reason)
+    """
+    params = (guild_id, user_id, reason)
+    execute_action(query, params)
+
+
+def remove_user_from_blacklist(guild_id: str, user_id: str):
+    query = "DELETE FROM blacklistedUser WHERE guild_id = %s AND user_id = %s"
+    params = (guild_id, user_id)
+    execute_action(query, params)
+
+
+def get_blacklist(guild_id: str):
+    channels_query = (
+        "SELECT channel_id, reason FROM blacklistedChannel WHERE guild_id = %s"
+    )
+    roles_query = "SELECT role_id, reason FROM blacklistedRole WHERE guild_id = %s"
+    users_query = "SELECT user_id, reason FROM blacklistedUser WHERE guild_id = %s"
+
+    channels = execute_query(channels_query, (guild_id,))
+    roles = execute_query(roles_query, (guild_id,))
+    users = execute_query(users_query, (guild_id,))
+
+    return {"channels": channels, "roles": roles, "users": users}
