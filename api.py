@@ -393,3 +393,8 @@ def get_wordchain_last_user_id(channel_id):
     params = (channel_id,)
     result = execute_query(query, params)
     return result[0][0] if result else None
+
+def clear_wordchain(channel_id):
+    query = "DELETE FROM wordchain WHERE channel_id = %s"
+    params = (channel_id,)
+    execute_action(query, params)

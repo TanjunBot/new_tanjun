@@ -1343,6 +1343,10 @@
         }
     },
     "minigames": {
+        "wordchaincmds": {
+            "name": "wortkette",
+            "description": "Befehle für das Wortkette-Spiel. Erstelle mit den Server einen Satz!"
+        },
         "countingcmds": {
             "name": "counting",
             "description": "Befehle für das Counting-Spiel. Zähle von 1 hoch zur unendlichkeit!"
@@ -1354,6 +1358,69 @@
         "cmodescmds": {
             "name": "countingmodes",
             "description": "Befehle für das Counting-Modes-Spiel. Zähle in verschiedenen Modi!"
+        },
+        "setwordchainchannel": {
+            "error": {
+                "no_pro": {
+                    "title": "Tanjun Pro benötigt.",
+                    "description": "Dieser Spielmodus ist nur für Tanjun Pro Server verfügbar. Spiele das normale Wortkette-Spiel, wenn du kein Tanjun Pro kaufen möchtest/kannst."
+                },
+                "no_send_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu senden."
+                },
+                "no_message_delete_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu löschen."
+                },
+                "no_read_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
+                },
+                "no_view_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu sehen."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die erforderlichen Rechte, dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
+                }
+            },
+            "success": {
+                "title": "Wortkette Kanal gesetzt",
+                "description": "Der Kanal ${channel} ist jetzt ein Wortkette Kanal."
+            },
+            "introduction": {
+                "title": "Dies ist jetzt ein Wortkette Channel!",
+                "description": "Hier kann ab jetzt ein Satz erstellt werden! Jeder Spieler fügt *ein* Wort hinzu, um einen Satz zu erstellen. Ihr müsst abwechselnd Schreiben. kommata zählen als eigenes Wort. Satzzeichen wie `.`, `!`, `?` uvm. beenden den Satz. Normale Nachrichten können hier nicht mehr geschrieben werden!\n\nViel Spaß beim Satz erstellen!"
+            }
+        },
+        "wordchain": {
+            "opted_out": "Du hast die Nachrichtenverfolgung ausgeschaltet. Das heißt dass der Bot deine Nachrichten nicht lesen wird. Solltest du mitspielen wollen, musst du die Nachrichtenverfolgung wieder anschalten. Andernfalls kannst du nicht mit machen.",
+            "finished": {
+                "title": "Wortkette beendet",
+                "description": "Die Wortkette wurde beendet! Der Satz lautet:\n\n## ${sentence}"
+            }
+        },
+        "removewordchainchannel": {
+            "error": {
+                "not_counting_channel": {
+                    "title": "Kein Wortkette-Kanal",
+                    "description": "Der angegebene Kanal ist kein Wortkette-Kanal."
+                },
+                "no_moderate_members_perms": {
+                    "title": "Fehlende Berechtigungen",
+                    "description": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`."
+                }
+            },
+            "success": {
+                "title": "Wortkette Kanal entfernt",
+                "description": "Der Kanal ${channel} ist jetzt kein Wortkette-Kanal mehr."
+            },
+            "channel_message": {
+                "title": "Wortkette Kanal entfernt",
+                "description": "Dieser Kanal ist jetzt kein Wortkette-Kanal mehr."
+            }
         },
         "setcountingchannel": {
             "error": {
@@ -1635,9 +1702,29 @@
         }
     },
     "games": {
+        "setwordcainch": {
+            "name": "kanal_setzen",
+            "description": "Setzt den Wortkette-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem das Wortkette-Spiel stattfinden soll"
+                }
+            }
+        },
+        "removewordchch": {
+            "name": "kanal_entfernen",
+            "description": "Entfernt einen Wortkette-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der als Wortkette-Kanal entfernt werden soll"
+                }
+            }
+        },
         "setcountingch": {
             "name": "kanal_setzen",
-            "description": "Setzt den Counting-Kanal für den Server",
+            "description": "Setzt den Counting-Kanal",
             "params": {
                 "channel": {
                     "name": "channel",
@@ -1647,7 +1734,7 @@
         },
         "removecountingch": {
             "name": "kanal_entfernen",
-            "description": "Entfernt den Counting-Kanal",
+            "description": "Entfernt einen Counting-Kanal",
             "params": {
                 "channel": {
                     "name": "channel",
@@ -1669,7 +1756,7 @@
                 }
             }
         },
-        "setcchallengech":{
+        "setcchallengech": {
             "name": "kanal_setzen",
             "description": "Setzt den Counting-Challenge-Kanal für den Server",
             "params": {

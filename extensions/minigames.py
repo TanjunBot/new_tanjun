@@ -33,7 +33,12 @@ from commands.minigames.countingModes.setcountingchannel import (
 from commands.minigames.countingModes.setcountingprogress import (
     setCountingProgress as setCountingModesProgressCommand,
 )
-
+from commands.minigames.wordchain.setwordchainchannel import (
+    setwordchainchannel as setWordChainChannelCommand,
+)
+from commands.minigames.wordchain.removewordchainchannel import (
+    removewordchainchannel as removeWordChainChannelCommand,
+)
 
 class CountingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -312,6 +317,64 @@ class CountingModesCommands(discord.app_commands.Group):
         await setCountingModesProgressCommand(commandInfo, channel, progress)
 
 
+class WordChainCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("games_setwordcainch_name"),
+        description=app_commands.locale_str("games_setwordcainch_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("games_setwordcainch_params_channel_description"),
+    )
+    async def setwordchainchannel(self, ctx, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await setWordChainChannelCommand(commandInfo, channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("games_removewordchch_name"),
+        description=app_commands.locale_str("games_removewordchch_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "games_removewordchch_params_channel_description"
+        ),
+    )
+    async def removewordchainchannel(
+        self, ctx, channel: discord.TextChannel = None
+    ):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await removeWordChainChannelCommand(commandInfo, channel)
+
+
 class minigameCommands(discord.app_commands.Group): ...
 
 
@@ -337,9 +400,14 @@ class minigameCog(commands.Cog):
             name=app_commands.locale_str("minigames_cmodescmds_name"),
             description=app_commands.locale_str("minigames_cmodescmds_description"),
         )
+        wordChainCmds = WordChainCommands(
+            name=app_commands.locale_str("minigames_wordchaincmds_name"),
+            description=app_commands.locale_str("minigames_wordchaincmds_description"),
+        )
         minigameCmds.add_command(countingCmds)
         minigameCmds.add_command(countingChallengeCmds)
         minigameCmds.add_command(countingModesCmds)
+        minigameCmds.add_command(wordChainCmds)
         self.bot.tree.add_command(minigameCmds)
 
 
