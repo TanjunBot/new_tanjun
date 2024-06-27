@@ -1,4 +1,4 @@
-from api import set_counting_mode_progress
+from api import set_counting_mode_progress, set_counting_mode
 from utility import commandInfo, checkIfHasPro, tanjunEmbed
 from localizer import tanjunLocalizer
 import discord
@@ -55,8 +55,8 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
         )
         await commandInfo.reply(embed=embed)
         return
-
-    set_counting_mode_progress(channel_id=channel.id, guild_id=commandInfo.guild.id, progress=0)
+    
+    set_counting_mode_progress(channel_id=channel.id, guild_id=commandInfo.guild.id, progress=1, mode=8, goal=128, counter_id="nobody")
 
     introductionEmbed = tanjunEmbed(
         title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.modesintroduction.title"),

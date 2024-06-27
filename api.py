@@ -61,6 +61,7 @@ def create_tables():
         "  `channel_id` VARCHAR(20) PRIMARY KEY,"
         "  `progress` INT DEFAULT 0,"
         "  `mode` TINYINT UNSIGNED DEFAULT 0,"
+        "  `goal` INT,"
         "  `last_counter_id` VARCHAR(20) DEFAULT NULL,"
         "  `guild_id` VARCHAR(20)"
         ") ENGINE=InnoDB"
@@ -82,20 +83,18 @@ def create_tables():
     cursor.close()
     connection.close()
 
+connection = mysql.connector.connect(
+    host=database_ip,
+    user=database_user,
+    password=database_password,
+    database=database_schema,
+)
+cursor = connection.cursor()
 
 def execute_query(query, params=None):
-    connection = mysql.connector.connect(
-        host=database_ip,
-        user=database_user,
-        password=database_password,
-        database=database_schema,
-    )
-    cursor = connection.cursor()
     cursor.execute(query, params)
     result = cursor.fetchall()
     connection.commit()
-    cursor.close()
-    connection.close()
     return result
 
 
@@ -353,7 +352,19 @@ def get_counting_mode_channel_amount(guild_id):
     result = execute_query(query, params)
     return len(result) if result else 0
 
-def set_counting_mode_progress(channel_id, progress, guild_id):
-    query = "INSERT INTO counting_modes (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress)"
-    params = (channel_id, progress, guild_id)
+def set_counting_mode_progress(channel_id, progress, guild_id, mode, goal, counter_id):
+    query = "INSERT INTO counting_modes (channel_id, progress, guild_id, mode, goal, last_counter_id) VALUES (%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s, last_counter_id = %s"
+    params = (channel_id, progress, guild_id, mode, goal, counter_id, progress, counter_id)
     execute_action(query, params)
+
+def get_counting_mode_mode(channel_id):
+    query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
+    params = (channel_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else None
+
+def get_count_mode_goal(channel_id):
+    query = "SELECT goal FROM counting_modes WHERE channel_id = %s"
+    params = (channel_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else None

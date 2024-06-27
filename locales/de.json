@@ -1436,6 +1436,70 @@
             }
         },
         "counting": {
+            "modes": {
+                "failed": {
+                    "title": "Das war wohl nix.",
+                    "description": "Die Gezähle zahl war leider Falsch. Richtig wäre gewesen: `${number}`.\nFangen wir mit einem anderen Modus an.\n\n# Neuer Modus: ${mode_name}\n${mode_description}\n\nDas Ziel ist: ${goal}.\nViel Erfolg!"
+                },
+                "failed_double": {
+                    "title": "Das war wohl nix.",
+                    "description": "Du warst noch nicht dran mit zählen. Richtig wäre gewesen: `${number}`.\nFangen wir mit einem anderen Modus an.\n\n# Neuer Modus: ${mode_name}\n${mode_description}\n\nDas Ziel ist: ${goal}.\nViel Erfolg!"
+                },
+                "won": {
+                    "title": "Gewonnen!",
+                    "description": "Herzlichen Glückwunsch! Ihr habt das Ziel erreicht und das Spiel gewonnen.\n\nDas Ziel war: ${goal}.\n\nFangen wir mit einem neuen Ziel an.\n\n# Neuer Modus: ${mode_name}\n${mode_description}\n\nDas Ziel ist: ${new_goal}.\nViel Erfolg!"
+                },
+                "modes": {
+                    "normal": {
+                        "name": "Normal",
+                        "description": "Zähle einfach immer um 1 hoch."
+                    },
+                    "negative": {
+                        "name": "Negativ",
+                        "description": "Zähle ins Negative."
+                    },
+                    "reverse": {
+                        "name": "Reverse",
+                        "description": "Zähle rückwärts zur 0."
+                    },
+                    "prime": {
+                        "name": "Primzahlen",
+                        "description": "Zähle nur Primzahlen."
+                    },
+                    "even": {
+                        "name": "Gerade",
+                        "description": "Zähle nur gerade Zahlen."
+                    },
+                    "odd": {
+                        "name": "Ungerade",
+                        "description": "Zähle nur ungerade Zahlen."
+                    },
+                    "fibonacci": {
+                        "name": "Fibonacci",
+                        "description": "Zähle die Fibonacci-Zahlen."
+                    },
+                    "square": {
+                        "name": "Quadratzahlen",
+                        "description": "Zähle die Quadratzahlen."
+                    },
+                    "cube": {
+                        "name": "Kubikzahlen",
+                        "description": "Zähle die Kubikzahlen."
+                    },
+                    "houndreds": {
+                        "name": "Hunderter",
+                        "description": "Zähle nur Zahlen, die auf 00 enden."
+                    },
+                    "binary": {
+                        "name": "Binär",
+                        "description": "Zähle in Binärzahlen."
+                    },
+                    "romean": {
+                        "name": "Römisch",
+                        "description": "Zähle in römischen Zahlen."
+                    }
+                }
+            },
             "failed": {
                 "title": "Das war wohl nix.",
                 "description": "Die Gezähle zahl war leider Falsch. Ihr müsst wohl nochmal von vorne anfangen :("
