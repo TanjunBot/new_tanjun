@@ -15,6 +15,15 @@ from commands.level.enable_level_system import (
 from commands.level.change_levelup_message import (
     change_levelup_message as changeLevelupMessageCommand,
 )
+from commands.level.disable_levelup_message import (
+    disable_levelup_message as disableLevelupMessageCommand,
+)
+from commands.level.enable_levelup_message import (
+    enable_levelup_message as enableLevelupMessageCommand,
+)
+from commands.level.set_levelup_channel import (
+    set_levelup_channel_command as setLevelupChannelCommand,
+)
 
 
 class LevelConfigCommands(discord.app_commands.Group):
@@ -67,7 +76,9 @@ class LevelConfigCommands(discord.app_commands.Group):
             "level_changelevelupmessage_params_newmessage_description"
         ),
     )
-    async def changelevelupmessage(self, ctx, new_message: app_commands.Range[str, 1, 255]):
+    async def changelevelupmessage(
+        self, ctx, new_message: app_commands.Range[str, 1, 255]
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -82,6 +93,73 @@ class LevelConfigCommands(discord.app_commands.Group):
         )
 
         await changeLevelupMessageCommand(commandInfo, new_message)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_disablelevelupmessage_name"),
+        description=app_commands.locale_str("level_disablelevelupmessage_description"),
+    )
+    async def disablelevelupmessage(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await disableLevelupMessageCommand(commandInfo)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_enablelevelupmessage_name"),
+        description=app_commands.locale_str("level_enablelevelupmessage_description"),
+    )
+    async def enablelevelupmessage(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await enableLevelupMessageCommand(commandInfo)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_setlevelupchannel_name"),
+        description=app_commands.locale_str("level_setlevelupchannel_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "level_setlevelupchannel_params_channel_description"
+        ),
+    )
+    async def setlevelupchannel(
+        self, ctx, channel: Optional[discord.TextChannel] = None
+    ):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await setLevelupChannelCommand(commandInfo, channel)
 
 
 class levelCommands(discord.app_commands.Group): ...

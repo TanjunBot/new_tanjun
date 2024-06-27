@@ -963,6 +963,66 @@
                     "title": "Level-Up-Nachricht geändert",
                     "description": "Die Level-Up-Nachricht wurde erfolgreich auf folgendes geändert:\n\n${new_message}"
                 }
+            },
+            "disablelevelupmessage": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die Level-Up-Nachricht zu deaktivieren."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "already_disabled": {
+                        "title": "Bereits deaktiviert",
+                        "description": "Die Level-Up-Nachricht ist bereits deaktiviert."
+                    }
+                },
+                "success": {
+                    "title": "Level-Up-Nachricht deaktiviert",
+                    "description": "Die Level-Up-Nachricht wurde erfolgreich deaktiviert. Benutzer werden keine Benachrichtigungen mehr erhalten, wenn sie ein Level aufsteigen."
+                }
+            },
+            "enablelevelupmessage": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die Level-Up-Nachricht zu aktivieren."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    },
+                    "already_enabled": {
+                        "title": "Bereits aktiviert",
+                        "description": "Die Level-Up-Nachricht ist bereits aktiviert."
+                    }
+                },
+                "success": {
+                    "title": "Level-Up-Nachricht aktiviert",
+                    "description": "Die Level-Up-Nachricht wurde erfolgreich aktiviert. Benutzer werden nun Benachrichtigungen erhalten, wenn sie ein Level aufsteigen."
+                }
+            },
+            "setlevelupchannel": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um den Level-Up-Kanal festzulegen."
+                    },
+                    "no_pro": {
+                        "title": "Tanjun Pro erforderlich",
+                        "description": "Diese Funktion ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen."
+                    }
+                },
+                "success": {
+                    "title": "Level-Up-Kanal festgelegt",
+                    "description": "Level-Up-Nachrichten werden nun in ${channel} gesendet."
+                },
+                "reset": {
+                    "title": "Level-Up-Kanal zurückgesetzt",
+                    "description": "Level-Up-Nachrichten werden nun in dem Kanal gesendet, in dem das Level-Up erreicht wurde."
+                }
             }
         }
     },
@@ -1933,6 +1993,24 @@
                 "newmessage": {
                     "name": "neue_nachricht",
                     "description": "Die neue Level-Up-Nachricht. Verwende {user} für den Benutzernamen und {level} für das neue Level."
+                }
+            }
+        },
+        "disablelevelupmessage": {
+            "name": "levelup_nachricht_deaktivieren",
+            "description": "Deaktiviert die Level-Up-Nachricht"
+        },
+        "enablelevelupmessage": {
+            "name": "levelup_nachricht_aktivieren",
+            "description": "Aktiviert die Level-Up-Nachricht"
+        },
+        "setlevelupchannel": {
+            "name": "levelup_kanal_festlegen",
+            "description": "Legt den Kanal fest, in dem Level-Up-Nachrichten gesendet werden",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem Level-Up-Nachrichten gesendet werden sollen (leer lassen um zurückzusetzen)."
                 }
             }
         }

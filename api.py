@@ -1,7 +1,7 @@
 import mysql.connector
 from config import database_ip, database_password, database_user, database_schema
 import json
-
+from typing import Optional
 
 def create_tables():
     tables = {}
@@ -156,7 +156,8 @@ def create_tables():
         "  `levelUpMessage` VARCHAR(255) DEFAULT NULL,"
         "  `active` TINYINT(1) DEFAULT 1,"
         "  `textCooldown` TINYINT(4) DEFAULT 1,"
-        "  `voiceCooldown` TINYINT(4) DEFAULT 1"
+        "  `voiceCooldown` TINYINT(4) DEFAULT 1,"
+        "  `levelUpChannelId` VARCHAR(20) DEFAULT NULL"
         ") ENGINE=InnoDB"
     )
 
@@ -551,17 +552,53 @@ def delete_level_system_data(guild_id: str):
         query = f"DELETE FROM {table} WHERE guild_id = %s"
         execute_action(query, (guild_id,))
 
+
+def set_levelup_message_status(guild_id: str, status: bool):
+    query = """
+    INSERT INTO levelConfig (guild_id, levelUpMessageActive) 
+    VALUES (%s, %s) 
+    ON DUPLICATE KEY UPDATE levelUpMessageActive = VALUES(levelUpMessageActive)
+    """
+    params = (guild_id, status)
+    execute_action(query, params)
+
+
+def get_levelup_message_status(guild_id: str) -> bool:
+    query = "SELECT levelUpMessageActive FROM levelConfig WHERE guild_id = %s"
+    params = (guild_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else True  # Default to True if no record exists
+
+
 def set_levelup_message(guild_id: str, message: str):
     query = """
     INSERT INTO levelConfig (guild_id, levelUpMessage) 
     VALUES (%s, %s) 
     ON DUPLICATE KEY UPDATE levelUpMessage = VALUES(levelUpMessage)
     """
-    execute_action(query, (guild_id, message))
+    params = (guild_id, message)
+    execute_action(query, params)
 
 
 def get_levelup_message(guild_id: str) -> str:
     query = "SELECT levelUpMessage FROM levelConfig WHERE guild_id = %s"
-    result = execute_query(query, (guild_id,))
+    params = (guild_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else None
 
-    return result[0] if result else None
+
+def set_levelup_channel(guild_id: str, channel_id: Optional[str]):
+    query = """
+    INSERT INTO levelConfig (guild_id, levelUpChannelId) 
+    VALUES (%s, %s) 
+    ON DUPLICATE KEY UPDATE levelUpChannelId = VALUES(levelUpChannelId)
+    """
+    params = (guild_id, channel_id)
+    execute_action(query, params)
+
+
+def get_levelup_channel(guild_id: str) -> Optional[str]:
+    query = "SELECT levelUpChannelId FROM levelConfig WHERE guild_id = %s"
+    params = (guild_id,)
+    result = execute_query(query, params)
+    return result[0][0] if result else None
