@@ -16,14 +16,6 @@ import discord
 
 
 async def calculate_user_channel_boost_command(commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel):
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.error.no_pro.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.error.no_pro.description")
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     user_boost = get_user_boost(str(commandInfo.guild.id), str(user.id))
     role_boosts = get_user_roles_boosts(str(commandInfo.guild.id), [str(role.id) for role in user.roles])
     channel_boost = get_channel_boost(str(commandInfo.guild.id), str(channel.id))
@@ -183,18 +175,6 @@ async def add_user_boost_command(
 
 
 async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role):
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.description"
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     remove_role_boost(str(commandInfo.guild.id), str(role.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -212,18 +192,6 @@ async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role
 async def remove_channel_boost_command(
     commandInfo: commandInfo, channel: discord.TextChannel
 ):
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.description"
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     remove_channel_boost(str(commandInfo.guild.id), str(channel.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -239,18 +207,6 @@ async def remove_channel_boost_command(
 
 
 async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Member):
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.description"
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     remove_user_boost(str(commandInfo.guild.id), str(user.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -266,18 +222,6 @@ async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Memb
 
 
 async def show_boosts_command(commandInfo: commandInfo):
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.description"
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     boosts = get_all_boosts(str(commandInfo.guild.id))
 
     embed = tanjunEmbed(
