@@ -333,7 +333,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
                     "commands.admin.embed.modals.colorModal.label",
                 ),
                 style=discord.TextStyle.short,
-                default=view.embed.color if view.embed.color else "#FFFFFF",
+                default=str(view.embed.color) if view.embed.color else "#FFFFFF",
                 required=True,
                 max_length=7,
                 min_length=7,
