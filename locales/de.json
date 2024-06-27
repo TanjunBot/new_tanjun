@@ -1344,8 +1344,16 @@
     },
     "minigames": {
         "countingcmds": {
-            "name": "countingcmds",
-            "description": "Befehle für das Counting-Spiel"
+            "name": "counting",
+            "description": "Befehle für das Counting-Spiel. Zähle von 1 hoch zur unendlichkeit!"
+        },
+        "countingchallangecmds": {
+            "name": "countingchallenge",
+            "description": "Befehle für das Counting-Challenge-Spiel. Zähle von 1 hoch. aber mache nur keine Fehler!"
+        },
+        "countingmodescmds": {
+            "name": "countingmodes",
+            "description": "Befehle für das Counting-Modes-Spiel. Zähle in verschiedenen Modi!"
         },
         "setcountingchannel": {
             "error": {

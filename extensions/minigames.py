@@ -6,9 +6,9 @@ from utility import tanjunEmbed
 from localizer import tanjunLocalizer
 from typing import List, Optional
 
-from commands.minigames.setcountingchannel import setCountingChannel as setCountingChannelCommand
-from commands.minigames.removecountingchannel import removeCountingChannel as removeCountingChannelCommand
-from commands.minigames.setcountingprogress import setCountingProgress as setCountingProgressCommand
+from commands.minigames.counting.setcountingchannel import setCountingChannel as setCountingChannelCommand
+from commands.minigames.counting.removecountingchannel import removeCountingChannel as removeCountingChannelCommand
+from commands.minigames.counting.setcountingprogress import setCountingProgress as setCountingProgressCommand
 
 
 class CountingCommands(discord.app_commands.Group):
@@ -95,6 +95,11 @@ class CountingCommands(discord.app_commands.Group):
 
         await setCountingProgressCommand(commandInfo, channel, progress)
 
+class CountingChallengeCommands(discord.app_commands.Group):
+    ...
+
+class CountingModesCommands(discord.app_commands.Group):
+    ...
 
 class minigameCommands(discord.app_commands.Group): ...
 
@@ -113,7 +118,17 @@ class minigameCog(commands.Cog):
             name=app_commands.locale_str("minigames_countingcmds_name"),
             description=app_commands.locale_str("minigames_countingcmds_description"),
         )
+        countingChallengeCmds = CountingChallengeCommands(
+            name=app_commands.locale_str("minigames_countingchallengecmds_name"),
+            description=app_commands.locale_str("minigames_countingchallengecmds_description"),
+        )
+        countingModesCmds = CountingModesCommands(
+            name=app_commands.locale_str("minigames_countingmodescmds_name"),
+            description=app_commands.locale_str("minigames_countingmodescmds_description"),
+        )
         minigameCmds.add_command(countingCmds)
+        minigameCmds.add_command(countingChallengeCmds)
+        minigameCmds.add_command(countingModesCmds)
         self.bot.tree.add_command(minigameCmds)
 
 
