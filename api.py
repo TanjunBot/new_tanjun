@@ -825,8 +825,9 @@ async def get_user_level_info(guild_id: str, user_id: str):
         xp, custom_background = result[0]
         level = get_level_for_xp(xp, scaling, custom_formula)
         xp_needed = get_xp_for_level(level, scaling, custom_formula)
+        xp_for_last_level_needed = get_xp_for_level(level - 1, scaling, custom_formula)
         return {
-            "xp": xp,
+            "xp": xp - xp_for_last_level_needed,
             "level": level,
             "xp_needed": xp_needed,
             "customBackground": custom_background,
