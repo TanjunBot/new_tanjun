@@ -73,7 +73,7 @@ class WarningView(View):
 
     async def remove_warning_callback(self, interaction: discord.Interaction):
         warning_id = int(interaction.data["custom_id"].split("_")[1])
-        remove_warning(warning_id)
+        await remove_warning(warning_id)
         self.warnings = [w for w in self.warnings if w[0] != warning_id]
 
         if not self.warnings:
@@ -202,7 +202,7 @@ async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member
     guild_id = commandInfo.guild.id
     user_id = member.id
 
-    warnings = get_detailed_warnings(guild_id, user_id)
+    warnings = await get_detailed_warnings(guild_id, user_id)
 
     if not warnings:
         embed = utility.tanjunEmbed(

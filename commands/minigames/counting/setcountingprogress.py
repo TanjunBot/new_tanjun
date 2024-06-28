@@ -14,7 +14,7 @@ async def setCountingProgress(commandInfo: commandInfo, channel: discord.TextCha
         return
 
     # Check if the channel is a counting channel
-    current_progress = get_counting_progress(channel.id)
+    current_progress = await get_counting_progress(channel.id)
     if current_progress is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.error.not_counting_channel.title"),
@@ -40,7 +40,7 @@ async def setCountingProgress(commandInfo: commandInfo, channel: discord.TextCha
         return
 
     # Set the new progress
-    set_counting_progress(channel.id, progress, commandInfo.guild.id)
+    await set_counting_progress(channel.id, progress, commandInfo.guild.id)
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.success.title"),

@@ -273,9 +273,9 @@ async def counting(message: discord.Message):
     if message.author.bot:
         return
 
-    progress = get_counting_mode_progress(message.channel.id)
+    progress = await get_counting_mode_progress(message.channel.id)
 
-    mode = get_counting_mode_mode(message.channel.id)
+    mode = await get_counting_mode_mode(message.channel.id)
 
     locale = message.guild.locale if hasattr(message.guild, "locale") else "de"
 
@@ -288,7 +288,7 @@ async def counting(message: discord.Message):
     if mode == 11:
         progress = int(str(progress), 2)
 
-    if check_if_opted_out(message.author.id):
+    if await check_if_opted_out(message.author.id):
         try:
             await message.author.send(
                 tanjunLocalizer.localize(locale, "minigames.counting.opted_out")
@@ -327,11 +327,11 @@ async def counting(message: discord.Message):
                 goal=goal,
             ),
         )
-        clear_counting_mode(message.channel.id)
+        await clear_counting_mode(message.channel.id)
         if mode == 12:
             goal = romeal_to_number(goal)
         starter = get_first_number(newMode)
-        set_counting_mode_progress(
+        await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
@@ -366,11 +366,11 @@ async def counting(message: discord.Message):
                 goal=goal,
             ),
         )
-        clear_counting_mode(message.channel.id)
+        await clear_counting_mode(message.channel.id)
         if mode == 12:
             goal = romeal_to_number(goal)
         starter = get_first_number(newMode)
-        set_counting_mode_progress(
+        await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
@@ -403,11 +403,11 @@ async def counting(message: discord.Message):
                 goal=goal,
             ),
         )
-        clear_counting_mode(message.channel.id)
+        await clear_counting_mode(message.channel.id)
         if newMode == 12:
             goal = romeal_to_number(goal)
         starter = get_first_number(newMode)
-        set_counting_mode_progress(
+        await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
@@ -418,7 +418,7 @@ async def counting(message: discord.Message):
         await message.reply(embed=embed)
         return
 
-    last_counter_id = get_last_mode_counter_id(message.channel.id)
+    last_counter_id = await get_last_mode_counter_id(message.channel.id)
 
     if last_counter_id == str(message.author.id):
         await message.add_reaction("💀")
@@ -442,11 +442,11 @@ async def counting(message: discord.Message):
                 goal=goal,
             ),
         )
-        clear_counting_mode(message.channel.id)
+        await clear_counting_mode(message.channel.id)
         if mode == 12:
             goal = romeal_to_number(goal)
         starter = get_first_number(newMode)
-        set_counting_mode_progress(
+        await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
@@ -457,7 +457,7 @@ async def counting(message: discord.Message):
         await message.reply(embed=embed)
         return
 
-    goal = get_count_mode_goal(message.channel.id)
+    goal = await get_count_mode_goal(message.channel.id)
 
     if mode == 12:
         number = romeal_to_number(number)
@@ -486,11 +486,11 @@ async def counting(message: discord.Message):
                 new_goal=new_goal,
             ),
         )
-        clear_counting_mode(message.channel.id)
+        await clear_counting_mode(message.channel.id)
         if mode == 12:
             new_goal = romeal_to_number(new_goal)
         starter = get_first_number(newMode)
-        set_counting_mode_progress(
+        await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
@@ -504,7 +504,7 @@ async def counting(message: discord.Message):
     if mode == 12:
         correctNumber = romeal_to_number(correctNumber)
 
-    set_counting_mode_progress(
+    await set_counting_mode_progress(
         channel_id=message.channel.id,
         progress=correctNumber,
         mode=mode,
@@ -515,7 +515,7 @@ async def counting(message: discord.Message):
     if random.randint(1, 100) == 1:
         correctNumber = get_correct_next_number(mode, correctNumber)
         await message.channel.send(correctNumber)
-        set_counting_mode_progress(
+        await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=romeal_to_number(correctNumber),
             mode=mode,

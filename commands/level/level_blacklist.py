@@ -36,7 +36,7 @@ async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: di
         await commandInfo.reply(embed=embed)
         return
 
-    add_channel_to_blacklist(str(commandInfo.guild.id), str(channel.id), reason)
+    await add_channel_to_blacklist(str(commandInfo.guild.id), str(channel.id), reason)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.blacklist.add_channel.success.title"
@@ -62,7 +62,7 @@ async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channe
         await commandInfo.reply(embed=embed)
         return
 
-    remove_channel_from_blacklist(str(commandInfo.guild.id), str(channel.id))
+    await remove_channel_from_blacklist(str(commandInfo.guild.id), str(channel.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.blacklist.remove_channel.success.title"
@@ -87,7 +87,7 @@ async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.
         await commandInfo.reply(embed=embed)
         return
 
-    add_role_to_blacklist(str(commandInfo.guild.id), str(role.id), reason)
+    await add_role_to_blacklist(str(commandInfo.guild.id), str(role.id), reason)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.blacklist.add_role.success.title"
@@ -113,7 +113,7 @@ async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: dis
         await commandInfo.reply(embed=embed)
         return
 
-    remove_role_from_blacklist(str(commandInfo.guild.id), str(role.id))
+    await remove_role_from_blacklist(str(commandInfo.guild.id), str(role.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.blacklist.remove_role.success.title"
@@ -150,7 +150,7 @@ async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.
         await commandInfo.reply(embed=embed)
         return
 
-    add_user_to_blacklist(str(commandInfo.guild.id), str(user.id), reason)
+    await add_user_to_blacklist(str(commandInfo.guild.id), str(user.id), reason)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.blacklist.add_user.success.title"
@@ -176,7 +176,7 @@ async def remove_user_from_blacklist_command(commandInfo: commandInfo, user: dis
         await commandInfo.reply(embed=embed)
         return
 
-    remove_user_from_blacklist(str(commandInfo.guild.id), str(user.id))
+    await remove_user_from_blacklist(str(commandInfo.guild.id), str(user.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.blacklist.remove_user.success.title"
@@ -201,7 +201,7 @@ async def show_blacklist_command(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
-    blacklist = get_blacklist(str(commandInfo.guild.id))
+    blacklist = await get_blacklist(str(commandInfo.guild.id))
     
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(

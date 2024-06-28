@@ -16,7 +16,7 @@ async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role
         await commandInfo.reply(embed=embed)
         return
     
-    existing_roles = get_level_roles(str(commandInfo.guild.id), level)
+    existing_roles = await get_level_roles(str(commandInfo.guild.id), level)
     if str(role.id) not in existing_roles:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -31,7 +31,7 @@ async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role
         await commandInfo.reply(embed=embed)
         return
 
-    remove_level_role(str(commandInfo.guild.id), str(role.id), level)
+    await remove_level_role(str(commandInfo.guild.id), str(role.id), level)
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(

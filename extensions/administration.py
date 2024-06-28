@@ -2,6 +2,7 @@
 THE COMMANDS IN THIS FILE ARE FOR ADMINISTRATIVE PURPOSES ONLY. THEY ARE NOT TO BE SHARED WITH ANYONE ELSE!
 """
 import asyncio
+import signal
 import discord
 from discord.ext import commands
 import config

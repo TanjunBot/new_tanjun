@@ -55,7 +55,7 @@ async def setwordchainchannel(commandInfo: commandInfo, channel: discord.TextCha
         await commandInfo.reply(embed=embed)
         return
     
-    set_wordchain_word(channel_id=channel.id, guild_id=commandInfo.guild.id, word="", worder_id="nobody")
+    await set_wordchain_word(channel_id=channel.id, guild_id=commandInfo.guild.id, word="", worder_id="nobody")
 
     introductionEmbed = tanjunEmbed(
         title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setwordchainchannel.introduction.title"),

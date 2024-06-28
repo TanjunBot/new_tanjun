@@ -101,9 +101,9 @@ async def change_xp_scaling_command(
         await commandInfo.reply(embed=embed)
         return
 
-    set_xp_scaling(str(commandInfo.guild.id), scaling)
+    await set_xp_scaling(str(commandInfo.guild.id), scaling)
     if scaling == "custom":
-        set_custom_formula(str(commandInfo.guild.id), custom_formula)
+        await set_custom_formula(str(commandInfo.guild.id), custom_formula)
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -172,7 +172,7 @@ async def show_xp_scalings(
             if scaling == "custom":
                 if not checkIfHasPro(commandInfo.guild.id):
                     continue
-                custom_formula = get_custom_formula(str(commandInfo.guild.id))
+                custom_formula = await get_custom_formula(str(commandInfo.guild.id))
                 if not custom_formula:
                     continue
                 formula_display = custom_formula

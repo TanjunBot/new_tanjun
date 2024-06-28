@@ -35,7 +35,7 @@ async def unlock_channel(commandInfo: utility.commandInfo, channel: discord.Text
 
     try:
         # Retrieve saved overwrites
-        saved_overwrites = get_channel_overwrites(channel.id)
+        saved_overwrites = await get_channel_overwrites(channel.id)
 
         if not saved_overwrites:
             embed = utility.tanjunEmbed(
@@ -61,7 +61,7 @@ async def unlock_channel(commandInfo: utility.commandInfo, channel: discord.Text
         await channel.set_permissions(channel.guild.default_role, send_messages=None)
 
         # Clear saved overwrites
-        clear_channel_overwrites(channel.id)
+        await clear_channel_overwrites(channel.id)
         
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

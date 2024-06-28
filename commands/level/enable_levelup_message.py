@@ -15,7 +15,7 @@ async def enable_levelup_message(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
-    current_status = get_levelup_message_status(str(commandInfo.guild.id))
+    current_status = await get_levelup_message_status(str(commandInfo.guild.id))
     if current_status:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -28,7 +28,7 @@ async def enable_levelup_message(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
-    set_levelup_message_status(str(commandInfo.guild.id), True)
+    await set_levelup_message_status(str(commandInfo.guild.id), True)
     
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(

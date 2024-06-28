@@ -34,8 +34,8 @@ async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, re
     guild_id = commandInfo.guild.id
     user_id = member.id
 
-    add_warning(guild_id, user_id, reason)
-    warn_count, warn_reasons = get_warnings(guild_id, user_id)
+    await add_warning(guild_id, user_id, reason)
+    warn_count, warn_reasons = await get_warnings(guild_id, user_id)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -52,7 +52,7 @@ async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, re
     await commandInfo.reply(embed=embed)
 
     # Check for escalated actions based on warn count
-    warn_config = get_warn_config(guild_id)
+    warn_config = await get_warn_config(guild_id)
     if warn_config:
         if warn_count >= warn_config['ban_threshold']:
             # Ban the user
