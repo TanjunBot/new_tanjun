@@ -543,7 +543,7 @@ class RoleRequirementView(ui.View):
 
     async def submit(self, interaction: discord.Interaction):
         role_ids = [role for role in interaction.data["values"]]
-        if len(role_ids) > 1 and not utility.checkIfhasPro(self.commandInfo.guild):
+        if len(role_ids) > 1 and not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
                     self.commandInfo.locale, "commands.giveaway.builder.role_requirement.pro"
