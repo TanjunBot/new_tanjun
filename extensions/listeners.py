@@ -11,7 +11,7 @@ from minigames.countingmodes import counting as countingModes
 from minigames.wordchain import wordchain
 from minigames.addLevelXp import addLevelXp
 
-from commands.giveaway.utility import add_giveaway_participant
+from commands.giveaway.utility import add_giveaway_participant, addMessageToGiveaway
 from loops.giveaway import handleVoiceChange
 
 class ListenerCog(commands.Cog):
@@ -26,6 +26,7 @@ class ListenerCog(commands.Cog):
         await countingModes(message)
         await wordchain(message)
         await addLevelXp(message)
+        await addMessageToGiveaway(message)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):

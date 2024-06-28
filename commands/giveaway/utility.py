@@ -15,7 +15,9 @@ from api import (
     add_giveaway_participant as add_giveaway_participant_api,
     remove_giveaway_participant,
     set_giveaway_message_id,
-    set_giveaway_started
+    set_giveaway_started,
+    add_giveaway_new_message_channel_if_needed,
+    add_giveaway_new_message_if_needed
 )
 import discord
 from datetime import date
@@ -484,3 +486,14 @@ async def add_giveaway_participant(giveawayid, userid, client):
     )
 
     return embed
+
+async def addMessageToGiveaway(message: discord.Message):
+    if await check_if_opted_out(message.author.id):
+        return
+    
+    if message.author.bot:
+        return
+    
+    await add_giveaway_new_message_if_needed(message.author.id, message.guild.id)
+
+    await add_giveaway_new_message_channel_if_needed(message.author.id, message.guild.id, message.channel.id)
