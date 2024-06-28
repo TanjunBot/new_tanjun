@@ -210,7 +210,6 @@ async def create_tables():
         `ended` TINYINT(1) NOT NULL DEFAULT 0,
         `newMessageRequirement` SMALLINT UNSIGNED,
         `dayRequirement` SMALLINT UNSIGNED,
-        `roleRequirement` VARCHAR(20),
         `sendFailed` TINYINT(1) NOT NULL DEFAULT 0
     ) ENGINE=InnoDB;
     """

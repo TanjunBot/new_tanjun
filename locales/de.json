@@ -1374,6 +1374,133 @@
                     "no_boosts": "Es sind keine XP-Boosts für diesen Server konfiguriert."
                 }
             }
+        },
+        "giveaway": {
+            "builder": {
+                "change_description": "Beschreibung ändern",
+                "custom_name": {
+                    "label": "Benutzerdefinierter Name",
+                    "placeholder": "Gib den benutzerdefinierten Namen ein",
+                    "updated": "Benutzerdefinierter Name aktualisiert",
+                    "title": "Benutzerdefinierter Name",
+                    "description": "Passe den Namen deines Gewinnspiels in der giveaways.tanjun.bot domaine an!"
+                },
+                "not_authorized": "Du bist nicht autorisiert, dies zu tun",
+                "modal": {
+                    "timeout": "Das Zeitlimit für die Eingabe ist abgelaufen"
+                },
+                "sponsor": {
+                    "label": "Sponsor",
+                    "updated": "Sponsor aktualisiert",
+                    "cancelled": "Sponsor Auswahl abgebrochen",
+                    "selected": "Sponsor ausgewählt: ${user}",
+                    "select": {
+                        "name": "Sponsor auswählen",
+                        "placeholder": "Wähle einen Sponsor aus"
+                    }
+                },
+                "confirm": "Bestätigen",
+                "cancel": "Abbrechen",
+                "change_winners": {
+                    "label": "Gewinner ändern",
+                    "placeholder": "Anzahl der Gewinner eingeben",
+                    "updated": "Anzahl der Gewinner aktualisiert",
+                    "title": "Gewinner ändern",
+                    "description": "Gib die Anzahl der Gewinner ein"
+                },
+                "end_time": {
+                    "label": "Endzeit",
+                    "placeholder": "Gib die Endzeit ein z.B. 10m für in 10 Minuten",
+                    "updated": "Endzeit aktualisiert",
+                    "title": "Endzeit festlegen",
+                    "description": "Gib die Endzeit des Giveaways ein"
+                },
+                "start_time": {
+                    "label": "Startzeit",
+                    "placeholder": "Gib die Startzeit ein z.B. 10m für in 10 Minuten",
+                    "updated": "Startzeit aktualisiert",
+                    "title": "Startzeit festlegen",
+                    "description": "Gib die Startzeit des Giveaways ein"
+                },
+                "new_message_requirement": {
+                    "label": "Nachrichtenanforderung",
+                    "placeholder": "Gib die Anzahl der benötigten Nachrichten ein",
+                    "updated": "Nachrichtenanforderung aktualisiert",
+                    "title": "Nachrichtenanforderung festlegen",
+                    "description": "Gib die Anzahl der neuen Nachrichten ein"
+                },
+                "day_requirement": {
+                    "label": "Tagesanforderung",
+                    "placeholder": "Gib die Anzahl der benötigten Tage ein",
+                    "updated": "Tagesanforderung aktualisiert",
+                    "title": "Tagesanforderung festlegen",
+                    "description": "Gib die Anzahl der Tage ein"
+                },
+                "role_requirement": {
+                    "label": "Rollenanforderung",
+                    "placeholder": "Rollenanforderung auswählen",
+                    "updated": "Rollenanforderung aktualisiert",
+                    "cancelled": "Rollenanforderung abgebrochen",
+                    "pro": "Pro-Mitgliedschaft erforderlich",
+                    "select": "Rollenanforderung auswählen",
+                    "title": "Rollenanforderung festlegen",
+                    "description": "Wähle die erforderlichen Rollen aus"
+                },
+                "voice_requirement": {
+                    "label": "Sprachanforderung",
+                    "placeholder": "Gib die benötigte Sprechzeit ein",
+                    "updated": "Sprachanforderung aktualisiert",
+                    "title": "Sprachanforderung festlegen",
+                    "description": "Gib die benötigte Sprechzeit ein"
+                },
+                "add_channel_requirement": {
+                    "label": "Kanalanforderung hinzufügen",
+                    "placeholder": "Kanal hinzufügen",
+                    "select": "Kanal auswählen",
+                    "v": {
+                        "t": "Wert für Kanalanforderung festlegen",
+                        "p": "Gib den Wert ein"
+                    },
+                    "value": {
+                        "updated": "Kanalanforderungswert aktualisiert"
+                    },
+                    "cancelled": "Kanalanforderung abgebrochen"
+                },
+                "remove_channel_requirement": {
+                    "label": "Kanalanforderung entfernen",
+                    "placeholder": "Kanal entfernen",
+                    "select": "Kanal zum Entfernen auswählen",
+                    "removed": "Kanalanforderung entfernt"
+                },
+                "description": {
+                    "updated": "Beschreibung aktualisiert",
+                    "timeout": "Zeitlimit für die Eingabe der Beschreibung ist abgelaufen"
+                },
+                "price": {
+                    "label": "Preis",
+                    "updated": "Preis aktualisiert",
+                    "timeout": "Zeitlimit für die Eingabe des Preises ist abgelaufen"
+                },
+                "message": {
+                    "label": "Nachricht",
+                    "updated": "Nachricht aktualisiert",
+                    "timeout": "Zeitlimit für die Eingabe der Nachricht ist abgelaufen"
+                },
+                "channel": {
+                    "selected": "Kanal Ausgewählt."
+                },
+                "enter_description": "Gib die Beschreibung ein",
+                "enter_price": "Gib den Preis ein",
+                "enter_message": "Gib die Nachricht ein",
+                "none": "Keine",
+                "true": "Wahr",
+                "false": "Falsch",
+                "winners": "Gewinner",
+                "with_button": "Mit Button",
+                "preview": "Vorschau",
+                "loading": "Wird geladen...",
+                "start.no_permission": "Du hast keine Berechtigung, das Giveaway zu starten."
+            }
         }
     },
     "admin": {
