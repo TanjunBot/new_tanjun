@@ -1376,6 +1376,20 @@
             }
         },
         "giveaway": {
+            "giveawayEmbed": {
+                "title": "${title}",
+                "description": "🎉 **Gewinnspiel Start** 🎉\n\nTeilnahmebedingungen:\n- Klicke auf \"Jetzt teilnehmen!\", um teilzunehmen.\n${requirements}\n🏆 Gewinner: ${winners}",
+                "sponsor": "### 🎁 Das Gewinnspiel ist Gesponsort von ${sponsor} - Vielen Dank!",
+                "price": "### Preis: ${price}",
+                "no_requirements": "- `Keine spezifischen Bedingungen.`",
+                "new_message_requirement": "- 🧑‍💻`${count}` neue Nachrichten",
+                "day_requirement": "- 📅seit `${count}` Tage im Server",
+                "role_requirement": "- 🪪Benötigte Rollen: ${roles}",
+                "voice_requirement": "- 🕛`${minutes}` Minuten in Sprachkanälen",
+                "channel_requirements": "- 🤓Neue Nachrichten in Kanälen: ${channels}",
+                "end_time": "🗓️Endet ${date}",
+                "button_text": "Jetzt teilnehmen!"
+            },
             "builder": {
                 "change_description": "Beschreibung ändern",
                 "custom_name": {
