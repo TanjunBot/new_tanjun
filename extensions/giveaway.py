@@ -14,49 +14,13 @@ class GiveawayCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         title=app_commands.locale_str("giveaway_start_params_title_description"),
-        winners=app_commands.locale_str("giveaway_start_params_winners_description"),
-        with_button=app_commands.locale_str(
-            "giveaway_start_params_with_button_description"
-        ),
-        custom_name=app_commands.locale_str(
-            "giveaway_start_params_custom_name_description"
-        ),
-        sponsor=app_commands.locale_str("giveaway_start_params_sponsor_description"),
-        price=app_commands.locale_str("giveaway_start_params_price_description"),
-        message=app_commands.locale_str("giveaway_start_params_message_description"),
-        end_time=app_commands.locale_str("giveaway_start_params_end_time_description"),
-        start_time=app_commands.locale_str(
-            "giveaway_start_params_start_time_description"
-        ),
-        new_message_requirement=app_commands.locale_str(
-            "giveaway_start_params_new_message_requirement_description"
-        ),
-        day_requirement=app_commands.locale_str(
-            "giveaway_start_params_day_requirement_description"
-        ),
-        role_requirement=app_commands.locale_str(
-            "giveaway_start_params_role_requirement_description"
-        ),
-        voice_requirement=app_commands.locale_str(
-            "giveaway_start_params_voice_requirement_description"
-        ),
+        channel=app_commands.locale_str("giveaway_start_params_channel_description"),
     )
     async def start(
         self,
         ctx: discord.Interaction,
         title: str,
-        winners: int = 1,
-        with_button: bool = True,
-        custom_name: str = None,
-        sponsor: discord.Member = None,
-        price: str = None,
-        message: str = None,
-        end_time: str = None,
-        start_time: str = None,
-        new_message_requirement: int = 0,
-        day_requirement: int = 0,
-        role_requirement: discord.Role = None,
-        voice_requirement: int = 0,
+        channel: discord.TextChannel = None,
     ):
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -69,22 +33,15 @@ class GiveawayCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
+
+        if not channel:
+            channel = ctx.channel
+
         await ctx.response.defer()
         await start_giveaway(
-            commandInfo,
-            title,
-            winners,
-            with_button,
-            custom_name,
-            sponsor,
-            price,
-            message,
-            end_time,
-            start_time,
-            new_message_requirement,
-            day_requirement,
-            role_requirement,
-            voice_requirement,
+            commandInfo=commandInfo,
+            title=title,
+            target_channel=channel,
         )
 
 
