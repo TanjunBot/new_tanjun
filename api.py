@@ -7,9 +7,11 @@ from utility import get_xp_for_level, get_level_for_xp
 
 pool = None
 
-def set_pool(p):    
+
+def set_pool(p):
     global pool
     pool = p
+
 
 async def execute_query(p, query, params=None):
     try:
@@ -188,6 +190,109 @@ async def create_tables():
         "  `voiceCooldown` INT DEFAULT 60"
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     )
+    tables[
+        "giveaway"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveaway` (
+        `giveawayId` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `guildId` VARCHAR(20) NOT NULL,
+        `title` VARCHAR(128) NOT NULL,
+        `description` VARCHAR(1024) NOT NULL,
+        `winners` TINYINT(4) NOT NULL,
+        `withButton` TINYINT(1) NOT NULL,
+        `customName` VARCHAR(32),
+        `sponsor` VARCHAR(20),
+        `price` VARCHAR(64),
+        `message` VARCHAR(128),
+        `endtime` DATETIME NOT NULL,
+        `starttime` DATETIME,
+        `started` TINYINT(1) NOT NULL DEFAULT 0,
+        `ended` TINYINT(1) NOT NULL DEFAULT 0,
+        `newMessageRequirement` SMALLINT UNSIGNED,
+        `dayRequirement` SMALLINT UNSIGNED,
+        `roleRequirement` VARCHAR(20),
+        `sendFailed` TINYINT(1) NOT NULL DEFAULT 0
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayChannelRequirement"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayChannelRequirement` (
+        `giveawayId` INT UNSIGNED,
+        `channelId` VARCHAR(20),
+        `amount` SMALLINT UNSIGNED,
+        PRIMARY KEY(`giveawayId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayIdMessageIdMap"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayIdMessageIdMap` (
+        `giveawayId` INT UNSIGNED,
+        `messageId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`giveawayId`, `messageId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayParticipant"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayParticipant` (
+        `userId` VARCHAR(20),
+        `giveawayId` INT UNSIGNED,
+        PRIMARY KEY(`userId`, `giveawayId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "roleRequirement"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `roleRequirement` (
+        `roleId` VARCHAR(20),
+        `giveawayId` INT UNSIGNED,
+        PRIMARY KEY(`roleId`, `giveawayId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "voiceTime"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `voiceTime` (
+        `giveawayId` INT UNSIGNED,
+        `userId` VARCHAR(20),
+        `voiceMinutes` MEDIUMINT UNSIGNED,
+        PRIMARY KEY(`giveawayId`, `userId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "newMessage"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `newMessage` (
+        `giveawayId` INT UNSIGNED,
+        `userId` VARCHAR(20),
+        `messages` MEDIUMINT UNSIGNED,
+        PRIMARY KEY(`giveawayId`, `userId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayBlacklistedRole"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayBlacklistedRole` (
+        `roleId` VARCHAR(20) PRIMARY KEY,
+        `reason` VARCHAR(128),
+        `expire` DATETIME,
+        `guildId` VARCHAR(20)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayBlacklistedUser"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayBlacklistedUser` (
+        `userId` VARCHAR(20),
+        `guildId` VARCHAR(20),
+        `expire` DATETIME,
+        `reason` VARCHAR(128),
+        PRIMARY KEY(`userId`, `guildId`)
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
