@@ -180,7 +180,7 @@ class AddRoleLevelModal(Modal):
             )
             return
 
-        add_level_role(str(interaction.guild.id), self.role_id, level)
+        await add_level_role(str(interaction.guild.id), self.role_id, level)
         await interaction.response.send_message(
             tanjunLocalizer.localize(
                 self.commandInfo.locale, "commands.level.showlevelroles.add_role_modal.success",
@@ -267,7 +267,7 @@ class RemoveRoleConfirmView(View):
     async def confirm(self, interaction: discord.Interaction, button: Button):
         for role_data in self.selected_roles:
             level, role_id = role_data.split("|")
-            remove_level_role(str(interaction.guild.id), role_id, int(level))
+            await remove_level_role(str(interaction.guild.id), role_id, int(level))
         
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(
@@ -301,7 +301,7 @@ async def show_level_roles_command(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
     
-    level_roles = get_all_level_roles(str(commandInfo.guild.id))
+    level_roles = await get_all_level_roles(str(commandInfo.guild.id))
 
     if not level_roles:
         embed = tanjunEmbed(

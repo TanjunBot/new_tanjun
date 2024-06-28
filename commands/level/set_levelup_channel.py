@@ -17,7 +17,7 @@ async def set_levelup_channel_command(commandInfo: commandInfo, channel: discord
         return
 
     if channel:
-        set_levelup_channel(str(commandInfo.guild.id), str(channel.id))
+        await set_levelup_channel(str(commandInfo.guild.id), str(channel.id))
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.level.setlevelupchannel.success.title"
@@ -28,7 +28,7 @@ async def set_levelup_channel_command(commandInfo: commandInfo, channel: discord
             ),
         )
     else:
-        set_levelup_channel(str(commandInfo.guild.id), None)
+        await set_levelup_channel(str(commandInfo.guild.id), None)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.level.setlevelupchannel.reset.title"

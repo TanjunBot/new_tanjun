@@ -7,14 +7,14 @@ async def counting(message: discord.Message):
     if message.author.bot:
         return
 
-    progress = get_counting_progress(message.channel.id)
+    progress = await get_counting_progress(message.channel.id)
 
     locale = message.guild.locale if hasattr(message.guild, "locale") else "en_US"
 
     if not progress and progress != 0:
         return
     
-    if check_if_opted_out(message.author.id):
+    if await check_if_opted_out(message.author.id):
         try:
             await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
         except discord.Forbidden:
@@ -38,7 +38,7 @@ async def counting(message: discord.Message):
         await message.delete()
         return
 
-    last_counter_id = get_last_counter_id(message.channel.id)
+    last_counter_id = await get_last_counter_id(message.channel.id)
 
     print(last_counter_id)
 
@@ -46,7 +46,7 @@ async def counting(message: discord.Message):
         await message.delete()
         return
 
-    increase_counting_progress(message.channel.id, message.author.id)
+    await increase_counting_progress(message.channel.id, message.author.id)
     if random.randint(1, 100) == 1:
         await message.channel.send(progress + 2)
-        increase_counting_progress(message.channel.id, "me")
+        await increase_counting_progress(message.channel.id, "me")

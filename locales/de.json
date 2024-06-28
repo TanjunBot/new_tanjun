@@ -902,6 +902,54 @@
             }
         },
         "level": {
+            "givexp": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Server verwalten', um XP zu vergeben."
+                    },
+                    "invalid_amount": {
+                        "title": "Ungültige XP-Menge",
+                        "description": "Die XP-Menge muss größer als 0 sein."
+                    }
+                },
+                "success": {
+                    "title": "XP erfolgreich vergeben",
+                    "description": "${amount} XP wurden ${user} gegeben. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}"
+                }
+            },
+            "takexp": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Server verwalten', um XP wegzunehmen."
+                    },
+                    "invalid_amount": {
+                        "title": "Ungültige XP-Menge",
+                        "description": "Die XP-Menge muss größer als 0 sein."
+                    }
+                },
+                "success": {
+                    "title": "XP erfolgreich weggenommen",
+                    "description": "${amount} XP wurden ${user} weggenommen. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}"
+                }
+            },
+            "setxp": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Server verwalten', um XP zu setzen."
+                    },
+                    "invalid_amount": {
+                        "title": "Ungültige XP-Menge",
+                        "description": "Die XP-Menge muss 0 oder größer sein."
+                    }
+                },
+                "success": {
+                    "title": "XP erfolgreich gesetzt",
+                    "description": "XP für ${user} wurde von ${old_xp} auf ${new_xp} gesetzt. Level: ${old_level} -> ${new_level}"
+                }
+            },
             "rank": {
                 "error": {
                     "no_data": {
@@ -2276,6 +2324,48 @@
         }
     },
     "level": {
+        "givexp": {
+            "name": "xp_vergeben",
+            "description": "Vergibt Erfahrungspunkte an einen Benutzer",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Der Benutzer, dem die Erfahrungspunkte vergeben werden sollen"
+                },
+                "amount": {
+                    "name": "betrag",
+                    "description": "Die Anzahl der zu vergebenden Erfahrungspunkte"
+                }
+            }
+        },
+        "takexp": {
+            "name": "xp_entziehen",
+            "description": "Entzieht Erfahrungspunkte von einem Benutzer",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Der Benutzer, dem die Erfahrungspunkte entzogen werden sollen"
+                },
+                "amount": {
+                    "name": "betrag",
+                    "description": "Die Anzahl der zu entziehenden Erfahrungspunkte"
+                }
+            }
+        },
+        "setxp": {
+            "name": "xp_setzen",
+            "description": "Setzt die Erfahrungspunkte eines Benutzers auf einen bestimmten Wert",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Der Benutzer, dessen Erfahrungspunkte gesetzt werden sollen"
+                },
+                "amount": {
+                    "name": "betrag",
+                    "description": "Der neue Wert der Erfahrungspunkte"
+                }
+            }
+        },
         "rank": {
             "name": "rang",
             "description": "Zeigt die Rangkarte eines Benutzers an",
