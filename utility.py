@@ -34,6 +34,8 @@ import re
 from github import Github
 import ast
 import operator as op
+import cmath
+
 
 class EmbedProxy:
     def __init__(self, layer: Dict[str, Any]):
@@ -930,64 +932,81 @@ async def getGif(query: str, amount: int = 1, limit: int = 10):
 
         if r is None:
             return []
-        
+
         random.shuffle(r["results"])
 
         return [r["results"][i]["itemurl"] for i in range(amount)]
-    
+
+
 def get_highest_exponent(polynomial):
     # Remove spaces
-    polynomial = polynomial.replace(' ', '')
-    
+    polynomial = polynomial.replace(" ", "")
+
     # Regular expression to match terms
-    term_pattern = re.compile(r'([+-]?\d*)(x(\^(\d+))?)?')
-    
+    term_pattern = re.compile(r"([+-]?\d*)(x(\^(\d+))?)?")
+
     # Find all matches
     terms = term_pattern.findall(polynomial)
-    
+
     highest_exponent = 0
-    
+
     for term in terms:
         coefficient, variable, _, exponent = term
-        
+
         if variable:  # term contains 'x'
             if exponent:  # term contains 'x^n'
                 highest_exponent = max(highest_exponent, int(exponent))
             else:  # term is 'x' which is x^1
                 highest_exponent = max(highest_exponent, 1)
-    
+
     return highest_exponent
+
 
 def checkIfHasPro(guildid: int):
     if guildid == 0:
         return False
     return True
 
+
 def checkIfhasPlus(userid: int):
     if userid == 0:
         return False
     return True
 
+
 def missingLocalization(locale: str):
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new-Tanjun")
     label = repo.get_label("missing localization")
-    repo.create_issue(title="Missing localization", body=f"Missing localization for {locale}", labels=[label])
+    repo.create_issue(
+        title="Missing localization",
+        body=f"Missing localization for {locale}",
+        labels=[label],
+    )
+
 
 LEVEL_SCALINGS = {
     "easy": lambda level: 100 * level,
-    "medium": lambda level: 100 * (level ** 1.5),
-    "hard": lambda level: 100 * (level ** 2),
-    "extreme": lambda level: 100 * (level ** 2.5),
+    "medium": lambda level: 100 * (level**1.5),
+    "hard": lambda level: 100 * (level**2),
+    "extreme": lambda level: 100 * (level**2.5),
 }
 
 # Define allowed operators
-operators = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
-             ast.Div: op.truediv, ast.Pow: op.pow, ast.BitXor: op.xor,
-             ast.USub: op.neg}
+operators = {
+    ast.Add: op.add,
+    ast.Sub: op.sub,
+    ast.Mult: op.mul,
+    ast.Div: op.truediv,
+    ast.Pow: op.pow,
+    ast.BitXor: op.xor,
+    ast.USub: op.neg,
+}
+
 
 def eval_expr(expr):
-    return eval_(ast.parse(expr, mode='eval').body)
+    return eval_(ast.parse(expr, mode="eval").body)
+
 
 def eval_(node):
     if isinstance(node, ast.Num):
@@ -999,19 +1018,28 @@ def eval_(node):
     else:
         raise TypeError(node)
 
+
 def get_xp_for_level(level: int, scaling: str, custom_formula: str = None) -> int:
+    if level <= 0:
+        return 0
     if scaling == "custom" and custom_formula:
         try:
-            return math.floor(eval_expr(custom_formula.replace('level', str(level))))
+            result = eval_expr(custom_formula.replace("level", str(level)))
         except:
             return 0  # Return 0 if there's an error in the custom formula
-    elif scaling in LEVEL_SCALINGS:
-        return math.floor(LEVEL_SCALINGS[scaling](level))
     else:
-        return math.floor(LEVEL_SCALINGS["medium"](level))  # Default to medium if invalid scaling is provided
+        result = LEVEL_SCALINGS.get(scaling, LEVEL_SCALINGS["medium"])(level)
+    if isinstance(result, complex):
+        return 0  # Optionally handle or raise an error for complex results
+    return math.floor(result)
+
 
 def get_level_for_xp(xp: int, scaling: str, custom_formula: str = None) -> int:
-    level = 1
-    while get_xp_for_level(level + 1, scaling, custom_formula) <= xp:
-        level += 1
-    return level
+    low, high = 1, 10000  # Assuming a high range cap for levels
+    while low < high:
+        mid = (low + high) // 2
+        if get_xp_for_level(mid, scaling, custom_formula) > xp:
+            high = mid
+        else:
+            low = mid + 1
+    return low

@@ -35,13 +35,13 @@ async def lock_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
 
     try:
         # Clear any existing saved overwrites for this channel
-        clear_channel_overwrites(channel.id)
+        await clear_channel_overwrites(channel.id)
 
         # Save current overwrites and update them
         for role, overwrites in channel.overwrites.items():
             if isinstance(role, discord.Role) and role != channel.guild.default_role:
                 overwrite_dict = {k: v for k, v in overwrites._values.items() if v is not None}
-                save_channel_overwrites(channel.id, role.id, overwrite_dict)
+                await save_channel_overwrites(channel.id, role.id, overwrite_dict)
                 
                 # Remove send_messages permission
                 overwrites.send_messages = False

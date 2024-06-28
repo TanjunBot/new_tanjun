@@ -15,7 +15,7 @@ async def enable_level_system(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
-    current_status = get_level_system_status(str(commandInfo.guild.id))
+    current_status = await get_level_system_status(str(commandInfo.guild.id))
     
     if current_status:
         embed = tanjunEmbed(
@@ -29,7 +29,7 @@ async def enable_level_system(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
-    set_level_system_status(str(commandInfo.guild.id), True)
+    await set_level_system_status(str(commandInfo.guild.id), True)
     
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(

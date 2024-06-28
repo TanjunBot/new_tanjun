@@ -1,10 +1,12 @@
 import discord
 from discord.ext import commands
-import os 
+import os
 import asyncio
 import config
 from translator import TanjunTranslator
 import api
+import asyncmy
+from config import database_ip, database_password, database_user, database_schema
 
 async def loadextension(bot, extensionname):
     extensionname = f"extensions.{extensionname}"
@@ -15,13 +17,15 @@ async def loadextension(bot, extensionname):
         print(f"Failed to load extension {extensionname}")
         raise
 
+
 async def loadTranslator(bot):
     print("loading translator...")
     translator = TanjunTranslator()
     await bot.tree.set_translator(translator)
     print("translator loaded!")
 
-intents = discord.Intents.none()  
+
+intents = discord.Intents.none()
 intents.guilds = True
 intents.members = True
 intents.emojis_and_stickers = True
@@ -31,22 +35,44 @@ intents.typing = True
 intents.message_content = True
 intents.presences = False
 
-bot = commands.Bot("t.", intents=intents,
-                   application_id=config.applicationId)
+bot = commands.Bot("t.", intents=intents, application_id=config.applicationId)
 
-if __name__ == "__main__":
+
+async def main():
     print("starting bot...")
     print("discord.py version: ", discord.__version__)
-    api.create_tables()
     for extension in os.listdir(os.fsencode("extensions")):
         if os.fsdecode(extension).endswith(".py"):
             extension = os.fsdecode(extension).replace(".py", "")
-            asyncio.run(loadextension(bot, extension))
-    asyncio.run(loadTranslator(bot))
+            await loadextension(bot, extension)
+    await loadTranslator(bot)
+
+async def create_pool():
+    """Create a connection pool"""
+    p = await asyncmy.create_pool(
+        host=database_ip,
+        user=database_user,
+        password=database_password,
+        db=database_schema,
+        minsize=50,
+        maxsize=1000,
+    )
+    return p
+
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
 
 @bot.event
 async def on_ready():
+    await bot.change_presence(
+        activity=discord.Game(name=config.activity.format(version=config.version))
+    )
+    pool = await create_pool()
+    api.set_pool(pool)
+    await api.create_tables()
     print("Bot is running!")
-    await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
+
 
 bot.run(config.token)

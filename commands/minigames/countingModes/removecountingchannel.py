@@ -14,7 +14,7 @@ async def removecountingmodeschannel(commandInfo: commandInfo, channel: discord.
         return
     
     # Check if the channel is a counting channel
-    current_progress = get_counting_mode_progress(channel.id)
+    current_progress = await get_counting_mode_progress(channel.id)
     if current_progress is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(commandInfo.locale, "minigames.removecountingmodeschannel.error.not_counting_channel.title"),
@@ -23,7 +23,7 @@ async def removecountingmodeschannel(commandInfo: commandInfo, channel: discord.
         await commandInfo.reply(embed=embed)
         return
 
-    clear_counting_mode(channel.id)
+    await clear_counting_mode(channel.id)
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(commandInfo.locale, "minigames.removecountingmodeschannel.success.title"),
