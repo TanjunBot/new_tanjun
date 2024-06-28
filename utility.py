@@ -1043,3 +1043,32 @@ def get_level_for_xp(xp: int, scaling: str, custom_formula: str = None) -> int:
         else:
             low = mid + 1
     return low
+
+def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
+    if not time_string:
+        return datetime.datetime.now()
+
+    # Regular expression to match time units
+    pattern = r'(\d+)([smhd])'
+    matches = re.findall(pattern, time_string.lower())
+
+    if not matches:
+        return datetime.datetime.now()
+
+    # Initialize timedelta components
+    days = hours = minutes = seconds = 0
+
+    for value, unit in matches:
+        value = int(value)
+        if unit == 's':
+            seconds += value
+        elif unit == 'm':
+            minutes += value
+        elif unit == 'h':
+            hours += value
+        elif unit == 'd':
+            days += value
+
+    # Create timedelta and add to current time
+    delta = datetime.timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+    return datetime.datetime.now() + delta
