@@ -261,7 +261,7 @@ async def create_tables():
     CREATE TABLE IF NOT EXISTS `giveawayVoiceTime` (
         `giveawayId` INT UNSIGNED,
         `userId` VARCHAR(20),
-        `voiceMinutes` MEDIUMINT UNSIGNED,
+        `voiceMinutes` MEDIUMINT UNSIGNED DEFAULT 0,
         PRIMARY KEY(`giveawayId`, `userId`)
     ) ENGINE=InnoDB;
     """
@@ -1145,3 +1145,12 @@ async def get_send_ready_giveaways():
     query = "SELECT giveawayId FROM giveaway WHERE started = 0 AND starttime < NOW()"
     result = await execute_query(pool, query)
     return result
+
+async def add_giveaway_voice_minutes_if_needed(user_id, guild_id):
+    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND voiceRequirement IS NOT NULL"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    for giveaway_id in result:
+        query = "INSERT INTO giveawayVoiceTime (giveawayId, userId, voiceMinutes) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE voiceMinutes = voiceMinutes + 1"
+        params = (giveaway_id, user_id)
+        await execute_action(pool, query, params)

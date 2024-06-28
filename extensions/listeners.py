@@ -12,6 +12,7 @@ from minigames.wordchain import wordchain
 from minigames.addLevelXp import addLevelXp
 
 from commands.giveaway.utility import add_giveaway_participant
+from loops.giveaway import handleVoiceChange
 
 class ListenerCog(commands.Cog):
 
@@ -34,6 +35,10 @@ class ListenerCog(commands.Cog):
             print("embed: ", embed)
             if embed:
                 await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, user, before, after):
+        handleVoiceChange(user, before, after)
 
 async def setup(bot):
     await bot.add_cog(ListenerCog(bot))
