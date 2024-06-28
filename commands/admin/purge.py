@@ -73,7 +73,7 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
             
         print(setting)
             
-        deleted = await channel.purge(limit=amount, check=check, bulk=False)
+        deleted = await channel.purge(limit=amount, check=check, bulk=True)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.purge.success.title"
