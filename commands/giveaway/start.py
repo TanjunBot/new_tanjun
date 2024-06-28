@@ -1066,7 +1066,7 @@ class GiveawayBuilder(ui.View):
 
     async def update_embed(self, editmessage=None):
         self.update_buttons()
-        embed = discord.Embed(
+        embed = utility.tanjunEmbed(
             title=self.giveaway_data["title"],
             description=(f"## `{self.last_action}`\n\n" if self.last_action else "")
             + self.giveaway_data["description"],
@@ -1714,7 +1714,7 @@ async def start_giveaway(
     )
 
     # Send the initial message with the GiveawayBuilder view
-    embed = discord.Embed(
+    embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.giveaway.builder.loading"
         ),
