@@ -1261,7 +1261,6 @@ class GiveawayBuilder(ui.View):
     async def button_callback(
         self, interaction: discord.Interaction, button: GiveawayBuilderButton
     ):
-        print("Button pressed")
         if button.custom_id == "change_description":
             await self.change_description(interaction, button)
         elif button.custom_id == "change_winners":
@@ -1652,8 +1651,6 @@ class GiveawayBuilder(ui.View):
         voice_requirement = self.giveaway_data["voice_requirement"]
         channel_requirements = self.giveaway_data["channel_requirements"]
         target_channel=self.giveaway_data["target_channel"]
-
-        print("channel_requirements: ", channel_requirements)
 
         giveawayId = await add_giveaway(
             self.commandInfo.guild.id,

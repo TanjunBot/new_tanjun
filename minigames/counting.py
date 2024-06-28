@@ -40,8 +40,6 @@ async def counting(message: discord.Message):
 
     last_counter_id = await get_last_counter_id(message.channel.id)
 
-    print(last_counter_id)
-
     if last_counter_id == str(message.author.id):
         await message.delete()
         return

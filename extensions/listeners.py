@@ -33,7 +33,6 @@ class ListenerCog(commands.Cog):
         if interaction.data["custom_id"].startswith("giveaway_enter"):
             giveaway_id = interaction.data["custom_id"].split("; ")[1]
             embed = await add_giveaway_participant(giveawayid=giveaway_id, userid=interaction.user.id, client=self.bot)
-            print("embed: ", embed)
             if embed:
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 

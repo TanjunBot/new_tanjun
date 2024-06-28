@@ -133,9 +133,6 @@ async def generateGiveawayEmbed(giveawayInformation, locale):
 
 async def sendGiveaway(giveawayid, client):
     giveawayInformation = await get_giveaway(giveawayid)
-    print(giveawayid)
-
-    print("giveawayInformation: ", giveawayInformation)
 
     if not giveawayInformation:
         return
@@ -143,8 +140,6 @@ async def sendGiveaway(giveawayid, client):
     guildId = giveawayInformation[1]
 
     guild = client.get_guild(int(guildId))
-
-    print(guild)
 
     if not guild:
         return
@@ -173,13 +168,9 @@ async def sendGiveaway(giveawayid, client):
         "channel_requirements": channel_requirements,
     }
 
-    print(giveawayData)
-
     embed = await generateGiveawayEmbed(giveawayData, locale)
 
     channel = guild.get_channel(int(giveawayInformation[18]))
-
-    print(channel)
 
     if not channel:
         return
@@ -210,8 +201,6 @@ async def sendGiveaway(giveawayid, client):
 
 async def add_giveaway_participant(giveawayid, userid, client):
     giveawayInformation = await get_giveaway(giveawayid)
-
-    print(giveawayInformation)
 
     if not giveawayInformation:
         return
@@ -454,8 +443,6 @@ async def add_giveaway_participant(giveawayid, userid, client):
     await add_giveaway_participant_api(giveawayid, userid)
 
     giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
-    print(int(giveawayInformation[18]))
-    print(giveawayChannel)
     giveawaymessage = await giveawayChannel.fetch_message(int(giveawayInformation[19]))
 
     view = discord.ui.View()
@@ -500,13 +487,11 @@ async def addMessageToGiveaway(message: discord.Message):
     await add_giveaway_new_message_channel_if_needed(message.author.id, message.guild.id, message.channel.id)
 
 async def endGiveaway(giveaway_id, client):
-    print("endGiveaway: ", giveaway_id)
     giveawayInformation = await get_giveaway(giveaway_id)
 
     if giveawayInformation[13] == 1:
         return
 
-    print("giveawayInformation: ", giveawayInformation)
     await set_giveaway_ended(giveaway_id)
 
     if not giveawayInformation:
@@ -522,8 +507,6 @@ async def endGiveaway(giveaway_id, client):
     locale = guild.locale if hasattr(guild, "locale") else "en_US"
 
     participants = await get_giveaway_participants(giveaway_id)
-
-    print("participants: ", participants)
 
     if not participants:
         embed = tanjunEmbed(
@@ -571,8 +554,6 @@ async def endGiveaway(giveaway_id, client):
         participants = []
 
     participantAmount = len(participants)
-
-    print("winners: ", giveawayInformation[4])
 
     if giveawayInformation[4] > participantAmount:
         winners = participants

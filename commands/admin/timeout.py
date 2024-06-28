@@ -101,8 +101,6 @@ async def timeout(commandInfo: utility.commandInfo, member: discord.Member, dura
         )
         await commandInfo.reply(embed=embed)
     except TypeError as e:
-        print(duration)
-        print(e)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.timeout.invalidDuration.title"

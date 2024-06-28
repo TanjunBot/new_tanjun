@@ -107,8 +107,6 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
         await image.read(), image.content_type.split("/")[1]
     )
 
-    print(uploaded_image)
-
     await set_custom_background(
         str(commandInfo.guild.id),
         str(commandInfo.user.id),
@@ -236,7 +234,6 @@ def process_image(background_frames, avatar_frames, user, user_info):
     return img_byte_arr
 
 async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO:
-    print(user_info)
     # Load background image or frames
     if user_info['customBackground']:
         background_frames, _ = await get_image_or_gif_frames(user_info['customBackground'])
