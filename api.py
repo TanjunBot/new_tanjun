@@ -992,7 +992,7 @@ async def add_giveaway(
     starttime: Optional[datetime],
     new_message_requirement: Optional[int],
     day_requirement: Optional[int],
-    channel_requirements: List[Dict[str, int]],
+    channel_requirements: Dict[str, int],
     role_requirement: List[str],
     voice_requirement: Optional[int],
     

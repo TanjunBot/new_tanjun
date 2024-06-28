@@ -12,12 +12,13 @@ from api import (
     check_if_user_blacklisted,
     check_if_opted_out,
     check_if_giveaway_participant,
-    add_giveaway_participant,
+    add_giveaway_participant as add_giveaway_participant_api,
     remove_giveaway_participant,
     set_giveaway_message_id,
     set_giveaway_started
 )
 import discord
+from datetime import date
 
 
 async def generateGiveawayEmbed(giveawayInformation, locale):
@@ -207,12 +208,14 @@ async def sendGiveaway(giveawayid, client):
 async def add_giveaway_participant(giveawayid, userid, client):
     giveawayInformation = await get_giveaway(giveawayid)
 
+    print(giveawayInformation)
+
     if not giveawayInformation:
         return
 
     guildId = giveawayInformation[1]
 
-    guild = client.get_guild(guildId)
+    guild = client.get_guild(int(guildId))
 
     if not guild:
         return
@@ -226,11 +229,11 @@ async def add_giveaway_participant(giveawayid, userid, client):
         await remove_giveaway_participant(giveawayid, userid)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                guild.locale,
+                guild.locale if hasattr(guild, "locale") else "en_US",
                 "commands.giveaway.giveawayEmbed.participation_removed.title",
             ),
             description=tanjunLocalizer.localize(
-                guild.locale,
+                guild.locale if hasattr(guild, "locale") else "en_US",
                 "commands.giveaway.giveawayEmbed.participation_removed.description",
             ),
         )
@@ -246,10 +249,10 @@ async def add_giveaway_participant(giveawayid, userid, client):
         btn = discord.ui.Button(
             style=discord.ButtonStyle.primary,
             label=tanjunLocalizer.localize(
-                guild.locale, "commands.giveaway.giveawayEmbed.button_text"
+                guild.locale if hasattr(guild, "locale") else "en_US", "commands.giveaway.giveawayEmbed.button_text"
             )
             + "("
-            + str(len(participants))
+            + str(len(participants if participants else []) - (1 if userid in (participants if participants else []) else 0))
             + ")",
             custom_id="giveaway_enter; " + str(giveawayid),
         )
@@ -257,27 +260,29 @@ async def add_giveaway_participant(giveawayid, userid, client):
 
         await giveawaymessage.edit(view=view)
 
+        return embed
+
     if await check_if_user_blacklisted(guildId, userid):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                guild.locale,
+                guild.locale if hasattr(guild, "locale") else "en_US",
                 "commands.giveaway.giveawayEmbed.participation_failed.title",
             ),
             description=tanjunLocalizer.localize(
-                guild.locale,
+                guild.locale if hasattr(guild, "locale") else "en_US",
                 "commands.giveaway.giveawayEmbed.participation_failed.blacklisted",
             ),
         )
         return embed
 
-    if await check_if_opted_out(guildId, userid):
+    if await check_if_opted_out(userid):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                guild.locale,
+                guild.locale if hasattr(guild, "locale") else "en_US",
                 "commands.giveaway.giveawayEmbed.participation_failed.title",
             ),
             description=tanjunLocalizer.localize(
-                guild.locale,
+                guild.locale if hasattr(guild, "locale") else "en_US",
                 "commands.giveaway.giveawayEmbed.participation_failed.opted_out",
             ),
         )
@@ -290,48 +295,63 @@ async def add_giveaway_participant(giveawayid, userid, client):
         if any(str(role.id) in blacklisted_roles for role in member.roles):
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.blacklisted_role",
                 ),
             )
             return embed
 
     # check if new Message requirement is met
-    if giveawayInformation[15]:
-        new_messages = await get_new_messages(guildId, userid, giveawayInformation[14])
-
+    if giveawayInformation[14]:
+        new_messages = await get_new_messages(giveaway_id=giveawayid, user_id=userid)
         if not new_messages:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.message_requirement",
                     new_messages=0,
-                    required_messages=giveawayInformation[13],
-                    missing_messages=giveawayInformation[13],
+                    required_messages=giveawayInformation[14],
+                    missing_messages=giveawayInformation[14],
+                ),
+            )
+            return embed
+        
+        elif new_messages < giveawayInformation[14]:
+            embed = tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    guild.locale if hasattr(guild, "locale") else "en_US",
+                    "commands.giveaway.giveawayEmbed.participation_failed.title",
+                ),
+                description=tanjunLocalizer.localize(
+                    guild.locale if hasattr(guild, "locale") else "en_US",
+                    "commands.giveaway.giveawayEmbed.participation_failed.message_requirement",
+                    new_messages=new_messages,
+                    required_messages=giveawayInformation[14],
+                    missing_messages=giveawayInformation[14] - new_messages,
                 ),
             )
             return embed
 
     # check if day requirement is met
-    if giveawayInformation[16]:
+    if giveawayInformation[15]:
         member = guild.get_member(userid)
         if not member:
             return
 
-        joinDate = member.joined_at
+        joinDate = member.joined_at.replace(tzinfo=None)
 
         if not joinDate:
             return
 
-        giveawayStartDate = relativeTimeStrToDate(giveawayInformation[11])
+        giveawayStartDate = giveawayInformation[11]
 
         if not giveawayStartDate:
             return
@@ -341,11 +361,11 @@ async def add_giveaway_participant(giveawayid, userid, client):
         if days < giveawayInformation[15]:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.day_requirement",
                     required_days=giveawayInformation[15],
                 ),
@@ -360,14 +380,17 @@ async def add_giveaway_participant(giveawayid, userid, client):
 
         voice_time = await get_voice_time(guildId, userid)
 
+        if not voice_time:
+            voice_time = 0
+
         if voice_time < giveawayInformation[16]:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.voice_requirement",
                     required_minutes=giveawayInformation[16],
                     missing_minutes=giveawayInformation[16] - voice_time,
@@ -386,11 +409,11 @@ async def add_giveaway_participant(giveawayid, userid, client):
         if not any(role in role_requirements for role in member.roles):
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    guild.locale,
+                    guild.locale if hasattr(guild, "locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.role_requirement",
                     roles=", ".join(f"<@&{role}>" for role in role_requirements),
                 ),
@@ -411,11 +434,11 @@ async def add_giveaway_participant(giveawayid, userid, client):
             if not messages:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
-                        guild.locale,
+                        guild.locale if hasattr(guild, "locale") else "en_US",
                         "commands.giveaway.giveawayEmbed.participation_failed.title",
                     ),
                     description=tanjunLocalizer.localize(
-                        guild.locale,
+                        guild.locale if hasattr(guild, "locale") else "en_US",
                         "commands.giveaway.giveawayEmbed.participation_failed.channel_requirement",
                         channel=channel,
                         required_messages=count,
@@ -425,10 +448,12 @@ async def add_giveaway_participant(giveawayid, userid, client):
                 return embed
 
     # add participant to giveaway
-    await add_giveaway_participant(giveawayid, userid)
+    await add_giveaway_participant_api(giveawayid, userid)
 
-    giveawayChannel = guild.get_channel(giveawayInformation[18])
-    giveawaymessage = await giveawayChannel.fetch_message(giveawayInformation[18])
+    giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
+    print(int(giveawayInformation[18]))
+    print(giveawayChannel)
+    giveawaymessage = await giveawayChannel.fetch_message(int(giveawayInformation[19]))
 
     view = discord.ui.View()
 
@@ -436,10 +461,10 @@ async def add_giveaway_participant(giveawayid, userid, client):
     btn = discord.ui.Button(
         style=discord.ButtonStyle.primary,
         label=tanjunLocalizer.localize(
-            guild.locale, "commands.giveaway.giveawayEmbed.button_text"
+            guild.locale if hasattr(guild, "locale") else "en_US", "commands.giveaway.giveawayEmbed.button_text"
         )
         + "("
-        + str(len(participants if participants else []))
+        + str(len(participants if participants else []) + (1 if not userid in (participants if participants else []) else 0))
         + ")",
         custom_id="giveaway_enter; " + str(giveawayid),
     )
@@ -449,11 +474,11 @@ async def add_giveaway_participant(giveawayid, userid, client):
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
-            guild.locale,
+            guild.locale if hasattr(guild, "locale") else "en_US",
             "commands.giveaway.giveawayEmbed.participation_success.title",
         ),
         description=tanjunLocalizer.localize(
-            guild.locale,
+            guild.locale if hasattr(guild, "locale") else "en_US",
             "commands.giveaway.giveawayEmbed.participation_success.description",
         ),
     )
