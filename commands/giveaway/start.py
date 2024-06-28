@@ -5,7 +5,7 @@ from utility import commandInfo, relativeTimeStrToDate
 from localizer import tanjunLocalizer
 from typing import List, Optional
 import asyncio
-from commands.giveaway.utility import sendGiveawayEmbed
+from commands.giveaway.utility import generateGiveawayEmbed
 
 class GiveawayBuilderButton(ui.Button):
     def __init__(self, label, custom_id, style, row=None):
@@ -908,28 +908,28 @@ class GiveawayBuilder(ui.View):
                 style=discord.ButtonStyle.primary,
             )
         )
-        self.add_item(
-            GiveawayBuilderButton(
-                label=tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.with_button"
-                ),
-                custom_id="toggle_button",
-                style=(
-                    discord.ButtonStyle.success
-                    if self.giveaway_data["with_button"]
-                    else discord.ButtonStyle.danger
-                ),
-            )
-        )
-        self.add_item(
-            GiveawayBuilderButton(
-                label=tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.custom_name.label"
-                ),
-                custom_id="custom_name",
-                style=discord.ButtonStyle.primary,
-            )
-        )
+        # self.add_item(    # Removed because of @2000Arion 😢 (he really hates fun :'c)
+        #     GiveawayBuilderButton(
+        #         label=tanjunLocalizer.localize(
+        #             self.commandInfo.locale, "commands.giveaway.builder.with_button"
+        #         ),
+        #         custom_id="toggle_button",
+        #         style=(
+        #             discord.ButtonStyle.success
+        #             if self.giveaway_data["with_button"]
+        #             else discord.ButtonStyle.danger
+        #         ),
+        #     )
+        # )
+        # self.add_item(    # Removed because of @2000Arion 😢 (he really hates fun :'c)
+        #     GiveawayBuilderButton(
+        #         label=tanjunLocalizer.localize(
+        #             self.commandInfo.locale, "commands.giveaway.builder.custom_name.label"
+        #         ),
+        #         custom_id="custom_name",
+        #         style=discord.ButtonStyle.primary,
+        #     )
+        # )
         self.add_item(
             GiveawayBuilderButton(
                 label=tanjunLocalizer.localize(
@@ -1065,32 +1065,32 @@ class GiveawayBuilder(ui.View):
             ),
             value=self.giveaway_data["winners"],
         )
-        embed.add_field(
-            name=tanjunLocalizer.localize(
-                self.commandInfo.locale, "commands.giveaway.builder.with_button"
-            ),
-            value=(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.true"
-                )
-                if self.giveaway_data["with_button"]
-                else tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.false"
-                )
-            ),
-        )
-        embed.add_field(
-            name=tanjunLocalizer.localize(
-                self.commandInfo.locale, "commands.giveaway.builder.custom_name.label"
-            ),
-            value=(
-                self.giveaway_data["custom_name"]
-                if self.giveaway_data["custom_name"]
-                else tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.none"
-                )
-            ),
-        )
+        # embed.add_field(    # Removed because of @2000Arion 😢 (he really hates fun :'c)
+        #     name=tanjunLocalizer.localize(
+        #         self.commandInfo.locale, "commands.giveaway.builder.with_button"
+        #     ),
+        #     value=(
+        #         tanjunLocalizer.localize(
+        #             self.commandInfo.locale, "commands.giveaway.builder.true"
+        #         )
+        #         if self.giveaway_data["with_button"]
+        #         else tanjunLocalizer.localize(
+        #             self.commandInfo.locale, "commands.giveaway.builder.false"
+        #         )
+        #     ),
+        # )
+        # embed.add_field(   # Removed because of @2000Arion 😢 (he really hates fun :'c)
+        #     name=tanjunLocalizer.localize(
+        #         self.commandInfo.locale, "commands.giveaway.builder.custom_name.label"
+        #     ),
+        #     value=(
+        #         self.giveaway_data["custom_name"]
+        #         if self.giveaway_data["custom_name"]
+        #         else tanjunLocalizer.localize(
+        #             self.commandInfo.locale, "commands.giveaway.builder.none"
+        #         )
+        #     ),
+        # )
         embed.add_field(
             name=tanjunLocalizer.localize(
                 self.commandInfo.locale, "commands.giveaway.builder.sponsor.label"
@@ -1249,10 +1249,10 @@ class GiveawayBuilder(ui.View):
             await self.change_description(interaction, button)
         elif button.custom_id == "change_winners":
             await self.change_winners(interaction, button)
-        # elif button.custom_id == "toggle_button":  # Removed because of @2000Arion 😢 
-        #     await self.toggle_button(interaction, button)
-        # elif button.custom_id == "custom_name":  # Removed because of @2000Arion 😢 (he really hates fun :'c)
-        #     await self.custom_name(interaction, button)
+        elif button.custom_id == "toggle_button": 
+            await self.toggle_button(interaction, button)
+        elif button.custom_id == "custom_name":
+            await self.custom_name(interaction, button)
         elif button.custom_id == "sponsor":
             await self.sponsor(interaction, button)
         elif button.custom_id == "price":
@@ -1600,7 +1600,14 @@ class GiveawayBuilder(ui.View):
     async def preview(
         self, interaction: discord.Interaction, button: GiveawayBuilderButton
     ): 
-        await sendGiveawayEmbed(self.giveaway_data)
+        embed = await generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)
+        await interaction.response.send_message(
+            content=tanjunLocalizer.localize(
+                self.commandInfo.locale, "commands.giveaway.builder.preview"
+            ),
+            embed=embed,
+            view=self,
+        )
 
     async def confirm(
         self, interaction: discord.Interaction, button: GiveawayBuilderButton
