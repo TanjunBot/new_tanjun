@@ -5,7 +5,7 @@ from utility import commandInfo, relativeTimeStrToDate
 from localizer import tanjunLocalizer
 from typing import List, Optional
 import asyncio
-
+from commands.giveaway.utility import sendGiveawayEmbed
 
 class GiveawayBuilderButton(ui.Button):
     def __init__(self, label, custom_id, style, row=None):
@@ -1249,10 +1249,10 @@ class GiveawayBuilder(ui.View):
             await self.change_description(interaction, button)
         elif button.custom_id == "change_winners":
             await self.change_winners(interaction, button)
-        elif button.custom_id == "toggle_button":
-            await self.toggle_button(interaction, button)
-        elif button.custom_id == "custom_name":
-            await self.custom_name(interaction, button)
+        # elif button.custom_id == "toggle_button":  # Removed because of @2000Arion 😢 
+        #     await self.toggle_button(interaction, button)
+        # elif button.custom_id == "custom_name":  # Removed because of @2000Arion 😢 (he really hates fun :'c)
+        #     await self.custom_name(interaction, button)
         elif button.custom_id == "sponsor":
             await self.sponsor(interaction, button)
         elif button.custom_id == "price":
@@ -1599,7 +1599,8 @@ class GiveawayBuilder(ui.View):
 
     async def preview(
         self, interaction: discord.Interaction, button: GiveawayBuilderButton
-    ): ...
+    ): 
+        await sendGiveawayEmbed(self.giveaway_data)
 
     async def confirm(
         self, interaction: discord.Interaction, button: GiveawayBuilderButton
