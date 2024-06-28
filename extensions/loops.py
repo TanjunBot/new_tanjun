@@ -6,6 +6,7 @@ from localizer import tanjunLocalizer
 
 from loops.giveaway import sendReadyGiveaways
 from loops.giveaway import checkVoiceUsers
+from loops.giveaway import endGiveaways
 
 class LoopCog(commands.Cog):
     def __init__(self, bot):
@@ -17,6 +18,13 @@ class LoopCog(commands.Cog):
             await sendReadyGiveaways(self.bot)
         except:
             pass
+    
+    @tasks.loop(seconds=10)
+    async def endGiveawaysLoop(self):
+        try:
+            await endGiveaways(self.bot)
+        except:
+            raise
 
     @tasks.loop(seconds=60)
     async def checkVoiceUsers(self):
@@ -28,6 +36,7 @@ class LoopCog(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):  
         self.sendSendReadyGiveaways.start()
+        self.endGiveawaysLoop.start()
         self.checkVoiceUsers.start()
 
 

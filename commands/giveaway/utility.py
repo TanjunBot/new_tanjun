@@ -17,7 +17,8 @@ from api import (
     set_giveaway_message_id,
     set_giveaway_started,
     add_giveaway_new_message_channel_if_needed,
-    add_giveaway_new_message_if_needed
+    add_giveaway_new_message_if_needed,
+    set_giveaway_ended
 )
 import discord
 from datetime import date
@@ -497,3 +498,140 @@ async def addMessageToGiveaway(message: discord.Message):
     await add_giveaway_new_message_if_needed(message.author.id, message.guild.id)
 
     await add_giveaway_new_message_channel_if_needed(message.author.id, message.guild.id, message.channel.id)
+
+async def endGiveaway(giveaway_id, client):
+    print("endGiveaway: ", giveaway_id)
+    giveawayInformation = await get_giveaway(giveaway_id)
+
+    if giveawayInformation[13] == 1:
+        return
+
+    print("giveawayInformation: ", giveawayInformation)
+    await set_giveaway_ended(giveaway_id)
+
+    if not giveawayInformation:
+        return
+
+    guildId = giveawayInformation[1]
+
+    guild = client.get_guild(int(guildId))
+
+    if not guild:
+        return
+
+    locale = guild.locale if hasattr(guild, "locale") else "en_US"
+
+    participants = await get_giveaway_participants(giveaway_id)
+
+    print("participants: ", participants)
+
+    if not participants:
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                locale,
+                "commands.giveaway.endedGiveaway.no_participants.title",
+            ),
+            description=tanjunLocalizer.localize(
+                locale,
+                "commands.giveaway.endedGiveaway.no_participants.description",
+            ),
+        )
+
+        giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
+        if not giveawayChannel:
+            return
+        try:
+            giveawaymessage = await giveawayChannel.fetch_message(
+                int(giveawayInformation[19])
+            )
+        except:
+            return
+        if not giveawaymessage:
+            return
+
+        view = discord.ui.View()
+
+        btn = discord.ui.Button(
+            style=discord.ButtonStyle.primary,
+            label=tanjunLocalizer.localize(
+                locale, "commands.giveaway.endedGiveaway.button_text", participants=0
+            ),
+            disabled=True,
+        )
+        view.add_item(btn)
+
+        await giveawaymessage.edit(view=view)
+        await giveawaymessage.reply(embed=embed)
+        return
+
+
+    winners = []
+
+    if not participants:
+        participants = []
+
+    participantAmount = len(participants)
+
+    print("winners: ", giveawayInformation[4])
+
+    if giveawayInformation[4] > participantAmount:
+        winners = participants
+    else:
+        for i in range(giveawayInformation[4]):
+            winner = participants.pop()
+            winners.append(winner)
+
+    embed = tanjunEmbed(
+        title=tanjunLocalizer.localize(
+            locale,
+            "commands.giveaway.endedGiveaway.title",
+        ),
+        description=tanjunLocalizer.localize(
+            locale,
+            "commands.giveaway.endedGiveaway.description",
+            winners=", ".join(f"<@{winner}>" for winner in winners),
+        ),
+    )
+
+    giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
+    if not giveawayChannel:
+        return
+    try:
+        giveawaymessage = await giveawayChannel.fetch_message(
+            int(giveawayInformation[19])
+        )
+    except:
+        return
+    if not giveawaymessage:
+        return
+
+    view = discord.ui.View()
+
+    btn = discord.ui.Button(
+        style=discord.ButtonStyle.primary,
+        label=tanjunLocalizer.localize(
+            locale, "commands.giveaway.endedGiveaway.button_text", participants=participantAmount
+        ),
+        disabled=True,
+    )
+    view.add_item(btn)
+
+    await giveawaymessage.edit(view=view)
+    await giveawaymessage.reply(embed=embed)
+
+    for winner in winners:
+
+        member = guild.get_member(winner)
+
+        if not member:
+            continue
+
+        await member.send(
+            tanjunLocalizer.localize(
+                locale,
+                "commands.giveaway.endedGiveaway.dm",
+                guild_name=guild.name,
+            )
+        )
+
+    return embed

@@ -1376,6 +1376,16 @@
             }
         },
         "giveaway": {
+            "endedGiveaway": {
+                "title": "Gewinnspiel beendet",
+                "description": "Das Gewinnspiel ist beendet. Hier sind die Gewinner:\n${winners}",
+                "no_participants": {
+                    "title": "Gewinnspiel beendet",
+                    "description": "Das Gewinnspiel ist beendet, aber es gab keine Teilnehmer."
+                },
+                "button_text": "Beendet mit ${participants} Teilnehmern",
+                "dm": "🎉 **Gewinnspiel beendet** 🎉\n\nHerzlichen Glückwunsch! Du hast ein Gewinnspiel auf den Server ${guild_name} gewonnen! Wende dich ggf. an die Serverleitung, um deinen Preis zu erhalten."
+            },
             "giveawayEmbed": {
                 "title": "${title}",
                 "description": "🎉 **Gewinnspiel Start** 🎉\n\nTeilnahmebedingungen:\n- Klicke auf \"Jetzt teilnehmen!\", um teilzunehmen.\n${requirements}\n🏆 Gewinner: ${winners}",

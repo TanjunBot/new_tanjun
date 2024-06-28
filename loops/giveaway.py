@@ -1,5 +1,5 @@
-from commands.giveaway.utility import sendGiveaway
-from api import get_send_ready_giveaways, add_giveaway_voice_minutes_if_needed, check_if_opted_out
+from commands.giveaway.utility import sendGiveaway, endGiveaway
+from api import get_send_ready_giveaways, add_giveaway_voice_minutes_if_needed, check_if_opted_out, get_end_ready_giveaways
 
 voiceUsers = []
 
@@ -8,15 +8,16 @@ async def sendReadyGiveaways(client):
     print("ready_giveaways", ready_giveaways)
     if ready_giveaways:    
         for giveaway in ready_giveaways:
-            await sendGiveaway(giveawayid=giveaway[0], client=client)
+            if giveaway[12] == 0:
+                await sendGiveaway(giveawayid=giveaway[0], client=client)
 
 async def checkVoiceUsers(client):
     print(voiceUsers)
     for user in voiceUsers:
         await add_giveaway_voice_minutes_if_needed(user.id, user.guild.id)
 
-def handleVoiceChange(user, before, after):
-    if check_if_opted_out(user.id):
+async def handleVoiceChange(user, before, after):
+    if await check_if_opted_out(user.id):
         return
     if not after.channel:
         removeVoiceUser(user)
@@ -36,3 +37,11 @@ def addVoiceUser(user):
 def removeVoiceUser(user):
     if user in voiceUsers:
         voiceUsers.remove(user)
+
+async def endGiveaways(client):
+    ready_giveaways = await get_end_ready_giveaways()
+    print("ready_giveaways", ready_giveaways)
+    if ready_giveaways:
+        for giveaway in ready_giveaways:
+            print(giveaway[0])
+            await endGiveaway(giveaway_id=giveaway[0], client=client)

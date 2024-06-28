@@ -39,7 +39,7 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user, before, after):
-        handleVoiceChange(user, before, after)
+        await handleVoiceChange(user, before, after)
 
 async def setup(bot):
     await bot.add_cog(ListenerCog(bot))

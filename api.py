@@ -1030,12 +1030,12 @@ async def add_giveaway(
     INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount)
     VALUES (%s, %s, %s)
     """
-    if not channel_requirements:
-        channel_requirements = [{"": 0}]
-    for channel_id, amount in channel_requirements.items():
-        params = (giveawayId, channel_id, amount)
-        await execute_action(pool, query, params)
-
+    try:
+        for channel_id, amount in channel_requirements.items():
+            params = (giveawayId, channel_id, amount)
+            await execute_action(pool, query, params)
+    except:
+        pass
     query = """
     INSERT INTO giveawayRoleRequirement (roleId, giveawayId)
     VALUES (%s, %s)
@@ -1080,9 +1080,9 @@ async def set_giveaway_started(giveaway_id: int):
     await execute_action(pool, query, params)
 
 
-async def set_giveaway_ended(guild_id: str, giveaway_id: int):
-    query = "UPDATE giveaway SET ended = 1 WHERE guildId = %s AND giveawayId = %s"
-    params = (guild_id, giveaway_id)
+async def set_giveaway_ended(giveaway_id: int):
+    query = "UPDATE giveaway SET ended = 1 WHERE giveawayId = %s"
+    params = (giveaway_id)
     await execute_action(pool, query, params)
 
 
@@ -1172,3 +1172,8 @@ async def add_giveaway_new_message_channel_if_needed(user_id, guild_id, channel_
         query = "INSERT INTO giveawayChannelMessages (giveawayId, channelId, userId, amount) VALUES (%s, %s, %s, 0) ON DUPLICATE KEY UPDATE amount = amount + 1"
         params = (giveaway_id, channel_id, user_id)
         await execute_action(pool, query, params)
+
+async def get_end_ready_giveaways():
+    query = "SELECT giveawayId FROM giveaway WHERE ended = 0 AND endtime < NOW()"
+    result = await execute_query(pool, query)
+    return result
