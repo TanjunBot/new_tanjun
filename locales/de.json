@@ -1376,6 +1376,16 @@
             }
         },
         "giveaway": {
+            "editor": {
+                "not_authorized": "Du bist nicht berechtigt, dieses Gewinnspiel zu bearbeiten.",
+                "no_permission": "Du hast nicht die erforderlichen Berechtigungen, um Gewinnspiele zu bearbeiten.",
+                "not_found": "Das angegebene Gewinnspiel wurde nicht gefunden.",
+                "loading": "Lade Gewinnspiel-Informationen...",
+                "success": {
+                    "title": "Gewinnspiel aktualisiert",
+                    "description": "Das Gewinnspiel wurde erfolgreich aktualisiert!"
+                }
+            },
             "reroll_giveaway": {
                 "error": {
                     "missingPermission": {

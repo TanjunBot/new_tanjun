@@ -1254,3 +1254,75 @@ async def set_giveaway_endtime(giveaway_id: int, endtime: datetime):
     query = "UPDATE giveaway SET endtime = %s WHERE giveawayId = %s"
     params = (endtime, giveaway_id)
     await execute_action(pool, query, params)
+
+async def update_giveaway(
+    giveaway_id: int,
+    guild_id: str,
+    title: str,
+    description: str,
+    winners: int,
+    with_button: bool,
+    custom_name: Optional[str],
+    sponsor: Optional[str],
+    price: Optional[str],
+    message: Optional[str],
+    endtime: datetime,
+    starttime: Optional[datetime],
+    new_message_requirement: Optional[int],
+    day_requirement: Optional[int],
+    channel_requirements: Dict[str, int],
+    role_requirement: List[str],
+    voice_requirement: Optional[int],
+    channel_id: str,
+):
+    query = """
+    UPDATE giveaway SET
+        guildId = %s,
+        title = %s,
+        description = %s,
+        winners = %s,
+        withButton = %s,
+        customName = %s,
+        sponsor = %s,
+        price = %s,
+        message = %s,
+        endtime = %s,
+        starttime = %s,
+        newMessageRequirement = %s,
+        dayRequirement = %s,
+        voiceRequirement = %s,
+        channelId = %s
+    WHERE giveawayId = %s
+    """
+    params = (
+        guild_id,
+        title,
+        description,
+        winners,
+        with_button,
+        custom_name,
+        sponsor,
+        price,
+        message,
+        endtime,
+        starttime,
+        new_message_requirement,
+        day_requirement,
+        voice_requirement,
+        channel_id,
+        giveaway_id
+    )
+    await execute_action(pool, query, params)
+
+    await execute_action(pool, "DELETE FROM giveawayChannelRequirement WHERE giveawayId = %s", (giveaway_id,))
+    if channel_requirements is not None and len(channel_requirements) > 0 and channel_requirements != {}:
+        for channel_id, amount in channel_requirements.items():
+            query = "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)"
+            params = (giveaway_id, channel_id, amount)
+            await execute_action(pool, query, params)
+
+    await execute_action(pool, "DELETE FROM giveawayRoleRequirement WHERE giveawayId = %s", (giveaway_id,))
+    for role_id in role_requirement:
+        query = "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)"
+        params = (role_id, giveaway_id)
+        await execute_action(pool, query, params)

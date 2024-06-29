@@ -1072,3 +1072,31 @@ def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
     # Create timedelta and add to current time
     delta = datetime.timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
     return datetime.datetime.now() + delta
+
+def dateToRelativeTimeStr(date: datetime.datetime) -> str:
+    start_date = datetime.datetime.now()
+    # Calculate the difference between the two dates
+    delta = date - start_date
+
+    # Extract days, seconds from delta
+    days = delta.days
+    seconds = delta.seconds
+
+    # Calculate hours, minutes and the remaining seconds
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+
+    # Create a list to hold each component that is non-zero
+    components = []
+    if days:
+        components.append(f"{days}d")
+    if hours:
+        components.append(f"{hours}h")
+    if minutes:
+        components.append(f"{minutes}m")
+    if seconds:
+        components.append(f"{seconds}s")
+
+    # Join all non-zero components with spaces
+    return ' '.join(components)
