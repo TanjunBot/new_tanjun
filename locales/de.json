@@ -2687,6 +2687,26 @@
         }
     },
     "level": {
+        "setvoicecooldown": {
+            "name": "voice_cooldown_setzen",
+            "description": "Setzt den Cooldown für das Sammeln von Erfahrungspunkten in Sprachkanälen",
+            "params": {
+                "cooldown": {
+                    "name": "cooldown",
+                    "description": "Der neue Cooldown für das Sammeln von Erfahrungspunkten in Sprachkanälen (in Sekunden)"
+                }
+            }
+        },
+        "settextcooldown": {
+            "name": "text_cooldown_setzen",
+            "description": "Setzt den Cooldown für das Senden von Nachrichten",
+            "params": {
+                "cooldown": {
+                    "name": "cooldown",
+                    "description": "Der neue Cooldown für das Senden von Nachrichten (in Sekunden)"
+                }
+            }
+        },
         "givexp": {
             "name": "xp_vergeben",
             "description": "Vergibt Erfahrungspunkte an einen Benutzer",
@@ -3052,6 +3072,97 @@
             }
         }
     },
+    "Giveaway Commands": "Gewinnspiel Befehle",
+    "giveawaycmd": "gewinnspiel",
+    "giveaway": {
+        "start": {
+            "name": "start",
+            "description": "Startet ein neues Gewinnspiel",
+            "params": {
+                "title": {
+                    "name": "titel",
+                    "description": "Der Titel des Gewinnspiels"
+                },
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem das Gewinnspiel stattfinden soll"
+                }
+            }
+        },
+        "end": {
+            "name": "ende",
+            "description": "Beendet ein laufendes Gewinnspiel",
+            "params": {
+                "giveawayid": {
+                    "name": "gewinnspiel_id",
+                    "description": "Die ID des Gewinnspiels, das beendet werden soll"
+                }
+            }
+        },
+        "reroll": {
+            "name": "neuverlosung",
+            "description": "Startet eine Neuverlosung für ein beendetes Gewinnspiel",
+            "params": {
+                "giveawayid": {
+                    "name": "gewinnspiel_id",
+                    "description": "Die ID des Gewinnspiels, das neu verlost werden soll"
+                }
+            }
+        },
+        "edit": {
+            "name": "bearbeiten",
+            "description": "Bearbeitet ein laufendes Gewinnspiel",
+            "params": {
+                "giveawayid": {
+                    "name": "gewinnspiel_id",
+                    "description": "Die ID des Gewinnspiels, das bearbeitet werden soll"
+                }
+            }
+        },
+        "bl": {
+            "add": {
+                "user": {
+                    "name": "benutzer_hinzufügen",
+                    "description": "Fügt einen Benutzer zur Blacklist für Gewinnspiele hinzu",
+                    "user": {
+                        "name": "benutzer",
+                        "description": "Der Benutzer, der zur Blacklist hinzugefügt werden soll"
+                    }
+                },
+                "role": {
+                    "name": "rolle_hinzufügen",
+                    "description": "Fügt eine Rolle zur Blacklist für Gewinnspiele hinzu",
+                    "role": {
+                        "description": "Die Rolle, die zur Blacklist hinzugefügt werden soll"
+                    }
+                }
+            },
+            "remove": {
+                "user": {
+                    "name": "benutzer_entfernen",
+                    "description": "Entfernt einen Benutzer von der Blacklist für Gewinnspiele",
+                    "user": {
+                        "description": "Der Benutzer, der von der Blacklist entfernt werden soll"
+                    }
+                },
+                "role": {
+                    "name": "rolle_entfernen",
+                    "description": "Entfernt eine Rolle von der Blacklist für Gewinnspiele",
+                    "role": {
+                        "description": "Die Rolle, die von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "list": {
+                "name": "anzeigen",
+                "description": "Zeigt die aktuelle Blacklist für Gewinnspiele an"
+            }
+        }
+    },
+    "cooldown": "cooldown",
+    "blacklist": "blacklist",
+    "Blacklist Commands": "Blacklist Befehle",
+    "giveawayid": "gewinnspiel_id",
     "Administrate the Server": "Verwalte den Server",
     "user": "benutzer",
     "role": "rolle",
