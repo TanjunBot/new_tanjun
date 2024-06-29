@@ -107,11 +107,9 @@ async def handleVoiceChange(user, before, after):
     active_members = [member for member in channel_members if not (member.voice.self_mute or member.voice.self_deaf)]
 
     if len(active_members) < 2:
-        # If there aren't at least two active members, ensure no one in the channel is gaining XP
         for member in channel_members:
             removeVoiceUser(member)
     else:
-        # Update the list of users gaining XP based on the new state of the channel
         updateVoiceUsers(active_members)
 
 def updateVoiceUsers(active_members):
@@ -130,10 +128,8 @@ def updateVoiceUsers(active_members):
 def addVoiceUser(user):
     if user not in voiceUsers:
         voiceUsers.append(user)
-        print(f"Added {user.id} to active voice users for XP gain. Total: {len(voiceUsers)}")
 
 def removeVoiceUser(user):
     if user in voiceUsers:
         voiceUsers.remove(user)
-        print(f"Removed {user.id} from active voice users for XP gain. Total: {len(voiceUsers)}")
 
