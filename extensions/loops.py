@@ -17,14 +17,14 @@ class LoopCog(commands.Cog):
         try:
             await sendReadyGiveaways(self.bot)
         except:
-            raise
+            pass
     
     @tasks.loop(seconds=3)
     async def endGiveawaysLoop(self):
         try:
             await endGiveaways(self.bot)
         except:
-            raise
+            pass
 
     @tasks.loop(seconds=60)
     async def checkVoiceUsers(self):

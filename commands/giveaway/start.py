@@ -1698,7 +1698,7 @@ async def start_giveaway(
     if not commandInfo.user.guild_permissions.manage_guild:
         await commandInfo.reply(
             tanjunLocalizer.localize(
-                commandInfo.locale, "giveaway.start.no_permission"
+                commandInfo.locale, "commands.giveaway.builder.no_permission"
             ),
         )
         return

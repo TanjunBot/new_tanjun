@@ -1618,7 +1618,7 @@
                 "with_button": "Mit Button",
                 "preview": "Vorschau",
                 "loading": "Wird geladen...",
-                "start.no_permission": "Du hast keine Berechtigung, das Giveaway zu starten."
+                "no_permission": "Du hast keine Berechtigung, Gewinnspiele zu starten."
             }
         }
     },

@@ -5,7 +5,6 @@ voiceUsers = []
 
 async def sendReadyGiveaways(client):
     ready_giveaways = await get_send_ready_giveaways()
-    print("send ready giveaways: ", ready_giveaways)
     if ready_giveaways:    
         for giveaway in ready_giveaways:
             await sendGiveaway(giveawayid=giveaway[0], client=client)
@@ -38,7 +37,6 @@ def removeVoiceUser(user):
 
 async def endGiveaways(client):
     ready_giveaways = await get_end_ready_giveaways()
-    print("end ready giveaways: ", ready_giveaways)
     if ready_giveaways:
         for giveaway in ready_giveaways:
             await endGiveaway(giveaway_id=giveaway[0], client=client)
