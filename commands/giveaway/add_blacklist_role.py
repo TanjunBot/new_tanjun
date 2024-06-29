@@ -1,4 +1,4 @@
-from api import add_blacklist_role as add_blacklist_role_api
+from api import add_giveaway_blacklisted_role as add_blacklist_role_api, get_giveaway_blacklisted_role
 import discord
 import utility
 from localizer import tanjunLocalizer
@@ -20,9 +20,11 @@ async def add_blacklist_role(
             ),
         )
         await commandInfo.reply(embed=embed)
-        return
+        return  
+    
+    blacklistedRoles = [role[0] for role in await get_giveaway_blacklisted_role(commandInfo.guild.id)]
 
-    if role in commandInfo.guild.blacklist_roles:
+    if str(role.id) in blacklistedRoles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

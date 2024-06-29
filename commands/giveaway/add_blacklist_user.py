@@ -1,9 +1,9 @@
-from api import add_giveaway_blacklisted_user as add_blacklist_user_api
+from api import add_giveaway_blacklisted_user as add_blacklist_user_api, get_giveaway_blacklisted_user
 import discord
 import utility
 from localizer import tanjunLocalizer
 
-def add_blacklist_user(
+async def add_blacklist_user(
     commandInfo: utility.commandInfo,
     user: discord.User,
 ):
@@ -19,8 +19,10 @@ def add_blacklist_user(
             ),
         )
         return embed
+    
+    blacklistedUsers = [user[0] for user in get_giveaway_blacklisted_user(commandInfo.guild.id)]
 
-    if user in commandInfo.guild.blacklist_users:
+    if str(user.id) in blacklistedUsers:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -33,7 +35,7 @@ def add_blacklist_user(
         )
         return embed
 
-    add_blacklist_user_api(
+    await add_blacklist_user_api(
         guild_id=commandInfo.guild.id,
         user_id=user.id,
     )

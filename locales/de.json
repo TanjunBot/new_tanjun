@@ -1376,6 +1376,20 @@
             }
         },
         "giveaway": {
+            "remove_blacklist_user": {
+                "notBlacklisted": {
+                    "title": "Benutzer nicht auf der Blacklist",
+                    "description": "Der Benutzer ist nicht auf der Blacklist."
+                },
+                "success": {
+                    "title": "Benutzer von der Blacklist entfernt",
+                    "description": "Der Benutzer wurde erfolgreich von der Blacklist entfernt."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um Benutzer von der Blacklist zu entfernen."
+                }
+            },
             "add_blacklist_user": {
                 "alreadyBlacklisted": {
                     "title": "Benutzer bereits auf der Blacklist",

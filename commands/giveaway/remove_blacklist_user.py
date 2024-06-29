@@ -1,53 +1,53 @@
-from api import remove_giveaway_blacklisted_role as remove_blacklist_role_api, get_giveaway_blacklisted_role
+from api import remove_giveaway_blacklisted_user as remove_blacklist_user_api, get_giveaway_blacklisted_user
 import discord
 import utility
 from localizer import tanjunLocalizer
 
-async def remove_blacklist_role(
+async def remove_blacklist_user(
     commandInfo: utility.commandInfo,
-    role: discord.Role,
+    user: discord.User,
 ):
     if not commandInfo.permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.remove_blacklist_role.missingPermission.title",
+                "commands.giveaway.remove_blacklist_user.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.remove_blacklist_role.missingPermission.description",
+                "commands.giveaway.remove_blacklist_user.missingPermission.description",
             ),
         )
         return embed
 
-    blacklistedRoles = [role[0] for role in await get_giveaway_blacklisted_role(commandInfo.guild.id)]
+    blacklistedUsers = [user[0] for user in get_giveaway_blacklisted_user(commandInfo.guild.id)]
 
-    if str(role.id) not in blacklistedRoles:
+    if str(user.id) not in blacklistedUsers:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.remove_blacklist_role.notBlacklisted.title",
+                "commands.giveaway.remove_blacklist_user.notBlacklisted.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.remove_blacklist_role.notBlacklisted.description",
+                "commands.giveaway.remove_blacklist_user.notBlacklisted.description",
             ),
         )
         return embed
 
-    await remove_blacklist_role_api(
+    await remove_blacklist_user_api(
         guild_id=commandInfo.guild.id,
-        role_id=role.id,
+        user_id=user.id,
     )
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.giveaway.remove_blacklist_role.success.title",
+            "commands.giveaway.remove_blacklist_user.success.title",
         ),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.giveaway.remove_blacklist_role.success.description",
+            "commands.giveaway.remove_blacklist_user.success.description",
         ),
     )
     return embed
