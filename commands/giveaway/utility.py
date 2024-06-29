@@ -22,6 +22,7 @@ from api import (
 )
 import discord
 from datetime import date
+import random
 
 
 async def generateGiveawayEmbed(giveawayInformation, locale):
@@ -561,7 +562,8 @@ async def endGiveaway(giveaway_id, client):
         winners = participants
     else:
         for i in range(giveawayInformation[4]):
-            winner = participants.pop()
+            winner = random.choice(participants)
+            participants.remove(winner)
             winners.append(winner)
 
     embed = tanjunEmbed(
