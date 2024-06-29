@@ -1115,6 +1115,7 @@ async def get_giveaway_participants(giveaway_id: int):
     query = "SELECT userId FROM giveawayParticipant WHERE giveawayId = %s"
     params = (giveaway_id,)
     result = await execute_query(pool, query, params)
+    return [row[0] for row in result]
 
 
 async def get_new_messages(giveaway_id: int, user_id: str):
