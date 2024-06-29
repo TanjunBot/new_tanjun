@@ -1013,7 +1013,6 @@ async def update_user_xp(guild_id: str, user_id: str, xp: int, respect_cooldown 
         query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s"
         params = (guild_id, user_id, xp, xp)
         await execute_action(pool, query, params)
-
 async def update_user_xp_from_voice(guild_id: str, user_id: str, xp: int, respect_cooldown = False):
     if respect_cooldown:
         query = """

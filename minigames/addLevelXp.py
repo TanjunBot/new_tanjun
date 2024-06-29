@@ -40,7 +40,7 @@ async def addLevelXp(message: discord.Message):
 
     new_xp = current_xp + xp_to_add
     new_level = get_level_for_xp(new_xp, scaling, custom_formula)
-
+    
     await update_user_xp(guild_id, str(message.author.id), xp_to_add, respect_cooldown=True)
     if new_level > current_level:
         await handle_level_up(message, new_level)
