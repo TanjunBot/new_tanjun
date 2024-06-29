@@ -18,6 +18,7 @@ async def execute_query(p, query, params=None):
     if not pool:
         print("tryied to execute action without pool. Pool is not yet initialized. Returning...")
         return
+
     try:
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
@@ -991,7 +992,6 @@ async def update_user_xp(guild_id: str, user_id: str, xp: int):
     query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = %s"
     params = (guild_id, user_id, xp, xp)
     await execute_action(pool, query, params)
-
 
 async def add_giveaway(
     guild_id: str,
