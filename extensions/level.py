@@ -53,7 +53,6 @@ from commands.level.level_rankcard import (
 )
 from commands.level.give_xp import give_xp_command 
 from commands.level.take_xp import take_xp_command
-from commands.level.set_xp import set_xp_command
 
 
 class BlacklistCommands(discord.app_commands.Group):
@@ -739,28 +738,6 @@ class LevelConfigCommands(discord.app_commands.Group):
         )
         await take_xp_command(commandInfo, user, amount)
 
-    @app_commands.command(
-        name=app_commands.locale_str("level_setxp_name"),
-        description=app_commands.locale_str("level_setxp_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("level_setxp_params_user_description"),
-        amount=app_commands.locale_str("level_setxp_params_amount_description"),
-    )
-    async def set_xp(self, ctx, user: discord.Member, amount: int):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
-        )
-        await set_xp_command(commandInfo, user, amount)
 
 class levelCommands(discord.app_commands.Group):
     @app_commands.command(

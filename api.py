@@ -781,7 +781,7 @@ async def remove_level_role(guild_id: str, role_id: str, level: int):
 
 
 async def get_level_roles(guild_id: str, level: int) -> List[str]:
-    query = "SELECT role_id FROM levelRole WHERE guild_id = %s AND level = %s"
+    query = "SELECT role_id FROM levelRole WHERE guild_id = %s AND level <= %s"
     params = (guild_id, level)
     result = await execute_query(pool, query, params)
     return [row[0] for row in result]
@@ -989,7 +989,7 @@ async def get_user_xp(guild_id: str, user_id: str):
 
 
 async def update_user_xp(guild_id: str, user_id: str, xp: int):
-    query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = %s"
+    query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s"
     params = (guild_id, user_id, xp, xp)
     await execute_action(pool, query, params)
 

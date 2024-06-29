@@ -40,7 +40,9 @@ async def addLevelXp(message: discord.Message):
     new_xp = current_xp + xp_to_add
     new_level = get_level_for_xp(new_xp, scaling, custom_formula)
 
-    await update_user_xp(guild_id, str(message.author.id), new_xp)
+    print(f"User {message.author.id} gained {xp_to_add} XP")
+
+    await update_user_xp(guild_id, str(message.author.id), xp_to_add)
     if new_level > current_level:
         await handle_level_up(message, new_level)
 
@@ -147,9 +149,9 @@ async def format_level_up_message(
 
 
 async def update_user_roles(message: discord.Message, new_level: int, guild_id: str):
-    level_roles = await get_level_roles(guild_id)
+    level_roles = await get_level_roles(guild_id, new_level)
     roles_to_add = [
-        role_id for level, role_id in level_roles.items() if level <= new_level
+        role_id for role_id in level_roles
     ]
     for role_id in roles_to_add:
         role = message.guild.get_role(int(role_id))
