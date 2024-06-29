@@ -1169,7 +1169,6 @@ async def remove_giveaway_participant(giveaway_id: int, user_id: str):
     params = (giveaway_id, user_id)
     await execute_action(pool, query, params)
 
-
 async def add_giveaway_participant(giveaway_id: int, user_id: str):
     query = "INSERT INTO giveawayParticipant (userId, giveawayId) VALUES (%s, %s)"
     params = (user_id, giveaway_id)
@@ -1216,3 +1215,35 @@ async def get_end_ready_giveaways():
     query = "SELECT giveawayId FROM giveaway WHERE ended = 0 AND endtime < NOW() AND started = 1 AND messageId <> 'pending'"
     result = await execute_query(pool, query)
     return result
+
+async def add_giveaway_blacklisted_user(guild_id: str, user_id: str, reason: str, expire: datetime):
+    query = "INSERT INTO giveawayBlacklistedUser (guildId, userId, reason, expire) VALUES (%s, %s, %s, %s)"
+    params = (guild_id, user_id, reason, expire)
+    await execute_action(pool, query, params)
+
+async def add_giveaway_blacklisted_role(guild_id: str, role_id: str, reason: str, expire: datetime):
+    query = "INSERT INTO giveawayBlacklistedRole (guildId, roleId, reason, expire) VALUES (%s, %s, %s, %s)"
+    params = (guild_id, role_id, reason, expire)
+    await execute_action(pool, query, params)
+
+async def get_giveaway_blacklisted_user(guild_id: str, user_id: str):
+    query = "SELECT * FROM giveawayBlacklistedUser WHERE guildId = %s AND userId = %s"
+    params = (guild_id, user_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def get_giveaway_blacklisted_role(guild_id: str, role_id: str):
+    query = "SELECT * FROM giveawayBlacklistedRole WHERE guildId = %s AND roleId = %s"
+    params = (guild_id, role_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def remove_giveaway_blacklisted_user(guild_id: str, user_id: str):
+    query = "DELETE FROM giveawayBlacklistedUser WHERE guildId = %s AND userId = %s"
+    params = (guild_id, user_id)
+    await execute_action(pool, query, params)
+
+async def remove_giveaway_blacklisted_role(guild_id: str, role_id: str):
+    query = "DELETE FROM giveawayBlacklistedRole WHERE guildId = %s AND roleId = %s"
+    params = (guild_id, role_id)
+    await execute_action(pool, query, params)

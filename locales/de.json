@@ -1376,6 +1376,28 @@
             }
         },
         "giveaway": {
+            "add_blacklist_role": {
+                "alreadyBlacklisted": {
+                    "title": "Rolle bereits auf der Blacklist",
+                    "description": "Die Rolle ist bereits auf der Blacklist."
+                },
+                "max_roles": {
+                    "title": "Maximale Anzahl von Rollen erreicht",
+                    "description": "Die maximale Anzahl von Rollen auf der Blacklist wurde erreicht. Entferne eine Rolle von der Blacklist, um eine neue hinzuzufügen."
+                },
+                "pro_required": {
+                    "title": "Tanjun Pro erforderlich",
+                    "description": "Um mehr als 3 Rollen auf die Blacklist zu setzen, benötigst du Tanjun Pro. Tanjun Pro Server können bis zu 25 Rollen auf die Blacklist setzen."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um Rollen auf die Blacklist zu setzen."
+                },
+                "success": {
+                    "title": "Rolle zur Blacklist hinzugefügt",
+                    "description": "Die Rolle wurde erfolgreich zur Blacklist hinzugefügt. Mit dieser Rolle wird man nicht an Gewinnspielen teilnehmen können."
+                }
+            },
             "endedGiveaway": {
                 "title": "Gewinnspiel beendet",
                 "description": "Das Gewinnspiel ist beendet. Hier sind die Gewinner:\n${winners}",
