@@ -12,14 +12,14 @@ class LoopCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=3)
     async def sendSendReadyGiveaways(self):
         try:
             await sendReadyGiveaways(self.bot)
         except:
-            pass
+            raise
     
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=3)
     async def endGiveawaysLoop(self):
         try:
             await endGiveaways(self.bot)

@@ -487,12 +487,17 @@ async def addMessageToGiveaway(message: discord.Message):
     await add_giveaway_new_message_channel_if_needed(message.author.id, message.guild.id, message.channel.id)
 
 async def endGiveaway(giveaway_id, client):
+    print("starting to end giveaway: ", giveaway_id)
     giveawayInformation = await get_giveaway(giveaway_id)
+
+    print("giveawayInformation: ", giveawayInformation)
 
     if giveawayInformation[13] == 1:
         return
 
     await set_giveaway_ended(giveaway_id)
+
+    print("giveawaystatus updated.")
 
     if not giveawayInformation:
         return
@@ -508,7 +513,10 @@ async def endGiveaway(giveaway_id, client):
 
     participants = await get_giveaway_participants(giveaway_id)
 
+    print("got participants: ", participants)
+
     if not participants:
+        print("participants are none.")
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 locale,
@@ -519,18 +527,23 @@ async def endGiveaway(giveaway_id, client):
                 "commands.giveaway.endedGiveaway.no_participants.description",
             ),
         )
-
+        print("getting now giveaway channel and message.")
         giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
         if not giveawayChannel:
             return
+        print("got channel.")
         try:
             giveawaymessage = await giveawayChannel.fetch_message(
                 int(giveawayInformation[19])
             )
-        except:
+        except Exception as e:
+            print("error :c", e)
             return
+        print("got message.")
         if not giveawaymessage:
             return
+        
+        print("got message and channel.")
 
         view = discord.ui.View()
 
@@ -543,9 +556,13 @@ async def endGiveaway(giveaway_id, client):
         )
         view.add_item(btn)
 
+        print("got the view.")
+
         await giveawaymessage.edit(view=view)
         await giveawaymessage.reply(embed=embed)
+        print("updated everything. returning.")
         return
+    
 
 
     winners = []
@@ -555,12 +572,16 @@ async def endGiveaway(giveaway_id, client):
 
     participantAmount = len(participants)
 
+    print("will now select winners")
+
     if giveawayInformation[4] > participantAmount:
         winners = participants
     else:
         for i in range(giveawayInformation[4]):
             winner = participants.pop()
             winners.append(winner)
+
+    print("winners selected: ", winners)
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
