@@ -9,6 +9,7 @@ from commands.giveaway.add_blacklist_role import add_blacklist_role
 from commands.giveaway.remove_blacklist_role import remove_blacklist_role
 from commands.giveaway.add_blacklist_user import add_blacklist_user
 from commands.giveaway.remove_blacklist_user import remove_blacklist_user
+from commands.giveaway.list_blacklist import list_blacklist
 
 class BlacklistCommands(discord.app_commands.Group):
     @commands.command(
@@ -129,6 +130,31 @@ class BlacklistCommands(discord.app_commands.Group):
         await remove_blacklist_user(
             commandInfo=commandInfo,
             user=user,
+        )
+
+    @commands.command(
+        name=app_commands.locale_str("giveaway_blacklist_list_name"),
+        description=app_commands.locale_str("giveaway_blacklist_list_description"),
+    )
+    async def list(
+        self,
+        ctx: discord.Interaction,
+    ):
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await ctx.response.defer()
+        await list_blacklist(
+            commandInfo=commandInfo,
         )
 
 class GiveawayCommands(discord.app_commands.Group):

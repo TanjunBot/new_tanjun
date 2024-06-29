@@ -1376,6 +1376,17 @@
             }
         },
         "giveaway": {
+            "list_blacklist": {
+                "title": "Blacklist für Gewinnspiele",
+                "description": "Hier ist die aktuelle Blacklist für Gewinnspiele:",
+                "users": "Blacklisted Benutzer:",
+                "roles": "Blacklisted Rollen:",
+                "empty": "Die Blacklist ist leer.",
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um die Blacklist für Gewinnspiele anzuzeigen."
+                }
+            },
             "remove_blacklist_user": {
                 "notBlacklisted": {
                     "title": "Benutzer nicht auf der Blacklist",
