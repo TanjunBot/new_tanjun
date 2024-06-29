@@ -10,6 +10,7 @@ from commands.giveaway.remove_blacklist_role import remove_blacklist_role
 from commands.giveaway.add_blacklist_user import add_blacklist_user
 from commands.giveaway.remove_blacklist_user import remove_blacklist_user
 from commands.giveaway.list_blacklist import list_blacklist
+from commands.giveaway.end_giveaway import end_giveaway 
 
 class BlacklistCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -192,6 +193,36 @@ class GiveawayCommands(discord.app_commands.Group):
             commandInfo=commandInfo,
             title=title,
             target_channel=channel,
+        )
+
+    @app_commands.command(
+        name=app_commands.locale_str("giveaway_end_name"),
+        description=app_commands.locale_str("giveaway_end_description"),
+    )
+    @app_commands.describe(
+        giveawayId=app_commands.locale_str("giveaway_end_params_giveawayId_description"),
+    )
+    async def end(
+        self,
+        ctx: discord.Interaction,
+        giveawayId: int,
+    ):
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await ctx.response.defer()
+        await end_giveaway(
+            commandInfo=commandInfo,
+            giveawayId=giveawayId,
         )
 
 

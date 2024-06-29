@@ -1376,6 +1376,34 @@
             }
         },
         "giveaway": {
+            "end_giveaway": {
+                "error": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Server verwalten', um Gewinnspiele zu beenden."
+                    },
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Server verwalten', um Gewinnspiele zu beenden."
+                    },
+                    "invalid_message": {
+                        "title": "Ungültige Nachricht",
+                        "description": "Die angegebene Nachricht ist keine gültige Gewinnspiel-Nachricht."
+                    },
+                    "already_ended": {
+                        "title": "Gewinnspiel bereits beendet",
+                        "description": "Das Gewinnspiel ist bereits beendet."
+                    }
+                },
+                "success": {
+                    "title": "Gewinnspiel beendet",
+                    "description": "Das Gewinnspiel wurde erfolgreich beendet. Hier sind die Gewinner:\n${winners}"
+                },
+                "deleted": {
+                    "title": "Gewinnspiel Gelöscht",
+                    "description": "Das Gewinnspiel wurde noch bevor es überhaupt gestartet ist, gelöscht."
+                }
+            },
             "list_blacklist": {
                 "title": "Blacklist für Gewinnspiele",
                 "description": "Hier ist die aktuelle Blacklist für Gewinnspiele:",

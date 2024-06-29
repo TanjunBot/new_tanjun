@@ -1244,3 +1244,8 @@ async def get_giveaway_blacklisted_roles(guild_id: str):
     params = (guild_id,)
     result = await execute_query(pool, query, params)
     return result
+
+async def delete_giveaway(giveaway_id: int):
+    query = "DELETE FROM giveaway WHERE giveawayId = %s"
+    params = (giveaway_id,)
+    await execute_action(pool, query, params)
