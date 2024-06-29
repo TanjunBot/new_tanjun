@@ -1376,6 +1376,20 @@
             }
         },
         "giveaway": {
+            "add_blacklist_user": {
+                "alreadyBlacklisted": {
+                    "title": "Benutzer bereits auf der Blacklist",
+                    "description": "Der Benutzer ist bereits auf der Blacklist."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um Benutzer auf die Blacklist zu setzen."
+                },
+                "success": {
+                    "title": "Benutzer zur Blacklist hinzugefügt",
+                    "description": "Der Benutzer wurde erfolgreich zur Blacklist hinzugefügt. Dieser Benutzer kann nicht an Gewinnspielen teilnehmen."
+                }
+            },
             "remove_blacklist_role": {
                 "notBlacklisted": {
                     "title": "Rolle nicht auf der Blacklist",
@@ -1395,13 +1409,9 @@
                     "title": "Rolle bereits auf der Blacklist",
                     "description": "Die Rolle ist bereits auf der Blacklist."
                 },
-                "max_roles": {
-                    "title": "Maximale Anzahl von Rollen erreicht",
-                    "description": "Die maximale Anzahl von Rollen auf der Blacklist wurde erreicht. Entferne eine Rolle von der Blacklist, um eine neue hinzuzufügen."
-                },
                 "pro_required": {
                     "title": "Tanjun Pro erforderlich",
-                    "description": "Um mehr als 3 Rollen auf die Blacklist zu setzen, benötigst du Tanjun Pro. Tanjun Pro Server können bis zu 25 Rollen auf die Blacklist setzen."
+                    "description": "Um mehr als 3 Rollen auf die Blacklist zu setzen, benötigst du Tanjun Pro. Tanjun Pro Server können unendlich viele Rollen auf die Blacklist setzen."
                 },
                 "missingPermission": {
                     "title": "Fehlende Berechtigung",

@@ -1,4 +1,4 @@
-from api import add_blacklist_role as add_blacklist_role_api, get_blacklisted_roles
+from api import add_blacklist_role as add_blacklist_role_api
 import discord
 import utility
 from localizer import tanjunLocalizer
@@ -17,36 +17,6 @@ async def add_blacklist_role(
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.giveaway.add_blacklist_role.missingPermission.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
-    roles = await get_blacklisted_roles(commandInfo.guild.id)
-
-    if len(roles) >= 3:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.giveaway.add_blacklist_role.pro_required.title",
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.giveaway.add_blacklist_role.pro_required.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
-    if len(roles) >= 25:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.giveaway.add_blacklist_role.max_roles.title",
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.giveaway.add_blacklist_role.max_roles.description",
             ),
         )
         await commandInfo.reply(embed=embed)
