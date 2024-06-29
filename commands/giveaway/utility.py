@@ -625,6 +625,21 @@ async def endGiveaway(giveaway_id, client):
         ),
     )
 
+    for winner in winners:
+        await remove_giveaway_participant(giveaway_id, winner)
+        member = guild.get_member(winner)
+        if member:
+            try:
+                await member.send(
+                    tanjunLocalizer.localize(
+                        locale,
+                        "commands.giveaway.endedGiveaway.winnerDM",
+                        guild_name=guild.name,
+                    )
+                )
+            except:
+                pass
+
     giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
     if not giveawayChannel:
         return
