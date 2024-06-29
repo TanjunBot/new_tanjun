@@ -7,6 +7,8 @@ from localizer import tanjunLocalizer
 from loops.giveaway import sendReadyGiveaways
 from loops.giveaway import checkVoiceUsers
 from loops.giveaway import endGiveaways
+from minigames.addLevelXp import clearNotifiedUsers
+from loops.level import addXpToVoiceUsers
 
 class LoopCog(commands.Cog):
     def __init__(self, bot):
@@ -33,11 +35,27 @@ class LoopCog(commands.Cog):
         except:
             pass
 
+    @tasks.loop(seconds=5)
+    async def clearNotifiedUsersLoop(self):
+        try:
+            await clearNotifiedUsers(self.bot)
+        except:
+            pass
+
+    @tasks.loop(seconds=5)
+    async def addVoiceUserLoop(self):
+        try:
+            await addXpToVoiceUsers(self.bot)
+        except:
+            raise
+
     @commands.Cog.listener()
     async def on_ready(self):  
         self.sendSendReadyGiveaways.start()
         self.endGiveawaysLoop.start()
         self.checkVoiceUsers.start()
+        self.clearNotifiedUsersLoop.start()
+        self.addVoiceUserLoop.start()
 
 
 async def setup(bot):

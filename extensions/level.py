@@ -53,7 +53,10 @@ from commands.level.level_rankcard import (
 )
 from commands.level.give_xp import give_xp_command 
 from commands.level.take_xp import take_xp_command
-
+from commands.level.level_set_xp_cooldown import (
+    set_text_cooldown_command,
+    set_voice_cooldown_command,
+)
 
 class BlacklistCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -738,6 +741,49 @@ class LevelConfigCommands(discord.app_commands.Group):
         )
         await take_xp_command(commandInfo, user, amount)
 
+    @app_commands.command(
+        name=app_commands.locale_str("level_settextcooldown_name"),
+        description=app_commands.locale_str("level_settextcooldown_description"),
+    )
+    @app_commands.describe(
+        cooldown=app_commands.locale_str("level_settextcooldown_params_cooldown_description"),
+    )
+    async def settextcooldown(self, ctx, cooldown: int):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await set_text_cooldown_command(commandInfo, cooldown)
+
+    @app_commands.command(
+        name=app_commands.locale_str("level_setvoicecooldown_name"),
+        description=app_commands.locale_str("level_setvoicecooldown_description"),
+    )
+    @app_commands.describe(
+        cooldown=app_commands.locale_str("level_setvoicecooldown_params_cooldown_description"),
+    )
+    async def setvoicecooldown(self, ctx, cooldown: int):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await set_voice_cooldown_command(commandInfo, cooldown)
 
 class levelCommands(discord.app_commands.Group):
     @app_commands.command(
