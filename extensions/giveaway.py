@@ -12,12 +12,12 @@ from commands.giveaway.remove_blacklist_user import remove_blacklist_user
 from commands.giveaway.list_blacklist import list_blacklist
 
 class BlacklistCommands(discord.app_commands.Group):
-    @commands.command(
-        name=app_commands.locale_str("giveaway_blacklist_add_role_name"),
-        description=app_commands.locale_str("giveaway_blacklist_add_role_description"),
+    @app_commands.command(
+        name=app_commands.locale_str("giveaway_bl_add_role_name"),
+        description=app_commands.locale_str("giveaway_bl_add_role_description"),
     )
-    @commands.describe(
-        role=app_commands.locale_str("giveaway_blacklist_add_role_role_description"),
+    @app_commands.describe(
+        role=app_commands.locale_str("giveaway_bl_add_role_role_description"),
     )
     async def add_role(
         self,
@@ -42,12 +42,12 @@ class BlacklistCommands(discord.app_commands.Group):
             role=role,
         )
 
-    @commands.command(
-        name=app_commands.locale_str("giveaway_blacklist_remove_role_name"),
-        description=app_commands.locale_str("giveaway_blacklist_remove_role_description"),
+    @app_commands.command(
+        name=app_commands.locale_str("giveaway_bl_remove_role_name"),
+        description=app_commands.locale_str("giveaway_bl_remove_role_description"),
     )
-    @commands.describe(
-        role=app_commands.locale_str("giveaway_blacklist_remove_role_role_description"),
+    @app_commands.describe(
+        role=app_commands.locale_str("giveaway_bl_remove_role_role_description"),
     )
     async def remove_role(
         self,
@@ -72,12 +72,12 @@ class BlacklistCommands(discord.app_commands.Group):
             role=role,
         )
 
-    @commands.command(
-        name=app_commands.locale_str("giveaway_blacklist_add_user_name"),
-        description=app_commands.locale_str("giveaway_blacklist_add_user_description"),
+    @app_commands.command(
+        name=app_commands.locale_str("giveaway_bl_add_user_name"),
+        description=app_commands.locale_str("giveaway_bl_add_user_description"),
     )
-    @commands.describe(
-        user=app_commands.locale_str("giveaway_blacklist_add_user_user_description"),
+    @app_commands.describe(
+        user=app_commands.locale_str("giveaway_bl_add_user_user_description"),
     )
     async def add_user(
         self,
@@ -102,12 +102,12 @@ class BlacklistCommands(discord.app_commands.Group):
             user=user,
         )
 
-    @commands.command(
-        name=app_commands.locale_str("giveaway_blacklist_remove_user_name"),
-        description=app_commands.locale_str("giveaway_blacklist_remove_user_description"),
+    @app_commands.command(
+        name=app_commands.locale_str("giveaway_bl_remove_user_name"),
+        description=app_commands.locale_str("giveaway_bl_remove_user_description"),
     )
-    @commands.describe(
-        user=app_commands.locale_str("giveaway_blacklist_remove_user_user_description"),
+    @app_commands.describe(
+        user=app_commands.locale_str("giveaway_bl_remove_user_user_description"),
     )
     async def remove_user(
         self,
@@ -132,9 +132,9 @@ class BlacklistCommands(discord.app_commands.Group):
             user=user,
         )
 
-    @commands.command(
-        name=app_commands.locale_str("giveaway_blacklist_list_name"),
-        description=app_commands.locale_str("giveaway_blacklist_list_description"),
+    @app_commands.command(
+        name=app_commands.locale_str("giveaway_bl_list_name"),
+        description=app_commands.locale_str("giveaway_bl_list_description"),
     )
     async def list(
         self,

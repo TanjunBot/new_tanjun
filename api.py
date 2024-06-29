@@ -299,9 +299,8 @@ async def create_tables():
     ] = """
     CREATE TABLE IF NOT EXISTS `giveawayBlacklistedRole` (
         `roleId` VARCHAR(20) PRIMARY KEY,
-        `reason` VARCHAR(128),
-        `expire` DATETIME,
-        `guildId` VARCHAR(20)
+        `guildId` VARCHAR(20),
+        PRIMARY KEY(`userId`, `guildId`)
     ) ENGINE=InnoDB;
     """
     tables[
@@ -310,8 +309,6 @@ async def create_tables():
     CREATE TABLE IF NOT EXISTS `giveawayBlacklistedUser` (
         `userId` VARCHAR(20),
         `guildId` VARCHAR(20),
-        `expire` DATETIME,
-        `reason` VARCHAR(128),
         PRIMARY KEY(`userId`, `guildId`)
     ) ENGINE=InnoDB;
     """
@@ -1216,27 +1213,15 @@ async def get_end_ready_giveaways():
     result = await execute_query(pool, query)
     return result
 
-async def add_giveaway_blacklisted_user(guild_id: str, user_id: str, reason: str, expire: datetime):
-    query = "INSERT INTO giveawayBlacklistedUser (guildId, userId, reason, expire) VALUES (%s, %s, %s, %s)"
-    params = (guild_id, user_id, reason, expire)
-    await execute_action(pool, query, params)
-
-async def add_giveaway_blacklisted_role(guild_id: str, role_id: str, reason: str, expire: datetime):
-    query = "INSERT INTO giveawayBlacklistedRole (guildId, roleId, reason, expire) VALUES (%s, %s, %s, %s)"
-    params = (guild_id, role_id, reason, expire)
-    await execute_action(pool, query, params)
-
-async def get_giveaway_blacklisted_user(guild_id: str, user_id: str):
-    query = "SELECT * FROM giveawayBlacklistedUser WHERE guildId = %s AND userId = %s"
+async def add_giveaway_blacklisted_user(guild_id: str, user_id: str):
+    query = "INSERT INTO giveawayBlacklistedUser (guildId, userId) VALUES (%s, %s)"
     params = (guild_id, user_id)
-    result = await execute_query(pool, query, params)
-    return result[0] if result else None
+    await execute_action(pool, query, params)
 
-async def get_giveaway_blacklisted_role(guild_id: str, role_id: str):
-    query = "SELECT * FROM giveawayBlacklistedRole WHERE guildId = %s AND roleId = %s"
+async def add_giveaway_blacklisted_role(guild_id: str, role_id: str):
+    query = "INSERT INTO giveawayBlacklistedRole (guildId, roleId) VALUES (%s, %s)"
     params = (guild_id, role_id)
-    result = await execute_query(pool, query, params)
-    return result[0] if result else None
+    await execute_action(pool, query, params)
 
 async def remove_giveaway_blacklisted_user(guild_id: str, user_id: str):
     query = "DELETE FROM giveawayBlacklistedUser WHERE guildId = %s AND userId = %s"
@@ -1247,3 +1232,15 @@ async def remove_giveaway_blacklisted_role(guild_id: str, role_id: str):
     query = "DELETE FROM giveawayBlacklistedRole WHERE guildId = %s AND roleId = %s"
     params = (guild_id, role_id)
     await execute_action(pool, query, params)
+
+async def get_giveaway_blacklisted_users(guild_id: str):
+    query = "SELECT userId, reason, expire FROM giveawayBlacklistedUser WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result
+
+async def get_giveaway_blacklisted_roles(guild_id: str):
+    query = "SELECT roleId, reason, expire FROM giveawayBlacklistedRole WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result

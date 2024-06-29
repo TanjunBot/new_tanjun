@@ -1,4 +1,4 @@
-from api import get_giveaway_blacklisted_role as get_blacklist_role_api, get_giveaway_blacklisted_user as get_blacklist_user_api
+from api import get_giveaway_blacklisted_roles as get_blacklist_role_api, get_giveaway_blacklisted_users as get_blacklist_user_api
 import discord
 import utility
 from localizer import tanjunLocalizer
@@ -17,10 +17,11 @@ async def list_blacklist(
                 "commands.giveaway.list_blacklist.missingPermission.description",
             ),
         )
-        return embed
+        await commandInfo.reply(embed=embed)
+        return
 
     blacklistedRoles = [role[0] for role in await get_blacklist_role_api(commandInfo.guild.id)]
-    blacklistedUsers = [user[0] for user in get_blacklist_user_api(commandInfo.guild.id)]
+    blacklistedUsers = [user[0] for user in await get_blacklist_user_api(commandInfo.guild.id)]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -53,4 +54,4 @@ async def list_blacklist(
             inline=False,
         )
 
-    return embed
+    await commandInfo.reply(embed=embed)
