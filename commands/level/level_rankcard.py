@@ -106,9 +106,7 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
     uploaded_image = await upload_image_to_imgbb(
         await image.read(), image.content_type.split("/")[1]
     )
-
-    print(uploaded_image)
-
+    
     await set_custom_background(
         str(commandInfo.guild.id),
         str(commandInfo.user.id),

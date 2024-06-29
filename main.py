@@ -48,16 +48,18 @@ async def main():
     await loadTranslator(bot)
 
 async def create_pool():
-    """Create a connection pool"""
-    p = await asyncmy.create_pool(
-        host=database_ip,
-        user=database_user,
-        password=database_password,
-        db=database_schema,
-        minsize=50,
-        maxsize=1000,
-    )
-    return p
+    try:
+        p = await asyncmy.create_pool(
+            host=database_ip,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+            init_command='SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; SET SESSION query_cache_type = OFF;',
+        )
+        return p
+    except Exception as e:
+        print(f"Error creating pool: {e}")
+        return None
 
 
 if __name__ == "__main__":

@@ -50,7 +50,6 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
             if setting == "all":
                 return True
             elif setting == "bot":
-                print(m.author.bot)
                 return m.author.bot
             elif setting == "user":
                 return not m.author.bot
@@ -71,9 +70,7 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
             elif setting == "notAdminNotPinned":
                 return not m.author.guild_permissions.administrator and not m.pinned
             
-        print(setting)
-            
-        deleted = await channel.purge(limit=amount, check=check, bulk=False)
+        deleted = await channel.purge(limit=amount, check=check, bulk=True)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.purge.success.title"

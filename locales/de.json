@@ -1374,6 +1374,320 @@
                     "no_boosts": "Es sind keine XP-Boosts für diesen Server konfiguriert."
                 }
             }
+        },
+        "giveaway": {
+            "editor": {
+                "not_authorized": "Du bist nicht berechtigt, dieses Gewinnspiel zu bearbeiten.",
+                "no_permission": "Du hast nicht die erforderlichen Berechtigungen, um Gewinnspiele zu bearbeiten.",
+                "not_found": "Das angegebene Gewinnspiel wurde nicht gefunden.",
+                "loading": "Lade Gewinnspiel-Informationen...",
+                "success": {
+                    "title": "Gewinnspiel aktualisiert",
+                    "description": "Das Gewinnspiel wurde erfolgreich aktualisiert!"
+                }
+            },
+            "reroll_giveaway": {
+                "error": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Server verwalten', um Gewinnspiele neu auszulosen."
+                    },
+                    "notFound": {
+                        "title": "Gewinnspiel nicht gefunden",
+                        "description": "Das angegebene Gewinnspiel wurde nicht gefunden."
+                    },
+                    "notEnded": {
+                        "title": "Gewinnspiel noch nicht beendet",
+                        "description": "Das Gewinnspiel muss erst beendet sein, bevor es neu ausgelost werden kann."
+                    },
+                    "noParticipants": {
+                        "title": "Keine Teilnehmer",
+                        "description": "Es gibt keine Teilnehmer für dieses Gewinnspiel. Eine Neuauslosung ist nicht möglich."
+                    },
+                    "notAuthorized": "Du bist nicht berechtigt, diese Aktion durchzuführen."
+                },
+                "selectOption": {
+                    "title": "Neuauslosung der Gewinner",
+                    "description": "Möchtest du einen einzelnen Gewinner neu auslosen oder alle Gewinner?"
+                },
+                "success": {
+                    "title": "Gewinner neu ausgelost",
+                    "description": "Folgende Gewinner wurden neu ausgelost:\n${winners}"
+                },
+                "winnerDM": "🎉 **Gewinnspiel-Neuauslosung** 🎉\n\nHerzlichen Glückwunsch! Du wurdest bei einer Neuauslosung als Gewinner für ein Gewinnspiel auf dem Server ${guild_name} ausgewählt! Wende dich ggf. an die Serverleitung, um deinen Preis zu erhalten."
+            },
+            "end_giveaway": {
+                "error": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Server verwalten', um Gewinnspiele zu beenden."
+                    },
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Server verwalten', um Gewinnspiele zu beenden."
+                    },
+                    "invalid_message": {
+                        "title": "Ungültige Nachricht",
+                        "description": "Die angegebene Nachricht ist keine gültige Gewinnspiel-Nachricht."
+                    },
+                    "already_ended": {
+                        "title": "Gewinnspiel bereits beendet",
+                        "description": "Das Gewinnspiel ist bereits beendet."
+                    }
+                },
+                "success": {
+                    "title": "Gewinnspiel beendet",
+                    "description": "Das Gewinnspiel wurde erfolgreich beendet. Hier sind die Gewinner:\n${winners}"
+                },
+                "deleted": {
+                    "title": "Gewinnspiel Gelöscht",
+                    "description": "Das Gewinnspiel wurde noch bevor es überhaupt gestartet ist, gelöscht."
+                }
+            },
+            "list_blacklist": {
+                "title": "Blacklist für Gewinnspiele",
+                "description": "Hier ist die aktuelle Blacklist für Gewinnspiele:",
+                "users": "Blacklisted Benutzer:",
+                "roles": "Blacklisted Rollen:",
+                "empty": "Die Blacklist ist leer.",
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um die Blacklist für Gewinnspiele anzuzeigen."
+                }
+            },
+            "remove_blacklist_user": {
+                "notBlacklisted": {
+                    "title": "Benutzer nicht auf der Blacklist",
+                    "description": "Der Benutzer ist nicht auf der Blacklist."
+                },
+                "success": {
+                    "title": "Benutzer von der Blacklist entfernt",
+                    "description": "Der Benutzer wurde erfolgreich von der Blacklist entfernt."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um Benutzer von der Blacklist zu entfernen."
+                }
+            },
+            "add_blacklist_user": {
+                "alreadyBlacklisted": {
+                    "title": "Benutzer bereits auf der Blacklist",
+                    "description": "Der Benutzer ist bereits auf der Blacklist."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um Benutzer auf die Blacklist zu setzen."
+                },
+                "success": {
+                    "title": "Benutzer zur Blacklist hinzugefügt",
+                    "description": "Der Benutzer wurde erfolgreich zur Blacklist hinzugefügt. Dieser Benutzer kann nicht an Gewinnspielen teilnehmen."
+                }
+            },
+            "remove_blacklist_role": {
+                "notBlacklisted": {
+                    "title": "Rolle nicht auf der Blacklist",
+                    "description": "Die Rolle ist nicht auf der Blacklist."
+                },
+                "success": {
+                    "title": "Rolle von der Blacklist entfernt",
+                    "description": "Die Rolle wurde erfolgreich von der Blacklist entfernt."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um Rollen von der Blacklist zu entfernen."
+                }
+            },
+            "add_blacklist_role": {
+                "alreadyBlacklisted": {
+                    "title": "Rolle bereits auf der Blacklist",
+                    "description": "Die Rolle ist bereits auf der Blacklist."
+                },
+                "pro_required": {
+                    "title": "Tanjun Pro erforderlich",
+                    "description": "Um mehr als 3 Rollen auf die Blacklist zu setzen, benötigst du Tanjun Pro. Tanjun Pro Server können unendlich viele Rollen auf die Blacklist setzen."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um Rollen auf die Blacklist zu setzen."
+                },
+                "success": {
+                    "title": "Rolle zur Blacklist hinzugefügt",
+                    "description": "Die Rolle wurde erfolgreich zur Blacklist hinzugefügt. Mit dieser Rolle wird man nicht an Gewinnspielen teilnehmen können."
+                }
+            },
+            "endedGiveaway": {
+                "title": "Gewinnspiel beendet",
+                "description": "Das Gewinnspiel ist beendet. Hier sind die Gewinner:\n${winners}",
+                "no_participants": {
+                    "title": "Gewinnspiel beendet",
+                    "description": "Das Gewinnspiel ist beendet, aber es gab keine Teilnehmer."
+                },
+                "button_text": "Beendet mit ${participants} Teilnehmern",
+                "dm": "🎉 **Gewinnspiel beendet** 🎉\n\nHerzlichen Glückwunsch! Du hast ein Gewinnspiel auf den Server ${guild_name} gewonnen! Wende dich ggf. an die Serverleitung, um deinen Preis zu erhalten."
+            },
+            "giveawayEmbed": {
+                "title": "${title}",
+                "description": "🎉 **Gewinnspiel Start** 🎉\n\nTeilnahmebedingungen:\n- Klicke auf \"Jetzt teilnehmen!\", um teilzunehmen.\n${requirements}\n🏆 Gewinner: ${winners}",
+                "sponsor": "### 🎁 Das Gewinnspiel ist Gesponsort von ${sponsor} - Vielen Dank!",
+                "price": "### Preis: ${price}",
+                "no_requirements": "- `Keine spezifischen Bedingungen.`",
+                "new_message_requirement": "- 🧑‍💻`${count}` neue Nachrichten",
+                "day_requirement": "- 📅seit `${count}` Tage im Server",
+                "role_requirement": "- 🪪Benötigte Rollen: ${roles}",
+                "voice_requirement": "- 🕛`${minutes}` Minuten in Sprachkanälen",
+                "channel_requirements": "- 🤓Neue Nachrichten in Kanälen: ${channels}",
+                "end_time": "🗓️Endet ${date}",
+                "button_text": "Jetzt teilnehmen!",
+                "participation_failed": {
+                    "title": "Teilnahme fehlgeschlagen",
+                    "message_requirement": "Du hast, seit erstellung des Gewinnspiels, nicht genügend Nachrichten geschrieben. Aktuell hast du `${new_messages}` Neue Nachrichten. Das Gewinnspiel setzt allerdings `${required_messages}` Neue nachrichten Vorraus. Dir fehlen also noch `${missing_messages}` Nachrichen.",
+                    "day_requirement": "Du bist leider nicht lang genug auf dem Server. Das Gewinnspiel setzt vorraus, dass du `${required_days}` Tage vor erstellung des Gewinnspiels auf dem Server warst. Leider darfst du nicht mit machen 😔",
+                    "role_requirement": "Du hast leider nicht die benötigten Rollen, um am Gewinnspiel teilzunehmen. Du benötigst folgende Rollen: ${roles}",
+                    "voice_requirement": "Du hast leider nicht lange genug in Sprachkanälen verbracht. Das Gewinnspiel setzt vorraus, dass du `${required_minutes}` Minuten in Sprachkanälen verbracht hast. Dir fehlen noch `${missing_minutes}` Minuten.",
+                    "channel_requirements": "Du hast leider nicht genügend Nachrichten in den benötigten Kanälen geschrieben. Das Gewinnspiel setzt vorraus, dass du `${required_messages}` Nachrichten in den folgenden Kanal ${channel}  geschrieben hast. Dir fehlen also noch `${missing_messages}` Nachrichten.",
+                    "blacklisted": "Du bist auf der Blacklist und darfst daher nicht am Gewinnspiel teilnehmen.",
+                    "blacklisted_role": "Du hast eine Rolle, die auf der Blacklist steht und darfst daher nicht am Gewinnspiel teilnehmen.",
+                    "opted_out": "Du hast die Nachrichtenverfolgung deaktiviert. Aus diesem Grund kann der Bot die Anforderungen ggf. nicht richtig überprüfen daher kannst du an dem gewinnspiel nicht teil nehmen."
+                },
+                "participation_success": {
+                    "title": "Teilnahme erfolgreich",
+                    "description": "Du hast erfolgreich am Gewinnspiel teilgenommen. Viel Glück!"
+                },
+                "participation_removed": {
+                    "title": "Teilnahme entfernt",
+                    "description": "Du wurdest erfolgreich aus dem Gewinnspiel entfernt."
+                }
+            },
+            "builder": {
+                "change_description": "Beschreibung ändern",
+                "custom_name": {
+                    "label": "Benutzerdefinierter Name",
+                    "placeholder": "Gib den benutzerdefinierten Namen ein",
+                    "updated": "Benutzerdefinierter Name aktualisiert",
+                    "title": "Benutzerdefinierter Name",
+                    "description": "Passe den Namen deines Gewinnspiels in der giveaways.tanjun.bot domaine an!"
+                },
+                "not_authorized": "Du bist nicht autorisiert, dies zu tun",
+                "modal": {
+                    "timeout": "Das Zeitlimit für die Eingabe ist abgelaufen"
+                },
+                "sponsor": {
+                    "label": "Sponsor",
+                    "updated": "Sponsor aktualisiert",
+                    "cancelled": "Sponsor Auswahl abgebrochen",
+                    "selected": "Sponsor ausgewählt: ${user}",
+                    "select": {
+                        "name": "Sponsor auswählen",
+                        "placeholder": "Wähle einen Sponsor aus"
+                    }
+                },
+                "confirm": "Bestätigen",
+                "cancel": "Abbrechen",
+                "change_winners": {
+                    "label": "Gewinner ändern",
+                    "placeholder": "Anzahl der Gewinner eingeben",
+                    "updated": "Anzahl der Gewinner aktualisiert",
+                    "title": "Gewinner ändern",
+                    "description": "Gib die Anzahl der Gewinner ein"
+                },
+                "end_time": {
+                    "label": "Endzeit",
+                    "placeholder": "Gib die Endzeit ein z.B. 10m für in 10 Minuten",
+                    "updated": "Endzeit aktualisiert",
+                    "title": "Endzeit festlegen",
+                    "description": "Gib die Endzeit des Giveaways ein"
+                },
+                "start_time": {
+                    "label": "Startzeit",
+                    "placeholder": "Gib die Startzeit ein z.B. 10m für in 10 Minuten",
+                    "updated": "Startzeit aktualisiert",
+                    "title": "Startzeit festlegen",
+                    "description": "Gib die Startzeit des Giveaways ein"
+                },
+                "new_message_requirement": {
+                    "label": "Nachrichtenanforderung",
+                    "placeholder": "Gib die Anzahl der benötigten Nachrichten ein",
+                    "updated": "Nachrichtenanforderung aktualisiert",
+                    "title": "Nachrichtenanforderung festlegen",
+                    "description": "Gib die Anzahl der neuen Nachrichten ein"
+                },
+                "day_requirement": {
+                    "label": "Tagesanforderung",
+                    "placeholder": "Gib die Anzahl der benötigten Tage ein",
+                    "updated": "Tagesanforderung aktualisiert",
+                    "title": "Tagesanforderung festlegen",
+                    "description": "Gib die Anzahl der Tage ein"
+                },
+                "role_requirement": {
+                    "label": "Rollenanforderung",
+                    "placeholder": "Rollenanforderung auswählen",
+                    "updated": "Rollenanforderung aktualisiert",
+                    "cancelled": "Rollenanforderung abgebrochen",
+                    "pro": "Pro-Mitgliedschaft erforderlich",
+                    "select": "Rollenanforderung auswählen",
+                    "title": "Rollenanforderung festlegen",
+                    "description": "Wähle die erforderlichen Rollen aus"
+                },
+                "voice_requirement": {
+                    "label": "Sprachanforderung",
+                    "placeholder": "Gib die benötigte Sprechzeit ein",
+                    "updated": "Sprachanforderung aktualisiert",
+                    "title": "Sprachanforderung festlegen",
+                    "description": "Gib die benötigte Sprechzeit ein"
+                },
+                "add_channel_requirement": {
+                    "label": "Kanalanforderung hinzufügen",
+                    "placeholder": "Kanal hinzufügen",
+                    "select": "Kanal auswählen",
+                    "v": {
+                        "t": "Wert für Kanalanforderung festlegen",
+                        "p": "Gib den Wert ein"
+                    },
+                    "value": {
+                        "updated": "Kanalanforderungswert aktualisiert"
+                    },
+                    "cancelled": "Kanalanforderung abgebrochen"
+                },
+                "remove_channel_requirement": {
+                    "label": "Kanalanforderung entfernen",
+                    "placeholder": "Kanal entfernen",
+                    "select": "Kanal zum Entfernen auswählen",
+                    "removed": "Kanalanforderung entfernt"
+                },
+                "description": {
+                    "updated": "Beschreibung aktualisiert",
+                    "timeout": "Zeitlimit für die Eingabe der Beschreibung ist abgelaufen"
+                },
+                "price": {
+                    "label": "Preis",
+                    "updated": "Preis aktualisiert",
+                    "timeout": "Zeitlimit für die Eingabe des Preises ist abgelaufen"
+                },
+                "message": {
+                    "label": "Nachricht",
+                    "updated": "Nachricht aktualisiert",
+                    "timeout": "Zeitlimit für die Eingabe der Nachricht ist abgelaufen",
+                    "too_long": "Die Nachricht ist zu lang. Bitte gib eine Nachricht ein, die weniger als 128 Zeichen lang ist."
+                },
+                "channel": {
+                    "selected": "Kanal Ausgewählt."
+                },
+                "success": {
+                    "title": "Erfolg",
+                    "description": "Das Gewinnspiel wurde erfolgreich Erstellt!"
+                },
+                "enter_description": "Gib die Beschreibung ein",
+                "enter_price": "Gib den Preis ein",
+                "enter_message": "Gib die Nachricht ein",
+                "none": "Keine",
+                "true": "Wahr",
+                "false": "Falsch",
+                "winners": "Gewinner",
+                "with_button": "Mit Button",
+                "preview": "Vorschau",
+                "loading": "Wird geladen...",
+                "no_permission": "Du hast keine Berechtigung, Gewinnspiele zu starten."
+            }
         }
     },
     "admin": {

@@ -152,7 +152,5 @@ async def update_user_roles(message: discord.Message, new_level: int, guild_id: 
                 await message.author.add_roles(
                     role, reason=f"Reached level {new_level}"
                 )
-            except discord.Forbidden:
-                print(
-                    f"Bot doesn't have permission to add role {role.name} to {message.author.name}"
-                )
+            except:
+                pass

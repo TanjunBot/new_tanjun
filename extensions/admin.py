@@ -509,7 +509,7 @@ class administrationCommands(discord.app_commands.Group):
             commandInfo=commandInfo,
             amount=limit,
             channel=channel,
-            setting=setting.value,
+            setting=setting.value if setting != "all" else "all",
         )
         return
 

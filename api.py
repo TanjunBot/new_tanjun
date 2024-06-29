@@ -4,14 +4,21 @@ from config import database_ip, database_password, database_user, database_schem
 import json
 from typing import Optional, List, Dict
 from utility import get_xp_for_level, get_level_for_xp
+from datetime import datetime
 
 pool = None
 
-def set_pool(p):    
+
+def set_pool(p):
     global pool
     pool = p
 
+
 async def execute_query(p, query, params=None):
+    if not pool:
+        print("tryied to execute action without pool. Pool is not yet initialized. Returning...")
+        return
+
     try:
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
@@ -20,14 +27,39 @@ async def execute_query(p, query, params=None):
                 return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}")
+        raise
 
 
 async def execute_action(p, query, params=None):
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cursor:
-            await cursor.execute(query, params)
-            await conn.commit()
-            return cursor.rowcount
+    if not pool:
+        print("tryied to execute action without pool. Pool is not yet initialized. Returning...")
+        return
+    try:
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(query, params)
+                await conn.commit()
+                return cursor.rowcount
+    except Exception as e:
+        print(f"An error occurred during action execution: {e}")
+        raise
+
+
+async def execute_insert_and_get_id(p, query, params=None):
+    if not pool:
+        print("tryied to execute action without pool. Pool is not yet initialized. Returning...")
+        return
+    try:
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(query, params)
+                await conn.commit()
+                await cursor.execute("SELECT LAST_INSERT_ID()")
+                last_id = await cursor.fetchone()
+                return last_id[0] if last_id else None
+    except Exception as e:
+        print(f"An error occurred during insert: {e}")
+        raise
 
 
 async def create_tables():
@@ -188,6 +220,110 @@ async def create_tables():
         "  `voiceCooldown` INT DEFAULT 60"
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
     )
+    tables[
+        "giveaway"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveaway` (
+        `giveawayId` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `guildId` VARCHAR(20) NOT NULL,
+        `title` VARCHAR(128) NOT NULL,
+        `description` VARCHAR(1024),
+        `winners` TINYINT(4) DEFAULT 1,
+        `withButton` TINYINT(1) DEFAULT 1,
+        `customName` VARCHAR(32),
+        `sponsor` VARCHAR(20),
+        `price` VARCHAR(64),
+        `message` VARCHAR(128),
+        `endtime` DATETIME NOT NULL,
+        `starttime` DATETIME,
+        `started` TINYINT(1) DEFAULT 0,
+        `ended` TINYINT(1) DEFAULT 0,
+        `newMessageRequirement` SMALLINT UNSIGNED,
+        `dayRequirement` SMALLINT UNSIGNED,
+        `voiceRequirement` SMALLINT UNSIGNED,
+        `sendFailed` TINYINT(1) DEFAULT 0,
+        `channelId` VARCHAR(20),
+        `messageId` VARCHAR(20) DEFAULT "pending",
+        `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayChannelRequirement"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayChannelRequirement` (
+        `giveawayId` INT UNSIGNED,
+        `channelId` VARCHAR(20),
+        `amount` SMALLINT UNSIGNED,
+        PRIMARY KEY(`giveawayId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayParticipant"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayParticipant` (
+        `userId` VARCHAR(20),
+        `giveawayId` INT UNSIGNED,
+        PRIMARY KEY(`userId`, `giveawayId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayRoleRequirement"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayRoleRequirement` (
+        `roleId` VARCHAR(20),
+        `giveawayId` INT UNSIGNED,
+        PRIMARY KEY(`roleId`, `giveawayId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayVoiceTime"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayVoiceTime` (
+        `giveawayId` INT UNSIGNED,
+        `userId` VARCHAR(20),
+        `voiceMinutes` MEDIUMINT UNSIGNED DEFAULT 0,
+        PRIMARY KEY(`giveawayId`, `userId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayNewMessage"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayNewMessage` (
+        `giveawayId` INT UNSIGNED,
+        `userId` VARCHAR(20),
+        `messages` MEDIUMINT UNSIGNED,
+        PRIMARY KEY(`giveawayId`, `userId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayBlacklistedRole"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayBlacklistedRole` (
+        `roleId` VARCHAR(20) PRIMARY KEY,
+        `guildId` VARCHAR(20),
+        PRIMARY KEY(`userId`, `guildId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayBlacklistedUser"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayBlacklistedUser` (
+        `userId` VARCHAR(20),
+        `guildId` VARCHAR(20),
+        PRIMARY KEY(`userId`, `guildId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "giveawayChannelMessages"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `giveawayChannelMessages` (
+        `giveawayId` INT UNSIGNED,
+        `channelId` VARCHAR(20),
+        `userId` VARCHAR(20),
+        `amount` MEDIUMINT UNSIGNED DEFAULT 0,
+        PRIMARY KEY(`giveawayId`, `channelId`, `userId`)
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -856,3 +992,337 @@ async def update_user_xp(guild_id: str, user_id: str, xp: int):
     query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = %s"
     params = (guild_id, user_id, xp, xp)
     await execute_action(pool, query, params)
+
+async def add_giveaway(
+    guild_id: str,
+    title: str,
+    description: str,
+    winners: int,
+    with_button: bool,
+    channel_id: str,
+    custom_name: Optional[str],
+    sponsor: Optional[str],
+    price: Optional[str],
+    message: Optional[str],
+    endtime: datetime,
+    starttime: Optional[datetime],
+    new_message_requirement: Optional[int],
+    day_requirement: Optional[int],
+    channel_requirements: Dict[str, int],
+    role_requirement: List[str],
+    voice_requirement: Optional[int],
+):
+    query = """
+    INSERT INTO giveaway (
+        guildId, title, description, winners, withButton, customName, sponsor, price, message, 
+        endtime, starttime, newMessageRequirement, dayRequirement, voiceRequirement, channelId
+    )
+    VALUES (
+        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+    )
+
+    """
+    params = (
+        guild_id,
+        title,
+        description,
+        winners,
+        with_button,
+        custom_name,
+        sponsor,
+        price,
+        message,
+        endtime,
+        starttime,
+        new_message_requirement,
+        day_requirement,
+        voice_requirement,
+        channel_id,
+    )
+    giveawayId = await execute_insert_and_get_id(pool, query, params)
+
+    query = """
+    INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount)
+    VALUES (%s, %s, %s)
+    """
+    try:
+        for channel_id, amount in channel_requirements.items():
+            params = (giveawayId, channel_id, amount)
+            await execute_action(pool, query, params)
+    except:
+        pass
+    query = """
+    INSERT INTO giveawayRoleRequirement (roleId, giveawayId)
+    VALUES (%s, %s)
+    """
+    for role_id in role_requirement:
+        params = (role_id, giveawayId)
+        await execute_action(pool, query, params)
+
+    return giveawayId
+
+
+async def set_giveaway_message_id(giveaway_id: int, message_id: int):
+    query = "UPDATE giveaway SET messageId = %s WHERE giveawayId = %s"
+    params = (message_id, giveaway_id)
+    await execute_action(pool, query, params)
+
+
+async def get_giveaway(giveaway_id: int):
+    query = "SELECT * FROM giveaway WHERE giveawayId = %s"
+    params = (giveaway_id,)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+
+async def get_giveaway_channel_requirements(giveaway_id: int):
+    query = (
+        "SELECT channelId, amount FROM giveawayChannelRequirement WHERE giveawayId = %s"
+    )
+    params = (giveaway_id,)
+    result = await execute_query(pool, query, params)
+    return result
+
+
+async def get_giveaway_role_requirements(giveaway_id: int):
+    query = "SELECT roleId FROM giveawayRoleRequirement WHERE giveawayId = %s"
+    params = (giveaway_id,)
+    result = await execute_query(pool, query, params)
+    return [row[0] for row in result]
+
+
+async def set_giveaway_started(giveaway_id: int):
+    query = "UPDATE giveaway SET started = 1 WHERE giveawayId = %s"
+    params = (giveaway_id,)
+    await execute_action(pool, query, params)
+
+
+async def set_giveaway_ended(giveaway_id: int):
+    query = "UPDATE giveaway SET ended = 1 WHERE giveawayId = %s"
+    params = (giveaway_id,)
+    await execute_action(pool, query, params)
+
+
+async def delete_old_giveaways():
+    query = "DELETE FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK"
+    await execute_action(pool, query)
+
+
+async def get_giveaway_participants(giveaway_id: int):
+    query = "SELECT userId FROM giveawayParticipant WHERE giveawayId = %s"
+    params = (giveaway_id,)
+    result = await execute_query(pool, query, params)
+    return [row[0] for row in result]
+
+
+async def get_new_messages(giveaway_id: int, user_id: str):
+    query = (
+        "SELECT messages FROM giveawayNewMessage WHERE giveawayId = %s AND userId = %s"
+    )
+    params = (giveaway_id, user_id)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else None
+
+
+async def get_new_messages_channel(giveaway_id: int, channel_id: str, user_id: str):
+    query = "SELECT messages FROM giveawayChannelMessages WHERE giveawayId = %s AND channelId = %s AND userId = %s"
+    params = (giveaway_id, channel_id, user_id)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else None
+
+
+async def get_voice_time(giveaway_id: int, user_id: str):
+    query = "SELECT voiceMinutes FROM giveawayVoiceTime WHERE giveawayId = %s AND userId = %s"
+    params = (giveaway_id, user_id)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else None
+
+
+async def get_blacklisted_roles(guild_id: str):
+    query = (
+        "SELECT roleId, reason, expire FROM giveawayBlacklistedRole WHERE guildId = %s"
+    )
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result
+
+
+async def check_if_user_blacklisted(guild_id: str, user_id: str):
+    query = "SELECT * FROM giveawayBlacklistedUser WHERE guildId = %s AND userId = %s"
+    params = (guild_id, user_id)
+    result = await execute_query(pool, query, params)
+    return len(result) > 0
+
+
+async def check_if_giveaway_participant(giveaway_id: int, user_id: str):
+    query = "SELECT * FROM giveawayParticipant WHERE giveawayId = %s AND userId = %s"
+    params = (giveaway_id, user_id)
+    result = await execute_query(pool, query, params)
+    return len(result) > 0
+
+
+async def remove_giveaway_participant(giveaway_id: int, user_id: str):
+    query = "DELETE FROM giveawayParticipant WHERE giveawayId = %s AND userId = %s"
+    params = (giveaway_id, user_id)
+    await execute_action(pool, query, params)
+
+async def add_giveaway_participant(giveaway_id: int, user_id: str):
+    query = "INSERT INTO giveawayParticipant (userId, giveawayId) VALUES (%s, %s)"
+    params = (user_id, giveaway_id)
+    await execute_action(pool, query, params)
+
+
+async def get_send_ready_giveaways():
+    query = "SELECT giveawayId FROM giveaway WHERE started = 0 AND starttime < NOW()"
+    result = await execute_query(pool, query)
+    return result
+
+
+async def add_giveaway_voice_minutes_if_needed(user_id, guild_id):
+    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND voiceRequirement IS NOT NULL"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    for giveaway_id in result:
+        query = "INSERT INTO giveawayVoiceTime (giveawayId, userId, voiceMinutes) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE voiceMinutes = voiceMinutes + 1"
+        params = (giveaway_id, user_id)
+        await execute_action(pool, query, params)
+
+
+async def add_giveaway_new_message_if_needed(user_id, guild_id):
+    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND newMessageRequirement IS NOT NULL"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    for giveaway_id in result:
+        query = "INSERT INTO giveawayNewMessage (giveawayId, userId, messages) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE messages = messages + 1"
+        params = (giveaway_id, user_id)
+        await execute_action(pool, query, params)
+
+
+async def add_giveaway_new_message_channel_if_needed(user_id, guild_id, channel_id):
+    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND newMessageRequirement IS NOT NULL"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    for giveaway_id in result:
+        query = "INSERT INTO giveawayChannelMessages (giveawayId, channelId, userId, amount) VALUES (%s, %s, %s, 0) ON DUPLICATE KEY UPDATE amount = amount + 1"
+        params = (giveaway_id, channel_id, user_id)
+        await execute_action(pool, query, params)
+
+
+async def get_end_ready_giveaways():
+    query = "SELECT giveawayId FROM giveaway WHERE ended = 0 AND endtime < NOW() AND started = 1 AND messageId <> 'pending'"
+    result = await execute_query(pool, query)
+    return result
+
+async def add_giveaway_blacklisted_user(guild_id: str, user_id: str):
+    query = "INSERT INTO giveawayBlacklistedUser (guildId, userId) VALUES (%s, %s)"
+    params = (guild_id, user_id)
+    await execute_action(pool, query, params)
+
+async def add_giveaway_blacklisted_role(guild_id: str, role_id: str):
+    query = "INSERT INTO giveawayBlacklistedRole (guildId, roleId) VALUES (%s, %s)"
+    params = (guild_id, role_id)
+    await execute_action(pool, query, params)
+
+async def remove_giveaway_blacklisted_user(guild_id: str, user_id: str):
+    query = "DELETE FROM giveawayBlacklistedUser WHERE guildId = %s AND userId = %s"
+    params = (guild_id, user_id)
+    await execute_action(pool, query, params)
+
+async def remove_giveaway_blacklisted_role(guild_id: str, role_id: str):
+    query = "DELETE FROM giveawayBlacklistedRole WHERE guildId = %s AND roleId = %s"
+    params = (guild_id, role_id)
+    await execute_action(pool, query, params)
+
+async def get_giveaway_blacklisted_users(guild_id: str):
+    query = "SELECT userId, reason, expire FROM giveawayBlacklistedUser WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result
+
+async def get_giveaway_blacklisted_roles(guild_id: str):
+    query = "SELECT roleId, reason, expire FROM giveawayBlacklistedRole WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result
+
+async def delete_giveaway(giveaway_id: int):
+    query = "DELETE FROM giveaway WHERE giveawayId = %s"
+    params = (giveaway_id,)
+    await execute_action(pool, query, params)
+
+async def set_giveaway_endtime(giveaway_id: int, endtime: datetime):
+    query = "UPDATE giveaway SET endtime = %s WHERE giveawayId = %s"
+    params = (endtime, giveaway_id)
+    await execute_action(pool, query, params)
+
+async def update_giveaway(
+    giveaway_id: int,
+    guild_id: str,
+    title: str,
+    description: str,
+    winners: int,
+    with_button: bool,
+    custom_name: Optional[str],
+    sponsor: Optional[str],
+    price: Optional[str],
+    message: Optional[str],
+    endtime: datetime,
+    starttime: Optional[datetime],
+    new_message_requirement: Optional[int],
+    day_requirement: Optional[int],
+    channel_requirements: Dict[str, int],
+    role_requirement: List[str],
+    voice_requirement: Optional[int],
+    channel_id: str,
+):
+    query = """
+    UPDATE giveaway SET
+        guildId = %s,
+        title = %s,
+        description = %s,
+        winners = %s,
+        withButton = %s,
+        customName = %s,
+        sponsor = %s,
+        price = %s,
+        message = %s,
+        endtime = %s,
+        starttime = %s,
+        newMessageRequirement = %s,
+        dayRequirement = %s,
+        voiceRequirement = %s,
+        channelId = %s
+    WHERE giveawayId = %s
+    """
+    params = (
+        guild_id,
+        title,
+        description,
+        winners,
+        with_button,
+        custom_name,
+        sponsor,
+        price,
+        message,
+        endtime,
+        starttime,
+        new_message_requirement,
+        day_requirement,
+        voice_requirement,
+        channel_id,
+        giveaway_id
+    )
+    await execute_action(pool, query, params)
+
+    await execute_action(pool, "DELETE FROM giveawayChannelRequirement WHERE giveawayId = %s", (giveaway_id,))
+    if channel_requirements is not None and len(channel_requirements) > 0 and channel_requirements != {}:
+        for channel_id, amount in channel_requirements.items():
+            query = "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)"
+            params = (giveaway_id, channel_id, amount)
+            await execute_action(pool, query, params)
+
+    await execute_action(pool, "DELETE FROM giveawayRoleRequirement WHERE giveawayId = %s", (giveaway_id,))
+    for role_id in role_requirement:
+        query = "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)"
+        params = (role_id, giveaway_id)
+        await execute_action(pool, query, params)
