@@ -140,6 +140,7 @@ async def create_tables():
         "  `xp` INT UNSIGNED DEFAULT 0,"
         "  `customBackground` VARCHAR(255) DEFAULT NULL,"
         "  `last_xp_gain` DATETIME DEFAULT NOW(),"
+        "  `last_voice_xp_gain` DATETIME DEFAULT NOW(),"
         "  PRIMARY KEY(`user_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
@@ -1004,6 +1005,30 @@ async def update_user_xp(guild_id: str, user_id: str, xp: int, respect_cooldown 
                 WHEN TIMESTAMPDIFF(SECOND, last_xp_gain, NOW()) >= GREATEST(1, (SELECT textCooldown FROM levelConfig WHERE guild_id = %s))
                 THEN NOW()
                 ELSE last_xp_gain
+            END;
+        """
+        params = (guild_id, user_id, xp, guild_id, xp, guild_id)
+        await execute_action(pool, query, params)
+    else:
+        query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s"
+        params = (guild_id, user_id, xp, xp)
+        await execute_action(pool, query, params)
+
+async def update_user_xp_from_voice(guild_id: str, user_id: str, xp: int, respect_cooldown = False):
+    if respect_cooldown:
+        query = """
+        INSERT INTO level (guild_id, user_id, xp, last_voice_xp_gain)
+        VALUES (%s, %s, %s, NOW())
+        ON DUPLICATE KEY UPDATE
+            xp = CASE
+                WHEN TIMESTAMPDIFF(SECOND, last_voice_xp_gain, NOW()) >= GREATEST(5, (SELECT voiceCooldown FROM levelConfig WHERE guild_id = %s))
+                THEN xp + %s
+                ELSE xp
+            END,
+            last_voice_xp_gain = CASE
+                WHEN TIMESTAMPDIFF(SECOND, last_voice_xp_gain, NOW()) >= GREATEST(5, (SELECT voiceCooldown FROM levelConfig WHERE guild_id = %s))
+                THEN NOW()
+                ELSE last_voice_xp_gain
             END;
         """
         params = (guild_id, user_id, xp, guild_id, xp, guild_id)
