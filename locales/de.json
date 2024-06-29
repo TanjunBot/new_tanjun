@@ -1376,6 +1376,20 @@
             }
         },
         "giveaway": {
+            "remove_blacklist_role": {
+                "notBlacklisted": {
+                    "title": "Rolle nicht auf der Blacklist",
+                    "description": "Die Rolle ist nicht auf der Blacklist."
+                },
+                "success": {
+                    "title": "Rolle von der Blacklist entfernt",
+                    "description": "Die Rolle wurde erfolgreich von der Blacklist entfernt."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Server verwalten', um Rollen von der Blacklist zu entfernen."
+                }
+            },
             "add_blacklist_role": {
                 "alreadyBlacklisted": {
                     "title": "Rolle bereits auf der Blacklist",

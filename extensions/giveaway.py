@@ -6,6 +6,7 @@ from localizer import tanjunLocalizer
 
 from commands.giveaway.start import start_giveaway
 from commands.giveaway.add_blacklist_role import add_blacklist_role
+from commands.giveaway.remove_blacklist_role import remove_blacklist_role
 
 class BlacklistCommands(discord.app_commands.Group):
     @commands.command(
@@ -34,6 +35,36 @@ class BlacklistCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await add_blacklist_role(
+            commandInfo=commandInfo,
+            role=role,
+        )
+
+    @commands.command(
+        name=app_commands.locale_str("giveaway_blacklist_remove_role_name"),
+        description=app_commands.locale_str("giveaway_blacklist_remove_role_description"),
+    )
+    @commands.describe(
+        role=app_commands.locale_str("giveaway_blacklist_remove_role_role_description"),
+    )
+    async def remove_role(
+        self,
+        ctx: discord.Interaction,
+        role: discord.Role,
+    ):
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await ctx.response.defer()
+        await remove_blacklist_role(
             commandInfo=commandInfo,
             role=role,
         )
@@ -85,6 +116,10 @@ class GiveawayCog(commands.Cog):
         giveaway_commands = GiveawayCommands(
             name="giveaway", description="Giveaway Commands"
         )
+        blacklistCmds = BlacklistCommands(
+            name="blacklist", description="Blacklist Commands"
+        )
+        giveaway_commands.add_command(blacklistCmds)
         self.bot.tree.add_command(giveaway_commands)
 
 
