@@ -199,6 +199,53 @@ async def sendGiveaway(giveawayid, client):
     await set_giveaway_message_id(giveawayid, message.id)
     await set_giveaway_started(giveawayid)
 
+async def updateGiveawayEmbed(giveawayid, client):
+    giveawayInformation = await get_giveaway(giveawayid)
+
+    if not giveawayInformation:
+        return
+
+    guildId = giveawayInformation[1]
+
+    guild = client.get_guild(int(guildId))
+
+    if not guild:
+        return
+
+    locale = guild.locale if hasattr(guild, "locale") else "en_US"
+
+    role_requirements = await get_giveaway_role_requirements(giveawayid)
+
+    channel_requirements = await get_giveaway_channel_requirements(giveawayid)
+
+    giveawayData = {
+        "title": giveawayInformation[2],
+        "description": giveawayInformation[3],
+        "winners": giveawayInformation[4],
+        "with_button": giveawayInformation[5],
+        "custom_name": giveawayInformation[6],
+        "sponsor": giveawayInformation[7],
+        "price": giveawayInformation[8],
+        "message": giveawayInformation[9],
+        "end_time": giveawayInformation[10],
+        "start_time": giveawayInformation[11],
+        "new_message_requirement": giveawayInformation[14],
+        "day_requirement": giveawayInformation[15],
+        "role_requirement": role_requirements,
+        "voice_requirement": giveawayInformation[16],
+        "channel_requirements": channel_requirements,
+    }
+
+    embed = await generateGiveawayEmbed(giveawayData, locale)
+
+    channel = guild.get_channel(int(giveawayInformation[18]))
+
+    if not channel:
+        return
+
+    message = await channel.fetch_message(int(giveawayInformation[19]))
+
+    await message.edit(embed=embed)
 
 async def add_giveaway_participant(giveawayid, userid, client):
     giveawayInformation = await get_giveaway(giveawayid)

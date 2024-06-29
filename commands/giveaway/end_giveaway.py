@@ -1,8 +1,9 @@
 import utility
 import discord
 from localizer import tanjunLocalizer
-from api import get_giveaway, delete_giveaway
-from giveaway.utility import endGiveaway
+from api import get_giveaway, delete_giveaway, set_giveaway_endtime
+from commands.giveaway.utility import endGiveaway, updateGiveawayEmbed
+import datetime
 
 async def end_giveaway(
         commandInfo: utility.commandInfo,
@@ -12,11 +13,11 @@ async def end_giveaway(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.error.missingPermission.title",
+                "commands.giveaway.end_giveaway_command.error.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.error.missingPermission.description",
+                "commands.giveaway.end_giveaway_command.error.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -27,11 +28,11 @@ async def end_giveaway(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.error.notFound.title",
+                "commands.giveaway.end_giveaway_command.error.notFound.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.error.notFound.description",
+                "commands.giveaway.end_giveaway_command.error.notFound.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -41,11 +42,11 @@ async def end_giveaway(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.error.notFound.title",
+                "commands.giveaway.end_giveaway_command.error.notFound.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.error.notFound.description",
+                "commands.giveaway.end_giveaway_command.error.notFound.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -55,11 +56,11 @@ async def end_giveaway(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.error.alreadyEnded.title",
+                "commands.giveaway.end_giveaway_command.error.alreadyEnded.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.error.alreadyEnded.description",
+                "commands.giveaway.end_giveaway_command.error.alreadyEnded.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -70,27 +71,26 @@ async def end_giveaway(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.deleted.title",
+                "commands.giveaway.end_giveaway_command.deleted.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.giveaway.end_giveaway.deleted.description",
+                "commands.giveaway.end_giveaway_command.deleted.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
-    
 
-    await endGiveaway(giveawayId)
+    await endGiveaway(giveawayId, commandInfo.client)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.giveaway.end_giveaway.success.title",
+            "commands.giveaway.end_giveaway_command.success.title",
         ),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.giveaway.end_giveaway.success.description",
+            "commands.giveaway.end_giveaway_command.success.description",
         ),
     )
 

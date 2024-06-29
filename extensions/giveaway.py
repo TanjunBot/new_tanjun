@@ -200,12 +200,12 @@ class GiveawayCommands(discord.app_commands.Group):
         description=app_commands.locale_str("giveaway_end_description"),
     )
     @app_commands.describe(
-        giveawayId=app_commands.locale_str("giveaway_end_params_giveawayId_description"),
+        giveawayid=app_commands.locale_str("giveaway_end_params_giveawayid_description"),
     )
     async def end(
         self,
         ctx: discord.Interaction,
-        giveawayId: int,
+        giveawayid: int,
     ):
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -222,7 +222,7 @@ class GiveawayCommands(discord.app_commands.Group):
         await ctx.response.defer()
         await end_giveaway(
             commandInfo=commandInfo,
-            giveawayId=giveawayId,
+            giveawayId=giveawayid,
         )
 
 

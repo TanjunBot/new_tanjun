@@ -1249,3 +1249,8 @@ async def delete_giveaway(giveaway_id: int):
     query = "DELETE FROM giveaway WHERE giveawayId = %s"
     params = (giveaway_id,)
     await execute_action(pool, query, params)
+
+async def set_giveaway_endtime(giveaway_id: int, endtime: datetime):
+    query = "UPDATE giveaway SET endtime = %s WHERE giveawayId = %s"
+    params = (endtime, giveaway_id)
+    await execute_action(pool, query, params)
