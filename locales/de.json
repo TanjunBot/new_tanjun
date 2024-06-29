@@ -902,6 +902,7 @@
             }
         },
         "level": {
+            "defaultLevelUpMessage": "Herzlichen Glückwunsch, {user}! Du bist jetzt Level {level}!",
             "givexp": {
                 "error": {
                     "no_permission": {
