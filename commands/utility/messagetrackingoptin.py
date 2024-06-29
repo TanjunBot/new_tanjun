@@ -4,7 +4,7 @@ from api import check_if_opted_out, opt_in, opt_out
 
 
 async def optIn(commandInfo: commandInfo):
-    if not check_if_opted_out(commandInfo.user.id):
+    if not await check_if_opted_out(commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.utility.messagetrackingoptin.error.title"
@@ -17,7 +17,7 @@ async def optIn(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
-    opt_in(commandInfo.user.id)
+    await opt_in(commandInfo.user.id)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.utility.messagetrackingoptin.success.title"

@@ -133,7 +133,6 @@ async def plot_function_command(
             x = np.linspace(self.x_min, self.x_max, 10000)
             for func_str, func, name in self.functions:
                 y = func(x)
-                print(func_str)
                 plt.plot(x, y, label=f"{name}(x) = {func_str}", zorder=187)
 
             plt.xlabel(self.x_label)

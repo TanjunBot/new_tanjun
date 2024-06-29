@@ -14,7 +14,7 @@ async def removeCountingChannel(commandInfo: commandInfo, channel: discord.TextC
         return
     
     # Check if the channel is a counting channel
-    current_progress = get_counting_progress(channel.id)
+    current_progress = await get_counting_progress(channel.id)
     if current_progress is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(commandInfo.locale, "minigames.removecountingchannel.error.not_counting_channel.title"),
@@ -24,7 +24,7 @@ async def removeCountingChannel(commandInfo: commandInfo, channel: discord.TextC
         return
 
     # Remove the channel from the counting database
-    clear_counting(channel.id)
+    await clear_counting(channel.id)
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(commandInfo.locale, "minigames.removecountingchannel.success.title"),

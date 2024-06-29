@@ -4,7 +4,7 @@ from localizer import tanjunLocalizer
 from api import set_warn_config, get_warn_config
 
 async def warn_config(commandInfo: utility.commandInfo):
-    config = get_warn_config(commandInfo.guild.id)  # Retrieve current configuration settings
+    config = await get_warn_config(commandInfo.guild.id)  # Retrieve current configuration settings
 
     class WarnConfigModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.commandInfo, config):
@@ -62,7 +62,7 @@ async def warn_config(commandInfo: utility.commandInfo):
                 kick_threshold = int(self.children[3].value)
                 ban_threshold = int(self.children[4].value)
 
-                set_warn_config(
+                await set_warn_config(
                     interaction.guild_id,
                     expiration_days=expiration_days,
                     timeout_threshold=timeout_threshold,
