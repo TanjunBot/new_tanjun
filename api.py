@@ -1346,3 +1346,33 @@ async def update_giveaway(
         query = "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)"
         params = (role_id, giveaway_id)
         await execute_action(pool, query, params)
+
+async def set_text_cooldown(guild_id: str, cooldown: int):
+    query = """
+    INSERT INTO levelConfig (guild_id, textCooldown) 
+    VALUES (%s, %s) 
+    ON DUPLICATE KEY UPDATE textCooldown = VALUES(textCooldown)
+    """
+    params = (guild_id, cooldown)
+    await execute_action(pool, query, params)
+
+async def set_voice_cooldown(guild_id: str, cooldown: int):
+    query = """
+    INSERT INTO levelConfig (guild_id, voiceCooldown) 
+    VALUES (%s, %s) 
+    ON DUPLICATE KEY UPDATE voiceCooldown = VALUES(voiceCooldown)
+    """
+    params = (guild_id, cooldown)
+    await execute_action(pool, query, params)
+
+async def get_text_cooldown(guild_id: str) -> int:
+    query = "SELECT textCooldown FROM levelConfig WHERE guild_id = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else 60  # Default to 60 seconds if not set
+
+async def get_voice_cooldown(guild_id: str) -> int:
+    query = "SELECT voiceCooldown FROM levelConfig WHERE guild_id = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else 60  # Default to 60 seconds if not set

@@ -902,6 +902,54 @@
             }
         },
         "level": {
+            "settextcooldown": {
+                "name": "text_cooldown_setzen",
+                "description": "Setzt die Abklingzeit für Text-XP in Sekunden",
+                "params": {
+                    "cooldown": {
+                        "name": "abklingzeit",
+                        "description": "Die neue Abklingzeit in Sekunden"
+                    }
+                },
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die Text-Abklingzeit zu ändern."
+                    },
+                    "invalid_cooldown": {
+                        "title": "Ungültige Abklingzeit",
+                        "description": "Die Abklingzeit muss eine positive Zahl sein."
+                    }
+                },
+                "success": {
+                    "title": "Text-Abklingzeit gesetzt",
+                    "description": "Die Text-Abklingzeit wurde auf ${cooldown} Sekunden gesetzt."
+                }
+            },
+            "setvoicecooldown": {
+                "name": "sprach_cooldown_setzen",
+                "description": "Setzt die Abklingzeit für Sprach-XP in Sekunden",
+                "params": {
+                    "cooldown": {
+                        "name": "abklingzeit",
+                        "description": "Die neue Abklingzeit in Sekunden"
+                    }
+                },
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst Administratorrechte, um die Sprach-Abklingzeit zu ändern."
+                    },
+                    "invalid_cooldown": {
+                        "title": "Ungültige Abklingzeit",
+                        "description": "Die Abklingzeit muss eine positive Zahl sein."
+                    }
+                },
+                "success": {
+                    "title": "Sprach-Abklingzeit gesetzt",
+                    "description": "Die Sprach-Abklingzeit wurde auf ${cooldown} Sekunden gesetzt."
+                }
+            },
             "defaultLevelUpMessage": "Herzlichen Glückwunsch, {user}! Du bist jetzt Level {level}!",
             "givexp": {
                 "error": {
