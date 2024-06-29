@@ -18,6 +18,7 @@ from api import (
     get_channel_boost,
 )
 from utility import checkIfHasPro, get_level_for_xp
+from localizer import tanjunLocalizer
 
 
 async def addLevelXp(message: discord.Message):
@@ -114,7 +115,7 @@ async def handle_level_up(message: discord.Message, new_level: int):
     if await get_levelup_message_status(guild_id):
         channel = await determine_levelup_channel(message, guild_id)
         await channel.send(
-            format_level_up_message(guild_id, message.author.mention, new_level)
+            await format_level_up_message(guild_id, message.author.mention, new_level, message.guild)
         )
 
     await update_user_roles(message, new_level, guild_id)
@@ -132,9 +133,14 @@ async def determine_levelup_channel(
 
 
 async def format_level_up_message(
-    guild_id: str, user_mention: str, new_level: int
+    guild_id: str, user_mention: str, new_level: int, guild: discord.Guild
 ) -> str:
     level_up_message = await get_levelup_message(guild_id)
+    if not level_up_message:
+        level_up_message = tanjunLocalizer.localize(
+            guild.locale if hasattr(guild, "locale") else "en_US",
+            "commands.level.defaultLevelUpMessage"
+        )
     return level_up_message.replace("{user}", user_mention).replace(
         "{level}", str(new_level)
     )
