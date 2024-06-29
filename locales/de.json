@@ -1376,6 +1376,36 @@
             }
         },
         "giveaway": {
+            "reroll_giveaway": {
+                "error": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Server verwalten', um Gewinnspiele neu auszulosen."
+                    },
+                    "notFound": {
+                        "title": "Gewinnspiel nicht gefunden",
+                        "description": "Das angegebene Gewinnspiel wurde nicht gefunden."
+                    },
+                    "notEnded": {
+                        "title": "Gewinnspiel noch nicht beendet",
+                        "description": "Das Gewinnspiel muss erst beendet sein, bevor es neu ausgelost werden kann."
+                    },
+                    "noParticipants": {
+                        "title": "Keine Teilnehmer",
+                        "description": "Es gibt keine Teilnehmer für dieses Gewinnspiel. Eine Neuauslosung ist nicht möglich."
+                    },
+                    "notAuthorized": "Du bist nicht berechtigt, diese Aktion durchzuführen."
+                },
+                "selectOption": {
+                    "title": "Neuauslosung der Gewinner",
+                    "description": "Möchtest du einen einzelnen Gewinner neu auslosen oder alle Gewinner?"
+                },
+                "success": {
+                    "title": "Gewinner neu ausgelost",
+                    "description": "Folgende Gewinner wurden neu ausgelost:\n${winners}"
+                },
+                "winnerDM": "🎉 **Gewinnspiel-Neuauslosung** 🎉\n\nHerzlichen Glückwunsch! Du wurdest bei einer Neuauslosung als Gewinner für ein Gewinnspiel auf dem Server ${guild_name} ausgewählt! Wende dich ggf. an die Serverleitung, um deinen Preis zu erhalten."
+            },
             "end_giveaway": {
                 "error": {
                     "missingPermission": {

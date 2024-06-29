@@ -11,6 +11,7 @@ from commands.giveaway.add_blacklist_user import add_blacklist_user
 from commands.giveaway.remove_blacklist_user import remove_blacklist_user
 from commands.giveaway.list_blacklist import list_blacklist
 from commands.giveaway.end_giveaway import end_giveaway 
+from commands.giveaway.reroll_giveaway import reroll_giveaway
 
 class BlacklistCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -221,6 +222,36 @@ class GiveawayCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await end_giveaway(
+            commandInfo=commandInfo,
+            giveawayId=giveawayid,
+        )
+
+    @app_commands.command(
+        name=app_commands.locale_str("giveaway_reroll_name"),
+        description=app_commands.locale_str("giveaway_reroll_description"),
+    )
+    @app_commands.describe(
+        giveawayid=app_commands.locale_str("giveaway_reroll_params_giveawayid_description"),
+    )
+    async def reroll(
+        self,
+        ctx: discord.Interaction,
+        giveawayid: int,
+    ):
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await ctx.response.defer()
+        await reroll_giveaway(
             commandInfo=commandInfo,
             giveawayId=giveawayid,
         )
