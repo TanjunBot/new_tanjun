@@ -82,7 +82,6 @@ async def calculate_xp(user) -> int:
 
 
 async def addXpToVoiceUsers(client):
-    print("looping trough: ", voiceUsers)
     for user in voiceUsers:
         if not await get_level_system_status(user.guild.id):
             return

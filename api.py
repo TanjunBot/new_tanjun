@@ -5,6 +5,7 @@ import json
 from typing import Optional, List, Dict
 from utility import get_xp_for_level, get_level_for_xp
 from datetime import datetime
+from discord import Entitlement
 
 pool = None
 
@@ -13,10 +14,12 @@ def set_pool(p):
     global pool
     pool = p
 
+def check_pool_initialized():
+    return pool is not None
 
 async def execute_query(p, query, params=None):
     if not pool:
-        print("tryied to execute action without pool. Pool is not yet initialized. Returning...")
+        print("tryied to execute action without pool. Pool is not yet initialized. Returning...\nquery: ", query)
         return
 
     try:
@@ -32,7 +35,7 @@ async def execute_query(p, query, params=None):
 
 async def execute_action(p, query, params=None):
     if not pool:
-        print("tryied to execute action without pool. Pool is not yet initialized. Returning...")
+        print("tryied to execute action without pool. Pool is not yet initialized. Returning...\nquery: ", query)
         return
     try:
         async with pool.acquire() as conn:
@@ -302,8 +305,7 @@ async def create_tables():
     ] = """
     CREATE TABLE IF NOT EXISTS `giveawayBlacklistedRole` (
         `roleId` VARCHAR(20) PRIMARY KEY,
-        `guildId` VARCHAR(20),
-        PRIMARY KEY(`userId`, `guildId`)
+        `guildId` VARCHAR(20)
     ) ENGINE=InnoDB;
     """
     tables[
@@ -324,6 +326,17 @@ async def create_tables():
         `userId` VARCHAR(20),
         `amount` MEDIUMINT UNSIGNED DEFAULT 0,
         PRIMARY KEY(`giveawayId`, `channelId`, `userId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "aiToken"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `aiToken` (
+        `freeToken` SMALLINT UNSIGNED DEFAULT 500,
+        `plusToken` SMALLINT UNSIGNED DEFAULT 0,
+        `paidToken` INT UNSIGNED DEFAULT 0,
+        `usedToken` INT UNSIGNED DEFAULT 0,
+        `userId` VARCHAR(20) PRIMARY KEY
     ) ENGINE=InnoDB;
     """
 
@@ -1400,3 +1413,82 @@ async def get_voice_cooldown(guild_id: str) -> int:
     params = (guild_id,)
     result = await execute_query(pool, query, params)
     return result[0][0] if result else 60  # Default to 60 seconds if not set
+
+async def useToken(user_id: str, amount: int):
+    query = """
+    BEGIN TRANSACTION;
+
+    -- Use freeToken if available
+    UPDATE aiToken
+    SET freeToken = CASE
+                        WHEN freeToken >= %s THEN freeToken - %s
+                        ELSE freeToken
+                    END,
+        usedToken = CASE
+                        WHEN freeToken >= %s THEN usedToken + %s
+                        ELSE usedToken
+                    END
+    WHERE userId = %s AND freeToken >= %s;
+
+    -- If not enough freeToken, use plusToken
+    UPDATE aiToken
+    SET plusToken = CASE
+                        WHEN freeToken < %s AND plusToken >= %s THEN plusToken - %s
+                        ELSE plusToken
+                    END,
+        usedToken = CASE
+                        WHEN freeToken < %s AND plusToken >= %s THEN usedToken + %s
+                        ELSE usedToken
+                    END
+    WHERE userId = %s AND freeToken < %s AND plusToken >= %s;
+
+    -- If not enough freeToken and plusToken, use paidToken
+    UPDATE aiToken
+    SET paidToken = CASE
+                        WHEN freeToken < %s AND plusToken < %s AND paidToken >= %s THEN paidToken - %s
+                        ELSE paidToken
+                    END,
+        usedToken = CASE
+                        WHEN freeToken < %s AND plusToken < %s AND paidToken >= %s THEN usedToken + %s
+                        ELSE usedToken
+                    END
+    WHERE userId = %s AND freeToken < %s AND plusToken < %s AND paidToken >= %s;
+
+    COMMIT;
+    """
+    params = (amount, amount, amount, amount, user_id, amount,
+              amount, amount, amount, amount, amount, amount, user_id, amount, amount,
+              amount, amount, amount, amount, user_id, amount, amount, amount, amount,
+              amount)
+
+    await execute_action(pool, query, params)
+
+async def addToken(user_id: str, amount: int):
+    query = """
+    INSERT INTO aiToken (userId, paidToken) 
+    VALUES (%s, %s)
+    ON DUPLICATE KEY
+    UPDATE paidToken = paidToken + %s
+    """
+    params = (user_id, amount, amount)
+    await execute_action(pool, query, params)
+
+async def getToken(user_id: str):
+    query = "SELECT freeToken, plusToken, paidToken FROM aiToken WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def resetToken(entitlements: Optional[List[Entitlement]] = None):
+    query = "UPDATE aiToken SET freeToken = 500"
+    await execute_action(pool, query)
+    if entitlements is not None:
+        for entitlement in entitlements:
+            query = "UPDATE aiToken SET plusToken = 2000 WHERE userId = %s"
+            params = (entitlement.userId)
+            await execute_action(pool, query, params)
+
+async def consumePaidToken(user_id: str, amount: int):
+    query = "UPDATE aiToken SET paidToken = paidToken + %s WHERE userId = %s"
+    params = (amount, user_id)
+    await execute_action(pool, query, params)
