@@ -984,6 +984,16 @@ def missingLocalization(locale: str):
         labels=[label],
     )
 
+def addFeedback(content, author):
+    g = Github(GithubAuthToken)
+    repo = g.get_repo("TanjunBot/new-Tanjun")
+    label = repo.get_label("Feedback")
+    repo.create_issue(
+        title="Feedback",
+        body=f"# {author} has given Feedback:\n{content}",
+        labels=[label],
+    )
+
 
 LEVEL_SCALINGS = {
     "easy": lambda level: 100 * level,
