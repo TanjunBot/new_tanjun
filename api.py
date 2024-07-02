@@ -1006,19 +1006,19 @@ async def get_user_xp(guild_id: str, user_id: str):
 async def update_user_xp(guild_id: str, user_id: str, xp: int, respect_cooldown = False):
     if respect_cooldown:
         query = """
-        INSERT INTO level (guild_id, user_id, xp, last_xp_gain)
-        VALUES (%s, %s, %s, NOW())
-        ON DUPLICATE KEY UPDATE
-            xp = CASE
-                WHEN TIMESTAMPDIFF(SECOND, last_xp_gain, NOW()) >= GREATEST(1, (SELECT textCooldown FROM levelConfig WHERE guild_id = %s))
-                THEN xp + %s
-                ELSE xp
-            END,
-            last_xp_gain = CASE
-                WHEN TIMESTAMPDIFF(SECOND, last_xp_gain, NOW()) >= GREATEST(1, (SELECT textCooldown FROM levelConfig WHERE guild_id = %s))
-                THEN NOW()
-                ELSE last_xp_gain
-            END;
+    INSERT INTO level (guild_id, user_id, xp, last_xp_gain)
+    VALUES (%s, %s, %s, NOW())
+    ON DUPLICATE KEY UPDATE
+        xp = CASE
+            WHEN TIMESTAMPDIFF(SECOND, last_xp_gain, NOW()) >= GREATEST(1, COALESCE((SELECT textCooldown FROM levelConfig WHERE guild_id = %s), 1))
+            THEN xp + %s
+            ELSE xp
+        END,
+        last_xp_gain = CASE
+            WHEN TIMESTAMPDIFF(SECOND, last_xp_gain, NOW()) >= GREATEST(1, COALESCE((SELECT textCooldown FROM levelConfig WHERE guild_id = %s), 1))
+            THEN NOW()
+            ELSE last_xp_gain
+        END;
         """
         params = (guild_id, user_id, xp, guild_id, xp, guild_id)
         await execute_action(pool, query, params)
