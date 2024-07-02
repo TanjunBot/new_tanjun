@@ -2,7 +2,6 @@ aiohttp==3.9.3
 aiomysql==0.2.0
 asyncmy==0.2.9
 discord.py==2.4.0
-imgurpython==1.1.7
 matplotlib==3.8.4
 num2words==0.5.13
 numpy==2.0.0

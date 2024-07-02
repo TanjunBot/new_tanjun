@@ -2,7 +2,6 @@ import discord
 from utility import commandInfo, tanjunEmbed, checkIfhasPlus
 from localizer import tanjunLocalizer
 from api import get_user_level_info, set_custom_background
-from imgurpython import ImgurClient
 import config
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageSequence
 import io
