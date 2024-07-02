@@ -141,7 +141,9 @@ async def get_image_or_gif_frames(url):
     return frames, duration
 
 def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
+    print(xy)
     x1, y1, x2, y2 = xy
+    print("x1, y1, x2, y2", x1, y1, x2, y2)
     draw.rectangle([x1 + radius, y1, x2 - radius, y2], fill=fill)
     draw.rectangle([x1, y1 + radius, x2, y2 - radius], fill=fill)
     draw.pieslice([x1, y1, x1 + 2 * radius, y1 + 2 * radius], 180, 270, fill=fill)
@@ -212,13 +214,16 @@ def process_image(background_frames, avatar_frames, user, user_info):
         bar_width = 700
         bar_height = 30
         xp_percentage = user_info['xp'] / user_info['xp_needed']
+        print("xp_percentage: ", xp_percentage)
+        print("[250, 200, 250 + bar_width, 200 + bar_height]", [250, 200, 250 + bar_width, 200 + bar_height])
         filled_width = int(bar_width * xp_percentage)
         radius = bar_height // 4  # Slightly rounded corners
 
         # Background bar
         draw_rounded_rectangle(draw, [250, 200, 250 + bar_width, 200 + bar_height], radius, fill=(50, 50, 50, 200), outline=(255, 255, 255, 255), width=2)
         # Filled bar
-        draw_rounded_rectangle(draw, [250, 200, 250 + filled_width, 200 + bar_height], radius, fill=(127, 219, 255, 200), outline=(255, 255, 255, 200), width=2)
+        if xp_percentage >= 0.02:
+            draw_rounded_rectangle(draw, [250, 200, 250 + filled_width, 200 + bar_height], radius, fill=(127, 219, 255, 200), outline=(255, 255, 255, 200), width=2)
 
         output = Image.new('RGBA', (200, 200), (0, 0, 0, 0))
         output.paste(avatar_frame, (0, 0), mask)
