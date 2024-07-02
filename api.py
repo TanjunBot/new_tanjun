@@ -466,8 +466,8 @@ async def opt_in(user_id):
 
 
 async def set_counting_progress(channel_id, progress, guild_id):
-    query = "INSERT INTO counting (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress)"
-    params = (channel_id, progress, guild_id)
+    query = "INSERT INTO counting (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
+    params = (channel_id, progress, guild_id, progress)
     await execute_action(pool, query, params)
 
 
@@ -505,8 +505,8 @@ async def clear_counting(channel_id):
 
 
 async def set_counting_challenge_progress(channel_id, progress, guild_id):
-    query = "INSERT INTO counting_challenge (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress)"
-    params = (channel_id, progress, guild_id)
+    query = "INSERT INTO counting_challenge (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
+    params = (channel_id, progress, guild_id, progress)
     await execute_action(pool, query, params)
 
 
