@@ -770,7 +770,7 @@ async def add_level_role(guild_id: str, role_id: str, level: int):
     await execute_action(pool, query, params)
 
 
-async def get_level_roles(guild_id: str) -> dict[int, str]:
+async def get_level_roles(guild_id: str) -> Dict[int, str]:
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(pool, query, params)
