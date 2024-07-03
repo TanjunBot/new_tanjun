@@ -933,9 +933,10 @@ async def getGif(query: str, amount: int = 1, limit: int = 10):
         if r is None:
             return []
 
+        print(r)
         random.shuffle(r["results"])
 
-        return [r["results"][i]["itemurl"] for i in range(amount)]
+        return [r["results"][i]["media_formats"]["mediumgif"]["url"] for i in range(amount)]
 
 
 def get_highest_exponent(polynomial):

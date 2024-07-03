@@ -879,6 +879,36 @@
                 }
             }
         },
+        "fun": {
+            "hug": {
+                "title": "<a:hug:1096036111425478666>${user} umarmt ${member}<a:hug:1096036111425478666>"
+            },
+            "kiss": {
+                "title": "<a:kiss:1096036196595007590>${user} küsst ${member}<a:kiss:1096036196595007590>"
+            },
+            "boop": {
+                "title": "<:boop:1096037035611009064>${user} macht BOOP bei ${member}<:boop:1096037035611009064>"
+            },
+            "wave": {
+                "title": "<a:wave:1096036655246360607>${user} winkt ${member} zu<a:wave:1096036655246360607>"
+            },
+            "slap": {
+                "title": "<:Grr:1258190616270082098>${user} schlägt ${member}<:Grr:1258190616270082098>"
+            },
+            "laugh": {
+                "title": "<:hahaha:1098128293657583657>${user} lacht ${member} aus<:hahaha:1098128293657583657>"
+            },
+            "pat": {
+                "title": "<a:pat:1096036467601575998>${user} pattet ${member}<a:pat:1096036467601575998>"
+            },
+            "poke": {
+                "title": "<a:poke:1096037473269846016>${user} piekst ${member}<a:poke:1096037473269846016>"
+            },
+            "tickle": {
+                "title": "<a:onethingaboutme:1254166259554062366>${user} kitzelt ${member}<a:onethingaboutme:1254166259554062366>"
+            }
+            
+        },
         "utility": {
             "messagetrackingoptout": {
                 "success": {
@@ -2077,6 +2107,136 @@
                 "roles": {
                     "name": "rollen",
                     "description": "Die Rollen, die das Emoji verwenden dürfen (optional, leer lassen für alle Rollen)"
+                }
+            }
+        }
+    },
+    "fun": {
+        "name": "Fun",
+        "description": "Funbefehle sind lustig",
+        "hug": {
+            "name": "hug",
+            "description": "Umarme jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du umarmen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "kiss": {
+            "name": "kiss",
+            "description": "Küsse jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du küssen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "boop": {
+            "name": "boop",
+            "description": "Boope jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du boopen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "wave": {
+            "name": "wave",
+            "description": "Winke jemandem zu",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, dem du zuwinken möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "laugh": {
+            "name": "laugh",
+            "description": "Lache jemanden aus",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du auslachen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "pat": {
+            "name": "pat",
+            "description": "Patte jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du patten möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "poke": {
+            "name": "poke",
+            "description": "Piekse jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du pieksen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "slap": {
+            "name": "slap",
+            "description": "Schlage jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du schlagen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "tickle": {
+            "name": "tickle",
+            "description": "Kitzle jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du kitzeln möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
                 }
             }
         }
