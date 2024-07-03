@@ -38,10 +38,10 @@ async def counting(message: discord.Message):
         await message.add_reaction("💀")
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                locale, "minigames.counting.error.failed.title"
+                locale, "minigames.counting.failed.title"
             ),
             description=tanjunLocalizer.localize(
-                locale, "minigames.counting.error.failed.description"
+                locale, "minigames.counting.failed.description"
             ),
         )
         await message.reply(embed=embed)
@@ -52,10 +52,10 @@ async def counting(message: discord.Message):
         await message.add_reaction("💀")
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                locale, "minigames.counting.error.failed.title"
+                locale, "minigames.counting.failed.title"
             ),
             description=tanjunLocalizer.localize(
-                locale, "minigames.counting.error.failed.description"
+                locale, "minigames.counting.failed.description"
             ),
         )
         await message.reply(embed=embed)
@@ -68,10 +68,10 @@ async def counting(message: discord.Message):
         await message.add_reaction("💀")
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                locale, "minigames.counting.error.failed.title"
+                locale, "minigames.counting.failed.title"
             ),
             description=tanjunLocalizer.localize(
-                locale, "minigames.counting.error.failed.description"
+                locale, "minigames.counting.failed.description"
             ),
         )
         await message.reply(embed=embed)
@@ -84,10 +84,10 @@ async def counting(message: discord.Message):
         await message.add_reaction("💀")
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                locale, "minigames.counting.error.failed_double.title"
+                locale, "minigames.counting.failed_double.title"
             ),
             description=tanjunLocalizer.localize(
-                locale, "minigames.counting.error.failed_double.description"
+                locale, "minigames.counting.failed_double.description"
             ),
         )
         await message.reply(embed=embed)

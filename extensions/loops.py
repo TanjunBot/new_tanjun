@@ -9,6 +9,11 @@ from loops.giveaway import checkVoiceUsers
 from loops.giveaway import endGiveaways
 from minigames.addLevelXp import clearNotifiedUsers
 from loops.level import addXpToVoiceUsers
+from ai.refillToken import refillAiToken
+
+import asyncio
+
+from api import check_pool_initialized
 
 class LoopCog(commands.Cog):
     def __init__(self, bot):
@@ -49,13 +54,25 @@ class LoopCog(commands.Cog):
         except:
             raise
 
+    @tasks.loop(seconds=60)
+    async def refillAiTokenLoop(self):
+        try:
+            await refillAiToken(self.bot)
+        except:
+            raise
+
     @commands.Cog.listener()
     async def on_ready(self):  
-        self.sendSendReadyGiveaways.start()
-        self.endGiveawaysLoop.start()
-        self.checkVoiceUsers.start()
-        self.clearNotifiedUsersLoop.start()
-        self.addVoiceUserLoop.start()
+        while not check_pool_initialized():
+            await asyncio.sleep(1)
+                    
+            self.sendSendReadyGiveaways.start()
+            self.endGiveawaysLoop.start()
+            self.checkVoiceUsers.start()
+            self.clearNotifiedUsersLoop.start()
+            self.addVoiceUserLoop.start()
+            self.refillAiTokenLoop.start()
+
 
 
 async def setup(bot):

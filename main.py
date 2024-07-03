@@ -72,6 +72,7 @@ async def on_ready():
         activity=discord.Game(name=config.activity.format(version=config.version))
     )
     pool = await create_pool()
+    print(pool)
     api.set_pool(pool)
     await api.create_tables()
     print("Bot is running!")
