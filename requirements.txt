@@ -1,6 +1,6 @@
 aiohttp==3.9.5
 discord.py==2.4.0
-matplotlib==3.9.0
+matplotlib==3.9.1
 mysql-connector-python==8.4.0
 num2words==0.5.13
 numpy==2.0.0
