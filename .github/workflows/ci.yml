@@ -25,8 +25,7 @@ jobs:
           pip install flake8
       - name: Lint with flake8
         run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=20 --max-line-length=127 --statistics
+          python run_flake8.py
 
   notify_discord:
     runs-on: ubuntu-latest
