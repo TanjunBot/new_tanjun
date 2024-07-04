@@ -470,7 +470,7 @@ async def add_giveaway_participant(giveawayid, userid, client):
             return
 
         for channel, count in channel_requirements.items():
-            messages = await get_new_messages_channel(guildId, userid, channel, count)
+            messages = await get_new_messages_channel(guildId, channel, userid)
 
             if not messages:
                 embed = tanjunEmbed(
