@@ -107,6 +107,8 @@ async def perform_reroll(commandInfo: utility.commandInfo, giveawayId: int, rero
     for _ in range(min(reroll_count, len(participants))):
         if not participants:
             break
+        #Nobody cares enough if the winner is choosen using a real(er) rng.
+        #nosec: B311
         winner = random.choice(participants)
         new_winners.append(winner)
         participants.remove(winner)

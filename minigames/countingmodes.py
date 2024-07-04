@@ -215,30 +215,42 @@ def get_correct_next_number(mode: int, number: int):
 
 def get_goal(mode: int):
     if mode == 1:
+        #nosec: B311
         return random.randint(20, 100)
     if mode == 2:
+        #nosec: B311
         return random.randint(-100, -20)
     if mode == 3:
+        #nosec: B311
         return random.randint(0, 80)
     if mode == 4:
+        #nosec: B311
         return primes[random.randint(0, len(primes) - 1)]
     if mode == 5:
+        #nosec: B311
         number = random.randint(20, 100)
         return number if number % 2 == 0 else number + 1
     if mode == 6:
+        #nosec: B311
         number = random.randint(20, 100)
         return number if number % 2 != 0 else number + 1
     if mode == 7:
+        #nosec: B311
         return fibonacci[random.randint(0, len(fibonacci) - 1)]
     if mode == 8:
+        #nosec: B311
         return 2 ** random.randint(1, 20)
     if mode == 9:
+        #nosec: B311
         return 3 ** random.randint(1, 10)
     if mode == 10:
+        #nosec: B311
         return random.randint(20, 100) * 100
     if mode == 11:
+        #nosec: B311
         return int(str(bin(random.randint(20, 100)))[2:])
     if mode == 12:
+        #nosec: B311
         return number_to_romeal(random.randint(20, 100))
 
 
@@ -307,6 +319,7 @@ async def counting(message: discord.Message):
     
     if not content:
         await message.add_reaction("💀")
+        #nosec: B311
         newMode = random.randint(1, 12)
         goal = get_goal(newMode)
         embed = tanjunEmbed(
@@ -346,6 +359,7 @@ async def counting(message: discord.Message):
         number = int(content) if mode != 12 else content
     except:
         await message.add_reaction("💀")
+        #nosec: B311
         newMode = random.randint(1, 12)
         goal = get_goal(newMode)
         embed = tanjunEmbed(
@@ -383,6 +397,7 @@ async def counting(message: discord.Message):
 
     if number != correctNumber:
         await message.add_reaction("💀")
+        #nosec: B311
         newMode = random.randint(1, 12)
         goal = get_goal(newMode)
         embed = tanjunEmbed(
@@ -422,6 +437,7 @@ async def counting(message: discord.Message):
 
     if last_counter_id == str(message.author.id):
         await message.add_reaction("💀")
+        #nosec: B311
         newMode = random.randint(1, 12)
         goal = get_goal(newMode)
         embed = tanjunEmbed(
@@ -464,6 +480,7 @@ async def counting(message: discord.Message):
 
     if number == goal:
         await message.add_reaction("🎉")
+        #nosec: B311
         newMode = random.randint(1, 12)
         new_goal = get_goal(newMode)
         if mode == 12:
@@ -512,6 +529,7 @@ async def counting(message: discord.Message):
         guild_id=message.guild.id,
         goal=goal,
     )
+    #nosec: B311
     if random.randint(1, 100) == 1:
         correctNumber = get_correct_next_number(mode, correctNumber)
         await message.channel.send(correctNumber)

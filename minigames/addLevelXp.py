@@ -70,6 +70,7 @@ async def fetch_xp_details(message: discord.Message, guild_id: str):
 
 
 async def calculate_xp(message: discord.Message, guild_id: str) -> int:
+    #nosec: B311
     base_xp = random.randint(1, 3)
     user_boost = await get_user_boost(guild_id, str(message.author.id))
     if not user_boost:

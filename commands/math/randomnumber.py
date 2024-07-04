@@ -38,6 +38,7 @@ async def random_number_command(commandInfo: utility.commandInfo, min: int, max:
             ),
         )
     else:
+        #nosec: B311
         numbers = [random.randint(min, max) for _ in range(amount)]
         numbers_str = ", ".join(map(str, numbers))
         

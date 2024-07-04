@@ -609,6 +609,7 @@ async def endGiveaway(giveaway_id, client):
         winners = participants
     else:
         for i in range(giveawayInformation[4]):
+            #nosec: B311
             winner = random.choice(participants)
             participants.remove(winner)
             winners.append(winner)
