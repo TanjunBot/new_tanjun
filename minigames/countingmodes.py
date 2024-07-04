@@ -1,3 +1,5 @@
+# noqa: E501
+
 from api import (
     get_counting_mode_progress,
     check_if_opted_out,

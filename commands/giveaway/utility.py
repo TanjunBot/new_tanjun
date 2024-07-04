@@ -1,3 +1,4 @@
+# noqa: E501
 from utility import tanjunEmbed, relativeTimeStrToDate
 from localizer import tanjunLocalizer
 from api import (

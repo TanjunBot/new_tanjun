@@ -1,3 +1,5 @@
+# noqa: E501
+
 from api import (
     get_counting_challenge_progress,
     get_last_challenge_counter_id,

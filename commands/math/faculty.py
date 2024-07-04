@@ -6,6 +6,7 @@ async def faculty_command(commandInfo: utility.commandInfo, number: int):
     try:
         number = int(number)
     except ValueError:
+        # noqa: E501
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.math.faculty.error.title"
@@ -17,6 +18,7 @@ async def faculty_command(commandInfo: utility.commandInfo, number: int):
         await commandInfo.reply(embed=embed)
         return
     if number < 0:
+         # noqa: E501
          embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.math.faculty.error.title"
@@ -26,6 +28,7 @@ async def faculty_command(commandInfo: utility.commandInfo, number: int):
             )
          )
     elif number > 100:
+         # noqa: E501
          embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.math.faculty.error.title"
@@ -35,6 +38,7 @@ async def faculty_command(commandInfo: utility.commandInfo, number: int):
             )
          )
     elif number == 0:
+        # noqa: E501
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.math.faculty.success.title"
