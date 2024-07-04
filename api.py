@@ -504,9 +504,9 @@ async def clear_counting(channel_id):
     await execute_action(pool, query, params)
 
 
-async def set_counting_challenge_progress(channel_id, progress, guild_id):
-    query = "INSERT INTO counting_challenge (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
-    params = (channel_id, progress, guild_id, progress)
+async def set_counting_challenge_progress(channel_id, progress):
+    query = "INSERT INTO counting_challenge (channel_id, progress) VALUES (%s, %s) ON DUPLICATE KEY UPDATE progress = %s"
+    params = (channel_id, progress, progress)
     await execute_action(pool, query, params)
 
 
