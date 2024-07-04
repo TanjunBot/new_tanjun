@@ -1,3 +1,5 @@
+# noqa: E501
+
 from api import (
     get_counting_challenge_progress,
     get_last_challenge_counter_id,
@@ -95,6 +97,7 @@ async def counting(message: discord.Message):
         return
 
     await increase_counting_challenge_progress(message.channel.id, message.author.id)
+    #nosec: B311
     if random.randint(1, 100) == 1:
         await message.channel.send(progress + 2)
         await increase_counting_challenge_progress(message.channel.id, "me")

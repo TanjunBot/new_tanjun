@@ -19,7 +19,6 @@ def check_pool_initialized():
 
 async def execute_query(p, query, params=None):
     if not pool:
-        print("tryied to execute action without pool. Pool is not yet initialized. Returning...\nquery: ", query)
         return
 
     try:
@@ -35,7 +34,6 @@ async def execute_query(p, query, params=None):
 
 async def execute_action(p, query, params=None):
     if not pool:
-        print("tryied to execute action without pool. Pool is not yet initialized. Returning...\nquery: ", query)
         return
     try:
         async with pool.acquire() as conn:
@@ -50,7 +48,6 @@ async def execute_action(p, query, params=None):
 
 async def execute_insert_and_get_id(p, query, params=None):
     if not pool:
-        print("tryied to execute action without pool. Pool is not yet initialized. Returning...")
         return
     try:
         async with pool.acquire() as conn:
@@ -504,9 +501,9 @@ async def clear_counting(channel_id):
     await execute_action(pool, query, params)
 
 
-async def set_counting_challenge_progress(channel_id, progress, guild_id):
-    query = "INSERT INTO counting_challenge (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
-    params = (channel_id, progress, guild_id, progress)
+async def set_counting_challenge_progress(channel_id, progress):
+    query = "INSERT INTO counting_challenge (channel_id, progress) VALUES (%s, %s) ON DUPLICATE KEY UPDATE progress = %s"
+    params = (channel_id, progress, progress)
     await execute_action(pool, query, params)
 
 
@@ -547,13 +544,6 @@ async def set_counting_mode(channel_id, progress, mode, guild_id):
     query = "INSERT INTO counting_modes (channel_id, progress, mode, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress), mode = VALUES(mode)"
     params = (channel_id, progress, mode, guild_id)
     await execute_action(pool, query, params)
-
-
-async def get_counting_mode_mode(channel_id):
-    query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
-    params = (channel_id,)
-    result = await execute_query(pool, query, params)
-    return result[0] if result else None
 
 
 async def get_counting_mode_progress(channel_id):
@@ -598,13 +588,6 @@ async def set_counting_mode_progress(
         counter_id,
     )
     await execute_action(pool, query, params)
-
-
-async def get_counting_mode_mode(channel_id):
-    query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
-    params = (channel_id,)
-    result = await execute_query(pool, query, params)
-    return result[0][0] if result else None
 
 
 async def get_count_mode_goal(channel_id):

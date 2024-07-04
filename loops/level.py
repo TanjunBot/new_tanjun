@@ -40,6 +40,7 @@ async def fetch_xp_details(user):
 
 
 async def calculate_xp(user) -> int:
+    #nosec: B311
     base_xp = random.randint(1, 3)
     user_boost = await get_user_boost(user.guild.id, str(user.id))
     if not user_boost:

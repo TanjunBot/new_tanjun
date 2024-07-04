@@ -45,6 +45,7 @@ async def counting(message: discord.Message):
         return
 
     await increase_counting_progress(message.channel.id, message.author.id)
+    #nosec: B311
     if random.randint(1, 100) == 1:
         await message.channel.send(progress + 2)
         await increase_counting_progress(message.channel.id, "me")

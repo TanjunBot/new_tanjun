@@ -8,6 +8,7 @@ async def random_number_command(commandInfo: utility.commandInfo, min: int, max:
         max = int(max)
         amount = int(amount)
     except ValueError:
+        # noqa: E501
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.math.randomnumber.error.title"
@@ -20,6 +21,7 @@ async def random_number_command(commandInfo: utility.commandInfo, min: int, max:
         return
 
     if max < min:
+        # noqa: E501
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.math.randomnumber.error.title"
@@ -29,6 +31,7 @@ async def random_number_command(commandInfo: utility.commandInfo, min: int, max:
             ),
         )
     elif amount < 1:
+        # noqa: E501
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.math.randomnumber.error.title"
@@ -38,6 +41,7 @@ async def random_number_command(commandInfo: utility.commandInfo, min: int, max:
             ),
         )
     else:
+        #nosec: B311
         numbers = [random.randint(min, max) for _ in range(amount)]
         numbers_str = ", ".join(map(str, numbers))
         

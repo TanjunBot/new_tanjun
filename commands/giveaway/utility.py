@@ -1,3 +1,4 @@
+# noqa: E501
 from utility import tanjunEmbed, relativeTimeStrToDate
 from localizer import tanjunLocalizer
 from api import (
@@ -470,7 +471,7 @@ async def add_giveaway_participant(giveawayid, userid, client):
             return
 
         for channel, count in channel_requirements.items():
-            messages = await get_new_messages_channel(guildId, userid, channel, count)
+            messages = await get_new_messages_channel(guildId, channel, userid)
 
             if not messages:
                 embed = tanjunEmbed(
@@ -609,6 +610,7 @@ async def endGiveaway(giveaway_id, client):
         winners = participants
     else:
         for i in range(giveawayInformation[4]):
+            #nosec: B311
             winner = random.choice(participants)
             participants.remove(winner)
             winners.append(winner)
