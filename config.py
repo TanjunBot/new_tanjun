@@ -1,18 +1,18 @@
 import os
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
-load_dotenv()
+config = dotenv_values(".env")
 
-version = "0.4.5"
-token = os.getenv("token")
+version = "0.4.6"
+token = config["token"]
 applicationId = "832297321793323028"
 adminIds = [766350321638309958, 471036610561966111]
 activity = "Tanjun {version}"
-database_ip = os.getenv("database_ip")
-database_password = os.getenv("database_password")
-database_user = os.getenv("database_user")
+database_ip = config["database_ip"]
+database_password = config["database_password"]
+database_user = config["database_user"]
 database_schema = "tanjun"
-tenorAPIKey = os.getenv("tenorAPIKey")
-tenorCKey = os.getenv("tenorCKey")
-GithubAuthToken = os.getenv("GithubAuthToken")
-ImgBBApiKey = os.getenv("ImgBBApiKey")
+tenorAPIKey = config["tenorAPIKey"]
+tenorCKey = config["tenorCKey"]
+GithubAuthToken = config["GithubAuthToken"]
+ImgBBApiKey = config["ImgBBApiKey"]
