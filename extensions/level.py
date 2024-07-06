@@ -57,6 +57,7 @@ from commands.level.level_set_xp_cooldown import (
     set_text_cooldown_command,
     set_voice_cooldown_command,
 )
+from commands.level.leaderboard import leaderboard
 
 class BlacklistCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -830,6 +831,27 @@ class levelCommands(discord.app_commands.Group):
         )
         await set_background_command(commandInfo, image)
 
+    @app_commands.command(
+        name=app_commands.locale_str("level_leaderboard_name"),
+        description=app_commands.locale_str("level_leaderboard_description"),
+    )
+    @app_commands.describe(
+        page=app_commands.locale_str("level_leaderboard_params_page_description"),
+    )
+    async def leaderboard(self, ctx, page: int = 1):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=await ctx.original_response(),
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await leaderboard(commandInfo, page)
 
 class levelCog(commands.Cog):
 

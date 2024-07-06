@@ -1475,3 +1475,9 @@ async def consumePaidToken(user_id: str, amount: int):
     query = "UPDATE aiToken SET paidToken = paidToken + %s WHERE userId = %s"
     params = (amount, user_id)
     await execute_action(pool, query, params)
+
+async def getLevelLeaderboard(guild_id: str):
+    query = "SELECT user_id, xp FROM level WHERE guild_id = %s ORDER BY xp DESC"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result
