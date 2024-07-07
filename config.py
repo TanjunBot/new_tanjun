@@ -1,7 +1,7 @@
 import os
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
-load_dotenv()
+config = dotenv_values(".env")
 
 version = "0.4.8"
 token = config["token"]
