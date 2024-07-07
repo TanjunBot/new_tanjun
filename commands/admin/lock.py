@@ -39,7 +39,7 @@ async def lock_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
 
         # Save current overwrites and update them
         for role, overwrites in channel.overwrites.items():
-            if isinstance(role, discord.Role) and role != channel.guild.default_role:
+            if isinstance(role, discord.Role):
                 overwrite_dict = {k: v for k, v in overwrites._values.items() if v is not None}
                 await save_channel_overwrites(channel.id, role.id, overwrite_dict)
                 
