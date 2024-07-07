@@ -1,0 +1,34 @@
+import subprocess
+import platform
+from config import database_ip, database_password, database_user
+from discord import Client, TextChannel, File
+
+def dump_database_schema(user, password, database, output_file):
+    if platform.system() != 'Linux':
+        print("This script only runs on Linux.")
+        return
+    
+    dump_command = [
+        'mysqldump',
+        '-u', user,
+        f'--password={password}',
+        '--no-data',
+        database
+    ]
+    
+    try:
+        with open(output_file, 'w') as file:
+            subprocess.run(dump_command, stdout=file, check=True)
+        print(f"Schema dumped to {output_file} successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred while dumping the database schema: {e}")
+    except FileNotFoundError:
+        print("mysqldump command not found. Make sure MySQL is installed and mysqldump is in your PATH.")
+
+async def create_database_backup(client: Client):
+    dump_database_schema(database_user, database_password, database_ip, 'backup.sql')
+
+    channel: TextChannel = client.get_channel(1259573137108893766)  
+
+    if channel is not None:
+        await channel.send(file=File('backup.sql'))
