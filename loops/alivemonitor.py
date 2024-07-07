@@ -4,7 +4,7 @@ import asyncio
 
 async def ping_server(client: Client):
     print("Sending alive message to server...")
-    url = "http://185.234.72.88:25500"
+    url = "https://botstatus-api.tanjun.bot"
     payload = {
         "id": str(client.user.id),
         "status": "alive",
