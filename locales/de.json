@@ -902,6 +902,14 @@
             }
         },
         "level": {
+            "leaderboard": {
+                "no_data": "Es sind keine Daten verfügbar.",
+                "previous": "Vorherige Seite",
+                "next": "Nächste Seite",
+                "title": "XP Rangliste",
+                "data": "Level ${level} - ${xp_from_last_level}/${xp_till_next_level} XP",
+                "page": "Seite ${current_page} von ${total_pages}"
+            },
             "settextcooldown": {
                 "name": "text_cooldown_setzen",
                 "description": "Setzt die Abklingzeit für Text-XP in Sekunden",
@@ -2687,6 +2695,16 @@
         }
     },
     "level": {
+        "leaderboard": {
+            "name": "rangliste",
+            "description": "Zeigt die Rangliste für den Server an",
+            "params": {
+                "page": {
+                    "name": "seite",
+                    "description": "Die Seite der Rangliste, die angezeigt werden soll (Standard: 1)"
+                }
+            }
+        },
         "setvoicecooldown": {
             "name": "voice_cooldown_setzen",
             "description": "Setzt den Cooldown für das Sammeln von Erfahrungspunkten in Sprachkanälen",
