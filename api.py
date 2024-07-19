@@ -336,6 +336,21 @@ async def create_tables():
         `userId` VARCHAR(20) PRIMARY KEY
     ) ENGINE=InnoDB;
     """
+    tables[
+        "aiSituations"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `aiSituations` (
+        `userId` VARCHAR(20) PRIMARY KEY,
+        `situation` VARCHAR(4000) DEFAULT NULL,
+        `name` VARCHAR(15) DEFAULT NULL,
+        `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        `temperature` DECIMAL(3, 2) DEFAULT 1,
+        `top_p` DECIMAL(3, 2) DEFAULT 1,
+        `frequency_penalty` DECIMAL(3, 2) DEFAULT 0,
+        `presence_penalty` DECIMAL(3, 2) DEFAULT 0,
+        `unlocked` TINYINT(1) DEFAULT 0
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -446,7 +461,6 @@ async def check_if_opted_out(user_id):
     query = "SELECT * FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     result = await execute_query(pool, query, params)
-    print(result)
     return len(result) > 0
 
 
@@ -1460,7 +1474,9 @@ async def getToken(user_id: str):
     query = "SELECT freeToken, plusToken, paidToken FROM aiToken WHERE userId = %s"
     params = (user_id,)
     result = await execute_query(pool, query, params)
-    return result[0] if result else None
+    token = result[0] if result else None
+    tokenSum = token[0] + token[1] + token[2] if token else 0
+    return tokenSum
 
 async def resetToken(entitlements: Optional[List[Entitlement]] = None):
     query = "UPDATE aiToken SET freeToken = 500"
@@ -1481,3 +1497,38 @@ async def getLevelLeaderboard(guild_id: str):
     params = (guild_id,)
     result = await execute_query(pool, query, params)
     return result
+
+async def addCustomSituation(user_id: str, situation: str, name: str, temperature: float, top_p: float, frequency_penalty: float, presence_penalty: float):
+    query = """
+    INSERT INTO aiSituations (userId, situation, name, temperature, top_p, frequency_penalty, presence_penalty)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    params = (user_id, situation, name, temperature, top_p, frequency_penalty, presence_penalty)
+    return await execute_action(pool, query, params)
+
+async def getCustomSituations():
+    query = "SELECT name FROM aiSituations"
+    result = await execute_query(pool, query)
+    return result[0] if result else []
+
+async def getCustomSituation(name: str):
+    query = "SELECT * FROM aiSituations WHERE name = %s"
+    params = (name,)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def getCustomSituationFromUser(user_id: str):
+    query = "SELECT * FROM aiSituations WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def deleteCustomSituation(user_id: str):
+    query = "DELETE FROM aiSituations WHERE userId = %s"
+    params = (user_id,)
+    await execute_action(pool, query, params)
+
+async def unlockCustomSituation(user_id: str):
+    query = "UPDATE aiSituations SET unlocked = 1 WHERE userId = %s"
+    params = (user_id,)
+    await execute_action(pool, query, params)

@@ -3,7 +3,7 @@ import platform
 from config import database_ip, database_password, database_user
 from discord import Client, TextChannel, File
 
-def dump_database_schema(user, password, database, output_file):
+def dump_database_schema(user, password, output_file):
     if platform.system() != 'Linux':
         print("This script only runs on Linux.")
         return
@@ -12,8 +12,7 @@ def dump_database_schema(user, password, database, output_file):
         'mysqldump',
         '-u', user,
         f'--password={password}',
-        '--no-data',
-        database
+        "--all-databases",
     ]
     
     try:
@@ -26,7 +25,7 @@ def dump_database_schema(user, password, database, output_file):
         print("mysqldump command not found. Make sure MySQL is installed and mysqldump is in your PATH.")
 
 async def create_database_backup(client: Client):
-    dump_database_schema(database_user, database_password, database_ip, 'backup.sql')
+    dump_database_schema(database_user, database_password, 'backup.sql')
 
     channel: TextChannel = client.get_channel(1259573137108893766)  
 

@@ -15,6 +15,8 @@ from commands.giveaway.utility import add_giveaway_participant, addMessageToGive
 from loops.level import handleVoiceChange as handleLevelVoiceChange
 from loops.giveaway import handleVoiceChange
 
+from commands.ai.add_custom_situation_button_handler import approve_custom_situation, deny_custom_situation
+
 class ListenerCog(commands.Cog):
 
     def __init__(self, bot):
@@ -37,6 +39,10 @@ class ListenerCog(commands.Cog):
                 embed = await add_giveaway_participant(giveawayid=giveaway_id, userid=interaction.user.id, client=self.bot)
                 if embed:
                     await interaction.response.send_message(embed=embed, ephemeral=True)
+            elif interaction.data["custom_id"].startswith("ai_add_custom_situation_approve"):
+                await approve_custom_situation(interaction)
+            elif interaction.data["custom_id"].startswith("ai_add_custom_situation_deny"):
+                await deny_custom_situation(interaction)
         except:
             pass
 
