@@ -302,7 +302,8 @@ async def create_tables():
     ] = """
     CREATE TABLE IF NOT EXISTS `giveawayBlacklistedRole` (
         `roleId` VARCHAR(20) PRIMARY KEY,
-        `guildId` VARCHAR(20)
+        `guildId` VARCHAR(20),
+        `reason` VARCHAR(255) DEFAULT NULL
     ) ENGINE=InnoDB;
     """
     tables[
@@ -311,6 +312,7 @@ async def create_tables():
     CREATE TABLE IF NOT EXISTS `giveawayBlacklistedUser` (
         `userId` VARCHAR(20),
         `guildId` VARCHAR(20),
+        `reason` VARCHAR(255) DEFAULT NULL,
         PRIMARY KEY(`userId`, `guildId`)
     ) ENGINE=InnoDB;
     """
@@ -1179,7 +1181,7 @@ async def get_new_messages(giveaway_id: int, user_id: str):
 
 
 async def get_new_messages_channel(giveaway_id: int, channel_id: str, user_id: str):
-    query = "SELECT messages FROM giveawayChannelMessages WHERE giveawayId = %s AND channelId = %s AND userId = %s"
+    query = "SELECT amount FROM giveawayChannelMessages WHERE giveawayId = %s AND channelId = %s AND userId = %s"
     params = (giveaway_id, channel_id, user_id)
     result = await execute_query(pool, query, params)
     return result[0][0] if result else None
@@ -1194,7 +1196,7 @@ async def get_voice_time(giveaway_id: int, user_id: str):
 
 async def get_blacklisted_roles(guild_id: str):
     query = (
-        "SELECT roleId, reason, expire FROM giveawayBlacklistedRole WHERE guildId = %s"
+        "SELECT roleId, reason FROM giveawayBlacklistedRole WHERE guildId = %s"
     )
     params = (guild_id,)
     result = await execute_query(pool, query, params)
@@ -1288,13 +1290,13 @@ async def remove_giveaway_blacklisted_role(guild_id: str, role_id: str):
     await execute_action(pool, query, params)
 
 async def get_giveaway_blacklisted_users(guild_id: str):
-    query = "SELECT userId, reason, expire FROM giveawayBlacklistedUser WHERE guildId = %s"
+    query = "SELECT userId, reason FROM giveawayBlacklistedUser WHERE guildId = %s"
     params = (guild_id,)
     result = await execute_query(pool, query, params)
     return result
 
 async def get_giveaway_blacklisted_roles(guild_id: str):
-    query = "SELECT roleId, reason, expire FROM giveawayBlacklistedRole WHERE guildId = %s"
+    query = "SELECT roleId, reason FROM giveawayBlacklistedRole WHERE guildId = %s"
     params = (guild_id,)
     result = await execute_query(pool, query, params)
     return result

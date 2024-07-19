@@ -63,6 +63,7 @@ async def generateGiveawayEmbed(giveawayInformation, locale):
                 minutes=giveawayInformation["voice_requirement"],
             )
         )
+
     if giveawayInformation["channel_requirements"]:
         channels_desc = ", ".join(
             f"<#{k}>: {v}"
@@ -420,7 +421,7 @@ async def add_giveaway_participant(giveawayid, userid, client):
         if not member:
             return
 
-        voice_time = await get_voice_time(guildId, userid)
+        voice_time = await get_voice_time(giveawayid, userid)
 
         if not voice_time:
             voice_time = 0
@@ -448,7 +449,7 @@ async def add_giveaway_participant(giveawayid, userid, client):
         if not member:
             return
 
-        if not any(role in role_requirements for role in member.roles):
+        if not any(role.id in [int(roleid) for roleid in role_requirements] for role in member.roles):
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     guild.locale if hasattr(guild, "locale") else "en_US",
@@ -470,10 +471,10 @@ async def add_giveaway_participant(giveawayid, userid, client):
         if not member:
             return
 
-        for channel, count in channel_requirements.items():
-            messages = await get_new_messages_channel(guildId, channel, userid)
+        for channel, count in channel_requirements:
+            messages = await get_new_messages_channel(giveawayid, channel, userid)
 
-            if not messages:
+            if not messages or messages < count:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
                         guild.locale if hasattr(guild, "locale") else "en_US",
@@ -481,7 +482,7 @@ async def add_giveaway_participant(giveawayid, userid, client):
                     ),
                     description=tanjunLocalizer.localize(
                         guild.locale if hasattr(guild, "locale") else "en_US",
-                        "commands.giveaway.giveawayEmbed.participation_failed.channel_requirement",
+                        "commands.giveaway.giveawayEmbed.participation_failed.channel_requirements",
                         channel=channel,
                         required_messages=count,
                         missing_messages=count,

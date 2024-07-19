@@ -1601,7 +1601,7 @@
                     "day_requirement": "Du bist leider nicht lang genug auf dem Server. Das Gewinnspiel setzt vorraus, dass du `${required_days}` Tage vor erstellung des Gewinnspiels auf dem Server warst. Leider darfst du nicht mit machen 😔",
                     "role_requirement": "Du hast leider nicht die benötigten Rollen, um am Gewinnspiel teilzunehmen. Du benötigst folgende Rollen: ${roles}",
                     "voice_requirement": "Du hast leider nicht lange genug in Sprachkanälen verbracht. Das Gewinnspiel setzt vorraus, dass du `${required_minutes}` Minuten in Sprachkanälen verbracht hast. Dir fehlen noch `${missing_minutes}` Minuten.",
-                    "channel_requirements": "Du hast leider nicht genügend Nachrichten in den benötigten Kanälen geschrieben. Das Gewinnspiel setzt vorraus, dass du `${required_messages}` Nachrichten in den folgenden Kanal ${channel}  geschrieben hast. Dir fehlen also noch `${missing_messages}` Nachrichten.",
+                    "channel_requirements": "Du hast leider nicht genügend Nachrichten in den benötigten Kanälen geschrieben. Das Gewinnspiel setzt vorraus, dass du `${required_messages}` Nachrichten in den Kanal <#${channel}>  geschrieben hast. Dir fehlen also noch `${missing_messages}` Nachrichten.",
                     "blacklisted": "Du bist auf der Blacklist und darfst daher nicht am Gewinnspiel teilnehmen.",
                     "blacklisted_role": "Du hast eine Rolle, die auf der Blacklist steht und darfst daher nicht am Gewinnspiel teilnehmen.",
                     "opted_out": "Du hast die Nachrichtenverfolgung deaktiviert. Aus diesem Grund kann der Bot die Anforderungen ggf. nicht richtig überprüfen daher kannst du an dem gewinnspiel nicht teil nehmen."

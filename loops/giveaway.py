@@ -5,11 +5,12 @@ voiceUsers = []
 
 async def sendReadyGiveaways(client):
     ready_giveaways = await get_send_ready_giveaways()
-    if ready_giveaways:    
+    if ready_giveaways:
         for giveaway in ready_giveaways:
             await sendGiveaway(giveawayid=giveaway[0], client=client)
 
 async def checkVoiceUsers(client):
+    print("voiceUsers: ", voiceUsers)
     for user in voiceUsers:
         await add_giveaway_voice_minutes_if_needed(user.id, user.guild.id)
 
