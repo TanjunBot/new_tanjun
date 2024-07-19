@@ -1745,6 +1745,80 @@
                 "loading": "Wird geladen...",
                 "no_permission": "Du hast keine Berechtigung, Gewinnspiele zu starten."
             }
+        },
+        "ai": {
+            "addcustom": {
+                "notplus": {
+                    "title": "Tanjun Plus erforderlich",
+                    "description": "Benutzerdefinierte KI-Persönlichkeit sind nur für Tanjun Plus Nutzer verfügbar. Upgrade auf Tanjun Plus, um diese Funktion zu nutzen."
+                },
+                "shortsituation": {
+                    "title": "Zu kurze Persönlichkeit",
+                    "description": "Die Persönlichkeit muss mindestens 10 Zeichen lang sein."
+                },
+                "shortname": {
+                    "title": "Zu kurzer Name",
+                    "description": "Der Name muss mindestens 3 Zeichen lang sein."
+                },
+                "longsituation": {
+                    "title": "Zu lange Persönlichkeit",
+                    "description": "Die Persönlichkeit darf maximal 4000 Zeichen lang sein."
+                },
+                "longname": {
+                    "title": "Zu langer Name",
+                    "description": "Der Name darf maximal 100 Zeichen lang sein."
+                },
+                "invalidtemperature": {
+                    "title": "Ungültige Temperatur",
+                    "description": "Die Temperatur muss eine Zahl zwischen 0 und 2 sein."
+                },
+                "invalidtop_p": {
+                    "title": "Ungültiger top_p-Wert",
+                    "description": "Der top_p-Wert muss eine Zahl zwischen 0 und 1 sein."
+                },
+                "invalidfrequency_penalty": {
+                    "title": "Ungültiger frequency_penalty-Wert",
+                    "description": "Der frequency_penalty-Wert muss eine Zahl zwischen 0 und 2 sein."
+                },
+                "invalidpresence_penalty": {
+                    "title": "Ungültiger presence_penalty-Wert",
+                    "description": "Der presence_penalty-Wert muss eine Zahl zwischen 0 und 2 sein."
+                },
+                "alreadyexists": {
+                    "title": "Persönlichkeit existiert bereits",
+                    "description": "Du besitzt bereits eine eigene Persönlichkeit. Bitte lösche diese bevor du eine neue erstellst."
+                },
+                "namealreadyexists": {
+                    "title": "Name existiert bereits",
+                    "description": "Eine Persönlichkeit mit diesem Namen existiert bereits."
+                },
+                "success": {
+                    "title": "Persönlichkeit hinzugefügt",
+                    "description": "Die Persönlichkeit ${name} wurde erfolgreich beantragt. Die Persönlichkeit muss, bevor Sie freigeschaltet wird, manuell überprüft werden. Dieser Prozess kann bis zu 3 Werktage beanspruchen. Bitte habe etwas geduld!"
+                }
+            },
+            "deletecustom": {
+                "notfound": {
+                    "title": "Persönlichkeit nicht gefunden",
+                    "description": "Du besitzt keine Persönlichkeit."
+                },
+                "success": {
+                    "title": "Persönlichkeit gelöscht",
+                    "description": "Die Persönlichkeit ${name} wurde erfolgreich gelöscht."
+                }
+            },
+            "approvecustom": {
+                "success": {
+                    "title": "Deine Situation wurde angenommen!",
+                    "description": "Herzlichen Glückwunsch! Deine Situation wurde akzeptiert und kann jetzt benutzt werden!"
+                }
+            },
+            "dencustom": {
+                "success": {
+                    "title": "Deine Situation wurde abgelehnt.",
+                    "description": "Deine Situation wurde abgelehnt. Bitte überarbeite deine Situation und versuche es erneut."
+                }
+            }
         }
     },
     "admin": {
@@ -3174,6 +3248,40 @@
             "list": {
                 "name": "anzeigen",
                 "description": "Zeigt die aktuelle Blacklist für Gewinnspiele an"
+            }
+        }
+    },
+    "ai": {
+        "ask": {
+            "createcustom": {
+                "name": "benutzerdefiniert_erstellen",
+                "description": "Erstellt eine benutzerdefinierte KI",
+                "params": {
+                    "name": {
+                        "name": "name",
+                        "description": "Der Name der benutzerdefinierten KI"
+                    },
+                    "personality": {
+                        "name": "persönlichkeit",
+                        "description": "Die Persönlichkeit der benutzerdefinierten KI"
+                    },
+                    "temperature": {
+                        "name": "temperatur",
+                        "description": "Die Temperatur der benutzerdefinierten KI"
+                    },
+                    "topp": {
+                        "name": "top_p",
+                        "description": "Der Top-P-Wert der benutzerdefinierten KI"
+                    },
+                    "frequencypenalty": {
+                        "name": "frequenz",
+                        "description": "Die frequency penalty der benutzerdefinierten KI"
+                    },
+                    "presencepenalty": {
+                        "name": "presence_penalty",
+                        "description": "Die presence penalty der benutzerdefinierten KI"
+                    }
+                }
             }
         }
     },
