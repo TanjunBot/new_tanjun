@@ -885,10 +885,10 @@ async def get_user_boost(guild_id: str, user_id: str):
 
 
 async def get_user_roles_boosts(guild_id: str, role_ids: List[str]):
-    placeholders = ", ".join(["%s"] * len(role_ids))
-    query = f"SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN ({placeholders})"
-    params = (guild_id,) + tuple(role_ids)
+    query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
+    params = (guild_id, tuple(role_ids))
     result = await execute_query(pool, query, params)
+    return result if result else []
 
 
 async def get_channel_boost(guild_id: str, channel_id: str):
