@@ -623,15 +623,16 @@
                     "preview": "Vorschau",
                     "send": "Senden"
                 },
+                "setDescription": {
+                    "message": "Bitte gib die Beschreibung für das Embed ein.\n-# Dies wird nicht über ein Modal gesendet, damit Emojis und andere Discord Formatierungen verwendet werden können.",
+                    "timeout": "Beschreibungseingabe abgelaufen. Bitte versuche es erneut.",
+                    "descriptionUpdated": "Beschreibung wurde aktualisiert!"
+                },
                 "modals": {
                     "titleModal": {
                         "title": "Embed-Titel festlegen",
                         "label": "Titel",
                         "urlLabel": "Titel-URL (optional)"
-                    },
-                    "descriptionModal": {
-                        "title": "Embed-Beschreibung festlegen",
-                        "label": "Beschreibung"
                     },
                     "fieldModal": {
                         "title": "Embed-Feld hinzufügen",
