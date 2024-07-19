@@ -1478,6 +1478,17 @@ async def getToken(user_id: str):
     tokenSum = token[0] + token[1] + token[2] if token else 0
     return tokenSum
 
+async def getTokenOverview(user_id: str):
+    query = "SELECT freeToken, plusToken, paidToken, usedToken FROM aiToken WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def includeToToken(user_id: str):
+    query = "INSERT INTO aiToken (userId) VALUES (%s)"
+    params = (user_id,)
+    await execute_action(pool, query, params)
+
 async def resetToken(entitlements: Optional[List[Entitlement]] = None):
     query = "UPDATE aiToken SET freeToken = 500"
     await execute_action(pool, query)
@@ -1507,7 +1518,7 @@ async def addCustomSituation(user_id: str, situation: str, name: str, temperatur
     return await execute_action(pool, query, params)
 
 async def getCustomSituations():
-    query = "SELECT name FROM aiSituations"
+    query = "SELECT name FROM aiSituations where unlocked = 1"
     result = await execute_query(pool, query)
     return result[0] if result else []
 

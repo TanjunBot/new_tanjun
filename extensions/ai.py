@@ -1,20 +1,24 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord import app_commands
 import utility
-from localizer import tanjunLocalizer
 from typing import List
-from api import getCustomSituations
 
 from commands.ai.add_custom_situation import add_custom_situation
 from commands.ai.delete_custom_situation import delete_custom_situation
+from commands.ai.ask_gpt import ask_gpt
+from api import getCustomSituations, getCustomSituation
 
 async def aiCustomSituationAutocomplete(
     interaction: discord.Interaction,
     current: str,
 ) -> List[app_commands.Choice[str]]:
     
+    print("Autocomplete triggered with current: ", current)
+    
     situations = await getCustomSituations()
+
+    print("Situations fetched: ", situations)
 
     filtered_situations = [
         situation for situation in situations if current.lower() in situation.lower()
@@ -27,20 +31,20 @@ async def aiCustomSituationAutocomplete(
 
 class CustomSituationCommands(discord.app_commands.Group):
     @app_commands.command(
-        name=app_commands.locale_str("ai_createcustom_name"),
-        description=app_commands.locale_str("ai_createcustom_description"),
+        name="createcustom",
+        description="Create a custom situation"
     )
     @app_commands.describe(
-        name=app_commands.locale_str("ai_createcustom_name"),
-        personality=app_commands.locale_str("ai_createcustom_personality_description"),
-        temperature=app_commands.locale_str("ai_createcustom_temperature_description"),
-        top_p=app_commands.locale_str("ai_createcustom_topp_description"),
-        frequency_penalty=app_commands.locale_str("ai_createcustom_frequencypenalty_description"),
-        presence_penalty=app_commands.locale_str("ai_createcustom_presencepenalty_description"),
+        name="The name of the custom situation",
+        personality="The personality description",
+        temperature="The temperature setting",
+        top_p="The top_p setting",
+        frequency_penalty="The frequency penalty setting",
+        presence_penalty="The presence penalty setting",
     )
     async def add_custom(
         self,
-        ctx: discord.Interaction,
+        interaction: discord.Interaction,
         name: app_commands.Range[str, 3, 15],
         personality: app_commands.Range[str, 10, 4000],
         temperature: app_commands.Range[float, 0, 2] = 1,
@@ -49,18 +53,18 @@ class CustomSituationCommands(discord.app_commands.Group):
         presence_penalty: app_commands.Range[float, 0, 2] = 0,
     ):
         commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
+            user=interaction.user,
+            channel=interaction.channel,
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
-        await ctx.response.defer()
+        await interaction.response.defer()
 
         await add_custom_situation(
             commandInfo=commandInfo,
@@ -73,45 +77,68 @@ class CustomSituationCommands(discord.app_commands.Group):
         )
 
     @app_commands.command(
-        name=app_commands.locale_str("ai_deletecustom_name"),
-        description=app_commands.locale_str("ai_deletecustom_description"),
+        name="deletecustom",
+        description="Delete a custom situation"
     )
     async def delete_custom(
         self,
-        ctx: discord.Interaction,
+        interaction: discord.Interaction,
     ):
         commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
+            user=interaction.user,
+            channel=interaction.channel,
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
-        await ctx.response.defer()
+        await interaction.response.defer()
 
         await delete_custom_situation(
             commandInfo=commandInfo,
         )
 
 class AiCommands(discord.app_commands.Group):
-    ...
+    @app_commands.command(
+        name="askcustom",
+        description="Ask a custom situation"
+    )
+    @app_commands.describe(
+        prompt="The prompt for the custom situation",
+        personality="The personality description",
+    )
+    @app_commands.autocomplete(personality=aiCustomSituationAutocomplete)
+    async def ask_custom_situation(self, interaction: discord.Interaction, prompt: app_commands.Range[str, 1, 1000], personality: str):
+        await interaction.response.defer()
+        commandInfo = utility.commandInfo(
+            user=interaction.user,
+            channel=interaction.channel,
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
+        )
+
+        situation = await getCustomSituation(personality)
+
+        await ask_gpt(commandInfo, name=personality, situation=situation[1], prompt=prompt, temperature=situation[4], top_p=situation[5], frequency_penalty=situation[6], presence_penalty=situation[7])
 
 class AiCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self):  
+    async def on_ready(self):
         aicmds = AiCommands(name="ai", description="✨POGGERS✨")
         aicmds.add_command(CustomSituationCommands(name="custom_situations", description="Create and manage your custom situation"))
         self.bot.tree.add_command(aicmds)
-
-
 
 async def setup(bot):
     await bot.add_cog(AiCog(bot))

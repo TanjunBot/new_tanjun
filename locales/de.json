@@ -1818,6 +1818,20 @@
                     "title": "Deine Situation wurde abgelehnt.",
                     "description": "Deine Situation wurde abgelehnt. Bitte überarbeite deine Situation und versuche es erneut."
                 }
+            },
+            "ask": {
+                "notoken": {
+                    "title": "Nicht genügend Token",
+                    "description": "Du hast nicht genügend Token, um eine Anfrage zu stellen. Du benötigst mindestens 20 Token, um eine Anfrage zu stellen."
+                },
+                "error": {
+                    "title": "Fehler bei der Anfrage",
+                    "description": "Es gab einen Fehler bei der Anfrage. Bitte versuche es später erneut."
+                },
+                "success": {
+                    "title": "Antwort von ${name}",
+                    "footer": "Die Anfrage hat ${cost} Token gekostet. Du hast noch ${token} übrig. (${free} Gratis-Token, ${plus} Plus-Token, ${paid} gekaufte-Token)"
+                }
             }
         }
     },
