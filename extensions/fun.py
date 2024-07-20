@@ -11,7 +11,7 @@ from commands.fun.funcommands import fun_command
 
 class funCommands(discord.app_commands.Group):
     @app_commands.command(
-        name=app_commands.locale_str("fun_hug_title"),
+        name=app_commands.locale_str("fun_hug_name"),
         description=app_commands.locale_str("fun_hug_description"),
     )
     @app_commands.describe(
@@ -37,7 +37,7 @@ class funCommands(discord.app_commands.Group):
 
 
     @app_commands.command(
-        name=app_commands.locale_str("fun_kiss_title"),
+        name=app_commands.locale_str("fun_kiss_name"),
         description=app_commands.locale_str("fun_kiss_description"),
     )
         
@@ -64,7 +64,7 @@ class funCommands(discord.app_commands.Group):
 
     
     @app_commands.command(
-        name=app_commands.locale_str("fun_boop_title"),
+        name=app_commands.locale_str("fun_boop_name"),
         description=app_commands.locale_str("fun_boop_description"),
     )
         
@@ -91,7 +91,7 @@ class funCommands(discord.app_commands.Group):
     
 
     @app_commands.command(
-        name=app_commands.locale_str("fun_wave_title"),
+        name=app_commands.locale_str("fun_wave_name"),
         description=app_commands.locale_str("fun_wave_description"),
     )
         
@@ -118,7 +118,7 @@ class funCommands(discord.app_commands.Group):
     
 
     @app_commands.command(
-        name=app_commands.locale_str("fun_slap_title"),
+        name=app_commands.locale_str("fun_slap_name"),
         description=app_commands.locale_str("fun_slap_description"),
     )
 
@@ -145,7 +145,7 @@ class funCommands(discord.app_commands.Group):
     
 
     @app_commands.command(
-        name=app_commands.locale_str("fun_laugh_title"),
+        name=app_commands.locale_str("fun_laugh_name"),
         description=app_commands.locale_str("fun_laugh_description"),
     )
         
@@ -172,7 +172,7 @@ class funCommands(discord.app_commands.Group):
 
     
     @app_commands.command(
-        name=app_commands.locale_str("fun_tickle_title"),
+        name=app_commands.locale_str("fun_tickle_name"),
         description=app_commands.locale_str("fun_tickle_description"),
     )
         
@@ -199,7 +199,7 @@ class funCommands(discord.app_commands.Group):
     
 
     @app_commands.command(
-        name=app_commands.locale_str("fun_pat_title"),
+        name=app_commands.locale_str("fun_pat_name"),
         description=app_commands.locale_str("fun_pat_description"),
     )
         
@@ -226,7 +226,7 @@ class funCommands(discord.app_commands.Group):
     
 
     @app_commands.command(
-        name=app_commands.locale_str("fun_poke_title"),
+        name=app_commands.locale_str("fun_poke_name"),
         description=app_commands.locale_str("fun_poke_description"),
     )
         

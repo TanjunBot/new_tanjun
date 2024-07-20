@@ -11,4 +11,5 @@ async def fun_command(commandInfo: utility.commandInfo, fun_type: str, member: d
         description=message
     )
     embed.set_image(url=(await utility.getGif(fun_type))[0])
+    embed.set_footer(text="via Tenor")
     await commandInfo.reply(embed=embed)
