@@ -21,7 +21,7 @@ async def aiCustomSituationAutocomplete(
     print("Situations fetched: ", situations)
 
     filtered_situations = [
-        situation for situation in situations if current.lower() in situation.lower()
+        situation[0] for situation in situations if current.lower() in situation[0].lower()
     ]
 
     return [

@@ -1522,7 +1522,7 @@ async def addCustomSituation(user_id: str, situation: str, name: str, temperatur
 async def getCustomSituations():
     query = "SELECT name FROM aiSituations where unlocked = 1"
     result = await execute_query(pool, query)
-    return result[0] if result else []
+    return result if result else []
 
 async def getCustomSituation(name: str):
     query = "SELECT * FROM aiSituations WHERE name = %s"
