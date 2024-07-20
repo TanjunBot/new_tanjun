@@ -19,7 +19,7 @@ class administrationCog(commands.Cog):
 
     @commands.command()
     async def feedback(self, ctx, *, content) -> None:
-        if ctx.author.id not in [689755528947433555, 892113092387942420]:
+        if ctx.author.id not in [689755528947433555, 892113092387942420, 806086469268668437]:
             return
         addFeedback(content, ctx.author.name)
         await ctx.send("Feedback wurde hinzugefügt. Vielen dank!")
