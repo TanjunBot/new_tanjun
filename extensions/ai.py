@@ -165,6 +165,48 @@ class AiCommands(discord.app_commands.Group):
 
         await ask_gpt(commandInfo, name="GPT", situation="", prompt=prompt, temperature=temperature, top_p=top_p, frequency_penalty=frequency_penalty, presence_penalty=presence_penalty)
 
+    @app_commands.command(
+        name="asktanjuwun",
+        description="Awst Tanjuwun something uwu"
+    )
+    @app_commands.describe(
+        prompt="The prompt for the custom situation",
+                temperature="The temperature setting",
+        top_p="The top_p setting",
+        frequency_penalty="The frequency penalty setting",
+        presence_penalty="The presence penalty setting",
+    )
+    async def ask_gpt_command(  
+            self, 
+            interaction: discord.Interaction, 
+            prompt: app_commands.Range[str, 1, 1000],
+            temperature: app_commands.Range[float, 0, 2] = 1,
+            top_p: app_commands.Range[float, 0, 1] = 1,
+            frequency_penalty: app_commands.Range[float, 0, 2] = 0,
+            presence_penalty: app_commands.Range[float, 0, 2] = 0,
+        ):
+        await interaction.response.defer()
+        commandInfo = utility.commandInfo(
+            user=interaction.user,
+            channel=interaction.channel,
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
+        )
+
+        situation = f"""
+        Your name is Tanjuwun. You are the Brother of Tanjun, the Discord Bot. You dont have Friends and watch Anime all day. You constantly use UwU, qwq, owo and talk in Anime uwu language. You also use many Unicode Emoticons. 
+        Answer in the Locale: {interaction.locale}
+        Information about the sener:
+        name: {interaction.user} server: {interaction.guild} channel: {interaction.channel}
+        """
+
+        await ask_gpt(commandInfo, name="tanjuwun", situation=situation, prompt=prompt, temperature=temperature, top_p=top_p, frequency_penalty=frequency_penalty, presence_penalty=presence_penalty)
+
 class AiCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
