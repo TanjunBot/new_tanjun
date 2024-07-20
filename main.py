@@ -54,7 +54,8 @@ async def create_pool():
             user=database_user,
             password=database_password,
             db=database_schema,
-            init_command='SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; SET SESSION query_cache_type = OFF;',
+            maxsize=1,
+            minsize=1,
         )
         return p
     except Exception as e:
@@ -72,6 +73,7 @@ async def on_ready():
         activity=discord.Game(name=config.activity.format(version=config.version))
     )
     pool = await create_pool()
+    print(pool)
     api.set_pool(pool)
     await api.create_tables()
     print("Bot is running!")

@@ -932,7 +932,7 @@ async def getGif(query: str, amount: int = 1, limit: int = 10):
 
         if r is None:
             return []
-
+        #nosec: B311
         random.shuffle(r["results"])
 
         return [r["results"][i]["itemurl"] for i in range(amount)]
@@ -981,6 +981,16 @@ def missingLocalization(locale: str):
     repo.create_issue(
         title="Missing localization",
         body=f"Missing localization for {locale}",
+        labels=[label],
+    )
+
+def addFeedback(content, author):
+    g = Github(GithubAuthToken)
+    repo = g.get_repo("TanjunBot/new-Tanjun")
+    label = repo.get_label("Feedback")
+    repo.create_issue(
+        title="Feedback",
+        body=f"# {author} has given Feedback:\n{content}",
         labels=[label],
     )
 

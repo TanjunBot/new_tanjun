@@ -566,18 +566,15 @@ class GiveawayEditor(ui.View):
         self.update_buttons()
         await self.update_embed(interaction.response.edit_message)
 
+    async def pro_required_error(self, interaction: discord.Interaction):
+        await self.pro_required_error(interaction)
     async def custom_name(
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
         if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.pro_required"
-                ),
-                ephemeral=True,
-            )
+            await self.pro_required_error(interaction)
             return
         modal = start_giveaway.CustomNameModal(
             self,
@@ -702,12 +699,7 @@ class GiveawayEditor(ui.View):
         button: start_giveaway.GiveawayBuilderButton,
     ):
         if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.pro_required"
-                ),
-                ephemeral=True,
-            )
+            await self.pro_required_error(interaction)
             return
         modal = start_giveaway.StartTimeModal(
             self,
@@ -747,12 +739,7 @@ class GiveawayEditor(ui.View):
         button: start_giveaway.GiveawayBuilderButton,
     ):
         if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.pro_required"
-                ),
-                ephemeral=True,
-            )
+            await self.pro_required_error(interaction)
             return
         modal = start_giveaway.DayRequirementModal(
             self,
@@ -800,12 +787,7 @@ class GiveawayEditor(ui.View):
         button: start_giveaway.GiveawayBuilderButton,
     ):
         if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.pro_required"
-                ),
-                ephemeral=True,
-            )
+            await self.pro_required_error(interaction)
             return
         modal = start_giveaway.VoiceRequirementModal(
             self,
@@ -827,12 +809,7 @@ class GiveawayEditor(ui.View):
         button: start_giveaway.GiveawayBuilderButton,
     ):
         if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.pro_required"
-                ),
-                ephemeral=True,
-            )
+            await self.pro_required_error(interaction)
             return
         view = start_giveaway.AddChannelRequirementView(self.commandInfo, self)
 

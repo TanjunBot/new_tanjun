@@ -156,8 +156,8 @@ async def plot_function_command(
                 description=tanjunLocalizer.localize(
                     locale = self.commandInfo.locale,
                     key = "commands.math.plotfunction.description",
-                    x_min=self.x_min,
-                    x_max=self.x_max,
+                    x_min=round(self.x_min, 2),
+                    x_max=round(self.x_max, 2),
                 ),
             )
 
@@ -170,13 +170,13 @@ async def plot_function_command(
     class AddFunctionModal(
         discord.ui.Modal,
         title=tanjunLocalizer.localize(
-            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.title"
+            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.add_function.title"
         ),
     ):
         def __init__(self, view):
             super().__init__(
                 title=tanjunLocalizer.localize(
-                    locale = commandInfo.locale, key = "commands.math.plotfunction.modals.title"
+                    locale = commandInfo.locale, key = "commands.math.plotfunction.modals.add_function.title"
                 )
             )
             self.view = view  # Store the view in the modal
@@ -184,10 +184,10 @@ async def plot_function_command(
         # Text input for the function expression
         function_expression = discord.ui.TextInput(
             label=tanjunLocalizer.localize(
-            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.function_expression"
+            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.add_function.function_expression"
         ),
             placeholder=tanjunLocalizer.localize(
-            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.function_expression_placeholder"
+            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.add_function.function_expression_placeholder"
         ),
             style=discord.TextStyle.short,
             required=True,
@@ -196,10 +196,10 @@ async def plot_function_command(
         # Optional: Text input for naming the function
         function_name = discord.ui.TextInput(
             label=tanjunLocalizer.localize(
-            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.function_name"
+            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.add_function.function_name"
         ),
             placeholder=tanjunLocalizer.localize(
-            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.function_name_placeholder"
+            locale = commandInfo.locale, key = "commands.math.plotfunction.modals.add_function.function_name_placeholder"
         ),
             style=discord.TextStyle.short,
             required=True,
@@ -224,23 +224,24 @@ async def plot_function_command(
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             return interaction.user.id == self.plotter.author_id
 
-        async def on_error(
-            self,
-            interaction: discord.Interaction,
-            error: Exception,
-            item: discord.ui.Item,
-        ):
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    locale = self.plotter.commandInfo.locale,
-                    key = "commands.math.plotfunction.error.title"
-                ),
-                description=tanjunLocalizer.localize(
-                    locale = self.plotter.commandInfo.locale,
-                    key = "commands.math.plotfunction.error.description",
-                )
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        # async def on_error(
+        #     self,
+        #     interaction: discord.Interaction,
+        #     error: Exception,
+        #     item: discord.ui.Item,
+        # ):
+        #     embed = utility.tanjunEmbed(
+        #         title=tanjunLocalizer.localize(
+        #             locale = self.plotter.commandInfo.locale,
+        #             key = "commands.math.plotfunction.error.title"
+        #         ),
+        #         description=tanjunLocalizer.localize(
+        #             locale = self.plotter.commandInfo.locale,
+        #             key = "commands.math.plotfunction.error.description",
+        #             er=str(error)
+        #         )
+        #     )
+        #     await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Zoom and move controls
         async def handle_zoom(self, interaction: discord.Interaction, factor: float):

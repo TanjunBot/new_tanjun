@@ -1,3 +1,5 @@
+# noqa: E501
+
 from utility import commandInfo, tanjunEmbed, checkIfHasPro
 from localizer import tanjunLocalizer
 from api import (

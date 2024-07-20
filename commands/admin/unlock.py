@@ -57,9 +57,6 @@ async def unlock_channel(commandInfo: utility.commandInfo, channel: discord.Text
             if role:
                 await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(**overwrites))
 
-        # Reset default role permissions
-        await channel.set_permissions(channel.guild.default_role, send_messages=None)
-
         # Clear saved overwrites
         await clear_channel_overwrites(channel.id)
         
