@@ -2,8 +2,8 @@ aiohttp==3.9.3
 aiomysql==0.2.0
 asyncmy==0.2.9
 discord.py==2.4.0
-matplotlib==3.9.0
-mysql-connector-python==9.0.0
+matplotlib==3.9.1
+mysql-connector-python==8.4.0
 num2words==0.5.13
 numpy==2.0.0
 Pillow==10.4.0
