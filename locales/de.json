@@ -1834,6 +1834,76 @@
                     "footer": "Die Anfrage hat ${cost} Token gekostet. Du hast noch ${token} übrig. (${free} Gratis-Token, ${plus} Plus-Token, ${paid} gekaufte-Token)"
                 }
             }
+        },
+        "image": {
+            "typenotsupported": {
+                "title": "Typ nicht unterstützt",
+                "description": "Der angegebene Typ wird nicht unterstützt. Unterstützte Typen: `jpeg`, `png`, `webp`."
+            },
+            "filesize": {
+                "title": "Dateigröße zu groß",
+                "description": "Die Dateigröße ist zu groß. Es werden aktuell nur Dateien bis zu 8 MB unterstützt."
+            },
+            "blur": {
+                "success": {
+                    "title": "Bild verschwommen",
+                    "description": "Das Bild wurde erfolgreich verschwommen."
+                }
+            },
+            "contour": {
+                "success": {
+                    "title": "Kontur hinzugefügt",
+                    "description": "Die Kontur wurde erfolgreich hervorgehoben."
+                }
+            },
+            "detail": {
+                "success": {
+                    "title": "Details verbessert",
+                    "description": "Die Details des Bildes wurden verbessert."
+                }
+            },
+            "edgeenhance": {
+                "success": {
+                    "title": "Kanten verbessert",
+                    "description": "Die Kanten des Bildes wurden verbessert."
+                }
+            },
+            "emboss": {
+                "success": {
+                    "title": "Bild gestanzt",
+                    "description": "Das Bild wurde erfolgreich gestanzt."
+                }
+            },
+            "findedges": {
+                "success": {
+                    "title": "Kanten gefunden",
+                    "description": "Die Kanten des Bildes wurden erfolgreich gefunden."
+                }
+            },
+            "sharpen": {
+                "success": {
+                    "title": "Bild geschärft",
+                    "description": "Das Bild wurde erfolgreich geschärft."
+                }
+            },
+            "smooth": {
+                "success": {
+                    "title": "Bild geglättet",
+                    "description": "Das Bild wurde erfolgreich geglättet."
+                }
+            },
+            "resize": {
+                "success": {
+                    "title": "Bildgröße geändert",
+                    "description": "Die Größe des Bildes wurde erfolgreich geändert."
+                }
+            },
+            "rescale": {
+                "success": {
+                    "title": "Bildskalierung geändert",
+                    "description": "Die Skalierung des Bildes wurde erfolgreich geändert."
+                }
+            }
         }
     },
     "admin": {
@@ -3362,6 +3432,5 @@
     "endlevel": "end_level",
     "boost": "boost",
     "additive": "additiv",
-    "image": "bild",
     "imageurl": "bild_url"
 }
