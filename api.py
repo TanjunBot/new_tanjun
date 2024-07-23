@@ -19,6 +19,7 @@ def check_pool_initialized():
 
 async def execute_query(p, query, params=None):
     if not pool:
+        print("tryied to execute action without pool. Pool is not yet initialized. Returning...\nquery: ", query)
         return
 
     try:
@@ -34,6 +35,7 @@ async def execute_query(p, query, params=None):
 
 async def execute_action(p, query, params=None):
     if not pool:
+        print("tryied to execute action without pool. Pool is not yet initialized. Returning...\nquery: ", query)
         return
     try:
         async with pool.acquire() as conn:
@@ -1490,7 +1492,6 @@ async def includeToToken(user_id: str):
     query = "INSERT INTO aiToken (userId) VALUES (%s)"
     params = (user_id,)
     await execute_action(pool, query, params)
-
 async def resetToken(entitlements: Optional[List[Entitlement]] = None):
     query = "UPDATE aiToken SET freeToken = 500"
     await execute_action(pool, query)
