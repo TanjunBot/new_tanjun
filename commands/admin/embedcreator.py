@@ -4,6 +4,7 @@ import utility
 from localizer import tanjunLocalizer
 from typing import Optional
 import re
+import asyncio
 
 
 async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextChannel, title: str):
@@ -37,7 +38,35 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
         async def set_description(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
-            await interaction.response.send_modal(DescriptionModal(self))
+            await interaction.response.send_message(
+                content=tanjunLocalizer.localize(
+                    self.commandInfo.locale, "commands.admin.embed.setDescription.message"
+                ),
+                embed=None,
+                ephemeral=True,
+                view=discord.ui.View(),
+            )
+            try:
+                message = await self.commandInfo.client.wait_for(
+                    "message",
+                    check=lambda m: m.author == interaction.user and m.channel == interaction.channel,
+                    timeout=300.0,
+                )
+            except asyncio.TimeoutError:
+                await interaction.followup.send_message(
+                    tanjunLocalizer.localize(
+                        self.commandInfo.locale, "commands.admin.embed.setDescription.timeout"
+                    ),
+                    ephemeral=True,
+                )
+            else:
+                await message.delete()
+                self.embed.description = message.content
+                await interaction.edit_original_response(
+                    content=tanjunLocalizer.localize(
+                        self.commandInfo.locale, "commands.admin.embed.descriptionUpdated",
+                    )
+                )
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
@@ -183,38 +212,6 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             for item in self.children:
                 item.disabled = True
             await self.message.edit(view=self)
-
-    class DescriptionModal(Modal):
-        def __init__(self, view):
-            super().__init__(
-                title=tanjunLocalizer.localize(
-                    view.commandInfo.locale,
-                    "commands.admin.embed.modals.descriptionModal.title",
-                )
-            )
-            self.view = view
-            self.description = TextInput(
-                label=tanjunLocalizer.localize(
-                    view.commandInfo.locale,
-                    "commands.admin.embed.modals.descriptionModal.label",
-                ),
-                style=discord.TextStyle.long,
-                default=view.embed.description,
-                required=True,
-                max_length=4000,
-                min_length=1,
-            )
-            self.add_item(self.description)
-
-        async def on_submit(self, interaction: discord.Interaction):
-            self.view.embed.description = self.description.value
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.view.commandInfo.locale,
-                    "commands.admin.embed.descriptionUpdated",
-                ),
-                ephemeral=True,
-            )
 
     class FieldModal(Modal):
         def __init__(self, view):

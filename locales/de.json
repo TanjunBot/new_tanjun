@@ -623,15 +623,16 @@
                     "preview": "Vorschau",
                     "send": "Senden"
                 },
+                "setDescription": {
+                    "message": "Bitte gib die Beschreibung für das Embed ein.\n-# Dies wird nicht über ein Modal gesendet, damit Emojis und andere Discord Formatierungen verwendet werden können.",
+                    "timeout": "Beschreibungseingabe abgelaufen. Bitte versuche es erneut.",
+                    "descriptionUpdated": "Beschreibung wurde aktualisiert!"
+                },
                 "modals": {
                     "titleModal": {
                         "title": "Embed-Titel festlegen",
                         "label": "Titel",
                         "urlLabel": "Titel-URL (optional)"
-                    },
-                    "descriptionModal": {
-                        "title": "Embed-Beschreibung festlegen",
-                        "label": "Beschreibung"
                     },
                     "fieldModal": {
                         "title": "Embed-Feld hinzufügen",
@@ -932,6 +933,14 @@
             }
         },
         "level": {
+            "leaderboard": {
+                "no_data": "Es sind keine Daten verfügbar.",
+                "previous": "Vorherige Seite",
+                "next": "Nächste Seite",
+                "title": "XP Rangliste",
+                "data": "Level ${level} - ${xp_from_last_level}/${xp_till_next_level} XP",
+                "page": "Seite ${current_page} von ${total_pages}"
+            },
             "settextcooldown": {
                 "name": "text_cooldown_setzen",
                 "description": "Setzt die Abklingzeit für Text-XP in Sekunden",
@@ -1623,7 +1632,7 @@
                     "day_requirement": "Du bist leider nicht lang genug auf dem Server. Das Gewinnspiel setzt vorraus, dass du `${required_days}` Tage vor erstellung des Gewinnspiels auf dem Server warst. Leider darfst du nicht mit machen 😔",
                     "role_requirement": "Du hast leider nicht die benötigten Rollen, um am Gewinnspiel teilzunehmen. Du benötigst folgende Rollen: ${roles}",
                     "voice_requirement": "Du hast leider nicht lange genug in Sprachkanälen verbracht. Das Gewinnspiel setzt vorraus, dass du `${required_minutes}` Minuten in Sprachkanälen verbracht hast. Dir fehlen noch `${missing_minutes}` Minuten.",
-                    "channel_requirements": "Du hast leider nicht genügend Nachrichten in den benötigten Kanälen geschrieben. Das Gewinnspiel setzt vorraus, dass du `${required_messages}` Nachrichten in den folgenden Kanal ${channel}  geschrieben hast. Dir fehlen also noch `${missing_messages}` Nachrichten.",
+                    "channel_requirements": "Du hast leider nicht genügend Nachrichten in den benötigten Kanälen geschrieben. Das Gewinnspiel setzt vorraus, dass du `${required_messages}` Nachrichten in den Kanal <#${channel}>  geschrieben hast. Dir fehlen also noch `${missing_messages}` Nachrichten.",
                     "blacklisted": "Du bist auf der Blacklist und darfst daher nicht am Gewinnspiel teilnehmen.",
                     "blacklisted_role": "Du hast eine Rolle, die auf der Blacklist steht und darfst daher nicht am Gewinnspiel teilnehmen.",
                     "opted_out": "Du hast die Nachrichtenverfolgung deaktiviert. Aus diesem Grund kann der Bot die Anforderungen ggf. nicht richtig überprüfen daher kannst du an dem gewinnspiel nicht teil nehmen."
@@ -1766,6 +1775,164 @@
                 "preview": "Vorschau",
                 "loading": "Wird geladen...",
                 "no_permission": "Du hast keine Berechtigung, Gewinnspiele zu starten."
+            }
+        },
+        "ai": {
+            "addcustom": {
+                "notplus": {
+                    "title": "Tanjun Plus erforderlich",
+                    "description": "Benutzerdefinierte KI-Persönlichkeit sind nur für Tanjun Plus Nutzer verfügbar. Upgrade auf Tanjun Plus, um diese Funktion zu nutzen."
+                },
+                "shortsituation": {
+                    "title": "Zu kurze Persönlichkeit",
+                    "description": "Die Persönlichkeit muss mindestens 10 Zeichen lang sein."
+                },
+                "shortname": {
+                    "title": "Zu kurzer Name",
+                    "description": "Der Name muss mindestens 3 Zeichen lang sein."
+                },
+                "longsituation": {
+                    "title": "Zu lange Persönlichkeit",
+                    "description": "Die Persönlichkeit darf maximal 4000 Zeichen lang sein."
+                },
+                "longname": {
+                    "title": "Zu langer Name",
+                    "description": "Der Name darf maximal 100 Zeichen lang sein."
+                },
+                "invalidtemperature": {
+                    "title": "Ungültige Temperatur",
+                    "description": "Die Temperatur muss eine Zahl zwischen 0 und 2 sein."
+                },
+                "invalidtop_p": {
+                    "title": "Ungültiger top_p-Wert",
+                    "description": "Der top_p-Wert muss eine Zahl zwischen 0 und 1 sein."
+                },
+                "invalidfrequency_penalty": {
+                    "title": "Ungültiger frequency_penalty-Wert",
+                    "description": "Der frequency_penalty-Wert muss eine Zahl zwischen 0 und 2 sein."
+                },
+                "invalidpresence_penalty": {
+                    "title": "Ungültiger presence_penalty-Wert",
+                    "description": "Der presence_penalty-Wert muss eine Zahl zwischen 0 und 2 sein."
+                },
+                "alreadyexists": {
+                    "title": "Persönlichkeit existiert bereits",
+                    "description": "Du besitzt bereits eine eigene Persönlichkeit. Bitte lösche diese bevor du eine neue erstellst."
+                },
+                "namealreadyexists": {
+                    "title": "Name existiert bereits",
+                    "description": "Eine Persönlichkeit mit diesem Namen existiert bereits."
+                },
+                "success": {
+                    "title": "Persönlichkeit hinzugefügt",
+                    "description": "Die Persönlichkeit ${name} wurde erfolgreich beantragt. Die Persönlichkeit muss, bevor Sie freigeschaltet wird, manuell überprüft werden. Dieser Prozess kann bis zu 3 Werktage beanspruchen. Bitte habe etwas geduld!"
+                }
+            },
+            "deletecustom": {
+                "notfound": {
+                    "title": "Persönlichkeit nicht gefunden",
+                    "description": "Du besitzt keine Persönlichkeit."
+                },
+                "success": {
+                    "title": "Persönlichkeit gelöscht",
+                    "description": "Die Persönlichkeit ${name} wurde erfolgreich gelöscht."
+                }
+            },
+            "approvecustom": {
+                "success": {
+                    "title": "Deine Situation wurde angenommen!",
+                    "description": "Herzlichen Glückwunsch! Deine Situation wurde akzeptiert und kann jetzt benutzt werden!"
+                }
+            },
+            "dencustom": {
+                "success": {
+                    "title": "Deine Situation wurde abgelehnt.",
+                    "description": "Deine Situation wurde abgelehnt. Bitte überarbeite deine Situation und versuche es erneut."
+                }
+            },
+            "ask": {
+                "notoken": {
+                    "title": "Nicht genügend Token",
+                    "description": "Du hast nicht genügend Token, um eine Anfrage zu stellen. Du benötigst mindestens 20 Token, um eine Anfrage zu stellen."
+                },
+                "error": {
+                    "title": "Fehler bei der Anfrage",
+                    "description": "Es gab einen Fehler bei der Anfrage. Bitte versuche es später erneut."
+                },
+                "success": {
+                    "title": "Antwort von ${name}",
+                    "footer": "Die Anfrage hat ${cost} Token gekostet. Du hast noch ${token} übrig. (${free} Gratis-Token, ${plus} Plus-Token, ${paid} gekaufte-Token)"
+                }
+            }
+        },
+        "image": {
+            "typenotsupported": {
+                "title": "Typ nicht unterstützt",
+                "description": "Der angegebene Typ wird nicht unterstützt. Unterstützte Typen: `jpeg`, `png`, `webp`."
+            },
+            "filesize": {
+                "title": "Dateigröße zu groß",
+                "description": "Die Dateigröße ist zu groß. Es werden aktuell nur Dateien bis zu 8 MB unterstützt."
+            },
+            "blur": {
+                "success": {
+                    "title": "Bild verschwommen",
+                    "description": "Das Bild wurde erfolgreich verschwommen."
+                }
+            },
+            "contour": {
+                "success": {
+                    "title": "Kontur hinzugefügt",
+                    "description": "Die Kontur wurde erfolgreich hervorgehoben."
+                }
+            },
+            "detail": {
+                "success": {
+                    "title": "Details verbessert",
+                    "description": "Die Details des Bildes wurden verbessert."
+                }
+            },
+            "edgeenhance": {
+                "success": {
+                    "title": "Kanten verbessert",
+                    "description": "Die Kanten des Bildes wurden verbessert."
+                }
+            },
+            "emboss": {
+                "success": {
+                    "title": "Bild gestanzt",
+                    "description": "Das Bild wurde erfolgreich gestanzt."
+                }
+            },
+            "findedges": {
+                "success": {
+                    "title": "Kanten gefunden",
+                    "description": "Die Kanten des Bildes wurden erfolgreich gefunden."
+                }
+            },
+            "sharpen": {
+                "success": {
+                    "title": "Bild geschärft",
+                    "description": "Das Bild wurde erfolgreich geschärft."
+                }
+            },
+            "smooth": {
+                "success": {
+                    "title": "Bild geglättet",
+                    "description": "Das Bild wurde erfolgreich geglättet."
+                }
+            },
+            "resize": {
+                "success": {
+                    "title": "Bildgröße geändert",
+                    "description": "Die Größe des Bildes wurde erfolgreich geändert."
+                }
+            },
+            "rescale": {
+                "success": {
+                    "title": "Bildskalierung geändert",
+                    "description": "Die Skalierung des Bildes wurde erfolgreich geändert."
+                }
             }
         }
     },
@@ -2847,6 +3014,16 @@
         }
     },
     "level": {
+        "leaderboard": {
+            "name": "rangliste",
+            "description": "Zeigt die Rangliste für den Server an",
+            "params": {
+                "page": {
+                    "name": "seite",
+                    "description": "Die Seite der Rangliste, die angezeigt werden soll (Standard: 1)"
+                }
+            }
+        },
         "setvoicecooldown": {
             "name": "voice_cooldown_setzen",
             "description": "Setzt den Cooldown für das Sammeln von Erfahrungspunkten in Sprachkanälen",
@@ -3319,6 +3496,40 @@
             }
         }
     },
+    "ai": {
+        "ask": {
+            "createcustom": {
+                "name": "benutzerdefiniert_erstellen",
+                "description": "Erstellt eine benutzerdefinierte KI",
+                "params": {
+                    "name": {
+                        "name": "name",
+                        "description": "Der Name der benutzerdefinierten KI"
+                    },
+                    "personality": {
+                        "name": "persönlichkeit",
+                        "description": "Die Persönlichkeit der benutzerdefinierten KI"
+                    },
+                    "temperature": {
+                        "name": "temperatur",
+                        "description": "Die Temperatur der benutzerdefinierten KI"
+                    },
+                    "topp": {
+                        "name": "top_p",
+                        "description": "Der Top-P-Wert der benutzerdefinierten KI"
+                    },
+                    "frequencypenalty": {
+                        "name": "frequenz",
+                        "description": "Die frequency penalty der benutzerdefinierten KI"
+                    },
+                    "presencepenalty": {
+                        "name": "presence_penalty",
+                        "description": "Die presence penalty der benutzerdefinierten KI"
+                    }
+                }
+            }
+        }
+    },
     "cooldown": "cooldown",
     "blacklist": "blacklist",
     "Blacklist Commands": "Blacklist Befehle",
@@ -3381,6 +3592,5 @@
     "endlevel": "end_level",
     "boost": "boost",
     "additive": "additiv",
-    "image": "bild",
     "imageurl": "bild_url"
 }

@@ -7,7 +7,13 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.x   | :white_check_mark: |
+| 0.1.x   | :x:                |
+| 0.2.x   | :x:                |
+| 0.3.x   | :x:                |
+| 0.4.x   | :warning:¹         |
+| 0.5.x   | :white_check_mark: |
+
+¹ Support for this version will be dropped on 2024-07-17.
 
 ## Reporting a Vulnerability
 

@@ -1,3 +1,4 @@
+# noqa: E501
 import discord
 from discord import ui
 import utility

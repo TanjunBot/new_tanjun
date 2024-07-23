@@ -50,7 +50,6 @@ async def execute_action(p, query, params=None):
 
 async def execute_insert_and_get_id(p, query, params=None):
     if not pool:
-        print("tryied to execute action without pool. Pool is not yet initialized. Returning...")
         return
     try:
         async with pool.acquire() as conn:
@@ -305,7 +304,8 @@ async def create_tables():
     ] = """
     CREATE TABLE IF NOT EXISTS `giveawayBlacklistedRole` (
         `roleId` VARCHAR(20) PRIMARY KEY,
-        `guildId` VARCHAR(20)
+        `guildId` VARCHAR(20),
+        `reason` VARCHAR(255) DEFAULT NULL
     ) ENGINE=InnoDB;
     """
     tables[
@@ -314,6 +314,7 @@ async def create_tables():
     CREATE TABLE IF NOT EXISTS `giveawayBlacklistedUser` (
         `userId` VARCHAR(20),
         `guildId` VARCHAR(20),
+        `reason` VARCHAR(255) DEFAULT NULL,
         PRIMARY KEY(`userId`, `guildId`)
     ) ENGINE=InnoDB;
     """
@@ -337,6 +338,21 @@ async def create_tables():
         `paidToken` INT UNSIGNED DEFAULT 0,
         `usedToken` INT UNSIGNED DEFAULT 0,
         `userId` VARCHAR(20) PRIMARY KEY
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "aiSituations"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `aiSituations` (
+        `userId` VARCHAR(20) PRIMARY KEY,
+        `situation` VARCHAR(4000) DEFAULT NULL,
+        `name` VARCHAR(15) DEFAULT NULL,
+        `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        `temperature` DECIMAL(3, 2) DEFAULT 1,
+        `top_p` DECIMAL(3, 2) DEFAULT 1,
+        `frequency_penalty` DECIMAL(3, 2) DEFAULT 0,
+        `presence_penalty` DECIMAL(3, 2) DEFAULT 0,
+        `unlocked` TINYINT(1) DEFAULT 0
     ) ENGINE=InnoDB;
     """
 
@@ -449,7 +465,6 @@ async def check_if_opted_out(user_id):
     query = "SELECT * FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     result = await execute_query(pool, query, params)
-    print(result)
     return len(result) > 0
 
 
@@ -504,9 +519,9 @@ async def clear_counting(channel_id):
     await execute_action(pool, query, params)
 
 
-async def set_counting_challenge_progress(channel_id, progress, guild_id):
-    query = "INSERT INTO counting_challenge (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
-    params = (channel_id, progress, guild_id, progress)
+async def set_counting_challenge_progress(channel_id, progress):
+    query = "INSERT INTO counting_challenge (channel_id, progress) VALUES (%s, %s) ON DUPLICATE KEY UPDATE progress = %s"
+    params = (channel_id, progress, progress)
     await execute_action(pool, query, params)
 
 
@@ -547,13 +562,6 @@ async def set_counting_mode(channel_id, progress, mode, guild_id):
     query = "INSERT INTO counting_modes (channel_id, progress, mode, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress), mode = VALUES(mode)"
     params = (channel_id, progress, mode, guild_id)
     await execute_action(pool, query, params)
-
-
-async def get_counting_mode_mode(channel_id):
-    query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
-    params = (channel_id,)
-    result = await execute_query(pool, query, params)
-    return result[0] if result else None
 
 
 async def get_counting_mode_progress(channel_id):
@@ -598,13 +606,6 @@ async def set_counting_mode_progress(
         counter_id,
     )
     await execute_action(pool, query, params)
-
-
-async def get_counting_mode_mode(channel_id):
-    query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
-    params = (channel_id,)
-    result = await execute_query(pool, query, params)
-    return result[0][0] if result else None
 
 
 async def get_count_mode_goal(channel_id):
@@ -888,10 +889,10 @@ async def get_user_boost(guild_id: str, user_id: str):
 
 
 async def get_user_roles_boosts(guild_id: str, role_ids: List[str]):
-    placeholders = ", ".join(["%s"] * len(role_ids))
-    query = f"SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN ({placeholders})"
-    params = (guild_id,) + tuple(role_ids)
+    query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
+    params = (guild_id, tuple(role_ids))
     result = await execute_query(pool, query, params)
+    return result if result else []
 
 
 async def get_channel_boost(guild_id: str, channel_id: str):
@@ -1182,7 +1183,7 @@ async def get_new_messages(giveaway_id: int, user_id: str):
 
 
 async def get_new_messages_channel(giveaway_id: int, channel_id: str, user_id: str):
-    query = "SELECT messages FROM giveawayChannelMessages WHERE giveawayId = %s AND channelId = %s AND userId = %s"
+    query = "SELECT amount FROM giveawayChannelMessages WHERE giveawayId = %s AND channelId = %s AND userId = %s"
     params = (giveaway_id, channel_id, user_id)
     result = await execute_query(pool, query, params)
     return result[0][0] if result else None
@@ -1197,7 +1198,7 @@ async def get_voice_time(giveaway_id: int, user_id: str):
 
 async def get_blacklisted_roles(guild_id: str):
     query = (
-        "SELECT roleId, reason, expire FROM giveawayBlacklistedRole WHERE guildId = %s"
+        "SELECT roleId, reason FROM giveawayBlacklistedRole WHERE guildId = %s"
     )
     params = (guild_id,)
     result = await execute_query(pool, query, params)
@@ -1291,13 +1292,13 @@ async def remove_giveaway_blacklisted_role(guild_id: str, role_id: str):
     await execute_action(pool, query, params)
 
 async def get_giveaway_blacklisted_users(guild_id: str):
-    query = "SELECT userId, reason, expire FROM giveawayBlacklistedUser WHERE guildId = %s"
+    query = "SELECT userId, reason FROM giveawayBlacklistedUser WHERE guildId = %s"
     params = (guild_id,)
     result = await execute_query(pool, query, params)
     return result
 
 async def get_giveaway_blacklisted_roles(guild_id: str):
-    query = "SELECT roleId, reason, expire FROM giveawayBlacklistedRole WHERE guildId = %s"
+    query = "SELECT roleId, reason FROM giveawayBlacklistedRole WHERE guildId = %s"
     params = (guild_id,)
     result = await execute_query(pool, query, params)
     return result
@@ -1477,8 +1478,20 @@ async def getToken(user_id: str):
     query = "SELECT freeToken, plusToken, paidToken FROM aiToken WHERE userId = %s"
     params = (user_id,)
     result = await execute_query(pool, query, params)
+    token = result[0] if result else None
+    tokenSum = token[0] + token[1] + token[2] if token else 0
+    return tokenSum
+
+async def getTokenOverview(user_id: str):
+    query = "SELECT freeToken, plusToken, paidToken, usedToken FROM aiToken WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
     return result[0] if result else None
 
+async def includeToToken(user_id: str):
+    query = "INSERT INTO aiToken (userId) VALUES (%s)"
+    params = (user_id,)
+    await execute_action(pool, query, params)
 async def resetToken(entitlements: Optional[List[Entitlement]] = None):
     query = "UPDATE aiToken SET freeToken = 500"
     await execute_action(pool, query)
@@ -1491,4 +1504,45 @@ async def resetToken(entitlements: Optional[List[Entitlement]] = None):
 async def consumePaidToken(user_id: str, amount: int):
     query = "UPDATE aiToken SET paidToken = paidToken + %s WHERE userId = %s"
     params = (amount, user_id)
+    await execute_action(pool, query, params)
+
+async def getLevelLeaderboard(guild_id: str):
+    query = "SELECT user_id, xp FROM level WHERE guild_id = %s ORDER BY xp DESC"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result
+
+async def addCustomSituation(user_id: str, situation: str, name: str, temperature: float, top_p: float, frequency_penalty: float, presence_penalty: float):
+    query = """
+    INSERT INTO aiSituations (userId, situation, name, temperature, top_p, frequency_penalty, presence_penalty)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    params = (user_id, situation, name, temperature, top_p, frequency_penalty, presence_penalty)
+    return await execute_action(pool, query, params)
+
+async def getCustomSituations():
+    query = "SELECT name FROM aiSituations where unlocked = 1"
+    result = await execute_query(pool, query)
+    return result if result else []
+
+async def getCustomSituation(name: str):
+    query = "SELECT * FROM aiSituations WHERE name = %s"
+    params = (name,)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def getCustomSituationFromUser(user_id: str):
+    query = "SELECT * FROM aiSituations WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def deleteCustomSituation(user_id: str):
+    query = "DELETE FROM aiSituations WHERE userId = %s"
+    params = (user_id,)
+    await execute_action(pool, query, params)
+
+async def unlockCustomSituation(user_id: str):
+    query = "UPDATE aiSituations SET unlocked = 1 WHERE userId = %s"
+    params = (user_id,)
     await execute_action(pool, query, params)

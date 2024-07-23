@@ -10,6 +10,8 @@ from loops.giveaway import endGiveaways
 from minigames.addLevelXp import clearNotifiedUsers
 from loops.level import addXpToVoiceUsers
 from ai.refillToken import refillAiToken
+from loops.alivemonitor import ping_server
+from loops.create_database_backup import create_database_backup
 
 import asyncio
 
@@ -61,6 +63,20 @@ class LoopCog(commands.Cog):
         except:
             raise
 
+    @tasks.loop(seconds=5)
+    async def pingServerLoop(self):
+        try:
+            await ping_server(self.bot)
+        except:
+            raise
+
+    @tasks.loop(hours=1)
+    async def backupDatabaseLoop(self):
+        try:
+            await create_database_backup(self.bot)
+        except:
+            raise
+
     @commands.Cog.listener()
     async def on_ready(self):  
         while not check_pool_initialized():
@@ -72,6 +88,8 @@ class LoopCog(commands.Cog):
             self.clearNotifiedUsersLoop.start()
             self.addVoiceUserLoop.start()
             self.refillAiTokenLoop.start()
+            self.pingServerLoop.start()
+            self.backupDatabaseLoop.start()
 
 
 
