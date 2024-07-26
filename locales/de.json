@@ -961,6 +961,9 @@
             },
             "avatar": {
                 "title": "Avatar von ${user}"
+            },
+            "banner": {
+                "title": "Banner von ${user}"
             }
         },
         "level": {
