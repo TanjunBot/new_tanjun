@@ -8,6 +8,7 @@ from discord.ext import commands
 import time
 import config
 from utility import addFeedback
+from api import feedbackBlockUser, feedbackUnblockUser
 
 class administrationCog(commands.Cog):
     @commands.command()
@@ -23,6 +24,20 @@ class administrationCog(commands.Cog):
             return
         addFeedback(content, ctx.author.name)
         await ctx.send("Feedback wurde hinzugefügt. Vielen dank!")
+
+    @commands.command()
+    async def blockFeedback(self, ctx, user: discord.User) -> None:
+        if ctx.author.id not in config.adminIds:
+            return
+        await feedbackBlockUser(user.id)
+        await ctx.send(f"{user.name} wurde blockiert.")
+
+    @commands.command()
+    async def unblockFeedback(self, ctx, user: discord.User) -> None:
+        if ctx.author.id not in config.adminIds:
+            return
+        await feedbackUnblockUser(user.id)
+        await ctx.send(f"{user.name} wurde entblockiert.")
 
 async def setup(bot):
     await bot.add_cog(administrationCog(bot))

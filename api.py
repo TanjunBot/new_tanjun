@@ -362,6 +362,13 @@ async def create_tables():
         `channelId` VARCHAR(20) PRIMARY KEY
     ) ENGINE=InnoDB;
     """
+    tables[
+        "feedbackBlocked"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `feedbackBlocked` (
+        `userId` VARCHAR(20) PRIMARY KEY
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -1572,3 +1579,19 @@ async def removeAutoPublish(channel_id: str):
     query = "DELETE FROM autopublish WHERE channelId = %s"
     params = (channel_id,)
     await execute_action(pool, query, params)
+
+async def feedbackBlockUser(user_id: str):
+    query = "INSERT INTO feedbackBlocked (userId) VALUES (%s)"
+    params = (user_id,)
+    await execute_action(pool, query, params)
+
+async def feedbackUnblockUser(user_id: str):
+    query = "DELETE FROM feedbackBlocked WHERE userId = %s"
+    params = (user_id,)
+    await execute_action(pool, query, params)
+
+async def feedbackIsBlocked(user_id: str):
+    query = "SELECT * FROM feedbackBlocked WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return len(result) > 0

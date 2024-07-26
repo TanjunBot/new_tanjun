@@ -964,6 +964,30 @@
             },
             "banner": {
                 "title": "Banner von ${user}"
+            },
+            "feedback": {
+                "modal": {
+                    "title": "Feedback senden",
+                    "description": "Bitte gib dein Feedback ein. Es wird an das Entwicklerteam gesendet.",
+                    "feedbacktitle": {
+                        "label": "Titel",
+                        "placeholder": "Gib einen Titel für dein Feedback ein"
+                    },
+                    "feedbackdescription": {
+                        "label": "Feedback",
+                        "placeholder": "Gib dein Feedback ein"
+                    },
+                    "not_authorized": "dir gehört dieses Modal nicht. Wie hast du es überhaupt geschafft es abzusenden???",
+                    "timeout": "Feedback-Eingabe abgelaufen. Bitte versuche es erneut.",
+                    "submitted": {
+                        "title": "Feedback gesendet",
+                        "description": "Dein Feedback wurde erfolgreich gesendet. Vielen Dank für deine Unterstützung!"
+                    }
+                },
+                "blocked": {
+                    "title": "Feedback blockiert",
+                    "description": "Du hast scheinbar quatsch gebaut und wurdest blockiert. Du darfst kein Feedback mehr senden. Wenn du denkst, dass das ein Fehler ist, kontaktiere bitte das Entwicklerteam."
+                }
             }
         },
         "level": {
