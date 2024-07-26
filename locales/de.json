@@ -988,6 +988,14 @@
                     "title": "Feedback blockiert",
                     "description": "Du hast scheinbar quatsch gebaut und wurdest blockiert. Du darfst kein Feedback mehr senden. Wenn du denkst, dass das ein Fehler ist, kontaktiere bitte das Entwicklerteam."
                 }
+            },
+            "avatarDecoration": {
+                "no_decoration": {
+                    "title": "Keine Dekoration",
+                    "description": "Dieser Benutzer hat keine Dekoration."
+                },
+                "title": "Avatar Dekoration von ${user}",
+                "description": "#- Aktuell ist es aufgrund der DiscordAPI nicht möglich die Server-Avatar Dekoration zu erhalten. Genauso wie die Banner Dekoration."
             }
         },
         "level": {

@@ -12,6 +12,7 @@ from commands.utility.autopublish import autopublish_remove as autopublishRemove
 from commands.utility.avatar import avatar as avatarCommand
 from commands.utility.banner import banner as bannerCommand
 from commands.utility.feedback import feedback as feedbackCommand
+from commands.utility.avatarDecoration import avatarDecoration as avatarDecorationCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -159,6 +160,32 @@ class utilityCommands(discord.app_commands.Group):
             user = ctx.user
 
         await bannerCommand(commandInfo=commandInfo, user=user)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_avatardecoration_name"),
+        description=app_commands.locale_str("utility_avatardecoration_description"),
+    )
+    @app_commands.describe(
+        user="The user to get the avatar decoration of.",
+    )
+    async def avatardecoration(self, ctx, user: discord.Member = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not user:
+            user = ctx.user
+
+        await avatarDecorationCommand(commandInfo=commandInfo, user=user)
 
     @app_commands.command(
         name=app_commands.locale_str("utility_feedback_name"),
