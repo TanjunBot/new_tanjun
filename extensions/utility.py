@@ -9,6 +9,7 @@ from commands.utility.messagetrackingoptout import optOut as optOutCommand
 from commands.utility.messagetrackingoptin import optIn as optInCommand
 from commands.utility.autopublish import autopublish as autopublishCommand
 from commands.utility.autopublish import autopublish_remove as autopublishRemoveCommand
+from commands.utility.avatar import avatar as avatarCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -105,7 +106,31 @@ class AutoPublishCommands(discord.app_commands.Group):
         await autopublishRemoveCommand(commandInfo=commandInfo, channel=channel)
 
 class utilityCommands(discord.app_commands.Group):
-    ...
+    @app_commands.command(
+        name=app_commands.locale_str("utility_avatar_name"),
+        description=app_commands.locale_str("utility_avatar_description"),
+    )
+    @app_commands.describe(
+        user="The user to get the avatar of.",
+    )
+    async def avatar(self, ctx, user: discord.Member = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not user:
+            user = ctx.user
+
+        await avatarCommand(commandInfo=commandInfo, user=user)
 
 
 class utilityCog(commands.Cog):

@@ -958,6 +958,9 @@
                     "title": "Autopublish-Modus deaktiviert",
                     "description": "Der Autopublish-Modus wurde erfolgreich deaktiviert. Neue Nachrichten werden nicht mehr automatisch veröffentlicht."
                 }
+            },
+            "avatar": {
+                "title": "Avatar von ${user}"
             }
         },
         "level": {
