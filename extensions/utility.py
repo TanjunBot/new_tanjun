@@ -13,6 +13,7 @@ from commands.utility.avatar import avatar as avatarCommand
 from commands.utility.banner import banner as bannerCommand
 from commands.utility.feedback import feedback as feedbackCommand
 from commands.utility.avatarDecoration import avatarDecoration as avatarDecorationCommand
+from commands.utility.afk import afk as afkCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -205,6 +206,29 @@ class utilityCommands(discord.app_commands.Group):
         )
 
         await feedbackCommand(commandInfo=commandInfo, ctx=ctx)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_afk_name"),
+        description=app_commands.locale_str("utility_afk_description"),
+    )
+    @app_commands.describe(
+        reason="The reason for being afk.",
+    )
+    async def afk(self, ctx, reason: app_commands.Range[str, 0, 1000]):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await afkCommand(commandInfo=commandInfo, reason=reason)
 
 class utilityCog(commands.Cog):
 

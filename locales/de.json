@@ -995,7 +995,37 @@
                     "description": "Dieser Benutzer hat keine Dekoration."
                 },
                 "title": "Avatar Dekoration von ${user}",
-                "description": "#- Aktuell ist es aufgrund der DiscordAPI nicht möglich die Server-Avatar Dekoration zu erhalten. Genauso wie die Banner Dekoration."
+                "description": "-# Aktuell ist es aufgrund der DiscordAPI nicht möglich die Server-Avatar Dekoration zu erhalten. Genauso wie die Banner Dekoration."
+            },
+            "afk": {
+                "already_afk": {
+                    "title": "Du bist bereits AFK",
+                    "description": "Du bist bereits als AFK markiert."
+                },
+                "success": {
+                    "title": "Du bist jetzt AFK",
+                    "description": "Du bist jetzt als AFK markiert. Sobald du nicht mehr AFK bist werde ich dich auf den neusten Stand bringen."
+                },
+                "removed_no_messages": {
+                    "title": "Du bist nicht mehr AFK",
+                    "description": "Du bist nicht mehr als AFK markiert. Du hast wärend deiner Abwesenheit keine Nachrichten verpasst."
+                },
+                "removed": {
+                    "title": "Du bist nicht mehr AFK",
+                    "description": "Du bist nicht mehr als AFK markiert. Hier sind die Nachrichten, die du verpasst hast:\n${messages}\n-# Um deine Privatsphäre zu sichern, prüfe ich nicht ob die Nachrichten vielleicht gelöscht wurden o.ä., wodurch es passieren kann dass hier gelöschte Nachrichten aufgezählt werden."
+                },
+                "mentions_one": {
+                    "title": "${user} ist momentan AFK.",
+                    "description": "${user} ist momentan mit der Begründung `${reason}` AFK. Ich werde die Nachricht weiterleiten, sobald ${user} zurück ist."
+                },
+                "mentions": {
+                    "title": "einige Nutzer sind AFK.",
+                    "description": "Die folgenden Nutzer sind momentan AFk und werden von mir mit benachrichtigt, sobald sie zurück sind:\n"
+                },
+                "opted_out": {
+                    "title": "Befehl nicht verfügbar",
+                    "description": "Du hast die Nachrichtenverfolgung deaktiviert, wodurch ich keine Nachrichten von dir lesen werde. Deshalb kann ich nicht wissen, wann du wieder da bist :/ Der AFK Modus ist für dich leider nicht verfügbar."
+                }
             }
         },
         "level": {

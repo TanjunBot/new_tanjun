@@ -369,6 +369,24 @@ async def create_tables():
         `userId` VARCHAR(20) PRIMARY KEY
     ) ENGINE=InnoDB;
     """
+    tables[
+        "afkUsers"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `afkUsers` (
+        `userId` VARCHAR(20) PRIMARY KEY,
+        `reason` VARCHAR(1024)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "afkMessages"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `afkMessages` (
+        `userId` VARCHAR(20),
+        `messageId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`userId`, `messageId`)
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -1595,3 +1613,44 @@ async def feedbackIsBlocked(user_id: str):
     params = (user_id,)
     result = await execute_query(pool, query, params)
     return len(result) > 0
+
+async def setAfk(user_id: str, reason: str):
+    query = """
+    INSERT INTO afkUsers (userId, reason)
+    VALUES (%s, %s)
+    """
+    params = (user_id, reason )
+    await execute_action(pool, query, params)
+
+async def removeAfk(user_id: str):
+    query = "DELETE FROM afkUsers WHERE userId = %s"
+    params = (user_id,)
+    await execute_action(pool, query, params)
+    query = "DELETE FROM afkMessages WHERE userId = %s"
+    await execute_action(pool, query, params)
+
+async def checkIfUserIsAfk(user_id: str):
+    query = "SELECT * FROM afkUsers WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return len(result) > 0
+
+async def addAfkMessage(user_id: str, message_id: str, channel_id: str):
+    query = """
+    INSERT INTO afkMessages (userId, messageId, channelId)
+    VALUES (%s, %s, %s)
+    """
+    params = (user_id, message_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def getAfkMessages(user_id: str):
+    query = "SELECT messageId, channelId FROM afkMessages WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return result
+
+async def getAfkReason(user_id: str):
+    query = "SELECT reason FROM afkUsers WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else None
