@@ -355,6 +355,13 @@ async def create_tables():
         `unlocked` TINYINT(1) DEFAULT 0
     ) ENGINE=InnoDB;
     """
+    tables[
+        "autopublish"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `autopublish` (
+        `channelId` VARCHAR(20) PRIMARY KEY
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -1545,4 +1552,23 @@ async def deleteCustomSituation(user_id: str):
 async def unlockCustomSituation(user_id: str):
     query = "UPDATE aiSituations SET unlocked = 1 WHERE userId = %s"
     params = (user_id,)
+    await execute_action(pool, query, params)
+
+async def addAutoPublish(channel_id: str):
+    query = """
+    INSERT INTO autopublish (channelId)
+    VALUES (%s)
+    """
+    params = (channel_id, )
+    return await execute_action(pool, query, params)
+
+async def checkIfChannelIsAutopublish(channel_id: str):
+    query = "SELECT * FROM autopublish WHERE channelId = %s"
+    params = (channel_id,)
+    result = await execute_query(pool, query, params)
+    return len(result) > 0
+
+async def removeAutoPublish(channel_id: str):
+    query = "DELETE FROM autopublish WHERE channelId = %s"
+    params = (channel_id,)
     await execute_action(pool, query, params)

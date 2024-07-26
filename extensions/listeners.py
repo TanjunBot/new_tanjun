@@ -17,6 +17,9 @@ from loops.giveaway import handleVoiceChange
 
 from commands.ai.add_custom_situation_button_handler import approve_custom_situation, deny_custom_situation
 
+from commands.utility.autopublish import publish_message
+
+
 class ListenerCog(commands.Cog):
 
     def __init__(self, bot):
@@ -30,6 +33,7 @@ class ListenerCog(commands.Cog):
         await wordchain(message)
         await addLevelXp(message)
         await addMessageToGiveaway(message)
+        await publish_message(message)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):

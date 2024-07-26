@@ -7,6 +7,8 @@ from typing import List, Optional
 
 from commands.utility.messagetrackingoptout import optOut as optOutCommand
 from commands.utility.messagetrackingoptin import optIn as optInCommand
+from commands.utility.autopublish import autopublish as autopublishCommand
+from commands.utility.autopublish import autopublish_remove as autopublishRemoveCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -49,6 +51,59 @@ class MessageTrackingCommands(discord.app_commands.Group):
 
         await optInCommand(commandInfo=commandInfo)
 
+class AutoPublishCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_autopublish_name"),
+        description=app_commands.locale_str("utility_autopublish_description"),
+    )
+    @app_commands.describe(
+        channel="The channel to autopublish messages in.",
+    )
+    async def autopublish(self, ctx, channel: discord.TextChannel= None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await autopublishCommand(commandInfo=commandInfo, channel=channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_autopublish_remove_name"),
+        description=app_commands.locale_str("utility_autopublish_remove_description"),
+    )
+    @app_commands.describe(
+        channel="The channel to remove from autopublishing.",
+    )
+    async def autopublish_remove(self, ctx, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,    
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await autopublishRemoveCommand(commandInfo=commandInfo, channel=channel)
+
 class utilityCommands(discord.app_commands.Group):
     ...
 
@@ -63,6 +118,8 @@ class utilityCog(commands.Cog):
         utilityCmds = utilityCommands(name="utilitycmd", description="Utility Commands")
         messageTrackingCmds = MessageTrackingCommands(name=app_commands.locale_str("utility_messagetracking_name"), description=app_commands.locale_str("utility_messagetracking_description"))
         utilityCmds.add_command(messageTrackingCmds)
+        autoPublishCmds = AutoPublishCommands(name=app_commands.locale_str("utility_autopublish_name"), description=app_commands.locale_str("utility_autopublish_description"))
+        utilityCmds.add_command(autoPublishCmds)
         self.bot.tree.add_command(utilityCmds)
 
 

@@ -930,6 +930,34 @@
                     "title": "Fehler beim Aktivieren der Nachrichtenverfolgung",
                     "already_opted_in": "Du hast die Nachrichtenverfolgung bereits aktiviert."
                 }
+            },
+            "autopublish": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Nachrichten verwalten', um den Autopublish-Modus zu aktivieren."
+                    },
+                    "not_news_channel": {
+                        "title": "Fehler beim Aktivieren des Autopublish-Modus",
+                        "description": "Der Autopublish-Modus kann nur in einem Nachrichtenkanal aktiviert werden."
+                    },
+                    "is_already": {
+                        "title": "Autopublish-Modus bereits aktiviert",
+                        "description": "Nachrichten werden in diesen Kanal bereits automatisch veröffentlicht."
+                    },
+                    "is_not": {
+                        "title": "Autopublish-Modus nicht aktiviert",
+                        "description": "Nachrichten werden in diesen Kanal nicht automatisch veröffentlicht."
+                    }
+                },
+                "success": {
+                    "title": "Autopublish-Modus aktiviert",
+                    "description": "Der Autopublish-Modus wurde erfolgreich aktiviert. Neue Nachrichten werden automatisch veröffentlicht."
+                },
+                "remove_success": {
+                    "title": "Autopublish-Modus deaktiviert",
+                    "description": "Der Autopublish-Modus wurde erfolgreich deaktiviert. Neue Nachrichten werden nicht mehr automatisch veröffentlicht."
+                }
             }
         },
         "level": {
