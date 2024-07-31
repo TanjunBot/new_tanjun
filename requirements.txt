@@ -1,4 +1,4 @@
-aiohttp==3.9.5
+aiohttp==3.10.0
 aiomysql==0.2.0
 asyncmy==0.2.9
 discord.py==2.4.0
