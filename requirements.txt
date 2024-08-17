@@ -12,5 +12,5 @@ PyGithub==2.3.0
 pyparsing==3.1.2
 Requests==2.32.3
 scipy==1.14.0
-sympy==1.13.1
+sympy==1.13.2
 typing_extensions==4.12.2
