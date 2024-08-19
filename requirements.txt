@@ -5,7 +5,7 @@ discord.py==2.4.0
 matplotlib==3.9.2
 mysql-connector-python==8.4.0
 num2words==0.5.13
-numpy==2.0.1
+numpy==2.1.0
 Pillow==10.4.0
 PyGithub==2.3.0
 PyGithub==2.3.0
