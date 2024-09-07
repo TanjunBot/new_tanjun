@@ -30,7 +30,7 @@ jobs:
   notify_discord:
     runs-on: ubuntu-latest
     needs: build
-    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/ver/')
+    if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/ver/')
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
