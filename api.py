@@ -358,6 +358,9 @@ async def create_tables():
         table_query = tables[table_name]
         await execute_action(pool, table_query)
 
+async def test_db(self, ctx):
+    query = "SELECT 1"
+    await execute_query(pool, query)
 
 async def add_warning(guild_id, user_id, reason, expiration_date=None):
     query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at) VALUES (%s, %s, %s, %s)"

@@ -58,6 +58,13 @@ class utilityCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @app_commands.command(
+        name="help",
+        description="Get help with the bot"
+    )
+    async def help_slash(self, ctx):
+        await ctx.response.send_message("ima help you!")
+
     @commands.Cog.listener()
     async def on_ready(self):
         utilityCmds = utilityCommands(name="utilitycmd", description="Utility Commands")

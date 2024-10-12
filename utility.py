@@ -1110,3 +1110,71 @@ def dateToRelativeTimeStr(date: datetime.datetime) -> str:
 
     # Join all non-zero components with spaces
     return ' '.join(components)
+
+class MockInteraction(discord.Interaction):
+    def __init__(self, bot, guild, channel, user):
+        # Initialize base Interaction with required parameters
+        super().__init__(data={}, state=bot._connection)
+
+        # Set required attributes
+        self.type = discord.InteractionType.application_command
+        self.id = 0  # Mock ID
+        self.application_id = bot.application_id or 0
+        self.guild = guild
+        self.channel = channel
+        self.user = user
+        self.locale = 'en-US'
+        self.guild_locale = 'en-US'
+        self.client = bot
+
+        # Mock the response object
+        self._response = False
+        self.response = MockInteractionResponse(self)
+        self.followup = discord.Webhook.from_state(
+            data={'application_id': self.application_id, 'token': 'mock_token', 'id': self.id},
+            state=bot._connection
+        )
+
+    # Override the original_response method to store the message
+    async def original_response(self):
+        return self.response.message
+
+class MockInteractionResponse:
+    def __init__(self, interaction):
+        self.interaction = interaction
+        self.message = None  # This will store the message sent
+
+    async def send_message(self, content=None, embed=None, **kwargs):
+        # Simulate sending a message
+        self.message = discord.Message(state=self.interaction._state, channel=self.interaction.channel, data={
+            'id': 1234567890,  # Mock message ID
+            'content': content or '',
+            'embeds': [embed.to_dict()] if embed else [],
+            'channel_id': self.interaction.channel.id,
+            'author': {
+                'id': self.interaction.client.user.id,
+                'username': self.interaction.client.user.name,
+                'discriminator': self.interaction.client.user.discriminator,
+                'bot': True
+            }
+        })
+
+    async def delete_original_response(self):
+        # Simulate deleting the message
+        if self.message:
+            # Here we can assume the message is deleted
+            self.message = None
+
+    # Implement other response methods as needed
+    async def defer(self, **kwargs):
+        pass
+
+    async def edit_message(self, **kwargs):
+        pass
+
+
+def create_mock_interaction(self):
+    guild = self.bot.guilds[0]  # Use the first guild the bot is connected to
+    channel = guild.text_channels[0]  # Use the first text channel
+    user = guild.me  # Use the bot as the user
+    return MockInteraction(self.bot, guild, channel, user)

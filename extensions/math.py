@@ -71,7 +71,6 @@ async def num2wordLocaleAutocomplete(
         "nl",
         "uk",
     ]
-    print("ich hasse menschen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     filtered_locales = [
         locale for locale in locales if current.lower() in locale.lower()
     ]

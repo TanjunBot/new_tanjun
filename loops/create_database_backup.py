@@ -5,7 +5,6 @@ from discord import Client, TextChannel, File
 
 def dump_database_schema(user, password, output_file):
     if platform.system() != 'Linux':
-        print("This script only runs on Linux.")
         return
     
     dump_command = [
