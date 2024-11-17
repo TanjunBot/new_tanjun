@@ -681,6 +681,41 @@
                 },
                 "error": "Fehler beim Erstellen des Emojis: ${error}",
                 "allRoles": "Allen Rollen"
+            },
+            "boosterRole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um die Booster-Rolle festzulegen. Du benötigst die Berechtigung `Rollen verwalten`."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um die Booster-Rolle festzulegen. Der Bot benötigt die Berechtigung `Rollen verwalten`."
+                },
+                "roleRemoved": {
+                    "title": "Booster-Rolle entfernt",
+                    "description": "Die Booster-Rolle wurde erfolgreich entfernt."
+                },
+                "targetTooHigh": {
+                    "title": "Rolle zu hoch",
+                    "description": "Du kannst keine Booster-Rolle setze, die höhr oder gleich hoch ist wie deine eigene höchste Rolle."
+                },
+                "roleTooHighBot": {
+                    "title": "Rolle zu hoch",
+                    "description": "Die Booster-Rolle kann nicht höher als die höchste Rolle des Bots sein."
+                },
+                "success": {
+                    "title": "Booster-Rolle erfolgreich festgelegt",
+                    "description": "Die Booster-Rolle wurde erfolgreich festgelegt.",
+                    "descriptionWarning": "Die Booster-Rolle wurde erfolgreich festgelegt. Diese Rolle hat jedoch die Berechtigung 'Administrator'. Das bedeutet, dass jedes Mitglied das den Server boostet, Administrator rechte erhält."
+                },
+                "forbidden": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um die Booster-Rolle festzulegen."
+                },
+                "error": {
+                    "title": "Fehler beim Festlegen der Booster-Rolle",
+                    "description": "Beim Versuch, die Booster-Rolle festzulegen, ist ein Fehler aufgetreten."
+                }
             }
         },
         "math": {
@@ -899,6 +934,24 @@
                 "error": {
                     "title": "Fehler beim Aktivieren der Nachrichtenverfolgung",
                     "already_opted_in": "Du hast die Nachrichtenverfolgung bereits aktiviert."
+                }
+            },
+            "claimboosterrole": {
+                "nobooster": {
+                    "title": "Kein Booster",
+                    "description": "Du bist kein Booster. Booster erhalten eine eigene Rolle, welche du einstellen kannst, wie du möchtest."
+                },
+                "no_booster_role": {
+                    "title": "Keine Boosterrolle",
+                    "description": "Es ist keine Boosterrolle eingestellt. Sage der Server-Administration, dass sie eine Boosterrolle für den Server einrichten soll."
+                },
+                "role_not_found": {
+                    "title": "Boosterrolle nicht gefunden",
+                    "description": "Die Boosterrolle wurde nicht gefunden. Sie wurde möglicherweise gelöscht."
+                },
+                "success": {
+                    "title": "Boosterrolle erfolgreich erhalten",
+                    "description": "Die Boosterrolle wurde erfolgreich erhalten."
                 }
             }
         },
@@ -2244,6 +2297,15 @@
                 "roles": {
                     "name": "rollen",
                     "description": "Die Rollen, die das Emoji verwenden dürfen (optional, leer lassen für alle Rollen)"
+                }
+            }
+        },
+        "boosterrole": {
+            "name": "boosterrolle",
+            "description": "Erstellt eine Boosterrolle",
+            "params": {
+                "role": {
+                    "description": "Die Rolle, die als Boosterrolle gesetzt werden soll"
                 }
             }
         }

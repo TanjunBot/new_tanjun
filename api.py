@@ -353,6 +353,20 @@ async def create_tables():
         `unlocked` TINYINT(1) DEFAULT 0
     ) ENGINE=InnoDB;
     """
+    tables["boosterChannel"] = """
+    CREATE TABLE IF NOT EXISTS `boosterChannel` (
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["boosterRole"] = """
+    CREATE TABLE IF NOT EXISTS `boosterRole` (
+        `guildId` VARCHAR(20),
+        `roleId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `roleId`)
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -1547,4 +1561,30 @@ async def deleteCustomSituation(user_id: str):
 async def unlockCustomSituation(user_id: str):
     query = "UPDATE aiSituations SET unlocked = 1 WHERE userId = %s"
     params = (user_id,)
+    await execute_action(pool, query, params)
+
+async def add_booster_channel(guild_id: str, channel_id: str):
+    query = "INSERT INTO boosterChannel (guildId, channelId) VALUES (%s, %s)"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def remove_booster_channel(guild_id: str, channel_id: str):
+    query = "DELETE FROM boosterChannel WHERE guildId = %s AND channelId = %s"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def add_booster_role(guild_id: str, role_id: str):
+    query = "INSERT INTO boosterRole (guildId, roleId) VALUES (%s, %s)"
+    params = (guild_id, role_id)
+    await execute_action(pool, query, params)
+
+async def get_booster_role(guild_id: str):
+    query = "SELECT roleId FROM boosterRole WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else None
+
+async def delete_booster_role(guild_id: str):
+    query = "DELETE FROM boosterRole WHERE guildId = %s"
+    params = (guild_id,)
     await execute_action(pool, query, params)

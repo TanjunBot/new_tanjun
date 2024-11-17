@@ -26,6 +26,7 @@ from commands.admin.warn import warn_user as warnUserCommand
 from commands.admin.viewwarns import view_warnings as viewWarningsCommand
 from commands.admin.warnconfig import warn_config as warnConfigCommand
 from commands.admin.moverole import moverole as moveroleCommand
+from commands.admin.boosterrole import create_booster_role as CreateBoosterRoleCommand
 
 
 class WarnCommands(discord.app_commands.Group):
@@ -754,6 +755,28 @@ class administrationCommands(discord.app_commands.Group):
             view=view,
         )
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_boosterrole_name"),
+        description=app_commands.locale_str("admin_boosterrole_description"),
+    )
+    @app_commands.describe(
+        role=app_commands.locale_str("admin_boosterrole_params_role_description"),
+    )
+    async def claimboosterrole(self, ctx, role: discord.Role = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await CreateBoosterRoleCommand(commandInfo=commandInfo, role=role)
+
 
 class adminCog(commands.Cog):
 
@@ -1243,6 +1266,23 @@ class adminCog(commands.Cog):
         await createEmojiCommand(
             commandInfo=commandInfo, name=name, image_url=image_url, roles=list(roles)
         )
+
+    @commands.command()
+    async def claimboosterrole(self, ctx, role: discord.Role = None):
+        commandInfo = utility.commandInfo(
+            user=ctx.author,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            message=ctx.message,
+            permissions=ctx.author.guild_permissions,
+            reply=ctx.reply,
+            client=ctx.bot,
+        )
+
+        await CreateBoosterRoleCommand(commandInfo=commandInfo, role=role)
+        
 
     @commands.Cog.listener()
     async def on_ready(self):
