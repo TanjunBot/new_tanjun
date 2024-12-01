@@ -12,10 +12,12 @@ from loops.level import addXpToVoiceUsers
 from ai.refillToken import refillAiToken
 from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
-
+from extensions.logs import sendLogEmbeds
 import asyncio
 
 from api import check_pool_initialized
+
+embeds = {}
 
 class LoopCog(commands.Cog):
     def __init__(self, bot):
@@ -77,6 +79,14 @@ class LoopCog(commands.Cog):
         except:
             raise
 
+    @tasks.loop(seconds=10)
+    async def sendLogEmbeds(self):
+        try:
+            await sendLogEmbeds(self)
+        except:
+            raise
+                
+
     @commands.Cog.listener()
     async def on_ready(self):  
         while not check_pool_initialized():
@@ -90,6 +100,7 @@ class LoopCog(commands.Cog):
             self.refillAiTokenLoop.start()
             self.pingServerLoop.start()
             self.backupDatabaseLoop.start()
+            self.sendLogEmbeds.start()
 
 
 

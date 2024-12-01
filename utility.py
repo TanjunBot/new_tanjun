@@ -35,7 +35,15 @@ from github import Github
 import ast
 import operator as op
 import cmath
-
+import tempfile
+import os
+from config import ImgBBApiKey, hastebinAPIKey
+import base64
+import json
+from hashlib import sha256
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+import gzip
 
 class EmbedProxy:
     def __init__(self, layer: Dict[str, Any]):
@@ -1178,3 +1186,57 @@ def create_mock_interaction(self):
     channel = guild.text_channels[0]  # Use the first text channel
     user = guild.me  # Use the bot as the user
     return MockInteraction(self.bot, guild, channel, user)
+
+def date_time_to_timestamp(date: datetime.datetime) -> int:
+    return int(date.timestamp())
+
+async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict:
+    # Create a temporary file with the appropriate file extension
+    with tempfile.NamedTemporaryFile(delete=False, suffix="." + file_extension, mode="wb") as temp_file:
+        temp_file.write(image_bytes)
+        temp_file_path = temp_file.name
+
+    # Upload the image to ImgBB
+    async with aiohttp.ClientSession() as session:
+        with open(temp_file_path, "rb") as image_file:
+            form_data = aiohttp.FormData()
+            form_data.add_field("key", ImgBBApiKey)
+            form_data.add_field("image", image_file)
+            form_data.add_field("name", f"tbg")
+
+            async with session.post("https://api.imgbb.com/1/upload", data=form_data) as response:
+                response_data = await response.json()
+
+    # Optionally, delete the temporary file if you want to clean up
+    os.remove(temp_file_path)
+
+    return response_data
+
+async def upload_to_byte_bin(content: str) -> str:
+    """Uploads content to PrivateBin and returns the URL."""
+    api_url = "https://bin.a2data.site/post"  # Updated endpoint for creating a paste
+
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "YourUserAgent",  # Specify your User-Agent here
+        "Content-Encoding": "gzip"  # Indicate that content is GZIP compressed
+    }
+
+    # Compress content using GZIP
+    compressed_content = gzip.compress(content.encode('utf-8'))
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(api_url, data=compressed_content, headers=headers, content_type="text/plain") as response:
+            # Check if the response is successful
+            if response.status == 201:
+                try:
+                    result = await response.json()
+                    # Extract the key from the response
+                    return f"{api_url.rsplit('/', 1)[0]}/{result['key']}"
+                except Exception as e:
+                    print(f"Error decoding JSON: {e}")
+                    print(await response.text())  # Print the response text for debugging
+                    raise
+            else:
+                print(f"Failed to create paste: {response.status}, {await response.text()}")
+                raise Exception(f"Failed to create paste: {response.status}, {await response.text()}")

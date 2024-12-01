@@ -36,5 +36,12 @@ class Localizer:
             return self.localize("de", key, **args) if locale != "de" else f"No translation found for key '{key}'."
         template = Template(template_string)
         return template.safe_substitute(args)
+    
+    def test_localize(self, locale, key, **args):
+        translations = self.load_translations(locale)
+        template_string = self.get_nested_translation(translations, key)
+        if template_string is None:
+            return self.localize("de", key, **args) if locale != "de" else f"No translation found for key '{key}'."
+        return template_string
 
 tanjunLocalizer = Localizer()

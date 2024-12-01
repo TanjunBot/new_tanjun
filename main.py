@@ -33,6 +33,9 @@ intents.voice_states = True
 intents.messages = True
 intents.typing = True
 intents.message_content = True
+intents.auto_moderation_configuration = True
+intents.auto_moderation_execution = True
+intents.invites = True
 intents.presences = False
 
 bot = commands.Bot("t.", intents=intents, application_id=config.applicationId)

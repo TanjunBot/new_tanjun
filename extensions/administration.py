@@ -5,6 +5,7 @@ THE COMMANDS IN THIS FILE ARE FOR ADMINISTRATIVE PURPOSES ONLY. THEY ARE NOT TO 
 import asyncio
 import discord
 from discord.ext import commands
+from localizer import tanjunLocalizer
 import config
 from utility import addFeedback
 from tests import (
@@ -12,6 +13,7 @@ from tests import (
     test_database,
     test_commands,
 )
+from api import test_log_enable, test_log_enable_2
 
 
 class administrationCog(commands.Cog):
@@ -70,6 +72,24 @@ class administrationCog(commands.Cog):
             content="Starting bot tests... \nPing Test: ✅\nDatabase Test: ✅\nCommands Test: ✅\nAll tests completed successfully. The bot seems to be working fine."
         )
 
+    @commands.command()
+    async def test_translation(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+        text = tanjunLocalizer.test_localize("de", "commands.logs")
+        await ctx.send(str(text)[:4000])
+
+    @commands.command()
+    async def tle1(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+        await test_log_enable()
+
+    @commands.command()
+    async def tle2(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+        await test_log_enable_2()
 
 async def setup(bot):
     await bot.add_cog(administrationCog(bot))
