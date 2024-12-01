@@ -15,7 +15,6 @@ async def loadextension(bot, extensionname):
         print(f"{extensionname} loaded!")
     except Exception as e:
         print(f"Failed to load extension {extensionname}")
-        raise
 
 
 async def loadTranslator(bot):

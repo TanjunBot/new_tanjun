@@ -56,35 +56,35 @@ class LoopCog(commands.Cog):
         try:
             await addXpToVoiceUsers(self.bot)
         except:
-            raise
+            pass
 
     @tasks.loop(seconds=60)
     async def refillAiTokenLoop(self):
         try:
             await refillAiToken(self.bot)
         except:
-            raise
+            pass
 
     @tasks.loop(seconds=5)
     async def pingServerLoop(self):
         try:
             await ping_server(self.bot)
         except:
-            raise
+            pass
 
     @tasks.loop(hours=1)
     async def backupDatabaseLoop(self):
         try:
             await create_database_backup(self.bot)
         except:
-            raise
+            pass
 
     @tasks.loop(seconds=10)
     async def sendLogEmbeds(self):
         try:
             await sendLogEmbeds(self)
         except:
-            raise
+            pass
                 
 
     @commands.Cog.listener()

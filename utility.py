@@ -40,9 +40,6 @@ import os
 from config import ImgBBApiKey, hastebinAPIKey
 import base64
 import json
-from hashlib import sha256
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad
 import gzip
 
 class EmbedProxy:
@@ -1236,7 +1233,5 @@ async def upload_to_byte_bin(content: str) -> str:
                 except Exception as e:
                     print(f"Error decoding JSON: {e}")
                     print(await response.text())  # Print the response text for debugging
-                    raise
             else:
                 print(f"Failed to create paste: {response.status}, {await response.text()}")
-                raise Exception(f"Failed to create paste: {response.status}, {await response.text()}")

@@ -3,7 +3,7 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 
-version = "0.5.0"
+version = "0.6.0"
 token = config["token"]
 applicationId = "832297321793323028"
 adminIds = [766350321638309958, 471036610561966111]

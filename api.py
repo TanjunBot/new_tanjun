@@ -29,7 +29,6 @@ async def execute_query(p, query, params=None):
                 return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}")
-        raise
 
 
 async def execute_action(p, query, params=None):
@@ -43,7 +42,6 @@ async def execute_action(p, query, params=None):
                 return cursor.rowcount
     except Exception as e:
         print(f"An error occurred during action execution: {e}")
-        raise
 
 
 async def execute_insert_and_get_id(p, query, params=None):
@@ -59,7 +57,6 @@ async def execute_insert_and_get_id(p, query, params=None):
                 return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}")
-        raise
 
 
 async def create_tables():

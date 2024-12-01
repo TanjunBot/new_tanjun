@@ -65,7 +65,6 @@ class administrationCog(commands.Cog):
         try:
             await test_commands(self, ctx)
         except Exception as e:
-            raise
             await message.edit(content=f"❌ Error in Commands test: {e}")
             return
         await message.edit(

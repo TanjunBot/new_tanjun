@@ -44,7 +44,7 @@ class ListenerCog(commands.Cog):
             elif interaction.data["custom_id"].startswith("ai_add_custom_situation_deny"):
                 await deny_custom_situation(interaction)
         except:
-            raise
+            pass
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user, before, after):

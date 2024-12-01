@@ -176,7 +176,7 @@ class AiCommands(discord.app_commands.Group):
         frequency_penalty="The frequency penalty setting",
         presence_penalty="The presence penalty setting",
     )
-    async def ask_gpt_command(  
+    async def ask_tanjuwun_command(  
             self, 
             interaction: discord.Interaction, 
             prompt: app_commands.Range[str, 1, 1000],

@@ -27,6 +27,7 @@ async def approve_custom_situation(interaction):
     except:
         pass
     await interaction.response.send_message("Situation wurde freigeschaltet!")
+    await interaction.message.delete()
 
 async def deny_custom_situation(interaction):
     situationId = interaction.data["custom_id"].split(";")[1]
