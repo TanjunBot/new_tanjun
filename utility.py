@@ -1217,7 +1217,7 @@ async def upload_to_byte_bin(content: str) -> str:
     api_url = "https://bin.a2data.site/post"  # Updated endpoint for creating a paste
 
     headers = {
-        "Content-Type": "application/json",
+        "Content-Type": "text/plain",
         "User-Agent": "YourUserAgent",  # Specify your User-Agent here
         "Content-Encoding": "gzip"  # Indicate that content is GZIP compressed
     }
@@ -1226,7 +1226,7 @@ async def upload_to_byte_bin(content: str) -> str:
     compressed_content = gzip.compress(content.encode('utf-8'))
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(api_url, data=compressed_content, headers=headers, content_type="text/plain") as response:
+        async with session.post(api_url, data=compressed_content, headers=headers) as response:
             # Check if the response is successful
             if response.status == 201:
                 try:
