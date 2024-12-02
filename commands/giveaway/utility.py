@@ -499,13 +499,16 @@ async def add_giveaway_participant(giveawayid, userid, client):
     view = discord.ui.View()
 
     participants = await get_giveaway_participants(giveawayid)
+
+    print("participants: ", participants)
+
     btn = discord.ui.Button(
         style=discord.ButtonStyle.primary,
         label=tanjunLocalizer.localize(
             guild.locale if hasattr(guild, "locale") else "en_US", "commands.giveaway.giveawayEmbed.button_text"
         )
         + "("
-        + str(len(participants if participants else []) + (1 if not userid in (participants if participants else []) else 0))
+        + str(len(participants if participants else []))
         + ")",
         custom_id="giveaway_enter; " + str(giveawayid),
     )
