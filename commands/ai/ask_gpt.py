@@ -28,6 +28,18 @@ async def ask_gpt(commandInfo: utility.commandInfo,
         )
         await commandInfo.reply(embed=embed)
         return
+    
+    additionalPromptInformation = f"""You are a Personality from the AI commands from the Discord Bot `Tanjun`. 
+    Stick to your personality as close as possible. Here are some additional information about the server and the prompter:
+    Name: {commandInfo.user.name}
+    userID: {commandInfo.user.id}
+    Server: {commandInfo.guild.name}
+    User Roles: {", ".join([role.name for role in commandInfo.user.roles])}
+
+    Here is your Personality. Here is the prompt you are supposed to answer:
+    """
+
+    prompt = additionalPromptInformation + "\n\n" + prompt
 
     response = await client.chat.completions.create(
         model="gpt-3.5-turbo-0125",

@@ -96,7 +96,7 @@ async def add_custom_situation(
     
     userCustomSituation = await getCustomSituationFromUser(commandInfo.user.id)
 
-    if userCustomSituation:
+    if userCustomSituation and commandInfo.user.id != 689755528947433555:
         embed = utility.tanjunEmbed(
             title = tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.alreadyexists.title"),
             description = tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.alreadyexists.description"),
