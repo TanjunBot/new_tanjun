@@ -1260,7 +1260,7 @@ class LogsCog(commands.Cog):
         locale = after.guild.locale if hasattr(after, "locale") else "de"
         description_parts = []
 
-        description_parts.append(tanjunLocalizer.localize(locale, "logs.messageEdit.name", user=after.author.mention))
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.messageEdit.name", user=after.author.mention, url=after.jump_url))
 
         if before.content != after.content:
             # Create a diff of the two message contents

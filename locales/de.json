@@ -3898,7 +3898,7 @@
             "activity": "Aktivität geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}"
         },
         "messageEdit": {
-            "name": "Nachricht bearbeitet von ${user}",
+            "name": "Nachricht bearbeitet von ${user}\n[Zur Nachricht](${url})",
             "ellipsis": "...",
             "truncatedNotice": "… (abgeschnitten)",
             "tooLongNotice": "Die Nachricht ist sehr lang. Um die Logs sauber zu halten, wurde der Nachrichtenhinhalt auf Hastbin hochgeladen. Um den Inhalt anzusehen, klicke [hier](${url}).",
