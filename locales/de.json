@@ -1127,6 +1127,36 @@
                 }
             }
         },
+        "fun": {
+            "hug": {
+                "title": "<a:hug:1096036111425478666>${user} umarmt ${member}<a:hug:1096036111425478666>"
+            },
+            "kiss": {
+                "title": "<a:kiss:1096036196595007590>${user} küsst ${member}<a:kiss:1096036196595007590>"
+            },
+            "boop": {
+                "title": "<:boop:1096037035611009064>${user} macht BOOP bei ${member}<:boop:1096037035611009064>"
+            },
+            "wave": {
+                "title": "<a:wave:1096036655246360607>${user} winkt ${member} zu<a:wave:1096036655246360607>"
+            },
+            "slap": {
+                "title": "<:Grr:1258190616270082098>${user} schlägt ${member}<:Grr:1258190616270082098>"
+            },
+            "laugh": {
+                "title": "<:hahaha:1098128293657583657>${user} lacht ${member} aus<:hahaha:1098128293657583657>"
+            },
+            "pat": {
+                "title": "<a:pat:1096036467601575998>${user} pattet ${member}<a:pat:1096036467601575998>"
+            },
+            "poke": {
+                "title": "<a:poke:1096037473269846016>${user} piekst ${member}<a:poke:1096037473269846016>"
+            },
+            "tickle": {
+                "title": "<a:onethingaboutmeichfahrauto:1247142217387085885>${user} kitzelt ${member}<a:onethingaboutmeichfahrauto:1247142217387085885>"
+            }
+            
+        },
         "utility": {
             "messagetrackingoptout": {
                 "success": {
@@ -1146,6 +1176,102 @@
                 "error": {
                     "title": "Fehler beim Aktivieren der Nachrichtenverfolgung",
                     "already_opted_in": "Du hast die Nachrichtenverfolgung bereits aktiviert."
+                }
+            },
+            "autopublish": {
+                "error": {
+                    "no_permission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung 'Nachrichten verwalten', um den Autopublish-Modus zu aktivieren."
+                    },
+                    "not_news_channel": {
+                        "title": "Fehler beim Aktivieren des Autopublish-Modus",
+                        "description": "Der Autopublish-Modus kann nur in einem Nachrichtenkanal aktiviert werden."
+                    },
+                    "is_already": {
+                        "title": "Autopublish-Modus bereits aktiviert",
+                        "description": "Nachrichten werden in diesen Kanal bereits automatisch veröffentlicht."
+                    },
+                    "is_not": {
+                        "title": "Autopublish-Modus nicht aktiviert",
+                        "description": "Nachrichten werden in diesen Kanal nicht automatisch veröffentlicht."
+                    }
+                },
+                "success": {
+                    "title": "Autopublish-Modus aktiviert",
+                    "description": "Der Autopublish-Modus wurde erfolgreich aktiviert. Neue Nachrichten werden automatisch veröffentlicht."
+                },
+                "remove_success": {
+                    "title": "Autopublish-Modus deaktiviert",
+                    "description": "Der Autopublish-Modus wurde erfolgreich deaktiviert. Neue Nachrichten werden nicht mehr automatisch veröffentlicht."
+                }
+            },
+            "avatar": {
+                "title": "Avatar von ${user}"
+            },
+            "banner": {
+                "title": "Banner von ${user}"
+            },
+            "feedback": {
+                "modal": {
+                    "title": "Feedback senden",
+                    "description": "Bitte gib dein Feedback ein. Es wird an das Entwicklerteam gesendet.",
+                    "feedbacktitle": {
+                        "label": "Titel",
+                        "placeholder": "Gib einen Titel für dein Feedback ein"
+                    },
+                    "feedbackdescription": {
+                        "label": "Feedback",
+                        "placeholder": "Gib dein Feedback ein"
+                    },
+                    "not_authorized": "dir gehört dieses Modal nicht. Wie hast du es überhaupt geschafft es abzusenden???",
+                    "timeout": "Feedback-Eingabe abgelaufen. Bitte versuche es erneut.",
+                    "submitted": {
+                        "title": "Feedback gesendet",
+                        "description": "Dein Feedback wurde erfolgreich gesendet. Vielen Dank für deine Unterstützung!"
+                    }
+                },
+                "blocked": {
+                    "title": "Feedback blockiert",
+                    "description": "Du hast scheinbar quatsch gebaut und wurdest blockiert. Du darfst kein Feedback mehr senden. Wenn du denkst, dass das ein Fehler ist, kontaktiere bitte das Entwicklerteam."
+                }
+            },
+            "avatarDecoration": {
+                "no_decoration": {
+                    "title": "Keine Dekoration",
+                    "description": "Dieser Benutzer hat keine Dekoration."
+                },
+                "title": "Avatar Dekoration von ${user}",
+                "description": "-# Aktuell ist es aufgrund der DiscordAPI nicht möglich die Server-Avatar Dekoration zu erhalten. Genauso wie die Banner Dekoration."
+            },
+            "afk": {
+                "already_afk": {
+                    "title": "Du bist bereits AFK",
+                    "description": "Du bist bereits als AFK markiert."
+                },
+                "success": {
+                    "title": "Du bist jetzt AFK",
+                    "description": "Du bist jetzt als AFK markiert. Sobald du nicht mehr AFK bist werde ich dich auf den neusten Stand bringen."
+                },
+                "removed_no_messages": {
+                    "title": "Du bist nicht mehr AFK",
+                    "description": "Du bist nicht mehr als AFK markiert. Du hast wärend deiner Abwesenheit keine Nachrichten verpasst."
+                },
+                "removed": {
+                    "title": "Du bist nicht mehr AFK",
+                    "description": "Du bist nicht mehr als AFK markiert. Hier sind die Nachrichten, die du verpasst hast:\n${messages}\n-# Um deine Privatsphäre zu sichern, prüfe ich nicht ob die Nachrichten vielleicht gelöscht wurden o.ä., wodurch es passieren kann dass hier gelöschte Nachrichten aufgezählt werden."
+                },
+                "mentions_one": {
+                    "title": "${user} ist momentan AFK.",
+                    "description": "${user} ist momentan mit der Begründung `${reason}` AFK. Ich werde die Nachricht weiterleiten, sobald ${user} zurück ist."
+                },
+                "mentions": {
+                    "title": "einige Nutzer sind AFK.",
+                    "description": "Die folgenden Nutzer sind momentan AFk und werden von mir mit benachrichtigt, sobald sie zurück sind:\n"
+                },
+                "opted_out": {
+                    "title": "Befehl nicht verfügbar",
+                    "description": "Du hast die Nachrichtenverfolgung deaktiviert, wodurch ich keine Nachrichten von dir lesen werde. Deshalb kann ich nicht wissen, wann du wieder da bist :/ Der AFK Modus ist für dich leider nicht verfügbar."
                 }
             },
             "claimboosterrole": {
@@ -2518,6 +2644,136 @@
             "params": {
                 "role": {
                     "description": "Die Rolle, die als Boosterrolle gesetzt werden soll"
+                }
+            }
+        }
+    },
+    "fun": {
+        "name": "Fun",
+        "description": "Funbefehle sind lustig",
+        "hug": {
+            "name": "hug",
+            "description": "Umarme jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du umarmen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "kiss": {
+            "name": "kiss",
+            "description": "Küsse jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du küssen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "boop": {
+            "name": "boop",
+            "description": "Boope jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du boopen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "wave": {
+            "name": "wave",
+            "description": "Winke jemandem zu",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, dem du zuwinken möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "laugh": {
+            "name": "laugh",
+            "description": "Lache jemanden aus",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du auslachen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "pat": {
+            "name": "pat",
+            "description": "Patte jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du patten möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "poke": {
+            "name": "poke",
+            "description": "Piekse jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du pieksen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "slap": {
+            "name": "slap",
+            "description": "Schlage jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du schlagen möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
+                }
+            }
+        },
+        "tickle": {
+            "name": "tickle",
+            "description": "Kitzle jemanden",
+            "params": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Wähle das Mitglied aus, das du kitzeln möchtest"
+                },
+                "message": {
+                    "name": "Nachricht",
+                    "description": "Schreibe eine Nachricht für dein Mitglied"
                 }
             }
         }

@@ -7,6 +7,13 @@ from typing import List, Optional
 
 from commands.utility.messagetrackingoptout import optOut as optOutCommand
 from commands.utility.messagetrackingoptin import optIn as optInCommand
+from commands.utility.autopublish import autopublish as autopublishCommand
+from commands.utility.autopublish import autopublish_remove as autopublishRemoveCommand
+from commands.utility.avatar import avatar as avatarCommand
+from commands.utility.banner import banner as bannerCommand
+from commands.utility.feedback import feedback as feedbackCommand
+from commands.utility.avatarDecoration import avatarDecoration as avatarDecorationCommand
+from commands.utility.afk import afk as afkCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -49,9 +56,179 @@ class MessageTrackingCommands(discord.app_commands.Group):
 
         await optInCommand(commandInfo=commandInfo)
 
-class utilityCommands(discord.app_commands.Group):
-    ...
+class AutoPublishCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_autopublish_name"),
+        description=app_commands.locale_str("utility_autopublish_description"),
+    )
+    @app_commands.describe(
+        channel="The channel to autopublish messages in.",
+    )
+    async def autopublish(self, ctx, channel: discord.TextChannel= None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
 
+        if not channel:
+            channel = ctx.channel
+
+        await autopublishCommand(commandInfo=commandInfo, channel=channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_autopublish_remove_name"),
+        description=app_commands.locale_str("utility_autopublish_remove_description"),
+    )
+    @app_commands.describe(
+        channel="The channel to remove from autopublishing.",
+    )
+    async def autopublish_remove(self, ctx, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,    
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await autopublishRemoveCommand(commandInfo=commandInfo, channel=channel)
+
+class utilityCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_avatar_name"),
+        description=app_commands.locale_str("utility_avatar_description"),
+    )
+    @app_commands.describe(
+        user="The user to get the avatar of.",
+    )
+    async def avatar(self, ctx, user: discord.Member = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not user:
+            user = ctx.user
+
+        await avatarCommand(commandInfo=commandInfo, user=user)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_banner_name"),
+        description=app_commands.locale_str("utility_banner_description"),
+    )
+    @app_commands.describe(
+        user="The user to get the banner of.",
+    )
+    async def banner(self, ctx, user: discord.Member = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not user:
+            user = ctx.user
+
+        await bannerCommand(commandInfo=commandInfo, user=user)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_avatardecoration_name"),
+        description=app_commands.locale_str("utility_avatardecoration_description"),
+    )
+    @app_commands.describe(
+        user="The user to get the avatar decoration of.",
+    )
+    async def avatardecoration(self, ctx, user: discord.Member = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not user:
+            user = ctx.user
+
+        await avatarDecorationCommand(commandInfo=commandInfo, user=user)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_feedback_name"),
+        description=app_commands.locale_str("utility_feedback_description"),
+    )
+    async def feedback(self, ctx):
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.response.send_message,
+            client=ctx.client,
+        )
+
+        await feedbackCommand(commandInfo=commandInfo, ctx=ctx)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_afk_name"),
+        description=app_commands.locale_str("utility_afk_description"),
+    )
+    @app_commands.describe(
+        reason="The reason for being afk.",
+    )
+    async def afk(self, ctx, reason: app_commands.Range[str, 0, 1000]):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await afkCommand(commandInfo=commandInfo, reason=reason)
 
 class utilityCog(commands.Cog):
 
@@ -70,6 +247,8 @@ class utilityCog(commands.Cog):
         utilityCmds = utilityCommands(name="utilitycmd", description="Utility Commands")
         messageTrackingCmds = MessageTrackingCommands(name=app_commands.locale_str("utility_messagetracking_name"), description=app_commands.locale_str("utility_messagetracking_description"))
         utilityCmds.add_command(messageTrackingCmds)
+        autoPublishCmds = AutoPublishCommands(name=app_commands.locale_str("utility_autopublish_name"), description=app_commands.locale_str("utility_autopublish_description"))
+        utilityCmds.add_command(autoPublishCmds)
         self.bot.tree.add_command(utilityCmds)
 
 

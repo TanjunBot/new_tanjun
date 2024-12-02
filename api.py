@@ -19,6 +19,7 @@ def check_pool_initialized():
 
 async def execute_query(p, query, params=None):
     if not pool:
+        print("tryied to execute action without pool. Pool is not yet initialized. Returning...\nquery: ", query)
         return
 
     try:
@@ -33,6 +34,7 @@ async def execute_query(p, query, params=None):
 
 async def execute_action(p, query, params=None):
     if not pool:
+        print("tryied to execute action without pool. Pool is not yet initialized. Returning...\nquery: ", query)
         return
     try:
         async with pool.acquire() as conn:
@@ -350,6 +352,36 @@ async def create_tables():
         `unlocked` TINYINT(1) DEFAULT 0
     ) ENGINE=InnoDB;
     """
+    tables[
+        "autopublish"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `autopublish` (
+        `channelId` VARCHAR(20) PRIMARY KEY
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "feedbackBlocked"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `feedbackBlocked` (
+        `userId` VARCHAR(20) PRIMARY KEY
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "afkUsers"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `afkUsers` (
+        `userId` VARCHAR(20) PRIMARY KEY,
+        `reason` VARCHAR(1024)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "afkMessages"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `afkMessages` (
+        `userId` VARCHAR(20),
+        `messageId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`userId`, `messageId`)
     tables["boosterChannel"] = """
     CREATE TABLE IF NOT EXISTS `boosterChannel` (
         `guildId` VARCHAR(20),
@@ -1560,7 +1592,6 @@ async def includeToToken(user_id: str):
     query = "INSERT INTO aiToken (userId) VALUES (%s)"
     params = (user_id,)
     await execute_action(pool, query, params)
-
 async def resetToken(entitlements: Optional[List[Entitlement]] = None):
     query = "UPDATE aiToken SET freeToken = 500"
     await execute_action(pool, query)
@@ -1616,6 +1647,82 @@ async def unlockCustomSituation(user_id: str):
     params = (user_id,)
     await execute_action(pool, query, params)
 
+async def addAutoPublish(channel_id: str):
+    query = """
+    INSERT INTO autopublish (channelId)
+    VALUES (%s)
+    """
+    params = (channel_id, )
+    return await execute_action(pool, query, params)
+
+async def checkIfChannelIsAutopublish(channel_id: str):
+    query = "SELECT * FROM autopublish WHERE channelId = %s"
+    params = (channel_id,)
+    result = await execute_query(pool, query, params)
+    return len(result) > 0
+
+async def removeAutoPublish(channel_id: str):
+    query = "DELETE FROM autopublish WHERE channelId = %s"
+    params = (channel_id,)
+    await execute_action(pool, query, params)
+
+async def feedbackBlockUser(user_id: str):
+    query = "INSERT INTO feedbackBlocked (userId) VALUES (%s)"
+    params = (user_id,)
+    await execute_action(pool, query, params)
+
+async def feedbackUnblockUser(user_id: str):
+    query = "DELETE FROM feedbackBlocked WHERE userId = %s"
+    params = (user_id,)
+    await execute_action(pool, query, params)
+
+async def feedbackIsBlocked(user_id: str):
+    query = "SELECT * FROM feedbackBlocked WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return len(result) > 0
+
+async def setAfk(user_id: str, reason: str):
+    query = """
+    INSERT INTO afkUsers (userId, reason)
+    VALUES (%s, %s)
+    """
+    params = (user_id, reason )
+    await execute_action(pool, query, params)
+
+async def removeAfk(user_id: str):
+    query = "DELETE FROM afkUsers WHERE userId = %s"
+    params = (user_id,)
+    await execute_action(pool, query, params)
+    query = "DELETE FROM afkMessages WHERE userId = %s"
+    await execute_action(pool, query, params)
+
+async def checkIfUserIsAfk(user_id: str):
+    query = "SELECT * FROM afkUsers WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return len(result) > 0
+
+async def addAfkMessage(user_id: str, message_id: str, channel_id: str):
+    query = """
+    INSERT INTO afkMessages (userId, messageId, channelId)
+    VALUES (%s, %s, %s)
+    """
+    params = (user_id, message_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def getAfkMessages(user_id: str):
+    query = "SELECT messageId, channelId FROM afkMessages WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return result
+
+async def getAfkReason(user_id: str):
+    query = "SELECT reason FROM afkUsers WHERE userId = %s"
+    params = (user_id,)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else None
+    
 async def add_booster_channel(guild_id: str, channel_id: str):
     query = "INSERT INTO boosterChannel (guildId, channelId) VALUES (%s, %s)"
     params = (guild_id, channel_id)

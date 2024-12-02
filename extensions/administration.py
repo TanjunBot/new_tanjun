@@ -8,13 +8,12 @@ from discord.ext import commands
 from localizer import tanjunLocalizer
 import config
 from utility import addFeedback
+from api import feedbackBlockUser, feedbackUnblockUser
 from tests import (
     test_ping,
     test_database,
     test_commands,
 )
-from api import test_log_enable, test_log_enable_2
-
 
 class administrationCog(commands.Cog):
     def __init__(self, bot):
@@ -37,6 +36,20 @@ class administrationCog(commands.Cog):
             return
         addFeedback(content, ctx.author.name)
         await ctx.send("Feedback wurde hinzugefügt. Vielen dank!")
+
+    @commands.command()
+    async def blockFeedback(self, ctx, user: discord.User) -> None:
+        if ctx.author.id not in config.adminIds:
+            return
+        await feedbackBlockUser(user.id)
+        await ctx.send(f"{user.name} wurde blockiert.")
+
+    @commands.command()
+    async def unblockFeedback(self, ctx, user: discord.User) -> None:
+        if ctx.author.id not in config.adminIds:
+            return
+        await feedbackUnblockUser(user.id)
+        await ctx.send(f"{user.name} wurde entblockiert.")
 
     @commands.command()
     async def test_bot(self, ctx):
