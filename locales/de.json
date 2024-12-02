@@ -788,6 +788,146 @@
                     "title": "Keine Logs aktiviert",
                     "description": "Es sind keine Logs aktiviert. Bitte aktiviere mindestens einen Log über `/logs set`."
                 }
+            },
+            "blacklistChannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal für die Logs zu ignorieren. Du benötigst `Administrator` Berechtigungen."
+                },
+                "alreadyBlacklisted": {
+                    "title": "Kanal wird bereits ignoriert",
+                    "description": "Der Kanal wird bereits ignoriert."
+                },
+                "blacklisted": {
+                    "title": "Kanal erfolgreich ignoriert",
+                    "description": "Der Kanal wird jetzt ignoriert. Änderungen die am Kanal vorgenommen werden, Nachrichten die im Kanal bearbeitet werden etc. werden nicht mehr geloggt."
+                }
+            },
+            "blacklistRemoveChannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal für die Logs nicht mehr zu ignorieren. Du benötigst `Administrator` Berechtigungen."
+                },
+                "notBlacklisted": {
+                    "title": "Kanal wird bereits geloggt",
+                    "description": "Änderungen in diesem Kanal werden bereits geloggt."
+                },
+                "success": {
+                    "title": "Kanal wird nicht länger ignoriert",
+                    "description": "Der Kanal wird jetzt nicht mehr ignoriert. Änderungen die am Kanal vorgenommen werden, Nachrichten die im Kanal bearbeitet werden etc. werden wieder geloggt."
+                }
+            },
+            "blacklist": {
+                "name": "blacklist",
+                "description": "Verwalte die Blacklist für Logs",
+                "add": {
+                    "name": "hinzufügen",
+                    "description": "Fügt einen Kanal zur Blacklist hinzu",
+                    "params": {
+                        "channel": {
+                            "description": "Der Kanal, der zur Blacklist hinzugefügt werden soll"
+                        }
+                    }
+                },
+                "remove": {
+                    "name": "entfernen",
+                    "description": "Entfernt einen Kanal von der Blacklist",
+                    "params": {
+                        "channel": {
+                            "description": "Der Kanal, der von der Blacklist entfernt werden soll"
+                        }
+                    }
+                },
+                "show": {
+                    "name": "anzeigen",
+                    "description": "Zeigt die aktuelle Blacklist an"
+                }
+            },
+            "blacklistListChannel": {
+                "title": "Blacklist Kanäle",
+                "addChannel": {
+                    "placeholder": "Kanal hinzufügen"
+                },
+                "noBlacklistedChannels": "Es sind keine Kanäle in der Blacklist."
+            },
+            "blacklistUser": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten."
+                },
+                "alreadyBlacklisted": {
+                    "title": "Benutzer bereits auf der Blacklist",
+                    "description": "Dieser Benutzer ist bereits auf der Blacklist."
+                },
+                "blacklisted": {
+                    "title": "Benutzer zur Blacklist hinzugefügt",
+                    "description": "Der Benutzer wurde erfolgreich zur Blacklist hinzugefügt."
+                }
+            },
+            "blacklistRemoveUser": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung", 
+                    "description": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten."
+                },
+                "notBlacklisted": {
+                    "title": "Benutzer nicht auf der Blacklist",
+                    "description": "Dieser Benutzer ist nicht auf der Blacklist."
+                },
+                "success": {
+                    "title": "Benutzer von der Blacklist entfernt",
+                    "description": "Der Benutzer wurde erfolgreich von der Blacklist entfernt."
+                }
+            },
+            "blacklistRole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Rollen-Blacklist zu verwalten."
+                },
+                "alreadyBlacklisted": {
+                    "title": "Rolle bereits auf der Blacklist",
+                    "description": "Diese Rolle ist bereits auf der Blacklist."
+                },
+                "blacklisted": {
+                    "title": "Rolle zur Blacklist hinzugefügt",
+                    "description": "Die Rolle wurde erfolgreich zur Blacklist hinzugefügt."
+                }
+            },
+        
+            "blacklistRemoveRole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Rollen-Blacklist zu verwalten."
+                },
+                "notBlacklisted": {
+                    "title": "Rolle nicht auf der Blacklist",
+                    "description": "Diese Rolle ist nicht auf der Blacklist."
+                },
+                "success": {
+                    "title": "Rolle von der Blacklist entfernt",
+                    "description": "Die Rolle wurde erfolgreich von der Blacklist entfernt."
+                }
+            },
+            "blacklistListUser": {
+                "title": "Benutzer-Blacklist",
+                "noBlacklistedUsers": "Es sind keine Benutzer auf der Blacklist.",
+                "addUser": {
+                    "placeholder": "Benutzer hinzufügen"
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Benutzer-Blacklist anzuzeigen."
+                }
+            },
+            "blacklistListRole": {
+                "title": "Rollen-Blacklist",
+                "noBlacklistedRoles": "Es sind keine Rollen auf der Blacklist.",
+                "addRole": {
+                    "placeholder": "Rolle hinzufügen"
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Rollen-Blacklist anzuzeigen."
+                }
             }
         },
         "math": {
@@ -3505,6 +3645,8 @@
         }
     },
     "logs": {
+        "name": "logs",
+        "description": "Logs",
         "permissions": {
             "add_reaction": "Reaktion hinzugefügt",
             "administrator": "Administrator",
@@ -3530,7 +3672,7 @@
             "manage_events": "Ereignisse verwalten",
             "manage_expressions": "Ausdrücke verwalten",
             "manage_guild": "Server verwalten",
-            "manage_messages": "Nachrichten verwalten", 
+            "manage_messages": "Nachrichten verwalten",
             "manage_nicknames": "Nicknamen verwalten",
             "manage_permissions": "Berechtigungen verwalten",
             "manage_roles": "Rollen verwalten",
@@ -3953,6 +4095,101 @@
             "removedPermissions": "Entfernte Berechtigungen:\n${permissions}",
             "displayIcon": "Anzeige-Icon: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
             "title": "Rolle aktualisiert"
+        },
+        "set": {
+            "name": "set",
+            "description": "Setzt einen Kanal für Logs",
+            "params": {
+                "channel": {
+                    "description": "Der Kanal, der für Logs gesetzt werden soll"
+                }
+            }
+        },
+        "remove": {
+            "name": "remove",
+            "description": "Entfernt einen Kanal für Logs"
+        },
+        "configure": {
+            "name": "configure",
+            "description": "Konfiguriert die Logs"
+        },
+        "blacklistc": {
+            "name": "blacklist",
+            "description": "Verwalte die Blacklist für Logs",
+            "add": {
+                "name": "hinzufügen",
+                "description": "Fügt einen Kanal zur Blacklist hinzu",
+                "params": {
+                    "channel": {
+                        "description": "Der Kanal, der zur Blacklist hinzugefügt werden soll"
+                    }
+                }
+            },
+            "remove": {
+                "name": "entfernen",
+                "description": "Entfernt einen Kanal von der Blacklist",
+                "params": {
+                    "channel": {
+                        "description": "Der Kanal, der von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt die aktuelle Blacklist an"
+            }
+        },
+        "blacklistr": {
+            "name": "blacklistr",
+            "description": "Verwalte die Rollen-Blacklist für Logs",
+            "add": {
+                "name": "hinzufügen",
+                "description": "Fügt eine Rolle zur Blacklist hinzu",
+                "params": {
+                    "role": {
+                        "description": "Die Rolle, die zur Blacklist hinzugefügt werden soll"
+                    }
+                }
+            },
+            "remove": {
+                "name": "entfernen",
+                "description": "Entfernt eine Rolle von der Blacklist",
+                "params": {
+                    "role": {
+                        "description": "Die Rolle, die von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt die aktuelle Rollen-Blacklist an"
+            }
+        },
+        "blacklistu": {
+            "name": "blacklistu",
+            "description": "Verwalte die Benutzer-Blacklist für Logs",
+            "add": {
+                "name": "hinzufügen",
+                "description": "Fügt einen Benutzer zur Blacklist hinzu",
+                "params": {
+                    "user": {
+                        "description": "Der Benutzer, der zur Blacklist hinzugefügt werden soll"
+                    }
+                }
+            },
+            "remove": {
+                "name": "entfernen",
+                "description": "Entfernt einen Benutzer von der Blacklist",
+                "params": {
+                    "user": {
+                        "description": "Der Benutzer, der von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt die aktuelle Benutzer-Blacklist an"
+            }
         }
     },
     "cooldown": "cooldown",

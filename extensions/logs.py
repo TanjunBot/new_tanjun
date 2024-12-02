@@ -1,14 +1,10 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from discord.ext import tasks
 import utility
 from typing import List
-from api import get_log_enable, get_log_channel
+from api import get_log_enable, get_log_channel, is_log_channel_blacklisted, is_log_user_blacklisted, get_log_role_blacklist
 from localizer import tanjunLocalizer
-import base64
-import tempfile
-import aiohttp
 import os
 import difflib
 from utility import upload_to_byte_bin
@@ -16,6 +12,17 @@ from utility import upload_to_byte_bin
 from commands.logs.set_log_channel import set_log_channel
 from commands.logs.remove_log_channel import remove_log_channel
 from commands.logs.configure_logs import configure_logs
+
+from commands.logs.blacklist_channel.blacklist_channel import blacklist_channel
+from commands.logs.blacklist_channel.blacklist_remove_channel import blacklist_remove_channel
+from commands.logs.blacklist_channel.blacklist_list_channel import blacklist_list_channel
+
+from commands.logs.blacklist_user.blacklist_user import blacklist_user
+from commands.logs.blacklist_user.blacklist_remove_user import blacklist_remove_user
+from commands.logs.blacklist_role.blacklist_role import blacklist_role
+from commands.logs.blacklist_role.blacklist_remove_role import blacklist_remove_role
+from commands.logs.blacklist_user.blacklist_list_user import blacklist_list_user
+from commands.logs.blacklist_role.blacklist_list_role import blacklist_list_role
 
 embeds = {}
 
@@ -45,15 +52,15 @@ async def sendLogEmbeds(self):
 
     embeds = {}
 
-class LogsCommands(discord.app_commands.Group):
+class ChannelBlacklistCommands(discord.app_commands.Group):
     @app_commands.command(
-        name="set_log_channel",
-        description="Set the log channel"
+        name=app_commands.locale_str("logs_blacklistc_add_name"),
+        description=app_commands.locale_str("logs_blacklistc_add_description")
     )
     @app_commands.describe(
-        channel="The channel you want set as log channel"
+        channel=app_commands.locale_str("logs_blacklistc_add_params_channel_description")
     )
-    async def set_log_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel):
+    async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -67,14 +74,218 @@ class LogsCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
+        if channel is None:
+            channel = ctx.channel
+
+        await blacklist_channel(commandInfo=commandInfo, channel=channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistc_remove_name"),
+        description=app_commands.locale_str("logs_blacklistc_remove_description")
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("logs_blacklistc_remove_params_channel_description")
+    )
+    async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if channel is None:
+            channel = ctx.channel
+
+        await blacklist_remove_channel(commandInfo=commandInfo, channel=channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistc_show_name"),
+        description=app_commands.locale_str("logs_blacklistc_show_description")
+    )
+    async def show_blacklist_channel_cmd(self, ctx: discord.Interaction):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await blacklist_list_channel(commandInfo=commandInfo)
+
+class UserBlacklistCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistu_add_name"),
+        description=app_commands.locale_str("logs_blacklistu_add_description")
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str("logs_blacklistu_add_params_user_description")
+    )
+    async def add_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await blacklist_user(commandInfo=commandInfo, user=user)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistu_remove_name"),
+        description=app_commands.locale_str("logs_blacklistu_remove_description")
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str("logs_blacklistu_remove_params_user_description")
+    )
+    async def remove_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await blacklist_remove_user(commandInfo=commandInfo, user=user)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistu_show_name"),
+        description=app_commands.locale_str("logs_blacklistu_show_description")
+    )
+    async def show_blacklist_user_cmd(self, ctx: discord.Interaction):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await blacklist_list_user(commandInfo=commandInfo)
+
+class RoleBlacklistCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistr_add_name"),
+        description=app_commands.locale_str("logs_blacklistr_add_description")
+    )
+    @app_commands.describe(
+        role=app_commands.locale_str("logs_blacklistr_add_params_role_description")
+    )
+    async def add_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await blacklist_role(commandInfo=commandInfo, role=role)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistr_remove_name"),
+        description=app_commands.locale_str("logs_blacklistr_remove_description")
+    )
+    @app_commands.describe(
+        role=app_commands.locale_str("logs_blacklistr_remove_params_role_description")
+    )
+    async def remove_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await blacklist_remove_role(commandInfo=commandInfo, role=role)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistr_show_name"),
+        description=app_commands.locale_str("logs_blacklistr_show_description")
+    )
+    async def show_blacklist_role_cmd(self, ctx: discord.Interaction):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await blacklist_list_role(commandInfo=commandInfo)
+
+class LogsCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("logs_set_name"),
+        description=app_commands.locale_str("logs_set_description")
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("logs_set_params_channel_description")
+    )
+    async def set_log_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if channel is None:
+            channel = ctx.channel
+
         await set_log_channel(
             commandInfo=commandInfo,
             channel=channel
         )
 
     @app_commands.command(
-        name="remove_log_channel",
-        description="Remove the log channel"
+        name=app_commands.locale_str("logs_remove_name"),
+        description=app_commands.locale_str("logs_remove_description")
     )
     async def remove_log_channel_cmd(self, ctx: discord.Interaction):
         await ctx.response.defer()
@@ -95,8 +306,8 @@ class LogsCommands(discord.app_commands.Group):
         )
 
     @app_commands.command(
-        name="configure_logs",
-        description="Configure the logs"
+        name=app_commands.locale_str("logs_configure_name"),
+        description=app_commands.locale_str("logs_configure_description")
     )
     async def configure_logs_cmd(self, ctx: discord.Interaction):
         await ctx.response.defer()
@@ -122,6 +333,9 @@ class LogsCog(commands.Cog):
     async def on_automod_rule_create(self, rule: discord.AutoModRule):
         logEnable = (await get_log_enable(rule.guild.id))[1]
         if not logEnable:
+            return
+        
+        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
         locale = rule.guild.locale if hasattr(rule.guild, "locale") else "de"
@@ -214,6 +428,9 @@ class LogsCog(commands.Cog):
     async def on_automod_rule_update(self, rule: discord.AutoModRule):
         logEnable = (await get_log_enable(rule.guild.id))[2]
         if not logEnable:
+            return
+
+        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
         locale = rule.guild.locale if hasattr(rule.guild, "locale") else "de"
@@ -317,6 +534,9 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
+        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
+            return
+
         locale = rule.guild.locale if hasattr(rule.guild, "locale") else "de"
         description_parts = []
 
@@ -417,6 +637,9 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
+        if await is_log_channel_blacklisted(execution.guild.id, str(execution.channel.id)):
+            return
+
         locale = execution.guild.locale if hasattr(execution.guild, "locale") else "de"
         description_parts = []
 
@@ -456,6 +679,9 @@ class LogsCog(commands.Cog):
     async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel):
         logEnable = (await get_log_enable(channel.guild.id))[5]
         if not logEnable:
+            return
+
+        if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
             return
 
         locale = channel.guild.locale if hasattr(channel.guild, "locale") else "de"
@@ -516,6 +742,9 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
+        if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
+            return
+
         locale = channel.guild.locale if hasattr(channel.guild, "locale") else "de"
         description_parts = []
         creator = None
@@ -572,6 +801,9 @@ class LogsCog(commands.Cog):
     async def on_guild_channel_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel):
         logEnable = (await get_log_enable(after.guild.id))[7]
         if not logEnable:
+            return
+
+        if await is_log_channel_blacklisted(after.guild.id, str(after.id)):
             return
 
         locale = after.guild.locale if hasattr(after.guild, "locale") else "de"
@@ -862,6 +1094,14 @@ class LogsCog(commands.Cog):
         logEnable = (await get_log_enable(invite.guild.id))[9]
         if not logEnable:
             return
+        
+        if await is_log_user_blacklisted(invite.guild.id, str(invite.inviter.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(invite.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in invite.inviter.roles:
+                return
 
         locale = invite.guild.locale if hasattr(invite.guild, "locale") else "de"
         description_parts = []
@@ -909,6 +1149,14 @@ class LogsCog(commands.Cog):
         logEnable = (await get_log_enable(invite.guild.id))[10]
         if not logEnable:
             return
+        
+        if await is_log_user_blacklisted(invite.guild.id, str(invite.inviter.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(invite.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in invite.inviter.roles:
+                return
 
         locale = invite.guild.locale if hasattr(invite.guild, "locale") else "de"
         description_parts = []
@@ -955,6 +1203,14 @@ class LogsCog(commands.Cog):
         logEnable = (await get_log_enable(member.guild.id))[11]
         if not logEnable:
             return
+        
+        if await is_log_user_blacklisted(member.guild.id, str(member.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(member.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in member.roles:
+                return
 
         locale = member.guild.locale if hasattr(member.guild, "locale") else "de"
         description_parts = []
@@ -979,6 +1235,14 @@ class LogsCog(commands.Cog):
         logEnable = (await get_log_enable(member.guild.id))[12]
         if not logEnable:
             return
+        
+        if await is_log_user_blacklisted(member.guild.id, str(member.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(member.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in member.roles:
+                return
 
         locale = member.guild.locale if hasattr(member.guild, "locale") else "de"
         description_parts = []
@@ -1004,6 +1268,14 @@ class LogsCog(commands.Cog):
         logEnable = (await get_log_enable(after.guild.id))[13]
         if not logEnable:
             return
+        
+        if await is_log_user_blacklisted(after.guild.id, str(after.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(after.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in after.roles:
+                return
 
         locale = after.guild.locale if hasattr(after.guild, "locale") else "de"
         description_parts = []
@@ -1094,9 +1366,21 @@ class LogsCog(commands.Cog):
     @commands.Cog.listener()
     async def on_user_update(self, before: discord.User, after: discord.User):
         for guild in self.bot.guilds:
+            user = guild.get_member(before.id)
+            if not user:
+                continue
+
             logEnable = (await get_log_enable(guild.id))[14]
             if not logEnable:
                 return
+            
+            if await is_log_user_blacklisted(guild.id, str(before.id)):
+                return
+            
+            blacklistedRoles = await get_log_role_blacklist(guild.id)
+            for blacklistedRole in blacklistedRoles:
+                if blacklistedRole in user.roles:
+                    return
 
             locale = guild.locale if hasattr(guild, "locale") else "de"
             description_parts = []
@@ -1164,6 +1448,14 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
+        if await is_log_user_blacklisted(user.guild.id, str(user.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(user.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in user.roles:
+                return
+
         locale = user.guild.locale if hasattr(user.guild, "locale") else "de"
         description_parts = []
 
@@ -1194,6 +1486,9 @@ class LogsCog(commands.Cog):
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
         logEnable = (await get_log_enable(guild.id))[16]
         if not logEnable:
+            return
+        
+        if await is_log_user_blacklisted(guild.id, str(user.id)):
             return
 
         locale = guild.locale if hasattr(guild, "locale") else "de"
@@ -1227,6 +1522,14 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
+        if await is_log_user_blacklisted(after.guild.id, str(after.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(after.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in after.roles:
+                return
+
         locale = after.guild.locale if hasattr(after.guild, "locale") else "de"
         description_parts = []
 
@@ -1256,6 +1559,17 @@ class LogsCog(commands.Cog):
         logEnable = (await get_log_enable(after.guild.id))[18]
         if not logEnable:
             return
+
+        if await is_log_user_blacklisted(after.guild.id, str(after.author.id)):
+            return
+        
+        if await is_log_channel_blacklisted(after.guild.id, str(after.channel.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(after.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in after.author.roles:
+                return
 
         locale = after.guild.locale if hasattr(after, "locale") else "de"
         description_parts = []
@@ -1312,6 +1626,17 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
+        if await is_log_user_blacklisted(message.guild.id, str(message.author.id)):
+            return
+        
+        if await is_log_channel_blacklisted(message.guild.id, str(message.channel.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(message.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in message.author.roles:
+                return
+
         locale = message.guild.locale if hasattr(message.guild, "locale") else "de"
         description_parts = []
 
@@ -1363,6 +1688,17 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
+        if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):
+            return
+        
+        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(reaction.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in user.roles:
+                return
+
         locale = reaction.guild.locale if hasattr(reaction.guild, "locale") else "de"
         description_parts = []
 
@@ -1387,6 +1723,17 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
+        if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):
+            return
+        
+        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
+            return
+        
+        blacklistedRoles = await get_log_role_blacklist(reaction.guild.id)
+        for blacklistedRole in blacklistedRoles:
+            if blacklistedRole in user.roles:
+                return
+
         locale = reaction.guild.locale if hasattr(reaction.guild, "locale") else "de"
         description_parts = []
 
@@ -1410,7 +1757,7 @@ class LogsCog(commands.Cog):
         logEnable = (await get_log_enable(role.guild.id))[22]
         if not logEnable:
             return
-
+        
         locale = role.guild.locale if hasattr(role.guild, "locale") else "de"
         description_parts = []
 
@@ -1593,7 +1940,25 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logcmds = LogsCommands(name="logs", description="Log Commands")
+        logcmds = LogsCommands(
+            name=app_commands.locale_str("logs_name"),
+            description=app_commands.locale_str("logs_desc")
+        )
+        channelBlacklist = ChannelBlacklistCommands(
+            name=app_commands.locale_str("logs_blacklist_name"),
+            description=app_commands.locale_str("logs_blacklist_description")
+        )
+        userBlacklist = UserBlacklistCommands(
+            name=app_commands.locale_str("logs_blacklistu_name"),
+            description=app_commands.locale_str("logs_blacklistu_description")
+        )
+        roleBlacklist = RoleBlacklistCommands(
+            name=app_commands.locale_str("logs_blacklistr_name"),
+            description=app_commands.locale_str("logs_blacklistr_description")
+        )
+        logcmds.add_command(channelBlacklist)
+        logcmds.add_command(userBlacklist)
+        logcmds.add_command(roleBlacklist)
         self.bot.tree.add_command(logcmds)
 
 async def setup(bot):

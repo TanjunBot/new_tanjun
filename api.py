@@ -385,6 +385,13 @@ async def create_tables():
         PRIMARY KEY(`guildId`, `roleId`)
     ) ENGINE=InnoDB;
     """
+    tables["logBlacklistChannel"] = """
+    CREATE TABLE IF NOT EXISTS `logBlacklistChannel` (
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
     tables["logUserBlacklist"] = """
     CREATE TABLE IF NOT EXISTS `logUserBlacklist` (
         `guildId` VARCHAR(20),
@@ -1648,6 +1655,28 @@ async def remove_log_channel(guild_id: str):
     params = (guild_id,)
     await execute_action(pool, query, params)
 
+async def add_log_blacklist_channel(guild_id: str, channel_id: str):
+    query = "INSERT INTO logBlacklistChannel (guildId, channelId) VALUES (%s, %s)"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def remove_log_blacklist_channel(guild_id: str, channel_id: str):
+    query = "DELETE FROM logBlacklistChannel WHERE guildId = %s AND channelId = %s"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def get_log_blacklist_channel(guild_id: str):
+    query = "SELECT channelId FROM logBlacklistChannel WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result if result else []
+
+async def is_log_channel_blacklisted(guild_id: str, channel_id: str):
+    query = "SELECT channelId FROM logBlacklistChannel WHERE guildId = %s AND channelId = %s"
+    params = (guild_id, channel_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
 async def add_log_role_blacklist(guild_id: str, role_id: str):
     query = "INSERT INTO logRoleBlacklist (guildId, roleId) VALUES (%s, %s)"
     params = (guild_id, role_id)
@@ -1658,6 +1687,18 @@ async def remove_log_role_blacklist(guild_id: str, role_id: str):
     params = (guild_id, role_id)
     await execute_action(pool, query, params)
 
+async def get_log_role_blacklist(guild_id: str):
+    query = "SELECT roleId FROM logRoleBlacklist WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result if result else []
+
+async def is_log_role_blacklisted(guild_id: str, role_id: str):
+    query = "SELECT roleId FROM logRoleBlacklist WHERE guildId = %s AND roleId = %s"
+    params = (guild_id, role_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
 async def add_log_user_blacklist(guild_id: str, user_id: str):
     query = "INSERT INTO logUserBlacklist (guildId, userId) VALUES (%s, %s)"
     params = (guild_id, user_id)
@@ -1667,6 +1708,18 @@ async def remove_log_user_blacklist(guild_id: str, user_id: str):
     query = "DELETE FROM logUserBlacklist WHERE guildId = %s AND userId = %s"
     params = (guild_id, user_id)
     await execute_action(pool, query, params)
+
+async def get_log_user_blacklist(guild_id: str):
+    query = "SELECT userId FROM logUserBlacklist WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result if result else []
+
+async def is_log_user_blacklisted(guild_id: str, user_id: str):
+    query = "SELECT userId FROM logUserBlacklist WHERE guildId = %s AND userId = %s"
+    params = (guild_id, user_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
 
 async def get_log_channel(guild_id: str):
     query = "SELECT channelId FROM logChannel WHERE guildId = %s"
