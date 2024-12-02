@@ -1587,7 +1587,6 @@ class LogsCog(commands.Cog):
             if len(diff_summary) > 1500:
                 diff_summary_url = await upload_to_byte_bin(tanjunLocalizer.localize(locale, "logs.messageEdit.diff", diff=diff_summary))
 
-                # Add notice about Hastebin upload
                 description_parts.append(tanjunLocalizer.localize(locale, "logs.messageEdit.tooLongNotice", url=diff_summary_url))
                 
             else:
