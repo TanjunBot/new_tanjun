@@ -57,16 +57,21 @@ async def ask_gpt(commandInfo: utility.commandInfo,
         frequency_penalty=float(frequency_penalty),
         presence_penalty=float(presence_penalty)
     )
-    print(response)
+
+    tokenCost = int(response.usage.total_tokens * 0.25)
+
+    await useToken(commandInfo.user.id, tokenCost)
 
     tokenOverview = await getTokenOverview(commandInfo.user.id)
 
-    tokenCost = int(response.usage.total_tokens * 0.25)
 
     embed = utility.tanjunEmbed(
         title = tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.success.title", name=name),
         description = response.choices[0].message.content,
     )
+
+
+
     embed.set_footer(text=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.success.footer", 
                                                    cost=tokenCost, 
                                                    token=token - tokenCost if token - tokenCost > 0 else 0, 

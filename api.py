@@ -1487,9 +1487,6 @@ async def get_voice_cooldown(guild_id: str) -> int:
 
 async def useToken(user_id: str, amount: int):
     query = """
-    BEGIN TRANSACTION;
-
-    -- Use freeToken if available
     UPDATE aiToken
     SET freeToken = CASE
                         WHEN freeToken >= %s THEN freeToken - %s
@@ -1500,8 +1497,6 @@ async def useToken(user_id: str, amount: int):
                         ELSE usedToken
                     END
     WHERE userId = %s AND freeToken >= %s;
-
-    -- If not enough freeToken, use plusToken
     UPDATE aiToken
     SET plusToken = CASE
                         WHEN freeToken < %s AND plusToken >= %s THEN plusToken - %s
@@ -1512,8 +1507,6 @@ async def useToken(user_id: str, amount: int):
                         ELSE usedToken
                     END
     WHERE userId = %s AND freeToken < %s AND plusToken >= %s;
-
-    -- If not enough freeToken and plusToken, use paidToken
     UPDATE aiToken
     SET paidToken = CASE
                         WHEN freeToken < %s AND plusToken < %s AND paidToken >= %s THEN paidToken - %s
@@ -1524,13 +1517,11 @@ async def useToken(user_id: str, amount: int):
                         ELSE usedToken
                     END
     WHERE userId = %s AND freeToken < %s AND plusToken < %s AND paidToken >= %s;
-
-    COMMIT;
     """
-    params = (amount, amount, amount, amount, user_id, amount,
-              amount, amount, amount, amount, amount, amount, user_id, amount, amount,
-              amount, amount, amount, amount, user_id, amount, amount, amount, amount,
-              amount)
+    params = (amount, amount, amount, amount, user_id, amount,amount, 
+              amount, amount, amount, amount, amount, user_id, amount, amount,
+              amount, amount, amount, amount, amount, amount, amount, amount, 
+              user_id, amount, amount, amount, )
 
     await execute_action(pool, query, params)
 
