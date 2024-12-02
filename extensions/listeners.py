@@ -15,6 +15,8 @@ from commands.giveaway.utility import add_giveaway_participant, addMessageToGive
 from loops.level import handleVoiceChange as handleLevelVoiceChange
 from loops.giveaway import handleVoiceChange
 
+from config import adminIds
+
 from commands.ai.add_custom_situation_button_handler import approve_custom_situation, deny_custom_situation
 
 from commands.utility.autopublish import publish_message
@@ -47,11 +49,15 @@ class ListenerCog(commands.Cog):
                 if embed:
                     await interaction.response.send_message(embed=embed, ephemeral=True)
             elif interaction.data["custom_id"].startswith("ai_add_custom_situation_approve"):
+                if interaction.user.id not in adminIds:
+                    return
                 await approve_custom_situation(interaction)
             elif interaction.data["custom_id"].startswith("ai_add_custom_situation_deny"):
+                if interaction.user.id not in adminIds:
+                    return
                 await deny_custom_situation(interaction)
         except:
-            raise
+            pass
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user, before, after):

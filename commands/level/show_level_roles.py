@@ -170,7 +170,8 @@ class AddRoleLevelModal(Modal):
         try:
             level = int(self.level.value)
             if level < 1:
-                raise ValueError
+                pass
+                # raise ValueError
         except ValueError:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(

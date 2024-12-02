@@ -11,7 +11,7 @@ async def approve_custom_situation(interaction):
         return
     situationCreator = interaction.client.get_user(int(situationId))
     if not situationCreator:
-        await interaction.response.send_message("Der typ der die Situation erstellt hat ist nicht mehr am tanjun nutzen :c")
+        await interaction.channel.send("Der typ der die Situation erstellt hat ist nicht mehr am tanjun nutzen :c", delete_after=25)
         return
 
     locale = interaction.data["custom_id"].split(";")[2]
@@ -26,7 +26,7 @@ async def approve_custom_situation(interaction):
         await situationCreator.send(embed=embed)
     except:
         pass
-    await interaction.response.send_message("Situation wurde freigeschaltet!")
+    await interaction.channel.send("Situation wurde freigeschaltet!", delete_after=25)
 
 async def deny_custom_situation(interaction):
     situationId = interaction.data["custom_id"].split(";")[1]
@@ -37,7 +37,7 @@ async def deny_custom_situation(interaction):
     
     situationCreator = interaction.bot.get_user(int(situationId))
     if not situationCreator:
-        await interaction.response.send_message("Der typ der die Situation erstellt hat ist nicht mehr am tanjun nutzen :c")
+        await interaction.channel.send("Der typ der die Situation erstellt hat ist nicht mehr am tanjun nutzen :c", delete_after=25)
         return
 
     locale = interaction.data["custom_id"].split(";")[2]
@@ -52,4 +52,4 @@ async def deny_custom_situation(interaction):
         await situationCreator.send(embed=embed)
     except:
         pass
-    await interaction.response.send_message("Situation wurde gelöscht!")
+    await interaction.channel.send("Situation wurde gelöscht!", delete_after=25)

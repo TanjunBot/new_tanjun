@@ -681,6 +681,253 @@
                 },
                 "error": "Fehler beim Erstellen des Emojis: ${error}",
                 "allRoles": "Allen Rollen"
+            },
+            "boosterRole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um die Booster-Rolle festzulegen. Du benötigst die Berechtigung `Rollen verwalten`."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um die Booster-Rolle festzulegen. Der Bot benötigt die Berechtigung `Rollen verwalten`."
+                },
+                "roleRemoved": {
+                    "title": "Booster-Rolle entfernt",
+                    "description": "Die Booster-Rolle wurde erfolgreich entfernt."
+                },
+                "targetTooHigh": {
+                    "title": "Rolle zu hoch",
+                    "description": "Du kannst keine Booster-Rolle setze, die höhr oder gleich hoch ist wie deine eigene höchste Rolle."
+                },
+                "roleTooHighBot": {
+                    "title": "Rolle zu hoch",
+                    "description": "Die Booster-Rolle kann nicht höher als die höchste Rolle des Bots sein."
+                },
+                "success": {
+                    "title": "Booster-Rolle erfolgreich festgelegt",
+                    "description": "Die Booster-Rolle wurde erfolgreich festgelegt.",
+                    "descriptionWarning": "Die Booster-Rolle wurde erfolgreich festgelegt. Diese Rolle hat jedoch die Berechtigung 'Administrator'. Das bedeutet, dass jedes Mitglied das den Server boostet, Administrator rechte erhält."
+                },
+                "forbidden": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um die Booster-Rolle festzulegen."
+                },
+                "error": {
+                    "title": "Fehler beim Festlegen der Booster-Rolle",
+                    "description": "Beim Versuch, die Booster-Rolle festzulegen, ist ein Fehler aufgetreten."
+                }
+            }
+        },
+        "logs": {
+            "setLogChannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um den Log-Kanal festzulegen. Du benötigst `Administrator` Berechtigungen."
+                },
+                "botMissingPermission": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um den Log-Kanal festzulegen. Der Bot benötigt die Berechtigung `Nachrichten senden`."
+                },
+                "alreadySet": {
+                    "title": "Log-Kanal bereits festgelegt",
+                    "description": "Der Log-Kanal wurde bereits festgelegt. Entferne den Aktuellen Log-Kanal über `/logs remove`, um einen neuen festzulegen."
+                },
+                "success": {
+                    "title": "Log-Kanal erfolgreich festgelegt",
+                    "description": "Der Log-Kanal wurde erfolgreich festgelegt. Logs werden jetzt in ${channel} gesendet.\nBitte beachte, dass du ggf. die einzelnen Logs anschalten musst, um sie zu sehen."
+                }
+            },
+            "removeLogChannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um den Log-Kanal zu entfernen. Du benötigst `Administrator` Berechtigungen."
+                },
+                "notSet": {
+                    "title": "Log-Kanal nicht festgelegt",
+                    "description": "Der Log-Kanal wurde nicht festgelegt. Setze ihn über `/logs set`."
+                },
+                "success": {
+                    "title": "Log-Kanal erfolgreich entfernt",
+                    "description": "Der Log-Kanal wurde erfolgreich entfernt."
+                }
+            },
+            "configureLogs": {
+                "configurationEmbed": {
+                    "title": "Log-Einstellungen",
+                    "automodRuleCreate": "Automod-Regel erstellen",
+                    "automodRuleUpdate": "Automod-Regel aktualisieren",
+                    "automodRuleDelete": "Automod-Regel löschen",
+                    "automodAction": "Automod-Aktion",
+                    "guildChannelDelete": "Kanal löschen",
+                    "guildChannelCreate": "Kanal erstellen",
+                    "guildChannelUpdate": "Kanal aktualisieren",
+                    "guildUpdate": "Server aktualisieren",
+                    "inviteCreate": "Einladung erstellen",
+                    "inviteDelete": "Einladung löschen",
+                    "memberJoin": "Mitglied hinzufügen",
+                    "memberLeave": "Mitglied entfernen",
+                    "memberUpdate": "Mitglied aktualisieren",
+                    "userUpdate": "Benutzer aktualisieren",
+                    "memberBan": "Mitglied sperren",
+                    "memberUnban": "Mitglied entsperren",
+                    "presenceUpdate": "Status aktualisieren",
+                    "messageEdit": "Nachricht bearbeiten",
+                    "messageDelete": "Nachricht löschen",
+                    "reactionAdd": "Reaktion hinzufügen",
+                    "reactionRemove": "Reaktion entfernen",
+                    "guildRoleCreate": "Rolle erstellen",
+                    "guildRoleDelete": "Rolle löschen",
+                    "guildRoleUpdate": "Rolle aktualisieren",
+                    "activated": "Aktiviert",
+                    "deactivated": "Deaktiviert",
+                    "activate": "Aktivieren",
+                    "deactivate": "Deaktivieren"
+                },
+                "title": "Log-Konfiguration",
+                "noLogEnabled": {
+                    "title": "Keine Logs aktiviert",
+                    "description": "Es sind keine Logs aktiviert. Bitte aktiviere mindestens einen Log über `/logs set`."
+                }
+            },
+            "blacklistChannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal für die Logs zu ignorieren. Du benötigst `Administrator` Berechtigungen."
+                },
+                "alreadyBlacklisted": {
+                    "title": "Kanal wird bereits ignoriert",
+                    "description": "Der Kanal wird bereits ignoriert."
+                },
+                "blacklisted": {
+                    "title": "Kanal erfolgreich ignoriert",
+                    "description": "Der Kanal wird jetzt ignoriert. Änderungen die am Kanal vorgenommen werden, Nachrichten die im Kanal bearbeitet werden etc. werden nicht mehr geloggt."
+                }
+            },
+            "blacklistRemoveChannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal für die Logs nicht mehr zu ignorieren. Du benötigst `Administrator` Berechtigungen."
+                },
+                "notBlacklisted": {
+                    "title": "Kanal wird bereits geloggt",
+                    "description": "Änderungen in diesem Kanal werden bereits geloggt."
+                },
+                "success": {
+                    "title": "Kanal wird nicht länger ignoriert",
+                    "description": "Der Kanal wird jetzt nicht mehr ignoriert. Änderungen die am Kanal vorgenommen werden, Nachrichten die im Kanal bearbeitet werden etc. werden wieder geloggt."
+                }
+            },
+            "blacklist": {
+                "name": "blacklist",
+                "description": "Verwalte die Blacklist für Logs",
+                "add": {
+                    "name": "hinzufügen",
+                    "description": "Fügt einen Kanal zur Blacklist hinzu",
+                    "params": {
+                        "channel": {
+                            "description": "Der Kanal, der zur Blacklist hinzugefügt werden soll"
+                        }
+                    }
+                },
+                "remove": {
+                    "name": "entfernen",
+                    "description": "Entfernt einen Kanal von der Blacklist",
+                    "params": {
+                        "channel": {
+                            "description": "Der Kanal, der von der Blacklist entfernt werden soll"
+                        }
+                    }
+                },
+                "show": {
+                    "name": "anzeigen",
+                    "description": "Zeigt die aktuelle Blacklist an"
+                }
+            },
+            "blacklistListChannel": {
+                "title": "Blacklist Kanäle",
+                "addChannel": {
+                    "placeholder": "Kanal hinzufügen"
+                },
+                "noBlacklistedChannels": "Es sind keine Kanäle in der Blacklist."
+            },
+            "blacklistUser": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten."
+                },
+                "alreadyBlacklisted": {
+                    "title": "Benutzer bereits auf der Blacklist",
+                    "description": "Dieser Benutzer ist bereits auf der Blacklist."
+                },
+                "blacklisted": {
+                    "title": "Benutzer zur Blacklist hinzugefügt",
+                    "description": "Der Benutzer wurde erfolgreich zur Blacklist hinzugefügt."
+                }
+            },
+            "blacklistRemoveUser": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung", 
+                    "description": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten."
+                },
+                "notBlacklisted": {
+                    "title": "Benutzer nicht auf der Blacklist",
+                    "description": "Dieser Benutzer ist nicht auf der Blacklist."
+                },
+                "success": {
+                    "title": "Benutzer von der Blacklist entfernt",
+                    "description": "Der Benutzer wurde erfolgreich von der Blacklist entfernt."
+                }
+            },
+            "blacklistRole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Rollen-Blacklist zu verwalten."
+                },
+                "alreadyBlacklisted": {
+                    "title": "Rolle bereits auf der Blacklist",
+                    "description": "Diese Rolle ist bereits auf der Blacklist."
+                },
+                "blacklisted": {
+                    "title": "Rolle zur Blacklist hinzugefügt",
+                    "description": "Die Rolle wurde erfolgreich zur Blacklist hinzugefügt."
+                }
+            },
+        
+            "blacklistRemoveRole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Rollen-Blacklist zu verwalten."
+                },
+                "notBlacklisted": {
+                    "title": "Rolle nicht auf der Blacklist",
+                    "description": "Diese Rolle ist nicht auf der Blacklist."
+                },
+                "success": {
+                    "title": "Rolle von der Blacklist entfernt",
+                    "description": "Die Rolle wurde erfolgreich von der Blacklist entfernt."
+                }
+            },
+            "blacklistListUser": {
+                "title": "Benutzer-Blacklist",
+                "noBlacklistedUsers": "Es sind keine Benutzer auf der Blacklist.",
+                "addUser": {
+                    "placeholder": "Benutzer hinzufügen"
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Benutzer-Blacklist anzuzeigen."
+                }
+            },
+            "blacklistListRole": {
+                "title": "Rollen-Blacklist",
+                "noBlacklistedRoles": "Es sind keine Rollen auf der Blacklist.",
+                "addRole": {
+                    "placeholder": "Rolle hinzufügen"
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Rollen-Blacklist anzuzeigen."
+                }
             }
         },
         "math": {
@@ -1025,6 +1272,24 @@
                 "opted_out": {
                     "title": "Befehl nicht verfügbar",
                     "description": "Du hast die Nachrichtenverfolgung deaktiviert, wodurch ich keine Nachrichten von dir lesen werde. Deshalb kann ich nicht wissen, wann du wieder da bist :/ Der AFK Modus ist für dich leider nicht verfügbar."
+                }
+            },
+            "claimboosterrole": {
+                "nobooster": {
+                    "title": "Kein Booster",
+                    "description": "Du bist kein Booster. Booster erhalten eine eigene Rolle, welche du einstellen kannst, wie du möchtest."
+                },
+                "no_booster_role": {
+                    "title": "Keine Boosterrolle",
+                    "description": "Es ist keine Boosterrolle eingestellt. Sage der Server-Administration, dass sie eine Boosterrolle für den Server einrichten soll."
+                },
+                "role_not_found": {
+                    "title": "Boosterrolle nicht gefunden",
+                    "description": "Die Boosterrolle wurde nicht gefunden. Sie wurde möglicherweise gelöscht."
+                },
+                "success": {
+                    "title": "Boosterrolle erfolgreich erhalten",
+                    "description": "Die Boosterrolle wurde erfolgreich erhalten."
                 }
             }
         },
@@ -2372,6 +2637,15 @@
                     "description": "Die Rollen, die das Emoji verwenden dürfen (optional, leer lassen für alle Rollen)"
                 }
             }
+        },
+        "boosterrole": {
+            "name": "boosterrolle",
+            "description": "Erstellt eine Boosterrolle",
+            "params": {
+                "role": {
+                    "description": "Die Rolle, die als Boosterrolle gesetzt werden soll"
+                }
+            }
         }
     },
     "fun": {
@@ -3623,6 +3897,554 @@
                         "description": "Die presence penalty der benutzerdefinierten KI"
                     }
                 }
+            }
+        }
+    },
+    "logs": {
+        "name": "logs",
+        "description": "Logs",
+        "permissions": {
+            "add_reaction": "Reaktion hinzugefügt",
+            "administrator": "Administrator",
+            "attach_files": "Dateien angehängt",
+            "ban_members": "Mitglieder sperren",
+            "change_nickname": "Nickname ändern",
+            "connect": "Verbinden",
+            "create_events": "Ereignisse erstellen",
+            "create_expressions": "Ausdrücke erstellen",
+            "create_instant_invite": "Instant-Einladungen erstellen",
+            "create_polls": "Umfragen erstellen",
+            "create_private_threads": "Private Threads erstellen",
+            "create_public_threads": "Öffentliche Threads erstellen",
+            "deafen_members": "Mitglieder stumm schalten",
+            "embed_links": "Links einfügen",
+            "external_emojis": "Externe Emojis verwenden",
+            "external_stickers": "Externe Sticker verwenden",
+            "kick_members": "Mitglieder kicken",
+            "manage_channels": "Kanäle verwalten",
+            "manage_emojis": "Emojis verwalten",
+            "manage_stickers": "Sticker verwalten",
+            "manage_emojis_and_stickers": "Emojis und Sticker verwalten",
+            "manage_events": "Ereignisse verwalten",
+            "manage_expressions": "Ausdrücke verwalten",
+            "manage_guild": "Server verwalten",
+            "manage_messages": "Nachrichten verwalten",
+            "manage_nicknames": "Nicknamen verwalten",
+            "manage_permissions": "Berechtigungen verwalten",
+            "manage_roles": "Rollen verwalten",
+            "manage_threads": "Threads verwalten",
+            "manage_webhooks": "Webhooks verwalten",
+            "mention_everyone": "Alle erwähnen",
+            "moderate_members": "Mitglieder moderieren",
+            "move_members": "Mitglieder verschieben",
+            "mute_members": "Mitglieder stumm schalten",
+            "priority_speaker": "Prioritätssprecher",
+            "read_message_history": "Nachrichtengeschichte lesen",
+            "read_messages": "Nachrichten lesen",
+            "request_to_speak": "Sprechen beantragen",
+            "send_messages": "Nachrichten senden",
+            "send_messages_in_threads": "Nachrichten in Threads senden",
+            "send_polls": "Umfragen senden",
+            "send_tts_messages": "TTS-Nachrichten senden",
+            "send_voice_messages": "Sprachnachrichten senden",
+            "speak": "Sprechen",
+            "stream": "Streamen",
+            "use_application_commands": "Anwendungsbefehle verwenden",
+            "use_embedded_activities": "Eingebettete Aktivitäten verwenden",
+            "use_external_apps": "Externe Apps verwenden",
+            "use_external_emojis": "Externe Emojis verwenden",
+            "use_external_sounds": "Externe Sounds verwenden",
+            "use_external_stickers": "Externe Sticker verwenden",
+            "use_soundboard": "Soundboard verwenden",
+            "use_voice_activation": "Sprachaktivierung verwenden",
+            "view_audit_log": "Audit-Log ansehen",
+            "view_channel": "Kanal ansehen",
+            "view_creator_monetization_analytics": "Ersteller-Monetisierungs-Analytics ansehen",
+            "view_guild_insights": "Server-Einsichten ansehen"
+        },
+        "automodRuleCreate": {
+            "AutoModRuleTriggerType": {
+                "keyword": "Schlagwort",
+                "harmful_link": "Gefährliche Links",
+                "spam": "Spam",
+                "keyword_preset": "Schlagwort-Vorlage",
+                "mention_spam": "Erwähnungs-Spam",
+                "member_profile": "Mitglied-Profil"
+            },
+            "title": "Automod-Regel erstellt",
+            "created_by": "Erstellt von ${creator}",
+            "name": "Name: ${name}",
+            "enabled": "Aktiviert: ${enabled}",
+            "trigger": "Trigger:",
+            "triggerType": "Typ: ${triggerType}",
+            "keywordFilters": "Schlagwörter:\n${keywordFilters}",
+            "regexPatterns": "Regex-Muster:\n`${regexPatterns}`",
+            "presets": "Vorlagen:\n- Obszönitätsfilter: ${profanityFilter}\n- Sexuelle Inhalte Filter: ${sexualContentFilter}\n- Beleidigungsfilter: ${slurFilter}",
+            "allow_list": "Erlaubte Liste:\n${allow_list}",
+            "max_mentions": "Maximale Erwähnungen: ${max_mentions}",
+            "mentionSpamProtection": "Erwähnungs-Spam-Schutz Aktiviert",
+            "excluded_roles": "Ausgenommene Rollen:\n${excluded_roles}",
+            "excluded_channels": "Ausgenommene Kanäle:\n${excluded_channels}",
+            "actions": "Aktionen:",
+            "block_message": "- Nachricht blockieren",
+            "send_warning_message": "- Warnnachricht senden in <#${channel}>",
+            "timeout": "- Timeout: ${duration}",
+            "timeout_duration": {
+                "0:01:00": "1 Minute",
+                "0:05:00": "5 Minuten",
+                "0:10:00": "10 Minuten",
+                "1:00:00": "1 Stunde",
+                "1 day, 0:00:00": "1 Tag",
+                "7 days, 0:00:00": "7 Tage"
+            },
+            "block_member_interaction": "- Mitglied-Interaktion blockieren: ${duration}"
+        },
+        "automodRuleUpdate": {
+            "title": "Automod-Regel aktualisiert",
+            "updated_by": "Aktualisiert von ${updater}",
+            "footer": "Leider ist es nur sehr umständlich, die Änderungen an der Regel zu loggen. Dies kommt vielleicht in einer zukünftigen Version (vielleicht aber auch nicht)."
+        },
+        "automodRuleDelete": {
+            "title": "Automod-Regel gelöscht",
+            "deleted_by": "Gelöscht von ${deleter}"
+        },
+        "automodAction": {
+            "title": "Automod-Aktion",
+            "actionWasTaken": "Der Automod hat etwas gegen ${user} in ${channel} unternommen",
+            "action": "Aktion:",
+            "message": "Nachricht: \n${message}"
+        },
+        "guildChannelDelete": {
+            "title": "Kanal gelöscht",
+            "deleted_by": "Gelöscht von ${deleter}",
+            "name": "Name: ${name}",
+            "type": "Typ: ${type}",
+            "types": {
+                "text": "Textkanal",
+                "voice": "Sprachkanal",
+                "category": "Kategorie",
+                "stage": "Stagekanal",
+                "forum": "Forumkanal"
+            },
+            "created_at": "Erstellt <t:${created_at}:F>",
+            "category": "Kategorie: `${category}`",
+            "topic": "Thema: ${topic}",
+            "permissionOverwrites": "Berechtigungen:",
+            "permissionOverwriteTarget": "#${target}",
+            "permissionOverwriteAllowed": "✅ Erlaubt: ${permissions}",
+            "permissionOverwriteDenied": "❌ Verweigert: ${permissions}",
+            "permissionOverwriteNeutral": "➖ Neutral: ${permissions}"
+        },
+        "guildChannelCreate": {
+            "created_by": "Erstellt von ${creator}",
+            "name": "Name: ${name}",
+            "type": "Typ: ${type}",
+            "types": {
+                "text": "Textkanal",
+                "voice": "Sprachkanal",
+                "category": "Kategorie",
+                "stage": "Stagekanal",
+                "forum": "Forumkanal"
+            },
+            "created_at": "Erstellt <t:${created_at}:F>",
+            "category": "Kategorie: `${category}`",
+            "topic": "Thema: ${topic}",
+            "permissionOverwrites": "Berechtigungen:",
+            "permissionOverwriteTarget": "#${target}",
+            "permissionOverwriteAllowed": "✅ Erlaubt: ${permissions}",
+            "permissionOverwriteDenied": "❌ Verweigert: ${permissions}",
+            "permissionOverwriteNeutral": "➖ Neutral: ${permissions}",
+            "title": "Kanal erstellt"
+        },
+        "guildChannelUpdate": {
+            "updated_by": "Aktualisiert von ${updater}",
+            "name": "Name geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "mention": "Kanal Erwähnung: ${mention}",
+            "type": "Typ geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "category": "In andere Kategorie verschoben: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "topic": "Thema geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "permissionOverwrites": "Berechtigungen:",
+            "permissionOverwriteTarget": "#${target}",
+            "permissionOverwriteAllowed": "✅ Erlaubt: ${permissions}",
+            "permissionOverwriteDenied": "❌ Verweigert: ${permissions}",
+            "permissionOverwriteNeutral": "➖ Neutral: ${permissions}",
+            "permissionOverwriteModified": "Berechtigungen geändert für ${target}:",
+            "permissionOverwriteAddedAllow": "✅ Erlaubt Hinzugefügt: ${permissions}",
+            "permissionOverwriteAddedDeny": "❌ Verweigert Hinzugefügt: ${permissions}",
+            "permissionOverwriteAddedNeutral": "➖ Neutral Hinzugefügt: ${permissions}",
+            "permissionOverwriteRemovedAllow": "✅ Erlaubt Entfernt: ${permissions}",
+            "permissionOverwriteRemovedDeny": "❌ Verweigert Entfernt: ${permissions}",
+            "permissionOverwriteRemovedNeutral": "➖ Neutral Entfernt: ${permissions}",
+            "defaultAutoArchiveDuration": "Standard-Auto-Archive-Dauer geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "defaultThreadAutoArchiveDuration": "Standard-Thread-Auto-Archive-Dauer geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "nsfw": "NSFW-Status geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "slowmodeDelay": "Slowmode-Verzögerung geändert: \n<:empty:1312126155897442416>Vorher: ${before}s\n<:empty:1312126155897442416>Nachher: ${after}s",
+            "yes": "Ja",
+            "no": "Nein",
+            "title": "Kanal aktualisiert"
+        },
+        "guildUpdate": {
+            "none": "Keiner",
+            "afkChannel": "AFK-Kanal geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "afkTimeout": "AFK-Timeout geändert: \n<:empty:1312126155897442416>Vorher: ${before}s\n<:empty:1312126155897442416>Nachher: ${after}s",
+            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "title": "Server Einstellungen aktualisiert",
+            "defaultNotificationsLocales": {
+                "allMembers": "Alle Mitglieder",
+                "onlyMentions": "Nur Erwähnungen"
+            },
+            "description": "Beschreibung geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "discoverySplashLocales": {
+                "url": "LINK"
+            },
+            "discoverySplash": "Entdeckung-Splash geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "emojiLimit": "Emoji-Limit geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "addedEmojis": "Hinzugefügte Emojis:\n${added_emojis}",
+            "removedEmojis": "Entfernte Emojis:\n${removed_emojis}",
+            "explicitContentFilterLocales": {
+                "disabled": "Deaktiviert",
+                "noRole": "Keine Rolle",
+                "allMembers": "Alle Mitglieder"
+            },
+            "explicitContentFilter": "Explizite Inhalte Filter: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "featuresLocales": {
+                "ANIMATED_BANNER": "Animierter Banner",
+                "ANIMATED_ICON": "Animierter Icon",
+                "APPLICATION_COMMAND_PERMISSIONS_V2": "Anwendungsbefehle Berechtigungen v2",
+                "AUTO_MODERATION": "Automod",
+                "BANNER": "Banner",
+                "COMMUNITY": "Community",
+                "CREATOR_MONETIZATION_ANALYTICS": "Ersteller-Monetisierungs-Analytics",
+                "CREATOR_STORE_PAGE": "Ersteller-Store-Page",
+                "DEVELOPER_SUPPORT_SERVER": "Entwickler-Support-Server",
+                "DISCOVERABLE": "Entdeckbar",
+                "FEATURABLE": "Ins Serververzeichnis aufführbar",
+                "INVITES_DISABLED": "Einladungen deaktiviert",
+                "INVITE_SPLASH": "Einladung-Splash",
+                "MEMBER_VERIFICATION_GATE_ENABLED": "Mitglieder-Verifizierung-Gate aktiviert",
+                "MORE_SOUNDBOARD": "Mehr Soundboard",
+                "MORE_STICKERS": "Mehr Sticker",
+                "NEWS": "News",
+                "PARTNERED": "Partner Server",
+                "PREVIEW_ENABLED": "Vorschau aktiviert",
+                "RAID_ALERTS_DISABLED": "Raid-Warnungen deaktiviert",
+                "ROLE_ICONS": "Rollen-Icons",
+                "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE": "Rollen-Abonnements verfügbar für den Kauf",
+                "ROLE_SUBSCRIPTIONS_ENABLED": "Rollen-Abonnements aktiviert",
+                "SOUNDBOARD": "Soundboard",
+                "TICKETED_EVENTS_ENABLED": "Ticketierte Events aktiviert",
+                "VANITY_URL": "Vanity-URL",
+                "VERIFIED": "Verifiziert",
+                "VIP_REGIONS": "VIP-Regionen",
+                "WELCOME_SCREEN_ENABLED": "Begrüßungsbildschirm aktiviert"
+            },
+            "addedFeatures": "Hinzugefügte Funktionen:\n${added_features}",
+            "removedFeatures": "Entfernte Funktionen:\n${removed_features}",
+            "iconLocales": {
+                "url": "LINK",
+                "noIcon": "Keins"
+            },
+            "icon": "Icon geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "filesizeLimit": "Dateigrößen-Limit geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "invitesPausedUntilLocales": {
+                "notPaused": "Nicht pausiert"
+            },
+            "invitesPausedUntil": "Einladungen pausiert bis: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "maxMembers": "Maximale Mitglieder geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "maxPresences": "Maximale Präsenzen geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "maxVideoChannelUsers": "Maximale Video-Kanäle-Mitglieder geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "nsfwLevelLocales": {
+                "default": "Standard (Nicht Altersbeschränkt)",
+                "explicit": "Explizit (Server enthält NSFW Inhalt)",
+                "safe": "Sicher (Server enthält keine NSFW Inhalte)",
+                "ageRegistered": "Alter registriert (Server könnte NSFW Inhalte enthalten)"
+            },
+            "nsfwLevel": "NSFW-Level geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "preferredLocaleLocales": {
+                "en-US": "Englisch (USA)",
+                "en-GB": "Englisch (Großbritannien)",
+                "bg": "Bulgarisch",
+                "zh-CN": "Chinesisch",
+                "zh-TW": "Chinesisch (Taiwan)",
+                "hr": "Kroatisch",
+                "cs": "Tschechisch",
+                "id": "Indonesisch",
+                "da": "Dänisch",
+                "nl": "Niederländisch",
+                "fi": "Finnisch",
+                "fr": "Französisch",
+                "de": "Deutsch",
+                "el": "Griechisch",
+                "hi": "Hindi",
+                "hu": "Ungarisch",
+                "it": "Italienisch",
+                "ko": "Koreanisch",
+                "es-419": "Spanisch (Latinamerika)",
+                "lt": "Litauisch",
+                "no": "Norwegisch",
+                "pl": "Polnisch",
+                "pt-BR": "Portugiesisch (Brasilien)",
+                "ro": "Rumänisch",
+                "es-ES": "Spanisch (Spanien)",
+                "sv-SE": "Schwedisch",
+                "th": "Thailändisch",
+                "tr": "Türkisch",
+                "uk": "Ukrainisch",
+                "vi": "Vietnamesisch"
+            },
+            "preferredLocale": "Bevorzugte Sprache geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "premiumProgressBarLocales": {
+                "activated": "Boost-Fortschrittsleiste wurde aktiviert",
+                "deactivated": "Boost-Fortschrittsleiste wurde deaktiviert"
+            },
+            "premiumSubscriberRole": "Booster-Rolle geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "premiumSubscribers": "Server-Booster anzahl geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "premiumTier": "Server-Booster-Tier geändert: \n<:empty:1312126155897442416>Vorher: Level ${before}\n<:empty:1312126155897442416>Nachher: Level ${after}",
+            "publicUpdatesChannel": "Öffentliche Updates-Kanal (Moderator-Nachrichten) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "rulesChannel": "Regeln-Kanal geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "safetyAlertsChannel": "Safety-Alerts-Kanal geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "unavailableLocales": {
+                "available": "Der Server ist verfügbar",
+                "unavailable": "Der Server ist nicht mehr verfügbar"
+            },
+            "verificationLevelLocales": {
+                "none": "Keine (Jeder kann joinen)",
+                "low": "Niedrig (Mitglieder müssen ihre Email bei Discord bestätigt haben)",
+                "medium": "Mittel (Mitglieder müssen seit mindestens 5 Minuten ihre Email bei Discord bestätigt haben)",
+                "high": "Hoch (Mitglieder müssen seit mindestens 5 Minuten ihre Email bei Disord bestätigt haben und seit mindestens 10 Minuten auf dem Server sein)",
+                "highest": "Höchst (Mitglieder müssen ihre Telefonnummer bei Discord bestätigt haben)"
+            }
+        },
+        "inviteCreate": {
+            "title": "Einladung erstellt",
+            "createdBy": "Erstellt von ${created_by}",
+            "channel": "Einladung führt zu den Kanal: ${channel}",
+            "expiresLocales": {
+                "never": "Nie"
+            },
+            "expires": "Läuft ab: ${expires}",
+            "maxUsesLocales": {
+                "infinite": "Unendlich"
+            },
+            "max_uses": "Maximale Verwendungen: ${max_uses}",
+            "scheduledEvent": "Einladung führt zu der Veranstaltung: ${scheduled_event}",
+            "targetApplication": "Einladung führt zu der Anwendung: ${target_application}",
+            "targetTypeLocales": {
+                "InviteTarget.stream": "Einladung führt zu einem Stream",
+                "InviteTarget.embeddedApplication": "Einladung führt zu einer Eingebetteten Anwendung",
+                "InviteTarget.unknown": "Einladung führt zu einem Unbekannten Ziel"
+            },
+            "targetUser": "Einladung führt zu dem Mitglied: ${target_user}",
+            "temporary": "Die Erstellte Einladung ist temporär",
+            "invite": "Erstellter Einladungslink: ${invite}"
+        },
+        "inviteDelete": {
+            "title": "Einladung gelöscht",
+            "invite": "Gelöschte Einladung: ${invite}"
+        },
+        "memberJoin": {
+            "name": "Neues Mitglied: ${joined}",
+            "title": "Mitglied beigetreten"
+        },
+        "memberRemove": {
+            "name": "Mitglied verlassen: ${left}",
+            "title": "Mitglied verlassen",
+            "roles": "Rollen: ${roles}"
+        },
+        "memberUpdate": {
+            "name": "Mitglied aktualisiert: ${member}",
+            "displayName": "Anzeigename geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "addedRoles": "Hinzugefügte Rollen:\n${added_roles}",
+            "removedRoles": "Entfernte Rollen:\n${removed_roles}",
+            "pending": "Der User ist jetzt verifiziert",
+            "pendingRemoved": "Der User ist nicht mehr verifiziert",
+            "timeout": "Wurde in Timeout geschickt bis: <t:${timeout}:R>\n",
+            "timeoutRemoved": "Timeout wurde entfernt",
+            "guildAvatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
+            "guildAvatarLocales": {
+                "none": "Keins",
+                "url": "LINK"
+            },
+            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
+            "title": "Mitglied aktualisiert"
+        },
+        "userUpdate": {
+            "title": "Benutzer aktualisiert",
+            "name": "Der Nutzer ${user} hat seinen globalen Discord Account geändert",
+            "avatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
+            "guildAvatarLocales": {
+                "none": "Keins",
+                "url": "LINK"
+            },
+            "userName": "Benutzername (@) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
+            "globalName": "Globaler Nickname geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}"
+        },
+        "memberBan": {
+            "title": "Mitglied gebannt",
+            "name": "Gebanntes Mitglied: ${user}",
+            "banned_by": "Gebannt von: ${banner}"
+        },
+        "memberUnban": {
+            "title": "Mitglied entbannt",
+            "name": "Entbanntes Mitglied: ${user}",
+            "unbanned_by": "Entbannt von: ${unbanned_by}"
+        },
+        "presenceUpdate": {
+            "title": "Präsenz aktualisiert",
+            "name": "Präsenz von ${user} aktualisiert",
+            "activity": "Aktivität geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}"
+        },
+        "messageEdit": {
+            "name": "Nachricht bearbeitet von ${user}\n[Zur Nachricht](${url})",
+            "ellipsis": "...",
+            "truncatedNotice": "… (abgeschnitten)",
+            "tooLongNotice": "Die Nachricht ist sehr lang. Um die Logs sauber zu halten, wurde der Nachrichtenhinhalt auf Hastbin hochgeladen. Um den Inhalt anzusehen, klicke [hier](${url}).",
+            "content": "Nachrichteninhalt: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "diff": "Nachrichtenänderungen: \n```\n${diff}\n```",
+            "title": "Nachricht bearbeitet",
+            "attachments": "Anhänge: \n${attachments}"
+        },
+        "messageDelete": {
+            "title": "Nachricht gelöscht",
+            "name": "Eine Nachricht von ${user} wurde im Kanal ${channel} gelöscht",
+            "deletedBy": "Gelöscht von: ${deleted_by}",
+            "content": "Nachrichteninhalt: \n${content}",
+            "attachments": "Anhänge: \n${attachments}",
+            "embeds": "Die Nachricht enthielt Embeds. Sie sind unter diesem Log-Eintrag zu finden"
+        },
+        "reactionAdd": {
+            "title": "Reaktion hinzugefügt",
+            "name": "${user} hat auf die Nachricht ${message} eine Reaktion hinzugefügt: ${emoji}"
+        },
+        "reactionRemove": {
+            "title": "Reaktion entfernt",
+            "name": "${user} hat auf die Nachricht ${message} eine Reaktion entfernt: ${emoji}"
+        },
+        "guildRoleCreate": {
+            "title": "Rolle erstellt",
+            "name": "Erstellte Rolle: ${role}",
+            "color": "Farbe: ${color}",
+            "displayIcon": "Anzeige-Icon: ${display_icon}",
+            "hoist": "Mitglieder werden getrennt angezeigt",
+            "managed": "Die Rolle wird von einer Anwendung (z.B. einem Bot) verwaltet",
+            "mentionable": "Die Rolle ist von jedem erwähnbar",
+            "permissions": "Berechtigungen: ${permissions}",
+            "createdBy": "Erstellt von: ${created_by}"
+        },
+        "guildRoleDelete": {
+            "title": "Rolle gelöscht",
+            "name": "Gelöschte Rolle: ${role}",
+            "deletedBy": "Gelöscht von: ${deleted_by}"
+        },
+        "guildRoleUpdate": {
+            "name": "Rolle aktualisiert: ${role}",
+            "updatedBy": "Aktualisiert von: ${updated_by}",
+            "color": "Farbe: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "hoistNow": "Mitglieder werden getrennt angezeigt",
+            "hoistNoLonger": "Mitglieder werden nicht mehr getrennt angezeigt",
+            "mentionableNow": "Die Rolle ist von jedem erwähnbar",
+            "mentionableNoLonger": "Die Rolle ist nicht mehr von jedem erwähnbar",
+            "managedNow": "Die Rolle wird von einer Anwendung (z.B. einem Bot) verwaltet",
+            "managedNoLonger": "Die Rolle wird nicht mehr von einer Anwendung (z.B. einem Bot) verwaltet",
+            "addedPermissions": "Hinzugefügte Berechtigungen:\n${permissions}",
+            "removedPermissions": "Entfernte Berechtigungen:\n${permissions}",
+            "displayIcon": "Anzeige-Icon: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "title": "Rolle aktualisiert"
+        },
+        "set": {
+            "name": "set",
+            "description": "Setzt einen Kanal für Logs",
+            "params": {
+                "channel": {
+                    "description": "Der Kanal, der für Logs gesetzt werden soll"
+                }
+            }
+        },
+        "remove": {
+            "name": "remove",
+            "description": "Entfernt einen Kanal für Logs"
+        },
+        "configure": {
+            "name": "configure",
+            "description": "Konfiguriert die Logs"
+        },
+        "blacklistc": {
+            "name": "blacklist",
+            "description": "Verwalte die Blacklist für Logs",
+            "add": {
+                "name": "hinzufügen",
+                "description": "Fügt einen Kanal zur Blacklist hinzu",
+                "params": {
+                    "channel": {
+                        "description": "Der Kanal, der zur Blacklist hinzugefügt werden soll"
+                    }
+                }
+            },
+            "remove": {
+                "name": "entfernen",
+                "description": "Entfernt einen Kanal von der Blacklist",
+                "params": {
+                    "channel": {
+                        "description": "Der Kanal, der von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt die aktuelle Blacklist an"
+            }
+        },
+        "blacklistr": {
+            "name": "blacklistr",
+            "description": "Verwalte die Rollen-Blacklist für Logs",
+            "add": {
+                "name": "hinzufügen",
+                "description": "Fügt eine Rolle zur Blacklist hinzu",
+                "params": {
+                    "role": {
+                        "description": "Die Rolle, die zur Blacklist hinzugefügt werden soll"
+                    }
+                }
+            },
+            "remove": {
+                "name": "entfernen",
+                "description": "Entfernt eine Rolle von der Blacklist",
+                "params": {
+                    "role": {
+                        "description": "Die Rolle, die von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt die aktuelle Rollen-Blacklist an"
+            }
+        },
+        "blacklistu": {
+            "name": "blacklistu",
+            "description": "Verwalte die Benutzer-Blacklist für Logs",
+            "add": {
+                "name": "hinzufügen",
+                "description": "Fügt einen Benutzer zur Blacklist hinzu",
+                "params": {
+                    "user": {
+                        "description": "Der Benutzer, der zur Blacklist hinzugefügt werden soll"
+                    }
+                }
+            },
+            "remove": {
+                "name": "entfernen",
+                "description": "Entfernt einen Benutzer von der Blacklist",
+                "params": {
+                    "user": {
+                        "description": "Der Benutzer, der von der Blacklist entfernt werden soll"
+                    }
+                }
+            },
+            "show": {
+                "name": "anzeigen",
+                "description": "Zeigt die aktuelle Benutzer-Blacklist an"
             }
         }
     },

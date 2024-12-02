@@ -30,7 +30,6 @@ async def execute_query(p, query, params=None):
                 return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}")
-        raise
 
 
 async def execute_action(p, query, params=None):
@@ -45,7 +44,6 @@ async def execute_action(p, query, params=None):
                 return cursor.rowcount
     except Exception as e:
         print(f"An error occurred during action execution: {e}")
-        raise
 
 
 async def execute_insert_and_get_id(p, query, params=None):
@@ -61,7 +59,6 @@ async def execute_insert_and_get_id(p, query, params=None):
                 return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}")
-        raise
 
 
 async def create_tables():
@@ -385,6 +382,83 @@ async def create_tables():
         `messageId` VARCHAR(20),
         `channelId` VARCHAR(20),
         PRIMARY KEY(`userId`, `messageId`)
+    tables["boosterChannel"] = """
+    CREATE TABLE IF NOT EXISTS `boosterChannel` (
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["boosterRole"] = """
+    CREATE TABLE IF NOT EXISTS `boosterRole` (
+        `guildId` VARCHAR(20),
+        `roleId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `roleId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["logChannel"] = """
+    CREATE TABLE IF NOT EXISTS `logChannel` (
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["logChannelBlacklist"] = """
+    CREATE TABLE IF NOT EXISTS `logChannelBlacklist` (
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["logRoleBlacklist"] = """
+    CREATE TABLE IF NOT EXISTS `logRoleBlacklist` (
+        `guildId` VARCHAR(20),
+        `roleId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `roleId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["logBlacklistChannel"] = """
+    CREATE TABLE IF NOT EXISTS `logBlacklistChannel` (
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["logUserBlacklist"] = """
+    CREATE TABLE IF NOT EXISTS `logUserBlacklist` (
+        `guildId` VARCHAR(20),
+        `userId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `userId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["logEnables"] = """
+    CREATE TABLE IF NOT EXISTS `logEnables` (
+        `guildId` VARCHAR(20),
+        `automodRuleCreate` TINYINT(1) DEFAULT 1,
+        `automodRuleUpdate` TINYINT(1) DEFAULT 1,
+        `automodRuleDelete` TINYINT(1) DEFAULT 1,
+        `automodAction` TINYINT(1) DEFAULT 0,
+        `guildChannelDelete` TINYINT(1) DEFAULT 1,
+        `guildChannelCreate` TINYINT(1) DEFAULT 1,
+        `guildChannelUpdate` TINYINT(1) DEFAULT 1,
+        `guildUpdate` TINYINT(1) DEFAULT 1,
+        `inviteCreate` TINYINT(1) DEFAULT 1,
+        `inviteDelete` TINYINT(1) DEFAULT 0,
+        `memberJoin` TINYINT(1) DEFAULT 1,
+        `memberLeave` TINYINT(1) DEFAULT 1,
+        `memberUpdate` TINYINT(1) DEFAULT 1,
+        `userUpdate` TINYINT(1) DEFAULT 1,
+        `memberBan` TINYINT(1) DEFAULT 1,
+        `memberUnban` TINYINT(1) DEFAULT 1,
+        `presenceUpdate` TINYINT(1) DEFAULT 1,
+        `messageEdit` TINYINT(1) DEFAULT 1,
+        `messageDelete` TINYINT(1) DEFAULT 1,
+        `reactionAdd` TINYINT(1) DEFAULT 0,
+        `reactionRemove` TINYINT(1) DEFAULT 0,
+        `guildRoleCreate` TINYINT(1) DEFAULT 1,
+        `guildRoleDelete` TINYINT(1) DEFAULT 1,
+        `guildRoleUpdate` TINYINT(1) DEFAULT 1,
+        PRIMARY KEY(`guildId`)
     ) ENGINE=InnoDB;
     """
 
@@ -392,6 +466,9 @@ async def create_tables():
         table_query = tables[table_name]
         await execute_action(pool, table_query)
 
+async def test_db(self, ctx):
+    query = "SELECT 1"
+    await execute_query(pool, query)
 
 async def add_warning(guild_id, user_id, reason, expiration_date=None):
     query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at) VALUES (%s, %s, %s, %s)"
@@ -1449,9 +1526,6 @@ async def get_voice_cooldown(guild_id: str) -> int:
 
 async def useToken(user_id: str, amount: int):
     query = """
-    BEGIN TRANSACTION;
-
-    -- Use freeToken if available
     UPDATE aiToken
     SET freeToken = CASE
                         WHEN freeToken >= %s THEN freeToken - %s
@@ -1462,8 +1536,6 @@ async def useToken(user_id: str, amount: int):
                         ELSE usedToken
                     END
     WHERE userId = %s AND freeToken >= %s;
-
-    -- If not enough freeToken, use plusToken
     UPDATE aiToken
     SET plusToken = CASE
                         WHEN freeToken < %s AND plusToken >= %s THEN plusToken - %s
@@ -1474,8 +1546,6 @@ async def useToken(user_id: str, amount: int):
                         ELSE usedToken
                     END
     WHERE userId = %s AND freeToken < %s AND plusToken >= %s;
-
-    -- If not enough freeToken and plusToken, use paidToken
     UPDATE aiToken
     SET paidToken = CASE
                         WHEN freeToken < %s AND plusToken < %s AND paidToken >= %s THEN paidToken - %s
@@ -1486,13 +1556,11 @@ async def useToken(user_id: str, amount: int):
                         ELSE usedToken
                     END
     WHERE userId = %s AND freeToken < %s AND plusToken < %s AND paidToken >= %s;
-
-    COMMIT;
     """
-    params = (amount, amount, amount, amount, user_id, amount,
-              amount, amount, amount, amount, amount, amount, user_id, amount, amount,
-              amount, amount, amount, amount, user_id, amount, amount, amount, amount,
-              amount)
+    params = (amount, amount, amount, amount, user_id, amount,amount, 
+              amount, amount, amount, amount, amount, user_id, amount, amount,
+              amount, amount, amount, amount, amount, amount, amount, amount, 
+              user_id, amount, amount, amount, )
 
     await execute_action(pool, query, params)
 
@@ -1654,3 +1722,290 @@ async def getAfkReason(user_id: str):
     params = (user_id,)
     result = await execute_query(pool, query, params)
     return result[0][0] if result else None
+    
+async def add_booster_channel(guild_id: str, channel_id: str):
+    query = "INSERT INTO boosterChannel (guildId, channelId) VALUES (%s, %s)"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def remove_booster_channel(guild_id: str, channel_id: str):
+    query = "DELETE FROM boosterChannel WHERE guildId = %s AND channelId = %s"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def add_booster_role(guild_id: str, role_id: str):
+    query = "INSERT INTO boosterRole (guildId, roleId) VALUES (%s, %s)"
+    params = (guild_id, role_id)
+    await execute_action(pool, query, params)
+
+async def get_booster_role(guild_id: str):
+    query = "SELECT roleId FROM boosterRole WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else None
+
+async def delete_booster_role(guild_id: str):
+    query = "DELETE FROM boosterRole WHERE guildId = %s"
+    params = (guild_id,)
+    await execute_action(pool, query, params)
+
+async def set_log_channel(guild_id: str, channel_id: str):
+    query = "INSERT INTO logChannel (guildId, channelId) VALUES (%s, %s)"
+    params = (guild_id, channel_id)
+    if not await get_log_enable(guild_id):
+        query = "REPLACE INTO logEnables (guildId) VALUES (%s)"
+        params = (guild_id)
+    await execute_action(pool, query, params)
+
+async def remove_log_channel(guild_id: str):
+    query = "DELETE FROM logChannel WHERE guildId = %s"
+    params = (guild_id,)
+    await execute_action(pool, query, params)
+
+async def add_log_blacklist_channel(guild_id: str, channel_id: str):
+    query = "INSERT INTO logBlacklistChannel (guildId, channelId) VALUES (%s, %s)"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def remove_log_blacklist_channel(guild_id: str, channel_id: str):
+    query = "DELETE FROM logBlacklistChannel WHERE guildId = %s AND channelId = %s"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def get_log_blacklist_channel(guild_id: str):
+    query = "SELECT channelId FROM logBlacklistChannel WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result if result else []
+
+async def is_log_channel_blacklisted(guild_id: str, channel_id: str):
+    query = "SELECT channelId FROM logBlacklistChannel WHERE guildId = %s AND channelId = %s"
+    params = (guild_id, channel_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def add_log_role_blacklist(guild_id: str, role_id: str):
+    query = "INSERT INTO logRoleBlacklist (guildId, roleId) VALUES (%s, %s)"
+    params = (guild_id, role_id)
+    await execute_action(pool, query, params)
+
+async def remove_log_role_blacklist(guild_id: str, role_id: str):
+    query = "DELETE FROM logRoleBlacklist WHERE guildId = %s AND roleId = %s"
+    params = (guild_id, role_id)
+    await execute_action(pool, query, params)
+
+async def get_log_role_blacklist(guild_id: str):
+    query = "SELECT roleId FROM logRoleBlacklist WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result if result else []
+
+async def is_log_role_blacklisted(guild_id: str, role_id: str):
+    query = "SELECT roleId FROM logRoleBlacklist WHERE guildId = %s AND roleId = %s"
+    params = (guild_id, role_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def add_log_user_blacklist(guild_id: str, user_id: str):
+    query = "INSERT INTO logUserBlacklist (guildId, userId) VALUES (%s, %s)"
+    params = (guild_id, user_id)
+    await execute_action(pool, query, params)
+
+async def remove_log_user_blacklist(guild_id: str, user_id: str):
+    query = "DELETE FROM logUserBlacklist WHERE guildId = %s AND userId = %s"
+    params = (guild_id, user_id)
+    await execute_action(pool, query, params)
+
+async def get_log_user_blacklist(guild_id: str):
+    query = "SELECT userId FROM logUserBlacklist WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result if result else []
+
+async def is_log_user_blacklisted(guild_id: str, user_id: str):
+    query = "SELECT userId FROM logUserBlacklist WHERE guildId = %s AND userId = %s"
+    params = (guild_id, user_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def get_log_channel(guild_id: str):
+    query = "SELECT channelId FROM logChannel WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    print("\n\nFrom API getlogcHannel: ", result, "\n\n")
+    return result[0][0] if result else None
+
+async def get_log_role_blacklist(guild_id: str):
+    query = "SELECT roleId FROM logRoleBlacklist WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result if result else []
+
+async def get_log_user_blacklist(guild_id: str):
+    query = "SELECT userId FROM logUserBlacklist WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result if result else []
+
+async def set_log_enable(guild_id: str, 
+                         automodRuleCreate: bool = None, 
+                         automodRuleUpdate: bool = None, 
+                         automodRuleDelete: bool = None, 
+                         automodAction: bool = None, 
+                         guildChannelDelete: bool = None,
+                         guildChannelCreate: bool = None,
+                         guildChannelUpdate: bool = None,
+                         guildUpdate: bool = None,
+                         inviteCreate: bool = None,
+                         inviteDelete: bool = None,
+                         memberJoin: bool = None,
+                         memberLeave: bool = None,
+                         memberUpdate: bool = None,
+                         userUpdate: bool = None,
+                         memberBan: bool = None,
+                         memberUnban: bool = None,
+                         presenceUpdate: bool = None,
+                         messageEdit: bool = None,
+                         messageDelete: bool = None,
+                         reactionAdd: bool = None,
+                         reactionRemove: bool = None,
+                         guildRoleCreate: bool = None,
+                         guildRoleDelete: bool = None,
+                         guildRoleUpdate: bool = None):
+    query = "UPDATE logEnables SET "
+    endQuery = " WHERE guildId = %s"
+    params = ()
+
+    if automodRuleCreate is not None:
+        query += "automodRuleCreate = %s, "
+        params += (automodRuleCreate, )
+
+
+    if automodRuleUpdate is not None:
+        query += "automodRuleUpdate = %s, "
+        params += (automodRuleUpdate, )
+
+
+    if automodRuleDelete is not None:
+        query += "automodRuleDelete = %s, "
+        params += (automodRuleDelete, )
+
+    if automodAction is not None:
+        query += "automodAction = %s, "
+        params += (automodAction, )
+
+    if guildChannelDelete is not None:
+        query += "guildChannelDelete = %s, "
+        params += (guildChannelDelete, )
+
+    if guildChannelCreate is not None:
+        query += "guildChannelCreate = %s, "
+        params += (guildChannelCreate, )
+
+
+    if guildChannelUpdate is not None:
+        query += "guildChannelUpdate = %s, "
+        params += (guildChannelUpdate, )
+
+
+    if guildUpdate is not None:
+        query += "guildUpdate = %s, "
+        params += (guildUpdate, )
+
+
+    if inviteCreate is not None:
+        query += "inviteCreate = %s, "
+        params += (inviteCreate, )
+
+
+    if inviteDelete is not None:
+        query += "inviteDelete = %s, "
+        params += (inviteDelete, )
+
+    if memberJoin is not None:
+        query += "memberJoin = %s, "
+        params += (memberJoin, )
+
+    if memberLeave is not None:
+        query += "memberLeave = %s, "
+        params += (memberLeave, )
+
+    if memberUpdate is not None:
+        query += "memberUpdate = %s, "
+        params += (memberUpdate, )
+
+    if userUpdate is not None:
+        query += "userUpdate = %s, "
+        params += (userUpdate, )
+
+    if memberBan is not None:
+        query += "memberBan = %s, "
+        params += (memberBan, )
+
+    if memberUnban is not None:
+        query += "memberUnban = %s, "
+        params += (memberUnban, )
+
+
+    if presenceUpdate is not None:
+        query += "presenceUpdate = %s, "
+        params += (presenceUpdate, )
+
+    if messageEdit is not None:
+        query += "messageEdit = %s, "
+        params += (messageEdit, )
+
+    if messageDelete is not None:
+        query += "messageDelete = %s, "
+        params += (messageDelete, )
+
+
+    if reactionAdd is not None:
+        query += "reactionAdd = %s, "
+        params += (reactionAdd, )
+
+
+    if reactionRemove is not None:
+        query += "reactionRemove = %s, "
+        params += (reactionRemove, )
+
+
+    if guildRoleCreate is not None:
+        query += "guildRoleCreate = %s, "
+        params += (guildRoleCreate, )
+
+    if guildRoleDelete is not None:
+        query += "guildRoleDelete = %s, "
+        params += (guildRoleDelete, )
+
+    if guildRoleUpdate is not None:
+        query += "guildRoleUpdate = %s, "
+        params += (guildRoleUpdate, )
+
+    if len(params) == 0:
+        return
+    
+    params += (guild_id,)
+    
+    query = query[:-2] + endQuery
+
+    print("\n\nFrom API 2: ", query, params, "\n\n")
+    await execute_action(pool, query, params)
+
+async def get_log_enable(guild_id: str):
+    query = "SELECT * FROM logEnables WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    print("\n\nFrom API: ", result, "\n\n")
+    print("\n\nFrom API: ", result[0] if result and result[0] else None, "\n\n")
+    return result[0] if result and result[0] else None
+
+async def test_log_enable():
+    query = "UPDATE logEnables SET automodRuleCreate = %s WHERE guildId = %s"
+    params = (False, 947219439764521060)
+    await execute_action(pool, query, params)
+    print("Done")
+
+async def test_log_enable_2():
+    result = await get_log_enable(947219439764521060)
+    print(result)

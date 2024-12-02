@@ -28,6 +28,18 @@ async def ask_gpt(commandInfo: utility.commandInfo,
         )
         await commandInfo.reply(embed=embed)
         return
+    
+    additionalPromptInformation = f"""You are a Personality from the AI commands from the Discord Bot `Tanjun`. 
+    Stick to your personality as close as possible. Here are some additional information about the server and the prompter:
+    Name: {commandInfo.user.name}
+    userID: {commandInfo.user.id}
+    Server: {commandInfo.guild.name}
+    User Roles: {", ".join([role.name for role in commandInfo.user.roles])}
+
+    Here is your Personality. Here is the prompt you are supposed to answer:
+    """
+
+    prompt = additionalPromptInformation + "\n\n" + prompt
 
     response = await client.chat.completions.create(
         model="gpt-3.5-turbo-0125",
@@ -57,16 +69,21 @@ async def ask_gpt(commandInfo: utility.commandInfo,
         frequency_penalty=float(frequency_penalty),
         presence_penalty=float(presence_penalty)
     )
-    print(response)
+
+    tokenCost = int(response.usage.total_tokens * 0.25)
+
+    await useToken(commandInfo.user.id, tokenCost)
 
     tokenOverview = await getTokenOverview(commandInfo.user.id)
 
-    tokenCost = int(response.usage.total_tokens * 0.25)
 
     embed = utility.tanjunEmbed(
         title = tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.success.title", name=name),
         description = response.choices[0].message.content,
     )
+
+
+
     embed.set_footer(text=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.success.footer", 
                                                    cost=tokenCost, 
                                                    token=token - tokenCost if token - tokenCost > 0 else 0, 

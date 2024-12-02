@@ -35,7 +35,12 @@ from github import Github
 import ast
 import operator as op
 import cmath
-
+import tempfile
+import os
+from config import ImgBBApiKey
+import base64
+import json
+import gzip
 
 class EmbedProxy:
     def __init__(self, layer: Dict[str, Any]):
@@ -1110,3 +1115,123 @@ def dateToRelativeTimeStr(date: datetime.datetime) -> str:
 
     # Join all non-zero components with spaces
     return ' '.join(components)
+
+class MockInteraction(discord.Interaction):
+    def __init__(self, bot, guild, channel, user):
+        # Initialize base Interaction with required parameters
+        super().__init__(data={}, state=bot._connection)
+
+        # Set required attributes
+        self.type = discord.InteractionType.application_command
+        self.id = 0  # Mock ID
+        self.application_id = bot.application_id or 0
+        self.guild = guild
+        self.channel = channel
+        self.user = user
+        self.locale = 'en-US'
+        self.guild_locale = 'en-US'
+        self.client = bot
+
+        # Mock the response object
+        self._response = False
+        self.response = MockInteractionResponse(self)
+        self.followup = discord.Webhook.from_state(
+            data={'application_id': self.application_id, 'token': 'mock_token', 'id': self.id},
+            state=bot._connection
+        )
+
+    # Override the original_response method to store the message
+    async def original_response(self):
+        return self.response.message
+
+class MockInteractionResponse:
+    def __init__(self, interaction):
+        self.interaction = interaction
+        self.message = None  # This will store the message sent
+
+    async def send_message(self, content=None, embed=None, **kwargs):
+        # Simulate sending a message
+        self.message = discord.Message(state=self.interaction._state, channel=self.interaction.channel, data={
+            'id': 1234567890,  # Mock message ID
+            'content': content or '',
+            'embeds': [embed.to_dict()] if embed else [],
+            'channel_id': self.interaction.channel.id,
+            'author': {
+                'id': self.interaction.client.user.id,
+                'username': self.interaction.client.user.name,
+                'discriminator': self.interaction.client.user.discriminator,
+                'bot': True
+            }
+        })
+
+    async def delete_original_response(self):
+        # Simulate deleting the message
+        if self.message:
+            # Here we can assume the message is deleted
+            self.message = None
+
+    # Implement other response methods as needed
+    async def defer(self, **kwargs):
+        pass
+
+    async def edit_message(self, **kwargs):
+        pass
+
+
+def create_mock_interaction(self):
+    guild = self.bot.guilds[0]  # Use the first guild the bot is connected to
+    channel = guild.text_channels[0]  # Use the first text channel
+    user = guild.me  # Use the bot as the user
+    return MockInteraction(self.bot, guild, channel, user)
+
+def date_time_to_timestamp(date: datetime.datetime) -> int:
+    return int(date.timestamp())
+
+async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict:
+    # Create a temporary file with the appropriate file extension
+    with tempfile.NamedTemporaryFile(delete=False, suffix="." + file_extension, mode="wb") as temp_file:
+        temp_file.write(image_bytes)
+        temp_file_path = temp_file.name
+
+    # Upload the image to ImgBB
+    async with aiohttp.ClientSession() as session:
+        with open(temp_file_path, "rb") as image_file:
+            form_data = aiohttp.FormData()
+            form_data.add_field("key", ImgBBApiKey)
+            form_data.add_field("image", image_file)
+            form_data.add_field("name", f"tbg")
+
+            async with session.post("https://api.imgbb.com/1/upload", data=form_data) as response:
+                response_data = await response.json()
+
+    # Optionally, delete the temporary file if you want to clean up
+    os.remove(temp_file_path)
+
+    return response_data
+
+async def upload_to_byte_bin(content: str) -> str:
+    """Uploads content to PrivateBin and returns the URL."""
+    api_url = "https://bin.a2data.site/post"  # Updated endpoint for creating a paste
+
+    headers = {
+        "Content-Type": "text/plain",
+        "User-Agent": "YourUserAgent",  # Specify your User-Agent here
+        "Content-Encoding": "gzip"  # Indicate that content is GZIP compressed
+    }
+
+    # Compress content using GZIP
+    compressed_content = gzip.compress(content.encode('utf-8'))
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(api_url, data=compressed_content, headers=headers) as response:
+            # Check if the response is successful
+            if response.status == 201:
+                try:
+                    result = await response.json()
+                    # Extract the key from the response
+                    return f"{api_url.rsplit('/', 1)[0]}/{result['key']}"
+                except Exception as e:
+                    print(f"Error decoding JSON: {e}")
+                    print(await response.text())  # Print the response text for debugging
+            else:
+                print(f"Failed to create paste: {response.status}, {await response.text()}")
