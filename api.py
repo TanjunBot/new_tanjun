@@ -382,6 +382,8 @@ async def create_tables():
         `messageId` VARCHAR(20),
         `channelId` VARCHAR(20),
         PRIMARY KEY(`userId`, `messageId`)
+    ) ENGINE=InnoDB;
+    """
     tables["boosterChannel"] = """
     CREATE TABLE IF NOT EXISTS `boosterChannel` (
         `guildId` VARCHAR(20),
