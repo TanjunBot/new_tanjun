@@ -391,6 +391,14 @@ async def create_tables():
         PRIMARY KEY(`guildId`, `channelId`)
     ) ENGINE=InnoDB;
     """
+    tables["claimedBoosterChannel"] = """
+    CREATE TABLE IF NOT EXISTS `claimedBoosterChannel` (
+        `userId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        `guildId` VARCHAR(20),
+        PRIMARY KEY(`userId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
     tables["boosterRole"] = """
     CREATE TABLE IF NOT EXISTS `boosterRole` (
         `guildId` VARCHAR(20),
@@ -1738,11 +1746,38 @@ async def add_booster_channel(guild_id: str, channel_id: str):
     params = (guild_id, channel_id)
     await execute_action(pool, query, params)
 
-async def remove_booster_channel(guild_id: str, channel_id: str):
+async def delete_booster_channel(guild_id: str, channel_id: str):
     query = "DELETE FROM boosterChannel WHERE guildId = %s AND channelId = %s"
     params = (guild_id, channel_id)
     await execute_action(pool, query, params)
 
+async def get_booster_channel(guild_id: str):
+    query = "SELECT channelId FROM boosterChannel WHERE guildId = %s"
+    params = (guild_id,)
+    result = await execute_query(pool, query, params)
+    return result[0][0] if result else None
+
+async def claim_booster_channel(user_id: str, channel_id: str, guild_id: str):
+    query = "INSERT INTO claimedBoosterChannel (userId, channelId, guildId) VALUES (%s, %s, %s)"
+    params = (user_id, channel_id, guild_id)
+    await execute_action(pool, query, params)
+
+async def remove_claimed_booster_channel(user_id: str, guild_id: str):
+    query = "DELETE FROM claimedBoosterChannel WHERE userId = %s AND guildId = %s"
+    params = (user_id, guild_id)
+    await execute_action(pool, query, params)
+
+async def get_claimed_booster_channel(user_id: str = None, guild_id: str = None):
+    if user_id:
+        query = "SELECT channelId FROM claimedBoosterChannel WHERE userId = %s AND guildId = %s" if guild_id else "SELECT * FROM claimedBoosterChannel WHERE userId = %s"
+        params = (user_id, guild_id) if guild_id else (user_id,)
+        result = await execute_query(pool, query, params)
+        return result[0][0] if result else None
+    else:
+        query = "SELECT * FROM claimedBoosterChannel"
+        result = await execute_query(pool, query)
+        return result if result else []
+    
 async def add_booster_role(guild_id: str, role_id: str):
     query = "INSERT INTO boosterRole (guildId, roleId) VALUES (%s, %s)"
     params = (guild_id, role_id)
