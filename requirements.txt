@@ -69,7 +69,7 @@ pydantic==2.9.2
 pydantic_core==2.27.1
 PyGithub==2.4.0
 Pygments==2.18.0
-PyJWT==2.9.0
+PyJWT==2.10.1
 PyMySQL==1.1.1
 PyNaCl==1.5.0
 pyparsing==3.1.4
