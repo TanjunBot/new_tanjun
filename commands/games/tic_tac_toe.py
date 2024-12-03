@@ -120,7 +120,7 @@ class TicTacToe:
         embed = utility.tanjunEmbed(title=title, description=description)
         if initial:
             self.message = await interaction.reply(embed=embed)
-        view = self.getBoardView(timeout=10, disable_on_timeout=timeout, message=self.message)
+        view = self.getBoardView(timeout=3600, disable_on_timeout=timeout, message=self.message)
         if initial:
             await self.message.edit(view=view, embed=embed)
         else:
@@ -129,7 +129,7 @@ class TicTacToe:
     def toggle_turn(self):
         self.current_player = self.player2 if self.current_player == self.player1 else self.player1
 
-    def getBoardView(self, timeout: int = 10, disable_on_timeout: bool = True, message: discord.Message = None):
+    def getBoardView(self, timeout: int = 3600, disable_on_timeout: bool = True, message: discord.Message = None):
         class TicTacToeView(discord.ui.View):
             def __init__(self, ticTacToe: TicTacToe):
                 super().__init__(timeout=timeout)
