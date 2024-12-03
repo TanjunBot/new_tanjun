@@ -1315,7 +1315,7 @@
                 },
                 "missingPermission": {
                     "title": "Fehlende Berechtigung",
-                    "description": "Du benötigst Administratorrechte, um die Boosterrolle zu einstellen."
+                    "description": "Du benötigst Administratorrechte, um die Boosterrollen einzurichten."
                 }
             },
             "deleteboosterrole": {
@@ -1336,6 +1336,62 @@
                 "info": {
                     "title": "Was sind Boosterrollen?",
                     "description": "Boosterrollen sind spezielle Rollen, die einem Server-Booster sich ganz nach seinen/ihren wünschen konfigurieren kann, sobald er/sie den Server boostet. Diese Rollen werden automatisch gelöscht, sobald der Booster den Server nicht mehr boostet.\nÜber den setup Befehl kann die Booster Rolle eingestellt werden. Die dort angegebene Rolle dient als Vorlage. Berechtigungen und alle Rollen spezifische Einstellungen werden von dieser für die neue Boosterrolle übernommen. Boosterrollen werden über der Vorlagenrolle platziert. Aufgrund von Discord kann es passieren, dass die Rolle nicht genau über der Vorlagenrolle platziert wird."
+                }
+            },
+            "setupboosterchannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Boosterkanäle einzurichten."
+                },
+                "already_set": {
+                    "title": "Boosterkanal bereits eingestellt",
+                    "description": "Der Boosterkanal wurde bereits eingestellt. Bitte lösche den alten Boosterkanal, bevor du einen neuen einstellst."
+                },
+                "success": {
+                    "title": "Boosterkanal eingestellt",
+                    "description": "Der Boosterkanal wurde erfolgreich eingestellt."
+                }
+            },
+            "deleteboosterchannel": {
+                "no_booster_channel": {
+                    "title": "Kein Boosterkanal",
+                    "description": "Es ist kein Boosterkanal eingestellt, welchen du löschen könntest."
+                },
+                "success": {
+                    "title": "Boosterkanal erfolgreich gelöscht",
+                    "description": "Der Boosterkanal wurde erfolgreich gelöscht."
+                }
+            },
+            "claimboosterchannel": {
+                "no_booster_channel": {
+                    "title": "Kein Boosterkanal",
+                    "description": "Es ist kein Boosterkanal eingestellt, welchen du beanspruchen könntest."
+                },
+                "success": {
+                    "title": "Boosterkanal erfolgreich beansprucht",
+                    "description": "Der Boosterkanal wurde erfolgreich beansprucht.",
+                    "reason": "Jemand hat den Boosterkanal beansprucht."
+                },
+                "nobooster": {
+                    "title": "Kein Booster",
+                    "description": "Du bist kein Booster. Booster erhalten einen eigenen Kanal, welchen sie beanspruchen können."
+                },
+                "already_claimed": {
+                    "title": "Boosterkanal bereits beansprucht",
+                    "description": "Du hast bereits den Boosterkanal beansprucht. Bitte warte, bis der Kanal automatisch freigegeben wird."
+                },
+                "category_not_found": {
+                    "title": "Kategorie nicht gefunden",
+                    "description": "Die Kategorie wurde möglicherweise gelöscht."
+                },
+                "expired": {
+                    "reason": "Der Boosterkanal wurde automatisch gelöscht, da der user dem der Channel gehört, kein Booster mehr ist."
+                }
+            },
+            "boosterchannelinfo": {
+                "info": {
+                    "title": "Was sind Boosterkanäle?",
+                    "description": "Boosterkanäle sind spezielle Kanäle, die einem Server-Booster sich ganz nach seinen/ihren wünschen konfigurieren kann, sobald er/sie den Server boostet. Diese Kanäle werden automatisch gelöscht, sobald der Booster den Server nicht mehr boostet.\nÜber den setup Befehl kann der Boosterkanal eingestellt werden. Der dort angegebene Kanal dient als Vorlage. Berechtigungen und alle Kanal spezifische Einstellungen werden von diesem für den neuen Boosterkanal übernommen. Boosterkanäle werden über dem Vorlagenkanal platziert. Aufgrund von Discord kann es passieren, dass der Kanal nicht genau über dem Vorlagenkanal platziert wird."
                 }
             }
         },

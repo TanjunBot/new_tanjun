@@ -23,7 +23,7 @@ async def claimBoosterRole(
         await commandInfo.reply(embed=embed)
         return
 
-    if commandInfo.user.premium_since:
+    if not commandInfo.user.premium_since:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.utility.claimboosterrole.nobooster.title"
@@ -115,8 +115,8 @@ async def remove_claimed_booster_roles_that_are_expired(client: discord.Client):
     for user, role, guild_id in claimed_booster_roles:
         guild = client.get_guild(int(guild_id))
         user = guild.get_member(int(user))
-        if not user.premium_since:
-            role = guild.get_role(int(role))
+        role = guild.get_role(int(role))
+        if not user.premium_since and role:
             await user.remove_roles(role)
             await remove_claimed_booster_role(user.id, guild_id)
             await role.delete(
@@ -125,3 +125,5 @@ async def remove_claimed_booster_roles_that_are_expired(client: discord.Client):
                     "commands.utility.claimboosterrole.expired.reason",
                 )
             )
+        if not role:
+            await remove_claimed_booster_role(user.id, guild_id)

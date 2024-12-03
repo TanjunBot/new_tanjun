@@ -17,6 +17,9 @@ from commands.utility.afk import afk as afkCommand
 from commands.utility.claimBoosterRole import claimBoosterRole as claimboosterroleCommand
 from commands.utility.deleteBoosterRole import deleteBoosterRole as deleteboosterroleCommand
 from commands.utility.setupBoosterRole import setupBoosterRole as setupboosterroleCommand
+from commands.utility.claimBoosterChannel import claimBoosterChannel as claimboosterchannelCommand
+from commands.utility.deleteBoosterChannel import deleteBoosterChannel as deleteboosterchannelCommand
+from commands.utility.setupBoosterChannel import setupBoosterChannel as setupboosterchannelCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -146,6 +149,91 @@ class BoosterRoleCommands(discord.app_commands.Group):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterroleinfo.info.title"),
             description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterroleinfo.info.description"),
+        )
+        await commandInfo.reply(embed=embed)
+
+class BoosterChannelCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_claimboosterchannel_name"),
+        description=app_commands.locale_str("utility_claimboosterchannel_description"),
+    )
+    @app_commands.describe(
+        name="The name of the booster channel.",
+    )
+    async def claimboosterchannel(self, ctx, name: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await claimboosterchannelCommand(commandInfo=commandInfo, name=name)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_deleteboosterch_name"),
+        description=app_commands.locale_str("utility_deleteboosterchannel_description"),
+    )
+    async def deleteboosterchannel(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await deleteboosterchannelCommand(commandInfo=commandInfo)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_setupboosterchannel_name"),
+        description=app_commands.locale_str("utility_setupboosterchannel_description"),
+    )
+    async def setupboosterchannel(self, ctx, category: discord.CategoryChannel):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await setupboosterchannelCommand(commandInfo=commandInfo, category=category)
+    
+    @app_commands.command(
+        name=app_commands.locale_str("utility_boosterchannelinfo_name"),
+        description=app_commands.locale_str("utility_boosterchannelinfo_description"),
+    )
+    async def info(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterchannelinfo.info.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterchannelinfo.info.description"),
         )
         await commandInfo.reply(embed=embed)
 
@@ -344,6 +432,8 @@ class utilityCog(commands.Cog):
         utilityCmds.add_command(autoPublishCmds)
         boosterRoleCmds = BoosterRoleCommands(name=app_commands.locale_str("utility_boosterrole_name"), description=app_commands.locale_str("utility_boosterrole_description"))
         utilityCmds.add_command(boosterRoleCmds)
+        boosterChannelCmds = BoosterChannelCommands(name=app_commands.locale_str("utility_boosterchannel_name"), description=app_commands.locale_str("utility_boosterchannel_description"))
+        utilityCmds.add_command(boosterChannelCmds)
         self.bot.tree.add_command(utilityCmds)
 
 
