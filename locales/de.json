@@ -2410,6 +2410,19 @@
                 "cellAlreadyTaken": "Diese Zelle ist bereits besetzt. Bitte versuche es erneut.",
                 "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
                 "currentTurn": "Aktuell am Zug: ${player}"
+            },
+            "connect4": {
+                "title": "4 Gewinnt",
+                "description": "${player1} (🔴) vs ${player2} (🟡)",
+                "descriptionBotEnemy": "(Zufällig ausgeloste) Schwierigkeit von Tanjun: ${difficulty} (1-5) ||1 = leicht, 5 = schwer||",
+                "notYourTurn": "Du bist noch nicht an der Reihe. Bitte warte noch einen Moment.",
+                "invalidMove": "Ungültige Zug. Bitte versuche es erneut.",
+                "cellAlreadyTaken": "Diese Zelle ist bereits besetzt. Bitte versuche es erneut.",
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
+                "currentTurn": "Aktuell am Zug: ${player}",
+                "winner": "${winner} hat gewonnen!",
+                "draw": "Unentschieden!",
+                "drop": "Fallen lassen"
             }
         }
     },
