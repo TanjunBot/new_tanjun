@@ -200,7 +200,7 @@ class Connect4:
             await self.update_board(interaction)
             return
 
-        if self.player2 == "tanjun":
+        if self.player2 == "tanjun" or self.player2.bot:
             await self.bot_move()
         else:
             self.current_player = self.player2 if self.current_player == self.player1 else self.player1

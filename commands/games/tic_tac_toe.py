@@ -127,7 +127,10 @@ class TicTacToe:
             await interaction.response.edit_message(view=view, embed=embed)
 
     def toggle_turn(self):
-        self.current_player = self.player2 if self.current_player == self.player1 else self.player1
+        if self.player2.bot:
+            self.current_player = self.player1
+        else:
+            self.current_player = self.player2 if self.current_player == self.player1 else self.player1
 
     def getBoardView(self, timeout: int = 3600, disable_on_timeout: bool = True, message: discord.Message = None):
         class TicTacToeView(discord.ui.View):
@@ -285,7 +288,7 @@ class TicTacToe:
                     await self.update_board(interaction)
                     return
                 
-                if self.player2 == "tanjun":
+                if self.player2 == "tanjun" or self.player2.bot:
                     self.current_player = self.player2
                     _, best_move = self.minimax(self.current_player, self.bot_difficulty * 2, self.board, True)
                     self.board[best_move // 3][best_move % 3] = self.player2_move
