@@ -1279,6 +1279,10 @@
                     "title": "Kein Booster",
                     "description": "Du bist kein Booster. Booster erhalten eine eigene Rolle, welche du einstellen kannst, wie du möchtest."
                 },
+                "invalid_color": {
+                    "title": "Ungültige Farbe",
+                    "description": "Die Farbe muss ein gültiges Hex-Farbcode sein.\nSolltest du nicht wissen, was eine Hex-Farbe ist, klicke [hier](https://www.google.com/search?q=hex+farbe).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden."
+                },
                 "no_booster_role": {
                     "title": "Keine Boosterrolle",
                     "description": "Es ist keine Boosterrolle eingestellt. Sage der Server-Administration, dass sie eine Boosterrolle für den Server einrichten soll."
@@ -1289,7 +1293,49 @@
                 },
                 "success": {
                     "title": "Boosterrolle erfolgreich erhalten",
-                    "description": "Die Boosterrolle wurde erfolgreich erhalten."
+                    "description": "Die Boosterrolle wurde erfolgreich erhalten. \n-# Um wohlmöglich unerwünschte Einflüsse auf die Rolle zu vermeiden, ist es nicht möglich, die Rolle über den Bot nachträglich zu bearbeiten. Hierfür musst du den Server-Administrator um Hilfe bitten.\nDie Rolle behälst du solange, wie du den Server boostest. Sobald du den Server nicht mehr boostest, wird die Rolle automatisch gelöscht.",
+                    "reason": "Jemand hat die Booster Rolle eingefordert."
+                },
+                "already_claimed": {
+                    "title": "Boosterrolle bereits erhalten",
+                    "description": "Du hast bereits die Boosterrolle erhalten. Bitte warte, bis die Rolle automatisch gelöscht wird."
+                },
+                "expired": {
+                    "reason": "Die Boosterrolle wurde automatisch gelöscht, da der user dem die Rolle zugeordnet wurde, kein Booster mehr ist."
+                }
+            },
+            "setupboosterrole": {
+                "already_set": {
+                    "title": "Boosterrolle bereits eingestellt",
+                    "description": "Die Boosterrolle wurde bereits eingestellt. Bitte lösche die alte Boosterrolle, bevor du eine neue einstellst. \n-# Es reicht nicht, die Rolle zu löschen, sondern du musst den befehl zum löschen der Boosterrolle ausführen, auch wenn die Rolle nicht mehr existiert. Die Rolle muss hierfür nicht umbedingt gelöscht werden."
+                },
+                "success": {
+                    "title": "Boosterrolle eingestellt",
+                    "description": "Die Boosterrolle wurde erfolgreich eingestellt."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Boosterrolle zu einstellen."
+                }
+            },
+            "deleteboosterrole": {
+                "no_booster_role": {
+                    "title": "Keine Boosterrolle",
+                    "description": "Es ist keine Boosterrolle eingestellt, welche du löschen könntest."
+                },
+                "success": {
+                    "title": "Boosterrolle erfolgreich gelöscht",
+                    "description": "Die Boosterrolle wurde erfolgreich gelöscht."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Boosterrolle zu löschen."
+                }
+            },
+            "boosterroleinfo": {
+                "info": {
+                    "title": "Was sind Boosterrollen?",
+                    "description": "Boosterrollen sind spezielle Rollen, die einem Server-Booster sich ganz nach seinen/ihren wünschen konfigurieren kann, sobald er/sie den Server boostet. Diese Rollen werden automatisch gelöscht, sobald der Booster den Server nicht mehr boostet.\nÜber den setup Befehl kann die Booster Rolle eingestellt werden. Die dort angegebene Rolle dient als Vorlage. Berechtigungen und alle Rollen spezifische Einstellungen werden von dieser für die neue Boosterrolle übernommen. Boosterrollen werden über der Vorlagenrolle platziert. Aufgrund von Discord kann es passieren, dass die Rolle nicht genau über der Vorlagenrolle platziert wird."
                 }
             }
         },

@@ -14,6 +14,9 @@ from commands.utility.banner import banner as bannerCommand
 from commands.utility.feedback import feedback as feedbackCommand
 from commands.utility.avatarDecoration import avatarDecoration as avatarDecorationCommand
 from commands.utility.afk import afk as afkCommand
+from commands.utility.claimBoosterRole import claimBoosterRole as claimboosterroleCommand
+from commands.utility.deleteBoosterRole import deleteBoosterRole as deleteboosterroleCommand
+from commands.utility.setupBoosterRole import setupBoosterRole as setupboosterroleCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -55,6 +58,96 @@ class MessageTrackingCommands(discord.app_commands.Group):
         )
 
         await optInCommand(commandInfo=commandInfo)
+
+class BoosterRoleCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_claimboosterrole_name"),
+        description=app_commands.locale_str("utility_claimboosterrole_description"),
+    )
+    @app_commands.describe(
+        name="The name of the booster role.",
+        color="The color of the booster role.",
+        icon="The icon of the booster role.",
+    )
+    async def claimboosterrole(self, ctx, name: str, color: str = None, icon: discord.Attachment = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await claimboosterroleCommand(commandInfo=commandInfo, name=name, color=color, icon=icon)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_deleteboosterrole_name"),
+        description=app_commands.locale_str("utility_deleteboosterrole_description"),
+    )
+    async def deleteboosterrole(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await deleteboosterroleCommand(commandInfo=commandInfo)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_setupboosterrole_name"),
+        description=app_commands.locale_str("utility_setupboosterrole_description"),
+    )
+    @app_commands.describe(
+        role="The base role. This will be copied to create the booster role.",
+    )
+    async def setupboosterrole(self, ctx, role: discord.Role):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await setupboosterroleCommand(commandInfo=commandInfo, role=role)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_boosterroleinfo_name"),
+        description=app_commands.locale_str("utility_boosterroleinfo_description"),
+    )
+    async def info(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterroleinfo.info.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterroleinfo.info.description"),
+        )
+        await commandInfo.reply(embed=embed)
 
 class AutoPublishCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -249,6 +342,8 @@ class utilityCog(commands.Cog):
         utilityCmds.add_command(messageTrackingCmds)
         autoPublishCmds = AutoPublishCommands(name=app_commands.locale_str("utility_autopublish_name"), description=app_commands.locale_str("utility_autopublish_description"))
         utilityCmds.add_command(autoPublishCmds)
+        boosterRoleCmds = BoosterRoleCommands(name=app_commands.locale_str("utility_boosterrole_name"), description=app_commands.locale_str("utility_boosterrole_description"))
+        utilityCmds.add_command(boosterRoleCmds)
         self.bot.tree.add_command(utilityCmds)
 
 
