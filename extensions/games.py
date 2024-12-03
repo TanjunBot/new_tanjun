@@ -2,9 +2,6 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from utility import tanjunEmbed, LEVEL_SCALINGS
-from localizer import tanjunLocalizer
-from typing import List, Optional
 
 from commands.games.tic_tac_toe import tic_tac_toe
 

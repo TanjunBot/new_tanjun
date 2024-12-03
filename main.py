@@ -14,6 +14,7 @@ async def loadextension(bot, extensionname):
         await bot.load_extension(extensionname)
         print(f"{extensionname} loaded!")
     except Exception as e:
+        raise e
         print(f"Failed to load extension {extensionname}")
 
 

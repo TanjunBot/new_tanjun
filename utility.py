@@ -1235,3 +1235,10 @@ async def upload_to_byte_bin(content: str) -> str:
                     print(await response.text())  # Print the response text for debugging
             else:
                 print(f"Failed to create paste: {response.status}, {await response.text()}")
+
+def check_if_str_is_hex_color(color: str) -> bool:
+    try:
+        int(color, 16)
+        return True
+    except:
+        return False

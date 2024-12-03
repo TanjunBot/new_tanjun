@@ -13,6 +13,8 @@ from ai.refillToken import refillAiToken
 from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
 from extensions.logs import sendLogEmbeds
+from commands.utility.claimBoosterRole import remove_claimed_booster_roles_that_are_expired
+
 import asyncio
 
 from api import check_pool_initialized
@@ -85,6 +87,14 @@ class LoopCog(commands.Cog):
             await sendLogEmbeds(self)
         except:
             pass
+
+
+    @tasks.loop(seconds=10)
+    async def removeExpiredClaimedBoosterRoles(self):
+        try:
+            await remove_claimed_booster_roles_that_are_expired(self.bot)
+        except:
+            raise
                 
 
     @commands.Cog.listener()
@@ -101,6 +111,7 @@ class LoopCog(commands.Cog):
             self.pingServerLoop.start()
             self.backupDatabaseLoop.start()
             self.sendLogEmbeds.start()
+            self.removeExpiredClaimedBoosterRoles.start()
 
 
 

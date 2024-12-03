@@ -398,6 +398,14 @@ async def create_tables():
         PRIMARY KEY(`guildId`, `roleId`)
     ) ENGINE=InnoDB;
     """
+    tables["claimedBoosterRole"] = """
+    CREATE TABLE IF NOT EXISTS `claimedBoosterRole` (
+        `userId` VARCHAR(20),
+        `roleId` VARCHAR(20),
+        `guildId` VARCHAR(20),
+        PRIMARY KEY(`userId`, `roleId`)
+    ) ENGINE=InnoDB;
+    """
     tables["logChannel"] = """
     CREATE TABLE IF NOT EXISTS `logChannel` (
         `guildId` VARCHAR(20),
@@ -1750,6 +1758,27 @@ async def delete_booster_role(guild_id: str):
     query = "DELETE FROM boosterRole WHERE guildId = %s"
     params = (guild_id,)
     await execute_action(pool, query, params)
+
+async def add_claimed_booster_role(user_id: str, role_id: str, guild_id: str):
+    query = "INSERT INTO claimedBoosterRole (userId, roleId, guildId) VALUES (%s, %s, %s)"
+    params = (user_id, role_id, guild_id)
+    await execute_action(pool, query, params)
+
+async def remove_claimed_booster_role(user_id: str, guild_id: str):
+    query = "DELETE FROM claimedBoosterRole WHERE userId = %s AND guildId = %s"
+    params = (user_id, guild_id)
+    await execute_action(pool, query, params)
+
+async def get_claimed_booster_role(user_id: str = None, guild_id: str = None):
+    if user_id:
+        query = "SELECT roleId FROM claimedBoosterRole WHERE userId = %s AND guildId = %s" if guild_id else "SELECT * FROM claimedBoosterRole WHERE userId = %s"
+        params = (user_id, guild_id) if guild_id else (user_id,)
+        result = await execute_query(pool, query, params)
+        return result[0][0] if result else None
+    else:
+        query = "SELECT * FROM claimedBoosterRole"
+        result = await execute_query(pool, query)
+        return result if result else []
 
 async def set_log_channel(guild_id: str, channel_id: str):
     query = "INSERT INTO logChannel (guildId, channelId) VALUES (%s, %s)"
