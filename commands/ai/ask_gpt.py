@@ -42,7 +42,7 @@ async def ask_gpt(commandInfo: utility.commandInfo,
     prompt = additionalPromptInformation + "\n\n" + prompt
 
     response = await client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model="gpt-4o-mini",
         messages=[
             {
             "role": "system",
@@ -70,7 +70,7 @@ async def ask_gpt(commandInfo: utility.commandInfo,
         presence_penalty=float(presence_penalty)
     )
 
-    tokenCost = int(response.usage.total_tokens * 0.25)
+    tokenCost = int(response.usage.total_tokens * 0.125)
 
     await useToken(commandInfo.user.id, tokenCost)
 
