@@ -5,6 +5,7 @@ import utility
 
 from commands.games.tic_tac_toe import tic_tac_toe
 from commands.games.connect4 import connect4
+from commands.games.akinator import akinator
 
 class gameCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -87,7 +88,41 @@ class gameCommands(discord.app_commands.Group):
         size = size.value.split(",") if size != "7,6" else "7,6".split(",")
         await connect4(commandInfo, ctx.user, user, int(size[0]), int(size[1]))
 
+    @app_commands.command(
+        name=app_commands.locale_str("akinator_name"),
+        description=app_commands.locale_str("akinator_description"),
+    )
+    @app_commands.choices(
+        theme=[
+            app_commands.Choice(
+                value="characters",
+                name=app_commands.locale_str("akinator_theme_characters"),
+            ),
+            app_commands.Choice(
+                value="animals",
+                name=app_commands.locale_str("akinator_theme_animals"),
+            ),
+            app_commands.Choice(
+                value="objects",
+                name=app_commands.locale_str("akinator_theme_objects"),
+            ),
+        ]
+    )
+    async def akinator_cmd(self, ctx, theme: app_commands.Choice[str] = "characters"):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
 
+        await akinator(commandInfo, theme.value if theme != "characters" else "characters")
 
 class gameCog(commands.Cog):
 
