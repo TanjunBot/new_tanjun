@@ -8,6 +8,7 @@ from commands.games.connect4 import connect4
 from commands.games.akinator import akinator
 from commands.games.wordle import wordle
 from commands.games.hangman import hangman
+from commands.games.flag_quiz import flag_quiz
 
 class gameCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -355,6 +356,25 @@ class gameCommands(discord.app_commands.Group):
         )
 
         await hangman(commandInfo, language.value if language != "own" else "own")
+
+    @app_commands.command(
+        name=app_commands.locale_str("flag_quiz_name"),
+        description=app_commands.locale_str("flag_quiz_description"),
+    )
+    async def flag_quiz_cmd(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await flag_quiz(commandInfo)
 
 class gameCog(commands.Cog):
 

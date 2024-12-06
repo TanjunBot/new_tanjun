@@ -2507,6 +2507,42 @@
                     "title": "Hangman",
                     "description": "Versuche, das gesuchte Wort in 11 Versuchen zu erraten. Viel Spaß!\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
                 }
+            },
+            "flagquiz": {
+                "givenUp": {
+                    "title": "Aufgegeben",
+                    "description": "Du hast aufgegeben. Das gesuchte Land war: ${country}"
+                },
+                "success": {
+                    "title": "Gewonnen",
+                    "description": "Du hast das gesuchte Land in ${guesses} Versuchen erraten!"
+                },
+                "failure": {
+                    "title": "Verloren",
+                    "description": "Du hast das gesuchte Land in 5 Versuchen nicht erraten. Vielleicht schaffst du es ja beim nächsten Mal! Das gesuchte Land war: ${country}"
+                },
+                "hint": "Hinweis",
+                "title": "Flaggenquiz",
+                "description": "Zu welchem Land gehört diese Flagge? Versuche es in 5 Versuchen zu erraten. Viel Spaß!\nVersuche verbleibend: ${remaining}\n${guesses}",
+                "modal": {
+                    "title": "Flaggenquiz",
+                    "input": {
+                        "label": "Landername eingeben",
+                        "placeholder": "Landername"
+                    }
+                },
+                "buttons": {
+                    "guess": "Erraten",
+                    "hint": "Hinweis",
+                    "giveUp": "Aufgeben"
+                },
+                "error": {
+                    "hintUsed": "Du hast bereits einen Hinweis verwendet."
+                },
+                "initial": {
+                    "title": "Flaggenquiz",
+                    "description": "Zu welchem Land gehört diese Flagge? Versuche es in 5 Versuchen zu erraten. Viel Spaß!\nVersuche verbleibend: 5\n${guesses}"
+                }
             }
         }
     },
