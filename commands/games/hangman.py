@@ -173,7 +173,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                     used_letters=[x for x in guesses if len(x) == 1],
                 ),
             )
-        elif wrong_letters >= 11:
+        elif wrong_letters(guesses, word) >= 11:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
