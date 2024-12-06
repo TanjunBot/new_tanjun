@@ -240,7 +240,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             )
         view = (
             None
-            if len(guesses) > 11
+            if wrong_letters(guesses, word) > 11
             or (len(guesses) > 0 and guesses[-1] == word)
             or given_up
             else WordleView(commandInfo)
