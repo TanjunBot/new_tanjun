@@ -1242,3 +1242,13 @@ def check_if_str_is_hex_color(color: str) -> bool:
         return True
     except:
         return False
+
+def draw_text_with_outline(draw, position, text, font, text_color, outline_color):
+    x, y = position
+    # Draw outline
+    draw.text((x-1, y-1), text, font=font, fill=outline_color)
+    draw.text((x+1, y-1), text, font=font, fill=outline_color)
+    draw.text((x-1, y+1), text, font=font, fill=outline_color)
+    draw.text((x+1, y+1), text, font=font, fill=outline_color)
+    # Draw text
+    draw.text(position, text, font=font, fill=text_color)

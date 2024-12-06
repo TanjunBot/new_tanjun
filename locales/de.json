@@ -2436,6 +2436,41 @@
                 "title": "Akinator",
                 "result": "Ich bin mir sehr sicher, dass es sich um ${guess_name} handelt. Ich habe ${steps} Schritte benötigt, um ihn/sie zu erraten.\n${guess_description}",
                 "description": "Aktuelle Frage: ${question}\n\nLetzte Antwort: ${lastAnswer}\nFortschritt: ${progress}%"
+            },
+            "wordle": {
+                "givenUp": {
+                    "title": "Aufgegeben",
+                    "description": "Du hast nach ${guesses} Versuchen aufgegeben."
+                },
+                "title": "Wordle",
+                "description": "Versuche, das gesuchte Wort in 6 Versuchen zu erraten. Viel Spaß!",
+                "modal": {
+                    "title": "Wordle",
+                    "input": {
+                        "label": "Gib das gesuchte Wort ein",
+                        "placeholder": "Das gesuchte Wort"
+                    }
+                },
+                "error": {
+                    "title": "Ungültiges Wort",
+                    "description": "Das eingegebene Wort ist kein richtiges Wort. Bitte gebe nur wörter ein, die wirklich existieren.",
+                    "invalidInput": "Ungültige Eingabe. Bitte gebe nur wörter ein, die wirklich existieren. und die genau 5 Buchstaben lang sind."
+                },
+                "failure": {
+                    "title": "Verloren",
+                    "description": "Du hast das gesuchte Wort in 6 Versuchen nicht erraten. Vielleicht schaffst du es ja beim nächsten Mal! Das gesuchte Wort war: ${word}"
+                },
+                "initial": {
+                    "title": "Wordle",
+                    "description": "Versuche, das gesuchte Wort in 6 Versuchen zu erraten. Viel Spaß!",
+                    "descriptionextra": {
+                        "ja": "Das gesuchte Wort ist rein in Hiragana geschrieben. Auch wenn es normalerweise Kanji beinhaltet, so ist es hier nicht der Fall."
+                    }
+                },
+                "success": {
+                    "title": "Gewonnen",
+                    "description": "Du hast das gesuchte Wort in ${guesses} Versuchen erraten!"
+                }
             }
         }
     },

@@ -6,6 +6,7 @@ import utility
 from commands.games.tic_tac_toe import tic_tac_toe
 from commands.games.connect4 import connect4
 from commands.games.akinator import akinator
+from commands.games.wordle import wordle
 
 class gameCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -123,6 +124,122 @@ class gameCommands(discord.app_commands.Group):
         )
 
         await akinator(commandInfo, theme.value if theme != "characters" else "characters")
+
+    @app_commands.command(
+        name=app_commands.locale_str("wordle_name"),
+        description=app_commands.locale_str("wordle_description"),
+    )
+    @app_commands.choices(
+        language=[
+            app_commands.Choice(
+                value="bg",
+                name=app_commands.locale_str("wordle_language_bg"),
+            ),
+            app_commands.Choice(
+                value="cs",
+                name=app_commands.locale_str("wordle_language_cs"),
+            ),
+            app_commands.Choice(
+                value="da",
+                name=app_commands.locale_str("wordle_language_da"),
+            ),
+            app_commands.Choice(
+                value="de",
+                name=app_commands.locale_str("wordle_language_de"),
+            ),
+            app_commands.Choice(
+                value="el",
+                name=app_commands.locale_str("wordle_language_el"),
+            ),
+            app_commands.Choice(
+                value="en",
+                name=app_commands.locale_str("wordle_language_en"),
+            ),
+            app_commands.Choice(
+                value="es",
+                name=app_commands.locale_str("wordle_language_es"),
+            ),
+            app_commands.Choice(
+                value="fi",
+                name=app_commands.locale_str("wordle_language_fi"),
+            ),
+            app_commands.Choice(
+                value="fr",
+                name=app_commands.locale_str("wordle_language_fr"),
+            ),
+            app_commands.Choice(
+                value="hi",
+                name=app_commands.locale_str("wordle_language_hi"),
+            ),
+            app_commands.Choice(
+                value="hu",
+                name=app_commands.locale_str("wordle_language_hu"),
+            ),
+            app_commands.Choice(
+                value="id",
+                name=app_commands.locale_str("wordle_language_id"),
+            ),
+            app_commands.Choice(
+                value="it",
+                name=app_commands.locale_str("wordle_language_it"),
+            ),
+            app_commands.Choice(
+                value="ja",
+                name=app_commands.locale_str("wordle_language_ja"),
+            ),
+            app_commands.Choice(
+                value="ko",
+                name=app_commands.locale_str("wordle_language_ko"),
+            ),
+            app_commands.Choice(
+                value="lt",
+                name=app_commands.locale_str("wordle_language_lt"),
+            ),
+            app_commands.Choice(
+                value="nb",
+                name=app_commands.locale_str("wordle_language_nb"),
+            ),
+            app_commands.Choice(
+                value="nl",
+                name=app_commands.locale_str("wordle_language_nl"),
+            ),
+            app_commands.Choice(
+                value="pl",
+                name=app_commands.locale_str("wordle_language_pl"),
+            ),
+            app_commands.Choice(
+                value="pt",
+                name=app_commands.locale_str("wordle_language_pt"),
+            ),
+            app_commands.Choice(
+                value="ru",
+                name=app_commands.locale_str("wordle_language_ru"),
+            ),
+            app_commands.Choice(
+                value="zh",
+                name=app_commands.locale_str("wordle_language_zh"),
+            ),
+        ]
+    )
+    @app_commands.describe(
+        language=app_commands.locale_str("wordle_language_description"),
+    )
+    async def wordle_cmd(self, ctx, language: app_commands.Choice[str] = "own"):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await wordle(commandInfo, language.value if language != "own" else "own")
+
 
 class gameCog(commands.Cog):
 
