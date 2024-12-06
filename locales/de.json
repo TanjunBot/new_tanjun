@@ -2471,6 +2471,42 @@
                     "title": "Gewonnen",
                     "description": "Du hast das gesuchte Wort in ${guesses} Versuchen erraten!"
                 }
+            },
+            "hangman": {
+                "title": "Hangman",
+                "givenUp": {
+                    "title": "Aufgegeben",
+                    "description": "Du hast nach ${guesses} Versuchen aufgegeben.\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                },
+                "failure": {
+                    "title": "Verloren",
+                    "description": "Du hast das gesuchte Wort in 11 Versuchen nicht erraten. Vielleicht schaffst du es ja beim nächsten Mal! Das gesuchte Wort war: ${word}\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                },
+                "success": {
+                    "title": "Gewonnen",
+                    "description": "Du hast das gesuchte Wort in ${guesses} Versuchen erraten!\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                },
+                "description": "Versuche, das gesuchte Wort in 11 Versuchen zu erraten. Viel Spaß!\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```",
+                "wrongGuess": {
+                    "title": "Falscher Versuch",
+                    "description": "Versuche, das gesuchte Wort in 11 Versuchen zu erraten. Viel Spaß!\nDas war nicht das gesuchte Wort.\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                },
+                "modal": {
+                    "title": "Hangman",
+                    "input": {
+                        "label": "Versuche das Wort zu erraten",
+                        "placeholder": "Das gesuchte Wort"
+                    }
+                },
+                "error": {
+                    "title": "Ungültige Eingabe",
+                    "description": "Ungültige Eingabe. Bitte gebe nur Buchstaben oder Worte ein.",
+                    "invalidInput": "Ungültige Eingabe. Bitte gebe nur Buchstaben oder Worte ein."
+                },
+                "initial": {
+                    "title": "Hangman",
+                    "description": "Versuche, das gesuchte Wort in 11 Versuchen zu erraten. Viel Spaß!\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                }
             }
         }
     },
