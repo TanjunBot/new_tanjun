@@ -4437,24 +4437,24 @@
             "pendingRemoved": "Der User ist nicht mehr verifiziert",
             "timeout": "Wurde in Timeout geschickt bis: <t:${timeout}:R>\n",
             "timeoutRemoved": "Timeout wurde entfernt",
-            "guildAvatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
+            "guildAvatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-# Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
             "guildAvatarLocales": {
                 "none": "Keins",
                 "url": "LINK"
             },
-            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
+            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-# Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
             "title": "Mitglied aktualisiert"
         },
         "userUpdate": {
             "title": "Benutzer aktualisiert",
             "name": "Der Nutzer ${user} hat seinen globalen Discord Account geändert",
-            "avatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
+            "avatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-# Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
             "guildAvatarLocales": {
                 "none": "Keins",
                 "url": "LINK"
             },
             "userName": "Benutzername (@) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
-            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
+            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-# Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
             "globalName": "Globaler Nickname geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}"
         },
         "memberBan": {
