@@ -153,6 +153,9 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         async def guess_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if interaction.user.id != commandInfo.user.id:
+                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.notYourGame"), ephemeral=True)
+                return
             modal = FlagQuizModal(self.commandInfo)
             await interaction.response.send_modal(modal)
 
@@ -166,6 +169,9 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         async def hint_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if interaction.user.id != commandInfo.user.id:
+                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.notYourGame"), ephemeral=True)
+                return
             nonlocal hints_used
             if hints_used == 0:
                 hints_used += 1
@@ -189,6 +195,9 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         async def give_up_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if interaction.user.id != commandInfo.user.id:
+                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.notYourGame"), ephemeral=True)
+                return
             await update_game(interaction, given_up=True)
 
     view = FlagQuizView(commandInfo)

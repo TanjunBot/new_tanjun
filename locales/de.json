@@ -2435,9 +2435,11 @@
                 "no_answer": "Noch keine Antwort gegeben",
                 "title": "Akinator",
                 "result": "Ich bin mir sehr sicher, dass es sich um ${guess_name} handelt. Ich habe ${steps} Schritte benötigt, um ihn/sie zu erraten.\n${guess_description}",
-                "description": "Aktuelle Frage: ${question}\n\nLetzte Antwort: ${lastAnswer}\nFortschritt: ${progress}%"
+                "description": "Aktuelle Frage: ${question}\n\nLetzte Antwort: ${lastAnswer}\nFortschritt: ${progress}%",
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel."
             },
             "wordle": {
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
                 "givenUp": {
                     "title": "Aufgegeben",
                     "description": "Du hast nach ${guesses} Versuchen aufgegeben."
@@ -2473,6 +2475,7 @@
                 }
             },
             "hangman": {
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
                 "title": "Hangman",
                 "givenUp": {
                     "title": "Aufgegeben",
@@ -2509,6 +2512,7 @@
                 }
             },
             "flagquiz": {
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
                 "givenUp": {
                     "title": "Aufgegeben",
                     "description": "Du hast aufgegeben. Das gesuchte Land war: ${country}"

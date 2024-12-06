@@ -247,6 +247,9 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
         async def guess_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if interaction.user.id != commandInfo.user.id:
+                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.wordle.notYourGame"), ephemeral=True)
+                return
             modal = WordleInputModal(self.commandInfo, guesses)
             await interaction.response.send_modal(modal)
             self.stop()
@@ -255,6 +258,9 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
         async def give_up_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if interaction.user.id != commandInfo.user.id:
+                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.wordle.notYourGame"), ephemeral=True)
+                return
             guesses.append(word)
             guesses.append("NOTHING")
             guesses.append("NOTHING")
