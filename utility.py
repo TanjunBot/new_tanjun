@@ -1088,6 +1088,35 @@ def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
     delta = datetime.timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
     return datetime.datetime.now() + delta
 
+def relativeTimeToSeconds(time_string: str) -> int:
+    if not time_string:
+        return 0
+
+    # Regular expression to match time units
+    pattern = r'(\d+)([smhd])'
+    matches = re.findall(pattern, time_string.lower())
+
+    if not matches:
+        return 0
+
+    # Initialize timedelta components
+    days = hours = minutes = seconds = 0
+
+    for value, unit in matches:
+        value = int(value)
+        if unit == 's':
+            seconds += value
+        elif unit == 'm':
+            minutes += value
+        elif unit == 'h':
+            hours += value
+        elif unit == 'd':
+            days += value
+
+    # Create timedelta and add to current time
+    delta = datetime.timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+    return delta.total_seconds()
+
 def dateToRelativeTimeStr(date: datetime.datetime) -> str:
     start_date = datetime.datetime.now()
     # Calculate the difference between the two dates
@@ -1235,3 +1264,20 @@ async def upload_to_byte_bin(content: str) -> str:
                     print(await response.text())  # Print the response text for debugging
             else:
                 print(f"Failed to create paste: {response.status}, {await response.text()}")
+
+def check_if_str_is_hex_color(color: str) -> bool:
+    try:
+        int(color, 16)
+        return True
+    except:
+        return False
+
+def draw_text_with_outline(draw, position, text, font, text_color, outline_color):
+    x, y = position
+    # Draw outline
+    draw.text((x-1, y-1), text, font=font, fill=outline_color)
+    draw.text((x+1, y-1), text, font=font, fill=outline_color)
+    draw.text((x-1, y+1), text, font=font, fill=outline_color)
+    draw.text((x+1, y+1), text, font=font, fill=outline_color)
+    # Draw text
+    draw.text(position, text, font=font, fill=text_color)

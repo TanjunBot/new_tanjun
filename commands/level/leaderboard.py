@@ -57,7 +57,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
                 xp_from_last_level = xp - utility.get_xp_for_level(level - 1, scaling, custom_formula)
                 xp_till_next_level = utility.get_xp_for_level(level, scaling, custom_formula)
 
-                description += f"\n\n### {i + 1 + (page - 1) * 10}. <@{user}>\n{tanjunLocalizer.localize(commandInfo.locale, 'commands.level.leaderboard.data', level= level, xp_from_last_level = xp_from_last_level, xp_till_next_level = xp_till_next_level)}"
+                description += f"\n### {i + 1 + (page - 1) * 10}. <@{user}> - {tanjunLocalizer.localize(commandInfo.locale, 'commands.level.leaderboard.data', level= level, xp_from_last_level = xp_from_last_level, xp_till_next_level = xp_till_next_level)}"
             except:
                 break
         print(description)
