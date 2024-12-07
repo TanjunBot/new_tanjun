@@ -866,7 +866,7 @@
             },
             "blacklistRemoveUser": {
                 "missingPermission": {
-                    "title": "Fehlende Berechtigung", 
+                    "title": "Fehlende Berechtigung",
                     "description": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten."
                 },
                 "notBlacklisted": {
@@ -892,7 +892,6 @@
                     "description": "Die Rolle wurde erfolgreich zur Blacklist hinzugefügt."
                 }
             },
-        
             "blacklistRemoveRole": {
                 "missingPermission": {
                     "title": "Fehlende Berechtigung",
@@ -1155,7 +1154,6 @@
             "tickle": {
                 "title": "<a:onethingaboutmeichfahrauto:1247142217387085885>${user} kitzelt ${member}<a:onethingaboutmeichfahrauto:1247142217387085885>"
             }
-            
         },
         "utility": {
             "messagetrackingoptout": {
@@ -4800,10 +4798,10 @@
     "countries": {
         "Afghanistan": "Afghanistan",
         "Albania": "Albanien",
-        "Algeria": "Algerien", 
+        "Algeria": "Algerien",
         "American Samoa": "Amerikanisch-Samoa",
         "Andorra": "Andorra",
-        "Angola": "Angola", 
+        "Angola": "Angola",
         "Anguilla": "Anguilla",
         "Antarctica": "Antarktis",
         "Antigua and Barbuda": "Antigua und Barbuda",
@@ -4816,7 +4814,7 @@
         "Bahamas": "Bahamas",
         "Bahrain": "Bahrain",
         "Bangladesh": "Bangladesch",
-        "Barbados": "Barbados", 
+        "Barbados": "Barbados",
         "Belarus": "Belarus",
         "Belgium": "Belgien",
         "Belize": "Belize",
@@ -4834,7 +4832,7 @@
         "Burkina Faso": "Burkina Faso",
         "Burundi": "Burundi",
         "Cambodia": "Kambodscha",
-        "Cameroon": "Kamerun", 
+        "Cameroon": "Kamerun",
         "Canada": "Kanada",
         "Cape Verde": "Kap Verde",
         "Cayman Islands": "Kaimaninseln",
@@ -5114,5 +5112,46 @@
     "endlevel": "end_level",
     "boost": "boost",
     "additive": "additiv",
-    "imageurl": "bild_url"
+    "imageurl": "bild_url",
+    "help": "hilfe",
+    "Get help with the bot": "Hilfe mit dem Bot erhalten",
+    "display": {
+        "icon": "anzeige_icon",
+        "emoji": "anzeige_emoji"
+    },
+    "target": {
+        "role": "ziel_rolle"
+    },
+    "delete": {
+        "message": {
+            "days": "nachricht_löschen_tage"
+        }
+    },
+    "✨POGGERS✨": "Ai Befehle",
+    "askcustom": "frage_benutzerdefiniert",
+    "Ask a custom situation": "Eine benutzerdefinierte Situation erfragen",
+    "prompt": "prompt",
+    "The prompt for the custom situation": "Der Prompt für die benutzerdefinierte Situation",
+    "personality": "persönlichkeit",
+    "The personality description": "Die Persönlichkeitsbeschreibung",
+    "askgpt": "gpt_fragen",
+    "Ask Chat GPT something": "Chat GPT etwas fragen",
+    "temperature": "temperatur",
+    "The temperature setting": "Die Temperatur-Einstellung",
+    "top": {
+        "p": "top_p"
+    },
+    "The top": {
+        "p setting": "p_einstellung"
+    },
+    "frequency": {
+        "penalty": "frequenz_strafen"
+    },
+    "The frequency penalty setting": "Die Frequenz-Strafen-Einstellung",
+    "presence": {
+        "penalty": "präsenz_strafen"
+    },
+    "The presence penalty setting": "Die Präsenz-Strafen-Einstellung",
+    "asktanjuwun": "frage_tanjuwun",
+    "Awst Tanjuwun something uwu": "fwage Tanjuwun etwas uwu"
 }
