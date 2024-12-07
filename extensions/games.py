@@ -9,6 +9,7 @@ from commands.games.akinator import akinator
 from commands.games.wordle import wordle
 from commands.games.hangman import hangman
 from commands.games.flag_quiz import flag_quiz
+from commands.games.rps import rps
 
 class gameCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -375,6 +376,28 @@ class gameCommands(discord.app_commands.Group):
             client=ctx.client,
         )
         await flag_quiz(commandInfo)
+
+    @app_commands.command(
+        name=app_commands.locale_str("rps_name"),
+        description=app_commands.locale_str("rps_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str("rps_user_description"),
+    )
+    async def rps_cmd(self, ctx, user: discord.Member = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await rps(commandInfo, user)
 
 class gameCog(commands.Cog):
 

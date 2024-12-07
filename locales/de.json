@@ -2547,6 +2547,20 @@
                     "title": "Flaggenquiz",
                     "description": "Zu welchem Land gehört diese Flagge? Versuche es in 5 Versuchen zu erraten. Viel Spaß!\nVersuche verbleibend: 5\n${guesses}"
                 }
+            },
+            "rps": {
+                "draw": "Unentschieden!",
+                "drawDescription": "${player1} und ${player2} haben ${player1_choice} gewählt. Es ist ein Unentschieden!",
+                "win": "Herazsforderer hat gewonnen!",
+                "winDescription": "${player1} hat ${player1_choice} gewählt und ${player2} hat ${player2_choice} gewählt. ${player1} hat gewonnen!",
+                "lose": "Wie peinlich... Herazsforderer hat verloren!",
+                "loseDescription": "${player1} hat ${player1_choice} gewählt und ${player2} hat ${player2_choice} gewählt. ${player2} hat gewonnen!",
+                "title": "Stein Schere Papier",
+                "description": "${player1} spielt gegen ${player2}",
+                "notYourGame": "Störe nicht den Zug eines anderen Spielers!",
+                "rock": "Stein 🪨",
+                "paper": "Papier 📃",
+                "scissors": "Schere ✂️"
             }
         }
     },
