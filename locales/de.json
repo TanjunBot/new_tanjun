@@ -1393,6 +1393,88 @@
                     "title": "Was sind Boosterkanäle?",
                     "description": "Boosterkanäle sind spezielle Kanäle, die einem Server-Booster sich ganz nach seinen/ihren wünschen konfigurieren kann, sobald er/sie den Server boostet. Diese Kanäle werden automatisch gelöscht, sobald der Booster den Server nicht mehr boostet.\nÜber den setup Befehl kann der Boosterkanal eingestellt werden. Der dort angegebene Kanal dient als Vorlage. Berechtigungen und alle Kanal spezifische Einstellungen werden von diesem für den neuen Boosterkanal übernommen. Boosterkanäle werden über dem Vorlagenkanal platziert. Aufgrund von Discord kann es passieren, dass der Kanal nicht genau über dem Vorlagenkanal platziert wird."
                 }
+            },
+            "listscheduled": {
+                "pagination": {
+                    "page_counter": "Seite ${current}/${total}"
+                },
+                "title": "Geplante Nachrichten",
+                "message_id": "Nachricht ID: ${id}",
+                "message_details": "Nachricht: ${content}\nSendezeit: <t:${time}:R>\nKanal: ${channel}\nWiederholung: ${repeat}",
+                "direct_message": "Direktnachricht",
+                "no_repeat": "Keine Wiederholung",
+                "truncated": {
+                    "title": "Nachrichten wurden abgeschnitten",
+                    "description": "Die Nachrichten wurden abgeschnitten, da sie zu lang wären um in einem Embed angezeigt zu werden."
+                },
+                "error": {
+                    "not_authorized": "Du hast nicht die Berechtigung, um die geplante Nachrichten zu sehen."
+                },
+                "no_messages": {
+                    "title": "Keine geplante Nachrichten",
+                    "description": "Du hast noch keine geplante Nachrichten."
+                }
+            },
+            "removescheduled": {
+                "select": {
+                    "placeholder": "Wähle eine Nachricht aus",
+                    "title": "Nachricht auswählen",
+                    "description": "Wähle eine Nachricht aus, welche du löschen möchtest."
+                },
+                "error": {
+                    "not_authorized": "Du hast nicht die Berechtigung, um diese Nachricht zu löschen."
+                },
+                "success": {
+                    "title": "Nachricht erfolgreich gelöscht",
+                    "description": "Die Nachricht wurde erfolgreich gelöscht."
+                },
+                "timeout": {
+                    "title": "Timeout",
+                    "description": "Die Nachricht wurde nicht gelöscht, da die Abklingzeit noch nicht abgelaufen ist."
+                },
+                "no_messages": {
+                    "title": "Keine Nachrichten gefunden",
+                    "description": "Es wurden keine Nachrichten gefunden, welche du löschen könntest."
+                },
+                "not_found": {
+                    "title": "Nachricht nicht gefunden",
+                    "description": "Die Nachricht wurde möglicherweise gelöscht."
+                }
+            },
+            "schedulemessage": {
+                "invalidTime": {
+                    "title": "Ungültige Zeit",
+                    "description": "Die Zeit muss ein gültiges Datum und eine gültige Uhrzeit sein."
+                },
+                "pastTime": {
+                    "title": "Vergangene Zeit",
+                    "description": "Die Zeit muss in der Zukunft liegen."
+                },
+                "noRepeatPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um wiederkehrende Nachrichten zu planen."
+                },
+                "noChannelPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Nachrichten senden', um Nachrichten in diesem Kanal zu planen."
+                },
+                "noBotChannelPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Ich benötige die Berechtigung 'Nachrichten senden', um Nachrichten in diesem Kanal zu planen."
+                },
+                "noDMPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Nachrichten senden', um Nachrichten als Direktnachricht zu planen."
+                },
+                "tooManyScheduled": {
+                    "title": "Zu viele geplante Nachrichten",
+                    "description": "Du hast bereits zu viele geplante Nachrichten. Bitte warte, bis einige von ihnen automatisch gelöscht werden."
+                },
+                "referenceMessage": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zugewiesen, wenn die geplante Nachricht gesendet wird. Sollte diese Nachricht bearbeitet werden, werden in Zukunft geplante Nachrichten auch so bearbeitet gesendet. Sollte diese Nachricht gelöscht werden, wird die geplante Nachricht nicht mehr gesendet.",
+                "success": {
+                    "title": "Nachricht erfolgreich geplant",
+                    "description": "Die Nachricht wurde erfolgreich geplant."
+                }
             }
         },
         "level": {

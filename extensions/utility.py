@@ -20,6 +20,9 @@ from commands.utility.setupBoosterRole import setupBoosterRole as setupboosterro
 from commands.utility.claimBoosterChannel import claimBoosterChannel as claimboosterchannelCommand
 from commands.utility.deleteBoosterChannel import deleteBoosterChannel as deleteboosterchannelCommand
 from commands.utility.setupBoosterChannel import setupBoosterChannel as setupboosterchannelCommand
+from commands.utility.schedulemessage import schedule_message as scheduleMessageCommand
+from commands.utility.listscheduled import list_scheduled_messages as listScheduledCommand
+from commands.utility.removescheduled import remove_scheduled_message as removeScheduledCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -411,6 +414,103 @@ class utilityCommands(discord.app_commands.Group):
 
         await afkCommand(commandInfo=commandInfo, reason=reason)
 
+class ScheduledMessageCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_schedulemessage_name"),
+        description=app_commands.locale_str("utility_schedulemessage_description"),
+    )
+    @app_commands.describe(
+        content="The message content to schedule",
+        send_in="When to send the message (e.g. '1h', '2d', '30m')",
+        channel="The channel to send the message in (optional)",
+        repeat="How often to repeat the message (e.g. '1h', '1d') (optional)",
+    )
+    async def schedulemessage(
+        self, 
+        ctx, 
+        content: str,
+        send_in: str,
+        channel: discord.TextChannel = None,
+        repeat: str = None,
+        # attachment1: discord.Attachment = None,
+        # attachment2: discord.Attachment = None,
+        # attachment3: discord.Attachment = None,
+        # attachment4: discord.Attachment = None,
+        # attachment5: discord.Attachment = None,
+        # attachment6: discord.Attachment = None,
+        # attachment7: discord.Attachment = None,
+        # attachment8: discord.Attachment = None,
+        # attachment9: discord.Attachment = None,
+        # attachment10: discord.Attachment = None,
+    ):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        attachments = [] # [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
+        #                          attachment6, attachment7, attachment8, attachment9, attachment10] if a is not None]
+        
+        await scheduleMessageCommand(
+            commandInfo=commandInfo,
+            content=content,
+            send_in=send_in,
+            channel=channel,
+            repeat=repeat,
+            attachments=attachments or []
+        )
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_listscheduled_name"),
+        description=app_commands.locale_str("utility_listscheduled_description"),
+    )
+    async def listscheduled(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        
+        await listScheduledCommand(commandInfo=commandInfo)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_removescheduled_name"),
+        description=app_commands.locale_str("utility_removescheduled_description"),
+    )
+    @app_commands.describe(
+        message_id="The ID of the scheduled message to remove",
+    )
+    async def removescheduled(self, ctx, message_id: int):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        
+        await removeScheduledCommand(commandInfo=commandInfo, message_id=message_id)
+
 class utilityCog(commands.Cog):
 
     def __init__(self, bot):
@@ -434,6 +534,8 @@ class utilityCog(commands.Cog):
         utilityCmds.add_command(boosterRoleCmds)
         boosterChannelCmds = BoosterChannelCommands(name=app_commands.locale_str("utility_boosterchannel_name"), description=app_commands.locale_str("utility_boosterchannel_description"))
         utilityCmds.add_command(boosterChannelCmds)
+        scheduledMessageCmds = ScheduledMessageCommands(name=app_commands.locale_str("utility_scheduledmessage_name"), description=app_commands.locale_str("utility_scheduledmessage_description"))
+        utilityCmds.add_command(scheduledMessageCmds)
         self.bot.tree.add_command(utilityCmds)
 
 

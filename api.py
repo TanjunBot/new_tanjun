@@ -479,6 +479,21 @@ async def create_tables():
         PRIMARY KEY(`guildId`)
     ) ENGINE=InnoDB;
     """
+    tables["scheduledMessages"] = """
+    CREATE TABLE IF NOT EXISTS `scheduledMessages` (
+        `messageId` BIGINT PRIMARY KEY AUTO_INCREMENT,
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        `userId` VARCHAR(20) NOT NULL,
+        `content` TEXT NOT NULL,
+        `sendTime` DATETIME NOT NULL,
+        `repeatInterval` INT,
+        `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX `idx_sendtime` (sendTime),
+        INDEX `idx_user` (userId),
+        INDEX `idx_guild` (guildId)
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -2075,3 +2090,62 @@ async def test_log_enable():
 async def test_log_enable_2():
     result = await get_log_enable(947219439764521060)
     print(result)
+
+async def add_scheduled_message(
+    guild_id: Optional[str],
+    channel_id: Optional[str], 
+    user_id: str,
+    content: str,
+    send_time: datetime,
+    repeat_interval: Optional[int] = None
+):
+    query = """
+    INSERT INTO scheduledMessages 
+    (guildId, channelId, userId, content, sendTime, repeatInterval)
+    VALUES (%s, %s, %s, %s, %s, %s)
+    """
+    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval)
+    await execute_action(pool, query, params)
+
+async def get_scheduled_messages(user_id: str):
+    query = """
+    SELECT * FROM scheduledMessages 
+    WHERE userId = %s
+    ORDER BY sendTime ASC
+    """
+    params = (user_id,)
+    return await execute_query(pool, query, params)
+
+async def remove_scheduled_message(message_id: int):
+    query = "DELETE FROM scheduledMessages WHERE messageId = %s"
+    params = (message_id,)
+    await execute_action(pool, query, params)
+
+async def get_user_scheduled_messages_in_timeframe(
+    user_id: str, 
+    start_time: datetime,
+    end_time: datetime,
+    guild_id: Optional[str] = None
+):
+    query = """
+    SELECT * FROM scheduledMessages 
+    WHERE userId = %s 
+    AND sendTime BETWEEN %s AND %s
+    """
+    params = [user_id, start_time, end_time]
+    
+    if guild_id:
+        query += " AND guildId = %s"
+        params.append(guild_id)
+        
+    return await execute_query(pool, query, params)
+
+async def update_scheduled_message_content(message_id: int, new_content: str):
+    query = "UPDATE scheduledMessages SET content = %s WHERE referenceMessageId = %s"
+    params = (new_content, message_id)
+    await execute_action(pool, query, params)
+
+async def get_ready_scheduled_messages():
+    query = "SELECT * FROM scheduledMessages WHERE sendTime <= NOW()"
+    res = await execute_query(pool, query)
+    return res
