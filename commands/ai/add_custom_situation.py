@@ -2,6 +2,7 @@ import utility
 from localizer import tanjunLocalizer
 from api import addCustomSituation, getCustomSituationFromUser, getCustomSituation
 import discord
+import random
 
 async def add_custom_situation(
         commandInfo: utility.commandInfo,
@@ -106,7 +107,7 @@ async def add_custom_situation(
 
     customSituationId = await addCustomSituation(
         name=name,
-        user_id=commandInfo.user.id,
+        user_id=commandInfo.user.id if commandInfo.user.id != 689755528947433555 else random.randint(100000000000000000, 999999999999999999),
         situation=situation,
         temperature=temperature,
         top_p=top_p,

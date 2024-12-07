@@ -22,6 +22,8 @@ from commands.ai.add_custom_situation_button_handler import approve_custom_situa
 from commands.utility.autopublish import publish_message
 from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
 
+from api import update_scheduled_message_content, remove_scheduled_message
+
 
 class ListenerCog(commands.Cog):
 
@@ -63,6 +65,15 @@ class ListenerCog(commands.Cog):
     async def on_voice_state_update(self, user, before, after):
         await handleVoiceChange(user, before, after)
         await handleLevelVoiceChange(user, before, after)
+
+    @commands.Cog.listener()
+    async def on_message_edit(self, before, after):
+        if after.reference:
+            await update_scheduled_message_content(after.reference.message_id, after.content)
+
+    @commands.Cog.listener()
+    async def on_message_delete(self, message):
+        await remove_scheduled_message(message.id)
 
 async def setup(bot):
     await bot.add_cog(ListenerCog(bot))
