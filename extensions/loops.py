@@ -13,6 +13,9 @@ from ai.refillToken import refillAiToken
 from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
 from extensions.logs import sendLogEmbeds
+from commands.utility.claimBoosterRole import remove_claimed_booster_roles_that_are_expired
+from commands.utility.claimBoosterChannel import remove_claimed_booster_channels_that_are_expired
+from commands.utility.schedulemessage import send_scheduled_messages
 import asyncio
 
 from api import check_pool_initialized
@@ -85,7 +88,28 @@ class LoopCog(commands.Cog):
             await sendLogEmbeds(self)
         except:
             pass
-                
+
+
+    @tasks.loop(seconds=10)
+    async def removeExpiredClaimedBoosterRoles(self):
+        try:
+            await remove_claimed_booster_roles_that_are_expired(self.bot)
+        except:
+            raise
+
+    @tasks.loop(seconds=10)
+    async def removeExpiredClaimedBoosterChannels(self):
+        try:
+            await remove_claimed_booster_channels_that_are_expired(self.bot)
+        except:
+            raise
+
+    @tasks.loop(seconds=10)
+    async def sendScheduledMessages(self):
+        try:
+            await send_scheduled_messages(self.bot)
+        except:
+            pass
 
     @commands.Cog.listener()
     async def on_ready(self):  
@@ -101,8 +125,9 @@ class LoopCog(commands.Cog):
             self.pingServerLoop.start()
             self.backupDatabaseLoop.start()
             self.sendLogEmbeds.start()
-
-
+            self.removeExpiredClaimedBoosterRoles.start()
+            self.removeExpiredClaimedBoosterChannels.start()
+            self.sendScheduledMessages.start()
 
 async def setup(bot):
     await bot.add_cog(LoopCog(bot))

@@ -866,7 +866,7 @@
             },
             "blacklistRemoveUser": {
                 "missingPermission": {
-                    "title": "Fehlende Berechtigung", 
+                    "title": "Fehlende Berechtigung",
                     "description": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten."
                 },
                 "notBlacklisted": {
@@ -892,7 +892,6 @@
                     "description": "Die Rolle wurde erfolgreich zur Blacklist hinzugefügt."
                 }
             },
-        
             "blacklistRemoveRole": {
                 "missingPermission": {
                     "title": "Fehlende Berechtigung",
@@ -1155,7 +1154,6 @@
             "tickle": {
                 "title": "<a:onethingaboutmeichfahrauto:1247142217387085885>${user} kitzelt ${member}<a:onethingaboutmeichfahrauto:1247142217387085885>"
             }
-            
         },
         "utility": {
             "messagetrackingoptout": {
@@ -1279,6 +1277,10 @@
                     "title": "Kein Booster",
                     "description": "Du bist kein Booster. Booster erhalten eine eigene Rolle, welche du einstellen kannst, wie du möchtest."
                 },
+                "invalid_color": {
+                    "title": "Ungültige Farbe",
+                    "description": "Die Farbe muss ein gültiges Hex-Farbcode sein.\nSolltest du nicht wissen, was eine Hex-Farbe ist, klicke [hier](https://www.google.com/search?q=hex+farbe).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden."
+                },
                 "no_booster_role": {
                     "title": "Keine Boosterrolle",
                     "description": "Es ist keine Boosterrolle eingestellt. Sage der Server-Administration, dass sie eine Boosterrolle für den Server einrichten soll."
@@ -1289,7 +1291,187 @@
                 },
                 "success": {
                     "title": "Boosterrolle erfolgreich erhalten",
-                    "description": "Die Boosterrolle wurde erfolgreich erhalten."
+                    "description": "Die Boosterrolle wurde erfolgreich erhalten. \n-# Um wohlmöglich unerwünschte Einflüsse auf die Rolle zu vermeiden, ist es nicht möglich, die Rolle über den Bot nachträglich zu bearbeiten. Hierfür musst du den Server-Administrator um Hilfe bitten.\nDie Rolle behälst du solange, wie du den Server boostest. Sobald du den Server nicht mehr boostest, wird die Rolle automatisch gelöscht.",
+                    "reason": "Jemand hat die Booster Rolle eingefordert."
+                },
+                "already_claimed": {
+                    "title": "Boosterrolle bereits erhalten",
+                    "description": "Du hast bereits die Boosterrolle erhalten. Bitte warte, bis die Rolle automatisch gelöscht wird."
+                },
+                "expired": {
+                    "reason": "Die Boosterrolle wurde automatisch gelöscht, da der user dem die Rolle zugeordnet wurde, kein Booster mehr ist."
+                }
+            },
+            "setupboosterrole": {
+                "already_set": {
+                    "title": "Boosterrolle bereits eingestellt",
+                    "description": "Die Boosterrolle wurde bereits eingestellt. Bitte lösche die alte Boosterrolle, bevor du eine neue einstellst. \n-# Es reicht nicht, die Rolle zu löschen, sondern du musst den befehl zum löschen der Boosterrolle ausführen, auch wenn die Rolle nicht mehr existiert. Die Rolle muss hierfür nicht umbedingt gelöscht werden."
+                },
+                "success": {
+                    "title": "Boosterrolle eingestellt",
+                    "description": "Die Boosterrolle wurde erfolgreich eingestellt."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Boosterrollen einzurichten."
+                }
+            },
+            "deleteboosterrole": {
+                "no_booster_role": {
+                    "title": "Keine Boosterrolle",
+                    "description": "Es ist keine Boosterrolle eingestellt, welche du löschen könntest."
+                },
+                "success": {
+                    "title": "Boosterrolle erfolgreich gelöscht",
+                    "description": "Die Boosterrolle wurde erfolgreich gelöscht."
+                },
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Boosterrolle zu löschen."
+                }
+            },
+            "boosterroleinfo": {
+                "info": {
+                    "title": "Was sind Boosterrollen?",
+                    "description": "Boosterrollen sind spezielle Rollen, die einem Server-Booster sich ganz nach seinen/ihren wünschen konfigurieren kann, sobald er/sie den Server boostet. Diese Rollen werden automatisch gelöscht, sobald der Booster den Server nicht mehr boostet.\nÜber den setup Befehl kann die Booster Rolle eingestellt werden. Die dort angegebene Rolle dient als Vorlage. Berechtigungen und alle Rollen spezifische Einstellungen werden von dieser für die neue Boosterrolle übernommen. Boosterrollen werden über der Vorlagenrolle platziert. Aufgrund von Discord kann es passieren, dass die Rolle nicht genau über der Vorlagenrolle platziert wird."
+                }
+            },
+            "setupboosterchannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um die Boosterkanäle einzurichten."
+                },
+                "already_set": {
+                    "title": "Boosterkanal bereits eingestellt",
+                    "description": "Der Boosterkanal wurde bereits eingestellt. Bitte lösche den alten Boosterkanal, bevor du einen neuen einstellst."
+                },
+                "success": {
+                    "title": "Boosterkanal eingestellt",
+                    "description": "Der Boosterkanal wurde erfolgreich eingestellt."
+                }
+            },
+            "deleteboosterchannel": {
+                "no_booster_channel": {
+                    "title": "Kein Boosterkanal",
+                    "description": "Es ist kein Boosterkanal eingestellt, welchen du löschen könntest."
+                },
+                "success": {
+                    "title": "Boosterkanal erfolgreich gelöscht",
+                    "description": "Der Boosterkanal wurde erfolgreich gelöscht."
+                }
+            },
+            "claimboosterchannel": {
+                "no_booster_channel": {
+                    "title": "Kein Boosterkanal",
+                    "description": "Es ist kein Boosterkanal eingestellt, welchen du beanspruchen könntest."
+                },
+                "success": {
+                    "title": "Boosterkanal erfolgreich beansprucht",
+                    "description": "Der Boosterkanal wurde erfolgreich beansprucht.",
+                    "reason": "Jemand hat den Boosterkanal beansprucht."
+                },
+                "nobooster": {
+                    "title": "Kein Booster",
+                    "description": "Du bist kein Booster. Booster erhalten einen eigenen Kanal, welchen sie beanspruchen können."
+                },
+                "already_claimed": {
+                    "title": "Boosterkanal bereits beansprucht",
+                    "description": "Du hast bereits den Boosterkanal beansprucht. Bitte warte, bis der Kanal automatisch freigegeben wird."
+                },
+                "category_not_found": {
+                    "title": "Kategorie nicht gefunden",
+                    "description": "Die Kategorie wurde möglicherweise gelöscht."
+                },
+                "expired": {
+                    "reason": "Der Boosterkanal wurde automatisch gelöscht, da der user dem der Channel gehört, kein Booster mehr ist."
+                }
+            },
+            "boosterchannelinfo": {
+                "info": {
+                    "title": "Was sind Boosterkanäle?",
+                    "description": "Boosterkanäle sind spezielle Kanäle, die einem Server-Booster sich ganz nach seinen/ihren wünschen konfigurieren kann, sobald er/sie den Server boostet. Diese Kanäle werden automatisch gelöscht, sobald der Booster den Server nicht mehr boostet.\nÜber den setup Befehl kann der Boosterkanal eingestellt werden. Der dort angegebene Kanal dient als Vorlage. Berechtigungen und alle Kanal spezifische Einstellungen werden von diesem für den neuen Boosterkanal übernommen. Boosterkanäle werden über dem Vorlagenkanal platziert. Aufgrund von Discord kann es passieren, dass der Kanal nicht genau über dem Vorlagenkanal platziert wird."
+                }
+            },
+            "listscheduled": {
+                "pagination": {
+                    "page_counter": "Seite ${current}/${total}"
+                },
+                "title": "Geplante Nachrichten",
+                "message_id": "Nachricht ID: ${id}",
+                "message_details": "Nachricht: ${content}\nSendezeit: <t:${time}:R>\nKanal: ${channel}\nWiederholung: ${repeat}",
+                "direct_message": "Direktnachricht",
+                "no_repeat": "Keine Wiederholung",
+                "truncated": {
+                    "title": "Nachrichten wurden abgeschnitten",
+                    "description": "Die Nachrichten wurden abgeschnitten, da sie zu lang wären um in einem Embed angezeigt zu werden."
+                },
+                "error": {
+                    "not_authorized": "Du hast nicht die Berechtigung, um die geplante Nachrichten zu sehen."
+                },
+                "no_messages": {
+                    "title": "Keine geplante Nachrichten",
+                    "description": "Du hast noch keine geplante Nachrichten."
+                }
+            },
+            "removescheduled": {
+                "select": {
+                    "placeholder": "Wähle eine Nachricht aus",
+                    "title": "Nachricht auswählen",
+                    "description": "Wähle eine Nachricht aus, welche du löschen möchtest."
+                },
+                "error": {
+                    "not_authorized": "Du hast nicht die Berechtigung, um diese Nachricht zu löschen."
+                },
+                "success": {
+                    "title": "Nachricht erfolgreich gelöscht",
+                    "description": "Die Nachricht wurde erfolgreich gelöscht."
+                },
+                "timeout": {
+                    "title": "Timeout",
+                    "description": "Die Nachricht wurde nicht gelöscht, da die Abklingzeit noch nicht abgelaufen ist."
+                },
+                "no_messages": {
+                    "title": "Keine Nachrichten gefunden",
+                    "description": "Es wurden keine Nachrichten gefunden, welche du löschen könntest."
+                },
+                "not_found": {
+                    "title": "Nachricht nicht gefunden",
+                    "description": "Die Nachricht wurde möglicherweise gelöscht."
+                }
+            },
+            "schedulemessage": {
+                "invalidTime": {
+                    "title": "Ungültige Zeit",
+                    "description": "Die Zeit muss ein gültiges Datum und eine gültige Uhrzeit sein."
+                },
+                "pastTime": {
+                    "title": "Vergangene Zeit",
+                    "description": "Die Zeit muss in der Zukunft liegen."
+                },
+                "noRepeatPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst Administratorrechte, um wiederkehrende Nachrichten zu planen."
+                },
+                "noChannelPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Nachrichten senden', um Nachrichten in diesem Kanal zu planen."
+                },
+                "noBotChannelPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Ich benötige die Berechtigung 'Nachrichten senden', um Nachrichten in diesem Kanal zu planen."
+                },
+                "noDMPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du benötigst die Berechtigung 'Nachrichten senden', um Nachrichten als Direktnachricht zu planen."
+                },
+                "tooManyScheduled": {
+                    "title": "Zu viele geplante Nachrichten",
+                    "description": "Du hast bereits zu viele geplante Nachrichten. Bitte warte, bis einige von ihnen automatisch gelöscht werden."
+                },
+                "referenceMessage": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zugewiesen, wenn die geplante Nachricht gesendet wird. Sollte diese Nachricht bearbeitet werden, werden in Zukunft geplante Nachrichten auch so bearbeitet gesendet. Sollte diese Nachricht gelöscht werden, wird die geplante Nachricht nicht mehr gesendet.",
+                "success": {
+                    "title": "Nachricht erfolgreich geplant",
+                    "description": "Die Nachricht wurde erfolgreich geplant."
                 }
             }
         },
@@ -2294,6 +2476,171 @@
                     "title": "Bildskalierung geändert",
                     "description": "Die Skalierung des Bildes wurde erfolgreich geändert."
                 }
+            }
+        },
+        "games": {
+            "ticTacToe": {
+                "title": "Tic Tac Toe",
+                "description": "${player1} (⭕) vs ${player2} (❌)",
+                "winner": "${winner} hat gewonnen!",
+                "draw": "Unentschieden!",
+                "descriptionBotEnemy": "(Zufällig ausgeloste) Schwierigkeit von Tanjun: ${difficulty} (1-5) ||1 = leicht, 5 = schwer||",
+                "notYourTurn": "Du bist noch nicht an der Reihe. Bitte warte noch einen Moment.",
+                "invalidMove": "Ungültige Zug. Bitte versuche es erneut.",
+                "cellAlreadyTaken": "Diese Zelle ist bereits besetzt. Bitte versuche es erneut.",
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
+                "currentTurn": "Aktuell am Zug: ${player}"
+            },
+            "connect4": {
+                "title": "4 Gewinnt",
+                "description": "${player1} (🔴) vs ${player2} (🟡)",
+                "descriptionBotEnemy": "(Zufällig ausgeloste) Schwierigkeit von Tanjun: ${difficulty} (1-5) ||1 = leicht, 5 = schwer||",
+                "notYourTurn": "Du bist noch nicht an der Reihe. Bitte warte noch einen Moment.",
+                "invalidMove": "Ungültige Zug. Bitte versuche es erneut.",
+                "cellAlreadyTaken": "Diese Zelle ist bereits besetzt. Bitte versuche es erneut.",
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
+                "currentTurn": "Aktuell am Zug: ${player}",
+                "winner": "${winner} hat gewonnen!",
+                "draw": "Unentschieden!",
+                "drop": "Fallen lassen"
+            },
+            "akinator": {
+                "yes": "Ja",
+                "no": "Nein",
+                "idk": "Ich weiß es nicht",
+                "probably": "Wahrscheinlich",
+                "probably_not": "Wahrscheinlich nicht",
+                "end": "Aufgeben",
+                "back": "Zurück",
+                "no_answer": "Noch keine Antwort gegeben",
+                "title": "Akinator",
+                "result": "Ich bin mir sehr sicher, dass es sich um ${guess_name} handelt. Ich habe ${steps} Schritte benötigt, um ihn/sie zu erraten.\n${guess_description}",
+                "description": "Aktuelle Frage: ${question}\n\nLetzte Antwort: ${lastAnswer}\nFortschritt: ${progress}%",
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel."
+            },
+            "wordle": {
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
+                "givenUp": {
+                    "title": "Aufgegeben",
+                    "description": "Du hast nach ${guesses} Versuchen aufgegeben."
+                },
+                "title": "Wordle",
+                "description": "Versuche, das gesuchte Wort in 6 Versuchen zu erraten. Viel Spaß!",
+                "modal": {
+                    "title": "Wordle",
+                    "input": {
+                        "label": "Gib das gesuchte Wort ein",
+                        "placeholder": "Das gesuchte Wort"
+                    }
+                },
+                "error": {
+                    "title": "Ungültiges Wort",
+                    "description": "Das eingegebene Wort ist kein richtiges Wort. Bitte gebe nur wörter ein, die wirklich existieren.",
+                    "invalidInput": "Ungültige Eingabe. Bitte gebe nur wörter ein, die wirklich existieren. und die genau 5 Buchstaben lang sind."
+                },
+                "failure": {
+                    "title": "Verloren",
+                    "description": "Du hast das gesuchte Wort in 6 Versuchen nicht erraten. Vielleicht schaffst du es ja beim nächsten Mal! Das gesuchte Wort war: ${word}"
+                },
+                "initial": {
+                    "title": "Wordle",
+                    "description": "Versuche, das gesuchte Wort in 6 Versuchen zu erraten. Viel Spaß!",
+                    "descriptionextra": {
+                        "ja": "Das gesuchte Wort ist rein in Hiragana geschrieben. Auch wenn es normalerweise Kanji beinhaltet, so ist es hier nicht der Fall."
+                    }
+                },
+                "success": {
+                    "title": "Gewonnen",
+                    "description": "Du hast das gesuchte Wort in ${guesses} Versuchen erraten!"
+                }
+            },
+            "hangman": {
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
+                "title": "Hangman",
+                "givenUp": {
+                    "title": "Aufgegeben",
+                    "description": "Du hast nach ${guesses} Versuchen aufgegeben.\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                },
+                "failure": {
+                    "title": "Verloren",
+                    "description": "Du hast das gesuchte Wort in 11 Versuchen nicht erraten. Vielleicht schaffst du es ja beim nächsten Mal! Das gesuchte Wort war: ${word}\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                },
+                "success": {
+                    "title": "Gewonnen",
+                    "description": "Du hast das gesuchte Wort in ${guesses} Versuchen erraten!\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                },
+                "description": "Versuche, das gesuchte Wort in 11 Versuchen zu erraten. Viel Spaß!\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```",
+                "wrongGuess": {
+                    "title": "Falscher Versuch",
+                    "description": "Versuche, das gesuchte Wort in 11 Versuchen zu erraten. Viel Spaß!\nDas war nicht das gesuchte Wort.\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                },
+                "modal": {
+                    "title": "Hangman",
+                    "input": {
+                        "label": "Versuche das Wort zu erraten",
+                        "placeholder": "Das gesuchte Wort"
+                    }
+                },
+                "error": {
+                    "title": "Ungültige Eingabe",
+                    "description": "Ungültige Eingabe. Bitte gebe nur Buchstaben oder Worte ein.",
+                    "invalidInput": "Ungültige Eingabe. Bitte gebe nur Buchstaben oder Worte ein."
+                },
+                "initial": {
+                    "title": "Hangman",
+                    "description": "Versuche, das gesuchte Wort in 11 Versuchen zu erraten. Viel Spaß!\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
+                }
+            },
+            "flagquiz": {
+                "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
+                "givenUp": {
+                    "title": "Aufgegeben",
+                    "description": "Du hast aufgegeben. Das gesuchte Land war: ${country}"
+                },
+                "success": {
+                    "title": "Gewonnen",
+                    "description": "Du hast das gesuchte Land in ${guesses} Versuchen erraten!"
+                },
+                "failure": {
+                    "title": "Verloren",
+                    "description": "Du hast das gesuchte Land in 5 Versuchen nicht erraten. Vielleicht schaffst du es ja beim nächsten Mal! Das gesuchte Land war: ${country}"
+                },
+                "hint": "Hinweis",
+                "title": "Flaggenquiz",
+                "description": "Zu welchem Land gehört diese Flagge? Versuche es in 5 Versuchen zu erraten. Viel Spaß!\nVersuche verbleibend: ${remaining}\n${guesses}",
+                "modal": {
+                    "title": "Flaggenquiz",
+                    "input": {
+                        "label": "Landername eingeben",
+                        "placeholder": "Landername"
+                    }
+                },
+                "buttons": {
+                    "guess": "Erraten",
+                    "hint": "Hinweis",
+                    "giveUp": "Aufgeben"
+                },
+                "error": {
+                    "hintUsed": "Du hast bereits einen Hinweis verwendet."
+                },
+                "initial": {
+                    "title": "Flaggenquiz",
+                    "description": "Zu welchem Land gehört diese Flagge? Versuche es in 5 Versuchen zu erraten. Viel Spaß!\nVersuche verbleibend: 5\n${guesses}"
+                }
+            },
+            "rps": {
+                "draw": "Unentschieden!",
+                "drawDescription": "${player1} und ${player2} haben ${player1_choice} gewählt. Es ist ein Unentschieden!",
+                "win": "Herazsforderer hat gewonnen!",
+                "winDescription": "${player1} hat ${player1_choice} gewählt und ${player2} hat ${player2_choice} gewählt. ${player1} hat gewonnen!",
+                "lose": "Wie peinlich... Herazsforderer hat verloren!",
+                "loseDescription": "${player1} hat ${player1_choice} gewählt und ${player2} hat ${player2_choice} gewählt. ${player2} hat gewonnen!",
+                "title": "Stein Schere Papier",
+                "description": "${player1} spielt gegen ${player2}",
+                "notYourGame": "Störe nicht den Zug eines anderen Spielers!",
+                "rock": "Stein 🪨",
+                "paper": "Papier 📃",
+                "scissors": "Schere ✂️"
             }
         }
     },
@@ -4260,24 +4607,24 @@
             "pendingRemoved": "Der User ist nicht mehr verifiziert",
             "timeout": "Wurde in Timeout geschickt bis: <t:${timeout}:R>\n",
             "timeoutRemoved": "Timeout wurde entfernt",
-            "guildAvatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
+            "guildAvatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-# Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
             "guildAvatarLocales": {
                 "none": "Keins",
                 "url": "LINK"
             },
-            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
+            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-# Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
             "title": "Mitglied aktualisiert"
         },
         "userUpdate": {
             "title": "Benutzer aktualisiert",
             "name": "Der Nutzer ${user} hat seinen globalen Discord Account geändert",
-            "avatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
+            "avatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-# Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
             "guildAvatarLocales": {
                 "none": "Keins",
                 "url": "LINK"
             },
             "userName": "Benutzername (@) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
-            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-#Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
+            "banner": "Banner geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-# Die URLs werden auf imgbb hochgeladen, da geänderte Banners nicht mehr von Discord gespeichert werden.",
             "globalName": "Globaler Nickname geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}"
         },
         "memberBan": {
@@ -4448,6 +4795,261 @@
             }
         }
     },
+    "countries": {
+        "Afghanistan": "Afghanistan",
+        "Albania": "Albanien",
+        "Algeria": "Algerien",
+        "American Samoa": "Amerikanisch-Samoa",
+        "Andorra": "Andorra",
+        "Angola": "Angola",
+        "Anguilla": "Anguilla",
+        "Antarctica": "Antarktis",
+        "Antigua and Barbuda": "Antigua und Barbuda",
+        "Argentina": "Argentinien",
+        "Armenia": "Armenien",
+        "Aruba": "Aruba",
+        "Australia": "Australien",
+        "Austria": "Österreich",
+        "Azerbaijan": "Aserbaidschan",
+        "Bahamas": "Bahamas",
+        "Bahrain": "Bahrain",
+        "Bangladesh": "Bangladesch",
+        "Barbados": "Barbados",
+        "Belarus": "Belarus",
+        "Belgium": "Belgien",
+        "Belize": "Belize",
+        "Benin": "Benin",
+        "Bermuda": "Bermuda",
+        "Bhutan": "Bhutan",
+        "Bolivia": "Bolivien",
+        "Bosnia": "Bosnien und Herzegowina",
+        "Botswana": "Botswana",
+        "Bouvet Island": "Bouvetinsel",
+        "Brazil": "Brasilien",
+        "British Indian Ocean Territory": "Britisches Territorium im Indischen Ozean",
+        "Brunei": "Brunei",
+        "Bulgaria": "Bulgarien",
+        "Burkina Faso": "Burkina Faso",
+        "Burundi": "Burundi",
+        "Cambodia": "Kambodscha",
+        "Cameroon": "Kamerun",
+        "Canada": "Kanada",
+        "Cape Verde": "Kap Verde",
+        "Cayman Islands": "Kaimaninseln",
+        "Central African Republic": "Zentralafrikanische Republik",
+        "Chad": "Tschad",
+        "Chile": "Chile",
+        "China": "China",
+        "Christmas Island": "Weihnachtsinsel",
+        "Cocos": "Kokosinseln",
+        "Colombia": "Kolumbien",
+        "Comoros": "Komoren",
+        "Congo": "Republik Kongo",
+        "Cook Islands": "Cookinseln",
+        "Costa Rica": "Costa Rica",
+        "Cote d'Ivoire": "Elfenbeinküste",
+        "Croatia": "Kroatien",
+        "Cuba": "Kuba",
+        "Curacao": "Curacao",
+        "Cyprus": "Zypern",
+        "Czech Republic": "Tschechische Republik",
+        "Democratic Republic of Congo": "Demokratische Republik Kongo",
+        "Denmark": "Dänemark",
+        "Djibouti": "Dschibuti",
+        "Dominica": "Dominica",
+        "Dominican Republic": "Dominikanische Republik",
+        "Ecuador": "Ecuador",
+        "Egypt": "Ägypten",
+        "El Salvador": "El Salvador",
+        "England": "England",
+        "Equatorial Guinea": "Äquatorialguinea",
+        "Eritrea": "Eritrea",
+        "Estonia": "Estland",
+        "Ethiopia": "Äthiopien",
+        "Europe": "Europa",
+        "Falkland Islands": "Falklandinseln",
+        "Faroe Islands": "Färöer",
+        "Fiji": "Fidschi",
+        "Finland": "Finnland",
+        "France": "Frankreich",
+        "French Guiana": "Französisch-Guayana",
+        "French Polynesia": "Französisch-Polynesien",
+        "French Southern Territories": "Französische Süd- und Antarktisgebiete",
+        "Gabon": "Gabun",
+        "Gambia": "Gambia",
+        "Georgia": "Georgien",
+        "Germany": "Deutschland",
+        "Ghana": "Ghana",
+        "Gibraltar": "Gibraltar",
+        "Greece": "Griechenland",
+        "Greenland": "Grönland",
+        "Grenada": "Grenada",
+        "Guadeloupe": "Guadeloupe",
+        "Guam": "Guam",
+        "Guatemala": "Guatemala",
+        "Guernsey": "Guernsey",
+        "Guinea-Bissau": "Guinea-Bissau",
+        "Guinea": "Guinea",
+        "Guyana": "Guyana",
+        "Haiti": "Haiti",
+        "Heard Island and McDonald Islands": "Heard und McDonaldinseln",
+        "Honduras": "Honduras",
+        "Hong Kong": "Hongkong",
+        "Hungary": "Ungarn",
+        "Iceland": "Island",
+        "India": "Indien",
+        "Indonesia": "Indonesien",
+        "Iran": "Iran",
+        "Iraq": "Irak",
+        "Ireland": "Irland",
+        "Isle of Man": "Isle of Man",
+        "Israel": "Israel",
+        "Italy": "Italien",
+        "Jamaica": "Jamaika",
+        "Japan": "Japan",
+        "Jersey": "Jersey",
+        "Jordan": "Jordanien",
+        "Kazakhstan": "Kasachstan",
+        "Kenya": "Kenia",
+        "Kiribati": "Kiribati",
+        "Kosovo": "Kosovo",
+        "Kuwait": "Kuwait",
+        "Kyrgyzstan": "Kirgisistan",
+        "Laos": "Laos",
+        "Latvia": "Lettland",
+        "Lebanon": "Libanon",
+        "Lesotho": "Lesotho",
+        "Liberia": "Liberia",
+        "Libya": "Libyen",
+        "Liechtenstein": "Liechtenstein",
+        "Lithuania": "Litauen",
+        "Luxembourg": "Luxemburg",
+        "Macao": "Macau",
+        "Madagascar": "Madagaskar",
+        "Malawi": "Malawi",
+        "Malaysia": "Malaysia",
+        "Maldives": "Malediven",
+        "Mali": "Mali",
+        "Malta": "Malta",
+        "Marshall Islands": "Marshallinseln",
+        "Martinique": "Martinique",
+        "Mauritania": "Mauretanien",
+        "Mauritius": "Mauritius",
+        "Mayotte": "Mayotte",
+        "Mexico": "Mexiko",
+        "Micronesia": "Mikronesien",
+        "Moldova": "Moldawien",
+        "Monaco": "Monaco",
+        "Mongolia": "Mongolei",
+        "Montenegro": "Montenegro",
+        "Montserrat": "Montserrat",
+        "Morocco": "Marokko",
+        "Mozambique": "Mosambik",
+        "Myanmar": "Myanmar",
+        "Namibia": "Namibia",
+        "Nauru": "Nauru",
+        "Nepal": "Nepal",
+        "Netherlands": "Niederlande",
+        "New Caledonia": "Neukaledonien",
+        "New Zealand": "Neuseeland",
+        "Nicaragua": "Nicaragua",
+        "Niger": "Niger",
+        "Nigeria": "Nigeria",
+        "Niue": "Niue",
+        "Norfolk Island": "Norfolkinsel",
+        "North Korea": "Nordkorea",
+        "North Macedonia": "Nordmazedonien",
+        "Northern Ireland": "Nordirland",
+        "Northern Mariana Islands": "Nördliche Marianen",
+        "Norway": "Norwegen",
+        "Oman": "Oman",
+        "Pakistan": "Pakistan",
+        "Palau": "Palau",
+        "Palestine": "Palästina",
+        "Panama": "Panama",
+        "Papua New Guinea": "Papua-Neuguinea",
+        "Paraguay": "Paraguay",
+        "Peru": "Peru",
+        "Philippines": "Philippinen",
+        "Pitcairn": "Pitcairninseln",
+        "Poland": "Polen",
+        "Portugal": "Portugal",
+        "Puerto Rico": "Puerto Rico",
+        "Qatar": "Katar",
+        "Romania": "Rumänien",
+        "Russia": "Russland",
+        "Rwanda": "Ruanda",
+        "Réunion": "Reunion",
+        "Samoa": "Samoa",
+        "San Marino": "San Marino",
+        "Sao Tome and Principe": "São Tomé und Príncipe",
+        "Saudi Arabia": "Saudi-Arabien",
+        "Scotland": "Schottland",
+        "Senegal": "Senegal",
+        "Serbia": "Serbien",
+        "Seychelles": "Seychellen",
+        "Sierra Leone": "Sierra Leone",
+        "Singapore": "Singapur",
+        "Sint Maarten": "Sint Maarten",
+        "Slovakia": "Slowakei",
+        "Slovenia": "Slowenien",
+        "Solomon Islands": "Salomonen",
+        "Somalia": "Somalia",
+        "South Africa": "Südafrika",
+        "South Georgia": "Südgeorgien",
+        "South Korea": "Südkorea",
+        "South Sudan": "Südsudan",
+        "Spain": "Spanien",
+        "Sri Lanka": "Sri Lanka",
+        "St Barthélemy": "Saint-Barthélemy",
+        "St Helena": "St. Helena",
+        "St Kitts and Nevis": "St. Kitts und Nevis",
+        "St Lucia": "St. Lucia",
+        "St Martin": "Saint-Martin",
+        "St Pierre and Miquelon": "Saint-Pierre und Miquelon",
+        "St Vincent and the Grenadines": "St. Vincent und die Grenadinen",
+        "Sudan": "Sudan",
+        "Suriname": "Suriname",
+        "Svalbard and Jan Mayen Islands": "Spitzbergen und Jan Mayen",
+        "Swaziland": "Eswatini",
+        "Sweden": "Schweden",
+        "Switzerland": "Schweiz",
+        "Syria": "Syrien",
+        "Taiwan (Republic of China)": "Taiwan",
+        "Tajikistan": "Tadschikistan",
+        "Tanzania": "Tansania",
+        "Thailand": "Thailand",
+        "Timor-Leste": "Osttimor",
+        "Togo": "Togo",
+        "Tokelau": "Tokelau",
+        "Tonga": "Tonga",
+        "Trinidad and Tobago": "Trinidad und Tobago",
+        "Tunisia": "Tunesien",
+        "Turkey": "Türkei",
+        "Turkmenistan": "Turkmenistan",
+        "Turks and Caicos Islands": "Turks- und Caicosinseln",
+        "Tuvalu": "Tuvalu",
+        "Uganda": "Uganda",
+        "Ukraine": "Ukraine",
+        "United Arab Emirates": "Vereinigte Arabische Emirate",
+        "United Kingdom": "Vereinigtes Königreich",
+        "United States": "Vereinigte Staaten",
+        "Uruguay": "Uruguay",
+        "Uzbekistan": "Usbekistan",
+        "Vanuatu": "Vanuatu",
+        "Vatican City": "Vatikanstadt",
+        "Venezuela": "Venezuela",
+        "Vietnam": "Vietnam",
+        "Virgin Islands, British": "Britische Jungferninseln",
+        "Virgin Islands, U": "Amerikanische Jungferninseln",
+        "Wales": "Wales",
+        "Wallis and Futuna Islands": "Wallis und Futuna",
+        "Western Sahara": "Westsahara",
+        "Yemen": "Jemen",
+        "Zambia": "Sambia",
+        "Zimbabwe": "Simbabwe",
+        "Åland Islands": "Aland"
+    },
     "cooldown": "cooldown",
     "blacklist": "blacklist",
     "Blacklist Commands": "Blacklist Befehle",
@@ -4510,5 +5112,46 @@
     "endlevel": "end_level",
     "boost": "boost",
     "additive": "additiv",
-    "imageurl": "bild_url"
+    "imageurl": "bild_url",
+    "help": "hilfe",
+    "Get help with the bot": "Hilfe mit dem Bot erhalten",
+    "display": {
+        "icon": "anzeige_icon",
+        "emoji": "anzeige_emoji"
+    },
+    "target": {
+        "role": "ziel_rolle"
+    },
+    "delete": {
+        "message": {
+            "days": "nachricht_löschen_tage"
+        }
+    },
+    "✨POGGERS✨": "Ai Befehle",
+    "askcustom": "frage_benutzerdefiniert",
+    "Ask a custom situation": "Eine benutzerdefinierte Situation erfragen",
+    "prompt": "prompt",
+    "The prompt for the custom situation": "Der Prompt für die benutzerdefinierte Situation",
+    "personality": "persönlichkeit",
+    "The personality description": "Die Persönlichkeitsbeschreibung",
+    "askgpt": "gpt_fragen",
+    "Ask Chat GPT something": "Chat GPT etwas fragen",
+    "temperature": "temperatur",
+    "The temperature setting": "Die Temperatur-Einstellung",
+    "top": {
+        "p": "top_p"
+    },
+    "The top": {
+        "p setting": "p_einstellung"
+    },
+    "frequency": {
+        "penalty": "frequenz_strafen"
+    },
+    "The frequency penalty setting": "Die Frequenz-Strafen-Einstellung",
+    "presence": {
+        "penalty": "präsenz_strafen"
+    },
+    "The presence penalty setting": "Die Präsenz-Strafen-Einstellung",
+    "asktanjuwun": "frage_tanjuwun",
+    "Awst Tanjuwun something uwu": "fwage Tanjuwun etwas uwu"
 }

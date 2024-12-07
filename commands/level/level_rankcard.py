@@ -1,5 +1,5 @@
 import discord
-from utility import commandInfo, tanjunEmbed, checkIfhasPlus
+from utility import commandInfo, tanjunEmbed, checkIfhasPlus, draw_text_with_outline
 from localizer import tanjunLocalizer
 from api import get_user_level_info, set_custom_background
 import config
@@ -159,16 +159,6 @@ def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
         draw.line([x1 + radius, y2, x2 - radius, y2], fill=outline, width=width)
         draw.line([x1, y1 + radius, x1, y2 - radius], fill=outline, width=width)
         draw.line([x2, y1 + radius, x2, y2 - radius], fill=outline, width=width)
-
-def draw_text_with_outline(draw, position, text, font, text_color, outline_color):
-    x, y = position
-    # Draw outline
-    draw.text((x-1, y-1), text, font=font, fill=outline_color)
-    draw.text((x+1, y-1), text, font=font, fill=outline_color)
-    draw.text((x-1, y+1), text, font=font, fill=outline_color)
-    draw.text((x+1, y+1), text, font=font, fill=outline_color)
-    # Draw text
-    draw.text(position, text, font=font, fill=text_color)
 
 def process_image(background_frames, avatar_frames, user, user_info):
     num_frames = max(len(background_frames), len(avatar_frames))
