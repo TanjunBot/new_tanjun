@@ -1347,7 +1347,7 @@ class LogsCog(commands.Cog):
             else:
                 description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUpdate.timeoutRemoved"))
 
-        if len(description_parts) == 1:
+        if len(description_parts) >= 2:
             return
 
         # Join all parts with newlines
