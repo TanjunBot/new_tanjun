@@ -101,7 +101,7 @@ class WarnCommands(discord.app_commands.Group):
         return
 
 
-class administrationCommands(discord.app_commands.Group):
+class RoleCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_addrole_name"),
         description=app_commands.locale_str("admin_addrole_description"),
@@ -307,7 +307,9 @@ class administrationCommands(discord.app_commands.Group):
             ),
         ]
     )
-    async def copyrole(self, ctx, role: discord.Role, copy_members: app_commands.Choice[str]):
+    async def copyrole(
+        self, ctx, role: discord.Role, copy_members: app_commands.Choice[str]
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -328,6 +330,8 @@ class administrationCommands(discord.app_commands.Group):
         )
         return
 
+
+class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_kick_name"),
         description=app_commands.locale_str("admin_kick_description"),
@@ -1338,6 +1342,8 @@ class adminCog(commands.Cog):
         )
         warncmds = WarnCommands(name="warn", description="Manage Warns")
         admincmds.add_command(warncmds)
+        rolecmds = RoleCommands(name="role", description="Manage Roles")
+        admincmds.add_command(rolecmds)
         self.bot.tree.add_command(admincmds)
 
 
