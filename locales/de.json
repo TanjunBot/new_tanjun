@@ -716,6 +716,21 @@
                     "title": "Fehler beim Festlegen der Booster-Rolle",
                     "description": "Beim Versuch, die Booster-Rolle festzulegen, ist ein Fehler aufgetreten."
                 }
+            },
+            "copyrole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um die Rolle zu kopieren. Du benötigst `Rollen verwalten` Berechtigungen."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um die Rolle zu kopieren. Der Bot benötigt die Berechtigung `Rollen verwalten`."
+                },
+                "success": {
+                    "title": "Rolle erfolgreich kopiert",
+                    "description": "Die Rolle wurde erfolgreich kopiert."
+                },
+                "reason": "Rolle kopiert von ${name}"
             }
         },
         "logs": {

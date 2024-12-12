@@ -27,6 +27,7 @@ from commands.admin.viewwarns import view_warnings as viewWarningsCommand
 from commands.admin.warnconfig import warn_config as warnConfigCommand
 from commands.admin.moverole import moverole as moveroleCommand
 from commands.admin.boosterrole import create_booster_role as CreateBoosterRoleCommand
+from commands.admin.copyrole import copyrole as copyRoleCommand
 
 
 class WarnCommands(discord.app_commands.Group):
@@ -234,7 +235,6 @@ class administrationCommands(discord.app_commands.Group):
         await deleteroleCommand(commandInfo=commandInfo, role=role, reason=reason)
         return
 
-
     @app_commands.command(
         name=app_commands.locale_str("admin_moverole_name"),
         description=app_commands.locale_str("admin_moverole_description"),
@@ -248,8 +248,14 @@ class administrationCommands(discord.app_commands.Group):
     )
     @app_commands.choices(
         position=[
-            app_commands.Choice(name=app_commands.locale_str("admin_moverole_params_position_above"), value="above"),
-            app_commands.Choice(name=app_commands.locale_str("admin_moverole_params_position_below"), value="below"),
+            app_commands.Choice(
+                name=app_commands.locale_str("admin_moverole_params_position_above"),
+                value="above",
+            ),
+            app_commands.Choice(
+                name=app_commands.locale_str("admin_moverole_params_position_below"),
+                value="below",
+            ),
         ]
     )
     async def moverole(
@@ -272,13 +278,55 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-
         await moveroleCommand(
             commandInfo=commandInfo,
             role=role,
             target_role=target_role,
             position=position.value,
+        )
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_copyrole_name"),
+        description=app_commands.locale_str("admin_copyrole_description"),
     )
+    @app_commands.describe(
+        role=app_commands.locale_str("admin_copyrole_params_role_description"),
+        copy_members=app_commands.locale_str(
+            "admin_copyrole_params_copymembers_description"
+        ),
+    )
+    @app_commands.choices(
+        copy_members=[
+            app_commands.Choice(
+                name=app_commands.locale_str("admin_copyrole_params_copymembers_true"),
+                value="true",
+            ),
+            app_commands.Choice(
+                name=app_commands.locale_str("admin_copyrole_params_copymembers_false"),
+                value="false",
+            ),
+        ]
+    )
+    async def copyrole(self, ctx, role: discord.Role, copy_members: app_commands.Choice[str]):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await copyRoleCommand(
+            commandInfo=commandInfo,
+            role=role,
+            copy_members=copy_members.value == "true",
+        )
+        return
 
     @app_commands.command(
         name=app_commands.locale_str("admin_kick_name"),
@@ -1282,7 +1330,6 @@ class adminCog(commands.Cog):
         )
 
         await CreateBoosterRoleCommand(commandInfo=commandInfo, role=role)
-        
 
     @commands.Cog.listener()
     async def on_ready(self):
