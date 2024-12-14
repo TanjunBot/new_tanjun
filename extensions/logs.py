@@ -755,7 +755,7 @@ class LogsCog(commands.Cog):
         if creator:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.created_by", creator=creator))
 
-        description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.name", channel=channel.name))
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.name", name=channel.name))
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.type", type=str(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.types." + str(channel.type)))))
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.created_at", created_at=utility.date_time_to_timestamp(channel.created_at)))
         if channel.category:
