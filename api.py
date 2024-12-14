@@ -561,6 +561,28 @@ async def create_tables():
         PRIMARY KEY(`guildId`, `channelId`)
     ) ENGINE=InnoDB;
     """
+    tables["triggerMessages"] = """
+    CREATE TABLE IF NOT EXISTS `triggerMessages` (
+        `id` INT AUTO_INCREMENT,
+        `guildId` VARCHAR(20),
+        `trigger` VARCHAR(128),
+        `response` VARCHAR(1024),
+        `caseSensitive` TINYINT(1) DEFAULT 0,
+        PRIMARY KEY(`id`),
+        INDEX `idx_guild` (`guildId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["triggerMessagesChannel"] = """
+    CREATE TABLE IF NOT EXISTS `triggerMessagesChannel` (
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20), 
+        `triggerId` INT,
+        PRIMARY KEY(`guildId`, `channelId`, `triggerId`),
+        FOREIGN KEY (`guildId`, `triggerId`) 
+            REFERENCES `triggerMessages`(`guildId`, `id`)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -2490,3 +2512,62 @@ async def remove_report_channel(guild_id: str):
     query = "DELETE FROM reportchannel WHERE guildId = %s"
     params = (guild_id,)
     await execute_action(pool, query, params)
+
+async def get_trigger_messages(guild_id: str):
+    query = "SELECT * FROM triggerMessages WHERE guildId = %s"
+    params = (guild_id,)
+    return await execute_query(pool, query, params)
+
+async def add_trigger_message(guild_id: str, trigger: str, response: str, caseSensitive: bool = False):
+    query = "INSERT INTO triggerMessages (guildId, `trigger`, response, caseSensitive) VALUES (%s, %s, %s, %s)"
+    params = (guild_id, trigger, response, caseSensitive)
+    print("query", query)
+    print("params", params)
+    await execute_action(pool, query, params)
+
+async def remove_trigger_message(guild_id: str, trigger: str):
+    query = "DELETE FROM triggerMessages WHERE guildId = %s AND `trigger` = %s"
+    params = (guild_id, trigger)
+    await execute_action(pool, query, params)
+
+async def get_trigger_message_channels(guild_id: str, trigger_id: int):
+    query = "SELECT * FROM triggerMessagesChannel WHERE guildId = %s AND triggerId = %s"
+    params = (guild_id, trigger_id)
+    return await execute_query(pool, query, params)
+
+async def get_trigger_messages_by_channel(guild_id: str, channel_id: str):
+    query = "SELECT * FROM triggerMessagesChannel WHERE guildId = %s AND channelId = %s"
+    params = (guild_id, channel_id)
+    return await execute_query(pool, query, params)
+
+async def add_trigger_message_channel(guild_id: str, channel_id: str, trigger_id: int):
+    query = "INSERT INTO triggerMessagesChannel (guildId, channelId, triggerId) VALUES (%s, %s, %s)"
+    params = (guild_id, channel_id, trigger_id)
+    await execute_action(pool, query, params)
+
+async def remove_trigger_message_channel(guild_id: str, channel_id: str, trigger_id: int):
+    query = "DELETE FROM triggerMessagesChannel WHERE guildId = %s AND channelId = %s AND triggerId = %s"
+    params = (guild_id, channel_id, trigger_id)
+    print("query", query)
+    print("params", params)
+    await execute_action(pool, query, params)
+
+async def is_trigger_message(guild_id: str, trigger: str, channel_id: str):
+    query = """
+        SELECT t.* FROM triggerMessages t
+        LEFT JOIN triggerMessagesChannel tc ON t.id = tc.triggerId AND t.guildId = tc.guildId
+        WHERE t.guildId = %s AND t.`trigger` LIKE %s 
+        AND (tc.channelId = %s)
+    """
+    params = (guild_id, trigger, channel_id)
+    result = await execute_query(pool, query, params)
+    result = result[0] if result and result[0] else None
+    if not result:
+        return None
+    if result[4]:  # caseSensitive check
+        if trigger != result[2]:
+            return None
+    else:
+        if trigger.lower() != result[2].lower():
+            return None
+    return result

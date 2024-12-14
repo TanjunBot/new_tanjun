@@ -23,6 +23,7 @@ from commands.utility.autopublish import publish_message
 from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
 from commands.utility.report import report_btn_click
 from api import update_scheduled_message_content, remove_scheduled_message
+from commands.admin.trigger_messages.send import send_trigger_message
 
 
 class ListenerCog(commands.Cog):
@@ -41,6 +42,7 @@ class ListenerCog(commands.Cog):
         await publish_message(message)
         await checkIfAfkHasToBeRemoved(message)
         await checkIfMentionsAreAfk(message)
+        await send_trigger_message(message)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):

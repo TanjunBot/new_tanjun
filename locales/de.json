@@ -782,6 +782,84 @@
                     },
                     "not_your_warns": "Du darfst nicht mit den Buttons interagieren."
                 }
+            },
+            "trigger_messages": {
+                "add": {
+                    "success": {
+                        "title": "Trigger-Nachricht erfolgreich hinzugefügt",
+                        "description": "Die Trigger-Nachricht wurde erfolgreich hinzugefügt."
+                    },
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen, um eine Trigger-Nachricht hinzuzufügen. Du benötigst `Administrator` Berechtigungen."
+                    }
+                },
+                "configure": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen, um die Trigger-Nachrichten zu sehen. Du benötigst `Administrator` Berechtigungen."
+                    },
+                    "noTriggerMessages": {
+                        "title": "Keine Trigger-Nachrichten",
+                        "description": "Es sind keine Trigger-Nachrichten vorhanden."
+                    },
+                    "trigger": {
+                        "title": "Trigger-Nachrichten",
+                        "description": "## Trigger-Nachricht: \nTrigger: ${trigger}\nAntwort: ${response}",
+                        "caseSensitive": "Groß-/Kleinschreibung wird beachtet",
+                        "caseInsensitive": "Groß-/Kleinschreibung wird ignoriert",
+                        "channels": "Aktiv in Kanälen:",
+                        "noChannels": "Trigger-Nachricht ist in keinem Kanal aktiv. Sie ist also quasi deaktiviert.",
+                        "noTriggerMessages": {
+                            "title": "Keine Trigger-Nachrichten",
+                            "description": "Es sind keine Trigger-Nachrichten vorhanden."
+                        },
+                        "addChannel": {
+                            "placeholder": "Kanal hinzufügen",
+                            "title": "Trigger-Nachricht in Kanal aktivieren",
+                            "description": "Wähle aus, in welchen Kanal du die Trigger-Nachricht aktivieren möchtest.\n-# In allen anderen Aktivierten Kanälen wird die Trigger-Nachricht weiterhin aktiv sein."
+                        }
+                    },
+                    "modal": {
+                        "title": "Trigger-Nachricht hinzufügen",
+                        "trigger": {
+                            "label": "Trigger",
+                            "placeholder": "Trigger"
+                        },
+                        "response": {
+                            "label": "Antwort",
+                            "placeholder": "Antwort"
+                        },
+                        "caseSensitive": {
+                            "label": "Groß-/Kleinschreibung beachten (y/n)",
+                            "placeholder": "Groß-/Kleinschreibung beachten (y/n)"
+                        }
+                    },
+                    "previous": {
+                        "label": "Vorherige Seite"
+                    },
+                    "remove": {
+                        "label": "Löschen"
+                    },
+                    "new": {
+                        "label": "Neu hinzufügen"
+                    },
+                    "next": {
+                        "label": "Nächste Seite"
+                    },
+                    "up": {
+                        "label": "Nach oben"
+                    },
+                    "add_channel": {
+                        "label": "Kanal hinzufügen"
+                    },
+                    "remove_channel": {
+                        "label": "Kanal entfernen"
+                    },
+                    "down": {
+                        "label": "Nach unten"
+                    }
+                }
             }
         },
         "logs": {

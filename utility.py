@@ -793,7 +793,7 @@ class tanjunEmbed:
 
 class commandInfo:
     def __init__(
-        self, user, channel, guild, command, locale, message, permissions, reply, client
+        self, user: discord.abc.User, channel: discord.abc.GuildChannel, guild: discord.Guild, command: discord.app_commands.Command, locale: str, message: discord.Message, permissions: discord.Permissions, reply, client: discord.Client
     ):
         self.user = user
         self.channel = channel
