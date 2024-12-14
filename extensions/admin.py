@@ -28,6 +28,11 @@ from commands.admin.warnconfig import warn_config as warnConfigCommand
 from commands.admin.moverole import moverole as moveroleCommand
 from commands.admin.boosterrole import create_booster_role as CreateBoosterRoleCommand
 from commands.admin.copyrole import copyrole as copyRoleCommand
+from commands.admin.reports.set_channel import set_channel as setReportChannelCommand
+from commands.admin.reports.remove_channel import (
+    remove_channel as removeReportChannelCommand,
+)
+from commands.admin.reports.show_reports import show_reports as showReportsCommand
 
 
 class WarnCommands(discord.app_commands.Group):
@@ -330,6 +335,82 @@ class RoleCommands(discord.app_commands.Group):
         )
         return
 
+
+class ReportCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("admin_rps_set_channel_name"),
+        description=app_commands.locale_str("admin_rps_set_channel_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "admin_rps_set_channel_params_channel_description"
+        ),
+    )
+    async def set_channel(self, ctx, channel: discord.TextChannel = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if not channel:
+            channel = ctx.channel
+
+        await setReportChannelCommand(commandInfo=commandInfo, channel=channel)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_rps_remove_channel_name"),
+        description=app_commands.locale_str("admin_rps_remove_channel_description"),
+    )
+    async def remove_channel(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await removeReportChannelCommand(commandInfo=commandInfo)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_rps_show_reports_name"),
+        description=app_commands.locale_str("admin_rps_show_reports_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str("admin_rps_show_reports_params_user_description"),
+    )
+    async def show_reports(self, ctx, user: discord.Member = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await showReportsCommand(commandInfo=commandInfo, user=user)
+        return
+    
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -1344,6 +1425,8 @@ class adminCog(commands.Cog):
         admincmds.add_command(warncmds)
         rolecmds = RoleCommands(name="role", description="Manage Roles")
         admincmds.add_command(rolecmds)
+        reportcmds = ReportCommands(name="report", description="Manage Reports")
+        admincmds.add_command(reportcmds)
         self.bot.tree.add_command(admincmds)
 
 

@@ -21,7 +21,7 @@ from commands.ai.add_custom_situation_button_handler import approve_custom_situa
 
 from commands.utility.autopublish import publish_message
 from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
-
+from commands.utility.report import report_btn_click
 from api import update_scheduled_message_content, remove_scheduled_message
 
 
@@ -58,6 +58,9 @@ class ListenerCog(commands.Cog):
                 if interaction.user.id not in adminIds:
                     return
                 await deny_custom_situation(interaction)
+            elif interaction.data["custom_id"].startswith("report_"):
+                await report_btn_click(interaction, interaction.data["custom_id"])
+                return
         except:
             pass
 
