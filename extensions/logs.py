@@ -7,7 +7,7 @@ from api import get_log_enable, get_log_channel, is_log_channel_blacklisted, is_
 from localizer import tanjunLocalizer
 import os
 import difflib
-from utility import upload_to_byte_bin
+from utility import upload_to_tanjun_logs
 
 from commands.logs.set_log_channel import set_log_channel
 from commands.logs.remove_log_channel import remove_log_channel
@@ -1585,7 +1585,7 @@ class LogsCog(commands.Cog):
 
             # Check if either message exceeds 1500 characters
             if len(diff_summary) > 1500:
-                diff_summary_url = await upload_to_byte_bin(tanjunLocalizer.localize(locale, "logs.messageEdit.diff", diff=diff_summary))
+                diff_summary_url = await upload_to_tanjun_logs(tanjunLocalizer.localize(locale, "logs.messageEdit.diff", diff=diff_summary))
 
                 description_parts.append(tanjunLocalizer.localize(locale, "logs.messageEdit.tooLongNotice", url=diff_summary_url))
                 

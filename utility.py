@@ -1305,40 +1305,6 @@ async def upload_to_tanjun_logs(content: str) -> str:
                 return None
 
 
-async def upload_to_byte_bin(content: str) -> str:
-    """Uploads content to PrivateBin and returns the URL."""
-    api_url = "https://bin.a2data.site/post"  # Updated endpoint for creating a paste
-
-    headers = {
-        "Content-Type": "text/plain",
-        "User-Agent": "YourUserAgent",  # Specify your User-Agent here
-        "Content-Encoding": "gzip",  # Indicate that content is GZIP compressed
-    }
-
-    # Compress content using GZIP
-    compressed_content = gzip.compress(content.encode("utf-8"))
-
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            api_url, data=compressed_content, headers=headers
-        ) as response:
-            # Check if the response is successful
-            if response.status == 201:
-                try:
-                    result = await response.json()
-                    # Extract the key from the response
-                    return f"{api_url.rsplit('/', 1)[0]}/{result['key']}"
-                except Exception as e:
-                    print(f"Error decoding JSON: {e}")
-                    print(
-                        await response.text()
-                    )  # Print the response text for debugging
-            else:
-                print(
-                    f"Failed to create paste: {response.status}, {await response.text()}"
-                )
-
-
 def check_if_str_is_hex_color(color: str) -> bool:
     try:
         int(color, 16)
