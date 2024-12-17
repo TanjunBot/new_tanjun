@@ -27,7 +27,14 @@ from pyparsing import (
 )
 import math
 import operator
-from config import tenorAPIKey, tenorCKey, GithubAuthToken
+from config import (
+    tenorAPIKey,
+    tenorCKey,
+    GithubAuthToken,
+    bytebin_url,
+    bytebin_password,
+    bytebin_username,
+)
 import aiohttp
 import random
 import re
@@ -41,6 +48,7 @@ from config import ImgBBApiKey
 import base64
 import json
 import gzip
+
 
 class EmbedProxy:
     def __init__(self, layer: Dict[str, Any]):
@@ -793,7 +801,16 @@ class tanjunEmbed:
 
 class commandInfo:
     def __init__(
-        self, user: discord.abc.User, channel: discord.abc.GuildChannel, guild: discord.Guild, command: discord.app_commands.Command, locale: str, message: discord.Message, permissions: discord.Permissions, reply, client: discord.Client
+        self,
+        user: discord.abc.User,
+        channel: discord.abc.GuildChannel,
+        guild: discord.Guild,
+        command: discord.app_commands.Command,
+        locale: str,
+        message: discord.Message,
+        permissions: discord.Permissions,
+        reply,
+        client: discord.Client,
     ):
         self.user = user
         self.channel = channel
@@ -937,10 +954,12 @@ async def getGif(query: str, amount: int = 1, limit: int = 10):
 
         if r is None:
             return []
-        #nosec: B311
+        # nosec: B311
         random.shuffle(r["results"])
 
-        return [r["results"][i]["media_formats"]["mediumgif"]["url"] for i in range(amount)]
+        return [
+            r["results"][i]["media_formats"]["mediumgif"]["url"] for i in range(amount)
+        ]
 
 
 def get_highest_exponent(polynomial):
@@ -988,6 +1007,7 @@ def missingLocalization(locale: str):
         body=f"Missing localization for {locale}",
         labels=[label],
     )
+
 
 def addFeedback(content, author):
     g = Github(GithubAuthToken)
@@ -1059,12 +1079,13 @@ def get_level_for_xp(xp: int, scaling: str, custom_formula: str = None) -> int:
             low = mid + 1
     return low
 
+
 def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
     if not time_string:
         return datetime.datetime.now()
 
     # Regular expression to match time units
-    pattern = r'(\d+)([smhd])'
+    pattern = r"(\d+)([smhd])"
     matches = re.findall(pattern, time_string.lower())
 
     if not matches:
@@ -1075,25 +1096,26 @@ def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
 
     for value, unit in matches:
         value = int(value)
-        if unit == 's':
+        if unit == "s":
             seconds += value
-        elif unit == 'm':
+        elif unit == "m":
             minutes += value
-        elif unit == 'h':
+        elif unit == "h":
             hours += value
-        elif unit == 'd':
+        elif unit == "d":
             days += value
 
     # Create timedelta and add to current time
     delta = datetime.timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
     return datetime.datetime.now() + delta
 
+
 def relativeTimeToSeconds(time_string: str) -> int:
     if not time_string:
         return 0
 
     # Regular expression to match time units
-    pattern = r'(\d+)([smhd])'
+    pattern = r"(\d+)([smhd])"
     matches = re.findall(pattern, time_string.lower())
 
     if not matches:
@@ -1104,18 +1126,19 @@ def relativeTimeToSeconds(time_string: str) -> int:
 
     for value, unit in matches:
         value = int(value)
-        if unit == 's':
+        if unit == "s":
             seconds += value
-        elif unit == 'm':
+        elif unit == "m":
             minutes += value
-        elif unit == 'h':
+        elif unit == "h":
             hours += value
-        elif unit == 'd':
+        elif unit == "d":
             days += value
 
     # Create timedelta and add to current time
     delta = datetime.timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
     return delta.total_seconds()
+
 
 def dateToRelativeTimeStr(date: datetime.datetime) -> str:
     start_date = datetime.datetime.now()
@@ -1143,7 +1166,8 @@ def dateToRelativeTimeStr(date: datetime.datetime) -> str:
         components.append(f"{seconds}s")
 
     # Join all non-zero components with spaces
-    return ' '.join(components)
+    return " ".join(components)
+
 
 class MockInteraction(discord.Interaction):
     def __init__(self, bot, guild, channel, user):
@@ -1157,21 +1181,26 @@ class MockInteraction(discord.Interaction):
         self.guild = guild
         self.channel = channel
         self.user = user
-        self.locale = 'en-US'
-        self.guild_locale = 'en-US'
+        self.locale = "en-US"
+        self.guild_locale = "en-US"
         self.client = bot
 
         # Mock the response object
         self._response = False
         self.response = MockInteractionResponse(self)
         self.followup = discord.Webhook.from_state(
-            data={'application_id': self.application_id, 'token': 'mock_token', 'id': self.id},
-            state=bot._connection
+            data={
+                "application_id": self.application_id,
+                "token": "mock_token",
+                "id": self.id,
+            },
+            state=bot._connection,
         )
 
     # Override the original_response method to store the message
     async def original_response(self):
         return self.response.message
+
 
 class MockInteractionResponse:
     def __init__(self, interaction):
@@ -1180,18 +1209,22 @@ class MockInteractionResponse:
 
     async def send_message(self, content=None, embed=None, **kwargs):
         # Simulate sending a message
-        self.message = discord.Message(state=self.interaction._state, channel=self.interaction.channel, data={
-            'id': 1234567890,  # Mock message ID
-            'content': content or '',
-            'embeds': [embed.to_dict()] if embed else [],
-            'channel_id': self.interaction.channel.id,
-            'author': {
-                'id': self.interaction.client.user.id,
-                'username': self.interaction.client.user.name,
-                'discriminator': self.interaction.client.user.discriminator,
-                'bot': True
-            }
-        })
+        self.message = discord.Message(
+            state=self.interaction._state,
+            channel=self.interaction.channel,
+            data={
+                "id": 1234567890,  # Mock message ID
+                "content": content or "",
+                "embeds": [embed.to_dict()] if embed else [],
+                "channel_id": self.interaction.channel.id,
+                "author": {
+                    "id": self.interaction.client.user.id,
+                    "username": self.interaction.client.user.name,
+                    "discriminator": self.interaction.client.user.discriminator,
+                    "bot": True,
+                },
+            },
+        )
 
     async def delete_original_response(self):
         # Simulate deleting the message
@@ -1213,12 +1246,16 @@ def create_mock_interaction(self):
     user = guild.me  # Use the bot as the user
     return MockInteraction(self.bot, guild, channel, user)
 
+
 def date_time_to_timestamp(date: datetime.datetime) -> int:
     return int(date.timestamp())
 
+
 async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict:
     # Create a temporary file with the appropriate file extension
-    with tempfile.NamedTemporaryFile(delete=False, suffix="." + file_extension, mode="wb") as temp_file:
+    with tempfile.NamedTemporaryFile(
+        delete=False, suffix="." + file_extension, mode="wb"
+    ) as temp_file:
         temp_file.write(image_bytes)
         temp_file_path = temp_file.name
 
@@ -1230,13 +1267,43 @@ async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict
             form_data.add_field("image", image_file)
             form_data.add_field("name", f"tbg")
 
-            async with session.post("https://api.imgbb.com/1/upload", data=form_data) as response:
+            async with session.post(
+                "https://api.imgbb.com/1/upload", data=form_data
+            ) as response:
                 response_data = await response.json()
 
     # Optionally, delete the temporary file if you want to clean up
     os.remove(temp_file_path)
 
     return response_data
+
+
+async def upload_to_tanjun_logs(content: str) -> str:
+    compressed_content = gzip.compress(content.encode("utf-8"))
+    url = bytebin_url
+    username = bytebin_username
+    password = bytebin_password
+
+    async with aiohttp.ClientSession() as session:
+        auth = aiohttp.BasicAuth(username, password)
+        headers = {"Content-Type": "text/html", "Content-Encoding": "gzip"}
+
+        async with session.post(
+            url + "/post", data=compressed_content, headers=headers, auth=auth
+        ) as response:
+            if response.status == 201:
+                response_data = await response.json()
+                if "key" in response_data:
+                    return f"{bytebin_url}/{response_data['key']}"
+                else:
+                    print("Unexpected response format:", response_data)
+                    return None
+            else:
+                print(
+                    f"Request failed with status {response.status}: {await response.text()}"
+                )
+                return None
+
 
 async def upload_to_byte_bin(content: str) -> str:
     """Uploads content to PrivateBin and returns the URL."""
@@ -1245,14 +1312,16 @@ async def upload_to_byte_bin(content: str) -> str:
     headers = {
         "Content-Type": "text/plain",
         "User-Agent": "YourUserAgent",  # Specify your User-Agent here
-        "Content-Encoding": "gzip"  # Indicate that content is GZIP compressed
+        "Content-Encoding": "gzip",  # Indicate that content is GZIP compressed
     }
 
     # Compress content using GZIP
-    compressed_content = gzip.compress(content.encode('utf-8'))
+    compressed_content = gzip.compress(content.encode("utf-8"))
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(api_url, data=compressed_content, headers=headers) as response:
+        async with session.post(
+            api_url, data=compressed_content, headers=headers
+        ) as response:
             # Check if the response is successful
             if response.status == 201:
                 try:
@@ -1261,9 +1330,14 @@ async def upload_to_byte_bin(content: str) -> str:
                     return f"{api_url.rsplit('/', 1)[0]}/{result['key']}"
                 except Exception as e:
                     print(f"Error decoding JSON: {e}")
-                    print(await response.text())  # Print the response text for debugging
+                    print(
+                        await response.text()
+                    )  # Print the response text for debugging
             else:
-                print(f"Failed to create paste: {response.status}, {await response.text()}")
+                print(
+                    f"Failed to create paste: {response.status}, {await response.text()}"
+                )
+
 
 def check_if_str_is_hex_color(color: str) -> bool:
     try:
@@ -1272,12 +1346,13 @@ def check_if_str_is_hex_color(color: str) -> bool:
     except:
         return False
 
+
 def draw_text_with_outline(draw, position, text, font, text_color, outline_color):
     x, y = position
     # Draw outline
-    draw.text((x-1, y-1), text, font=font, fill=outline_color)
-    draw.text((x+1, y-1), text, font=font, fill=outline_color)
-    draw.text((x-1, y+1), text, font=font, fill=outline_color)
-    draw.text((x+1, y+1), text, font=font, fill=outline_color)
+    draw.text((x - 1, y - 1), text, font=font, fill=outline_color)
+    draw.text((x + 1, y - 1), text, font=font, fill=outline_color)
+    draw.text((x - 1, y + 1), text, font=font, fill=outline_color)
+    draw.text((x + 1, y + 1), text, font=font, fill=outline_color)
     # Draw text
     draw.text(position, text, font=font, fill=text_color)

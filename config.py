@@ -3,7 +3,7 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 
-version = "0.7.6"
+version = "0.7.7"
 token = config["token"]
 applicationId = "832297321793323028"
 adminIds = [766350321638309958, 471036610561966111]
@@ -17,3 +17,7 @@ tenorCKey = config["tenorCKey"]
 GithubAuthToken = config["GithubAuthToken"]
 ImgBBApiKey = config["ImgBBApiKey"]
 openAiKey = config["openAIKey"]
+bytebin_url = config["bytebin_url"]
+bytebin_password = config["bytebin_password"]
+bytebin_username = config["bytebin_username"]
+
