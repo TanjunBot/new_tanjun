@@ -105,9 +105,15 @@ async def close_ticket(interaction: discord.Interaction):
         view.add_item(btn2)
 
         await summary_channel.send(
-            content=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.ticketClosed", user=interaction.user),
+            content=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.ticketClosed", user=interaction.user.mention),
             embed=embed,
             view=view
+        )
+
+        await interaction.channel.edit(archived=True, locked=True)
+        
+        await interaction.channel.send(
+            content=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.ticketClosed", user=interaction.user.mention),
         )
 
 async def generate_summary_html(
@@ -125,7 +131,14 @@ async def generate_summary_html(
 <head>
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Summary</title>
+    """
+
+    html += f"""
+    <title>{channel.name}</title>
+    """
+
+    html += """
+    <link rel="icon" href="https://images-ext-1.discordapp.net/external/FWSPdGnm0UWSgnF35SzaxUBfNYSKLDEZ2aP7lWFGwpo/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/885984139315122206/31004c06c072a0ec1760eebb1358f210.png?format=webp&quality=lossless&width=671&height=671">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {

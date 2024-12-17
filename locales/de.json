@@ -893,7 +893,8 @@
                     "description": "Das Ticket wurde erfolgreich geschlossen. Du kannst das Ticket über den Button in der Nachricht sehen.",
                     "viewOnlineSummary": "Online Zusammenfassung ansehen",
                     "viewThread": "Thread ansehen",
-                    "ticketClosed": "Ticket geschlossen von ${user}"
+                    "ticketClosed": "Ticket wurde geschlossen",
+                    "ticketClosedDescription": "Das Ticket wurde erfolgreich geschlossen. Du kannst das Ticket über den Button in der Nachricht sehen."
                 }
             }
         },
