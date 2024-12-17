@@ -561,7 +561,9 @@ async def create_tables():
         PRIMARY KEY(`guildId`, `channelId`)
     ) ENGINE=InnoDB;
     """
-    tables["triggerMessages"] = """
+    tables[
+        "triggerMessages"
+    ] = """
     CREATE TABLE IF NOT EXISTS `triggerMessages` (
         `id` INT AUTO_INCREMENT,
         `guildId` VARCHAR(20),
@@ -572,7 +574,9 @@ async def create_tables():
         INDEX `idx_guild` (`guildId`)
     ) ENGINE=InnoDB;
     """
-    tables["triggerMessagesChannel"] = """
+    tables[
+        "triggerMessagesChannel"
+    ] = """
     CREATE TABLE IF NOT EXISTS `triggerMessagesChannel` (
         `guildId` VARCHAR(20),
         `channelId` VARCHAR(20), 
@@ -580,6 +584,40 @@ async def create_tables():
         PRIMARY KEY(`guildId`, `channelId`, `triggerId`),
         FOREIGN KEY (`guildId`, `triggerId`) 
             REFERENCES `triggerMessages`(`guildId`, `id`)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "ticketMessages"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `ticketMessages` (
+        `id` INT AUTO_INCREMENT,
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        `introduction` VARCHAR(1024),
+        `pingRole` VARCHAR(20),
+        `name` VARCHAR(128),
+        `description` VARCHAR(1024),
+        `summaryChannelId` VARCHAR(20),
+        PRIMARY KEY(`id`),
+        INDEX `idx_guild` (`guildId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "tickets"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `tickets` (
+        `guildId` VARCHAR(20),
+        `openerId` VARCHAR(20),
+        `openedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        `closed` TINYINT(1) DEFAULT 0,
+        `closedAt` TIMESTAMP DEFAULT NULL,
+        `closedBy` VARCHAR(20) DEFAULT NULL,
+        `channelId` VARCHAR(20),
+        `ticketMessageId` INT,
+        PRIMARY KEY(`guildId`, `channelId`, `ticketMessageId`),
+        FOREIGN KEY (`guildId`, `ticketMessageId`)
+            REFERENCES `ticketMessages`(`guildId`, `id`)
             ON DELETE CASCADE
     ) ENGINE=InnoDB;
     """
@@ -2513,44 +2551,56 @@ async def remove_report_channel(guild_id: str):
     params = (guild_id,)
     await execute_action(pool, query, params)
 
+
 async def get_trigger_messages(guild_id: str):
     query = "SELECT * FROM triggerMessages WHERE guildId = %s"
     params = (guild_id,)
     return await execute_query(pool, query, params)
 
-async def add_trigger_message(guild_id: str, trigger: str, response: str, caseSensitive: bool = False):
+
+async def add_trigger_message(
+    guild_id: str, trigger: str, response: str, caseSensitive: bool = False
+):
     query = "INSERT INTO triggerMessages (guildId, `trigger`, response, caseSensitive) VALUES (%s, %s, %s, %s)"
     params = (guild_id, trigger, response, caseSensitive)
     print("query", query)
     print("params", params)
     await execute_action(pool, query, params)
 
+
 async def remove_trigger_message(guild_id: str, trigger: str):
     query = "DELETE FROM triggerMessages WHERE guildId = %s AND `trigger` = %s"
     params = (guild_id, trigger)
     await execute_action(pool, query, params)
+
 
 async def get_trigger_message_channels(guild_id: str, trigger_id: int):
     query = "SELECT * FROM triggerMessagesChannel WHERE guildId = %s AND triggerId = %s"
     params = (guild_id, trigger_id)
     return await execute_query(pool, query, params)
 
+
 async def get_trigger_messages_by_channel(guild_id: str, channel_id: str):
     query = "SELECT * FROM triggerMessagesChannel WHERE guildId = %s AND channelId = %s"
     params = (guild_id, channel_id)
     return await execute_query(pool, query, params)
+
 
 async def add_trigger_message_channel(guild_id: str, channel_id: str, trigger_id: int):
     query = "INSERT INTO triggerMessagesChannel (guildId, channelId, triggerId) VALUES (%s, %s, %s)"
     params = (guild_id, channel_id, trigger_id)
     await execute_action(pool, query, params)
 
-async def remove_trigger_message_channel(guild_id: str, channel_id: str, trigger_id: int):
+
+async def remove_trigger_message_channel(
+    guild_id: str, channel_id: str, trigger_id: int
+):
     query = "DELETE FROM triggerMessagesChannel WHERE guildId = %s AND channelId = %s AND triggerId = %s"
     params = (guild_id, channel_id, trigger_id)
     print("query", query)
     print("params", params)
     await execute_action(pool, query, params)
+
 
 async def is_trigger_message(guild_id: str, trigger: str, channel_id: str):
     query = """
@@ -2571,3 +2621,100 @@ async def is_trigger_message(guild_id: str, trigger: str, channel_id: str):
         if trigger.lower() != result[2].lower():
             return None
     return result
+
+
+async def create_ticket_message(
+    guild_id: str,
+    channel_id: str,
+    introduction: str,
+    ping_role: str,
+    name: str,
+    description: str,
+    summary_channel_id: str,
+):
+    query = "INSERT INTO ticketMessages (guildId, channelId, introduction, pingRole, name, description, summaryChannelId) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    params = (
+        guild_id,
+        channel_id,
+        introduction,
+        ping_role,
+        name,
+        description,
+        summary_channel_id,
+    )
+    return await execute_action(pool, query, params)
+
+
+async def delete_ticket_message(guild_id: str, ticket_message_id: str):
+    query = "DELETE FROM ticketMessages WHERE guildId = %s AND id = %s"
+    params = (guild_id, ticket_message_id)
+    await execute_action(pool, query, params)
+
+
+async def get_ticket_messages(guild_id: str):
+    query = "SELECT * FROM ticketMessages WHERE guildId = %s"
+    params = (guild_id,)
+    return await execute_query(pool, query, params)
+
+
+async def get_ticket_messages_by_id(ticket_message_id: str):
+    query = "SELECT * FROM ticketMessages WHERE id = %s"
+    params = (ticket_message_id,)
+    return (await execute_query(pool, query, params))[0] if (await execute_query(pool, query, params)) else None
+
+
+async def open_ticket(
+    guild_id: str, opener_id: str, ticket_message_id: str, channel_id: str
+):
+    query = "INSERT INTO tickets (guildId, openerId, ticketMessageId, channelId) VALUES (%s, %s, %s, %s)"
+    params = (guild_id, opener_id, ticket_message_id, channel_id)
+    return await execute_action(pool, query, params)
+
+
+async def close_ticket(guild_id: str, ticket_id: str):
+    query = "UPDATE tickets SET closed = 1, closedAt = NOW(), closedBy = %s WHERE guildId = %s AND id = %s"
+    params = (guild_id, ticket_id)
+    await execute_action(pool, query, params)
+
+
+async def get_tickets(guild_id: str):
+    query = """
+        SELECT guildId, openerId, 
+               UNIX_TIMESTAMP(openedAt) as openedAt,
+               closed,
+               UNIX_TIMESTAMP(closedAt) as closedAt,
+               closedBy, channelId, ticketMessageId 
+        FROM tickets WHERE guildId = %s
+    """
+    params = (guild_id,)
+    return await execute_query(pool, query, params)
+
+
+async def get_ticket_by_id(guild_id: str, ticket_id: str, channel_id: str):
+    query = """
+        SELECT guildId, openerId,
+               UNIX_TIMESTAMP(openedAt) as openedAt,
+               closed,
+               UNIX_TIMESTAMP(closedAt) as closedAt,
+               closedBy, channelId, ticketMessageId
+        FROM tickets 
+        WHERE guildId = %s AND ticketMessageId = %s AND channelId = %s
+    """
+    params = (guild_id, ticket_id, channel_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+
+async def get_ticket_by_channel_id(guild_id: str, channel_id: str):
+    query = """
+        SELECT guildId, openerId,
+               UNIX_TIMESTAMP(openedAt) as openedAt,
+               closed,
+               UNIX_TIMESTAMP(closedAt) as closedAt,
+               closedBy, channelId, ticketMessageId
+        FROM tickets
+        WHERE guildId = %s AND channelId = %s
+    """
+    params = (guild_id, channel_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None

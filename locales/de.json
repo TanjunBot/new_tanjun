@@ -860,6 +860,41 @@
                         "label": "Nach unten"
                     }
                 }
+            },
+            "create_ticket": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um ein Ticket zu erstellen. Du benötigst `Moderator` Berechtigungen."
+                },
+                "missingBotPermission": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in den angegebenen Kanal zu senden. Der Bot benötigt die Berechtigung `Nachrichten senden`. Stelle außerdem sicher, dass der Bot den angegebenen Kanal sehen kann."
+                },
+                "button": {
+                    "label": "Ticket erstellen"
+                },
+                "embed": {
+                    "title": "Ticket erstellen",
+                    "description": "Klicke auf den Button, um ein Ticket ${name} zu erstellen.\n${description}\n-# Beachte, dass der Bot deine Nachrichten ggf. ansieht und bearbeitet, selbst wenn du die Nachrichtenverfolgung deaktiviert hast. Mit erstellen eines Tickets erklärst du dich damit einverstanden, dass der Bot deine Nachrichten im Ticket Kanal ansieht und bearbeitet."
+                },
+                "success": {
+                    "title": "Ticket erfolgreich erstellt",
+                    "description": "Das Ticket wurde erfolgreich erstellt. Du kannst das Ticket über den Button in der Nachricht sehen.\n#- Die Sprache der Ticket Nachricht wird auf deine Discord Sprache gesetzt. Wenn die Nachricht in der falschen Sprache ist, musst du ggf. die Sprache von deinem Discord kurzzeitig ändern."
+                }
+            },
+            "close_ticket": {
+                "error": {
+                    "ticketNotFound1": "Das Ticket wurde nicht gefunden. Leider kann das Ticket nicht geschlossen werden.",
+                    "ticketNotFound2": "Das Ticket wurde nicht gefunden. Leider kann das Ticket nicht geschlossen werden.",
+                    "ticketNotFound3": "Das Ticket wurde nicht gefunden. Der Ticket-Kanal wurde nicht gefunden. Leider kann das Ticket nicht geschlossen werden."
+                },
+                "success": {
+                    "title": "Ticket erfolgreich geschlossen",
+                    "description": "Das Ticket wurde erfolgreich geschlossen. Du kannst das Ticket über den Button in der Nachricht sehen.",
+                    "viewOnlineSummary": "Online Zusammenfassung ansehen",
+                    "viewThread": "Thread ansehen",
+                    "ticketClosed": "Ticket geschlossen von ${user}"
+                }
             }
         },
         "logs": {

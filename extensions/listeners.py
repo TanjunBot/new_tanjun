@@ -25,6 +25,8 @@ from commands.utility.report import report_btn_click
 from api import update_scheduled_message_content, remove_scheduled_message
 from commands.admin.trigger_messages.send import send_trigger_message
 
+from commands.admin.ticket.open_ticket import openTicket as openTicketListener
+from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
 
 class ListenerCog(commands.Cog):
 
@@ -63,8 +65,14 @@ class ListenerCog(commands.Cog):
             elif interaction.data["custom_id"].startswith("report_"):
                 await report_btn_click(interaction, interaction.data["custom_id"])
                 return
+            elif interaction.data["custom_id"].startswith("ticket_create"):
+                await openTicketListener(interaction)
+                return
+            elif interaction.data["custom_id"].startswith("ticket_close"):
+                await closeTicketListener(interaction)
+                return
         except:
-            pass
+            raise
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user, before, after):
