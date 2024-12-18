@@ -106,11 +106,12 @@ class administrationCog(commands.Cog):
         sh_file = "update.sh"
         await sendLogEmbeds(self.bot)
         await create_database_backup(self.bot)
+        await ctx.send("Updating...")
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 f"http://127.0.0.1:6969/restart/{self.bot.application_id}"
             ) as response:
-                await ctx.send(response.text())
+                await ctx.send(await response.text())
 
 
 async def setup(bot):
