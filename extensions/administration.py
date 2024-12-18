@@ -16,7 +16,7 @@ from tests import (
 )
 import subprocess
 import platform
-from logs import sendLogEmbeds
+from extensions.logs import sendLogEmbeds
 from loops.create_database_backup import create_database_backup
 
 
