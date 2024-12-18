@@ -3,10 +3,10 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 
-version = "0.7.13"
+version = "0.7.14"
 token = config["token"]
 applicationId = config["applicationId"]
-adminIds = list(config["adminIds"])
+adminIds = [int(id) for id in config["adminIds"].split(",")]
 activity = "Tanjun {version}"
 database_ip = config["database_ip"]
 database_password = config["database_password"]

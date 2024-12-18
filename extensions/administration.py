@@ -96,6 +96,7 @@ class administrationCog(commands.Cog):
 
     @commands.command()
     async def update(self, ctx):
+        print(config.adminIds)
         if ctx.author.id not in config.adminIds:
             return
 
