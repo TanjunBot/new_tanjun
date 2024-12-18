@@ -18,6 +18,7 @@ import subprocess
 import platform
 from extensions.logs import sendLogEmbeds
 from loops.create_database_backup import create_database_backup
+import aiohttp
 
 
 class administrationCog(commands.Cog):
@@ -105,24 +106,11 @@ class administrationCog(commands.Cog):
         sh_file = "update.sh"
         await sendLogEmbeds(self.bot)
         await create_database_backup(self.bot)
-        if platform.system() == "Windows":
-            await ctx.send(
-                "Bot is Updating... Please note that this might not work on Windows. If it does, please let me know :) I might die during this process :("
-            )
-            sh_file = "update.bat"
-            result = subprocess.run(
-                [sh_file], capture_output=True, text=True, check=True
-            )
-            await ctx.send(result.stdout)
-            return
-
-        await ctx.send(
-            "Updating... Please check again in a few seconds if im still alive. I may die during this process :("
-        )
-        result = subprocess.run(
-            ["bash", sh_file], capture_output=True, text=True, check=True
-        )
-        await ctx.send(result.stdout)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                f"http://127.0.0.1:6969/restart/{self.bot.application_id}"
+            ) as response:
+                await ctx.send(response.text())
 
 
 async def setup(bot):
