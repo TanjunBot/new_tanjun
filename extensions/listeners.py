@@ -27,6 +27,7 @@ from commands.admin.trigger_messages.send import send_trigger_message
 
 from commands.admin.ticket.open_ticket import openTicket as openTicketListener
 from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
+from commands.admin.joinToCreate.joinToCreateListener import memberLeave, memberJoin
 
 class ListenerCog(commands.Cog):
 
@@ -76,6 +77,8 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user, before, after):
+        await memberLeave(before)
+        await memberJoin(after, user)
         await handleVoiceChange(user, before, after)
         await handleLevelVoiceChange(user, before, after)
 

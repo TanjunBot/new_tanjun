@@ -41,7 +41,8 @@ from commands.admin.trigger_messages.add import (
 )
 
 from commands.admin.ticket.create_ticket import create_ticket as createTicketCommand
-
+from commands.admin.joinToCreate.jointocreatechannel import jointocreatechannel as jointoCreateChannelCommand
+from commands.admin.joinToCreate.removejointocreatechannel import removejointocreatechannel as removeJoinToCreateChannelCommand
 
 class WarnCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -487,6 +488,49 @@ class TriggerMessagesCommands(discord.app_commands.Group):
         )
         return
 
+class JoinToCreateCommands(discord.app_commands.Group): 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_jtc_set_channel_name"),
+        description=app_commands.locale_str("admin_jtc_set_channel_description"),
+    )
+    async def set_channel(self, ctx, channel: discord.VoiceChannel):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await jointoCreateChannelCommand(commandInfo=commandInfo, channel=channel)
+        return
+    
+    @app_commands.command(
+        name=app_commands.locale_str("admin_jtc_remove_channel_name"),
+        description=app_commands.locale_str("admin_jtc_remove_channel_description"),
+    )
+    async def remove_channel(self, ctx, channel: discord.VoiceChannel):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await removeJoinToCreateChannelCommand(commandInfo=commandInfo, channel=channel)
+        return
+    
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -1555,6 +1599,10 @@ class adminCog(commands.Cog):
             name="trigger_messages", description="Manage Trigger Messages"
         )
         admincmds.add_command(trigger_messages_cmds)
+        join_to_create_cmds = JoinToCreateCommands(
+            name="join_to_create", description="Manage Join-to-Create Channels"
+        )
+        admincmds.add_command(join_to_create_cmds)
         self.bot.tree.add_command(admincmds)
 
 

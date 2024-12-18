@@ -621,6 +621,13 @@ async def create_tables():
             ON DELETE CASCADE
     ) ENGINE=InnoDB;
     """
+    tables["joinToCreateChannel"] = """
+    CREATE TABLE IF NOT EXISTS `joinToCreateChannel` (
+        `guildId` VARCHAR(20),
+        `channelId` VARCHAR(20),
+        PRIMARY KEY(`guildId`, `channelId`)
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -2716,5 +2723,26 @@ async def get_ticket_by_channel_id(guild_id: str, channel_id: str):
         WHERE guildId = %s AND channelId = %s
     """
     params = (guild_id, channel_id)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+async def get_join_to_create_channel(guild_id: str):
+    query = "SELECT * FROM joinToCreateChannel WHERE guildId = %s"
+    params = (guild_id,)
+    return await execute_query(pool, query, params)
+
+async def set_join_to_create_channel(guild_id: str, channel_id: str):
+    query = "INSERT INTO joinToCreateChannel (guildId, channelId) VALUES (%s, %s)"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def remove_join_to_create_channel(guild_id: str):
+    query = "DELETE FROM joinToCreateChannel WHERE guildId = %s"
+    params = (guild_id,)
+    await execute_action(pool, query, params)
+
+async def get_join_to_create_channel(channel_id: str):
+    query = "SELECT * FROM joinToCreateChannel WHERE channelId = %s"
+    params = (channel_id,)
     result = await execute_query(pool, query, params)
     return result[0] if result else None

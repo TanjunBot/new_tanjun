@@ -18,6 +18,7 @@ import subprocess
 import platform
 from extensions.logs import sendLogEmbeds
 from loops.create_database_backup import create_database_backup
+from commands.admin.joinToCreate.joinToCreateListener import removeAllJoinToCreateChannels
 import aiohttp
 
 
@@ -106,6 +107,7 @@ class administrationCog(commands.Cog):
         sh_file = "update.sh"
         await sendLogEmbeds(self.bot)
         await create_database_backup(self.bot)
+        await removeAllJoinToCreateChannels()
         await ctx.send("Updating...")
         async with aiohttp.ClientSession() as session:
             async with session.get(

@@ -896,6 +896,44 @@
                     "ticketClosed": "Ticket wurde geschlossen",
                     "ticketClosedDescription": "Das Ticket wurde erfolgreich geschlossen. Du kannst das Ticket über den Button in der Nachricht sehen."
                 }
+            },
+            "jointocreatechannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal festzulegen, der erstellt wird, wenn ein Mitglied den Server betritt. Du benötigst `Kanal verwalten` Berechtigungen."
+                },
+                "alreadySet": {
+                    "title": "Kanal bereits festgelegt",
+                    "description": "Der Kanal wurde bereits als Join-to-Create Kanal festgelegt. Wenn du nicht mehr möchtest, dass der Bot Kanäle erstellt, kannst du den Kanal als Join-to-Create Kanal entfernen."
+                },
+                "success": {
+                    "title": "Kanal erfolgreich festgelegt",
+                    "description": "Der Kanal wurde erfolgreich festgelegt. Kanäle werden jetzt erstellt, wenn ein Mitglied den Server betritt."
+                }
+            },
+            "removejointocreatechannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal als Join-to-Create Kanal zu entfernen. Du benötigst `Kanal verwalten` Berechtigungen."
+                },
+                "notSet": {
+                    "title": "Kanal nicht festgelegt",
+                    "description": "Der Kanal ist kein Join-to-Create Kanal."
+                },
+                "success": {
+                    "title": "Kanal erfolgreich entfernt",
+                    "description": "Der Kanal wurde erfolgreich entfernt. Kanäle werden jetzt nicht mehr erstellt, wenn ein Mitglied den Server betritt."
+                }
+            },
+            "joinToCreateListener": {
+                "success": {
+                    "title": "Das ist jetzt dein Kanal",
+                    "description": "Dies ist jetzt dein persönlicher Kanal. Du kannst ihn Nutzen und Konfigurieren wie du möchtest."
+                },
+                "channelDeleted": {
+                    "title": "Dein Kanal wurde gelöscht",
+                    "description": "Dein Kanal wurde soeben gelöscht, da der bot ein Update durchführt. Du solltest in einigen Sekunden wieder einen neuen Kanal erstellen können. Ich entschuldige mich für die Unannehmlichkeiten."
+                }
             }
         },
         "logs": {
