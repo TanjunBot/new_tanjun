@@ -87,7 +87,7 @@ class LoopCog(commands.Cog):
         try:
             await sendLogEmbeds(self.bot)
         except:
-            pass
+            raise
 
 
     @tasks.loop(seconds=10)
