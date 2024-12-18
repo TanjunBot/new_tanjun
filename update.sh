@@ -1,32 +1,25 @@
 #!/bin/bash
 
-# Load environment variables from the .env file
-source /home/tanjun/.env
-
-# Ensure ssh-agent is running
-eval $(ssh-agent -s)
-
-# Add the SSH private key to the agent, using the passphrase from .env
-echo "$GithubPassphrase" | ssh-add ~/.ssh/id_ed25519
+source ".env"
 
 # Check the value of APPLICATION_ID and navigate accordingly
-if [ "$APPLICATION_ID" = "885984139315122206" ]; then
+if [ "$applicationId" = "885984139315122206" ]; then
     echo "Navigating to /home/tanjun..."
     cd /home/tanjun
-    source /bin/activate
+    source /home/tanjun/bin/activate
     systemctl stop tanjun.service
-elif [ "$APPLICATION_ID" = "1000673977406070864" ]; then
+elif [ "$applicationId" = "1000673977406070864" ]; then
     echo "Navigating to /home/sayoka..."
     cd /home/sayoka
-    source /bin/activate
+    source /home/sayoka/bin/activate
     systemctl stop sayoka.service
-elif [ "$APPLICATION_ID" = "1255607578722046015" ]; then
+elif [ "$applicationId" = "1255607578722046015" ]; then
     echo "Navigating to /home/demo-tanjun..."
     cd /home/demo-tanjun
-    source /bin/activate
+    source /home/demo-tanjun/bin/activate
     systemctl stop demo-tanjun.service
 else
-    echo "Unknown APPLICATION_ID: $APPLICATION_ID"
+    echo "Unknown APPLICATION_ID: $applicationId"
     exit 1
 fi
 
@@ -48,11 +41,11 @@ pip install -r requirements.txt
 echo "Update completed successfully. Starting bot..."
 
 # Restart the appropriate service
-if [ "$APPLICATION_ID" = "885984139315122206" ]; then
+if [ "$applicationId" = "885984139315122206" ]; then
     systemctl start tanjun.service
-elif [ "$APPLICATION_ID" = "1000673977406070864" ]; then
+elif [ "$applicationId" = "1000673977406070864" ]; then
     systemctl start sayoka.service
-elif [ "$APPLICATION_ID" = "1255607578722046015" ]; then
+elif [ "$applicationId" = "1255607578722046015" ]; then
     systemctl start demo-tanjun.service
 fi
 
