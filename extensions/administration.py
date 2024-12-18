@@ -14,6 +14,9 @@ from tests import (
     test_database,
     test_commands,
 )
+import subprocess
+import platform
+
 
 class administrationCog(commands.Cog):
     def __init__(self, bot):
@@ -92,16 +95,30 @@ class administrationCog(commands.Cog):
         await ctx.send(str(text)[:4000])
 
     @commands.command()
-    async def tle1(self, ctx):
+    async def update(self, ctx):
         if ctx.author.id not in config.adminIds:
             return
-        await test_log_enable()
 
-    @commands.command()
-    async def tle2(self, ctx):
-        if ctx.author.id not in config.adminIds:
+        sh_file = "update.sh"
+        if platform.system() == "Windows":
+            await ctx.send(
+                "Bot is Updating... Please note that this might not work on Windows. If it does, please let me know :) I might die during this process :("
+            )
+            sh_file = "update.bat"
+            result = subprocess.run(
+                [sh_file], capture_output=True, text=True, check=True
+            )
+            await ctx.send(result.stdout)
             return
-        await test_log_enable_2()
+
+        await ctx.send(
+            "Updating... Please check again in a few seconds if im still alive. I may die during this process :("
+        )
+        result = subprocess.run(
+            ["bash", sh_file], capture_output=True, text=True, check=True
+        )
+        await ctx.send(result.stdout)
+
 
 async def setup(bot):
     await bot.add_cog(administrationCog(bot))
