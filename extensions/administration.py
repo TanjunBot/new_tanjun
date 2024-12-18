@@ -16,6 +16,8 @@ from tests import (
 )
 import subprocess
 import platform
+from logs import sendLogEmbeds
+from loops.create_database_backup import create_database_backup
 
 
 class administrationCog(commands.Cog):
@@ -101,6 +103,8 @@ class administrationCog(commands.Cog):
             return
 
         sh_file = "update.sh"
+        await sendLogEmbeds(self)
+        await create_database_backup(self)
         if platform.system() == "Windows":
             await ctx.send(
                 "Bot is Updating... Please note that this might not work on Windows. If it does, please let me know :) I might die during this process :("
