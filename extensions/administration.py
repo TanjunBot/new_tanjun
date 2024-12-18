@@ -103,7 +103,7 @@ class administrationCog(commands.Cog):
             return
 
         sh_file = "update.sh"
-        await sendLogEmbeds(self.client)
+        await sendLogEmbeds(ctx.bot)
         await create_database_backup(self)
         if platform.system() == "Windows":
             await ctx.send(
