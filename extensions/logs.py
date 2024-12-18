@@ -31,7 +31,7 @@ class EmbedColors:
     yellow = 0xFFBF00
     red = 0xFF0000
 
-async def sendLogEmbeds(self):
+async def sendLogEmbeds(bot):
     global embeds
     print("Sending log embeds, Embeds: ", embeds)
     for guildId, ems in embeds.items():
@@ -41,7 +41,7 @@ async def sendLogEmbeds(self):
         print(f"Sending {len(ems)} embeds to {destination}")
         if destination is None:
             continue
-        destinationChannel = self.bot.get_channel(int(destination))
+        destinationChannel = bot.get_channel(int(destination))
         if destinationChannel is None:
             continue
         for i in range(0, len(ems), 10):
