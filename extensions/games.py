@@ -11,6 +11,7 @@ from commands.games.hangman import hangman
 from commands.games.flag_quiz import flag_quiz
 from commands.games.rps import rps
 
+
 class gameCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("games_ttt_name"),
@@ -38,6 +39,9 @@ class gameCommands(discord.app_commands.Group):
         name=app_commands.locale_str("games_connect4_name"),
         description=app_commands.locale_str("games_connect4_description"),
     )
+    @app_commands.describe(
+        size=app_commands.locale_str("games_connect4_params_size_description"),
+    )
     @app_commands.choices(
         size=[
             app_commands.Choice(
@@ -58,9 +62,7 @@ class gameCommands(discord.app_commands.Group):
             ),
             app_commands.Choice(
                 value="11,10",
-                name=app_commands.locale_str(
-                    "games_connect4_params_size_11x10"
-                ),
+                name=app_commands.locale_str("games_connect4_params_size_11x10"),
             ),
             app_commands.Choice(
                 value="12,11",
@@ -76,7 +78,9 @@ class gameCommands(discord.app_commands.Group):
             ),
         ]
     )
-    async def connect4_cmd(self, ctx, user: discord.Member = None, size: app_commands.Choice[str] = "7,6"):
+    async def connect4_cmd(
+        self, ctx, user: discord.Member = None, size: app_commands.Choice[str] = "7,6"
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -95,6 +99,9 @@ class gameCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("games_akinator_name"),
         description=app_commands.locale_str("games_akinator_description"),
+    )
+    @app_commands.describe(
+        theme=app_commands.locale_str("games_akinator_params_theme_description"),
     )
     @app_commands.choices(
         theme=[
@@ -126,11 +133,16 @@ class gameCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await akinator(commandInfo, theme.value if theme != "characters" else "characters")
+        await akinator(
+            commandInfo, theme.value if theme != "characters" else "characters"
+        )
 
     @app_commands.command(
         name=app_commands.locale_str("games_wordle_name"),
         description=app_commands.locale_str("games_wordle_description"),
+    )
+    @app_commands.describe(
+        language=app_commands.locale_str("games_wordle_params_language_description"),
     )
     @app_commands.choices(
         language=[
@@ -244,8 +256,11 @@ class gameCommands(discord.app_commands.Group):
         await wordle(commandInfo, language.value if language != "own" else "own")
 
     @app_commands.command(
-    name=app_commands.locale_str("hangman_name"),
-    description=app_commands.locale_str("hangman_description"),
+        name=app_commands.locale_str("hangman_name"),
+        description=app_commands.locale_str("hangman_description"),
+    )
+    @app_commands.describe(
+        language=app_commands.locale_str("games_hangman_params_language_description"),
     )
     @app_commands.choices(
         language=[
@@ -398,6 +413,7 @@ class gameCommands(discord.app_commands.Group):
             client=ctx.client,
         )
         await rps(commandInfo, user)
+
 
 class gameCog(commands.Cog):
 

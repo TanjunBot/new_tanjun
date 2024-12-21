@@ -203,6 +203,9 @@ class BoosterChannelCommands(discord.app_commands.Group):
         name=app_commands.locale_str("utility_setupboosterchannel_name"),
         description=app_commands.locale_str("utility_setupboosterchannel_description"),
     )
+    @app_commands.describe(
+        category=app_commands.locale_str("utility_setupboosterchannel_params_category_description"),
+    )
     async def setupboosterchannel(self, ctx, category: discord.CategoryChannel):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(

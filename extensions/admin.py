@@ -510,6 +510,9 @@ class JoinToCreateCommands(discord.app_commands.Group):
         name=app_commands.locale_str("admin_jtc_setchannel_name"),
         description=app_commands.locale_str("admin_jtc_setchannel_description"),
     )
+    @app_commands.describe(
+        channel=app_commands.locale_str("admin_jtc_setchannel_params_channel_description"),
+    )
     async def set_channel(self, ctx, channel: discord.VoiceChannel):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -530,6 +533,9 @@ class JoinToCreateCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_jtc_removechannel_name"),
         description=app_commands.locale_str("admin_jtc_removechannel_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("admin_jtc_removechannel_params_channel_description"),
     )
     async def remove_channel(self, ctx, channel: discord.VoiceChannel):
         await ctx.response.defer()
@@ -867,6 +873,7 @@ class administrationCommands(discord.app_commands.Group):
     @app_commands.describe(
         limit=app_commands.locale_str("admin_purge_params_amount_description"),
         channel=app_commands.locale_str("admin_purge_params_channel_description"),
+        setting=app_commands.locale_str("admin_purge_params_setting_description"),
     )
     @app_commands.choices(
         setting=[

@@ -41,7 +41,7 @@ async def help(commandInfo, ctx):
                             )
                             command_text += f"{group_desc}\n\n"
                         except:
-                            command_text += "\n"
+                            command_text += f"*No description available for {group.name}*\n\n"
 
                         # Process each subcommand
                         for cmd in group.commands:
@@ -55,7 +55,7 @@ async def help(commandInfo, ctx):
                                     )
                                     command_text += f"{cmd_desc}\n\n"
                                 except:
-                                    command_text += "\n"
+                                    command_text += f"*No description available for {cmd.name}*\n\n"
 
                                 # Process subcommands within the subcommand group
                                 for subcmd in cmd.commands:
@@ -87,7 +87,7 @@ async def help(commandInfo, ctx):
                                                 )
                                                 command_text += f"- **{param_name}**: {param_desc}\n"
                                             except:
-                                                command_text += f"- **{param.name}**\n"
+                                                command_text += f"- **{param.name}**: *No description available*\n"
                                         command_text += "\n"
 
                                     print(len(texts[current_index] + command_text))
@@ -116,7 +116,7 @@ async def help(commandInfo, ctx):
                                     )
                                     command_text += f"{cmd_desc}\n\n"
                                 except:
-                                    command_text += "\n"
+                                    command_text += f"*No description available for {cmd.name}*\n\n"
 
                                 # Process parameters only if they exist
                                 if hasattr(cmd, "parameters") and cmd.parameters:
@@ -135,7 +135,7 @@ async def help(commandInfo, ctx):
                                                 f"- **{param_name}**: {param_desc}\n"
                                             )
                                         except:
-                                            command_text += f"- **{param.name}**\n"
+                                            command_text += f"- **{param.name}**: *No description available*\n"
                                     command_text += "\n"
 
                                 if (

@@ -5826,6 +5826,140 @@
             }
         }
     },
+    "image": {
+        "name": "bild",
+        "description": "Bild-Kommandos",
+        "blur": {
+            "name": "blur",
+            "description": "Bild unscharf machen",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das unscharf gemacht werden soll"
+                },
+                "type": {
+                    "name": "typ",
+                    "description": "Der Typ der Unscharfmacher",
+                    "gaussian": "Gaußscher Unscharfmacher",
+                    "boxblurr": "Box Unscharfmacher"
+                },
+                "radius": {
+                    "name": "radius",
+                    "description": "Der Radius der Unscharfmacher"
+                }
+            }
+        },
+        "contour": {
+            "name": "contour",
+            "description": "Bild konturieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das konturiert werden soll"
+                }
+            }
+        },
+        "detail": {
+            "name": "detail",
+            "description": "Bild detailieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das detailiert werden soll"
+                }
+            }
+        },
+        "edgeenhance": {
+            "name": "edgeenhance",
+            "description": "Bild edge enhance",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das edge enhanced werden soll"
+                }
+            }
+        },
+        "emboss": {
+            "name": "emboss",
+            "description": "Bild embossieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das embossiert werden soll"
+                }
+            }
+        },
+        "findedges": {
+            "name": "findedges",
+            "description": "Bild kanten finden",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das kanten finden soll"
+                }
+            }
+        },
+        "sharpen": {
+            "name": "sharpen",
+            "description": "Bild scharf machen",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das scharf gemacht werden soll"
+                }
+            }
+        },
+        "smooth": {
+            "name": "smooth",
+            "description": "Bild glätten",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das glättet werden soll"
+                }
+            }
+        },
+        "resize": {
+            "name": "resize",
+            "description": "Bild verkleinern",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das verkleinert werden soll"
+                }
+            }
+        },
+        "rescale": {
+            "name": "rescale",
+            "description": "Bild skalieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das skaliert werden soll"
+                }
+            }
+        },
+        "mirror": {
+            "name": "mirror",
+            "description": "Bild spiegeln",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das gespiegelt werden soll"
+                }
+            }
+        },
+        "compress": {
+            "name": "compress",
+            "description": "Bild komprimieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das komprimiert werden soll"
+                }
+            }
+        }
+    },
     "countries": {
         "Afghanistan": "Afghanistan",
         "Albania": "Albanien",
@@ -6208,7 +6342,9 @@
     "repeat": "wiederholen",
     "content": "inhalt",
     "page": "seite",
-    "image": "bild",
     "jointocreate": "jointocreate",
-    "Manage Join-to-Create Channels": "Join To Create Kanäle verwalten"
+    "Manage Join-to-Create Channels": "Join To Create Kanäle verwalten",
+    "theme": "theme",
+    "size": "größe",
+    "quality": "qualität"
 }
