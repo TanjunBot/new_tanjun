@@ -134,7 +134,7 @@ async def generate_summary_html(
     """
 
     html += f"""
-    <title>{channel.name}</title>
+    <title>{channel.name} - Ticket Transcript</title>
     """
 
     html += """
