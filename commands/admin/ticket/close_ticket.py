@@ -3977,7 +3977,7 @@ async def generate_summary_html(
                     const option = document.createElement('option');
                     option.value = key;
                     option.textContent = value;
-                    if (key === 'fire') option.selected = true;
+                    if (key === 'dark') option.selected = true;
                     themeSelector.appendChild(option);
                 }
 
