@@ -977,6 +977,62 @@
                         "title": "Nur Nachrichten mit Medien",
                         "description": "Du hast eine Nachricht ohne Medien gesendet. Es sind nur Nachrichten erlaubt, welche Anhänge haben."
                     }
+                },
+                "welcome": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen. Du benötigst `Administrator` Berechtigungen."
+                    },
+                    "missingBotPermission": {
+                        "title": "Bot hat fehlende Berechtigung",
+                        "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um den Willkommens-Kanal korrekt zu verwalten. Der Bot benötigt die Berechtigung `Nachrichten senden` und `Nachrichtenverlauf lesen` in dem angegebenen Kanal."
+                    },
+                    "alreadySet": {
+                        "title": "Willkommens-Kanal bereits festgelegt",
+                        "description": "Der Kanal ist bereits ein Willkommens-Kanal. Du brauchst ihn also nicht erneut festzulegen."
+                    },
+                    "success": {
+                        "title": "Willkommens-Kanal erfolgreich festgelegt",
+                        "description": "Der Kanal wurde erfolgreich festgelegt. Willkommens-Nachrichten werden jetzt in ${channel} gesendet."
+                    },
+                    "notSet": {
+                        "title": "Willkommens-Kanal nicht festgelegt",
+                        "description": "Der Willkommens-Kanal wurde nicht festgelegt. Setze ihn über `/welcome set`."
+                    },
+                    "deleteSuccess": {
+                        "title": "Willkommens-Kanal erfolgreich entfernt",
+                        "description": "Der Willkommens-Kanal wurde erfolgreich entfernt."
+                    },
+                    "defaultWelcomeMessage": "{user}, ist leider nicht mehr auf {guild}.\nSo'n mist aber auch :(",
+                    "memberNumber": "Mitglied Nummer ${member_count}"
+                },
+                "farewell": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen. Du benötigst `Administrator` Berechtigungen."
+                    },
+                    "missingBotPermission": {
+                        "title": "Bot hat fehlende Berechtigung",
+                        "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um den Verabschiedungs-Kanal korrekt zu verwalten. Der Bot benötigt die Berechtigung `Nachrichten senden` und `Nachrichtenverlauf lesen` in dem angegebenen Kanal."
+                    },
+                    "alreadySet": {
+                        "title": "Verabschiedungs-Kanal bereits festgelegt",
+                        "description": "Der Kanal ist bereits ein Verabschiedungs-Kanal. Du brauchst ihn also nicht erneut festzulegen."
+                    },
+                    "success": {
+                        "title": "Verabschiedungs-Kanal erfolgreich festgelegt",
+                        "description": "Der Kanal wurde erfolgreich festgelegt. Verabschiedungs-Nachrichten werden jetzt in ${channel} gesendet."
+                    },
+                    "notSet": {
+                        "title": "Verabschiedungs-Kanal nicht festgelegt",
+                        "description": "Der Verabschiedungs-Kanal wurde nicht festgelegt. Setze ihn über `/farewell set`."
+                    },
+                    "deleteSuccess": {
+                        "title": "Verabschiedungs-Kanal erfolgreich entfernt",
+                        "description": "Der Verabschiedungs-Kanal wurde erfolgreich entfernt."
+                    },
+                    "defaultFarewellMessage": "{user}, wir freuen uns, dass du bei uns warst! Wir hoffen, dass du viel Spaß auf dem Server hatte! Wir wünschen dir alles Gute und wir freuen uns, dich bald wieder zu sehen! Du bist das {member}. Mitglied.",
+                    "memberNumber": "Mitglied Nummer ${member_count}"
                 }
             }
         },

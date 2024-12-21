@@ -20,6 +20,9 @@ from extensions.logs import sendLogEmbeds
 from loops.create_database_backup import create_database_backup
 from commands.admin.joinToCreate.joinToCreateListener import removeAllJoinToCreateChannels
 import aiohttp
+from commands.admin.channel.welcome import welcomeNewUser
+
+from commands.admin.channel.farewell import farewellUser
 
 
 class administrationCog(commands.Cog):
@@ -114,6 +117,22 @@ class administrationCog(commands.Cog):
                 f"http://127.0.0.1:6969/restart/{self.bot.application_id}"
             ) as response:
                 await ctx.send(await response.text())
+
+    @commands.command()
+    async def welcome(self, ctx, user: discord.Member = None):
+        if user is None:
+            user = ctx.author
+        if ctx.author.id not in config.adminIds:
+            return
+        await welcomeNewUser(user)
+
+    @commands.command()
+    async def farewell(self, ctx, user: discord.Member = None):
+        if user is None:
+            user = ctx.author
+        if ctx.author.id not in config.adminIds:
+            return
+        await farewellUser(user)
 
 
 async def setup(bot):

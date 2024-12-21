@@ -29,7 +29,8 @@ from commands.admin.ticket.open_ticket import openTicket as openTicketListener
 from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
 from commands.admin.joinToCreate.joinToCreateListener import memberLeave, memberJoin
 from commands.admin.channel.media import mediaChannelMessage
-
+from commands.admin.channel.welcome import welcomeNewUser
+from commands.admin.channel.farewell import farewellUser
 
 class ListenerCog(commands.Cog):
 
@@ -93,6 +94,14 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         await remove_scheduled_message(message.id)
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        await welcomeNewUser(member)
+
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        await farewellUser(member)
 
 async def setup(bot):
     await bot.add_cog(ListenerCog(bot))

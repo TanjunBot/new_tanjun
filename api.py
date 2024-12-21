@@ -635,6 +635,24 @@ async def create_tables():
         PRIMARY KEY(`channelId`)
     ) ENGINE=InnoDB;
     """
+    tables["welcomeChannel"] = """
+    CREATE TABLE IF NOT EXISTS `welcomeChannel` (
+        `channelId` VARCHAR(20),
+        `guildId` VARCHAR(20),
+        `message` VARCHAR(1024) DEFAULT NULL,
+        `imageBackground` VARCHAR(255) DEFAULT NULL,
+        PRIMARY KEY(`channelId`, `guildId`)
+    ) ENGINE=InnoDB;
+    """
+    tables["leaveChannel"] = """
+    CREATE TABLE IF NOT EXISTS `leaveChannel` (
+        `channelId` VARCHAR(20),
+        `guildId` VARCHAR(20),
+        `message` VARCHAR(1024) DEFAULT NULL,
+        `imageBackground` VARCHAR(255) DEFAULT NULL,
+        PRIMARY KEY(`channelId`, `guildId`)
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -2767,4 +2785,34 @@ async def add_media_channel(guild_id: str, channel_id: str):
 async def remove_media_channel(guild_id: str, channel_id: str):
     query = "DELETE FROM mediaChannel WHERE guildId = %s AND channelId = %s"
     params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def get_welcome_channel(guild_id: str):
+    query = "SELECT * FROM welcomeChannel WHERE guildId = %s"
+    params = (guild_id,)
+    return (await execute_query(pool, query, params))[0] if (await execute_query(pool, query, params)) else None
+
+async def set_welcome_channel(guild_id: str, channel_id: str, message: str, image_background: str):
+    query = "INSERT INTO welcomeChannel (guildId, channelId, message, imageBackground) VALUES (%s, %s, %s, %s)"
+    params = (guild_id, channel_id, message, image_background)
+    await execute_action(pool, query, params)
+
+async def remove_welcome_channel(guild_id: str):
+    query = "DELETE FROM welcomeChannel WHERE guildId = %s"
+    params = (guild_id,)
+    await execute_action(pool, query, params)
+
+async def get_leave_channel(guild_id: str):
+    query = "SELECT * FROM leaveChannel WHERE guildId = %s"
+    params = (guild_id,)
+    return (await execute_query(pool, query, params))[0] if (await execute_query(pool, query, params)) else None
+
+async def set_leave_channel(guild_id: str, channel_id: str, message: str, image_background: str):
+    query = "INSERT INTO leaveChannel (guildId, channelId, message, imageBackground) VALUES (%s, %s, %s, %s)"
+    params = (guild_id, channel_id, message, image_background)
+    await execute_action(pool, query, params)
+
+async def remove_leave_channel(guild_id: str):
+    query = "DELETE FROM leaveChannel WHERE guildId = %s"
+    params = (guild_id,)
     await execute_action(pool, query, params)

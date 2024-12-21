@@ -26,7 +26,10 @@ async def addMediaChannel(
         await commandInfo.reply(embed=embed)
         return
 
-    if not channel.permissions_for(commandInfo.guild.me).manage_messages:
+    if (
+        not channel.permissions_for(commandInfo.guild.me).manage_messages
+        or not channel.permissions_for(commandInfo.guild.me).read_message_history
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -162,10 +165,10 @@ async def mediaChannelMessage(message: discord.Message):
             )
         )
         return
-    
+
     if len(message.attachments) > 0:
         return
-    
+
     await message.delete()
     await message.author.send(
         embed=utility.tanjunEmbed(
