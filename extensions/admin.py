@@ -321,12 +321,12 @@ class RoleCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         role=app_commands.locale_str("admin_copyrole_params_role_description"),
-        copy_members=app_commands.locale_str(
+        copymembers=app_commands.locale_str(
             "admin_copyrole_params_copymembers_description"
         ),
     )
     @app_commands.choices(
-        copy_members=[
+        copymembers=[
             app_commands.Choice(
                 name=app_commands.locale_str("admin_copyrole_params_copymembers_true"),
                 value="true",
@@ -338,7 +338,7 @@ class RoleCommands(discord.app_commands.Group):
         ]
     )
     async def copyrole(
-        self, ctx, role: discord.Role, copy_members: app_commands.Choice[str]
+        self, ctx, role: discord.Role, copymembers: app_commands.Choice[str]
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -356,19 +356,19 @@ class RoleCommands(discord.app_commands.Group):
         await copyRoleCommand(
             commandInfo=commandInfo,
             role=role,
-            copy_members=copy_members.value == "true",
+            copy_members=copymembers.value == "true",
         )
         return
 
 
 class ReportCommands(discord.app_commands.Group):
     @app_commands.command(
-        name=app_commands.locale_str("admin_rps_set_channel_name"),
-        description=app_commands.locale_str("admin_rps_set_channel_description"),
+        name=app_commands.locale_str("admin_rps_setchannel_name"),
+        description=app_commands.locale_str("admin_rps_setchannel_description"),
     )
     @app_commands.describe(
         channel=app_commands.locale_str(
-            "admin_rps_set_channel_params_channel_description"
+            "admin_rps_setchannel_params_channel_description"
         ),
     )
     async def set_channel(self, ctx, channel: discord.TextChannel = None):
@@ -392,8 +392,8 @@ class ReportCommands(discord.app_commands.Group):
         return
 
     @app_commands.command(
-        name=app_commands.locale_str("admin_rps_remove_channel_name"),
-        description=app_commands.locale_str("admin_rps_remove_channel_description"),
+        name=app_commands.locale_str("admin_rps_removechannel_name"),
+        description=app_commands.locale_str("admin_rps_removechannel_description"),
     )
     async def remove_channel(self, ctx):
         await ctx.response.defer()
@@ -413,11 +413,11 @@ class ReportCommands(discord.app_commands.Group):
         return
 
     @app_commands.command(
-        name=app_commands.locale_str("admin_rps_show_reports_name"),
-        description=app_commands.locale_str("admin_rps_show_reports_description"),
+        name=app_commands.locale_str("admin_rps_showreports_name"),
+        description=app_commands.locale_str("admin_rps_showreports_description"),
     )
     @app_commands.describe(
-        user=app_commands.locale_str("admin_rps_show_reports_params_user_description"),
+        user=app_commands.locale_str("admin_rps_showreports_params_user_description"),
     )
     async def show_reports(self, ctx, user: discord.Member = None):
         await ctx.response.defer()
@@ -467,7 +467,7 @@ class TriggerMessagesCommands(discord.app_commands.Group):
         trigger=app_commands.locale_str("admin_tm_add_params_trigger_description"),
         response=app_commands.locale_str("admin_tm_add_params_response_description"),
         casesensitive=app_commands.locale_str(
-            "admin_tm_add_params_caseSensitive_description"
+            "admin_tm_add_params_casesensitive_description"
         ),
     )
     @app_commands.choices(
@@ -507,8 +507,8 @@ class TriggerMessagesCommands(discord.app_commands.Group):
 
 class JoinToCreateCommands(discord.app_commands.Group):
     @app_commands.command(
-        name=app_commands.locale_str("admin_jtc_set_channel_name"),
-        description=app_commands.locale_str("admin_jtc_set_channel_description"),
+        name=app_commands.locale_str("admin_jtc_setchannel_name"),
+        description=app_commands.locale_str("admin_jtc_setchannel_description"),
     )
     async def set_channel(self, ctx, channel: discord.VoiceChannel):
         await ctx.response.defer()
@@ -528,8 +528,8 @@ class JoinToCreateCommands(discord.app_commands.Group):
         return
 
     @app_commands.command(
-        name=app_commands.locale_str("admin_jtc_remove_channel_name"),
-        description=app_commands.locale_str("admin_jtc_remove_channel_description"),
+        name=app_commands.locale_str("admin_jtc_removechannel_name"),
+        description=app_commands.locale_str("admin_jtc_removechannel_description"),
     )
     async def remove_channel(self, ctx, channel: discord.VoiceChannel):
         await ctx.response.defer()
@@ -577,12 +577,12 @@ class ChannelCommands(discord.app_commands.Group):
         return
 
     @app_commands.command(
-        name=app_commands.locale_str("admin_channel_media_remove_name"),
-        description=app_commands.locale_str("admin_channel_media_remove_description"),
+        name=app_commands.locale_str("admin_channel_mediaremove_name"),
+        description=app_commands.locale_str("admin_channel_mediaremove_description"),
     )
     @app_commands.describe(
         channel=app_commands.locale_str(
-            "admin_channel_media_params_channel_description"
+            "admin_channel_mediaremove_params_channel_description"
         ),
     )
     async def media_remove_cmd(self, ctx, channel: discord.TextChannel):
@@ -608,13 +608,13 @@ class ChannelCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         channel=app_commands.locale_str(
-            "admin_channel_welcome_params_channel_description"
+            "admin_ch_w_params_channel_description"
         ),
         message=app_commands.locale_str(
-            "admin_channel_welcome_params_message_description"
+            "admin_ch_w_params_message_description"
         ),
         background=app_commands.locale_str(
-            "admin_channel_welcome_params_image_description"
+            "admin_ch_w_params_image_description"
         ),
     )
     async def welcome(
@@ -1212,25 +1212,25 @@ class administrationCommands(discord.app_commands.Group):
         await CreateBoosterRoleCommand(commandInfo=commandInfo, role=role)
 
     @app_commands.command(
-        name=app_commands.locale_str("admin_create_ticket_name"),
-        description=app_commands.locale_str("admin_create_ticket_description"),
+        name=app_commands.locale_str("admin_createticket_name"),
+        description=app_commands.locale_str("admin_createticket_description"),
     )
     @app_commands.describe(
-        name=app_commands.locale_str("admin_create_ticket_params_name_description"),
+        name=app_commands.locale_str("admin_createticket_params_name_description"),
         description=app_commands.locale_str(
-            "admin_create_ticket_params_description_description"
+            "admin_createticket_params_description_description"
         ),
         channel=app_commands.locale_str(
-            "admin_create_ticket_params_channel_description"
+            "admin_createticket_params_channel_description"
         ),
-        ping_role=app_commands.locale_str(
-            "admin_create_ticket_params_ping_role_description"
+        pingrole=app_commands.locale_str(
+            "admin_createticket_params_pingrole_description"
         ),
-        summary_channel=app_commands.locale_str(
-            "admin_create_ticket_params_summary_channel_description"
+        summarychannel=app_commands.locale_str(
+            "admin_createticket_params_summarychannel_description"
         ),
         introduction=app_commands.locale_str(
-            "admin_create_ticket_params_introduction_description"
+            "admin_createticket_params_introduction_description"
         ),
     )
     async def create_ticket(
@@ -1239,8 +1239,8 @@ class administrationCommands(discord.app_commands.Group):
         name: str,
         description: str,
         channel: discord.TextChannel = None,
-        ping_role: discord.Role = None,
-        summary_channel: discord.TextChannel = None,
+        pingrole: discord.Role = None,
+        summarychannel: discord.TextChannel = None,
         introduction: str = None,
     ):
         await ctx.response.defer()
@@ -1261,8 +1261,8 @@ class administrationCommands(discord.app_commands.Group):
             channel=channel,
             name=name,
             description=description,
-            ping_role=ping_role,
-            summary_channel=summary_channel,
+            ping_role=pingrole,
+            summary_channel=summarychannel,
             introduction=introduction,
         )
         return
@@ -1785,11 +1785,11 @@ class adminCog(commands.Cog):
         reportcmds = ReportCommands(name="report", description="Manage Reports")
         admincmds.add_command(reportcmds)
         trigger_messages_cmds = TriggerMessagesCommands(
-            name="trigger_messages", description="Manage Trigger Messages"
+            name="triggermessages", description="Manage Trigger Messages"
         )
         admincmds.add_command(trigger_messages_cmds)
         join_to_create_cmds = JoinToCreateCommands(
-            name="join_to_create", description="Manage Join-to-Create Channels"
+            name="jointocreate", description="Manage Join-to-Create Channels"
         )
         admincmds.add_command(join_to_create_cmds)
         channel_cmds = ChannelCommands(name="channel", description="Manage Channels")

@@ -33,19 +33,14 @@ class EmbedColors:
 
 async def sendLogEmbeds(bot):
     global embeds
-    print("Sending log embeds, Embeds: ", embeds)
     for guildId, ems in embeds.items():
-        print("guildId: ", guildId)
-        print("embeds: ", ems)
         destination = await get_log_channel(guildId)
-        print(f"Sending {len(ems)} embeds to {destination}")
         if destination is None:
             continue
         destinationChannel = bot.get_channel(int(destination))
         if destinationChannel is None:
             continue
         for i in range(0, len(ems), 10):
-            print(f"Sending chunk {i} of {len(ems)}")
             chunk = ems[i:i+10]
             await destinationChannel.send(embeds=chunk)
         embeds[guildId] = []
@@ -1941,7 +1936,7 @@ class LogsCog(commands.Cog):
     async def on_ready(self):
         logcmds = LogsCommands(
             name=app_commands.locale_str("logs_name"),
-            description=app_commands.locale_str("logs_desc")
+            description=app_commands.locale_str("logs_description")
         )
         channelBlacklist = ChannelBlacklistCommands(
             name=app_commands.locale_str("logs_blacklist_name"),

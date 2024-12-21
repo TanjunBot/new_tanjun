@@ -13,11 +13,11 @@ from commands.games.rps import rps
 
 class gameCommands(discord.app_commands.Group):
     @app_commands.command(
-        name=app_commands.locale_str("ttt_name"),
-        description=app_commands.locale_str("ttt_description"),
+        name=app_commands.locale_str("games_ttt_name"),
+        description=app_commands.locale_str("games_ttt_description"),
     )
     @app_commands.describe(
-        user=app_commands.locale_str("ttt_user_description"),
+        user=app_commands.locale_str("games_ttt_params_user_description"),
     )
     async def tic_tac_toe_cmd(self, ctx, user: discord.Member = None):
         await ctx.response.defer()
@@ -35,44 +35,44 @@ class gameCommands(discord.app_commands.Group):
         await tic_tac_toe(commandInfo, ctx.user, user)
 
     @app_commands.command(
-        name=app_commands.locale_str("connect4_name"),
-        description=app_commands.locale_str("connect4_description"),
+        name=app_commands.locale_str("games_connect4_name"),
+        description=app_commands.locale_str("games_connect4_description"),
     )
     @app_commands.choices(
         size=[
             app_commands.Choice(
                 value="7,6",
-                name=app_commands.locale_str("admin_purge_params_setting_default"),
+                name=app_commands.locale_str("games_connect4_params_size_default"),
             ),
             app_commands.Choice(
                 value="8,7",
-                name=app_commands.locale_str("admin_purge_params_setting_8x7"),
+                name=app_commands.locale_str("games_connect4_params_size_8x7"),
             ),
             app_commands.Choice(
                 value="9,8",
-                name=app_commands.locale_str("admin_purge_params_setting_9x8"),
+                name=app_commands.locale_str("games_connect4_params_size_9x8"),
             ),
             app_commands.Choice(
                 value="10,9",
-                name=app_commands.locale_str("admin_purge_params_setting_10x9"),
+                name=app_commands.locale_str("games_connect4_params_size_10x9"),
             ),
             app_commands.Choice(
                 value="11,10",
                 name=app_commands.locale_str(
-                    "admin_purge_params_setting_11x10"
+                    "games_connect4_params_size_11x10"
                 ),
             ),
             app_commands.Choice(
                 value="12,11",
-                name=app_commands.locale_str("admin_purge_params_setting_12x11"),
+                name=app_commands.locale_str("games_connect4_params_size_12x11"),
             ),
             app_commands.Choice(
                 value="12,12",
-                name=app_commands.locale_str("admin_purge_params_setting_12x12"),
+                name=app_commands.locale_str("games_connect4_params_size_12x12"),
             ),
             app_commands.Choice(
                 value="4,4",
-                name=app_commands.locale_str("admin_purge_params_setting_4x4"),
+                name=app_commands.locale_str("games_connect4_params_size_4x4"),
             ),
         ]
     )
@@ -93,22 +93,22 @@ class gameCommands(discord.app_commands.Group):
         await connect4(commandInfo, ctx.user, user, int(size[0]), int(size[1]))
 
     @app_commands.command(
-        name=app_commands.locale_str("akinator_name"),
-        description=app_commands.locale_str("akinator_description"),
+        name=app_commands.locale_str("games_akinator_name"),
+        description=app_commands.locale_str("games_akinator_description"),
     )
     @app_commands.choices(
         theme=[
             app_commands.Choice(
                 value="characters",
-                name=app_commands.locale_str("akinator_theme_characters"),
+                name=app_commands.locale_str("games_akinator_params_theme_characters"),
             ),
             app_commands.Choice(
                 value="animals",
-                name=app_commands.locale_str("akinator_theme_animals"),
+                name=app_commands.locale_str("games_akinator_params_theme_animals"),
             ),
             app_commands.Choice(
                 value="objects",
-                name=app_commands.locale_str("akinator_theme_objects"),
+                name=app_commands.locale_str("games_akinator_params_theme_objects"),
             ),
         ]
     )
@@ -129,103 +129,103 @@ class gameCommands(discord.app_commands.Group):
         await akinator(commandInfo, theme.value if theme != "characters" else "characters")
 
     @app_commands.command(
-        name=app_commands.locale_str("wordle_name"),
-        description=app_commands.locale_str("wordle_description"),
+        name=app_commands.locale_str("games_wordle_name"),
+        description=app_commands.locale_str("games_wordle_description"),
     )
     @app_commands.choices(
         language=[
             app_commands.Choice(
                 value="bg",
-                name=app_commands.locale_str("wordle_language_bg"),
+                name=app_commands.locale_str("games_wordle_params_language_bg"),
             ),
             app_commands.Choice(
                 value="cs",
-                name=app_commands.locale_str("wordle_language_cs"),
+                name=app_commands.locale_str("games_wordle_params_language_cs"),
             ),
             app_commands.Choice(
                 value="da",
-                name=app_commands.locale_str("wordle_language_da"),
+                name=app_commands.locale_str("games_wordle_params_language_da"),
             ),
             app_commands.Choice(
                 value="de",
-                name=app_commands.locale_str("wordle_language_de"),
+                name=app_commands.locale_str("games_wordle_params_language_de"),
             ),
             app_commands.Choice(
                 value="el",
-                name=app_commands.locale_str("wordle_language_el"),
+                name=app_commands.locale_str("games_wordle_params_language_el"),
             ),
             app_commands.Choice(
                 value="en",
-                name=app_commands.locale_str("wordle_language_en"),
+                name=app_commands.locale_str("games_wordle_params_language_en"),
             ),
             app_commands.Choice(
                 value="es",
-                name=app_commands.locale_str("wordle_language_es"),
+                name=app_commands.locale_str("games_wordle_params_language_es"),
             ),
             app_commands.Choice(
                 value="fi",
-                name=app_commands.locale_str("wordle_language_fi"),
+                name=app_commands.locale_str("games_wordle_params_language_fi"),
             ),
             app_commands.Choice(
                 value="fr",
-                name=app_commands.locale_str("wordle_language_fr"),
+                name=app_commands.locale_str("games_wordle_params_language_fr"),
             ),
             app_commands.Choice(
                 value="hi",
-                name=app_commands.locale_str("wordle_language_hi"),
+                name=app_commands.locale_str("games_wordle_params_language_hi"),
             ),
             app_commands.Choice(
                 value="hu",
-                name=app_commands.locale_str("wordle_language_hu"),
+                name=app_commands.locale_str("games_wordle_params_language_hu"),
             ),
             app_commands.Choice(
                 value="id",
-                name=app_commands.locale_str("wordle_language_id"),
+                name=app_commands.locale_str("games_wordle_params_language_id"),
             ),
             app_commands.Choice(
                 value="it",
-                name=app_commands.locale_str("wordle_language_it"),
+                name=app_commands.locale_str("games_wordle_params_language_it"),
             ),
             app_commands.Choice(
                 value="ja",
-                name=app_commands.locale_str("wordle_language_ja"),
+                name=app_commands.locale_str("games_wordle_params_language_ja"),
             ),
             app_commands.Choice(
                 value="ko",
-                name=app_commands.locale_str("wordle_language_ko"),
+                name=app_commands.locale_str("games_wordle_params_language_ko"),
             ),
             app_commands.Choice(
                 value="lt",
-                name=app_commands.locale_str("wordle_language_lt"),
+                name=app_commands.locale_str("games_wordle_params_language_lt"),
             ),
             app_commands.Choice(
                 value="nb",
-                name=app_commands.locale_str("wordle_language_nb"),
+                name=app_commands.locale_str("games_wordle_params_language_nb"),
             ),
             app_commands.Choice(
                 value="nl",
-                name=app_commands.locale_str("wordle_language_nl"),
+                name=app_commands.locale_str("games_wordle_params_language_nl"),
             ),
             app_commands.Choice(
                 value="pl",
-                name=app_commands.locale_str("wordle_language_pl"),
+                name=app_commands.locale_str("games_wordle_params_language_pl"),
             ),
             app_commands.Choice(
                 value="pt",
-                name=app_commands.locale_str("wordle_language_pt"),
+                name=app_commands.locale_str("games_wordle_params_language_pt"),
             ),
             app_commands.Choice(
                 value="ru",
-                name=app_commands.locale_str("wordle_language_ru"),
+                name=app_commands.locale_str("games_wordle_params_language_ru"),
             ),
             app_commands.Choice(
                 value="zh",
-                name=app_commands.locale_str("wordle_language_zh"),
+                name=app_commands.locale_str("games_wordle_params_language_zh"),
             ),
         ]
     )
     @app_commands.describe(
-        language=app_commands.locale_str("wordle_language_description"),
+        language=app_commands.locale_str("games_wordle_params_language_description"),
     )
     async def wordle_cmd(self, ctx, language: app_commands.Choice[str] = "own"):
         await ctx.response.defer()
@@ -251,96 +251,96 @@ class gameCommands(discord.app_commands.Group):
         language=[
             app_commands.Choice(
                 value="bg",
-                name=app_commands.locale_str("wordle_language_bg"),
+                name=app_commands.locale_str("games_hangman_params_language_bg"),
             ),
             app_commands.Choice(
                 value="cs",
-                name=app_commands.locale_str("wordle_language_cs"),
+                name=app_commands.locale_str("games_hangman_params_language_cs"),
             ),
             app_commands.Choice(
                 value="da",
-                name=app_commands.locale_str("wordle_language_da"),
+                name=app_commands.locale_str("games_hangman_params_language_da"),
             ),
             app_commands.Choice(
                 value="de",
-                name=app_commands.locale_str("wordle_language_de"),
+                name=app_commands.locale_str("games_hangman_params_language_de"),
             ),
             app_commands.Choice(
                 value="el",
-                name=app_commands.locale_str("wordle_language_el"),
+                name=app_commands.locale_str("games_hangman_params_language_el"),
             ),
             app_commands.Choice(
                 value="en",
-                name=app_commands.locale_str("wordle_language_en"),
+                name=app_commands.locale_str("games_hangman_params_language_en"),
             ),
             app_commands.Choice(
                 value="es",
-                name=app_commands.locale_str("wordle_language_es"),
+                name=app_commands.locale_str("games_hangman_params_language_es"),
             ),
             app_commands.Choice(
                 value="fi",
-                name=app_commands.locale_str("wordle_language_fi"),
+                name=app_commands.locale_str("games_hangman_params_language_fi"),
             ),
             app_commands.Choice(
                 value="fr",
-                name=app_commands.locale_str("wordle_language_fr"),
+                name=app_commands.locale_str("games_hangman_params_language_fr"),
             ),
             app_commands.Choice(
                 value="hi",
-                name=app_commands.locale_str("wordle_language_hi"),
+                name=app_commands.locale_str("games_hangman_params_language_hi"),
             ),
             app_commands.Choice(
                 value="hu",
-                name=app_commands.locale_str("wordle_language_hu"),
+                name=app_commands.locale_str("games_hangman_params_language_hu"),
             ),
             app_commands.Choice(
                 value="id",
-                name=app_commands.locale_str("wordle_language_id"),
+                name=app_commands.locale_str("games_hangman_params_language_id"),
             ),
             app_commands.Choice(
                 value="it",
-                name=app_commands.locale_str("wordle_language_it"),
+                name=app_commands.locale_str("games_hangman_params_language_it"),
             ),
             app_commands.Choice(
                 value="ja",
-                name=app_commands.locale_str("wordle_language_ja"),
+                name=app_commands.locale_str("games_hangman_params_language_ja"),
             ),
             app_commands.Choice(
                 value="ko",
-                name=app_commands.locale_str("wordle_language_ko"),
+                name=app_commands.locale_str("games_hangman_params_language_ko"),
             ),
             app_commands.Choice(
                 value="lt",
-                name=app_commands.locale_str("wordle_language_lt"),
+                name=app_commands.locale_str("games_hangman_params_language_lt"),
             ),
             app_commands.Choice(
                 value="nb",
-                name=app_commands.locale_str("wordle_language_nb"),
+                name=app_commands.locale_str("games_hangman_params_language_nb"),
             ),
             app_commands.Choice(
                 value="nl",
-                name=app_commands.locale_str("wordle_language_nl"),
+                name=app_commands.locale_str("games_hangman_params_language_nl"),
             ),
             app_commands.Choice(
                 value="pl",
-                name=app_commands.locale_str("wordle_language_pl"),
+                name=app_commands.locale_str("games_hangman_params_language_pl"),
             ),
             app_commands.Choice(
                 value="pt",
-                name=app_commands.locale_str("wordle_language_pt"),
+                name=app_commands.locale_str("games_hangman_params_language_pt"),
             ),
             app_commands.Choice(
                 value="ru",
-                name=app_commands.locale_str("wordle_language_ru"),
+                name=app_commands.locale_str("games_hangman_params_language_ru"),
             ),
             app_commands.Choice(
                 value="zh",
-                name=app_commands.locale_str("wordle_language_zh"),
+                name=app_commands.locale_str("games_hangman_params_language_zh"),
             ),
         ]
     )
     @app_commands.describe(
-        language=app_commands.locale_str("hangman_language_description"),
+        language=app_commands.locale_str("games_hangman_params_language_description"),
     )
     async def hangman_cmd(self, ctx, language: app_commands.Choice[str] = "own"):
         await ctx.response.defer()
@@ -359,8 +359,8 @@ class gameCommands(discord.app_commands.Group):
         await hangman(commandInfo, language.value if language != "own" else "own")
 
     @app_commands.command(
-        name=app_commands.locale_str("flag_quiz_name"),
-        description=app_commands.locale_str("flag_quiz_description"),
+        name=app_commands.locale_str("games_flagquiz_name"),
+        description=app_commands.locale_str("games_flagquiz_description"),
     )
     async def flag_quiz_cmd(self, ctx):
         await ctx.response.defer()
@@ -378,11 +378,11 @@ class gameCommands(discord.app_commands.Group):
         await flag_quiz(commandInfo)
 
     @app_commands.command(
-        name=app_commands.locale_str("rps_name"),
-        description=app_commands.locale_str("rps_description"),
+        name=app_commands.locale_str("games_rps_name"),
+        description=app_commands.locale_str("games_rps_description"),
     )
     @app_commands.describe(
-        user=app_commands.locale_str("rps_user_description"),
+        user=app_commands.locale_str("games_rps_params_user_description"),
     )
     async def rps_cmd(self, ctx, user: discord.Member = None):
         await ctx.response.defer()
@@ -406,7 +406,7 @@ class gameCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        gameCmds = gameCommands(name="gamecommands", description="Game Commands")
+        gameCmds = gameCommands(name="games", description="Game Commands")
         self.bot.tree.add_command(gameCmds)
 
 
