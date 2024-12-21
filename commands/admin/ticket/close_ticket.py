@@ -134,12 +134,15 @@ async def generate_summary_html(
     """
 
     html += f"""
-    <title>{channel.name}</title>
+    <title>{channel.name} - Ticket Transcript</title>
     """
 
     html += """
-    <link rel="icon" href="https://images-ext-1.discordapp.net/external/FWSPdGnm0UWSgnF35SzaxUBfNYSKLDEZ2aP7lWFGwpo/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/885984139315122206/31004c06c072a0ec1760eebb1358f210.png?format=webp&quality=lossless&width=671&height=671">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://static.tanjun.bot/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://static.tanjun.bot/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://static.tanjun.bot/favicons/favicon-16x16.png">
+    <link rel="manifest" href="https://static.tanjun.bot/favicons/site.webmanifest">
+    <link href="https://static.tanjun.bot/fonts/Roboto" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -149,6 +152,8 @@ async def generate_summary_html(
             justify-content: center;
             align-items: flex-start;
             transition: background 0.5s, color 0.5s;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
 
         .container {
@@ -1627,7 +1632,7 @@ async def generate_summary_html(
                         manage_guild: "Spravovat server",
                         manage_messages: "Spravovat zprávy",
                         manage_nicknames: "Spravovat přezdívky",
-                        manage_permissions: "Spravovat oprávn��ní",
+                        manage_permissions: "Spravovat oprávnění",
                         manage_roles: "Spravovat role",
                         manage_threads: "Spravovat vlákna",
                         manage_webhooks: "Spravovat webhooky",
@@ -2340,7 +2345,7 @@ async def generate_summary_html(
                         create_instant_invite: "तत्काल आमंत्रण बनाएं",
                         create_polls: "पोल बनाएं",
                         create_private_threads: "निजी थ्रेड बनाएं",
-                        create_public_threads: "स���र्वजनिक थ्रेड बनाएं",
+                        create_public_threads: "सार्वजनिक थ्रेड बनाएं",
                         deafen_members: "सदस्यों को बधिर करें",
                         embed_links: "लिंक एम्बेड करें",
                         external_emojis: "बाहरी इमोजी का उपयोग करें",
@@ -2384,7 +2389,7 @@ async def generate_summary_html(
                         use_voice_activation: "वॉइस एक्टिवेशन का उपयोग करें",
                         view_audit_log: "ऑडिट लॉग देखें",
                         view_channel: "चैनल देखें",
-                        view_creator_monetization_analytics: "क्रिएटर मौद���रीकरण विश्लेषण देखें",
+                        view_creator_monetization_analytics: "क्रिएटर मौद्रिकरण विश्लेषण देखें",
                         view_guild_insights: "सर्वर इनसाइट्स देखें",
                         userPopover: {
                             memberSince: "Miembro desde"
@@ -2602,7 +2607,7 @@ async def generate_summary_html(
                         typeChannel: "チャンネル"
                     },
                     permissions: {
-                        add_reaction: "��アクションを追加",
+                        add_reaction: "リアクションを追加",
                         administrator: "管理者",
                         attach_files: "ファイルを添付",
                         ban_members: "メンバーをBAN",
@@ -2658,7 +2663,7 @@ async def generate_summary_html(
                         view_audit_log: "監査ログを表示",
                         view_channel: "チャンネルを表示",
                         view_creator_monetization_analytics: "クリエイター収益化分析を表示",
-                        view_guild_insights: "サーバーインサ���トを表示",
+                        view_guild_insights: "サーバーインサイトを表示",
                         userPopover: {
                             memberSince: "メンバー登録日"
                         }
@@ -2738,8 +2743,8 @@ async def generate_summary_html(
                         send_voice_messages: "음성 메시지 보내기",
                         speak: "말하기",
                         stream: "스트리밍",
-                        use_application_commands: "애플리케이션 ���령어 사용",
-                        use_embedded_activities: "임베드 활동 사���",
+                        use_application_commands: "애플리케이션 명령어 사용",
+                        use_embedded_activities: "임베드 활동 사용",
                         use_external_apps: "외부 앱 사용",
                         use_external_emojis: "외부 이모티콘 사용",
                         use_external_sounds: "외부 소리 사용",
@@ -3376,7 +3381,7 @@ async def generate_summary_html(
                         speak: "Говорить",
                         stream: "Стримить",
                         use_application_commands: "Использовать команды приложений",
-                        use_embedded_activities: "Использовать встроенные ак��ивность",
+                        use_embedded_activities: "Использовать встроенные активность",
                         use_external_apps: "Использовать внешние приложения",
                         use_external_emojis: "Использовать внешние эмодзи",
                         use_external_sounds: "Использовать внешние звуки",
@@ -3385,7 +3390,7 @@ async def generate_summary_html(
                         use_voice_activation: "Использовать активацию голоса",
                         view_audit_log: "Просмотреть журнал аудита",
                         view_channel: "Просмотреть канал",
-                        view_creator_monetization_analytics: "Просмотреть анализ монетизац��и создателей",
+                        view_creator_monetization_analytics: "Просмотреть анализ монетизации создателей",
                         view_guild_insights: "Просмотреть анализ гильдии",
                         userPopover: {
                             memberSince: "Участник с"
@@ -3493,7 +3498,7 @@ async def generate_summary_html(
                         fire: "Eld",
                         underwater: "Under vatten",
                         neonNight: "Neon natt",
-                        highContrastDark: "Hög kontrast m��rk",
+                        highContrastDark: "Hög kontrast mörk",
                         highContrastLight: "Hög kontrast ljus"
                     },
                     searchPlaceholder: "Sök i meddelanden eller avsändare",
@@ -3972,7 +3977,7 @@ async def generate_summary_html(
                     const option = document.createElement('option');
                     option.value = key;
                     option.textContent = value;
-                    if (key === 'fire') option.selected = true;
+                    if (key === 'dark') option.selected = true;
                     themeSelector.appendChild(option);
                 }
 
