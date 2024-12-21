@@ -1,15 +1,46 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from api import get_ticket_messages_by_id, open_ticket
+from api import get_ticket_messages_by_id, open_ticket, check_if_opted_out
 
 
 async def openTicket(interaction: discord.Interaction):
-    if interaction.data["custom_id"].split(";")[0] != "ticket_create":
+    if interaction.data["custom_id"].split(";")[0] != "ticket_create" or interaction.data["custom_id"].split(";")[-1] == "optedOutConfirm":
         return
 
     await interaction.response.defer(ephemeral=True)
 
+    class optedOutView(discord.ui.View):
+        def __init__(self):
+            super().__init__()
+
+        @discord.ui.button(label=tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.confirm"), custom_id=interaction.data["custom_id"] + ";optedOutConfirm")
+        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button):
+            await open_ticket_2(interaction)
+            return
+
+        @discord.ui.button(label=tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.decline"), custom_id="optedOutDecline")
+        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button):
+            await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.declined"), ephemeral=True)
+            return 
+
+        async def on_timeout(self):
+            for item in self.children:
+                item.disabled = True
+            await self.message.edit(view=self)
+
+    if not await check_if_opted_out(interaction.user.id):
+        view = optedOutView()
+        await interaction.followup.send(
+            tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.description"), 
+            view=view,
+            ephemeral=True
+        )
+        return
+    else:
+        await open_ticket_2(interaction)
+
+async def open_ticket_2(interaction: discord.Interaction):
     ticket_id = interaction.data["custom_id"].split(";")[1]
     ticket = await get_ticket_messages_by_id(ticket_id)
 
@@ -17,7 +48,7 @@ async def openTicket(interaction: discord.Interaction):
         await interaction.reply(
             tanjunLocalizer.localize(
                 interaction.locale,
-                "commands.admin.ticket.open_ticket.error.ticketNotFound",
+                "commands.admin.open_ticket.error.ticketNotFound",
             ),
             ephemeral=True,
         )
@@ -36,7 +67,7 @@ async def openTicket(interaction: discord.Interaction):
         await interaction.reply(
             tanjunLocalizer.localize(
                 interaction.locale,
-                "commands.admin.ticket.open_ticket.error.channelMissingPermission",
+                "commands.admin.open_ticket.error.channelMissingPermission",
             ),
             ephemeral=True,
         )
@@ -48,7 +79,7 @@ async def openTicket(interaction: discord.Interaction):
             if interaction.guild.preferred_locale
             else interaction.locale
         ),
-        "commands.admin.ticket.open_ticket.success.ticketCreated",
+        "commands.admin.open_ticket.success.ticketCreated",
         user=interaction.user,
     )
 
@@ -87,7 +118,7 @@ async def openTicket(interaction: discord.Interaction):
         style=discord.ButtonStyle.danger,
         label=tanjunLocalizer.localize(
             interaction.locale,
-            "commands.admin.ticket.close_ticket.button.label",
+            "commands.admin.close_ticket.button.label",
         ),
         custom_id=f"ticket_close;{ticket_id};{thread.id}",
     )
@@ -95,7 +126,7 @@ async def openTicket(interaction: discord.Interaction):
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             interaction.locale,
-            "commands.admin.ticket.open_ticket.success.ticketCreated",
+            "commands.admin.open_ticket.success.ticketCreated",
         ),
     )
 
@@ -104,7 +135,8 @@ async def openTicket(interaction: discord.Interaction):
     await interaction.followup.send(
         tanjunLocalizer.localize(
             interaction.locale,
-            "commands.admin.ticket.open_ticket.success.ticketCreated",
+            "commands.admin.open_ticket.success.ticketCreated",
         ),
         ephemeral=True,
     )
+

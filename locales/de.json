@@ -875,11 +875,30 @@
                 },
                 "embed": {
                     "title": "Ticket erstellen",
-                    "description": "Klicke auf den Button, um ein Ticket ${name} zu erstellen.\n${description}\n-# Beachte, dass der Bot deine Nachrichten ggf. ansieht und bearbeitet, selbst wenn du die Nachrichtenverfolgung deaktiviert hast. Mit erstellen eines Tickets erklärst du dich damit einverstanden, dass der Bot deine Nachrichten im Ticket Kanal ansieht und bearbeitet."
+                    "description": "Klicke auf den Button, um ein Ticket ${name} zu erstellen.\n${description}"
                 },
                 "success": {
                     "title": "Ticket erfolgreich erstellt",
                     "description": "Das Ticket wurde erfolgreich erstellt. Du kannst das Ticket über den Button in der Nachricht sehen.\n#- Die Sprache der Ticket Nachricht wird auf deine Discord Sprache gesetzt. Wenn die Nachricht in der falschen Sprache ist, musst du ggf. die Sprache von deinem Discord kurzzeitig ändern."
+                }
+            },
+            "open_ticket": {
+                "optedOutWarning": {
+                    "description": "Beachte, dass du die Nachrichtenverfolgung deaktiviert hast. In diesem Ticket wird der Bot dennoch deine Nachrichten lesen und verarbeiten. Wenn du ein Ticket erstellst, erklärst du dich damit einverstanden, dass der Bot Nachrichten von dir, die du in diesem Ticket sendest, lesen und verarbeiten wird.",
+                    "confirm": "Ich stimme zu",
+                    "decline": "Ich stimme nicht zu",
+                    "declined": "Da du nicht möchtest, dass der Bot deine Nachrichten lesen und verarbeiten kann, kannst du das Ticket nicht erstellen."
+                },
+                "error": {
+                    "ticketNotFound": "Das Ticket wurde nicht gefunden. Leider kann das Ticket nicht geöffnet werden.",
+                    "channelMissingPermission": "Der Bot hat nicht die erforderlichen Berechtigungen, um ein Ticket zu erstellen. Der Bot benötigt die Berechtigung `Nachrichten senden`.",
+                    "ticketCreated": "Ticket erfolgreich erstellt",
+                    "success": {
+                        "ticketCreated": "Ticket erfolgreich erstellt"
+                    }
+                },
+                "success": {
+                    "ticketCreated": "Ticket erfolgreich erstellt"
                 }
             },
             "close_ticket": {
@@ -895,6 +914,9 @@
                     "viewThread": "Thread ansehen",
                     "ticketClosed": "Ticket wurde geschlossen",
                     "ticketClosedDescription": "Das Ticket wurde erfolgreich geschlossen. Du kannst das Ticket über den Button in der Nachricht sehen."
+                },
+                "button": {
+                    "label": "Ticket schließen"
                 }
             },
             "jointocreatechannel": {
