@@ -12,6 +12,8 @@ def dump_database_schema(user, password, output_file):
         '-u', user,
         f'--password={password}',
         "--all-databases",
+        "--ignore-table=shlink.visit_locations",
+        "--ignore-table=shlink.visits",
     ]
     
     try:
