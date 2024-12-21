@@ -138,8 +138,11 @@ async def generate_summary_html(
     """
 
     html += """
-    <link rel="icon" href="https://images-ext-1.discordapp.net/external/FWSPdGnm0UWSgnF35SzaxUBfNYSKLDEZ2aP7lWFGwpo/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/885984139315122206/31004c06c072a0ec1760eebb1358f210.png?format=webp&quality=lossless&width=671&height=671">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://static.tanjun.bot/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://static.tanjun.bot/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://static.tanjun.bot/favicons/favicon-16x16.png">
+    <link rel="manifest" href="https://static.tanjun.bot/favicons/site.webmanifest">
+    <link href="https://static.tanjun.bot/fonts/Roboto" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
