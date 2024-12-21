@@ -11,9 +11,8 @@ def dump_database_schema(user, password, output_file):
         'mysqldump',
         '-u', user,
         f'--password={password}',
-        "--all-databases",
-        "--ignore-table=shlink.visit_locations",
-        "--ignore-table=shlink.visits",
+        '--all-databases',
+        '--ignore-database=shlink',
     ]
     
     try:
