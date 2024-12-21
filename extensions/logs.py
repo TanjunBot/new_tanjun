@@ -7,7 +7,7 @@ from api import get_log_enable, get_log_channel, is_log_channel_blacklisted, is_
 from localizer import tanjunLocalizer
 import os
 import difflib
-from utility import upload_to_byte_bin
+from utility import upload_to_tanjun_logs
 
 from commands.logs.set_log_channel import set_log_channel
 from commands.logs.remove_log_channel import remove_log_channel
@@ -31,7 +31,7 @@ class EmbedColors:
     yellow = 0xFFBF00
     red = 0xFF0000
 
-async def sendLogEmbeds(self):
+async def sendLogEmbeds(bot):
     global embeds
     print("Sending log embeds, Embeds: ", embeds)
     for guildId, ems in embeds.items():
@@ -41,7 +41,7 @@ async def sendLogEmbeds(self):
         print(f"Sending {len(ems)} embeds to {destination}")
         if destination is None:
             continue
-        destinationChannel = self.bot.get_channel(int(destination))
+        destinationChannel = bot.get_channel(int(destination))
         if destinationChannel is None:
             continue
         for i in range(0, len(ems), 10):
@@ -755,7 +755,7 @@ class LogsCog(commands.Cog):
         if creator:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.created_by", creator=creator))
 
-        description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.name", channel=channel.name))
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.name", name=channel.name))
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.type", type=str(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.types." + str(channel.type)))))
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.created_at", created_at=utility.date_time_to_timestamp(channel.created_at)))
         if channel.category:
@@ -1347,7 +1347,7 @@ class LogsCog(commands.Cog):
             else:
                 description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUpdate.timeoutRemoved"))
 
-        if len(description_parts) == 1:
+        if len(description_parts) >= 2:
             return
 
         # Join all parts with newlines
@@ -1585,7 +1585,7 @@ class LogsCog(commands.Cog):
 
             # Check if either message exceeds 1500 characters
             if len(diff_summary) > 1500:
-                diff_summary_url = await upload_to_byte_bin(tanjunLocalizer.localize(locale, "logs.messageEdit.diff", diff=diff_summary))
+                diff_summary_url = await upload_to_tanjun_logs(tanjunLocalizer.localize(locale, "logs.messageEdit.diff", diff=diff_summary))
 
                 description_parts.append(tanjunLocalizer.localize(locale, "logs.messageEdit.tooLongNotice", url=diff_summary_url))
                 

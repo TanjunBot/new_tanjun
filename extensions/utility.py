@@ -23,6 +23,7 @@ from commands.utility.setupBoosterChannel import setupBoosterChannel as setupboo
 from commands.utility.schedulemessage import schedule_message as scheduleMessageCommand
 from commands.utility.listscheduled import list_scheduled_messages as listScheduledCommand
 from commands.utility.removescheduled import remove_scheduled_message as removeScheduledCommand
+from commands.utility.report import report as reportCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -413,6 +414,30 @@ class utilityCommands(discord.app_commands.Group):
         )
 
         await afkCommand(commandInfo=commandInfo, reason=reason)
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_report_name"),
+        description=app_commands.locale_str("utility_report_description"),
+    )
+    @app_commands.describe(
+        user="The user to report.",
+        reason="The reason for reporting the user.",
+    )
+    async def report(self, ctx, user: discord.Member, reason: str):
+        await ctx.response.defer(ephemeral=True)
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await reportCommand(commandInfo=commandInfo, user=user, reason=reason)
+
 
 class ScheduledMessageCommands(discord.app_commands.Group):
     @app_commands.command(

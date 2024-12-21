@@ -716,6 +716,346 @@
                     "title": "Fehler beim Festlegen der Booster-Rolle",
                     "description": "Beim Versuch, die Booster-Rolle festzulegen, ist ein Fehler aufgetreten."
                 }
+            },
+            "copyrole": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um die Rolle zu kopieren. Du benötigst `Rollen verwalten` Berechtigungen."
+                },
+                "missingPermissionBot": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um die Rolle zu kopieren. Der Bot benötigt die Berechtigung `Rollen verwalten`."
+                },
+                "success": {
+                    "title": "Rolle erfolgreich kopiert",
+                    "description": "Die Rolle wurde erfolgreich kopiert."
+                },
+                "reason": "Rolle kopiert von ${name}"
+            },
+            "reports": {
+                "set_channel": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen, um den Report-Kanal festzulegen. Du benötigst `Administrator` Berechtigungen."
+                    },
+                    "missingPermissionBot": {
+                        "title": "Bot hat fehlende Berechtigung",
+                        "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um den Report-Kanal festzulegen. Der Bot benötigt die Berechtigung `Nachrichten senden`."
+                    },
+                    "alreadySet": {
+                        "title": "Report-Kanal bereits festgelegt",
+                        "description": "Der Report-Kanal wurde bereits festgelegt. Entferne den Aktuellen Report-Kanal, um einen neuen festzulegen."
+                    },
+                    "success": {
+                        "title": "Report-Kanal erfolgreich festgelegt",
+                        "description": "Der Report-Kanal wurde erfolgreich festgelegt. Reports werden jetzt in den Kanal gesendet."
+                    }
+                },
+                "show_reports": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du benötigst die Berechtigung `Server verwalten`, um die Warnungen zu sehen."
+                    },
+                    "noReports": {
+                        "title": "Keine Reports",
+                        "description": "Es sind keine Reports vorhanden."
+                    },
+                    "previous": {
+                        "label": "Vorherige Seite"
+                    },
+                    "remove": {
+                        "label": "Löschen"
+                    },
+                    "resolve": {
+                        "label": "Lösen"
+                    },
+                    "next": {
+                        "label": "Nächste Seite"
+                    },
+                    "report": {
+                        "title": "Reports ${index} von ${total}",
+                        "description": "Report eingereicht von <@${reporter}> am <t:${createdAt}:D> gegen <@${user}>\nGrund: ${reason}",
+                        "accepted": "Report akzeptiert am <t:${acceptedAt}:D>",
+                        "not_accepted": "Report nicht akzeptiert",
+                        "resolved": "Report gelöst am <t:${resolvedAt}:D>",
+                        "not_resolved": "Report noch nicht gelöst"
+                    },
+                    "not_your_warns": "Du darfst nicht mit den Buttons interagieren."
+                }
+            },
+            "trigger_messages": {
+                "add": {
+                    "success": {
+                        "title": "Trigger-Nachricht erfolgreich hinzugefügt",
+                        "description": "Die Trigger-Nachricht wurde erfolgreich hinzugefügt."
+                    },
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen, um eine Trigger-Nachricht hinzuzufügen. Du benötigst `Administrator` Berechtigungen."
+                    }
+                },
+                "configure": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen, um die Trigger-Nachrichten zu sehen. Du benötigst `Administrator` Berechtigungen."
+                    },
+                    "noTriggerMessages": {
+                        "title": "Keine Trigger-Nachrichten",
+                        "description": "Es sind keine Trigger-Nachrichten vorhanden."
+                    },
+                    "trigger": {
+                        "title": "Trigger-Nachrichten",
+                        "description": "## Trigger-Nachricht: \nTrigger: ${trigger}\nAntwort: ${response}",
+                        "caseSensitive": "Groß-/Kleinschreibung wird beachtet",
+                        "caseInsensitive": "Groß-/Kleinschreibung wird ignoriert",
+                        "channels": "Aktiv in Kanälen:",
+                        "noChannels": "Trigger-Nachricht ist in keinem Kanal aktiv. Sie ist also quasi deaktiviert.",
+                        "noTriggerMessages": {
+                            "title": "Keine Trigger-Nachrichten",
+                            "description": "Es sind keine Trigger-Nachrichten vorhanden."
+                        },
+                        "addChannel": {
+                            "placeholder": "Kanal hinzufügen",
+                            "title": "Trigger-Nachricht in Kanal aktivieren",
+                            "description": "Wähle aus, in welchen Kanal du die Trigger-Nachricht aktivieren möchtest.\n-# In allen anderen Aktivierten Kanälen wird die Trigger-Nachricht weiterhin aktiv sein."
+                        }
+                    },
+                    "modal": {
+                        "title": "Trigger-Nachricht hinzufügen",
+                        "trigger": {
+                            "label": "Trigger",
+                            "placeholder": "Trigger"
+                        },
+                        "response": {
+                            "label": "Antwort",
+                            "placeholder": "Antwort"
+                        },
+                        "caseSensitive": {
+                            "label": "Groß-/Kleinschreibung beachten (y/n)",
+                            "placeholder": "Groß-/Kleinschreibung beachten (y/n)"
+                        }
+                    },
+                    "previous": {
+                        "label": "Vorherige Seite"
+                    },
+                    "remove": {
+                        "label": "Löschen"
+                    },
+                    "new": {
+                        "label": "Neu hinzufügen"
+                    },
+                    "next": {
+                        "label": "Nächste Seite"
+                    },
+                    "up": {
+                        "label": "Nach oben"
+                    },
+                    "add_channel": {
+                        "label": "Kanal hinzufügen"
+                    },
+                    "remove_channel": {
+                        "label": "Kanal entfernen"
+                    },
+                    "down": {
+                        "label": "Nach unten"
+                    }
+                }
+            },
+            "create_ticket": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um ein Ticket zu erstellen. Du benötigst `Moderator` Berechtigungen."
+                },
+                "missingBotPermission": {
+                    "title": "Bot hat fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in den angegebenen Kanal zu senden. Der Bot benötigt die Berechtigung `Nachrichten senden`. Stelle außerdem sicher, dass der Bot den angegebenen Kanal sehen kann."
+                },
+                "button": {
+                    "label": "Ticket erstellen"
+                },
+                "embed": {
+                    "title": "Ticket erstellen",
+                    "description": "Klicke auf den Button, um ein Ticket ${name} zu erstellen.\n${description}"
+                },
+                "success": {
+                    "title": "Ticket erfolgreich erstellt",
+                    "description": "Das Ticket wurde erfolgreich erstellt. Du kannst das Ticket über den Button in der Nachricht sehen.\n#- Die Sprache der Ticket Nachricht wird auf deine Discord Sprache gesetzt. Wenn die Nachricht in der falschen Sprache ist, musst du ggf. die Sprache von deinem Discord kurzzeitig ändern."
+                }
+            },
+            "open_ticket": {
+                "optedOutWarning": {
+                    "description": "Beachte, dass du die Nachrichtenverfolgung deaktiviert hast. In diesem Ticket wird der Bot dennoch deine Nachrichten lesen und verarbeiten. Wenn du ein Ticket erstellst, erklärst du dich damit einverstanden, dass der Bot Nachrichten von dir, die du in diesem Ticket sendest, lesen und verarbeiten wird.",
+                    "confirm": "Ich stimme zu",
+                    "decline": "Ich stimme nicht zu",
+                    "declined": "Da du nicht möchtest, dass der Bot deine Nachrichten lesen und verarbeiten kann, kannst du das Ticket nicht erstellen."
+                },
+                "error": {
+                    "ticketNotFound": "Das Ticket wurde nicht gefunden. Leider kann das Ticket nicht geöffnet werden.",
+                    "channelMissingPermission": "Der Bot hat nicht die erforderlichen Berechtigungen, um ein Ticket zu erstellen. Der Bot benötigt die Berechtigung `Nachrichten senden`.",
+                    "ticketCreated": "Ticket erfolgreich erstellt",
+                    "success": {
+                        "ticketCreated": "Ticket erfolgreich erstellt"
+                    }
+                },
+                "success": {
+                    "ticketCreated": "Ticket erfolgreich erstellt"
+                }
+            },
+            "close_ticket": {
+                "error": {
+                    "ticketNotFound1": "Das Ticket wurde nicht gefunden. Leider kann das Ticket nicht geschlossen werden.",
+                    "ticketNotFound2": "Das Ticket wurde nicht gefunden. Leider kann das Ticket nicht geschlossen werden.",
+                    "ticketNotFound3": "Das Ticket wurde nicht gefunden. Der Ticket-Kanal wurde nicht gefunden. Leider kann das Ticket nicht geschlossen werden."
+                },
+                "success": {
+                    "title": "Ticket erfolgreich geschlossen",
+                    "description": "Das Ticket wurde erfolgreich geschlossen. Du kannst das Ticket über den Button in der Nachricht sehen.",
+                    "viewOnlineSummary": "Online Zusammenfassung ansehen",
+                    "viewThread": "Thread ansehen",
+                    "ticketClosed": "Ticket wurde geschlossen",
+                    "ticketClosedDescription": "Das Ticket wurde erfolgreich geschlossen. Du kannst das Ticket über den Button in der Nachricht sehen."
+                },
+                "button": {
+                    "label": "Ticket schließen"
+                }
+            },
+            "jointocreatechannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal festzulegen, der erstellt wird, wenn ein Mitglied den Server betritt. Du benötigst `Kanal verwalten` Berechtigungen."
+                },
+                "alreadySet": {
+                    "title": "Kanal bereits festgelegt",
+                    "description": "Der Kanal wurde bereits als Join-to-Create Kanal festgelegt. Wenn du nicht mehr möchtest, dass der Bot Kanäle erstellt, kannst du den Kanal als Join-to-Create Kanal entfernen."
+                },
+                "success": {
+                    "title": "Kanal erfolgreich festgelegt",
+                    "description": "Der Kanal wurde erfolgreich festgelegt. Kanäle werden jetzt erstellt, wenn ein Mitglied den Server betritt."
+                }
+            },
+            "removejointocreatechannel": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal als Join-to-Create Kanal zu entfernen. Du benötigst `Kanal verwalten` Berechtigungen."
+                },
+                "notSet": {
+                    "title": "Kanal nicht festgelegt",
+                    "description": "Der Kanal ist kein Join-to-Create Kanal."
+                },
+                "success": {
+                    "title": "Kanal erfolgreich entfernt",
+                    "description": "Der Kanal wurde erfolgreich entfernt. Kanäle werden jetzt nicht mehr erstellt, wenn ein Mitglied den Server betritt."
+                }
+            },
+            "joinToCreateListener": {
+                "success": {
+                    "title": "Das ist jetzt dein Kanal",
+                    "description": "Dies ist jetzt dein persönlicher Kanal. Du kannst ihn Nutzen und Konfigurieren wie du möchtest."
+                },
+                "channelDeleted": {
+                    "title": "Dein Kanal wurde gelöscht",
+                    "description": "Dein Kanal wurde soeben gelöscht, da der bot ein Update durchführt. Du solltest in einigen Sekunden wieder einen neuen Kanal erstellen können. Ich entschuldige mich für die Unannehmlichkeiten."
+                }
+            },
+            "channel": {
+                "media": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal festzulegen, der Nachrichten mit Medien enthält. Du benötigst `Kanal verwalten` Berechtigungen."
+                    },
+                    "missingPermissionBot": {
+                        "title": "Bot hat fehlende Berechtigung",
+                        "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um den Medien-Kanal korrekt zu verwalten. Der Bot benötigt die Berechtigung `Nachrichten Verwalten` und `Nachrichtenverlauf lesen` in dem angegebenen Kanal."
+                    },
+                    "alreadySet": {
+                        "title": "Medien-Kanal bereits festgelegt",
+                        "description": "Der Kanal ist bereits ein Medien-Kanal. Du brauchst ihn also nicht erneut festzulegen."
+                    },
+                    "success": {
+                        "title": "Medien-Kanal erfolgreich festgelegt",
+                        "description": "Der Kanal ist nun ein Medien Kanal. Es können jetzt nur noch Nachrichten mit Medien in diesen Kanal gesendet werden."
+                    },
+                    "infoMessage": {
+                        "title": "Medien-Kanal",
+                        "description": "Dieser Kanal ist jetzt ein Medien-Kanal. Es können jetzt nur noch Nachrichten mit Medien in diesen Kanal gesendet werden. Nachrichten ohne Anhänge werden automatisch gelöscht."
+                    },
+                    "notSet": {
+                        "title": "Kanal ist kein Medien-Kanal",
+                        "description": "Der Kanal ist kein Medien-Kanal. Du brauchst ihn also nicht zu entfernen."
+                    },
+                    "deleteSuccess": {
+                        "title": "Medien-Kanal erfolgreich entfernt",
+                        "description": "Der Medien-Kanal wurde erfolgreich entfernt. Es können jetzt wieder alle Nachrichten in den Kanal gesendet werden."
+                    },
+                    "infoMessageDelete": {
+                        "title": "Medien-Kanal entfernt",
+                        "description": "Dieser Kanal ist kein Medien-Kanal mehr. Es können jetzt wieder alle Nachrichten in den Kanal gesendet werden."
+                    },
+                    "optedOut": {
+                        "title": "Nachrichtenverfolgung deaktiviert",
+                        "description": "Du hast die Nachrichtenverfolgung deaktiviert. Das bedeutet, dass ich keine Nachrichten lese, die du sendest. Dementsprechend kann ich auch nicht sicherstellen, dass du eine Nachricht mit Medien sendest, wodurch ich leider alle Nachrichten löschen muss, die du in den Medien-Kanal sendest. Bitte aktiviere die Nachrichtenverfolgung wieder, wenn du Nachrichten in den Medien-Kanal senden möchtest."
+                    },
+                    "onlyMedia": {
+                        "title": "Nur Nachrichten mit Medien",
+                        "description": "Du hast eine Nachricht ohne Medien gesendet. Es sind nur Nachrichten erlaubt, welche Anhänge haben."
+                    }
+                },
+                "welcome": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen. Du benötigst `Administrator` Berechtigungen."
+                    },
+                    "missingBotPermission": {
+                        "title": "Bot hat fehlende Berechtigung",
+                        "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um den Willkommens-Kanal korrekt zu verwalten. Der Bot benötigt die Berechtigung `Nachrichten senden` und `Nachrichtenverlauf lesen` in dem angegebenen Kanal."
+                    },
+                    "alreadySet": {
+                        "title": "Willkommens-Kanal bereits festgelegt",
+                        "description": "Der Kanal ist bereits ein Willkommens-Kanal. Du brauchst ihn also nicht erneut festzulegen."
+                    },
+                    "success": {
+                        "title": "Willkommens-Kanal erfolgreich festgelegt",
+                        "description": "Der Kanal wurde erfolgreich festgelegt. Willkommens-Nachrichten werden jetzt in ${channel} gesendet."
+                    },
+                    "notSet": {
+                        "title": "Willkommens-Kanal nicht festgelegt",
+                        "description": "Der Willkommens-Kanal wurde nicht festgelegt. Setze ihn über `/welcome set`."
+                    },
+                    "deleteSuccess": {
+                        "title": "Willkommens-Kanal erfolgreich entfernt",
+                        "description": "Der Willkommens-Kanal wurde erfolgreich entfernt."
+                    },
+                    "defaultWelcomeMessage": "{user}, ist leider nicht mehr auf {guild}.\nSo'n mist aber auch :(",
+                    "memberNumber": "Mitglied Nummer ${member_count}"
+                },
+                "farewell": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen. Du benötigst `Administrator` Berechtigungen."
+                    },
+                    "missingBotPermission": {
+                        "title": "Bot hat fehlende Berechtigung",
+                        "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um den Verabschiedungs-Kanal korrekt zu verwalten. Der Bot benötigt die Berechtigung `Nachrichten senden` und `Nachrichtenverlauf lesen` in dem angegebenen Kanal."
+                    },
+                    "alreadySet": {
+                        "title": "Verabschiedungs-Kanal bereits festgelegt",
+                        "description": "Der Kanal ist bereits ein Verabschiedungs-Kanal. Du brauchst ihn also nicht erneut festzulegen."
+                    },
+                    "success": {
+                        "title": "Verabschiedungs-Kanal erfolgreich festgelegt",
+                        "description": "Der Kanal wurde erfolgreich festgelegt. Verabschiedungs-Nachrichten werden jetzt in ${channel} gesendet."
+                    },
+                    "notSet": {
+                        "title": "Verabschiedungs-Kanal nicht festgelegt",
+                        "description": "Der Verabschiedungs-Kanal wurde nicht festgelegt. Setze ihn über `/farewell set`."
+                    },
+                    "deleteSuccess": {
+                        "title": "Verabschiedungs-Kanal erfolgreich entfernt",
+                        "description": "Der Verabschiedungs-Kanal wurde erfolgreich entfernt."
+                    },
+                    "defaultFarewellMessage": "{user}, wir freuen uns, dass du bei uns warst! Wir hoffen, dass du viel Spaß auf dem Server hatte! Wir wünschen dir alles Gute und wir freuen uns, dich bald wieder zu sehen! Du bist das {member}. Mitglied.",
+                    "memberNumber": "Mitglied Nummer ${member_count}"
+                }
             }
         },
         "logs": {
@@ -1472,6 +1812,65 @@
                 "success": {
                     "title": "Nachricht erfolgreich geplant",
                     "description": "Die Nachricht wurde erfolgreich geplant."
+                }
+            },
+            "reports": {
+                "blocked": {
+                    "title": "Du darfst nicht mehr reporten",
+                    "description": "Scheinbar hast du das Report System ausgenutzt. Du darfst auf diesen Server nicht mehr reporten. Shame on you!"
+                },
+                "no_report_channel": {
+                    "title": "Kein Reportkanal",
+                    "description": "Es ist kein Reportkanal eingestell. Das Report System ist also nicht vollständig eingerichtet. Bitte wende dich an die Server-Administratoren, damit sie das Report System eingerichten können."
+                },
+                "report_channel_not_found": {
+                    "title": "Reportkanal nicht gefunden",
+                    "description": "Der Reportkanal wurde möglicherweise gelöscht oder ist nicht mehr verfügbar. Bitte wende dich an die Server-Administratoren, damit sie das Report System erneut einrichten können."
+                },
+                "no_permission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Ich würde gerne den Report senden, jedoch geht das nicht. Ich habe nicht die Berechtigung 'Nachrichten senden' im von der Server-Administratoren eingerichteten Reportkanal. Bitte wende dich an die Server-Administratoren, damit sie die Berechtigung 'Nachrichten senden' für mich einrichten können."
+                },
+                "no_reason": {
+                    "title": "Kein Grund angegeben",
+                    "description": "Du musst einen Grund angeben, warum du den User reporten möchtest."
+                },
+                "reason_too_short": {
+                    "title": "Grund zu kurz",
+                    "description": "Der Grund muss mindestens 12 Zeichen lang sein."
+                },
+                "accept": {
+                    "label": "Akzeptieren"
+                },
+                "reject": {
+                    "label": "Ablehnen"
+                },
+                "block_reporter": {
+                    "label": "Blockieren"
+                },
+                "report_sent": {
+                    "title": "Report gesendet",
+                    "description": "Der Report wurde erfolgreich gesendet. Bitte warte, bis ein Server-Administrator den Report bearbeitet.\n-# Du wirst keine weiteren Informationen zu diesem Report erhalten, es sei denn die Server-Administratoren Sagen dir bescheid."
+                },
+                "new_report": {
+                    "title": "Neuer Report",
+                    "description": "${reporter} hat ${user} reportet.\nGrund: ${reason}"
+                },
+                "report_accepted": {
+                    "title": "Report akzeptiert",
+                    "description": "Der Report wurde erfolgreich akzeptiert. Er ist jetzt in der Report-Liste aufgeführt. Die Nachricht kann jetzt gelöscht werden."
+                },
+                "report_rejected": {
+                    "title": "Report abgelehnt",
+                    "description": "Der Report wurde erfolgreich abgelehnt. Er Wird nicht in der Report-Liste aufgeführt und die Nachricht kann jetzt gelöscht werden."
+                },
+                "reporter_blocked": {
+                    "title": "Reporter blockiert",
+                    "description": "Der Reporter wurde erfolgreich blockiert. Er kann auf diesen Server nicht mehr reporten. Der Report kann über den `Akzeptieren` Knopf dennoch akzeptiert werden."
+                },
+                "invalid_action": {
+                    "title": "Ungültige Aktion",
+                    "description": "Irgendetwas ist schief gelaufen. Der Report konnte nicht bearbeitet werden. Versuche bitte, den Report erneut zu versenden."
                 }
             }
         },
@@ -4601,8 +5000,8 @@
         "memberUpdate": {
             "name": "Mitglied aktualisiert: ${member}",
             "displayName": "Anzeigename geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
-            "addedRoles": "Hinzugefügte Rollen:\n${added_roles}",
-            "removedRoles": "Entfernte Rollen:\n${removed_roles}",
+            "addedRoles": "Hinzugefügte Rollen:\n${roles}",
+            "removedRoles": "Entfernte Rollen:\n${roles}",
             "pending": "Der User ist jetzt verifiziert",
             "pendingRemoved": "Der User ist nicht mehr verifiziert",
             "timeout": "Wurde in Timeout geschickt bis: <t:${timeout}:R>\n",

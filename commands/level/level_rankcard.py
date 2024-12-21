@@ -13,35 +13,9 @@ import os
 from io import BytesIO
 import aiohttp
 from concurrent.futures import ThreadPoolExecutor
+from utility import upload_image_to_imgbb
 
 executor = ThreadPoolExecutor()
-
-
-async def upload_image_to_imgbb(image_bytes, file_extension):
-    # Create a temporary file with the appropriate file extension
-    with tempfile.NamedTemporaryFile(
-        delete=False, suffix="." + file_extension, mode="wb"
-    ) as temp_file:
-        temp_file.write(image_bytes)
-        temp_file_path = temp_file.name
-
-    # Upload the image to ImgBB
-    async with aiohttp.ClientSession() as session:
-        with open(temp_file_path, "rb") as image_file:
-            form_data = aiohttp.FormData()
-            form_data.add_field("key", config.ImgBBApiKey)
-            form_data.add_field("image", image_file)
-            form_data.add_field("name", f"tbg")
-
-            async with session.post(
-                "https://api.imgbb.com/1/upload", data=form_data
-            ) as response:
-                response_data = await response.json()
-
-    # Optionally, delete the temporary file if you want to clean up
-    os.remove(temp_file_path)
-
-    return response_data
 
 
 async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):

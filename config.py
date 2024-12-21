@@ -3,10 +3,10 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 
-version = "0.7.0"
+version = "0.7.20"
 token = config["token"]
-applicationId = "832297321793323028"
-adminIds = [766350321638309958, 471036610561966111]
+applicationId = config["applicationId"]
+adminIds = [int(id) for id in config["adminIds"].split(",")]
 activity = "Tanjun {version}"
 database_ip = config["database_ip"]
 database_password = config["database_password"]
@@ -17,3 +17,7 @@ tenorCKey = config["tenorCKey"]
 GithubAuthToken = config["GithubAuthToken"]
 ImgBBApiKey = config["ImgBBApiKey"]
 openAiKey = config["openAIKey"]
+bytebin_url = config["bytebin_url"]
+bytebin_password = config["bytebin_password"]
+bytebin_username = config["bytebin_username"]
+

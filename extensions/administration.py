@@ -14,6 +14,16 @@ from tests import (
     test_database,
     test_commands,
 )
+import subprocess
+import platform
+from extensions.logs import sendLogEmbeds
+from loops.create_database_backup import create_database_backup
+from commands.admin.joinToCreate.joinToCreateListener import removeAllJoinToCreateChannels
+import aiohttp
+from commands.admin.channel.welcome import welcomeNewUser
+
+from commands.admin.channel.farewell import farewellUser
+
 
 class administrationCog(commands.Cog):
     def __init__(self, bot):
@@ -92,16 +102,38 @@ class administrationCog(commands.Cog):
         await ctx.send(str(text)[:4000])
 
     @commands.command()
-    async def tle1(self, ctx):
+    async def update(self, ctx):
+        print(config.adminIds)
         if ctx.author.id not in config.adminIds:
             return
-        await test_log_enable()
+
+        sh_file = "update.sh"
+        await sendLogEmbeds(self.bot)
+        await create_database_backup(self.bot)
+        await removeAllJoinToCreateChannels()
+        await ctx.send("Updating...")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                f"http://127.0.0.1:6969/restart/{self.bot.application_id}"
+            ) as response:
+                await ctx.send(await response.text())
 
     @commands.command()
-    async def tle2(self, ctx):
+    async def welcome(self, ctx, user: discord.Member = None):
+        if user is None:
+            user = ctx.author
         if ctx.author.id not in config.adminIds:
             return
-        await test_log_enable_2()
+        await welcomeNewUser(user)
+
+    @commands.command()
+    async def farewell(self, ctx, user: discord.Member = None):
+        if user is None:
+            user = ctx.author
+        if ctx.author.id not in config.adminIds:
+            return
+        await farewellUser(user)
+
 
 async def setup(bot):
     await bot.add_cog(administrationCog(bot))

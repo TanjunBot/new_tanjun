@@ -21,9 +21,16 @@ from commands.ai.add_custom_situation_button_handler import approve_custom_situa
 
 from commands.utility.autopublish import publish_message
 from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
-
+from commands.utility.report import report_btn_click
 from api import update_scheduled_message_content, remove_scheduled_message
+from commands.admin.trigger_messages.send import send_trigger_message
 
+from commands.admin.ticket.open_ticket import openTicket as openTicketListener
+from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
+from commands.admin.joinToCreate.joinToCreateListener import memberLeave, memberJoin
+from commands.admin.channel.media import mediaChannelMessage
+from commands.admin.channel.welcome import welcomeNewUser
+from commands.admin.channel.farewell import farewellUser
 
 class ListenerCog(commands.Cog):
 
@@ -41,6 +48,8 @@ class ListenerCog(commands.Cog):
         await publish_message(message)
         await checkIfAfkHasToBeRemoved(message)
         await checkIfMentionsAreAfk(message)
+        await send_trigger_message(message)
+        await mediaChannelMessage(message)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
@@ -58,11 +67,22 @@ class ListenerCog(commands.Cog):
                 if interaction.user.id not in adminIds:
                     return
                 await deny_custom_situation(interaction)
+            elif interaction.data["custom_id"].startswith("report_"):
+                await report_btn_click(interaction, interaction.data["custom_id"])
+                return
+            elif interaction.data["custom_id"].startswith("ticket_create"):
+                await openTicketListener(interaction)
+                return
+            elif interaction.data["custom_id"].startswith("ticket_close"):
+                await closeTicketListener(interaction)
+                return
         except:
-            pass
+            raise
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user, before, after):
+        await memberLeave(before)
+        await memberJoin(after, user)
         await handleVoiceChange(user, before, after)
         await handleLevelVoiceChange(user, before, after)
 
@@ -74,6 +94,14 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         await remove_scheduled_message(message.id)
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        await welcomeNewUser(member)
+
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        await farewellUser(member)
 
 async def setup(bot):
     await bot.add_cog(ListenerCog(bot))
