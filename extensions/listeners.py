@@ -28,6 +28,8 @@ from commands.admin.trigger_messages.send import send_trigger_message
 from commands.admin.ticket.open_ticket import openTicket as openTicketListener
 from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
 from commands.admin.joinToCreate.joinToCreateListener import memberLeave, memberJoin
+from commands.admin.channel.media import mediaChannelMessage
+
 
 class ListenerCog(commands.Cog):
 
@@ -46,6 +48,7 @@ class ListenerCog(commands.Cog):
         await checkIfAfkHasToBeRemoved(message)
         await checkIfMentionsAreAfk(message)
         await send_trigger_message(message)
+        await mediaChannelMessage(message)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):

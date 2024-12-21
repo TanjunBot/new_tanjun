@@ -41,8 +41,17 @@ from commands.admin.trigger_messages.add import (
 )
 
 from commands.admin.ticket.create_ticket import create_ticket as createTicketCommand
-from commands.admin.joinToCreate.jointocreatechannel import jointocreatechannel as jointoCreateChannelCommand
-from commands.admin.joinToCreate.removejointocreatechannel import removejointocreatechannel as removeJoinToCreateChannelCommand
+from commands.admin.joinToCreate.jointocreatechannel import (
+    jointocreatechannel as jointoCreateChannelCommand,
+)
+from commands.admin.joinToCreate.removejointocreatechannel import (
+    removejointocreatechannel as removeJoinToCreateChannelCommand,
+)
+from commands.admin.channel.media import (
+    addMediaChannel as addMediaChannelCommand,
+    removeMediaChannel as removeMediaChannelCommand,
+)
+
 
 class WarnCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -488,7 +497,8 @@ class TriggerMessagesCommands(discord.app_commands.Group):
         )
         return
 
-class JoinToCreateCommands(discord.app_commands.Group): 
+
+class JoinToCreateCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_jtc_set_channel_name"),
         description=app_commands.locale_str("admin_jtc_set_channel_description"),
@@ -509,7 +519,7 @@ class JoinToCreateCommands(discord.app_commands.Group):
 
         await jointoCreateChannelCommand(commandInfo=commandInfo, channel=channel)
         return
-    
+
     @app_commands.command(
         name=app_commands.locale_str("admin_jtc_remove_channel_name"),
         description=app_commands.locale_str("admin_jtc_remove_channel_description"),
@@ -530,7 +540,61 @@ class JoinToCreateCommands(discord.app_commands.Group):
 
         await removeJoinToCreateChannelCommand(commandInfo=commandInfo, channel=channel)
         return
-    
+
+
+class ChannelCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("admin_channel_media_name"),
+        description=app_commands.locale_str("admin_channel_media_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "admin_channel_media_params_channel_description"
+        ),
+    )
+    async def media_add_cmd(self, ctx, channel: discord.TextChannel):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await addMediaChannelCommand(commandInfo=commandInfo, channel=channel)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_channel_media_remove_name"),
+        description=app_commands.locale_str("admin_channel_media_remove_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str(
+            "admin_channel_media_params_channel_description"
+        ),
+    )
+    async def media_remove_cmd(self, ctx, channel: discord.TextChannel):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await removeMediaChannelCommand(commandInfo=commandInfo, channel=channel)
+        return
+
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -1075,7 +1139,15 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await createTicketCommand(commandInfo=commandInfo, channel=channel, name=name, description=description, ping_role=ping_role, summary_channel=summary_channel, introduction=introduction)
+        await createTicketCommand(
+            commandInfo=commandInfo,
+            channel=channel,
+            name=name,
+            description=description,
+            ping_role=ping_role,
+            summary_channel=summary_channel,
+            introduction=introduction,
+        )
         return
 
 
@@ -1603,6 +1675,8 @@ class adminCog(commands.Cog):
             name="join_to_create", description="Manage Join-to-Create Channels"
         )
         admincmds.add_command(join_to_create_cmds)
+        channel_cmds = ChannelCommands(name="channel", description="Manage Channels")
+        admincmds.add_command(channel_cmds)
         self.bot.tree.add_command(admincmds)
 
 

@@ -934,6 +934,50 @@
                     "title": "Dein Kanal wurde gelöscht",
                     "description": "Dein Kanal wurde soeben gelöscht, da der bot ein Update durchführt. Du solltest in einigen Sekunden wieder einen neuen Kanal erstellen können. Ich entschuldige mich für die Unannehmlichkeiten."
                 }
+            },
+            "channel": {
+                "media": {
+                    "missingPermission": {
+                        "title": "Fehlende Berechtigung",
+                        "description": "Du hast nicht die erforderlichen Berechtigungen, um einen Kanal festzulegen, der Nachrichten mit Medien enthält. Du benötigst `Kanal verwalten` Berechtigungen."
+                    },
+                    "missingPermissionBot": {
+                        "title": "Bot hat fehlende Berechtigung",
+                        "description": "Der Bot hat nicht die erforderlichen Berechtigungen, um den Medien-Kanal korrekt zu verwalten. Der Bot benötigt die Berechtigung `Nachrichten Verwalten` und `Nachrichtenverlauf lesen` in dem angegebenen Kanal."
+                    },
+                    "alreadySet": {
+                        "title": "Medien-Kanal bereits festgelegt",
+                        "description": "Der Kanal ist bereits ein Medien-Kanal. Du brauchst ihn also nicht erneut festzulegen."
+                    },
+                    "success": {
+                        "title": "Medien-Kanal erfolgreich festgelegt",
+                        "description": "Der Kanal ist nun ein Medien Kanal. Es können jetzt nur noch Nachrichten mit Medien in diesen Kanal gesendet werden."
+                    },
+                    "infoMessage": {
+                        "title": "Medien-Kanal",
+                        "description": "Dieser Kanal ist jetzt ein Medien-Kanal. Es können jetzt nur noch Nachrichten mit Medien in diesen Kanal gesendet werden. Nachrichten ohne Anhänge werden automatisch gelöscht."
+                    },
+                    "notSet": {
+                        "title": "Kanal ist kein Medien-Kanal",
+                        "description": "Der Kanal ist kein Medien-Kanal. Du brauchst ihn also nicht zu entfernen."
+                    },
+                    "deleteSuccess": {
+                        "title": "Medien-Kanal erfolgreich entfernt",
+                        "description": "Der Medien-Kanal wurde erfolgreich entfernt. Es können jetzt wieder alle Nachrichten in den Kanal gesendet werden."
+                    },
+                    "infoMessageDelete": {
+                        "title": "Medien-Kanal entfernt",
+                        "description": "Dieser Kanal ist kein Medien-Kanal mehr. Es können jetzt wieder alle Nachrichten in den Kanal gesendet werden."
+                    },
+                    "optedOut": {
+                        "title": "Nachrichtenverfolgung deaktiviert",
+                        "description": "Du hast die Nachrichtenverfolgung deaktiviert. Das bedeutet, dass ich keine Nachrichten lese, die du sendest. Dementsprechend kann ich auch nicht sicherstellen, dass du eine Nachricht mit Medien sendest, wodurch ich leider alle Nachrichten löschen muss, die du in den Medien-Kanal sendest. Bitte aktiviere die Nachrichtenverfolgung wieder, wenn du Nachrichten in den Medien-Kanal senden möchtest."
+                    },
+                    "onlyMedia": {
+                        "title": "Nur Nachrichten mit Medien",
+                        "description": "Du hast eine Nachricht ohne Medien gesendet. Es sind nur Nachrichten erlaubt, welche Anhänge haben."
+                    }
+                }
             }
         },
         "logs": {

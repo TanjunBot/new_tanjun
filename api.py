@@ -628,6 +628,13 @@ async def create_tables():
         PRIMARY KEY(`guildId`, `channelId`)
     ) ENGINE=InnoDB;
     """
+    tables["mediaChannel"] = """
+    CREATE TABLE IF NOT EXISTS `mediaChannel` (
+        `channelId` VARCHAR(20),
+        `guildId` VARCHAR(20),
+        PRIMARY KEY(`channelId`)
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -2746,3 +2753,18 @@ async def get_join_to_create_channel(channel_id: str):
     params = (channel_id,)
     result = await execute_query(pool, query, params)
     return result[0] if result else None
+
+async def get_media_channel(channel_id: str):
+    query = "SELECT * FROM mediaChannel WHERE channelId = %s"
+    params = (channel_id,)
+    return await execute_query(pool, query, params)
+
+async def add_media_channel(guild_id: str, channel_id: str):
+    query = "INSERT INTO mediaChannel (guildId, channelId) VALUES (%s, %s)"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
+
+async def remove_media_channel(guild_id: str, channel_id: str):
+    query = "DELETE FROM mediaChannel WHERE guildId = %s AND channelId = %s"
+    params = (guild_id, channel_id)
+    await execute_action(pool, query, params)
