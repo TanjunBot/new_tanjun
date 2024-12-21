@@ -32,6 +32,7 @@ git fetch --all
 # Overwrite local changes and reset to the remote state
 git reset --hard origin/Development
 
+
 # Pull latest changes from GitHub (this is essentially redundant after the reset, but included for clarity)
 git pull
 
