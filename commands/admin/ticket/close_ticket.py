@@ -152,6 +152,8 @@ async def generate_summary_html(
             justify-content: center;
             align-items: flex-start;
             transition: background 0.5s, color 0.5s;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
 
         .container {
