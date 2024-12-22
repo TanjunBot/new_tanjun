@@ -20,9 +20,9 @@ from extensions.logs import sendLogEmbeds
 from loops.create_database_backup import create_database_backup
 from commands.admin.joinToCreate.joinToCreateListener import removeAllJoinToCreateChannels
 import aiohttp
-from commands.admin.channel.welcome import welcomeNewUser
+from commands.channel.welcome import welcomeNewUser
 
-from commands.admin.channel.farewell import farewellUser
+from commands.channel.farewell import farewellUser
 
 
 class administrationCog(commands.Cog):

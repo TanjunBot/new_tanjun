@@ -3057,6 +3057,44 @@
                 "paper": "Papier 📃",
                 "scissors": "Schere ✂️"
             }
+        },
+        "channel": {
+            "dynamicslowmode": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die nötigen Berechtigungen, um diesen Befehl zu verwenden. Du benötigst die Berechtigung `kanäle verwalten`."
+                },
+                "missingBotPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die nötigen Berechtigungen, um diesen Befehl zu verwenden. Der Bot benötigt die Berechtigungen `nachrichten lesen`, `nachrichten verwalten` und `kanäle verwalten`."
+                },
+                "alreadySet": {
+                    "title": "Bereits eingerichtet",
+                    "description": "Der Dynamische Slowmodus ist bereits für diesen Kanal eingerichtet."
+                },
+                "success": {
+                    "title": "Slowmodus eingerichtet",
+                    "description": "Der Dynamische Slowmodus wurde erfolgreich eingerichtet."
+                },
+                "notSet": {
+                    "title": "Nicht eingerichtet",
+                    "description": "Der Dynamische Slowmodus ist nicht für diesen Kanal eingerichtet."
+                },
+                "deleteSuccess": {
+                    "title": "Erfolgreich gelöscht",
+                    "description": "Der Dynamische Slowmodus wurde erfolgreich gelöscht. Der Kanal behält jetzt wieder den normalen Slowmodus."
+                },
+                "noChannels": {
+                    "title": "Keine Kanäle gefunden",
+                    "description": "Es wurden keine Kanäle mit Dynamischem Slowmodus gefunden."
+                },
+                "channels": {
+                    "title": "Kanäle mit Dynamischem Slowmodus",
+                    "description": "Kanal: <#${channel_id}> | Nachrichten: ${messages} | pro: ${per} Sekunden | Resetafter: ${resetafter} Sekunden"
+                },
+                "reason": "Dynamischer Slowmode wurde Aktiviert mit ${messages} Nachrichten pro ${per} Sekunden",
+                "resetReason": "Dynamischer Slowmode wurde deaktiviert."
+            }
         }
     },
     "admin": {
@@ -3533,80 +3571,6 @@
                         "name": "kanal",
                         "description": "Der Kanal, der entfernt werden soll"
                     }
-                }
-            }
-        },
-        "channel": {
-            "media": {
-                "name": "medienkanal",
-                "description": "Setzt den Medienkanal",
-                "params": {
-                    "channel": {
-                        "name": "kanal",
-                        "description": "Der Kanal, der als Medienkanal gesetzt werden soll"
-                    }
-                }
-            },
-            "mediaremove": {
-                "name": "medienkanal_entfernen",
-                "description": "Entfernt den Medienkanal",
-                "params": {
-                    "channel": {
-                        "name": "kanal",
-                        "description": "Der Kanal, der entfernt werden soll"
-                    }
-                }
-            }
-        },
-        "ch": {
-            "w": {
-                "name": "wilkommenskanal",
-                "description": "Setzt den Wilkommenskanal",
-                "params": {
-                    "channel": {
-                        "name": "kanal",
-                        "description": "Der Kanal, in den Mitglieder begrüßt werden sollen"
-                    },
-                    "message": {
-                        "name": "nachricht",
-                        "description": "Die Nachricht, die gesendet wird, wenn ein Mitglied den Server betritt"
-                    },
-                    "image": {
-                        "name": "hintergrund",
-                        "description": "Das Hintergrundbild des Wilkommenskanals (optional)"
-                    }
-                },
-                "remove": {
-                    "name": "wilkommenskanal_entfernen",
-                    "description": "Entfernt den Wilkommenskanal"
-                }
-            }
-        },
-        "farewell": {
-            "set": {
-                "ch": {
-                    "name": "verabschiedungskanal",
-                    "description": "Setzt den Verabschiedungskanal",
-                    "params": {
-                        "channel": {
-                            "name": "kanal",
-                            "description": "Der Kanal, in den Mitglieder verabschiedet werden sollen"
-                        },
-                        "message": {
-                            "name": "nachricht",
-                            "description": "Die Nachricht, die gesendet wird, wenn ein Mitglied den Server verlässt"
-                        },
-                        "image": {
-                            "name": "hintergrund",
-                            "description": "Das Hintergrundbild des Verabschiedungskanals (optional)"
-                        }
-                    }
-                }
-            },
-            "remove": {
-                "ch": {
-                    "name": "verabschiedungskanal_entfernen",
-                    "description": "Entfernt den Verabschiedungskanal"
                 }
             }
         }
@@ -5960,6 +5924,124 @@
             }
         }
     },
+    "channel": {
+        "welcome": {
+            "name": "wilkommenskanal",
+            "description": "Konfiguriere den Wilkommenskanal"
+        },
+        "media": {
+            "name": "medienkanal",
+            "description": "Setzt den Medienkanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der als Medienkanal gesetzt werden soll"
+                }
+            }
+        },
+        "mediaremove": {
+            "name": "medienkanal_entfernen",
+            "description": "Entfernt den Medienkanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der entfernt werden soll"
+                }
+            }
+        },
+        "w": {
+            "name": "wilkommenskanal",
+            "description": "Setzt den Wilkommenskanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in den Mitglieder begrüßt werden sollen"
+                },
+                "message": {
+                    "name": "nachricht",
+                    "description": "Die Nachricht, die gesendet wird, wenn ein Mitglied den Server betritt"
+                },
+                "image": {
+                    "name": "hintergrund",
+                    "description": "Das Hintergrundbild des Wilkommenskanals (optional)"
+                }
+            },
+            "remove": {
+                "name": "wilkommenskanal_entfernen",
+                "description": "Entfernt den Wilkommenskanal"
+            }
+        },
+        "farewell": {
+            "name": "verabschiedungskanal",
+            "description": "Konfiguriere den Verabschiedungskanal",
+            "set": {
+                "ch": {
+                    "name": "verabschiedungskanal",
+                    "description": "Setzt den Verabschiedungskanal",
+                    "params": {
+                        "channel": {
+                            "name": "kanal",
+                            "description": "Der Kanal, in den Mitglieder verabschiedet werden sollen"
+                        },
+                        "message": {
+                            "name": "nachricht",
+                            "description": "Die Nachricht, die gesendet wird, wenn ein Mitglied den Server verlässt"
+                        },
+                        "image": {
+                            "name": "hintergrund",
+                            "description": "Das Hintergrundbild des Verabschiedungskanals (optional)"
+                        }
+                    }
+                }
+            },
+            "remove": {
+                "ch": {
+                    "name": "verabschiedungskanal_entfernen",
+                    "description": "Entfernt den Verabschiedungskanal"
+                }
+            }
+        },
+        "ds": {
+            "name": "dynamischer_slowmode",
+            "description": "Konfiguriere den dynamischen Slowmode",
+            "add": {
+                "name": "dynamischer_slowmode_hinzufügen",
+                "description": "Fügt einen dynamischen Slowmode hinzu",
+                "params": {
+                    "channel": {    
+                        "name": "kanal",
+                        "description": "Der Kanal, dessen dynamischer Slowmode hinzugefügt werden soll"
+                    },
+                    "messages": {
+                        "name": "nachrichten",
+                        "description": "Wie viele Nachrichten pro n gesendet werden dürfen"
+                    },
+                    "per": {
+                        "name": "pro",
+                        "description": "Wie viele Nachrichten pro Sekunde gesendet werden dürfen"
+                    },
+                    "resetafter": {
+                        "name": "resetafter",
+                        "description": "Wie viele Sekunden nachdem keine Nachrichten gesendet werden, der Slowmode zurückgesetzt wird"
+                    }
+                }
+            },
+            "remove": {
+                "name": "dynamischer_slowmode_entfernen",
+                "description": "Entfernt einen dynamischen Slowmode",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, dessen dynamischer Slowmode entfernt werden soll"
+                    }
+                }
+            },
+            "get": {
+                "name": "kanäle_anzeigen",
+                "description": "Zeigt alle Kanäle an, die einen dynamischen Slowmode haben"
+            }
+        }
+    },
     "countries": {
         "Afghanistan": "Afghanistan",
         "Albania": "Albanien",
@@ -6235,7 +6317,6 @@
     "username": "benutzername",
     "member": "mitglied",
     "limit": "limit",
-    "channel": "kanal",
     "setting": "einstellung",
     "nickname": "nickname",
     "seconds": "sekunden",
