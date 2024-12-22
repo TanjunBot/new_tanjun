@@ -3057,6 +3057,44 @@
                 "paper": "Papier 📃",
                 "scissors": "Schere ✂️"
             }
+        },
+        "channel": {
+            "dynamicslowmode": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die nötigen Berechtigungen, um diesen Befehl zu verwenden. Du benötigst die Berechtigung `kanäle verwalten`."
+                },
+                "missingBotPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die nötigen Berechtigungen, um diesen Befehl zu verwenden. Der Bot benötigt die Berechtigungen `nachrichten lesen`, `nachrichten verwalten` und `kanäle verwalten`."
+                },
+                "alreadySet": {
+                    "title": "Bereits eingerichtet",
+                    "description": "Der Dynamische Slowmodus ist bereits für diesen Kanal eingerichtet."
+                },
+                "success": {
+                    "title": "Slowmodus eingerichtet",
+                    "description": "Der Dynamische Slowmodus wurde erfolgreich eingerichtet."
+                },
+                "notSet": {
+                    "title": "Nicht eingerichtet",
+                    "description": "Der Dynamische Slowmodus ist nicht für diesen Kanal eingerichtet."
+                },
+                "deleteSuccess": {
+                    "title": "Erfolgreich gelöscht",
+                    "description": "Der Dynamische Slowmodus wurde erfolgreich gelöscht. Der Kanal behält jetzt wieder den normalen Slowmodus."
+                },
+                "noChannels": {
+                    "title": "Keine Kanäle gefunden",
+                    "description": "Es wurden keine Kanäle mit Dynamischem Slowmodus gefunden."
+                },
+                "channels": {
+                    "title": "Kanäle mit Dynamischem Slowmodus",
+                    "description": "Kanal: <#${channel_id}> | Nachrichten: ${messages} | pro: ${per} Sekunden | Resetafter: ${resetafter} Sekunden"
+                },
+                "reason": "Dynamischer Slowmode wurde Aktiviert mit ${messages} Nachrichten pro ${per} Sekunden",
+                "resetReason": "Dynamischer Slowmode wurde deaktiviert."
+            }
         }
     },
     "admin": {
