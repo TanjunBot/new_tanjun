@@ -200,18 +200,18 @@ class MediaCommands(discord.app_commands.Group):
 
 class DynamicslowmodeCommands(discord.app_commands.Group):
     @app_commands.command(
-        name=app_commands.locale_str("channel_ds_get_name"),
-        description=app_commands.locale_str("channel_ds_get_description"),
+        name=app_commands.locale_str("channel_ds_add_name"),
+        description=app_commands.locale_str("channel_ds_add_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str("channel_ds_get_params_channel_description"),
-        messages=app_commands.locale_str("channel_ds_get_params_messages_description"),
-        per=app_commands.locale_str("channel_ds_get_params_per_description"),
+        channel=app_commands.locale_str("channel_ds_add_params_channel_description"),
+        messages=app_commands.locale_str("channel_ds_add_params_messages_description"),
+        per=app_commands.locale_str("channel_ds_add_params_per_description"),
         resetafter=app_commands.locale_str(
-            "channel_ds_get_params_resetafter_description"
+            "channel_ds_add_params_resetafter_description"
         ),
     )
-    async def get_dynamicslowmode(
+    async def add_dynamicslowmode(
         self,
         ctx,
         channel: discord.TextChannel,
@@ -268,8 +268,8 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         return
 
     @app_commands.command(
-        name=app_commands.locale_str("channel_ds_get_channels_name"),
-        description=app_commands.locale_str("channel_ds_get_channels_description"),
+        name=app_commands.locale_str("channel_ds_get_name"),
+        description=app_commands.locale_str("channel_ds_get_description"),
     )
     async def get_dynamicslowmode_channels(self, ctx):
         await ctx.response.defer()
@@ -318,8 +318,8 @@ class ChannelCog(commands.Cog):
             description=app_commands.locale_str("channel_media_description"),
         )
         dynamicslowmode_commands = DynamicslowmodeCommands(
-            name=app_commands.locale_str("channel_dynamicslowmode_name"),
-            description=app_commands.locale_str("channel_dynamicslowmode_description"),
+            name=app_commands.locale_str("channel_ds_name"),
+            description=app_commands.locale_str("channel_ds_description"),
         )
 
         channel_commands.add_command(welcome_commands)

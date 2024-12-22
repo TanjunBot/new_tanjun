@@ -26,11 +26,11 @@ async def addDynamicslowmode(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.missingPermission.title",
+                "commands.channel.dynamicslowmode.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.missingPermission.description",
+                "commands.channel.dynamicslowmode.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -44,11 +44,11 @@ async def addDynamicslowmode(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.missingBotPermission.title",
+                "commands.channel.dynamicslowmode.missingBotPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.missingBotPermission.description",
+                "commands.channel.dynamicslowmode.missingBotPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -58,11 +58,11 @@ async def addDynamicslowmode(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.alreadySet.title",
+                "commands.channel.dynamicslowmode.alreadySet.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.alreadySet.description",
+                "commands.channel.dynamicslowmode.alreadySet.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -73,11 +73,11 @@ async def addDynamicslowmode(
     )
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.channel.dynamicslowmode.success.title"
+            commandInfo.locale, "commands.channel.dynamicslowmode.success.title"
         ),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.admin.channel.dynamicslowmode.success.description",
+            "commands.channel.dynamicslowmode.success.description",
         ),
     )
     await commandInfo.reply(embed=embed)
@@ -90,11 +90,11 @@ async def removeDynamicslowmode(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.missingPermission.title",
+                "commands.channel.dynamicslowmode.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.missingPermission.description",
+                "commands.channel.dynamicslowmode.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -104,11 +104,11 @@ async def removeDynamicslowmode(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.notSet.title",
+                "commands.channel.dynamicslowmode.notSet.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.notSet.description",
+                "commands.channel.dynamicslowmode.notSet.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -119,11 +119,11 @@ async def removeDynamicslowmode(
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.admin.channel.dynamicslowmode.deleteSuccess.title",
+            "commands.channel.dynamicslowmode.deleteSuccess.title",
         ),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.admin.channel.dynamicslowmode.deleteSuccess.description",
+            "commands.channel.dynamicslowmode.deleteSuccess.description",
         ),
     )
     await commandInfo.reply(embed=embed)
@@ -134,11 +134,11 @@ async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.missingPermission.title",
+                "commands.channel.dynamicslowmode.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.missingPermission.description",
+                "commands.channel.dynamicslowmode.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -149,11 +149,11 @@ async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.noChannels.title",
+                "commands.channel.dynamicslowmode.noChannels.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.dynamicslowmode.noChannels.description",
+                "commands.channel.dynamicslowmode.noChannels.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -163,16 +163,16 @@ async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
     for channel in channels:
         description += tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.admin.channel.dynamicslowmode.channels.description",
-            channel_id=channel.channelId,
-            messages=channel.messages,
-            per=channel.per,
-            resetafter=channel.resetafter,
+            "commands.channel.dynamicslowmode.channels.description",
+            channel_id=channel[1],
+            messages=channel[2],
+            per=channel[3],
+            resetafter=channel[4],
         )
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.channel.dynamicslowmode.channels.title"
+            commandInfo.locale, "commands.channel.dynamicslowmode.channels.title"
         ),
         description=description,
     )
@@ -219,7 +219,7 @@ async def dynamicslowmodeMessage(message: discord.Message):
             if hasattr(message.guild, "preferred_locale")
             else "en-US"
         ),
-        "commands.admin.channel.dynamicslowmode.reason",
+        "commands.channel.dynamicslowmode.reason",
         messages=avgMessages,
         per=dynamicSlowmodeChannel[3],
     )
@@ -229,7 +229,7 @@ async def dynamicslowmodeMessage(message: discord.Message):
             if hasattr(message.guild, "preferred_locale")
             else "en-US"
         ),
-        "commands.admin.channel.dynamicslowmode.resetReason",
+        "commands.channel.dynamicslowmode.resetReason",
     )
     newSlowmode = int(avgMessages / dynamicSlowmodeChannel[3])
     if (
