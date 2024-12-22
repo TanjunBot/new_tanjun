@@ -1322,3 +1322,6 @@ def draw_text_with_outline(draw, position, text, font, text_color, outline_color
     draw.text((x + 1, y + 1), text, font=font, fill=outline_color)
     # Draw text
     draw.text(position, text, font=font, fill=text_color)
+
+def isoTimeToDate(isoTime: str) -> datetime.datetime:
+    return datetime.datetime.fromisoformat(isoTime)

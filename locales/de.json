@@ -1888,6 +1888,142 @@
                     "title": "Ungültige Aktion",
                     "description": "Irgendetwas ist schief gelaufen. Der Report konnte nicht bearbeitet werden. Versuche bitte, den Report erneut zu versenden."
                 }
+            },
+            "brawlstars": {
+                "maps": {   
+                    "Hard Rock Mine": "Mysteriose Mine",
+                    "Crystal Arcade": "Kristall-Arcade",
+                    "Deathcap Trap": "Giftpilzfalle",
+                    "Gem Fort": "Juwelenfort",
+                    "Undermine": "Erzgrube",
+                    "Double Swoosh": "Doppelhaken",
+                    "Minecard Madness": "Kipplorenkapriolen",
+                    "Rustic Arcade": "Urige Arcade",
+                    "Open Space": "Freiraum",
+                    "Last Stop": "Endstation",
+                    "Forest Clearing": "Kahlfläche",
+                    "The Cooler Hard Rock": "Felsrutsche",
+                    "Kaboom Canyon": "Kabumm-Canyon",
+                    "Safe Zone": "Sichere Zone",
+                    "Hot Potato": "Heisses Eisen",
+                    "Safe(r) Zone": "Sichere(re) Zone",
+                    "The Great Lake": "Der Grosse See",
+                    "Gg 2.0": "G. G. 2.0",
+                    "Snake Prairie": "Schlangenprarie",
+                    "Shooting Star": "Shootingstar",
+                    "Hideout": "Unterschlupf",
+                    "Canal Grande": "Canal Grande",
+                    "Layer Cake": "Sahnetorte",
+                    "No Excuses": "Keine Ausreden",
+                    "Backyard Bowl": "Hinterhofstation",
+                    "Triple Dribble": "Tripeldribbel",
+                    "Pinhole Punt": "Volltrefferpark",
+                    "Sneaky Fields": "Gewiefte Wiesen",
+                    "Super Beach": "Superstrand",
+                    "Pinball Dreams": "Flipperträume",
+                    "Center Stage": "Im Mittelpunkt",
+                    "Beach Ball": "Strandfussball",
+                    "Sunny Soccer": "Sonnenkick",
+                    "Penalty Kick": "Strafstoß",
+                    "Second Try": "Zweiter Versuch",
+                    "Trickey": "Gaunerei",
+                    "Skull Creek": "Schadelufer",
+                    "Rockwall Brawl": "Felswandbrawl",
+                    "Feast Or Famine": "Alles Oder Nichts",
+                    "Acid Lakes": "Sureseen",
+                    "Cavern Churn": "Wirbelhöhle",
+                    "Double Trouble": "Doppelter Ärger",
+                    "Island Invasion": "Inselinvasion",
+                    "Dark Passage": "Dunkle Passage",
+                    "Flying Fantasies": "Flugfantasien",
+                    "Safety Center": "Sichere Mitte",
+                    "Dried Up River": "Ausgetrockneter Fluss",
+                    "Marksmans Paradise": "Schutzenparadies",
+                    "Skull Rockwall Brawl": "Felswandbrawl",
+                    "Acid Cavern Churn": "Wirbelhöhle",
+                    "Final Four": "Die Letzten Vier",
+                    "Open Business": "Tag Der Offenen Tür",
+                    "Parallel Plays": "Parallele Plays",
+                    "Ring Of File": "Feuerring",
+                    "Dueling Beetles": "Duellkäfer",
+                    "Watersport": "Wassersport",
+                    "Noisy Neighbors": "Nervige Nachbarn",
+                    "Goldarm Gulch": "Goldarm-Schlucht",
+                    "Belles Rock": "Belles Felsen",
+                    "Flarning Phoenix": "Brennender Phonix",
+                    "Out In The Open": "Auf Weiter Flur",
+                    "New Horizons": "Neue Horizonte",
+                    "Four Levels": "Vier Level",
+                    "H For...": "H Steht Für...",
+                    "Two Rivers": "Zwei Flüsse",
+                    "Deep Forest": "Tiefer Wald",
+                    "Tiny Islands": "Miniinseln",
+                    "Temple Of Vroom": "Brummgebung",
+                    "Overgrown Ruins": "Überwucherte Ruinen",
+                    "No Surrender": "Nie Aufgeben",
+                    "Shrouding Serpent": "Schleichende Schlange",
+                    "Warrioirs Way": "Der Weg Des Kriegers",
+                    "Monkey Maze": "Affenlabyrinth",
+                    "Petticoat Duell": "Petticoat-Duell",
+                    "Zen Garden": "Zengarten",
+                    "Infinite Doom": "Unendliches Unheil",
+                    "Slayers Paradise": "Paradies Der Unholde",
+                    "Quad Damage": "Quad-Schaden",
+                    "Layer Bake": "Facettenreichtum",
+                    "The Great Open": "Große Ebene",
+                    "Spie Production": "Gewürzproduktion",
+                    "Slippery Road": "Rutschiger Weg",
+                    "Icy Ice Park": "Eisiger Eispark",
+                    "Frosty Tracks": "Frostige Gleise",
+                    "Riverbank Crossing": "Flussuferübergang",
+                    "Freezig Ripples": "Eiskaltes Geplätscher",
+                    "Great Waves": "Große Wellen",
+                    "Cool Shapes": "Coole Formen",
+                    "Suspenders": "Hosenträger"
+                },
+                "gameModes": {
+                    "gemGrab": "Juwelenjagd",
+                    "heist": "Tresorraub",
+                    "bounty": "Kopfgeldjagd",
+                    "brawlBall": "Brawlball",
+                    "soloShowdown": "Solo-Showdown",
+                    "duoShowdown": "Duo-Showdown",
+                    "hotZone": "Hotzone",
+                    "knockout": "Knockout",
+                    "duells": "Duelle",
+                    "wipeout": "Eliminierung",
+                    "wipeout5v5": "Eliminierung 5v5",
+                    "brawlBall5v5": "Brawlball 5v5"
+                },
+                "results": {
+                    "defeat": "Niederlage",
+                    "victory": "Sieg",
+                    "draw": "Unentschieden"
+                },
+                "battlelog": {
+                    "error": {
+                        "notFound": {
+                            "title": "Spieler nicht gefunden",
+                            "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        }
+                    },
+                    "description": {
+                        "battleTime": "Zeit des Kampfes: <t:${timestamp}:R>",
+                        "gameMode": "Spielmodus: ${gameMode}",
+                        "gameMap": "Karte: ${gameMap}",
+                        "trophyChange": "Trophäenänderung: ${trophyChange}",
+                        "enemies": "Feinde:",
+                        "result": "Ergebnis: ${result}",
+                        "duration": "Dauer: ${duration} Sekunden",
+                        "starPlayer": "Star Spieler: ${name} (${tag})\n<:empty:1312126155897442416>Brawler: ${brawlerName} (${brawlerPower})\n<:empty:1312126155897442416>Trophäen: ${brawlerTrophies}",
+                        "enemy": "\n<:empty:1312126155897442416>Name: ${name} (${tag})\n<:empty:1312126155897442416>Brawler: ${brawlerName} (${brawlerPower})\n<:empty:1312126155897442416>Trophäen: ${brawlerTrophies}",
+                        "team1": "Team 1",
+                        "team2": "Team 2",
+                        "teamPlayer": "\n<:empty:1312126155897442416>Name: ${name} (${tag})\n<:empty:1312126155897442416>Brawler: ${brawlerName} (${brawlerPower})\n<:empty:1312126155897442416>Trophäen: ${brawlerTrophies}"
+                    },
+                    "title": "Kampflogbuch von ${playerName} (${tag}) - Seite ${current_page} von ${total_pages}",
+                    "titleNoPages": "Kampflogbuch von ${playerName} (${tag})"
+                }
             }
         },
         "level": {
@@ -4019,6 +4155,20 @@
                 "repeat": {
                     "name": "wiederholen",
                     "description": "Wie oft die Nachricht wiederholt werden soll (optional)"
+                }
+            }
+        },
+        "bs": {
+            "name": "brawlstars",
+            "description": "Befehle für Brawl Stars",
+            "battlelog": {
+                "name": "kampflogbuch",
+                "description": "Zeigt das Kampflogbuch eines Spielers an",
+                "params": {
+                    "tag": {
+                        "name": "tag",
+                        "description": "Der Tag des Spielers, dessen Kampflogbuch angezeigt werden soll"
+                    }
                 }
             }
         }

@@ -25,6 +25,7 @@ from commands.utility.listscheduled import list_scheduled_messages as listSchedu
 from commands.utility.removescheduled import remove_scheduled_message as removeScheduledCommand
 from commands.utility.report import report as reportCommand
 from commands.utility.help import help as helpCommand
+from commands.utility.brawlstars.battlelog import battlelog as battlelogCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -297,6 +298,31 @@ class AutoPublishCommands(discord.app_commands.Group):
             channel = ctx.channel
 
         await autopublishRemoveCommand(commandInfo=commandInfo, channel=channel)
+
+class BrawlStarsCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_bs_battlelog_name"),
+        description=app_commands.locale_str("utility_bs_battlelog_description"),
+    )
+    @app_commands.describe(
+        tag=app_commands.locale_str("utility_bs_battlelog_params_tag_description"),
+    )
+    async def battlelog(self, ctx, tag: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await battlelogCommand(commandInfo=commandInfo, playerTag=tag)
+        return
 
 class utilityCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -579,6 +605,8 @@ class utilityCog(commands.Cog):
         utilityCmds.add_command(boosterChannelCmds)
         scheduledMessageCmds = ScheduledMessageCommands(name=app_commands.locale_str("utility_scheduledmessage_name"), description=app_commands.locale_str("utility_scheduledmessage_description"))
         utilityCmds.add_command(scheduledMessageCmds)
+        brawlStarsCmds = BrawlStarsCommands(name=app_commands.locale_str("utility_bs_name"), description=app_commands.locale_str("utility_bs_description"))
+        utilityCmds.add_command(brawlStarsCmds)
         self.bot.tree.add_command(utilityCmds)
 
 
