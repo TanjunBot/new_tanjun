@@ -47,18 +47,6 @@ from commands.admin.joinToCreate.jointocreatechannel import (
 from commands.admin.joinToCreate.removejointocreatechannel import (
     removejointocreatechannel as removeJoinToCreateChannelCommand,
 )
-from commands.admin.channel.media import (
-    addMediaChannel as addMediaChannelCommand,
-    removeMediaChannel as removeMediaChannelCommand,
-)
-from commands.admin.channel.welcome import (
-    setWelcomeChannel as setWelcomeChannelCommand,
-    removeWelcomeChannel as removeWelcomeChannelCommand,
-)
-from commands.admin.channel.farewell import (
-    setFarewellChannel as setFarewellChannelCommand,
-    removeFarewellChannel as removeFarewellChannelCommand,
-)
 
 class WarnCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -554,170 +542,6 @@ class JoinToCreateCommands(discord.app_commands.Group):
         await removeJoinToCreateChannelCommand(commandInfo=commandInfo, channel=channel)
         return
 
-
-class ChannelCommands(discord.app_commands.Group):
-    @app_commands.command(
-        name=app_commands.locale_str("admin_channel_media_name"),
-        description=app_commands.locale_str("admin_channel_media_description"),
-    )
-    @app_commands.describe(
-        channel=app_commands.locale_str(
-            "admin_channel_media_params_channel_description"
-        ),
-    )
-    async def media_add_cmd(self, ctx, channel: discord.TextChannel):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
-        )
-
-        await addMediaChannelCommand(commandInfo=commandInfo, channel=channel)
-        return
-
-    @app_commands.command(
-        name=app_commands.locale_str("admin_channel_mediaremove_name"),
-        description=app_commands.locale_str("admin_channel_mediaremove_description"),
-    )
-    @app_commands.describe(
-        channel=app_commands.locale_str(
-            "admin_channel_mediaremove_params_channel_description"
-        ),
-    )
-    async def media_remove_cmd(self, ctx, channel: discord.TextChannel):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
-        )
-
-        await removeMediaChannelCommand(commandInfo=commandInfo, channel=channel)
-        return
-
-    @app_commands.command(
-        name=app_commands.locale_str("admin_ch_w_name"),
-        description=app_commands.locale_str("admin_ch_w_description"),
-    )
-    @app_commands.describe(
-        channel=app_commands.locale_str(
-            "admin_ch_w_params_channel_description"
-        ),
-        message=app_commands.locale_str(
-            "admin_ch_w_params_message_description"
-        ),
-        background=app_commands.locale_str(
-            "admin_ch_w_params_image_description"
-        ),
-    )
-    async def welcome(
-        self,
-        ctx,
-        channel: discord.TextChannel = None,
-        message: str = None,
-        background: discord.Attachment = None,
-    ):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
-        )
-
-        await setWelcomeChannelCommand(
-            commandInfo=commandInfo,
-            channel=channel,
-            message=message,
-            image_background=background,
-        )
-        return
-
-    @app_commands.command(
-        name=app_commands.locale_str("admin_ch_w_remove_name"),
-        description=app_commands.locale_str("admin_ch_w_remove_description"),
-    )
-    async def remove_welcome(self, ctx):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
-        )
-
-        await removeWelcomeChannelCommand(commandInfo=commandInfo)
-        return
-
-    @app_commands.command(
-        name=app_commands.locale_str("admin_farewell_set_ch_name"),
-        description=app_commands.locale_str("admin_farewell_set_ch_description"),
-    )
-    @app_commands.describe(
-        channel=app_commands.locale_str("admin_farewell_set_ch_params_channel_description"),
-        message=app_commands.locale_str("admin_farewell_set_ch_params_message_description"),
-        background=app_commands.locale_str("admin_farewell_set_ch_params_image_description"),
-    )
-    async def set_farewell_channel(self, ctx, channel: discord.TextChannel = None, message: str = None, background: discord.Attachment = None):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
-        )
-
-        await setFarewellChannelCommand(commandInfo, channel, message, background)
-        return
-
-    @app_commands.command(
-        name=app_commands.locale_str("admin_farewell_remove_ch_name"),
-        description=app_commands.locale_str("admin_farewell_remove_ch_description"),
-    )
-    async def remove_farewell_channel(self, ctx):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
-        )
-
-        await removeFarewellChannelCommand(commandInfo=commandInfo)
-        return
 
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -1799,8 +1623,6 @@ class adminCog(commands.Cog):
             name="jointocreate", description="Manage Join-to-Create Channels"
         )
         admincmds.add_command(join_to_create_cmds)
-        channel_cmds = ChannelCommands(name="channel", description="Manage Channels")
-        admincmds.add_command(channel_cmds)
         self.bot.tree.add_command(admincmds)
 
 
