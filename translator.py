@@ -1,8 +1,10 @@
+# Unused imports:
+# from utility import missingLocalization
 from __future__ import annotations
 import discord
 from discord import app_commands
-from utility import missingLocalization
 import json
+
 
 class TanjunTranslator(app_commands.Translator):
     def __init__(self):
@@ -33,9 +35,9 @@ class TanjunTranslator(app_commands.Translator):
                     return current[str(string)]
                 else:
                     print("Missing translation for string: " + string.message, ". Please fix ASAP!\nskipping this for now :)")
-                    # text = input("Should I open a Issue on GitHub? (y/n): ")  
+                    # text = input("Should I open a Issue on GitHub? (y/n): ")
                     # if text.lower() == 'y':
-                        # missingLocalization(string)
+                    # missingLocalization(string)
                     return None
 
         if isinstance(current, str):
