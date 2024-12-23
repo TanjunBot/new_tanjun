@@ -2081,7 +2081,9 @@
                         "starPowers": "Star Powers:",
                         "starPower": " ${name}",
                         "gadgets": "Gadgets:",
-                        "gadget": " ${name}"
+                        "gadget": " ${name}",
+                        "gears": "Gears:",
+                        "gear": " ${name} (Level ${level})"
                     },
                     "title": "Brawler von ${name} (${tag}) - Seite ${current_page} von ${total_pages}",
                     "titleNoPages": "Brawler von ${name} (${tag})",

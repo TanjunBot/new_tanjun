@@ -8,6 +8,7 @@ from commands.utility.brawlstars.bshelper import (
     parseName,
     getGadgetEmoji,
     getStarPowerEmoji,
+    getGearEmoji,
 )
 
 
@@ -51,6 +52,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
         trophies = brawler["trophies"]
         highestTrophies = brawler["highestTrophies"]
         gears = brawler["gears"]
+        gadgets = brawler["gadgets"]
         starPowers = brawler["starPowers"]
 
         description = tanjunLocalizer.localize(
@@ -79,15 +81,16 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                     name=name,
                 )
                 description += "\n"
+            description += "\n"
 
-        if len(gears) > 0:
+        if len(gadgets) > 0:
             description += tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.brawlstars.brawlers.description.gadgets",
             )
             description += "\n"
 
-            for gadget in gears:
+            for gadget in gadgets:
                 name = f" {getGadgetEmoji(gadget['id'])} {parseName(gadget['name'])}"
                 description += tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -95,6 +98,25 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                     name=name,
                 )
                 description += "\n"
+            description += "\n"
+
+        if len(gears) > 0:
+            description += tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.utility.brawlstars.brawlers.description.gears",
+            )
+            description += "\n"
+
+            for gear in gears:
+                name = f" {getGearEmoji(gear['id'])} {parseName(gear['name'])}"
+                description += tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.utility.brawlstars.brawlers.description.gear",
+                    name=name,
+                    level=gear["level"],
+                )
+                description += "\n"
+            description += "\n"
 
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
