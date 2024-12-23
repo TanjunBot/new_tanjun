@@ -2021,8 +2021,29 @@
                         "team2": "Team 2",
                         "teamPlayer": "\n<:empty:1312126155897442416>Name: ${name} (${tag})\n<:empty:1312126155897442416>Brawler: ${brawlerName} (${brawlerPower})\n<:empty:1312126155897442416>Trophäen: ${brawlerTrophies}"
                     },
-                    "title": "Kampflogbuch von ${playerName} (${tag}) - Seite ${current_page} von ${total_pages}",
-                    "titleNoPages": "Kampflogbuch von ${playerName} (${tag})"
+                    "title": "<:bs_logo:1320640700446015488> Kampflogbuch von ${playerName} (${tag}) - Seite ${current_page} von ${total_pages}",
+                    "titleNoPages": "<:bs_logo:1320640700446015488> Kampflogbuch von ${playerName} (${tag})"
+                },
+                "playerinfo": {
+                    "error": {
+                        "notFound": {
+                            "title": "Spieler nicht gefunden",
+                            "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        }
+                    },
+                    "description": {
+                        "nameColor": "Namefarbe: ${nameColor}",
+                        "trophies": "Trophäen: ${trophies}",
+                        "highestTrophies": "Höchste Trophäen: ${highestTrophies}",
+                        "expLevel": "Level: ${expLevel}",
+                        "club": "Club: ${name} (${tag})",
+                        "3v3Victories": "3v3 Siege: ${victories}",
+                        "soloVictories": "Solo Siege: ${victories}",
+                        "duoVictories": "Duo Siege: ${victories}",
+                        "bestRoboRumbleTime": "Beste Robo-Rumble Zeit: ${time}",
+                        "bestTimeAsBigBrawler": "Beste Zeit als Big Brawler: ${time}"
+                    },
+                    "title": "<:bs_logo:1320640700446015488> Informationen über ${playerName} (${tag})"
                 }
             }
         },

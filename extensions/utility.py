@@ -26,6 +26,7 @@ from commands.utility.removescheduled import remove_scheduled_message as removeS
 from commands.utility.report import report as reportCommand
 from commands.utility.help import help as helpCommand
 from commands.utility.brawlstars.battlelog import battlelog as battlelogCommand
+from commands.utility.brawlstars.playerinfo import playerInfo as brawlstarsPlayerInfoCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -323,7 +324,31 @@ class BrawlStarsCommands(discord.app_commands.Group):
 
         await battlelogCommand(commandInfo=commandInfo, playerTag=tag)
         return
+    
+    @app_commands.command(
+        name=app_commands.locale_str("utility_bs_playerinfo_name"),
+        description=app_commands.locale_str("utility_bs_playerinfo_description"),
+    )
+    @app_commands.describe(
+        tag=app_commands.locale_str("utility_bs_playerinfo_params_tag_description"),
+    )
+    async def playerinfo(self, ctx, tag: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
 
+        await brawlstarsPlayerInfoCommand(commandInfo=commandInfo, playerTag=tag)
+        return
+    
 class utilityCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("utility_avatar_name"),
