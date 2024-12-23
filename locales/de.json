@@ -1964,7 +1964,7 @@
                     "Shrouding Serpent": "Schleichende Schlange",
                     "Warrioirs Way": "Der Weg Des Kriegers",
                     "Monkey Maze": "Affenlabyrinth",
-                    "Petticoat Duell": "Petticoat-Duell",
+                    "Petticoat Duel": "Petticoat-Duell",
                     "Zen Garden": "Zengarten",
                     "Infinite Doom": "Unendliches Unheil",
                     "Slayers Paradise": "Paradies Der Unholde",
@@ -1973,7 +1973,7 @@
                     "The Great Open": "Große Ebene",
                     "Spie Production": "Gewürzproduktion",
                     "Slippery Road": "Rutschiger Weg",
-                    "Icy Ice Park": "Eisiger Eispark",
+                    "Icy ice park": "Eisiger Eispark",
                     "Frosty Tracks": "Frostige Gleise",
                     "Riverbank Crossing": "Flussuferübergang",
                     "Freezig Ripples": "Eiskaltes Geplätscher",
@@ -1990,10 +1990,10 @@
                     "duoShowdown": "Duo-Showdown",
                     "hotZone": "Hotzone",
                     "knockout": "Knockout",
-                    "duells": "Duelle",
+                    "duels": "Duelle",
                     "wipeout": "Eliminierung",
-                    "wipeout5v5": "Eliminierung 5v5",
-                    "brawlBall5v5": "Brawlball 5v5"
+                    "wipeout5V5": "Eliminierung 5v5",
+                    "brawlBall5V5": "Brawlball 5v5"
                 },
                 "results": {
                     "defeat": "Niederlage",
@@ -2097,6 +2097,15 @@
                         "placeholder": "Brawler Namen eingeben",
                         "title": "Brawler suchen"
                     }
+                },
+                "events": {
+                    "notFound": {
+                        "title": "Es wurden keine Events gefunden",
+                        "description": "Es wurden keine Events gefunden. Bitte versuche es später erneut."
+                    },
+                    "description": "## ${mode} auf ${map_}\nStartet: <t:${startTime}:R>\nEndet: <t:${endTime}:R>\n<t:${startTime}:D> - <t:${endTime}:D>",
+                    "title": "Events - Seite ${current_page} von ${total_pages}",
+                    "titleNoPages": "Events"
                 }
             }
         },

@@ -29,6 +29,7 @@ from commands.utility.brawlstars.battlelog import battlelog as battlelogCommand
 from commands.utility.brawlstars.playerinfo import playerInfo as brawlstarsPlayerInfoCommand
 from commands.utility.brawlstars.brawlers import brawlers as brawlstarsBrawlersCommand
 from commands.utility.brawlstars.club import club as brawlstarsClubCommand
+from commands.utility.brawlstars.events import events as brawlstarsEventsCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -397,6 +398,27 @@ class BrawlStarsCommands(discord.app_commands.Group):
         )
 
         await brawlstarsClubCommand(commandInfo=commandInfo, clubTag=tag)
+        return
+    
+    @app_commands.command(
+        name=app_commands.locale_str("utility_bs_events_name"),
+        description=app_commands.locale_str("utility_bs_events_description"),
+    )
+    async def events(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await brawlstarsEventsCommand(commandInfo=commandInfo)
         return
 
 class utilityCommands(discord.app_commands.Group):
