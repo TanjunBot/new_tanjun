@@ -2045,6 +2045,30 @@
                     },
                     "title": "<:bs_logo:1320640700446015488> Informationen über ${playerName} (${tag})"
                 },
+                "club": {
+                    "error": {
+                        "notFound": {
+                            "title": "Spieler nicht gefunden",
+                            "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        }
+                    },
+                    "description": {
+                        "overview": "## ${name}\nTrophäen: ${trophies}\nErforderliche Trophäen: ${requiredTrophies}\n${description}",
+                        "member": "\n<:empty:1312126155897442416>Name: ${name} (${tag})\n<:empty:1312126155897442416>Trophäen: ${trophies}\n<:empty:1312126155897442416>Rang: ${role}"
+                    },
+                    "title": "<:bs_logo:1320640700446015488> Club ${name} (${tag}) - Seite ${current_page} von ${total_pages}",
+                    "titleNoMembers": "<:bs_logo:1320640700446015488> Club ${name} (${tag})",
+                    "search": {
+                        "label": "Club Mitglied suchen",
+                        "placeholder": "Club Mitglied suchen",
+                        "title": "Club Mitglied suchen",
+                        "error": {
+                            "title": "Fehler beim Suchen",
+                            "description": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+                            "invalidInput": "Ungültige Eingabe. Bitte versuche es erneut."
+                        }
+                    }
+                },
                 "brawlers": {
                     "error": {
                         "notFound": {
@@ -2053,13 +2077,14 @@
                         }
                     },
                     "description": {
-                        "overwiev": "${name} - ${power}\nRang: ${rank}\nTrophäen: ${trophies}\nHöchste Trophäen: ${highestTrophies}",
+                        "overview": "## ${name}\nPower: ${power}\nRang: ${rank}\nTrophäen: ${trophies}\nHöchste Trophäen: ${highestTrophies}",
                         "starPowers": "Star Powers:",
                         "starPower": " ${name}",
                         "gadgets": "Gadgets:",
-                        "gadget": " ${name} - Level ${level}"
+                        "gadget": " ${name}"
                     },
-                    "title": "Brawler von ${name} - Seite ${current_page} von ${total_pages}",
+                    "title": "Brawler von ${name} (${tag}) - Seite ${current_page} von ${total_pages}",
+                    "titleNoPages": "Brawler von ${name} (${tag})",
                     "search": {
                         "error": {
                             "title": "Fehler beim Suchen",

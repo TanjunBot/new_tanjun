@@ -1329,3 +1329,6 @@ def isoTimeToDate(isoTime: str) -> datetime.datetime:
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
+
+def addThousandsSeparator(number: int) -> str:
+    return "{:,}".format(number).replace(",", " ")

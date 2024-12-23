@@ -1,23 +1,18 @@
 from config import brawlstarsToken
 import aiohttp
-from utility import commandInfo, tanjunEmbed, similar
+from utility import commandInfo, tanjunEmbed, similar, addThousandsSeparator
 import discord
 from localizer import tanjunLocalizer
 import json
-from commands.utility.brawlstars.bshelper import (
-    parseName,
-    getGadgetEmoji,
-    getStarPowerEmoji,
-)
 
 
-async def getPlayerInfo(playerTag: str):
+async def getClubInfo(clubTag: str):
     print("token", brawlstarsToken)
-    print("gettin", playerTag)
+    print("gettin", clubTag)
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}",
+            f"https://api.brawlstars.com/v1/clubs/%23{clubTag[1:]}",
             headers=headers,
         ) as response:
             print(response.status)
@@ -28,91 +23,64 @@ async def getPlayerInfo(playerTag: str):
             return await response.json()
 
 
-async def brawlers(commandInfo: commandInfo, playerTag: str):
-    if not playerTag.startswith("#"):
-        playerTag = f"#{playerTag}"
-    playerInfo = await getPlayerInfo(playerTag)
-    if not playerInfo:
+async def club(commandInfo: commandInfo, clubTag: str):
+    if not clubTag.startswith("#"):
+        clubTag = f"#{clubTag}"
+    clubInfo = await getClubInfo(clubTag)
+    if not clubInfo:
         return await commandInfo.reply(
             tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.utility.brawlstars.brawlers.error.notFound",
+                "commands.utility.brawlstars.club.error.notFound",
             )
         )
 
-    playerName = playerInfo["name"]
+    clubName = clubInfo["name"]
+    clubDescription = clubInfo["description"]
+    requiredTrophies = clubInfo["requiredTrophies"]
+    trophies = clubInfo["trophies"]
+    members = clubInfo["members"]
+    role_order = {"president": 4, "vicePresident": 3, "senior": 2, "member": 1}
+    members = sorted(
+        members, key=lambda x: (role_order[x["role"]], x["trophies"]), reverse=True
+    )
 
+    baseDescription = ""
+    baseDescription += tanjunLocalizer.localize(
+        commandInfo.locale,
+        "commands.utility.brawlstars.club.description.overview",
+        name=clubName,
+        trophies=addThousandsSeparator(trophies),
+        description=clubDescription,
+        requiredTrophies=addThousandsSeparator(requiredTrophies),
+    )
     pages = []
-    for brawler in playerInfo["brawlers"]:
-        id = brawler["id"]
-        name = parseName(brawler["name"])
-        power = brawler["power"]
-        rank = brawler["rank"]
-        trophies = brawler["trophies"]
-        highestTrophies = brawler["highestTrophies"]
-        gears = brawler["gears"]
-        starPowers = brawler["starPowers"]
-
-        description = tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.utility.brawlstars.brawlers.description.overview",
-            name=name,
-            power=power,
-            rank=rank,
-            trophies=trophies,
-            highestTrophies=highestTrophies,
-        )
+    for i, member in enumerate(members):
+        description = baseDescription
         description += "\n"
-
-        if len(starPowers) > 0:
-            description += tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.brawlers.description.starPowers",
-            )
-            description += "\n"
-
-            for starPower in starPowers:
-                name = f" {getStarPowerEmoji(starPower['id'])} {parseName(starPower['name'])}"
-                description += tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.utility.brawlstars.brawlers.description.starPower",
-                    name=name,
-                )
-                description += "\n"
-
-        if len(gears) > 0:
-            description += tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.brawlers.description.gadgets",
-            )
-            description += "\n"
-
-            for gadget in gears:
-                name = f" {getGadgetEmoji(gadget['id'])} {parseName(gadget['name'])}"
-                description += tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.utility.brawlstars.brawlers.description.gadget",
-                    name=name,
-                )
-                description += "\n"
-
+        description += tanjunLocalizer.localize(
+            commandInfo.locale,
+            "commands.utility.brawlstars.club.description.member",
+            name=member["name"],
+            tag=member["tag"],
+            trophies=addThousandsSeparator(member["trophies"]),
+            role=member["role"],
+        )
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.utility.brawlstars.brawlers.title",
-                current_page=len(pages) + 1,
-                total_pages=len(playerInfo["brawlers"]),
-                name=playerName,
-                tag=playerTag,
+                "commands.utility.brawlstars.club.title",
+                name=clubName,
+                tag=clubTag,
+                role=member["role"],
+                current_page=i + 1,
+                total_pages=len(members),
             ),
             description=description,
         )
-        embed.set_thumbnail(
-            url=f"https://cdn.brawlify.com/brawlers/borderless/{id}.png"
-        )
         pages.append(embed)
 
-    class BrawlersPaginator(discord.ui.View):
+    class ClubPaginator(discord.ui.View):
         def __init__(self, pages: list[tanjunEmbed], current_page=0):
             super().__init__(timeout=3600)
             self.pages = pages
@@ -152,8 +120,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
         def __init__(self, commandInfo: commandInfo):
             super().__init__(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.utility.brawlstars.brawlers.search.title",
+                    commandInfo.locale, "commands.utility.brawlstars.club.search.title"
                 )
             )
             self.commandInfo = commandInfo
@@ -161,11 +128,11 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                 discord.ui.TextInput(
                     label=tanjunLocalizer.localize(
                         commandInfo.locale,
-                        "commands.utility.brawlstars.brawlers.search.label",
+                        "commands.utility.brawlstars.club.search.label",
                     ),
                     placeholder=tanjunLocalizer.localize(
                         commandInfo.locale,
-                        "commands.utility.brawlstars.brawlers.search.placeholder",
+                        "commands.utility.brawlstars.club.search.placeholder",
                     ),
                     required=True,
                 )
@@ -173,17 +140,21 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
 
         async def on_submit(self, interaction: discord.Interaction):
             try:
-                brawlerName = self.children[0].value
+                memberName = self.children[0].value
 
                 desiredPage = 0
                 bestSimilarity = -100
-                for i, brawler in enumerate(playerInfo["brawlers"]):
-                    similarity = similar(brawler["name"].lower(), brawlerName.lower())
+                for i, member in enumerate(members):
+                    similarity = similar(member["name"].lower(), memberName.lower())
+                    if similarity > bestSimilarity:
+                        bestSimilarity = similarity
+                        desiredPage = i
+                    similarity = similar(member["tag"].lower(), memberName.lower())
                     if similarity > bestSimilarity:
                         bestSimilarity = similarity
                         desiredPage = i
 
-                view = BrawlersPaginator(pages, desiredPage)
+                view = ClubPaginator(pages, desiredPage)
                 page = pages[desiredPage]
                 await interaction.response.edit_message(view=view, embed=page)
 
@@ -214,16 +185,16 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
     if len(pages) > 1:
-        view = BrawlersPaginator(pages)
+        view = ClubPaginator(pages)
         await commandInfo.reply(embed=pages[0], view=view)
     else:
 
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.utility.brawlstars.brawlers.titleNoPages",
-                playerName=playerName,
-                tag=playerTag,
+                "commands.utility.brawlstars.club.titleNoMembers",
+                name=clubName,
+                tag=clubTag,
             ),
             description=pages[0].description,
         )
