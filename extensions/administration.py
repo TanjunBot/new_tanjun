@@ -2,7 +2,10 @@
 THE COMMANDS IN THIS FILE ARE FOR ADMINISTRATIVE PURPOSES ONLY. THEY ARE NOT TO BE SHARED WITH ANYONE ELSE!
 """
 
-import asyncio
+# Unused imports:
+# import asyncio
+# import subprocess
+# import platform
 import discord
 from discord.ext import commands
 from localizer import tanjunLocalizer
@@ -14,8 +17,6 @@ from tests import (
     test_database,
     test_commands,
 )
-import subprocess
-import platform
 from extensions.logs import sendLogEmbeds
 from loops.create_database_backup import create_database_backup
 from commands.admin.joinToCreate.joinToCreateListener import removeAllJoinToCreateChannels
@@ -107,7 +108,6 @@ class administrationCog(commands.Cog):
         if ctx.author.id not in config.adminIds:
             return
 
-        sh_file = "update.sh"
         await sendLogEmbeds(self.bot)
         await create_database_backup(self.bot)
         await removeAllJoinToCreateChannels()
