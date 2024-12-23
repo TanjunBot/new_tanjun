@@ -24,6 +24,7 @@ from commands.utility.schedulemessage import schedule_message as scheduleMessage
 from commands.utility.listscheduled import list_scheduled_messages as listScheduledCommand
 from commands.utility.removescheduled import remove_scheduled_message as removeScheduledCommand
 from commands.utility.report import report as reportCommand
+from commands.utility.help import help as helpCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -546,7 +547,21 @@ class utilityCog(commands.Cog):
         description="Get help with the bot"
     )
     async def help_slash(self, ctx):
-        await ctx.response.send_message("ima help you!")
+        await ctx.response.defer(ephemeral=True)
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await helpCommand(commandInfo=commandInfo, ctx=ctx)
+        return
 
     @commands.Cog.listener()
     async def on_ready(self):
