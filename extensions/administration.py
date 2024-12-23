@@ -171,18 +171,9 @@ class administrationCog(commands.Cog):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url) as response:
                         image = await response.read()
-                        try:
-                            emoji = await ctx.guild.create_custom_emoji(
-                                name=f"{starPower['id']}", image=image
-                            )
-                        except:
-                            # convert image to gif
-                            image = await response.read()
-                            image = Image.open(image)
-                            image.save(f"{starPower['id']}.gif", "GIF")
-                            emoji = await ctx.guild.create_custom_emoji(
-                                name=f"{starPower['id']}", image=image
-                            )
+                        emoji = await ctx.guild.create_custom_emoji(
+                            name=f"{starPower['id']}", image=image
+                        )
                         await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
 
     @commands.command()
@@ -201,18 +192,10 @@ class administrationCog(commands.Cog):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url) as response:
                         image = await response.read()
-                        try:
-                            emoji = await ctx.guild.create_custom_emoji(
-                                name=f"{gadget['id']}", image=image
-                            )
-                        except:
-                            # convert image to gif
-                            image = await response.read()
-                            image = Image.open(image)
-                            image.save(f"{gadget['id']}.gif", "GIF")
-                            emoji = await ctx.guild.create_custom_emoji(
-                                name=f"{gadget['id']}", image=image
-                            )
+                        emoji = await ctx.guild.create_custom_emoji(
+                            name=f"{gadget['id']}", image=image
+                        )
+                        
                         await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
 
 
