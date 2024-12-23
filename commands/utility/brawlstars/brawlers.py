@@ -117,6 +117,9 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                 )
                 description += "\n"
             description += "\n"
+            
+        description += "\n"
+        description += f"raw:\n```json\n{json.dumps(brawler, indent=4)}\n```"
 
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

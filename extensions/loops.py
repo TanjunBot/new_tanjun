@@ -18,7 +18,8 @@ from commands.utility.claimBoosterChannel import remove_claimed_booster_channels
 from commands.utility.schedulemessage import send_scheduled_messages
 import asyncio
 
-from api import check_pool_initialized
+from api import check_pool_initialized, get_all_twitch_notification_uuids
+from commands.utility.twitch.twitchApi import getTwitchApi, notify_twitch_online
 
 embeds = {}
 
@@ -111,23 +112,61 @@ class LoopCog(commands.Cog):
         except:
             pass
 
+    @tasks.loop(seconds=10)
+    async def pollTwitchStreams(self):
+        try:
+            twitch_api = getTwitchApi()
+            if not twitch_api:
+                print("twitch_api not initialized")
+                return
+                
+            uuids = await get_all_twitch_notification_uuids()
+            if not uuids:
+                return
+
+            # Convert list of tuples to list of strings
+            user_ids = [str(uuid[0]) for uuid in uuids]
+            
+            # Initialize stream status on first run
+            if not twitch_api.initial_check_done:
+                await twitch_api.initialize_stream_status(user_ids)
+                return  # Skip notifications on first check
+            
+            streams = await twitch_api.get_streams(user_ids)
+            live_streams = {stream["user_id"]: stream for stream in streams}
+
+            # Check for newly live streams
+            for uuid in user_ids:
+                was_live = twitch_api.stream_status.get(uuid, False)
+                is_live = uuid in live_streams
+
+                if not was_live and is_live:
+                    # Stream just went live
+                    await notify_twitch_online(self.bot, uuid, live_streams[uuid])
+
+                twitch_api.stream_status[uuid] = is_live
+
+        except Exception as e:
+            print(f"Error in poll_streams: {str(e)}")
+
     @commands.Cog.listener()
     async def on_ready(self):  
         while not check_pool_initialized():
             await asyncio.sleep(1)
-                    
-            self.sendSendReadyGiveaways.start()
-            self.endGiveawaysLoop.start()
-            self.checkVoiceUsers.start()
-            self.clearNotifiedUsersLoop.start()
-            self.addVoiceUserLoop.start()
-            self.refillAiTokenLoop.start()
-            self.pingServerLoop.start()
-            self.backupDatabaseLoop.start()
-            self.sendLogEmbeds.start()
-            self.removeExpiredClaimedBoosterRoles.start()
-            self.removeExpiredClaimedBoosterChannels.start()
-            self.sendScheduledMessages.start()
+            
+        self.pollTwitchStreams.start()
+        self.sendSendReadyGiveaways.start()
+        self.endGiveawaysLoop.start()
+        self.checkVoiceUsers.start()
+        self.clearNotifiedUsersLoop.start()
+        self.addVoiceUserLoop.start()
+        self.refillAiTokenLoop.start()
+        self.pingServerLoop.start()
+        self.backupDatabaseLoop.start()
+        self.sendLogEmbeds.start()
+        self.removeExpiredClaimedBoosterRoles.start()
+        self.removeExpiredClaimedBoosterChannels.start()
+        self.sendScheduledMessages.start()
 
 async def setup(bot):
     await bot.add_cog(LoopCog(bot))

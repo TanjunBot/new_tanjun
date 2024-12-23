@@ -7,6 +7,7 @@ from translator import TanjunTranslator
 import api
 import asyncmy
 from config import database_ip, database_password, database_user, database_schema
+from commands.utility.twitch.twitchApi import initTwitch
 
 async def loadextension(bot, extensionname):
     extensionname = f"extensions.{extensionname}"
@@ -79,7 +80,7 @@ async def on_ready():
     print(pool)
     api.set_pool(pool)
     await api.create_tables()
+    await initTwitch()
     print("Bot is running!")
-
 
 bot.run(config.token)

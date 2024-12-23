@@ -2107,6 +2107,44 @@
                     "title": "Events - Seite ${current_page} von ${total_pages}",
                     "titleNoPages": "Events"
                 }
+            },
+            "twitch": {
+                "defaultNotificationMessage": "**{name}** ist jetzt online!",
+                "addTwitchLiveNotification": {
+                    "errors": {
+                        "missingPermissions": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        },
+                        "missingBotPermissions": {
+                            "title": "Fehlende Bot-Berechtigung",
+                            "description": "Der Bot benötigt die Berechtigung 'Nachrichten senden' und 'Embed Links', um diese Aktion durchzuführen."
+                        },
+                        "twitchNameNotFound": {
+                            "title": "Twitch Name nicht gefunden",
+                            "description": "Der Twitch Name ${twitch_name} wurde nicht gefunden."
+                        }
+                    },
+                    "success": {
+                        "title": "Twitch Live Benachrichtigung erfolgreich hinzugefügt",
+                        "description": "Die Twitch Live Benachrichtigung wurde erfolgreich hinzugefügt. Wenn ${twitch_name} online ist, werde ich in ${channel} eine Nachricht schreiben."
+                    }
+                },
+                "listTwitchLiveNotifications": {
+                    "error": {
+                        "missingPermissions": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        },
+                        "noNotifications": {
+                            "title": "Keine Twitch Live Benachrichtigungen gefunden",
+                            "description": "Es wurden keine Twitch Live Benachrichtigungen gefunden. Bitte erstelle zuerst welche."
+                        }
+                    },
+                    "title": "Twitch Live Benachrichtigungen - Seite ${current_page} von ${total_pages}",
+                    "titleNoPages": "Twitch Live Benachrichtigungen",
+                    "description": "Twitch Name: ${twitch_name}\nNachricht: ${message}"
+                }
             }
         },
         "level": {

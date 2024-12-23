@@ -30,6 +30,8 @@ from commands.utility.brawlstars.playerinfo import playerInfo as brawlstarsPlaye
 from commands.utility.brawlstars.brawlers import brawlers as brawlstarsBrawlersCommand
 from commands.utility.brawlstars.club import club as brawlstarsClubCommand
 from commands.utility.brawlstars.events import events as brawlstarsEventsCommand
+from commands.utility.twitch.addTwitchLiveNotification import addTwitchLiveNotification as addTwitchLiveNotificationCommand
+from commands.utility.twitch.seeTwitchLiveNotifications import seeTwitchLiveNotifications as seeTwitchLiveNotificationsCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -421,6 +423,49 @@ class BrawlStarsCommands(discord.app_commands.Group):
         await brawlstarsEventsCommand(commandInfo=commandInfo)
         return
 
+class TwitchCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_twitch_add_name"),
+        description=app_commands.locale_str("utility_twitch_add_description"),
+    )
+    async def add(self, ctx, twitch_name: str, channel: discord.TextChannel, notification_message: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await addTwitchLiveNotificationCommand(commandInfo=commandInfo, twitch_name=twitch_name, channel=channel, notification_message=notification_message)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_twitch_see_name"),
+        description=app_commands.locale_str("utility_twitch_see_description"),
+    )
+    async def see(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await seeTwitchLiveNotificationsCommand(commandInfo=commandInfo)
+        return
+
 class utilityCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("utility_avatar_name"),
@@ -704,6 +749,8 @@ class utilityCog(commands.Cog):
         utilityCmds.add_command(scheduledMessageCmds)
         brawlStarsCmds = BrawlStarsCommands(name=app_commands.locale_str("utility_bs_name"), description=app_commands.locale_str("utility_bs_description"))
         utilityCmds.add_command(brawlStarsCmds)
+        twitchCmds = TwitchCommands(name=app_commands.locale_str("utility_twitch_name"), description=app_commands.locale_str("utility_twitch_description"))
+        utilityCmds.add_command(twitchCmds)
         self.bot.tree.add_command(utilityCmds)
 
 

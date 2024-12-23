@@ -679,6 +679,19 @@ async def create_tables():
             ON DELETE CASCADE
     ) ENGINE=InnoDB;
     """
+    tables["twitchOnlineNotification"] = """
+    CREATE TABLE IF NOT EXISTS `twitchOnlineNotification` (
+        `id` INT AUTO_INCREMENT,
+        `channelId` VARCHAR(20),
+        `guildId` VARCHAR(20),
+        `twitchUuid` VARCHAR(64),
+        `twitchName` VARCHAR(128),
+        `notificationMessage` VARCHAR(1024) DEFAULT NULL,
+        PRIMARY KEY(`id`),
+        INDEX `idx_channel` (`channelId`),
+        INDEX `idx_guild` (`guildId`)
+    ) ENGINE=InnoDB;
+    """
 
     for table_name in tables:
         table_query = tables[table_name]
@@ -2892,3 +2905,34 @@ async def remove_cashed_slowmode_delay(channel_id: str):
     query = "UPDATE dynamicslowmode SET cashedSlowmode = NULL WHERE channelId = %s"
     params = (channel_id,)
     await execute_action(pool, query, params)
+
+async def get_twitch_online_notification(channel_id: str):
+    query = "SELECT * FROM twitchOnlineNotification WHERE channelId = %s"
+    params = (channel_id,)
+    return await execute_query(pool, query, params)
+
+async def set_twitch_online_notification(guild_id: str, channel_id: str, twitch_uuid: str, twitch_name: str, notification_message: str):
+    query = "INSERT INTO twitchOnlineNotification (guildId, channelId, twitchUuid, twitchName, notificationMessage) VALUES (%s, %s, %s, %s, %s)"
+    params = (guild_id, channel_id, twitch_uuid, twitch_name, notification_message)
+    await execute_action(pool, query, params)
+
+async def remove_twitch_online_notification(id: str):
+    query = "DELETE FROM twitchOnlineNotification WHERE id = %s"
+    params = (id,)
+    await execute_action(pool, query, params)
+
+async def get_twitch_online_notification_by_twitch_uuid(twitch_uuid: str):
+    query = "SELECT * FROM twitchOnlineNotification WHERE twitchUuid = %s"
+    params = (twitch_uuid,)
+    result = await execute_query(pool, query, params)
+    return result[0] if result else None
+
+
+async def get_all_twitch_notification_uuids():
+    query = "SELECT twitchUuid FROM twitchOnlineNotification"
+    return await execute_query(pool, query, ())
+
+async def get_twitch_notification_by_guild_id(guild_id: str):
+    query = "SELECT * FROM twitchOnlineNotification WHERE guildId = %s"
+    params = (guild_id,)
+    return await execute_query(pool, query, params)
