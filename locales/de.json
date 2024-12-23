@@ -1890,7 +1890,7 @@
                 }
             },
             "brawlstars": {
-                "maps": {   
+                "maps": {
                     "Hard Rock Mine": "Mysteriose Mine",
                     "Crystal Arcade": "Kristall-Arcade",
                     "Deathcap Trap": "Giftpilzfalle",
@@ -2044,6 +2044,32 @@
                         "bestTimeAsBigBrawler": "Beste Zeit als Big Brawler: ${time}"
                     },
                     "title": "<:bs_logo:1320640700446015488> Informationen über ${playerName} (${tag})"
+                },
+                "brawlers": {
+                    "error": {
+                        "notFound": {
+                            "title": "Spieler nicht gefunden",
+                            "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        }
+                    },
+                    "description": {
+                        "overwiev": "${name} - ${power}\nRang: ${rank}\nTrophäen: ${trophies}\nHöchste Trophäen: ${highestTrophies}",
+                        "starPowers": "Star Powers:",
+                        "starPower": " ${name}",
+                        "gadgets": "Gadgets:",
+                        "gadget": " ${name} - Level ${level}"
+                    },
+                    "title": "Brawler von ${name} - Seite ${current_page} von ${total_pages}",
+                    "search": {
+                        "error": {
+                            "title": "Fehler beim Suchen",
+                            "description": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+                            "invalidInput": "Ungültige Eingabe. Bitte versuche es erneut."
+                        },
+                        "label": "Brawler Namen eingeben",
+                        "placeholder": "Brawler Namen eingeben",
+                        "title": "Brawler suchen"
+                    }
                 }
             }
         },
@@ -6179,7 +6205,7 @@
                 "name": "dynamischer_slowmode_hinzufügen",
                 "description": "Fügt einen dynamischen Slowmode hinzu",
                 "params": {
-                    "channel": {    
+                    "channel": {
                         "name": "kanal",
                         "description": "Der Kanal, dessen dynamischer Slowmode hinzugefügt werden soll"
                     },

@@ -48,6 +48,7 @@ from config import ImgBBApiKey
 import base64
 import json
 import gzip
+from difflib import SequenceMatcher
 
 
 class EmbedProxy:
@@ -1325,3 +1326,6 @@ def draw_text_with_outline(draw, position, text, font, text_color, outline_color
 
 def isoTimeToDate(isoTime: str) -> datetime.datetime:
     return datetime.datetime.fromisoformat(isoTime)
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
