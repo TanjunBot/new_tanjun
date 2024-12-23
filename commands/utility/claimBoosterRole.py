@@ -111,7 +111,6 @@ async def claimBoosterRole(
 
 async def remove_claimed_booster_roles_that_are_expired(client: discord.Client):
     claimed_booster_roles = await get_claimed_booster_role()
-    print("claimed_booster_roles", claimed_booster_roles)
     for user, role, guild_id in claimed_booster_roles:
         guild = client.get_guild(int(guild_id))
         user = guild.get_member(int(user))

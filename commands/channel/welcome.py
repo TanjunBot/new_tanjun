@@ -140,15 +140,12 @@ async def fetch_image(url):
         async with session.get(url) as response:
             if response.status != 200:
                 return None
-            print("response: ", response)
             image_data = io.BytesIO(await response.read())
-            print("image_data: ", image_data)
             return image_data
 
 
 async def get_image_or_gif_frames(url):
     image_data = await fetch_image(url)
-    print("image_data: ", image_data)
     image = Image.open(image_data)
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
     duration = image.info.get("duration", 100)

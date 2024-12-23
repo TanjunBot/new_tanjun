@@ -2255,7 +2255,6 @@ async def get_log_channel(guild_id: str):
     query = "SELECT channelId FROM logChannel WHERE guildId = %s"
     params = (guild_id,)
     result = await execute_query(pool, query, params)
-    print("\n\nFrom API getlogcHannel: ", result, "\n\n")
     return result[0][0] if result else None
 
 
@@ -2407,7 +2406,6 @@ async def set_log_enable(
 
     query = query[:-2] + endQuery
 
-    print("\n\nFrom API 2: ", query, params, "\n\n")
     await execute_action(pool, query, params)
 
 
@@ -2415,8 +2413,6 @@ async def get_log_enable(guild_id: str):
     query = "SELECT * FROM logEnables WHERE guildId = %s"
     params = (guild_id,)
     result = await execute_query(pool, query, params)
-    print("\n\nFrom API: ", result, "\n\n")
-    print("\n\nFrom API: ", result[0] if result and result[0] else None, "\n\n")
     return result[0] if result and result[0] else None
 
 
@@ -2424,7 +2420,6 @@ async def test_log_enable():
     query = "UPDATE logEnables SET automodRuleCreate = %s WHERE guildId = %s"
     params = (False, 947219439764521060)
     await execute_action(pool, query, params)
-    print("Done")
 
 
 async def test_log_enable_2():
@@ -2567,7 +2562,6 @@ async def get_reports(guild_id: str, user_id: str = None):
         result = await execute_query(pool, query, tuple(params))
         return result
     except Exception as e:
-        print(f"Error fetching reports: {e}")
         return []
 
 
@@ -2634,8 +2628,6 @@ async def add_trigger_message(
 ):
     query = "INSERT INTO triggerMessages (guildId, `trigger`, response, caseSensitive) VALUES (%s, %s, %s, %s)"
     params = (guild_id, trigger, response, caseSensitive)
-    print("query", query)
-    print("params", params)
     await execute_action(pool, query, params)
 
 
@@ -2668,8 +2660,6 @@ async def remove_trigger_message_channel(
 ):
     query = "DELETE FROM triggerMessagesChannel WHERE guildId = %s AND channelId = %s AND triggerId = %s"
     params = (guild_id, channel_id, trigger_id)
-    print("query", query)
-    print("params", params)
     await execute_action(pool, query, params)
 
 
@@ -2888,7 +2878,6 @@ async def clear_old_dynamicslowmode_messages(channel_id: str, send_time: datetim
     # Only delete messages older than the specified time, ensuring UTC comparison
     query = "DELETE FROM dynamicslowmode_messages WHERE channelId = %s AND sendTime < %s"
     params = (channel_id, send_time)
-    print("Deleting messages older than:", send_time)
     await execute_action(pool, query, params)
 
 async def get_dynamicslowmode_messages(channel_id: str):

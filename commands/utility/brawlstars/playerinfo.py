@@ -7,18 +7,14 @@ import json
 
 
 async def getPlayerInfo(playerTag: str):
-    print("token", brawlstarsToken)
-    print("gettin", playerTag)
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with aiohttp.ClientSession() as session:
         async with session.get(
             f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}",
             headers=headers,
         ) as response:
-            print(response.status)
             if response.status != 200:
                 respo = await response.json()
-                print(respo)
                 return None
             return await response.json()
 

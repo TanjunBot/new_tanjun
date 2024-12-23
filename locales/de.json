@@ -4291,6 +4291,66 @@
                         "description": "Der Tag des Spielers, dessen Kampflogbuch angezeigt werden soll"
                     }
                 }
+            },
+            "playerinfo": {
+                "name": "spielerinfo",
+                "description": "Zeigt die Informationen eines Spielers an",
+                "params": {
+                    "tag": {
+                        "name": "tag",
+                        "description": "Der Tag des Spielers, dessen Informationen angezeigt werden sollen"
+                    }
+                }
+            },
+            "brawlers": {
+                "name": "brawler",
+                "description": "Zeigt die Brawler eines Spielers an",
+                "params": {
+                    "tag": {
+                        "name": "tag",
+                        "description": "Der Tag des Spielers, dessen Brawlers angezeigt werden sollen"
+                    }
+                }
+            },
+            "club": {
+                "name": "club",
+                "description": "Zeigt die Informationen eines Clubs an",
+                "params": {
+                    "tag": {
+                        "name": "tag",
+                        "description": "Der Tag des Clubs, dessen Informationen angezeigt werden sollen"
+                    }
+                }
+            },
+            "events": {
+                "name": "events",
+                "description": "Zeigt die aktuellen Events von Brawl Stars an"
+            }
+        },
+        "twitch": {
+            "name": "twitch",
+            "description": "Befehle für Twitch",
+            "add": {
+                "name": "benachrichtigung_hinzufügen",
+                "description": "Fügt eine Live-Benachrichtigung für einen Twitch-Streamer hinzu",
+                "params": {
+                    "twitch_name": {
+                        "name": "twitch_name",
+                        "description": "Der Name des Twitch-Streamers"
+                    },
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, in dem die Benachrichtigung gesendet werden soll"
+                    },
+                    "notification_message": {
+                        "name": "benachrichtigungsnachricht",
+                        "description": "Die Nachricht, die gesendet werden soll (optional)"
+                    }
+                }
+            },
+            "see": {
+                "name": "benachrichtigungen_ansehen",
+                "description": "Zeigt alle Live-Benachrichtigungen an"
             }
         }
     },

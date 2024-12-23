@@ -54,8 +54,6 @@ async def open_ticket_2(interaction: discord.Interaction):
         )
         return
     
-    print("ticket", ticket)
-
     introduction = ticket[3]
     ping_role = ticket[4]
     name = ticket[5]

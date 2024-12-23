@@ -92,7 +92,6 @@ def getTwitchApi():
     return twitch_api
 
 async def notify_twitch_online(client, uuid, data: dict):
-    print("notifying twitch online: ", uuid, data)
     datas = await get_twitch_online_notification_by_twitch_uuid(uuid)
     channelId = datas[1]
     notificationMessage = datas[5]
@@ -101,7 +100,6 @@ async def notify_twitch_online(client, uuid, data: dict):
     message = parse_twitch_notification_message(notificationMessage, guild.preferred_locale if guild.preferred_locale else "en", data["user_name"])
     channel = guild.get_channel(int(channelId))
     if not channel:
-        print("channel not found :(")
         return
     embed = tanjunEmbed(
         description=f"[{data['title']}](https://www.twitch.tv/{data['user_name']})"

@@ -5,7 +5,6 @@ import discord
 
 async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel):
 
-    print("channel: ", channel)
     if not commandInfo.user.guild_permissions.manage_guild:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

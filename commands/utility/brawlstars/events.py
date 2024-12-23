@@ -19,10 +19,8 @@ async def getEventRotation():
             f"https://api.brawlstars.com/v1/events/rotation",
             headers=headers,
         ) as response:
-            print(response.status)
             if response.status != 200:
                 respo = await response.json()
-                print(respo)
                 return None
             return await response.json()
 

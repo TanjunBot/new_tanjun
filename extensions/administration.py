@@ -106,7 +106,6 @@ class administrationCog(commands.Cog):
 
     @commands.command()
     async def update(self, ctx):
-        print(config.adminIds)
         if ctx.author.id not in config.adminIds:
             return
 
@@ -160,11 +159,9 @@ class administrationCog(commands.Cog):
         if ctx.author.id not in config.adminIds:
             return
         allBrawlers = await self.getBrawlers()
-        print(allBrawlers)
         for i, brawler in enumerate(allBrawlers["items"]):
             if i < start:
                 continue
-            print(brawler)
             starPowers = brawler["starPowers"]
             for starPower in starPowers:
                 url = f"https://cdn.brawlify.com/star-powers/borderless/{starPower['id']}.png"
@@ -181,11 +178,9 @@ class administrationCog(commands.Cog):
         if ctx.author.id not in config.adminIds:
             return
         allBrawlers = await self.getBrawlers()
-        print(allBrawlers)
         for i, brawler in enumerate(allBrawlers["items"]):
             if i < start:
                 continue
-            print(brawler)
             gadgets = brawler["gadgets"]
             for gadget in gadgets:
                 url = f"https://cdn.brawlify.com/gadgets/borderless/{gadget['id']}.png"

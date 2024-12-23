@@ -104,7 +104,6 @@ async def configure_logs(commandInfo: utility.commandInfo):
             custom_id="down"
         )
         async def down(self, interaction: discord.Interaction, button: discord.ui.Button):
-            print("")
             self.selectedIndex += 1
             if self.selectedIndex >= len(LOG_OPTIONS):
                 self.selectedIndex = 0

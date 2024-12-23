@@ -93,7 +93,6 @@ async def claimBoosterChannel(
 
 async def remove_claimed_booster_channels_that_are_expired(client: discord.Client):
     claimed_booster_channels = await get_claimed_booster_channel()
-    print("claimed_booster_channels", claimed_booster_channels)
     for user, channel, guild_id in claimed_booster_channels:
         guild = client.get_guild(int(guild_id))
         user = guild.get_member(int(user))

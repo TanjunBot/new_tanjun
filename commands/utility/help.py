@@ -90,13 +90,6 @@ async def help(commandInfo, ctx):
                                                 command_text += f"- **{param.name}**: *No description available*\n"
                                         command_text += "\n"
 
-                                    print(len(texts[current_index] + command_text))
-                                    print(
-                                        len(texts[current_index] + command_text)
-                                        > char_limit
-                                    )
-                                    print(current_index)
-
                                     if (
                                         len(texts[current_index] + command_text)
                                         > char_limit
@@ -156,11 +149,9 @@ async def help(commandInfo, ctx):
 
             # Create embeds
             embeds = []
-            print("len(texts)", len(texts))
             overall_length = 0
             for i, text in enumerate(texts, 1):
                 overall_length += len(text)
-                print(len(text))
                 if text.strip():
                     embed = discord.Embed(
                         title=(
@@ -174,7 +165,6 @@ async def help(commandInfo, ctx):
                     )
                     embeds.append(embed)
 
-            print("overall_length", overall_length)
             view = (
                 PaginatedHelpView(self.client, embeds)
                 if len(embeds) > 1

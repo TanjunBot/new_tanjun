@@ -117,7 +117,6 @@ class LoopCog(commands.Cog):
         try:
             twitch_api = getTwitchApi()
             if not twitch_api:
-                print("twitch_api not initialized")
                 return
                 
             uuids = await get_all_twitch_notification_uuids()
@@ -147,7 +146,7 @@ class LoopCog(commands.Cog):
                 twitch_api.stream_status[uuid] = is_live
 
         except Exception as e:
-            print(f"Error in poll_streams: {str(e)}")
+            pass
 
     @commands.Cog.listener()
     async def on_ready(self):  
