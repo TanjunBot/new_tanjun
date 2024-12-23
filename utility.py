@@ -1,3 +1,7 @@
+# Unused imports:
+# import cmath
+# import base64
+# import json
 from __future__ import division
 import discord
 from typing import (
@@ -7,7 +11,7 @@ from typing import (
     Mapping,
     Optional,
     Protocol,
-    TYPE_CHECKING,
+    # TYPE_CHECKING,
     TypeVar,
     Union,
 )
@@ -18,12 +22,12 @@ from pyparsing import (
     Word,
     Optional as Opt,
     Combine,
-    Group,
+    # Group,
     ZeroOrMore,
     Forward,
     nums,
     alphas,
-    oneOf,
+    # oneOf,
 )
 import math
 import operator
@@ -41,13 +45,11 @@ import re
 from github import Github
 import ast
 import operator as op
-import cmath
 import tempfile
 import os
 from config import ImgBBApiKey
-import base64
-import json
 import gzip
+from typing_extensions import Self
 
 
 class EmbedProxy:
@@ -69,8 +71,6 @@ class EmbedProxy:
     def __eq__(self, other: object) -> bool:
         return isinstance(other, EmbedProxy) and self.__dict__ == other.__dict__
 
-
-from typing_extensions import Self
 
 T = TypeVar("T")
 
@@ -933,7 +933,7 @@ class NumericStringParser(object):
 
     def eval(self, num_string, parseAll=True):
         self.exprStack = []
-        results = self.bnf.parseString(num_string, parseAll)
+        self.bnf.parseString(num_string, parseAll)
         val = self.evaluateStack(self.exprStack[:])
         return val
 
@@ -1060,7 +1060,7 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str = None) -> in
     if scaling == "custom" and custom_formula:
         try:
             result = eval_expr(custom_formula.replace("level", str(level)))
-        except:
+        except Exception:
             return 0  # Return 0 if there's an error in the custom formula
     else:
         result = LEVEL_SCALINGS.get(scaling, LEVEL_SCALINGS["medium"])(level)
@@ -1265,7 +1265,7 @@ async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict
             form_data = aiohttp.FormData()
             form_data.add_field("key", ImgBBApiKey)
             form_data.add_field("image", image_file)
-            form_data.add_field("name", f"tbg")
+            form_data.add_field("name", "tbg")
 
             async with session.post(
                 "https://api.imgbb.com/1/upload", data=form_data
@@ -1309,7 +1309,7 @@ def check_if_str_is_hex_color(color: str) -> bool:
     try:
         int(color, 16)
         return True
-    except:
+    except ValueError:
         return False
 
 
