@@ -60,6 +60,7 @@ from commands.admin.channel.farewell import (
     removeFarewellChannel as removeFarewellChannelCommand,
 )
 
+
 class WarnCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_warn_add_name"),
@@ -713,6 +714,7 @@ class ChannelCommands(discord.app_commands.Group):
         await removeFarewellChannelCommand(commandInfo=commandInfo)
         return
 
+
 class administrationCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_kick_name"),
@@ -1132,7 +1134,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        if channel == None:
+        if channel is None:
             channel = ctx.channel
 
         await createEmbedCommand(commandInfo=commandInfo, channel=channel, title=title)
@@ -1719,7 +1721,7 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        if channel == None:
+        if channel is None:
             channel = ctx.channel
 
         if not title:
