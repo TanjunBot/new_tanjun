@@ -50,6 +50,15 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
         async def previous_page(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if not interaction.user.id == commandInfo.user.id:
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.twitch.listTwitchLiveNotifications.error.notYourNotification.description",
+                    ),
+                    ephemeral=True,
+                )
+                return
             self.current_page -= 1
             if self.current_page < 0:
                 self.current_page = len(self.notifications) - 1
@@ -59,6 +68,15 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
         async def delete_notification(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if not interaction.user.id == commandInfo.user.id:
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.twitch.listTwitchLiveNotifications.error.notYourNotification.description",
+                    ),
+                    ephemeral=True,
+                )
+                return
             global notifications
             await remove_twitch_online_notification(self.notifications[self.current_page][0])
             self.notifications = await get_twitch_notification_by_guild_id(
@@ -85,6 +103,15 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
         async def next_page(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if not interaction.user.id == commandInfo.user.id:
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.twitch.listTwitchLiveNotifications.error.notYourNotification.description",
+                    ),
+                    ephemeral=True,
+                )
+                return
             self.current_page += 1
             if self.current_page >= len(self.notifications):
                 self.current_page = 0

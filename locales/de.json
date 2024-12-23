@@ -2105,7 +2105,8 @@
                     },
                     "description": "## ${mode} auf ${map_}\nStartet: <t:${startTime}:R>\nEndet: <t:${endTime}:R>\n<t:${startTime}:D> - <t:${endTime}:D>",
                     "title": "Events - Seite ${current_page} von ${total_pages}",
-                    "titleNoPages": "Events"
+                    "titleNoPages": "Events",
+                    "notYourEmbed": "Du darfst das nicht."
                 }
             },
             "twitch": {
@@ -2123,6 +2124,10 @@
                         "twitchNameNotFound": {
                             "title": "Twitch Name nicht gefunden",
                             "description": "Der Twitch Name ${twitch_name} wurde nicht gefunden."
+                        },
+                        "notYourNotification": {
+                            "title": "Du darfst das nicht.",
+                            "description": "Du darfst nicht mit diesem Knopf interagieren."
                         }
                     },
                     "success": {

@@ -86,6 +86,15 @@ async def club(commandInfo: commandInfo, clubTag: str):
         async def previous(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if not interaction.user.id == commandInfo.user.id:
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.brawlstars.events.notYourEmbed",
+                    ),
+                    ephemeral=True,
+                )
+                return
             if self.current_page == 0:
                 self.current_page = len(self.pages) - 1
             else:
@@ -98,6 +107,15 @@ async def club(commandInfo: commandInfo, clubTag: str):
         async def next(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if not interaction.user.id == commandInfo.user.id:
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.brawlstars.events.notYourEmbed",
+                    ),
+                    ephemeral=True,
+                )
+                return
             if self.current_page == len(self.pages) - 1:
                 self.current_page = 0
             else:
@@ -110,6 +128,15 @@ async def club(commandInfo: commandInfo, clubTag: str):
         async def search(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            if not interaction.user.id == commandInfo.user.id:
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.brawlstars.events.notYourEmbed",
+                    ),
+                    ephemeral=True,
+                )
+                return
             await interaction.response.send_modal(SearchModal(commandInfo))
 
     class SearchModal(discord.ui.Modal):
