@@ -7,7 +7,7 @@ annotated-types==0.7.0
 anyio==4.7.0
 asttokens==3.0.0
 asyncmy==0.2.10
-attrs==24.2.0
+attrs==24.3.0
 backcall==0.2.0
 beautifulsoup4==4.12.3
 bleach==6.2.0
