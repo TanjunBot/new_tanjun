@@ -1,5 +1,21 @@
 {
     "commands": {
+        "help": {
+            "select": {
+                "placeholder": "Befehls-Kategorie",
+                "title": "Hilfe",
+                "description": "Wähle eine Befehls-Kategorie aus, um mehr über die Befehle in dieser Kategorie zu erfahren."
+            },
+            "timeout": {
+                "title": "Timeout",
+                "description": "Der Timeout für diesen Befehl ist abgelaufen."
+            },
+            "not_authorized": {
+                "title": "Nicht autorisiert",
+                "description": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen."
+            },
+            "default": "Standardwert"
+        },
         "admin": {
             "addrole": {
                 "missingPermission": {
@@ -3249,7 +3265,8 @@
                     "notUserAdmin": "nur Nachrichten von Nicht-Administratoren löschen außer Bots",
                     "embeds": "nur Nachrichten mit Embed löschen",
                     "files": "nur Nachrichten mit Dateianhängen löschen",
-                    "notAdminNotPinned": "nur nicht angeheftete Nachrichten von Nicht-Administratoren löschen (inkl. Bots)"
+                    "notAdminNotPinned": "nur nicht angeheftete Nachrichten von Nicht-Administratoren löschen (inkl. Bots)",
+                    "description": "Welche Nachrichten gelöscht werden sollen"
                 }
             }
         },
