@@ -2330,141 +2330,23 @@ async def get_log_user_blacklist(guild_id: str):
 '''
 
 
-async def set_log_enable(
-    guild_id: str,
-    automodRuleCreate: bool = None,
-    automodRuleUpdate: bool = None,
-    automodRuleDelete: bool = None,
-    automodAction: bool = None,
-    guildChannelDelete: bool = None,
-    guildChannelCreate: bool = None,
-    guildChannelUpdate: bool = None,
-    guildUpdate: bool = None,
-    inviteCreate: bool = None,
-    inviteDelete: bool = None,
-    memberJoin: bool = None,
-    memberLeave: bool = None,
-    memberUpdate: bool = None,
-    userUpdate: bool = None,
-    memberBan: bool = None,
-    memberUnban: bool = None,
-    presenceUpdate: bool = None,
-    messageEdit: bool = None,
-    messageDelete: bool = None,
-    reactionAdd: bool = None,
-    reactionRemove: bool = None,
-    guildRoleCreate: bool = None,
-    guildRoleDelete: bool = None,
-    guildRoleUpdate: bool = None,
-):
+async def set_log_enable(guild_id: str, **kwargs):
     query = "UPDATE logEnables SET "
-    endQuery = " WHERE guildId = %s"
-    params = ()
+    end_query = " WHERE guildId = %s"
+    params = []
 
-    if automodRuleCreate is not None:
-        query += "automodRuleCreate = %s, "
-        params += (automodRuleCreate,)
+    for key, value in kwargs.items():
+        if value is not None:
+            query += f"{key} = %s, "
+            params.append(value)
 
-    if automodRuleUpdate is not None:
-        query += "automodRuleUpdate = %s, "
-        params += (automodRuleUpdate,)
-
-    if automodRuleDelete is not None:
-        query += "automodRuleDelete = %s, "
-        params += (automodRuleDelete,)
-
-    if automodAction is not None:
-        query += "automodAction = %s, "
-        params += (automodAction,)
-
-    if guildChannelDelete is not None:
-        query += "guildChannelDelete = %s, "
-        params += (guildChannelDelete,)
-
-    if guildChannelCreate is not None:
-        query += "guildChannelCreate = %s, "
-        params += (guildChannelCreate,)
-
-    if guildChannelUpdate is not None:
-        query += "guildChannelUpdate = %s, "
-        params += (guildChannelUpdate,)
-
-    if guildUpdate is not None:
-        query += "guildUpdate = %s, "
-        params += (guildUpdate,)
-
-    if inviteCreate is not None:
-        query += "inviteCreate = %s, "
-        params += (inviteCreate,)
-
-    if inviteDelete is not None:
-        query += "inviteDelete = %s, "
-        params += (inviteDelete,)
-
-    if memberJoin is not None:
-        query += "memberJoin = %s, "
-        params += (memberJoin,)
-
-    if memberLeave is not None:
-        query += "memberLeave = %s, "
-        params += (memberLeave,)
-
-    if memberUpdate is not None:
-        query += "memberUpdate = %s, "
-        params += (memberUpdate,)
-
-    if userUpdate is not None:
-        query += "userUpdate = %s, "
-        params += (userUpdate,)
-
-    if memberBan is not None:
-        query += "memberBan = %s, "
-        params += (memberBan,)
-
-    if memberUnban is not None:
-        query += "memberUnban = %s, "
-        params += (memberUnban,)
-
-    if presenceUpdate is not None:
-        query += "presenceUpdate = %s, "
-        params += (presenceUpdate,)
-
-    if messageEdit is not None:
-        query += "messageEdit = %s, "
-        params += (messageEdit,)
-
-    if messageDelete is not None:
-        query += "messageDelete = %s, "
-        params += (messageDelete,)
-
-    if reactionAdd is not None:
-        query += "reactionAdd = %s, "
-        params += (reactionAdd,)
-
-    if reactionRemove is not None:
-        query += "reactionRemove = %s, "
-        params += (reactionRemove,)
-
-    if guildRoleCreate is not None:
-        query += "guildRoleCreate = %s, "
-        params += (guildRoleCreate,)
-
-    if guildRoleDelete is not None:
-        query += "guildRoleDelete = %s, "
-        params += (guildRoleDelete,)
-
-    if guildRoleUpdate is not None:
-        query += "guildRoleUpdate = %s, "
-        params += (guildRoleUpdate,)
-
-    if len(params) == 0:
+    if not params:
         return
 
-    params += (guild_id,)
+    params.append(guild_id)
+    query = query.rstrip(", ") + end_query
 
-    query = query[:-2] + endQuery
-
-    await execute_action(query, params)
+    await execute_action(query, tuple(params))
 
 
 async def get_log_enable(guild_id: str):
