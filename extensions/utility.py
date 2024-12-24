@@ -1,9 +1,10 @@
+# Unused imports:
+# from typing import List, Optional
 import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
 from localizer import tanjunLocalizer
-from typing import List, Optional
 
 from commands.utility.messagetrackingoptout import optOut as optOutCommand
 from commands.utility.messagetrackingoptin import optIn as optInCommand
@@ -32,6 +33,7 @@ from commands.utility.brawlstars.club import club as brawlstarsClubCommand
 from commands.utility.brawlstars.events import events as brawlstarsEventsCommand
 from commands.utility.twitch.addTwitchLiveNotification import addTwitchLiveNotification as addTwitchLiveNotificationCommand
 from commands.utility.twitch.seeTwitchLiveNotifications import seeTwitchLiveNotifications as seeTwitchLiveNotificationsCommand
+
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -73,6 +75,7 @@ class MessageTrackingCommands(discord.app_commands.Group):
         )
 
         await optInCommand(commandInfo=commandInfo)
+
 
 class BoosterRoleCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -164,6 +167,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
         )
         await commandInfo.reply(embed=embed)
 
+
 class BoosterChannelCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("utility_claimboosterchannel_name"),
@@ -227,7 +231,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
             client=ctx.client,
         )
         await setupboosterchannelCommand(commandInfo=commandInfo, category=category)
-    
+
     @app_commands.command(
         name=app_commands.locale_str("utility_boosterchannelinfo_name"),
         description=app_commands.locale_str("utility_boosterchannelinfo_description"),
@@ -252,6 +256,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
         )
         await commandInfo.reply(embed=embed)
 
+
 class AutoPublishCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("utility_autopublish_name"),
@@ -260,7 +265,7 @@ class AutoPublishCommands(discord.app_commands.Group):
     @app_commands.describe(
         channel=app_commands.locale_str("utility_autopublish_params_channel_description"),
     )
-    async def autopublish(self, ctx, channel: discord.TextChannel= None):
+    async def autopublish(self, ctx, channel: discord.TextChannel = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -292,7 +297,7 @@ class AutoPublishCommands(discord.app_commands.Group):
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
-            command=ctx.command,    
+            command=ctx.command,
             locale=ctx.locale,
             message=ctx.message,
             permissions=ctx.permissions,
@@ -304,6 +309,7 @@ class AutoPublishCommands(discord.app_commands.Group):
             channel = ctx.channel
 
         await autopublishRemoveCommand(commandInfo=commandInfo, channel=channel)
+
 
 class BrawlStarsCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -329,7 +335,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
 
         await battlelogCommand(commandInfo=commandInfo, playerTag=tag)
         return
-    
+
     @app_commands.command(
         name=app_commands.locale_str("utility_bs_playerinfo_name"),
         description=app_commands.locale_str("utility_bs_playerinfo_description"),
@@ -353,7 +359,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
 
         await brawlstarsPlayerInfoCommand(commandInfo=commandInfo, playerTag=tag)
         return
-    
+
     @app_commands.command(
         name=app_commands.locale_str("utility_bs_brawlers_name"),
         description=app_commands.locale_str("utility_bs_brawlers_description"),
@@ -377,7 +383,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
 
         await brawlstarsBrawlersCommand(commandInfo=commandInfo, playerTag=tag)
         return
-    
+
     @app_commands.command(
         name=app_commands.locale_str("utility_bs_club_name"),
         description=app_commands.locale_str("utility_bs_club_description"),
@@ -401,7 +407,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
 
         await brawlstarsClubCommand(commandInfo=commandInfo, clubTag=tag)
         return
-    
+
     @app_commands.command(
         name=app_commands.locale_str("utility_bs_events_name"),
         description=app_commands.locale_str("utility_bs_events_description"),
@@ -422,6 +428,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
 
         await brawlstarsEventsCommand(commandInfo=commandInfo)
         return
+
 
 class TwitchCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -465,6 +472,7 @@ class TwitchCommands(discord.app_commands.Group):
 
         await seeTwitchLiveNotificationsCommand(commandInfo=commandInfo)
         return
+
 
 class utilityCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -623,8 +631,8 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         repeat=app_commands.locale_str("utility_schedulemessage_params_repeat_description"),
     )
     async def schedulemessage(
-        self, 
-        ctx, 
+        self,
+        ctx,
         content: str,
         sendin: str,
         channel: discord.TextChannel = None,
@@ -653,9 +661,9 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        attachments = [] # [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
+        attachments = []  # [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
         #                          attachment6, attachment7, attachment8, attachment9, attachment10] if a is not None]
-        
+
         await scheduleMessageCommand(
             commandInfo=commandInfo,
             content=content,
@@ -682,7 +690,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
-        
+
         await listScheduledCommand(commandInfo=commandInfo)
 
     @app_commands.command(
@@ -705,8 +713,9 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
-        
+
         await removeScheduledCommand(commandInfo=commandInfo, message_id=messageid)
+
 
 class utilityCog(commands.Cog):
 
