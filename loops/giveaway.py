@@ -3,15 +3,18 @@ from api import get_send_ready_giveaways, add_giveaway_voice_minutes_if_needed, 
 
 voiceUsers = []
 
+
 async def sendReadyGiveaways(client):
     ready_giveaways = await get_send_ready_giveaways()
     if ready_giveaways:
         for giveaway in ready_giveaways:
             await sendGiveaway(giveawayid=giveaway[0], client=client)
 
+
 async def checkVoiceUsers(client):
     for user in voiceUsers:
         await add_giveaway_voice_minutes_if_needed(user.id, user.guild.id)
+
 
 async def handleVoiceChange(user, before, after):
     if await check_if_opted_out(user.id):
@@ -26,6 +29,7 @@ async def handleVoiceChange(user, before, after):
     else:
         updateVoiceUsers(active_members)
 
+
 def updateVoiceUsers(active_members):
     global voiceUsers
     current_users_set = set(voiceUsers)
@@ -39,14 +43,15 @@ def updateVoiceUsers(active_members):
     for user in users_to_remove:
         removeVoiceUser(user)
 
+
 def addVoiceUser(user):
     if user not in voiceUsers:
         voiceUsers.append(user)
 
+
 def removeVoiceUser(user):
     if user in voiceUsers:
         voiceUsers.remove(user)
-
 
 
 async def endGiveaways(client):
