@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ['self-hosted', 'Linux', 'X64']
+    runs-on: ['self-hosted']
     container:
       image: "python:3.12.3"
     steps:
@@ -34,7 +34,7 @@ jobs:
           python run_flake8.py
 
   notify_discord:
-    runs-on: ['self-hosted', 'Linux', 'X64']
+    runs-on: ['self-hosted']
     needs: build
     if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/Development') || startsWith(github.ref, 'refs/heads/development') || startsWith(github.ref, 'refs/heads/dev') || startsWith(github.ref, 'refs/heads/ver/')
     steps:
