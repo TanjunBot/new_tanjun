@@ -1,8 +1,9 @@
+# Unused imports:
+# from typing import List
 import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from typing import List
 
 from commands.image.blur_image import blur_image
 from commands.image.contour import contour_image
@@ -16,6 +17,7 @@ from commands.image.resize import resize
 from commands.image.rescale import rescale
 from commands.image.mirror import mirror
 from commands.image.compress import compress
+
 
 class ImageCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -131,7 +133,7 @@ class ImageCommands(discord.app_commands.Group):
             commandInfo=commandInfo,
             image=image
         )
-    
+
     @app_commands.command(
         name=app_commands.locale_str("image_emboss_name"),
         description=app_commands.locale_str("image_emboss_description")
@@ -183,7 +185,7 @@ class ImageCommands(discord.app_commands.Group):
             commandInfo=commandInfo,
             image=image
         )
-    
+
     @app_commands.command(
         name=app_commands.locale_str("image_sharpen_name"),
         description=app_commands.locale_str("image_sharpen_description")
@@ -356,6 +358,7 @@ class ImageCommands(discord.app_commands.Group):
             quality=quality
         )
 
+
 class ImageCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -364,6 +367,7 @@ class ImageCog(commands.Cog):
     async def on_ready(self):
         imgcmds = ImageCommands(name=app_commands.locale_str("image_name"), description=app_commands.locale_str("image_description"))
         self.bot.tree.add_command(imgcmds)
+
 
 async def setup(bot):
     await bot.add_cog(ImageCog(bot))
