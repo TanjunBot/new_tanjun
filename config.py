@@ -3,7 +3,7 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 
-version = "0.8.15"
+version = "0.8.16"
 token = config["token"]
 applicationId = config["applicationId"]
 adminIds = [int(id) for id in config["adminIds"].split(",")]
