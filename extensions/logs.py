@@ -3579,7 +3579,7 @@ class LogsCog(commands.Cog):
         if added_perms:
             added_perms_list = ", ".join(
                 [
-                    f"`{tanjunLocalizer.localize(locale, f"logs.permissions.{perm}")}`"
+                    f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`"
                     for perm in added_perms
                 ]
             )
@@ -3594,7 +3594,7 @@ class LogsCog(commands.Cog):
         if removed_perms:
             removed_perms_list = ", ".join(
                 [
-                    f"`{tanjunLocalizer.localize(locale, f"logs.permissions.{perm}")}`"
+                    f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`"
                     for perm in removed_perms
                 ]
             )
