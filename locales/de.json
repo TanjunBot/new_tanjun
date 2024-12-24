@@ -5977,14 +5977,17 @@
             "content": "Nachrichteninhalt: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
             "diff": "Nachrichtenänderungen: \n```\n${diff}\n```",
             "title": "Nachricht bearbeitet",
-            "attachments": "Anhänge: \n${attachments}"
+            "addedAttachments": "hinzugefügte Anhänge: \n${attachments}",
+            "removedAttachments": "entfernte Anhänge: \n${attachments}\n-# Bilder werden auf imgbb hochgeladen, da sie nicht mehr von Discord gespeichert werden. Andere Dateien sind leider verloren.",
+            "urlNotAvaiableLocale": "Anhang konnte leider nicht gespeichert werden."
         },
         "messageDelete": {
             "title": "Nachricht gelöscht",
             "name": "Eine Nachricht von ${user} wurde im Kanal ${channel} gelöscht",
             "deletedBy": "Gelöscht von: ${deleted_by}",
             "content": "Nachrichteninhalt: \n${content}",
-            "attachments": "Anhänge: \n${attachments}",
+            "attachments": "Anhänge: \n${attachments}\n-# Bilder werden auf imgbb hochgeladen, da sie nicht mehr von Discord gespeichert werden. Andere Dateien sind leider verloren.",
+            "urlNotAvaiableLocale": "Anhang konnte leider nicht gespeichert werden.",
             "embeds": "Die Nachricht enthielt Embeds. Sie sind unter diesem Log-Eintrag zu finden"
         },
         "reactionAdd": {

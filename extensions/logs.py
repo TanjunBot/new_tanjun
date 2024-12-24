@@ -13,7 +13,7 @@ from api import (
 from localizer import tanjunLocalizer
 import os
 import difflib
-from utility import upload_to_tanjun_logs
+from utility import upload_to_tanjun_logs, upload_image_to_imgbb
 
 from commands.logs.set_log_channel import set_log_channel
 from commands.logs.remove_log_channel import remove_log_channel
@@ -3007,9 +3007,8 @@ class LogsCog(commands.Cog):
 
             truncated_notice = tanjunLocalizer.localize(
                 locale, "logs.messageEdit.truncatedNotice"
-            )  # e.g., "... (truncated)"
+            )
 
-            # Check if either message exceeds 1500 characters
             if len(diff_summary) > 1500:
                 diff_summary_url = await upload_to_tanjun_logs(
                     tanjunLocalizer.localize(
@@ -3031,19 +3030,43 @@ class LogsCog(commands.Cog):
                     )
                 )
 
-        # Check for edited attachments
         if before.attachments != after.attachments:
-            edited_attachments = [
+            added_attachments = [
                 f"[{attachment.filename}]({attachment.url})"
                 for attachment in after.attachments
                 if attachment not in before.attachments
             ]
-            if edited_attachments:
+            
+            removed_attachments = []
+            urlNotAvaiableLocale = tanjunLocalizer.localize(locale, "logs.messageEdit.urlNotAvaiableLocale")
+            for attachment in before.attachments:
+                if attachment not in after.attachments:
+                    if attachment.content_type and attachment.content_type.startswith('image/'):
+                        attachmentBytes = await attachment.read()
+                        url = await upload_image_to_imgbb(attachmentBytes, attachment.filename.split(".")[-1])
+                        if url:
+                            url = url["data"]["display_url"]
+                    else:
+                        url = None
+                    removed_attachments.append(
+                        f"[{attachment.filename}]({url if url else urlNotAvaiableLocale})"
+                    )
+
+            if added_attachments:
                 description_parts.append(
                     tanjunLocalizer.localize(
                         locale,
-                        "logs.messageEdit.attachments",
-                        attachments=", ".join(edited_attachments),
+                        "logs.messageEdit.addedAttachments",
+                        attachments=", ".join(added_attachments),
+                    )
+                )
+            
+            if removed_attachments:
+                description_parts.append(
+                    tanjunLocalizer.localize(
+                        locale,
+                        "logs.messageEdit.removedAttachments",
+                        attachments=", ".join(removed_attachments),
                     )
                 )
 
@@ -3119,12 +3142,26 @@ class LogsCog(commands.Cog):
 
         if message.attachments:
             sendLog = True
-            attachments = "\n- ".join(
-                [
-                    f"[{attachment.filename}]({attachment.url})"
-                    for attachment in message.attachments
-                ]
-            )
+            attachment_parts = []
+            urlNotAvaiableLocale = tanjunLocalizer.localize(locale, "logs.messageDelete.urlNotAvaiableLocale")
+            
+            for attachment in message.attachments:
+                if attachment.content_type and attachment.content_type.startswith('image/'):
+                    try:
+                        attachmentBytes = await attachment.read()
+                        url = await upload_image_to_imgbb(attachmentBytes, attachment.filename.split(".")[-1])
+                        if url:
+                            url = url["data"]["display_url"]
+                    except:
+                        url = None
+                else:
+                    url = None
+                
+                attachment_parts.append(
+                    f"[{attachment.filename}]({url if url else urlNotAvaiableLocale})"
+                )
+            
+            attachments = "\n- ".join(attachment_parts)
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale, "logs.messageDelete.attachments", attachments=attachments
