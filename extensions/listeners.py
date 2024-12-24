@@ -1,9 +1,10 @@
-import discord
+# Unused imports:
+# import discord
+# import utility
+# from discord import app_commands
+# from localizer import tanjunLocalizer
+# from typing import List, Optional
 from discord.ext import commands
-from discord import app_commands
-import utility
-from localizer import tanjunLocalizer
-from typing import List, Optional
 
 from minigames.counting import counting
 from minigames.countingChallenge import counting as countingChallenge
@@ -32,6 +33,7 @@ from commands.channel.media import mediaChannelMessage
 from commands.channel.welcome import welcomeNewUser
 from commands.channel.farewell import farewellUser
 from commands.channel.dynamicslowmode import dynamicslowmodeMessage
+
 
 class ListenerCog(commands.Cog):
 
@@ -78,7 +80,8 @@ class ListenerCog(commands.Cog):
             elif interaction.data["custom_id"].startswith("ticket_close"):
                 await closeTicketListener(interaction)
                 return
-        except:
+        except Exception as e:
+            print(f"An error occurred: {e}")
             raise
 
     @commands.Cog.listener()
@@ -104,6 +107,7 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_member_remove(self, member):
         await farewellUser(member)
+
 
 async def setup(bot):
     await bot.add_cog(ListenerCog(bot))
