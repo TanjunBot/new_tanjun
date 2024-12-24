@@ -1888,6 +1888,268 @@
                     "title": "Ungültige Aktion",
                     "description": "Irgendetwas ist schief gelaufen. Der Report konnte nicht bearbeitet werden. Versuche bitte, den Report erneut zu versenden."
                 }
+            },
+            "brawlstars": {
+                "maps": {
+                    "Hard Rock Mine": "Mysteriose Mine",
+                    "Crystal Arcade": "Kristall-Arcade",
+                    "Deathcap Trap": "Giftpilzfalle",
+                    "Gem Fort": "Juwelenfort",
+                    "Undermine": "Erzgrube",
+                    "Double Swoosh": "Doppelhaken",
+                    "Minecard Madness": "Kipplorenkapriolen",
+                    "Rustic Arcade": "Urige Arcade",
+                    "Open Space": "Freiraum",
+                    "Last Stop": "Endstation",
+                    "Forest Clearing": "Kahlfläche",
+                    "The Cooler Hard Rock": "Felsrutsche",
+                    "Kaboom Canyon": "Kabumm-Canyon",
+                    "Safe Zone": "Sichere Zone",
+                    "Hot Potato": "Heisses Eisen",
+                    "Safe(r) Zone": "Sichere(re) Zone",
+                    "The Great Lake": "Der Grosse See",
+                    "Gg 2.0": "G. G. 2.0",
+                    "Snake Prairie": "Schlangenprarie",
+                    "Shooting Star": "Shootingstar",
+                    "Hideout": "Unterschlupf",
+                    "Canal Grande": "Canal Grande",
+                    "Layer Cake": "Sahnetorte",
+                    "No Excuses": "Keine Ausreden",
+                    "Backyard Bowl": "Hinterhofstation",
+                    "Triple Dribble": "Tripeldribbel",
+                    "Pinhole Punt": "Volltrefferpark",
+                    "Sneaky Fields": "Gewiefte Wiesen",
+                    "Super Beach": "Superstrand",
+                    "Pinball Dreams": "Flipperträume",
+                    "Center Stage": "Im Mittelpunkt",
+                    "Beach Ball": "Strandfussball",
+                    "Sunny Soccer": "Sonnenkick",
+                    "Penalty Kick": "Strafstoß",
+                    "Second Try": "Zweiter Versuch",
+                    "Trickey": "Gaunerei",
+                    "Skull Creek": "Schadelufer",
+                    "Rockwall Brawl": "Felswandbrawl",
+                    "Feast Or Famine": "Alles Oder Nichts",
+                    "Acid Lakes": "Sureseen",
+                    "Cavern Churn": "Wirbelhöhle",
+                    "Double Trouble": "Doppelter Ärger",
+                    "Island Invasion": "Inselinvasion",
+                    "Dark Passage": "Dunkle Passage",
+                    "Flying Fantasies": "Flugfantasien",
+                    "Safety Center": "Sichere Mitte",
+                    "Dried Up River": "Ausgetrockneter Fluss",
+                    "Marksmans Paradise": "Schutzenparadies",
+                    "Skull Rockwall Brawl": "Felswandbrawl",
+                    "Acid Cavern Churn": "Wirbelhöhle",
+                    "Final Four": "Die Letzten Vier",
+                    "Open Business": "Tag Der Offenen Tür",
+                    "Parallel Plays": "Parallele Plays",
+                    "Ring Of File": "Feuerring",
+                    "Dueling Beetles": "Duellkäfer",
+                    "Watersport": "Wassersport",
+                    "Noisy Neighbors": "Nervige Nachbarn",
+                    "Goldarm Gulch": "Goldarm-Schlucht",
+                    "Belles Rock": "Belles Felsen",
+                    "Flarning Phoenix": "Brennender Phonix",
+                    "Out In The Open": "Auf Weiter Flur",
+                    "New Horizons": "Neue Horizonte",
+                    "Four Levels": "Vier Level",
+                    "H For...": "H Steht Für...",
+                    "Two Rivers": "Zwei Flüsse",
+                    "Deep Forest": "Tiefer Wald",
+                    "Tiny Islands": "Miniinseln",
+                    "Temple Of Vroom": "Brummgebung",
+                    "Overgrown Ruins": "Überwucherte Ruinen",
+                    "No Surrender": "Nie Aufgeben",
+                    "Shrouding Serpent": "Schleichende Schlange",
+                    "Warrioirs Way": "Der Weg Des Kriegers",
+                    "Monkey Maze": "Affenlabyrinth",
+                    "Petticoat Duel": "Petticoat-Duell",
+                    "Zen Garden": "Zengarten",
+                    "Infinite Doom": "Unendliches Unheil",
+                    "Slayers Paradise": "Paradies Der Unholde",
+                    "Quad Damage": "Quad-Schaden",
+                    "Layer Bake": "Facettenreichtum",
+                    "The Great Open": "Große Ebene",
+                    "Spie Production": "Gewürzproduktion",
+                    "Slippery Road": "Rutschiger Weg",
+                    "Icy ice park": "Eisiger Eispark",
+                    "Frosty Tracks": "Frostige Gleise",
+                    "Riverbank Crossing": "Flussuferübergang",
+                    "Freezig Ripples": "Eiskaltes Geplätscher",
+                    "Great Waves": "Große Wellen",
+                    "Cool Shapes": "Coole Formen",
+                    "Suspenders": "Hosenträger"
+                },
+                "gameModes": {
+                    "gemGrab": "Juwelenjagd",
+                    "heist": "Tresorraub",
+                    "bounty": "Kopfgeldjagd",
+                    "brawlBall": "Brawlball",
+                    "soloShowdown": "Solo-Showdown",
+                    "duoShowdown": "Duo-Showdown",
+                    "hotZone": "Hotzone",
+                    "knockout": "Knockout",
+                    "duels": "Duelle",
+                    "wipeout": "Eliminierung",
+                    "wipeout5V5": "Eliminierung 5v5",
+                    "brawlBall5V5": "Brawlball 5v5"
+                },
+                "results": {
+                    "defeat": "Niederlage",
+                    "victory": "Sieg",
+                    "draw": "Unentschieden"
+                },
+                "battlelog": {
+                    "error": {
+                        "notFound": {
+                            "title": "Spieler nicht gefunden",
+                            "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        }
+                    },
+                    "description": {
+                        "battleTime": "Zeit des Kampfes: <t:${timestamp}:R>",
+                        "gameMode": "Spielmodus: ${gameMode}",
+                        "gameMap": "Karte: ${gameMap}",
+                        "trophyChange": "Trophäenänderung: ${trophyChange}",
+                        "enemies": "Feinde:",
+                        "result": "Ergebnis: ${result}",
+                        "duration": "Dauer: ${duration} Sekunden",
+                        "starPlayer": "Star Spieler: ${name} (${tag})\n<:empty:1312126155897442416>Brawler: ${brawlerName} (${brawlerPower})\n<:empty:1312126155897442416>Trophäen: ${brawlerTrophies}",
+                        "enemy": "\n<:empty:1312126155897442416>Name: ${name} (${tag})\n<:empty:1312126155897442416>Brawler: ${brawlerName} (${brawlerPower})\n<:empty:1312126155897442416>Trophäen: ${brawlerTrophies}",
+                        "team1": "Team 1",
+                        "team2": "Team 2",
+                        "teamPlayer": "\n<:empty:1312126155897442416>Name: ${name} (${tag})\n<:empty:1312126155897442416>Brawler: ${brawlerName} (${brawlerPower})\n<:empty:1312126155897442416>Trophäen: ${brawlerTrophies}"
+                    },
+                    "title": "<:bs_logo:1320640700446015488> Kampflogbuch von ${playerName} (${tag}) - Seite ${current_page} von ${total_pages}",
+                    "titleNoPages": "<:bs_logo:1320640700446015488> Kampflogbuch von ${playerName} (${tag})"
+                },
+                "playerinfo": {
+                    "error": {
+                        "notFound": {
+                            "title": "Spieler nicht gefunden",
+                            "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        }
+                    },
+                    "description": {
+                        "nameColor": "Namefarbe: ${nameColor}",
+                        "trophies": "Trophäen: ${trophies}",
+                        "highestTrophies": "Höchste Trophäen: ${highestTrophies}",
+                        "expLevel": "Level: ${expLevel}",
+                        "club": "Club: ${name} (${tag})",
+                        "3v3Victories": "3v3 Siege: ${victories}",
+                        "soloVictories": "Solo Siege: ${victories}",
+                        "duoVictories": "Duo Siege: ${victories}",
+                        "bestRoboRumbleTime": "Beste Robo-Rumble Zeit: ${time}",
+                        "bestTimeAsBigBrawler": "Beste Zeit als Big Brawler: ${time}"
+                    },
+                    "title": "<:bs_logo:1320640700446015488> Informationen über ${playerName} (${tag})"
+                },
+                "club": {
+                    "error": {
+                        "notFound": {
+                            "title": "Spieler nicht gefunden",
+                            "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        }
+                    },
+                    "description": {
+                        "overview": "## ${name}\nTrophäen: ${trophies}\nErforderliche Trophäen: ${requiredTrophies}\n${description}",
+                        "member": "\n<:empty:1312126155897442416>Name: ${name} (${tag})\n<:empty:1312126155897442416>Trophäen: ${trophies}\n<:empty:1312126155897442416>Rang: ${role}"
+                    },
+                    "title": "<:bs_logo:1320640700446015488> Club ${name} (${tag}) - Seite ${current_page} von ${total_pages}",
+                    "titleNoMembers": "<:bs_logo:1320640700446015488> Club ${name} (${tag})",
+                    "search": {
+                        "label": "Club Mitglied suchen",
+                        "placeholder": "Club Mitglied suchen",
+                        "title": "Club Mitglied suchen",
+                        "error": {
+                            "title": "Fehler beim Suchen",
+                            "description": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+                            "invalidInput": "Ungültige Eingabe. Bitte versuche es erneut."
+                        }
+                    }
+                },
+                "brawlers": {
+                    "error": {
+                        "notFound": {
+                            "title": "Spieler nicht gefunden",
+                            "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        }
+                    },
+                    "description": {
+                        "overview": "## ${name}\nPower: ${power}\nRang: ${rank}\nTrophäen: ${trophies}\nHöchste Trophäen: ${highestTrophies}",
+                        "starPowers": "Star Powers:",
+                        "starPower": " ${name}",
+                        "gadgets": "Gadgets:",
+                        "gadget": " ${name}",
+                        "gears": "Gears:",
+                        "gear": " ${name} (Level ${level})"
+                    },
+                    "title": "Brawler von ${name} (${tag}) - Seite ${current_page} von ${total_pages}",
+                    "titleNoPages": "Brawler von ${name} (${tag})",
+                    "search": {
+                        "error": {
+                            "title": "Fehler beim Suchen",
+                            "description": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+                            "invalidInput": "Ungültige Eingabe. Bitte versuche es erneut."
+                        },
+                        "label": "Brawler Namen eingeben",
+                        "placeholder": "Brawler Namen eingeben",
+                        "title": "Brawler suchen"
+                    }
+                },
+                "events": {
+                    "notFound": {
+                        "title": "Es wurden keine Events gefunden",
+                        "description": "Es wurden keine Events gefunden. Bitte versuche es später erneut."
+                    },
+                    "description": "## ${mode} auf ${map_}\nStartet: <t:${startTime}:R>\nEndet: <t:${endTime}:R>\n<t:${startTime}:D> - <t:${endTime}:D>",
+                    "title": "Events - Seite ${current_page} von ${total_pages}",
+                    "titleNoPages": "Events",
+                    "notYourEmbed": "Du darfst das nicht."
+                }
+            },
+            "twitch": {
+                "defaultNotificationMessage": "**{name}** ist jetzt online!",
+                "addTwitchLiveNotification": {
+                    "errors": {
+                        "missingPermissions": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        },
+                        "missingBotPermissions": {
+                            "title": "Fehlende Bot-Berechtigung",
+                            "description": "Der Bot benötigt die Berechtigung 'Nachrichten senden' und 'Embed Links', um diese Aktion durchzuführen."
+                        },
+                        "twitchNameNotFound": {
+                            "title": "Twitch Name nicht gefunden",
+                            "description": "Der Twitch Name ${twitch_name} wurde nicht gefunden."
+                        },
+                        "notYourNotification": {
+                            "title": "Du darfst das nicht.",
+                            "description": "Du darfst nicht mit diesem Knopf interagieren."
+                        }
+                    },
+                    "success": {
+                        "title": "Twitch Live Benachrichtigung erfolgreich hinzugefügt",
+                        "description": "Die Twitch Live Benachrichtigung wurde erfolgreich hinzugefügt. Wenn ${twitch_name} online ist, werde ich in ${channel} eine Nachricht schreiben."
+                    }
+                },
+                "listTwitchLiveNotifications": {
+                    "error": {
+                        "missingPermissions": {
+                            "title": "Fehlende Berechtigung",
+                            "description": "Du benötigst Administratorrechte, um diese Aktion durchzuführen."
+                        },
+                        "noNotifications": {
+                            "title": "Keine Twitch Live Benachrichtigungen gefunden",
+                            "description": "Es wurden keine Twitch Live Benachrichtigungen gefunden. Bitte erstelle zuerst welche."
+                        }
+                    },
+                    "title": "Twitch Live Benachrichtigungen - Seite ${current_page} von ${total_pages}",
+                    "titleNoPages": "Twitch Live Benachrichtigungen",
+                    "description": "Twitch Name: ${twitch_name}\nNachricht: ${message}"
+                }
             }
         },
         "level": {
@@ -3057,6 +3319,44 @@
                 "paper": "Papier 📃",
                 "scissors": "Schere ✂️"
             }
+        },
+        "channel": {
+            "dynamicslowmode": {
+                "missingPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Du hast nicht die nötigen Berechtigungen, um diesen Befehl zu verwenden. Du benötigst die Berechtigung `kanäle verwalten`."
+                },
+                "missingBotPermission": {
+                    "title": "Fehlende Berechtigung",
+                    "description": "Der Bot hat nicht die nötigen Berechtigungen, um diesen Befehl zu verwenden. Der Bot benötigt die Berechtigungen `nachrichten lesen`, `nachrichten verwalten` und `kanäle verwalten`."
+                },
+                "alreadySet": {
+                    "title": "Bereits eingerichtet",
+                    "description": "Der Dynamische Slowmodus ist bereits für diesen Kanal eingerichtet."
+                },
+                "success": {
+                    "title": "Slowmodus eingerichtet",
+                    "description": "Der Dynamische Slowmodus wurde erfolgreich eingerichtet."
+                },
+                "notSet": {
+                    "title": "Nicht eingerichtet",
+                    "description": "Der Dynamische Slowmodus ist nicht für diesen Kanal eingerichtet."
+                },
+                "deleteSuccess": {
+                    "title": "Erfolgreich gelöscht",
+                    "description": "Der Dynamische Slowmodus wurde erfolgreich gelöscht. Der Kanal behält jetzt wieder den normalen Slowmodus."
+                },
+                "noChannels": {
+                    "title": "Keine Kanäle gefunden",
+                    "description": "Es wurden keine Kanäle mit Dynamischem Slowmodus gefunden."
+                },
+                "channels": {
+                    "title": "Kanäle mit Dynamischem Slowmodus",
+                    "description": "Kanal: <#${channel_id}> | Nachrichten: ${messages} | pro: ${per} Sekunden | Resetafter: ${resetafter} Sekunden"
+                },
+                "reason": "Dynamischer Slowmode wurde Aktiviert mit ${messages} Nachrichten pro ${per} Sekunden",
+                "resetReason": "Dynamischer Slowmode wurde deaktiviert."
+            }
         }
     },
     "admin": {
@@ -3409,6 +3709,132 @@
                     "description": "Die Rolle, die als Boosterrolle gesetzt werden soll"
                 }
             }
+        },
+        "createticket": {
+            "name": "ticket_erstellen",
+            "description": "Erstelle eine Nachricht, wo Mitglieder Tickets erstellen können",
+            "params": {
+                "name": {
+                    "name": "name",
+                    "description": "Der Name des Tickets"
+                },
+                "description": {
+                    "name": "beschreibung",
+                    "description": "Die Beschreibung des Tickets"
+                },
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem die Nachricht gesendet werden soll"
+                },
+                "pingrole": {
+                    "name": "pingrole",
+                    "description": "Die Rolle, die pingen soll (optional, leer lassen für keine Rolle)"
+                },
+                "summarychannel": {
+                    "name": "zusammenfassungskanal",
+                    "description": "Der Kanal, in dem die Zusammenfassung der Tickets gesendet werden soll (optional)"
+                },
+                "introduction": {
+                    "name": "einleitung",
+                    "description": "Einleitende Nachricht, die in neue Tickets gesendet wird (optional)"
+                }
+            }
+        },
+        "copyrole": {
+            "name": "rolle_kopieren",
+            "description": "Kopiert eine Rolle",
+            "params": {
+                "role": {
+                    "name": "rolle",
+                    "description": "Die Rolle, die kopiert werden soll"
+                },
+                "copymembers": {
+                    "name": "mitglieder_kopieren",
+                    "description": "Ob Mitglieder der Rolle kopiert werden sollen (true/false)"
+                }
+            }
+        },
+        "rps": {
+            "setchannel": {
+                "name": "kanal_setzen",
+                "description": "Setzt den Kanal, in dem neue Reports gesendet werden sollen",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, in dem neue Reports gesendet werden sollen (optional, Standard: aktueller Kanal)"
+                    }
+                }
+            },
+            "removechannel": {
+                "name": "kanal_entfernen",
+                "description": "Entfernt den Report-Kanal"
+            },
+            "showreports": {
+                "name": "reports_anzeigen",
+                "description": "Zeigt die Reports eines Mitglieds an",
+                "params": {
+                    "user": {
+                        "name": "mitglied",
+                        "description": "Das Mitglied, dessen Reports angezeigt werden sollen"
+                    }
+                }
+            }
+        },
+        "triggermessages": {
+            "name": "trigger_nachrichten",
+            "description": "Zeigt die Trigger-Nachrichten an",
+            "params": {
+                "message": {
+                    "name": "nachricht",
+                    "description": "Die Nachricht, die getriggert werden soll"
+                }
+            }
+        },
+        "tm": {
+            "configure": {
+                "name": "konfigurieren",
+                "description": "Konfiguriert die Trigger-Nachrichten"
+            },
+            "add": {
+                "name": "hinzufügen",
+                "description": "Fügt eine neue Trigger-Nachricht hinzu",
+                "params": {
+                    "trigger": {
+                        "name": "trigger",
+                        "description": "Die Nachricht, die getriggert werden soll"
+                    },
+                    "response": {
+                        "name": "antwort",
+                        "description": "Die Nachricht, die gesendet wird, wenn die Trigger-Nachricht getriggert wird"
+                    },
+                    "casesensitive": {
+                        "name": "casesensitive",
+                        "description": "Ob die Trigger-Nachricht case-sensitive sein soll (true/false)"
+                    }
+                }
+            }
+        },
+        "jtc": {
+            "setchannel": {
+                "name": "kanal_setzen",
+                "description": "Setzt den Kanal, in dem neue Mitglieder erstellt werden sollen",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, in dem neue Mitglieder erstellt werden sollen"
+                    }
+                }
+            },
+            "removechannel": {
+                "name": "kanal_entfernen",
+                "description": "Entfernt den Join-to-Create-Kanal",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, der entfernt werden soll"
+                    }
+                }
+            }
         }
     },
     "fun": {
@@ -3574,7 +4000,7 @@
                 },
                 "locale": {
                     "name": "sprache",
-                    "description": "Die Sprache, in der die Zahl konvertiert werden soll"
+                    "description": "Die Sprache, in der die Zahl konvertiert werden soll (optional)"
                 }
             }
         },
@@ -3606,11 +4032,11 @@
                 },
                 "xmin": {
                     "name": "x_min",
-                    "description": "Der minimale x-Wert für den Plot"
+                    "description": "Der minimale x-Wert für den Plot (optional)"
                 },
                 "xmax": {
                     "name": "x_max",
-                    "description": "Der maximale x-Wert für den Plot"
+                    "description": "Der maximale x-Wert für den Plot (optional)"
                 }
             }
         },
@@ -3626,6 +4052,70 @@
         }
     },
     "utility": {
+        "name": "Utility",
+        "description": "Verschiedenes",
+        "help": {
+            "name": "hilfe",
+            "description": "Hilfe für den Bot"
+        },
+        "avatar": {
+            "name": "avatar",
+            "description": "Zeigt den Avatar eines Mitglieds an",
+            "params": {
+                "user": {
+                    "name": "mitglied",
+                    "description": "Das Mitglied, dessen Avatar angezeigt werden soll (optional)"
+                }
+            }
+        },
+        "banner": {
+            "name": "banner",
+            "description": "Zeigt den Banner eines Mitglieds an",
+            "params": {
+                "user": {
+                    "name": "mitglied",
+                    "description": "Das Mitglied, dessen Banner angezeigt werden soll (optional)"
+                }
+            }
+        },
+        "avatardecoration": {
+            "name": "avatardekoration",
+            "description": "Zeigt die Avatar-Dekoration eines Mitglieds an",
+            "params": {
+                "user": {
+                    "name": "mitglied",
+                    "description": "Das Mitglied, dessen Avatar-Dekoration angezeigt werden soll (optional)"
+                }
+            }
+        },
+        "feedback": {
+            "name": "feedback",
+            "description": "Sende Feedback an den Bot"
+        },
+        "afk": {
+            "name": "afk",
+            "description": "Setze dich in den AFK-Modus",
+            "params": {
+                "reason": {
+                    "name": "grund",
+                    "description": "Der Grund, warum du AFK bist (optional)"
+                }
+            }
+        },
+        "report": {
+            "name": "report",
+            "description": "Reporte einen Nutzer",
+            "params": {
+                "user": {
+                    "name": "mitglied",
+                    "description": "Das Mitglied, das du reporten möchtest"
+                },
+                "reason": {
+                    "name": "grund",
+                    "description": "Der Grund für den Report"
+                }
+            }
+        },
         "messageoptout": {
             "name": "deaktivieren",
             "description": "Deaktiviert die Nachrichtenverfolgung für den Bot"
@@ -3637,6 +4127,236 @@
         "messagetracking": {
             "name": "nachrichtenverfolgung",
             "description": "Aktiviert oder deaktiviert die Nachrichtenverfolgung für den Bot"
+        },
+        "autopublish": {
+            "name": "autopublish",
+            "description": "Aktiviert oder deaktiviert das automatische Veröffentlichen von Nachrichten",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem die Nachrichten veröffentlicht werden sollen"
+                }
+            },
+            "remove": {
+                "name": "entfernen",
+                "description": "Deaktiviert das automatische Veröffentlichen von Nachrichten",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, in dem das automatische Veröffentlichen von Nachrichten deaktiviert werden soll"
+                    }
+                }
+            }
+        },
+        "boosterrole": {
+            "name": "boosterrolle",
+            "description": "Erstelle eine Boosterrolle"
+        },
+        "claimboosterrole": {
+            "name": "boosterrolle_einfordern",
+            "description": "Einfordert eine Boosterrolle",
+            "params": {
+                "name": {
+                    "name": "name",
+                    "description": "Der Name der Boosterrolle"
+                },
+                "color": {
+                    "name": "farbe",
+                    "description": "Die Farbe der Boosterrolle"
+                },
+                "icon": {
+                    "name": "icon",
+                    "description": "Das Icon der Boosterrolle"
+                }
+            }
+        },
+        "deleteboosterrole": {
+            "name": "boosterrolle_entfernen",
+            "description": "Entfernt die Konfiguration der Boosterrolle"
+        },
+        "setupboosterrole": {
+            "name": "boosterrolle_einrichten",
+            "description": "Richtet die Boosterrolle ein",
+            "params": {
+                "role": {
+                    "name": "rolle",
+                    "description": "Die Rolle, die als vorlage für die Boosterrolle genutzt werden soll"
+                }
+            }
+        },
+        "boosterchannel": {
+            "name": "boosterkanal",
+            "description": "Erstellt einen Boosterkanal"
+        },
+        "claimboosterchannel": {
+            "name": "boosterkanal_einfordern",
+            "description": "Einfordert einen Boosterkanal",
+            "params": {
+                "name": {
+                    "name": "name",
+                    "description": "Der Name des Boosterkanals"
+                }
+            }
+        },
+        "deleteboosterchannel": {
+            "name": "boosterkanal_entfernen",
+            "description": "Entfernt die Konfiguration des Boosterkanals"
+        },
+        "setupboosterchannel": {
+            "name": "boosterkanal_einrichten",
+            "description": "Richtet den Boosterkanal ein",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der als vorlage für den Boosterkanal genutzt werden soll"
+                }
+            }
+        },
+        "boosterchannelinfo": {
+            "name": "boosterkanal_info",
+            "description": "Erfahre was die Booster kanäle sind"
+        },
+        "scheduledmessage": {
+            "name": "geplante_nachricht",
+            "description": "Erstellt geplante Nachricht",
+            "params": {
+                "content": {
+                    "name": "nachricht",
+                    "description": "Die Nachricht, die gesendet werden soll"
+                },
+                "sendin": {
+                    "name": "senden_in",
+                    "description": "Wann die Nachricht gesendet werden soll (z.B. 10m, 1h, 1d)"
+                },
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem die Nachricht gesendet werden soll"
+                },
+                "repeat": {
+                    "name": "wiederholen",
+                    "description": "Wie oft die Nachricht wiederholt werden soll (optional)"
+                }
+            }
+        },
+        "removescheduled": {
+            "name": "geplante_nachricht_entfernen",
+            "description": "Entfernt eine geplante Nachricht",
+            "params": {
+                "messageid": {
+                    "name": "nachricht_id",
+                    "description": "Die ID der geplanten Nachricht"
+                }
+            }
+        },
+        "listscheduled": {
+            "name": "geplante_nachrichten",
+            "description": "Listet alle geplanten Nachrichten auf"
+        },
+        "deletescheduledmessage": {
+            "name": "geplante_nachricht_entfernen",
+            "description": "Entfernt eine geplante Nachricht",
+            "params": {
+                "messageid": {
+                    "name": "nachricht_id",
+                    "description": "Die ID der geplanten Nachricht"
+                }
+            }
+        },
+        "schedulemessage": {
+            "name": "geplante_nachricht",
+            "description": "Erstellt eine geplante Nachricht",
+            "params": {
+                "content": {
+                    "name": "nachricht",
+                    "description": "Die Nachricht, die gesendet werden soll"
+                },
+                "sendin": {
+                    "name": "senden_in",
+                    "description": "Wann die Nachricht gesendet werden soll (z.B. 10m, 1h, 1d)"
+                },
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in dem die Nachricht gesendet werden soll (optional, standard in DMs)"
+                },
+                "repeat": {
+                    "name": "wiederholen",
+                    "description": "Wie oft die Nachricht wiederholt werden soll (optional)"
+                }
+            }
+        },
+        "bs": {
+            "name": "brawlstars",
+            "description": "Befehle für Brawl Stars",
+            "battlelog": {
+                "name": "kampflogbuch",
+                "description": "Zeigt das Kampflogbuch eines Spielers an",
+                "params": {
+                    "tag": {
+                        "name": "tag",
+                        "description": "Der Tag des Spielers, dessen Kampflogbuch angezeigt werden soll"
+                    }
+                }
+            },
+            "playerinfo": {
+                "name": "spielerinfo",
+                "description": "Zeigt die Informationen eines Spielers an",
+                "params": {
+                    "tag": {
+                        "name": "tag",
+                        "description": "Der Tag des Spielers, dessen Informationen angezeigt werden sollen"
+                    }
+                }
+            },
+            "brawlers": {
+                "name": "brawler",
+                "description": "Zeigt die Brawler eines Spielers an",
+                "params": {
+                    "tag": {
+                        "name": "tag",
+                        "description": "Der Tag des Spielers, dessen Brawlers angezeigt werden sollen"
+                    }
+                }
+            },
+            "club": {
+                "name": "club",
+                "description": "Zeigt die Informationen eines Clubs an",
+                "params": {
+                    "tag": {
+                        "name": "tag",
+                        "description": "Der Tag des Clubs, dessen Informationen angezeigt werden sollen"
+                    }
+                }
+            },
+            "events": {
+                "name": "events",
+                "description": "Zeigt die aktuellen Events von Brawl Stars an"
+            }
+        },
+        "twitch": {
+            "name": "twitch",
+            "description": "Befehle für Twitch",
+            "add": {
+                "name": "benachrichtigung_hinzufügen",
+                "description": "Fügt eine Live-Benachrichtigung für einen Twitch-Streamer hinzu",
+                "params": {
+                    "twitch_name": {
+                        "name": "twitch_name",
+                        "description": "Der Name des Twitch-Streamers"
+                    },
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, in dem die Benachrichtigung gesendet werden soll"
+                    },
+                    "notification_message": {
+                        "name": "benachrichtigungsnachricht",
+                        "description": "Die Nachricht, die gesendet werden soll (optional)"
+                    }
+                }
+            },
+            "see": {
+                "name": "benachrichtigungen_ansehen",
+                "description": "Zeigt alle Live-Benachrichtigungen an"
+            }
         }
     },
     "minigames": {
@@ -3648,7 +4368,7 @@
             "name": "counting",
             "description": "Befehle für das Counting-Spiel. Zähle von 1 hoch zur unendlichkeit!"
         },
-        "cchallengecmds": {
+        "cchcmds": {
             "name": "countingchallenge",
             "description": "Befehle für das Counting-Challenge-Spiel. Zähle von 1 hoch. aber mache nur keine Fehler!"
         },
@@ -3970,6 +4690,18 @@
             }
         },
         "setcountingchallengeprogress": {
+            "name": "fortschritt_setzen",
+            "description": "Setzt den Fortschritt für einen Counting-Challenge-Kanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Counting-Challenge-Kanal, dessen Fortschritt gesetzt werden soll"
+                },
+                "progress": {
+                    "name": "fortschritt",
+                    "description": "Der neue Fortschritt für den Counting-Challenge-Kanal"
+                }
+            },
             "error": {
                 "not_counting_channel": {
                     "title": "Kein Counting-Kanal",
@@ -3996,9 +4728,7 @@
                 "title": "Neuer Counting-Fortschritt",
                 "description": "Ein Moderator hat den Counting-Fortschritt auf ${progress} gesetzt. Bitte fahrt mit dieser Zahl fort!"
             }
-        }
-    },
-    "games": {
+        },
         "setwordcainch": {
             "name": "kanal_setzen",
             "description": "Setzt den Wortkette-Kanal",
@@ -4039,7 +4769,7 @@
                 }
             }
         },
-        "setcountingprogress": {
+        "setcprogress": {
             "name": "fortschritt_setzen",
             "description": "Setzt den Fortschritt für einen Counting-Kanal",
             "params": {
@@ -4063,27 +4793,13 @@
                 }
             }
         },
-        "removecchallengech": {
+        "rcchallengech": {
             "name": "kanal_entfernen",
             "description": "Entfernt den Counting-Challenge-Kanal für den Server",
             "params": {
                 "channel": {
                     "name": "kanal",
                     "description": "Der Kanal, der als Counting-Challenge-Kanal entfernt werden soll"
-                }
-            }
-        },
-        "setcountingchallengeprogress": {
-            "name": "fortschritt_setzen",
-            "description": "Setzt den Fortschritt für einen Counting-Challenge-Kanal",
-            "params": {
-                "channel": {
-                    "name": "kanal",
-                    "description": "Der Counting-Challenge-Kanal, dessen Fortschritt gesetzt werden soll"
-                },
-                "progress": {
-                    "name": "fortschritt",
-                    "description": "Der neue Fortschritt für den Counting-Challenge-Kanal"
                 }
             }
         },
@@ -4117,7 +4833,7 @@
                 }
             }
         },
-        "setcchallengeprogress": {
+        "setcchallengep": {
             "name": "fortschritt_setzen",
             "description": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
             "params": {
@@ -4142,6 +4858,127 @@
                 "progress": {
                     "name": "fortschritt",
                     "description": "Der neue Fortschritt für den Counting-Modes-Kanal"
+                }
+            }
+        }
+    },
+    "games": {
+        "ttt": {
+            "name": "tic_tac_toe",
+            "description": "Spiele Tic-Tac-Toe",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Der Benutzer, gegen den das Spiel gespielt werden soll (optional)"
+                }
+            }
+        },
+        "connect4": {
+            "name": "4_gewinnt",
+            "description": "Spiele 4 Gewinnt",
+            "params": {
+                "size": {
+                    "name": "größe",
+                    "description": "Die Größe des Connect4-Feldes",
+                    "default": "standardgröße (7x6)",
+                    "8x7": "8x7",
+                    "9x8": "9x8",
+                    "10x9": "10x9",
+                    "11x10": "11x10",
+                    "12x11": "12x11",
+                    "12x12": "12x12",
+                    "4x4": "4x4"
+                }
+            }
+        },
+        "akinator": {
+            "name": "akinator",
+            "description": "Spiele Akinator",
+            "params": {
+                "theme": {
+                    "name": "thema",
+                    "description": "Das Thema, auf das der Akinator denken soll",
+                    "characters": "Charaktere",
+                    "animals": "Tiere",
+                    "objects": "Objekte"
+                }
+            }
+        },
+        "wordle": {
+            "name": "wordle",
+            "description": "Spiele Wordle",
+            "params": {
+                "language": {
+                    "name": "sprache",
+                    "description": "Die Sprache des Wordle-Worts",
+                    "bg": "Bulgarisch",
+                    "cs": "Tschechisch",
+                    "da": "Dänisch",
+                    "de": "Deutsch",
+                    "el": "Griechisch",
+                    "en": "Englisch",
+                    "es": "Spanisch",
+                    "fi": "Finnisch",
+                    "fr": "Französisch",
+                    "hi": "Hindi",
+                    "hu": "Ungarisch",
+                    "id": "Indonesisch",
+                    "it": "Italienisch",
+                    "ja": "Japanisch",
+                    "ko": "Koreanisch",
+                    "lt": "Litauisch",
+                    "nb": "Norwegisch",
+                    "nl": "Niederländisch",
+                    "pl": "Polnisch",
+                    "pt": "Portugiesisch",
+                    "ru": "Russisch",
+                    "zh": "Chinesisch"
+                }
+            }
+        },
+        "hangman": {
+            "name": "galgenmännchen",
+            "description": "Spiele Galgenmännchen",
+            "params": {
+                "language": {
+                    "name": "sprache",
+                    "description": "Die Sprache des Hangman-Worts",
+                    "bg": "Bulgarisch",
+                    "cs": "Tschechisch",
+                    "da": "Dänisch",
+                    "de": "Deutsch",
+                    "el": "Griechisch",
+                    "en": "Englisch",
+                    "es": "Spanisch",
+                    "fi": "Finnisch",
+                    "fr": "Französisch",
+                    "hi": "Hindi",
+                    "hu": "Ungarisch",
+                    "id": "Indonesisch",
+                    "it": "Italienisch",
+                    "ja": "Japanisch",
+                    "ko": "Koreanisch",
+                    "lt": "Litauisch",
+                    "nb": "Norwegisch",
+                    "nl": "Niederländisch",
+                    "pl": "Polnisch",
+                    "pt": "Portugiesisch",
+                    "ru": "Russisch",
+                    "zh": "Chinesisch"
+                }
+            }
+        },
+        "flagquiz": {
+            "name": "flaggem_quiz",
+            "description": "Errate eine vorgegebene Flagge"
+        },
+        "rps": {
+            "name": "schere_stein_papier",
+            "description": "Spiele Schere, Stein, Papier",
+            "params": {
+                "user": {
+                    "name": "benutzer",
+                    "description": "Der Benutzer, gegen den das Spiel gespielt werden soll (optional)"
                 }
             }
         }
@@ -4630,35 +5467,109 @@
         }
     },
     "ai": {
-        "ask": {
-            "createcustom": {
-                "name": "benutzerdefiniert_erstellen",
-                "description": "Erstellt eine benutzerdefinierte KI",
-                "params": {
-                    "name": {
-                        "name": "name",
-                        "description": "Der Name der benutzerdefinierten KI"
-                    },
-                    "personality": {
-                        "name": "persönlichkeit",
-                        "description": "Die Persönlichkeit der benutzerdefinierten KI"
-                    },
-                    "temperature": {
-                        "name": "temperatur",
-                        "description": "Die Temperatur der benutzerdefinierten KI"
-                    },
-                    "topp": {
-                        "name": "top_p",
-                        "description": "Der Top-P-Wert der benutzerdefinierten KI"
-                    },
-                    "frequencypenalty": {
-                        "name": "frequenz",
-                        "description": "Die frequency penalty der benutzerdefinierten KI"
-                    },
-                    "presencepenalty": {
-                        "name": "presence_penalty",
-                        "description": "Die presence penalty der benutzerdefinierten KI"
-                    }
+        "name": "ki",
+        "description": "KI Befehle",
+        "customsituations": {
+            "name": "benutzerdefinierte_situationen",
+            "description": "Benutzerdefinierte KI-Persönlichkeiten"
+        },
+        "createcustom": {
+            "name": "benutzerdefiniert_erstellen",
+            "description": "Erstellt eine benutzerdefinierte KI",
+            "params": {
+                "name": {
+                    "name": "name",
+                    "description": "Der Name der benutzerdefinierten KI"
+                },
+                "personality": {
+                    "name": "persönlichkeit",
+                    "description": "Die Persönlichkeit der benutzerdefinierten KI"
+                },
+                "temperature": {
+                    "name": "temperatur",
+                    "description": "Die Temperatur der benutzerdefinierten KI (optional, Standard: 1)"
+                },
+                "top_p": {
+                    "name": "top_p",
+                    "description": "Der Top-P-Wert der benutzerdefinierten KI (optional, Standard: 1)"
+                },
+                "frequency_penalty": {
+                    "name": "frequency_penalty",
+                    "description": "Die frequency penalty der benutzerdefinierten KI (optional, Standard: 0)"
+                },
+                "presence_penalty": {
+                    "name": "presence_penalty",
+                    "description": "Die presence penalty der benutzerdefinierten KI (optional, Standard: 0)"
+                }
+            }
+        },
+        "deletecustom": {
+            "name": "benutzerdefiniert_löschen",
+            "description": "Löscht eine benutzerdefinierte KI"
+        },
+        "askcustom": {
+            "name": "benutzerdefiniert_fragen",
+            "description": "Fragt eine benutzerdefinierte KI",
+            "params": {
+                "prompt": {
+                    "name": "prompt",
+                    "description": "Der Prompt der benutzerdefinierten KI"
+                },
+                "personality": {
+                    "name": "persönlichkeit",
+                    "description": "Die benutzerdefinierten KI die du Fragen möchtest"
+                }
+            }
+        },
+        "askgpt": {
+            "name": "gpt_fragen",
+            "description": "Fragt eine GPT-KI",
+            "params": {
+                "prompt": {
+                    "name": "prompt",
+                    "description": "Der Prompt der GPT-KI"
+                },
+                "temperature": {
+                    "name": "temperatur",
+                    "description": "Die Temperatur der GPT-KI (optional, Standard: 1)"
+                },
+                "top_p": {
+                    "name": "top_p",
+                    "description": "Der Top-P-Wert der GPT-KI (optional, Standard: 1)"
+                },
+                "frequency_penalty": {
+                    "name": "frequency_penalty",
+                    "description": "Die frequency penalty der GPT-KI (optional, Standard: 0)"
+                },
+                "presence_penalty": {
+                    "name": "presence_penalty",
+                    "description": "Die presence penalty der GPT-KI (optional, Standard: 0)"
+                }
+            }
+        },
+        "asktanjuwun": {
+            "name": "tanjuwun_fragen",
+            "description": "Fragt eine Tanjuwun-KI",
+            "params": {
+                "prompt": {
+                    "name": "prompt",
+                    "description": "Der Prompt der Tanjuwun-KI"
+                },
+                "temperature": {
+                    "name": "temperatur",
+                    "description": "Die Temperatur der Tanjuwun-KI (optional, Standard: 1)"
+                },
+                "top_p": {
+                    "name": "top_p",
+                    "description": "Der Top-P-Wert der Tanjuwun-KI (optional, Standard: 1)"
+                },
+                "frequency_penalty": {
+                    "name": "frequency_penalty",
+                    "description": "Die frequency penalty der Tanjuwun-KI (optional, Standard: 0)"
+                },
+                "presence_penalty": {
+                    "name": "presence_penalty",
+                    "description": "Die presence penalty der Tanjuwun-KI (optional, Standard: 0)"
                 }
             }
         }
@@ -5066,14 +5977,17 @@
             "content": "Nachrichteninhalt: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
             "diff": "Nachrichtenänderungen: \n```\n${diff}\n```",
             "title": "Nachricht bearbeitet",
-            "attachments": "Anhänge: \n${attachments}"
+            "addedAttachments": "hinzugefügte Anhänge: \n${attachments}",
+            "removedAttachments": "entfernte Anhänge: \n${attachments}\n-# Bilder werden auf imgbb hochgeladen, da sie nicht mehr von Discord gespeichert werden. Andere Dateien sind leider verloren.",
+            "urlNotAvaiableLocale": "Anhang konnte leider nicht gespeichert werden."
         },
         "messageDelete": {
             "title": "Nachricht gelöscht",
             "name": "Eine Nachricht von ${user} wurde im Kanal ${channel} gelöscht",
             "deletedBy": "Gelöscht von: ${deleted_by}",
             "content": "Nachrichteninhalt: \n${content}",
-            "attachments": "Anhänge: \n${attachments}",
+            "attachments": "Anhänge: \n${attachments}\n-# Bilder werden auf imgbb hochgeladen, da sie nicht mehr von Discord gespeichert werden. Andere Dateien sind leider verloren.",
+            "urlNotAvaiableLocale": "Anhang konnte leider nicht gespeichert werden.",
             "embeds": "Die Nachricht enthielt Embeds. Sie sind unter diesem Log-Eintrag zu finden"
         },
         "reactionAdd": {
@@ -5098,7 +6012,8 @@
         "guildRoleDelete": {
             "title": "Rolle gelöscht",
             "name": "Gelöschte Rolle: ${role}",
-            "deletedBy": "Gelöscht von: ${deleted_by}"
+            "deletedBy": "Gelöscht von: ${deleted_by}",
+            "permissions": "Berechtigungen: ${permissions}"
         },
         "guildRoleUpdate": {
             "name": "Rolle aktualisiert: ${role}",
@@ -5132,6 +6047,10 @@
             "name": "configure",
             "description": "Konfiguriert die Logs"
         },
+        "blacklist": {
+            "name": "blacklist",
+            "description": "Verwalte die Blacklist für Logs"
+        },
         "blacklistc": {
             "name": "blacklist",
             "description": "Verwalte die Blacklist für Logs",
@@ -5159,7 +6078,7 @@
             }
         },
         "blacklistr": {
-            "name": "blacklistr",
+            "name": "rollen_blacklist",
             "description": "Verwalte die Rollen-Blacklist für Logs",
             "add": {
                 "name": "hinzufügen",
@@ -5185,7 +6104,7 @@
             }
         },
         "blacklistu": {
-            "name": "blacklistu",
+            "name": "user_blacklist",
             "description": "Verwalte die Benutzer-Blacklist für Logs",
             "add": {
                 "name": "hinzufügen",
@@ -5208,6 +6127,258 @@
             "show": {
                 "name": "anzeigen",
                 "description": "Zeigt die aktuelle Benutzer-Blacklist an"
+            }
+        }
+    },
+    "image": {
+        "name": "bild",
+        "description": "Bild-Kommandos",
+        "blur": {
+            "name": "blur",
+            "description": "Bild unscharf machen",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das unscharf gemacht werden soll"
+                },
+                "type": {
+                    "name": "typ",
+                    "description": "Der Typ der Unscharfmacher",
+                    "gaussian": "Gaußscher Unscharfmacher",
+                    "boxblurr": "Box Unscharfmacher"
+                },
+                "radius": {
+                    "name": "radius",
+                    "description": "Der Radius der Unscharfmacher"
+                }
+            }
+        },
+        "contour": {
+            "name": "contour",
+            "description": "Bild konturieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das konturiert werden soll"
+                }
+            }
+        },
+        "detail": {
+            "name": "detail",
+            "description": "Bild detailieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das detailiert werden soll"
+                }
+            }
+        },
+        "edgeenhance": {
+            "name": "edgeenhance",
+            "description": "Bild edge enhance",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das edge enhanced werden soll"
+                }
+            }
+        },
+        "emboss": {
+            "name": "emboss",
+            "description": "Bild embossieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das embossiert werden soll"
+                }
+            }
+        },
+        "findedges": {
+            "name": "findedges",
+            "description": "Bild kanten finden",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das kanten finden soll"
+                }
+            }
+        },
+        "sharpen": {
+            "name": "sharpen",
+            "description": "Bild scharf machen",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das scharf gemacht werden soll"
+                }
+            }
+        },
+        "smooth": {
+            "name": "smooth",
+            "description": "Bild glätten",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das glättet werden soll"
+                }
+            }
+        },
+        "resize": {
+            "name": "resize",
+            "description": "Bild verkleinern",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das verkleinert werden soll"
+                }
+            }
+        },
+        "rescale": {
+            "name": "rescale",
+            "description": "Bild skalieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das skaliert werden soll"
+                }
+            }
+        },
+        "mirror": {
+            "name": "mirror",
+            "description": "Bild spiegeln",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das gespiegelt werden soll"
+                }
+            }
+        },
+        "compress": {
+            "name": "compress",
+            "description": "Bild komprimieren",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, das komprimiert werden soll"
+                }
+            }
+        }
+    },
+    "channel": {
+        "welcome": {
+            "name": "wilkommenskanal",
+            "description": "Konfiguriere den Wilkommenskanal"
+        },
+        "media": {
+            "name": "medienkanal",
+            "description": "Setzt den Medienkanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der als Medienkanal gesetzt werden soll"
+                }
+            }
+        },
+        "mediaremove": {
+            "name": "medienkanal_entfernen",
+            "description": "Entfernt den Medienkanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, der entfernt werden soll"
+                }
+            }
+        },
+        "w": {
+            "name": "wilkommenskanal",
+            "description": "Setzt den Wilkommenskanal",
+            "params": {
+                "channel": {
+                    "name": "kanal",
+                    "description": "Der Kanal, in den Mitglieder begrüßt werden sollen"
+                },
+                "message": {
+                    "name": "nachricht",
+                    "description": "Die Nachricht, die gesendet wird, wenn ein Mitglied den Server betritt"
+                },
+                "image": {
+                    "name": "hintergrund",
+                    "description": "Das Hintergrundbild des Wilkommenskanals (optional)"
+                }
+            },
+            "remove": {
+                "name": "wilkommenskanal_entfernen",
+                "description": "Entfernt den Wilkommenskanal"
+            }
+        },
+        "farewell": {
+            "name": "verabschiedungskanal",
+            "description": "Konfiguriere den Verabschiedungskanal",
+            "set": {
+                "ch": {
+                    "name": "verabschiedungskanal",
+                    "description": "Setzt den Verabschiedungskanal",
+                    "params": {
+                        "channel": {
+                            "name": "kanal",
+                            "description": "Der Kanal, in den Mitglieder verabschiedet werden sollen"
+                        },
+                        "message": {
+                            "name": "nachricht",
+                            "description": "Die Nachricht, die gesendet wird, wenn ein Mitglied den Server verlässt"
+                        },
+                        "image": {
+                            "name": "hintergrund",
+                            "description": "Das Hintergrundbild des Verabschiedungskanals (optional)"
+                        }
+                    }
+                }
+            },
+            "remove": {
+                "ch": {
+                    "name": "verabschiedungskanal_entfernen",
+                    "description": "Entfernt den Verabschiedungskanal"
+                }
+            }
+        },
+        "ds": {
+            "name": "dynamischer_slowmode",
+            "description": "Konfiguriere den dynamischen Slowmode",
+            "add": {
+                "name": "dynamischer_slowmode_hinzufügen",
+                "description": "Fügt einen dynamischen Slowmode hinzu",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, dessen dynamischer Slowmode hinzugefügt werden soll"
+                    },
+                    "messages": {
+                        "name": "nachrichten",
+                        "description": "Wie viele Nachrichten pro n gesendet werden dürfen"
+                    },
+                    "per": {
+                        "name": "pro",
+                        "description": "Wie viele Nachrichten pro Sekunde gesendet werden dürfen"
+                    },
+                    "resetafter": {
+                        "name": "resetafter",
+                        "description": "Wie viele Sekunden nachdem keine Nachrichten gesendet werden, der Slowmode zurückgesetzt wird"
+                    }
+                }
+            },
+            "remove": {
+                "name": "dynamischer_slowmode_entfernen",
+                "description": "Entfernt einen dynamischen Slowmode",
+                "params": {
+                    "channel": {
+                        "name": "kanal",
+                        "description": "Der Kanal, dessen dynamischer Slowmode entfernt werden soll"
+                    }
+                }
+            },
+            "get": {
+                "name": "kanäle_anzeigen",
+                "description": "Zeigt alle Kanäle an, die einen dynamischen Slowmode haben"
             }
         }
     },
@@ -5486,10 +6657,8 @@
     "username": "benutzername",
     "member": "mitglied",
     "limit": "limit",
-    "channel": "kanal",
     "setting": "einstellung",
     "nickname": "nickname",
-    "...": "...",
     "seconds": "sekunden",
     "message": "nachricht",
     "title": "titel",
@@ -5569,5 +6738,34 @@
     },
     "The presence penalty setting": "Die Präsenz-Strafen-Einstellung",
     "asktanjuwun": "frage_tanjuwun",
-    "Awst Tanjuwun something uwu": "fwage Tanjuwun etwas uwu"
+    "Awst Tanjuwun something uwu": "fwage Tanjuwun etwas uwu",
+    "trigger": "trigger",
+    "response": "antwort",
+    "casesensitive": "casesensitive",
+    "description": "beschreibung",
+    "params": "parameter",
+    "pingrole": "ping_rolle",
+    "summarychannel": "zusammenfassungskanal",
+    "introduction": "einleitung",
+    "copymembers": "mitglieder_kopieren",
+    "report": "report",
+    "Manage Reports": "Reports verwalten",
+    "Manage Trigger Messages": "Trigger-Nachrichten verwalten",
+    "Manage Channels": "Kanal verwalten",
+    "background": "hintergrund",
+    "Fun Commands": "Fun Befehle",
+    "xmin": "x_min",
+    "xmax": "x_max",
+    "triggermessages": "triggernachrichten",
+    "category": "kategorie",
+    "messageid": "nachricht_id",
+    "sendin": "senden_in",
+    "repeat": "wiederholen",
+    "content": "inhalt",
+    "page": "seite",
+    "jointocreate": "jointocreate",
+    "Manage Join-to-Create Channels": "Join To Create Kanäle verwalten",
+    "theme": "theme",
+    "size": "größe",
+    "quality": "qualität"
 }

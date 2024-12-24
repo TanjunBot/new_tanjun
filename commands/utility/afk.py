@@ -83,12 +83,9 @@ async def checkIfMentionsAreAfk(message: discord.message):
     
     locale = message.guild.locale if hasattr(message.guild, "locale") else "de"
 
-    print("mentions: ", message.mentions)
-
     afkUsers = []
     reasons = []
     for mention in message.mentions:
-        print("mention: ", mention, mention.id)
         if await checkIfUserIsAfk(mention.id):
             afkUsers.append(mention)
             reason = await getAfkReason(mention.id)

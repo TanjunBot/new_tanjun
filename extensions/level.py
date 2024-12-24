@@ -475,12 +475,12 @@ class LevelConfigCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_changelevelupmessage_description"),
     )
     @app_commands.describe(
-        new_message=app_commands.locale_str(
+        newmessage=app_commands.locale_str(
             "level_changelevelupmessage_params_newmessage_description"
         ),
     )
     async def changelevelupmessage(
-        self, ctx, new_message: app_commands.Range[str, 1, 255]
+        self, ctx, newmessage: app_commands.Range[str, 1, 255]
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -495,7 +495,7 @@ class LevelConfigCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await changeLevelupMessageCommand(commandInfo, new_message)
+        await changeLevelupMessageCommand(commandInfo, newmessage)
 
     @app_commands.command(
         name=app_commands.locale_str("level_disablelevelupmessage_name"),

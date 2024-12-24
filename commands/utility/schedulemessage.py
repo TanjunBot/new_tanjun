@@ -181,11 +181,8 @@ async def send_scheduled_messages(client):
     """Send all scheduled messages that are ready to be sent"""
     ready_messages = await get_ready_scheduled_messages()
     
-    print("sendready scheduled messages", ready_messages)
-
     for msg in ready_messages:
         try:
-            print("msg: ", msg)
             # Extract message details
             message_id = msg[0]
             guild_id = int(msg[1]) if msg[1] else None

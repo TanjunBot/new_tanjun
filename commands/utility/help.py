@@ -41,7 +41,7 @@ async def help(commandInfo, ctx):
                             )
                             command_text += f"{group_desc}\n\n"
                         except:
-                            command_text += "\n"
+                            command_text += f"*No description available for {group.name}*\n\n"
 
                         # Process each subcommand
                         for cmd in group.commands:
@@ -50,30 +50,36 @@ async def help(commandInfo, ctx):
                                 command_text += f"### /{group.name} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))}\n"
                                 try:
                                     cmd_desc = tanjunLocalizer.localize(
-                                        locale, f"{str(cmd.description).replace('_', '.')}"
+                                        locale,
+                                        f"{str(cmd.description).replace('_', '.')}",
                                     )
                                     command_text += f"{cmd_desc}\n\n"
                                 except:
-                                    command_text += "\n"
+                                    command_text += f"*No description available for {cmd.name}*\n\n"
 
                                 # Process subcommands within the subcommand group
                                 for subcmd in cmd.commands:
-                                    command_text += f"### /{group.name} {cmd.name} {tanjunLocalizer.localize(locale, str(subcmd.name).replace('_', '.'))}\n"
+                                    command_text += f"### /{group.name} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(subcmd.name).replace('_', '.'))}\n"
                                     try:
                                         subcmd_desc = tanjunLocalizer.localize(
-                                            locale, f"{str(subcmd.description).replace('_', '.')}"
+                                            locale,
+                                            f"{str(subcmd.description).replace('_', '.')}",
                                         )
                                         command_text += f"{subcmd_desc}\n\n"
                                     except:
                                         command_text += "\n"
 
                                     # Process parameters for subcommands
-                                    if hasattr(subcmd, "parameters") and subcmd.parameters:
+                                    if (
+                                        hasattr(subcmd, "parameters")
+                                        and subcmd.parameters
+                                    ):
                                         command_text += "**Parameters:**\n"
                                         for param in subcmd.parameters:
                                             try:
                                                 param_name = tanjunLocalizer.localize(
-                                                    locale, f"{param.name.replace('_', '.')}"
+                                                    locale,
+                                                    f"{param.name.replace('_', '.')}",
                                                 )
                                                 param_desc = tanjunLocalizer.localize(
                                                     locale,
@@ -81,14 +87,13 @@ async def help(commandInfo, ctx):
                                                 )
                                                 command_text += f"- **{param_name}**: {param_desc}\n"
                                             except:
-                                                command_text += f"- **{param.name}**\n"
+                                                command_text += f"- **{param.name}**: *No description available*\n"
                                         command_text += "\n"
-                                    
-                                    print(len(texts[current_index] + command_text))
-                                    print(len(texts[current_index] + command_text) > char_limit)
-                                    print(current_index)
 
-                                    if len(texts[current_index] + command_text) > char_limit:
+                                    if (
+                                        len(texts[current_index] + command_text)
+                                        > char_limit
+                                    ):
                                         current_index += 1
                                         texts.append("")
                                         texts[current_index] += command_text
@@ -99,11 +104,12 @@ async def help(commandInfo, ctx):
                                 command_text += f"### /{group.name} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))}\n"
                                 try:
                                     cmd_desc = tanjunLocalizer.localize(
-                                        locale, f"{str(cmd.description).replace('_', '.')}"
+                                        locale,
+                                        f"{str(cmd.description).replace('_', '.')}",
                                     )
                                     command_text += f"{cmd_desc}\n\n"
                                 except:
-                                    command_text += "\n"
+                                    command_text += f"*No description available for {cmd.name}*\n\n"
 
                                 # Process parameters only if they exist
                                 if hasattr(cmd, "parameters") and cmd.parameters:
@@ -111,18 +117,24 @@ async def help(commandInfo, ctx):
                                     for param in cmd.parameters:
                                         try:
                                             param_name = tanjunLocalizer.localize(
-                                                locale, f"{param.name.replace('_', '.')}"
+                                                locale,
+                                                f"{param.name.replace('_', '.')}",
                                             )
                                             param_desc = tanjunLocalizer.localize(
                                                 locale,
                                                 f"{param.description.replace('_', '.')}",
                                             )
-                                            command_text += f"- **{param_name}**: {param_desc}\n"
+                                            command_text += (
+                                                f"- **{param_name}**: {param_desc}\n"
+                                            )
                                         except:
-                                            command_text += f"- **{param.name}**\n"
+                                            command_text += f"- **{param.name}**: *No description available*\n"
                                     command_text += "\n"
 
-                                if len(texts[current_index] + command_text) > char_limit:
+                                if (
+                                    len(texts[current_index] + command_text)
+                                    > char_limit
+                                ):
                                     current_index += 1
                                     texts.append("")
                                     total_length = len(texts[current_index])
@@ -137,11 +149,9 @@ async def help(commandInfo, ctx):
 
             # Create embeds
             embeds = []
-            print("len(texts)", len(texts))
             overall_length = 0
             for i, text in enumerate(texts, 1):
                 overall_length += len(text)
-                print(len(text))
                 if text.strip():
                     embed = discord.Embed(
                         title=(
@@ -155,8 +165,11 @@ async def help(commandInfo, ctx):
                     )
                     embeds.append(embed)
 
-            print("overall_length", overall_length)
-            view = PaginatedHelpView(self.client, embeds) if len(embeds) > 1 else HelpView(self.client)
+            view = (
+                PaginatedHelpView(self.client, embeds)
+                if len(embeds) > 1
+                else HelpView(self.client)
+            )
             await interaction.response.edit_message(embeds=[embeds[0]], view=view)
 
         @classmethod
@@ -190,20 +203,28 @@ async def help(commandInfo, ctx):
             super().__init__(timeout=3600)
             self.embeds = embeds
             self.current_page = 0
-            
+
             # Add the select menu
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))
 
         @discord.ui.button(label="Previous", style=discord.ButtonStyle.gray)
-        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def previous_button(
+            self, interaction: discord.Interaction, button: discord.ui.Button
+        ):
             self.current_page = (self.current_page - 1) % len(self.embeds)
-            await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
+            await interaction.response.edit_message(
+                embeds=[self.embeds[self.current_page]]
+            )
 
         @discord.ui.button(label="Next", style=discord.ButtonStyle.gray)
-        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def next_button(
+            self, interaction: discord.Interaction, button: discord.ui.Button
+        ):
             self.current_page = (self.current_page + 1) % len(self.embeds)
-            await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
+            await interaction.response.edit_message(
+                embeds=[self.embeds[self.current_page]]
+            )
 
     class HelpView(discord.ui.View):
         def __init__(self, client, timeout=3600):

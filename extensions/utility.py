@@ -25,6 +25,13 @@ from commands.utility.listscheduled import list_scheduled_messages as listSchedu
 from commands.utility.removescheduled import remove_scheduled_message as removeScheduledCommand
 from commands.utility.report import report as reportCommand
 from commands.utility.help import help as helpCommand
+from commands.utility.brawlstars.battlelog import battlelog as battlelogCommand
+from commands.utility.brawlstars.playerinfo import playerInfo as brawlstarsPlayerInfoCommand
+from commands.utility.brawlstars.brawlers import brawlers as brawlstarsBrawlersCommand
+from commands.utility.brawlstars.club import club as brawlstarsClubCommand
+from commands.utility.brawlstars.events import events as brawlstarsEventsCommand
+from commands.utility.twitch.addTwitchLiveNotification import addTwitchLiveNotification as addTwitchLiveNotificationCommand
+from commands.utility.twitch.seeTwitchLiveNotifications import seeTwitchLiveNotifications as seeTwitchLiveNotificationsCommand
 
 class MessageTrackingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -73,9 +80,9 @@ class BoosterRoleCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_claimboosterrole_description"),
     )
     @app_commands.describe(
-        name="The name of the booster role.",
-        color="The color of the booster role.",
-        icon="The icon of the booster role.",
+        name=app_commands.locale_str("utility_claimboosterrole_params_name_description"),
+        color=app_commands.locale_str("utility_claimboosterrole_params_color_description"),
+        icon=app_commands.locale_str("utility_claimboosterrole_params_icon_description"),
     )
     async def claimboosterrole(self, ctx, name: str, color: str = None, icon: discord.Attachment = None):
         await ctx.response.defer()
@@ -116,7 +123,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_setupboosterrole_description"),
     )
     @app_commands.describe(
-        role="The base role. This will be copied to create the booster role.",
+        role=app_commands.locale_str("utility_setupboosterrole_params_role_description"),
     )
     async def setupboosterrole(self, ctx, role: discord.Role):
         await ctx.response.defer()
@@ -163,7 +170,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_claimboosterchannel_description"),
     )
     @app_commands.describe(
-        name="The name of the booster channel.",
+        name=app_commands.locale_str("utility_claimboosterchannel_params_name_description"),
     )
     async def claimboosterchannel(self, ctx, name: str):
         await ctx.response.defer()
@@ -202,6 +209,9 @@ class BoosterChannelCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("utility_setupboosterchannel_name"),
         description=app_commands.locale_str("utility_setupboosterchannel_description"),
+    )
+    @app_commands.describe(
+        category=app_commands.locale_str("utility_setupboosterchannel_params_category_description"),
     )
     async def setupboosterchannel(self, ctx, category: discord.CategoryChannel):
         await ctx.response.defer()
@@ -248,7 +258,7 @@ class AutoPublishCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_autopublish_description"),
     )
     @app_commands.describe(
-        channel="The channel to autopublish messages in.",
+        channel=app_commands.locale_str("utility_autopublish_params_channel_description"),
     )
     async def autopublish(self, ctx, channel: discord.TextChannel= None):
         await ctx.response.defer()
@@ -274,7 +284,7 @@ class AutoPublishCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_autopublish_remove_description"),
     )
     @app_commands.describe(
-        channel="The channel to remove from autopublishing.",
+        channel=app_commands.locale_str("utility_autopublish_remove_params_channel_description"),
     )
     async def autopublish_remove(self, ctx, channel: discord.TextChannel = None):
         await ctx.response.defer()
@@ -295,13 +305,174 @@ class AutoPublishCommands(discord.app_commands.Group):
 
         await autopublishRemoveCommand(commandInfo=commandInfo, channel=channel)
 
+class BrawlStarsCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_bs_battlelog_name"),
+        description=app_commands.locale_str("utility_bs_battlelog_description"),
+    )
+    @app_commands.describe(
+        tag=app_commands.locale_str("utility_bs_battlelog_params_tag_description"),
+    )
+    async def battlelog(self, ctx, tag: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await battlelogCommand(commandInfo=commandInfo, playerTag=tag)
+        return
+    
+    @app_commands.command(
+        name=app_commands.locale_str("utility_bs_playerinfo_name"),
+        description=app_commands.locale_str("utility_bs_playerinfo_description"),
+    )
+    @app_commands.describe(
+        tag=app_commands.locale_str("utility_bs_playerinfo_params_tag_description"),
+    )
+    async def playerinfo(self, ctx, tag: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await brawlstarsPlayerInfoCommand(commandInfo=commandInfo, playerTag=tag)
+        return
+    
+    @app_commands.command(
+        name=app_commands.locale_str("utility_bs_brawlers_name"),
+        description=app_commands.locale_str("utility_bs_brawlers_description"),
+    )
+    @app_commands.describe(
+        tag=app_commands.locale_str("utility_bs_brawlers_params_tag_description"),
+    )
+    async def brawlers(self, ctx, tag: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await brawlstarsBrawlersCommand(commandInfo=commandInfo, playerTag=tag)
+        return
+    
+    @app_commands.command(
+        name=app_commands.locale_str("utility_bs_club_name"),
+        description=app_commands.locale_str("utility_bs_club_description"),
+    )
+    @app_commands.describe(
+        tag=app_commands.locale_str("utility_bs_club_params_tag_description"),
+    )
+    async def club(self, ctx, tag: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await brawlstarsClubCommand(commandInfo=commandInfo, clubTag=tag)
+        return
+    
+    @app_commands.command(
+        name=app_commands.locale_str("utility_bs_events_name"),
+        description=app_commands.locale_str("utility_bs_events_description"),
+    )
+    async def events(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await brawlstarsEventsCommand(commandInfo=commandInfo)
+        return
+
+class TwitchCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("utility_twitch_add_name"),
+        description=app_commands.locale_str("utility_twitch_add_description"),
+    )
+    async def add(self, ctx, twitch_name: str, channel: discord.TextChannel, notification_message: str = None):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await addTwitchLiveNotificationCommand(commandInfo=commandInfo, twitch_name=twitch_name, channel=channel, notification_message=notification_message)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("utility_twitch_see_name"),
+        description=app_commands.locale_str("utility_twitch_see_description"),
+    )
+    async def see(self, ctx):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await seeTwitchLiveNotificationsCommand(commandInfo=commandInfo)
+        return
+
 class utilityCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("utility_avatar_name"),
         description=app_commands.locale_str("utility_avatar_description"),
     )
     @app_commands.describe(
-        user="The user to get the avatar of.",
+        user=app_commands.locale_str("utility_avatar_params_user_description"),
     )
     async def avatar(self, ctx, user: discord.Member = None):
         await ctx.response.defer()
@@ -327,7 +498,7 @@ class utilityCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_banner_description"),
     )
     @app_commands.describe(
-        user="The user to get the banner of.",
+        user=app_commands.locale_str("utility_banner_params_user_description"),
     )
     async def banner(self, ctx, user: discord.Member = None):
         await ctx.response.defer()
@@ -353,7 +524,7 @@ class utilityCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_avatardecoration_description"),
     )
     @app_commands.describe(
-        user="The user to get the avatar decoration of.",
+        user=app_commands.locale_str("utility_avatardecoration_params_user_description"),
     )
     async def avatardecoration(self, ctx, user: discord.Member = None):
         await ctx.response.defer()
@@ -398,7 +569,7 @@ class utilityCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_afk_description"),
     )
     @app_commands.describe(
-        reason="The reason for being afk.",
+        reason=app_commands.locale_str("utility_afk_params_reason_description"),
     )
     async def afk(self, ctx, reason: app_commands.Range[str, 0, 1000]):
         await ctx.response.defer()
@@ -421,8 +592,8 @@ class utilityCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_report_description"),
     )
     @app_commands.describe(
-        user="The user to report.",
-        reason="The reason for reporting the user.",
+        user=app_commands.locale_str("utility_report_params_user_description"),
+        reason=app_commands.locale_str("utility_report_params_reason_description"),
     )
     async def report(self, ctx, user: discord.Member, reason: str):
         await ctx.response.defer(ephemeral=True)
@@ -446,16 +617,16 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_schedulemessage_description"),
     )
     @app_commands.describe(
-        content="The message content to schedule",
-        send_in="When to send the message (e.g. '1h', '2d', '30m')",
-        channel="The channel to send the message in (optional)",
-        repeat="How often to repeat the message (e.g. '1h', '1d') (optional)",
+        content=app_commands.locale_str("utility_schedulemessage_params_content_description"),
+        sendin=app_commands.locale_str("utility_schedulemessage_params_sendin_description"),
+        channel=app_commands.locale_str("utility_schedulemessage_params_channel_description"),
+        repeat=app_commands.locale_str("utility_schedulemessage_params_repeat_description"),
     )
     async def schedulemessage(
         self, 
         ctx, 
         content: str,
-        send_in: str,
+        sendin: str,
         channel: discord.TextChannel = None,
         repeat: str = None,
         # attachment1: discord.Attachment = None,
@@ -488,7 +659,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         await scheduleMessageCommand(
             commandInfo=commandInfo,
             content=content,
-            send_in=send_in,
+            send_in=sendin,
             channel=channel,
             repeat=repeat,
             attachments=attachments or []
@@ -519,9 +690,9 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_removescheduled_description"),
     )
     @app_commands.describe(
-        message_id="The ID of the scheduled message to remove",
+        messageid=app_commands.locale_str("utility_removescheduled_params_messageid_description"),
     )
-    async def removescheduled(self, ctx, message_id: int):
+    async def removescheduled(self, ctx, messageid: int):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -535,7 +706,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             client=ctx.client,
         )
         
-        await removeScheduledCommand(commandInfo=commandInfo, message_id=message_id)
+        await removeScheduledCommand(commandInfo=commandInfo, message_id=messageid)
 
 class utilityCog(commands.Cog):
 
@@ -543,8 +714,8 @@ class utilityCog(commands.Cog):
         self.bot = bot
 
     @app_commands.command(
-        name="help",
-        description="Get help with the bot"
+        name=app_commands.locale_str("utility_help_name"),
+        description=app_commands.locale_str("utility_help_description"),
     )
     async def help_slash(self, ctx):
         await ctx.response.defer(ephemeral=True)
@@ -576,6 +747,10 @@ class utilityCog(commands.Cog):
         utilityCmds.add_command(boosterChannelCmds)
         scheduledMessageCmds = ScheduledMessageCommands(name=app_commands.locale_str("utility_scheduledmessage_name"), description=app_commands.locale_str("utility_scheduledmessage_description"))
         utilityCmds.add_command(scheduledMessageCmds)
+        brawlStarsCmds = BrawlStarsCommands(name=app_commands.locale_str("utility_bs_name"), description=app_commands.locale_str("utility_bs_description"))
+        utilityCmds.add_command(brawlStarsCmds)
+        twitchCmds = TwitchCommands(name=app_commands.locale_str("utility_twitch_name"), description=app_commands.locale_str("utility_twitch_description"))
+        utilityCmds.add_command(twitchCmds)
         self.bot.tree.add_command(utilityCmds)
 
 
