@@ -6009,7 +6009,8 @@
         "guildRoleDelete": {
             "title": "Rolle gelöscht",
             "name": "Gelöschte Rolle: ${role}",
-            "deletedBy": "Gelöscht von: ${deleted_by}"
+            "deletedBy": "Gelöscht von: ${deleted_by}",
+            "permissions": "Berechtigungen: ${permissions}"
         },
         "guildRoleUpdate": {
             "name": "Rolle aktualisiert: ${role}",
