@@ -8,23 +8,29 @@ jobs:
   build:
     runs-on: ['self-hosted', 'Linux', 'X64']
     container:
-      image: "python:3.12"
+      image: "python:3.12.3"
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
         with:
           ref: ${{ github.sha }}
+      
       - name: Set up Python
         uses: actions/setup-python@main
         with:
-          python-version: "3.12"
-      - name: Install dependencies
+          python-version: "3.12.3"
+      
+      - name: Create and activate virtual environment
         run: |
-          /usr/local/bin/python3.12 -m pip install --upgrade pip
+          python3 -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install flake8
+      
       - name: Lint with flake8
         run: |
+          source venv/bin/activate
           python run_flake8.py
 
   notify_discord:
