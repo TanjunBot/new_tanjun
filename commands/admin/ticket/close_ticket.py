@@ -28,9 +28,6 @@ async def close_ticket(interaction: discord.Interaction):
 
     ticket = await get_ticket_by_id(interaction.guild.id, ticket_id, ticket_channel_id)
 
-    print("ticket", ticket)
-    print("interaction.guild.id", interaction.guild.id)
-    print("ticket_id", ticket_id)
     if not ticket:
         await interaction.followup.send(
             tanjunLocalizer.localize(
@@ -41,9 +38,6 @@ async def close_ticket(interaction: discord.Interaction):
         return
 
     ticket_channel = interaction.channel
-
-    print("ticket_channel", ticket_channel)
-    print("ticket_channel.id", ticket_channel.id)
 
     if not ticket_channel.id == int(ticket[6]):
         await interaction.followup.send(
@@ -59,13 +53,8 @@ async def close_ticket(interaction: discord.Interaction):
 
     ticket_open_time = ticket[2]
 
-    print("ticket_message", ticket_message)
-
     summary_channel_id = int(ticket_message[7]) if ticket_message[7] else None
-    print("summary_channel_id", summary_channel_id)
     summary_channel = interaction.guild.get_channel(summary_channel_id)
-
-    print("summary_channel", summary_channel)
 
     if not summary_channel:
         await interaction.channel.edit(archived=True, locked=True)

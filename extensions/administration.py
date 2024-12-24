@@ -18,11 +18,14 @@ import subprocess
 import platform
 from extensions.logs import sendLogEmbeds
 from loops.create_database_backup import create_database_backup
-from commands.admin.joinToCreate.joinToCreateListener import removeAllJoinToCreateChannels
+from commands.admin.joinToCreate.joinToCreateListener import (
+    removeAllJoinToCreateChannels,
+)
 import aiohttp
-from commands.admin.channel.welcome import welcomeNewUser
+from commands.channel.welcome import welcomeNewUser
 
-from commands.admin.channel.farewell import farewellUser
+from commands.channel.farewell import farewellUser
+from PIL import Image
 
 
 class administrationCog(commands.Cog):
@@ -103,11 +106,9 @@ class administrationCog(commands.Cog):
 
     @commands.command()
     async def update(self, ctx):
-        print(config.adminIds)
         if ctx.author.id not in config.adminIds:
             return
 
-        sh_file = "update.sh"
         await sendLogEmbeds(self.bot)
         await create_database_backup(self.bot)
         await removeAllJoinToCreateChannels()
@@ -133,6 +134,64 @@ class administrationCog(commands.Cog):
         if ctx.author.id not in config.adminIds:
             return
         await farewellUser(user)
+
+    @commands.command()
+    async def onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus(
+        self, ctx
+    ):
+        if ctx.author.id not in config.adminIds:
+            return
+        emoji = ctx.bot.get_emoji(1266369876524666920)
+        await ctx.send(
+            f"{emoji} One thing about me ich fahr Auto seit vier Jahn'. Eines Tages woll ich in den Club Fahrn'. Ich stand an einer roten Ampel und ich war ganz allein, hinter mir war ein bus, und er fier mir rein. Er hupte mich an HUP HUP und ich stieg aus, schau mir an was passiert ist und er kommt raus."
+        )
+
+    async def getBrawlers(self):
+        async with aiohttp.ClientSession() as session:
+            headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
+            async with session.get(
+                f"https://api.brawlstars.com/v1/brawlers", headers=headers
+            ) as response:
+                return await response.json()
+
+    @commands.command()
+    async def bsstarpoweremojis(self, ctx, start: int = 0):
+        if ctx.author.id not in config.adminIds:
+            return
+        allBrawlers = await self.getBrawlers()
+        for i, brawler in enumerate(allBrawlers["items"]):
+            if i < start:
+                continue
+            starPowers = brawler["starPowers"]
+            for starPower in starPowers:
+                url = f"https://cdn.brawlify.com/star-powers/borderless/{starPower['id']}.png"
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url) as response:
+                        image = await response.read()
+                        emoji = await ctx.guild.create_custom_emoji(
+                            name=f"{starPower['id']}", image=image
+                        )
+                        await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
+
+    @commands.command()
+    async def bsgadgetsemojis(self, ctx, start: int = 0):
+        if ctx.author.id not in config.adminIds:
+            return
+        allBrawlers = await self.getBrawlers()
+        for i, brawler in enumerate(allBrawlers["items"]):
+            if i < start:
+                continue
+            gadgets = brawler["gadgets"]
+            for gadget in gadgets:
+                url = f"https://cdn.brawlify.com/gadgets/borderless/{gadget['id']}.png"
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url) as response:
+                        image = await response.read()
+                        emoji = await ctx.guild.create_custom_emoji(
+                            name=f"{gadget['id']}", image=image
+                        )
+                        
+                        await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
 
 
 async def setup(bot):

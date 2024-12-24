@@ -4,9 +4,6 @@ from localizer import tanjunLocalizer
 from api import add_trigger_message as add_trigger_message_api, get_trigger_messages_by_channel as get_trigger_messages_by_channel_api
 
 async def add_trigger_message(commandInfo: utility.commandInfo, trigger: str, response: str, caseSensitive: bool = False):
-    print("commandInfo", commandInfo)
-    print("commandInfo.user ", commandInfo.user)
-    print("commandInfo.user.guild_permissions", commandInfo.user.guild_permissions)
     if not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

@@ -210,7 +210,6 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
                 guess = self.children[0].value.lower()
 
                 if guess.lower() not in allowed_words:
-                    print("not in allowed words")
                     embed = utility.tanjunEmbed(
                         title=tanjunLocalizer.localize(
                             self.commandInfo.locale, "commands.games.wordle.error.title"

@@ -115,9 +115,7 @@ async def get_image_or_gif_frames(url):
     return frames, duration
 
 def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
-    print(xy)
     x1, y1, x2, y2 = xy
-    print("x1, y1, x2, y2", x1, y1, x2, y2)
     draw.rectangle([x1 + radius, y1, x2 - radius, y2], fill=fill)
     draw.rectangle([x1, y1 + radius, x2, y2 - radius], fill=fill)
     draw.pieslice([x1, y1, x1 + 2 * radius, y1 + 2 * radius], 180, 270, fill=fill)
@@ -178,8 +176,6 @@ def process_image(background_frames, avatar_frames, user, user_info):
         bar_width = 700
         bar_height = 30
         xp_percentage = user_info['xp'] / user_info['xp_needed']
-        print("xp_percentage: ", xp_percentage)
-        print("[250, 200, 250 + bar_width, 200 + bar_height]", [250, 200, 250 + bar_width, 200 + bar_height])
         filled_width = int(bar_width * xp_percentage)
         radius = bar_height // 4  # Slightly rounded corners
 
@@ -202,7 +198,6 @@ def process_image(background_frames, avatar_frames, user, user_info):
     return img_byte_arr
 
 async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO:
-    print(user_info)
     # Load background image or frames
     if user_info['customBackground']:
         background_frames, _ = await get_image_or_gif_frames(user_info['customBackground'])

@@ -288,7 +288,6 @@ async def add_giveaway_participant(giveawayid, userid, client):
         view = discord.ui.View()
 
         participants = await get_giveaway_participants(giveawayid)
-        print("participants: ", participants)
         btn = discord.ui.Button(
             style=discord.ButtonStyle.primary,
             label=tanjunLocalizer.localize(
@@ -500,7 +499,6 @@ async def add_giveaway_participant(giveawayid, userid, client):
 
     participants = await get_giveaway_participants(giveawayid)
 
-    print("participants: ", participants)
 
     btn = discord.ui.Button(
         style=discord.ButtonStyle.primary,
@@ -737,4 +735,4 @@ async def updateGiveawayMessage(giveaway_id, client):
         message = await channel.fetch_message(int(giveawayInformation[19]))
         await message.edit(embed=embed)
     except discord.errors.NotFound:
-        print(f"Giveaway message not found for giveaway ID {giveaway_id}")
+        pass
