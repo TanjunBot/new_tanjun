@@ -1337,7 +1337,7 @@ class LogsCog(commands.Cog):
                 )
             )
 
-        if before.type != after.type:
+        if hasattr(before, "type") and before.type != after.type:
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -1354,7 +1354,8 @@ class LogsCog(commands.Cog):
                     ),
                 )
             )
-        if before.category != after.category:
+
+        if hasattr(before, "category") and before.category != after.category:
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -1364,7 +1365,7 @@ class LogsCog(commands.Cog):
                 )
             )
 
-        if before.topic != after.topic:
+        if hasattr(before, "topic") and before.topic != after.topic:
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
