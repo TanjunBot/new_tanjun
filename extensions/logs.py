@@ -1,8 +1,10 @@
+# Unused imports:
+# from typing import List
+# import os
 import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from typing import List
 from api import (
     get_log_enable,
     get_log_channel,
@@ -11,7 +13,6 @@ from api import (
     get_log_role_blacklist,
 )
 from localizer import tanjunLocalizer
-import os
 import difflib
 from utility import upload_to_tanjun_logs, upload_image_to_imgbb
 
@@ -53,7 +54,7 @@ async def sendLogEmbeds(bot):
         if destinationChannel is None:
             continue
         for i in range(0, len(ems), 10):
-            chunk = ems[i : i + 10]
+            chunk = ems[i: i + 10]
             await destinationChannel.send(embeds=chunk)
         embeds[guildId] = []
 
@@ -2746,12 +2747,13 @@ class LogsCog(commands.Cog):
                 avatar_url_before = avatar_upload_response.get("data", {}).get(
                     "url", defaultAvatarUrl
                 )
+                """ Unused:
                 avatar_url_after = (
                     after.display_avatar.url
                     if after.display_avatar
                     else defaultAvatarUrl
                 )  # New avatar URL
-
+                """
                 # Upload new avatar to ImgBB
                 new_avatar_bytes = (
                     await after.display_avatar.read() if after.display_avatar else None
@@ -2793,9 +2795,11 @@ class LogsCog(commands.Cog):
                 banner_url_before = banner_upload_response.get("data", {}).get(
                     "url", noneLocale
                 )
+                """ Unused:
                 banner_url_after = (
                     after.banner.url if after.banner else noneLocale
                 )  # New banner URL
+                """
 
                 # Upload new banner to ImgBB
                 if after.banner:
@@ -3036,7 +3040,7 @@ class LogsCog(commands.Cog):
                 for attachment in after.attachments
                 if attachment not in before.attachments
             ]
-            
+
             removed_attachments = []
             urlNotAvaiableLocale = tanjunLocalizer.localize(locale, "logs.messageEdit.urlNotAvaiableLocale")
             for attachment in before.attachments:
@@ -3060,7 +3064,7 @@ class LogsCog(commands.Cog):
                         attachments=", ".join(added_attachments),
                     )
                 )
-            
+
             if removed_attachments:
                 description_parts.append(
                     tanjunLocalizer.localize(
@@ -3144,7 +3148,7 @@ class LogsCog(commands.Cog):
             sendLog = True
             attachment_parts = []
             urlNotAvaiableLocale = tanjunLocalizer.localize(locale, "logs.messageDelete.urlNotAvaiableLocale")
-            
+
             for attachment in message.attachments:
                 if attachment.content_type and attachment.content_type.startswith('image/'):
                     try:
@@ -3152,15 +3156,15 @@ class LogsCog(commands.Cog):
                         url = await upload_image_to_imgbb(attachmentBytes, attachment.filename.split(".")[-1])
                         if url:
                             url = url["data"]["display_url"]
-                    except:
+                    except Exception:
                         url = None
                 else:
                     url = None
-                
+
                 attachment_parts.append(
                     f"[{attachment.filename}]({url if url else urlNotAvaiableLocale})"
                 )
-            
+
             attachments = "\n- ".join(attachment_parts)
             description_parts.append(
                 tanjunLocalizer.localize(
