@@ -1324,11 +1324,14 @@ def draw_text_with_outline(draw, position, text, font, text_color, outline_color
     # Draw text
     draw.text(position, text, font=font, fill=text_color)
 
+
 def isoTimeToDate(isoTime: str) -> datetime.datetime:
     return datetime.datetime.fromisoformat(isoTime)
 
+
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
+
 
 def addThousandsSeparator(number: int) -> str:
     return "{:,}".format(number).replace(",", " ")
