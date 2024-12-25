@@ -1,5 +1,4 @@
 import discord
-from discord.ext import commands
 from discord import app_commands
 import utility
 from localizer import tanjunLocalizer
@@ -40,8 +39,10 @@ async def help(commandInfo, ctx):
                                 locale, f"{str(group.description)}"
                             )
                             command_text += f"{group_desc}\n\n"
-                        except:
-                            command_text += f"*No description available for {group.name}*\n\n"
+                        except Exception:
+                            command_text += (
+                                f"*No description available for {group.name}*\n\n"
+                            )
 
                         # Process each subcommand
                         for cmd in group.commands:
@@ -54,8 +55,10 @@ async def help(commandInfo, ctx):
                                         f"{str(cmd.description).replace('_', '.')}",
                                     )
                                     command_text += f"{cmd_desc}\n\n"
-                                except:
-                                    command_text += f"*No description available for {cmd.name}*\n\n"
+                                except Exception:
+                                    command_text += (
+                                        f"*No description available for {cmd.name}*\n\n"
+                                    )
 
                                 # Process subcommands within the subcommand group
                                 for subcmd in cmd.commands:
@@ -66,7 +69,7 @@ async def help(commandInfo, ctx):
                                             f"{str(subcmd.description).replace('_', '.')}",
                                         )
                                         command_text += f"{subcmd_desc}\n\n"
-                                    except:
+                                    except Exception:
                                         command_text += "\n"
 
                                     # Process parameters for subcommands
@@ -86,7 +89,7 @@ async def help(commandInfo, ctx):
                                                     f"{param.description.replace('_', '.')}",
                                                 )
                                                 command_text += f"- **{param_name}**: {param_desc}\n"
-                                            except:
+                                            except Exception:
                                                 command_text += f"- **{param.name}**: *No description available*\n"
                                         command_text += "\n"
 
@@ -108,8 +111,10 @@ async def help(commandInfo, ctx):
                                         f"{str(cmd.description).replace('_', '.')}",
                                     )
                                     command_text += f"{cmd_desc}\n\n"
-                                except:
-                                    command_text += f"*No description available for {cmd.name}*\n\n"
+                                except Exception:
+                                    command_text += (
+                                        f"*No description available for {cmd.name}*\n\n"
+                                    )
 
                                 # Process parameters only if they exist
                                 if hasattr(cmd, "parameters") and cmd.parameters:
@@ -127,7 +132,7 @@ async def help(commandInfo, ctx):
                                             command_text += (
                                                 f"- **{param_name}**: {param_desc}\n"
                                             )
-                                        except:
+                                        except Exception:
                                             command_text += f"- **{param.name}**: *No description available*\n"
                                     command_text += "\n"
 
@@ -180,7 +185,7 @@ async def help(commandInfo, ctx):
                 if cmd.parent is not None:
                     if cmd.parent.qualified_name not in groups:
                         groups.append(cmd.parent.qualified_name)
-                        if not " " in cmd.parent.qualified_name:
+                        if " " not in cmd.parent.qualified_name:
                             options.append(
                                 discord.SelectOption(
                                     label=cmd.parent.qualified_name,

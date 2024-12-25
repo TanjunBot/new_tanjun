@@ -1,10 +1,7 @@
 from config import brawlstarsToken
 import aiohttp
-from utility import commandInfo, tanjunEmbed, isoTimeToDate, date_time_to_timestamp
-import discord
+from utility import commandInfo, tanjunEmbed
 from localizer import tanjunLocalizer
-import json
-from commands.utility.brawlstars.bshelper import getLevelEmoji
 
 
 async def getPlayerInfo(playerTag: str):
@@ -15,7 +12,6 @@ async def getPlayerInfo(playerTag: str):
             headers=headers,
         ) as response:
             if response.status != 200:
-                respo = await response.json()
                 return None
             return await response.json()
 
@@ -44,7 +40,6 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str):
         highestTrophies=playerInfo["highestTrophies"],
     )
     description += "\n"
-    levelEmoji = getLevelEmoji(playerInfo["expLevel"])
     description += tanjunLocalizer.localize(
         commandInfo.locale,
         "commands.utility.brawlstars.playerinfo.description.expLevel",
@@ -91,4 +86,3 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str):
         color=playerInfo["nameColor"],
     )
     await commandInfo.reply(embed=embed)
-
