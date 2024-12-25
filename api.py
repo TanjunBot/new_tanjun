@@ -2370,7 +2370,7 @@ async def get_log_enable(guild_id: str):
     query = "SELECT * FROM logEnables WHERE guildId = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return result[0] if result and result[0] else None
+    return result[0] if result and result[0] else [0 for _ in range(35)]
 
 
 async def test_log_enable():

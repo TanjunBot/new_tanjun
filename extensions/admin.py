@@ -500,7 +500,9 @@ class JoinToCreateCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_jtc_setchannel_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str("admin_jtc_setchannel_params_channel_description"),
+        channel=app_commands.locale_str(
+            "admin_jtc_setchannel_params_channel_description"
+        ),
     )
     async def set_channel(self, ctx, channel: discord.VoiceChannel):
         await ctx.response.defer()
@@ -524,7 +526,9 @@ class JoinToCreateCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_jtc_removechannel_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str("admin_jtc_removechannel_params_channel_description"),
+        channel=app_commands.locale_str(
+            "admin_jtc_removechannel_params_channel_description"
+        ),
     )
     async def remove_channel(self, ctx, channel: discord.VoiceChannel):
         await ctx.response.defer()
@@ -542,7 +546,6 @@ class JoinToCreateCommands(discord.app_commands.Group):
 
         await removeJoinToCreateChannelCommand(commandInfo=commandInfo, channel=channel)
         return
-
 
 
 class administrationCommands(discord.app_commands.Group):

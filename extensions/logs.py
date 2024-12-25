@@ -2702,22 +2702,27 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_user_update(self, before: discord.User, after: discord.User):
+        print("user update")
         for guild in self.bot.guilds:
             user = guild.get_member(before.id)
             if not user:
+                print("user not in guild", guild.name)
                 continue
 
             logEnable = (await get_log_enable(guild.id))[14]
             if not logEnable:
-                return
+                print("log enable false", guild.name)
+                continue
 
             if await is_log_user_blacklisted(guild.id, str(before.id)):
-                return
+                print("user blacklisted", guild.name)
+                continue
 
             blacklistedRoles = await get_log_role_blacklist(guild.id)
             for blacklistedRole in blacklistedRoles:
                 if blacklistedRole in user.roles:
-                    return
+                    print("blacklisted role", guild.name)
+                    continue
 
             locale = guild.locale if hasattr(guild, "locale") else "de"
             description_parts = []
@@ -2729,50 +2734,44 @@ class LogsCog(commands.Cog):
             )
 
             if before.avatar != after.avatar:
-                defaultAvatarUrl = "https://cdn.discordapp.com/embed/avatars/0.png"
-                urlLocale = tanjunLocalizer.localize(
-                    locale, "logs.userUpdate.guildAvatarLocales.url"
-                )
+                print("avatar changed")
+                # defaultAvatarUrl = "https://cdn.discordapp.com/embed/avatars/0.png"
+                # urlLocale = tanjunLocalizer.localize(
+                #     locale, "logs.userUpdate.guildAvatarLocales.url"
+                # )
                 # Upload old avatar to ImgBB
-                avatar_bytes = (
-                    await before.display_avatar.read()
-                    if before.display_avatar
-                    else None
-                )  # Read the old avatar as bytes
-                avatar_upload_response = (
-                    await utility.upload_image_to_imgbb(avatar_bytes, "png")
-                    if avatar_bytes
-                    else {}
-                )
-                avatar_url_before = avatar_upload_response.get("data", {}).get(
-                    "url", defaultAvatarUrl
-                )
-                """ Unused:
-                avatar_url_after = (
-                    after.display_avatar.url
-                    if after.display_avatar
-                    else defaultAvatarUrl
-                )  # New avatar URL
-                """
-                # Upload new avatar to ImgBB
-                new_avatar_bytes = (
-                    await after.display_avatar.read() if after.display_avatar else None
-                )  # Read the new avatar as bytes
-                new_avatar_upload_response = (
-                    await utility.upload_image_to_imgbb(new_avatar_bytes, "png")
-                    if new_avatar_bytes
-                    else {}
-                )
-                new_avatar_url = new_avatar_upload_response.get("data", {}).get(
-                    "url", defaultAvatarUrl
-                )
+                # avatar_bytes = (
+                #     await before.display_avatar.read()
+                #     if before.display_avatar
+                #     else None
+                # )  # Read the old avatar as bytes
+                # avatar_upload_response = (
+                #     await utility.upload_image_to_imgbb(avatar_bytes, "png")
+                #     if avatar_bytes
+                #     else {}
+                # )
+                # avatar_url_before = avatar_upload_response.get("data", {}).get(
+                #     "url", defaultAvatarUrl
+                # )
+                # # Upload new avatar to ImgBB
+                # new_avatar_bytes = (
+                #     await after.display_avatar.read() if after.display_avatar else None
+                # )  # Read the new avatar as bytes
+                # new_avatar_upload_response = (
+                #     await utility.upload_image_to_imgbb(new_avatar_bytes, "png")
+                #     if new_avatar_bytes
+                #     else {}
+                # )
+                # new_avatar_url = new_avatar_upload_response.get("data", {}).get(
+                #     "url", defaultAvatarUrl
+                # )
 
                 description_parts.append(
                     tanjunLocalizer.localize(
                         locale,
                         "logs.userUpdate.avatar",
-                        before=f"[{urlLocale}]({avatar_url_before})",
-                        after=f"[{urlLocale}]({new_avatar_url})",
+                        # before=f"[{urlLocale}]({avatar_url_before})",
+                        # after=f"[{urlLocale}]({new_avatar_url})",
                     )
                 )
 
@@ -2823,6 +2822,9 @@ class LogsCog(commands.Cog):
                         after=f"[{urlLocale}]({new_banner_url})",
                     )
                 )
+
+            print(len(description_parts))
+            print(description_parts)
 
             if len(description_parts) == 1:
                 return

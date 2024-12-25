@@ -6004,7 +6004,7 @@
         "userUpdate": {
             "title": "Benutzer aktualisiert",
             "name": "Der Nutzer ${user} hat seinen globalen Discord Account geändert",
-            "avatar": "Avatar geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}\n-# Die URLs werden auf imgbb hochgeladen, da geänderte Avatare nicht mehr von Discord gespeichert werden.",
+            "avatar": "Der Nuter hat seinen Avatar geändert. Allerdings löscht Discord den alten Avatar, bevor ich darauf zugreifen kann. Daher kann ich den alten Avatar leider nicht anzeigen.",
             "guildAvatarLocales": {
                 "none": "Keins",
                 "url": "LINK"
