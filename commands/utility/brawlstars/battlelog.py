@@ -3,7 +3,6 @@ import aiohttp
 from utility import commandInfo, tanjunEmbed, isoTimeToDate, date_time_to_timestamp
 import discord
 from localizer import tanjunLocalizer
-import json
 
 
 async def getBattloeLog(playerTag: str):
@@ -14,7 +13,6 @@ async def getBattloeLog(playerTag: str):
             headers=headers,
         ) as response:
             if response.status != 200:
-                respo = await response.json()
                 return None
             return await response.json()
 

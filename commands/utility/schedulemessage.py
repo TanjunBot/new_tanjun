@@ -1,5 +1,4 @@
 import discord
-from discord.ext import commands
 import utility
 from localizer import tanjunLocalizer
 from datetime import datetime, timedelta
@@ -7,9 +6,10 @@ from api import (
     add_scheduled_message,
     get_user_scheduled_messages_in_timeframe,
     get_ready_scheduled_messages,
-    remove_scheduled_message
+    remove_scheduled_message,
 )
 from typing import List
+
 
 async def schedule_message(
     commandInfo: utility.commandInfo,
@@ -17,7 +17,7 @@ async def schedule_message(
     send_in: str,
     channel: discord.TextChannel = None,
     repeat: str = None,
-    attachments: List[discord.Attachment] = None
+    attachments: List[discord.Attachment] = None,
 ):
     # Parse send_in time
     try:
@@ -25,13 +25,12 @@ async def schedule_message(
     except ValueError:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, 
-                "commands.utility.schedulemessage.invalidTime.title"
+                commandInfo.locale, "commands.utility.schedulemessage.invalidTime.title"
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.utility.schedulemessage.invalidTime.description"
-            )
+                "commands.utility.schedulemessage.invalidTime.description",
+            ),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -40,13 +39,12 @@ async def schedule_message(
     if send_time <= datetime.now():
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.schedulemessage.pastTime.title"
+                commandInfo.locale, "commands.utility.schedulemessage.pastTime.title"
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.utility.schedulemessage.pastTime.description"
-            )
+                "commands.utility.schedulemessage.pastTime.description",
+            ),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -58,12 +56,12 @@ async def schedule_message(
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noRepeatPermission.title"
+                    "commands.utility.schedulemessage.noRepeatPermission.title",
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noRepeatPermission.description"
-                )
+                    "commands.utility.schedulemessage.noRepeatPermission.description",
+                ),
             )
             await commandInfo.reply(embed=embed)
             return
@@ -73,12 +71,12 @@ async def schedule_message(
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noChannelPermission.title"
+                    "commands.utility.schedulemessage.noChannelPermission.title",
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noChannelPermission.description"
-                )
+                    "commands.utility.schedulemessage.noChannelPermission.description",
+                ),
             )
             await commandInfo.reply(embed=embed)
             return
@@ -88,12 +86,12 @@ async def schedule_message(
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noBotChannelPermission.title"
+                    "commands.utility.schedulemessage.noBotChannelPermission.title",
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noBotChannelPermission.description"
-                )
+                    "commands.utility.schedulemessage.noBotChannelPermission.description",
+                ),
             )
             await commandInfo.reply(embed=embed)
             return
@@ -104,12 +102,12 @@ async def schedule_message(
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noDMPermission.title"
+                    "commands.utility.schedulemessage.noDMPermission.title",
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noDMPermission.description"
-                )
+                    "commands.utility.schedulemessage.noDMPermission.description",
+                ),
             )
             await commandInfo.reply(embed=embed)
             return
@@ -117,38 +115,35 @@ async def schedule_message(
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noDMPermission.title"
+                    "commands.utility.schedulemessage.noDMPermission.title",
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.noDMPermission.description"
-                )
+                    "commands.utility.schedulemessage.noDMPermission.description",
+                ),
             )
             await commandInfo.reply(embed=embed)
-            return 
-        
+            return
+
     # Check scheduling limits for non-moderators
     if channel and not commandInfo.user.guild_permissions.manage_messages:
         # Check if user has other messages scheduled within 1 hour
         start_time = send_time - timedelta(hours=1)
         end_time = send_time + timedelta(hours=1)
         existing_messages = await get_user_scheduled_messages_in_timeframe(
-            commandInfo.user.id,
-            start_time,
-            end_time,
-            commandInfo.guild.id
+            commandInfo.user.id, start_time, end_time, commandInfo.guild.id
         )
-        
+
         if existing_messages:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.tooManyScheduled.title"
+                    "commands.utility.schedulemessage.tooManyScheduled.title",
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.utility.schedulemessage.tooManyScheduled.description"
-                )
+                    "commands.utility.schedulemessage.tooManyScheduled.description",
+                ),
             )
             await commandInfo.reply(embed=embed)
             return
@@ -160,27 +155,27 @@ async def schedule_message(
         user_id=commandInfo.user.id,
         content=content,
         send_time=send_time,
-        repeat_interval=utility.relativeTimeToSeconds(repeat) if repeat else None
+        repeat_interval=utility.relativeTimeToSeconds(repeat) if repeat else None,
     )
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.utility.schedulemessage.success.title"
+            commandInfo.locale, "commands.utility.schedulemessage.success.title"
         ),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.schedulemessage.success.description",
             time=send_time.strftime("%Y-%m-%d %H:%M:%S"),
-            channel=channel.mention if channel else "DM"
-        )
+            channel=channel.mention if channel else "DM",
+        ),
     )
     await commandInfo.reply(embed=embed)
+
 
 async def send_scheduled_messages(client):
     """Send all scheduled messages that are ready to be sent"""
     ready_messages = await get_ready_scheduled_messages()
-    
+
     for msg in ready_messages:
         try:
             # Extract message details
@@ -190,33 +185,31 @@ async def send_scheduled_messages(client):
             user_id = int(msg[3])
             content = msg[4]
             repeat_interval = msg[6]
-            
+
             # Get the target channel or user
             if channel_id:
                 guild = client.get_guild(guild_id)
                 if not guild:
                     continue
-                    
+
                 channel = guild.get_channel(channel_id)
                 if not channel:
                     continue
-                    
+
                 target = channel
             else:
                 user = await client.fetch_user(user_id)
                 if not user:
                     continue
-                    
+
                 target = user
-            
+
             # Send the message
-            embed = utility.tanjunEmbed(
-                description=content
-            )
+            embed = utility.tanjunEmbed(description=content)
             await target.send(embed=embed)
-            
+
             if not repeat_interval:
                 await remove_scheduled_message(message_id)
-                
-        except Exception as e:
+
+        except Exception:
             pass

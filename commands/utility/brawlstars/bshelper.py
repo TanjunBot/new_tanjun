@@ -167,8 +167,9 @@ starPowerEmojiMap = {
     23000832: "<:23000832:1320861272471900160>",
     23000833: "<:23000833:1320861274682294372>",
     23000848: "<:23000848:1320861546896949379>",
-    23000849: "<:23000849:1320861548268355625>"
+    23000849: "<:23000849:1320861548268355625>",
 }
+
 
 def getStarPowerEmoji(id: int):
     try:
@@ -176,6 +177,7 @@ def getStarPowerEmoji(id: int):
     except KeyError:
         emoji = ""
     return emoji
+
 
 gadgetEmojiMap = {
     23000246: "<:23000246:1320831194610270268>",
@@ -342,8 +344,9 @@ gadgetEmojiMap = {
     23000850: "<:23000850:1320861549790888077>",
     23000851: "<:23000851:1320861551393247364>",
     23000818: "<:23000818:1320861038408630303>",
-    23000285: "<:23000285:1320836392418541618>"
+    23000285: "<:23000285:1320836392418541618>",
 }
+
 
 def getGadgetEmoji(gadget: str):
     try:
@@ -351,6 +354,7 @@ def getGadgetEmoji(gadget: str):
     except KeyError:
         emoji = ""
     return emoji
+
 
 gearEmojiMap = {
     62000000: "<:62000000:1320693233835053128>",
@@ -371,8 +375,9 @@ gearEmojiMap = {
     62000011: "<:62000011:1320697999701180446>",
     62000010: "<:62000010:1320697944978227261>",
     62000009: "<:62000009:1320697846546305024>",
-    62000018: "<:62000018:1320698427142836224>"
+    62000018: "<:62000018:1320698427142836224>",
 }
+
 
 def getGearEmoji(gear: str):
     try:
@@ -380,6 +385,7 @@ def getGearEmoji(gear: str):
     except KeyError:
         emoji = ""
     return emoji
+
 
 levelEmojiMap = {
     1: "<:tier1:1321075685208621086>",
@@ -432,8 +438,9 @@ levelEmojiMap = {
     48: "<:tier48:1321075791773040752>",
     49: "<:tier49:1321075793752752199>",
     50: "<:tier50:1321076178743857202>",
-    51: "<:tier51:1321077756494348318>"
+    51: "<:tier51:1321077756494348318>",
 }
+
 
 def getLevelEmoji(level: int):
     if level > 50:
@@ -442,6 +449,7 @@ def getLevelEmoji(level: int):
         return levelEmojiMap[level]
     except ValueError:
         return ""
+
 
 def parseName(name: str):
     name = name.replace("-", " ")

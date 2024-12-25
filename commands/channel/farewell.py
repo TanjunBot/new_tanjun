@@ -7,7 +7,7 @@ from api import (
     remove_leave_channel,
 )
 import aiohttp
-from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageSequence
+from PIL import Image, ImageDraw, ImageFont, ImageSequence
 from utility import commandInfo, draw_text_with_outline
 import io
 import asyncio
@@ -94,7 +94,7 @@ async def setFarewellChannel(
     await commandInfo.reply(embed=embed)
 
 
-async def removeFarewellChannel(commandInfo: utility.commandInfo):
+async def removeFarewellChannel():
     if not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

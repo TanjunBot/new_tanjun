@@ -1,7 +1,5 @@
 import discord
 from discord import ui
-from discord.ext import commands
-import math
 from typing import List, Dict, Optional
 import utility
 from localizer import tanjunLocalizer
@@ -48,7 +46,6 @@ class CalculatorView(ui.View):
         self.MULTIPLYEMOJI = "math_multiply:1254372798319558768"
         self.DIVIDEEMOJI = "math_divide:1254373636224323644"
         self.BACKSPACEEMOJI = "math_backspace:1254371946695757854"
-
 
     def create_buttons(self):
         self.clear_items()
@@ -258,43 +255,56 @@ class CalculatorView(ui.View):
                     error=str(e),
                 )
         elif button_id == "backspace":
-                if(self.equation[-5:] in ("asin(", "acos(", "atan(", "sqrt(", "log2(")):
-                    self.display_equation = self.display_equation[:-5]
-                    self.equation = self.equation[:-5]
-                elif(self.equation[-4:] in ("sin(", "cos(", "tan(")):
-                    self.display_equation = self.display_equation[:-4]
-                    self.equation = self.equation[:-4]
-                elif(self.equation[-3:] in ("log", "ln(", "log")):
-                    self.display_equation = self.display_equation[:-3]
-                    self.equation = self.equation[:-3] 
-                elif(self.equation[-4:] in ("log2", "log10")):
-                    self.display_equation = self.display_equation[:-4]
-                    self.equation = self.equation[:-4]
-                elif(self.equation[-3:] in ("abs", "sin", "cos", "tan", "log", "log", "ln", "nth", "sqrt", "ceil", "floor", "Rand")):
-                    self.display_equation = self.display_equation[:-3]
-                    self.equation = self.equation[:-3]
-                elif(self.equation[-2:] in ("pi")):
-                    self.display_equation = self.display_equation[:-1]
-                    self.equation = self.equation[:-2]
-                elif(self.equation[-4:] in ("^(2)")):
-                    self.display_equation = self.display_equation[:-1]
-                    self.equation = self.equation[:-4]
-                elif(self.equation[-6:] in ("log10(")):
-                    self.display_equation = self.display_equation[:-6]
-                    self.equation = self.equation[:-6]
-                elif(self.equation[-6:] in ("floor(")):
-                    self.display_equation = self.display_equation[:-1]
-                    self.equation = self.equation[:-6]
-                elif(self.equation[-5:] in ("ceil(")):
-                    self.display_equation = self.display_equation[:-1]
-                    self.equation = self.equation[:-5]
-                elif(self.equation[-4:] in ("abs(")):
-                    self.display_equation = self.display_equation[:-1]
-                    self.equation = self.equation[:-4]
-                else:
-                    self.display_equation = self.display_equation[:-1]
-                    self.equation = self.equation[:-1]
-                
+            if self.equation[-5:] in ("asin(", "acos(", "atan(", "sqrt(", "log2("):
+                self.display_equation = self.display_equation[:-5]
+                self.equation = self.equation[:-5]
+            elif self.equation[-4:] in ("sin(", "cos(", "tan("):
+                self.display_equation = self.display_equation[:-4]
+                self.equation = self.equation[:-4]
+            elif self.equation[-3:] in ("log", "ln(", "log"):
+                self.display_equation = self.display_equation[:-3]
+                self.equation = self.equation[:-3]
+            elif self.equation[-4:] in ("log2", "log10"):
+                self.display_equation = self.display_equation[:-4]
+                self.equation = self.equation[:-4]
+            elif self.equation[-3:] in (
+                "abs",
+                "sin",
+                "cos",
+                "tan",
+                "log",
+                "log",
+                "ln",
+                "nth",
+                "sqrt",
+                "ceil",
+                "floor",
+                "Rand",
+            ):
+                self.display_equation = self.display_equation[:-3]
+                self.equation = self.equation[:-3]
+            elif self.equation[-2:] in ("pi"):
+                self.display_equation = self.display_equation[:-1]
+                self.equation = self.equation[:-2]
+            elif self.equation[-4:] in ("^(2)"):
+                self.display_equation = self.display_equation[:-1]
+                self.equation = self.equation[:-4]
+            elif self.equation[-6:] in ("log10("):
+                self.display_equation = self.display_equation[:-6]
+                self.equation = self.equation[:-6]
+            elif self.equation[-6:] in ("floor("):
+                self.display_equation = self.display_equation[:-1]
+                self.equation = self.equation[:-6]
+            elif self.equation[-5:] in ("ceil("):
+                self.display_equation = self.display_equation[:-1]
+                self.equation = self.equation[:-5]
+            elif self.equation[-4:] in ("abs("):
+                self.display_equation = self.display_equation[:-1]
+                self.equation = self.equation[:-4]
+            else:
+                self.display_equation = self.display_equation[:-1]
+                self.equation = self.equation[:-1]
+
         elif button_id in ("prev_page", "next_page"):
             self.current_page = (
                 (self.current_page + 1) % 3

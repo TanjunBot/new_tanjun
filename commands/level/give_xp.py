@@ -3,6 +3,7 @@ from localizer import tanjunLocalizer
 from api import get_user_xp, update_user_xp, get_xp_scaling, get_custom_formula
 import discord
 
+
 async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount: int):
     if not commandInfo.user.guild_permissions.manage_guild:
         embed = tanjunEmbed(
@@ -10,7 +11,8 @@ async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount
                 commandInfo.locale, "commands.level.givexp.error.no_permission.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.givexp.error.no_permission.description"
+                commandInfo.locale,
+                "commands.level.givexp.error.no_permission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -22,7 +24,8 @@ async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount
                 commandInfo.locale, "commands.level.givexp.error.invalid_amount.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.givexp.error.invalid_amount.description"
+                commandInfo.locale,
+                "commands.level.givexp.error.invalid_amount.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -44,12 +47,13 @@ async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount
             commandInfo.locale, "commands.level.givexp.success.title"
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.givexp.success.description",
+            commandInfo.locale,
+            "commands.level.givexp.success.description",
             user=user.mention,
             amount=amount,
             new_xp=new_xp,
             old_level=old_level,
-            new_level=new_level
+            new_level=new_level,
         ),
     )
     await commandInfo.reply(embed=embed)

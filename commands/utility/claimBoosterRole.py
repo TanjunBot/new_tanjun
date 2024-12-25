@@ -1,6 +1,11 @@
 from utility import commandInfo, tanjunEmbed
 from localizer import tanjunLocalizer
-from api import get_booster_role, get_claimed_booster_role, remove_claimed_booster_role, add_claimed_booster_role
+from api import (
+    get_booster_role,
+    get_claimed_booster_role,
+    remove_claimed_booster_role,
+    add_claimed_booster_role,
+)
 import utility
 import discord
 
@@ -96,7 +101,9 @@ async def claimBoosterRole(
         reason=reason,
     )
     await newRole.edit(position=role.position + 1)
-    await add_claimed_booster_role(commandInfo.user.id, newRole.id, commandInfo.guild.id)
+    await add_claimed_booster_role(
+        commandInfo.user.id, newRole.id, commandInfo.guild.id
+    )
     await commandInfo.user.add_roles(newRole)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(

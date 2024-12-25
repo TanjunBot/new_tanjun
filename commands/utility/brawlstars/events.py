@@ -1,26 +1,23 @@
 from config import brawlstarsToken
 import aiohttp
-from utility import commandInfo, tanjunEmbed, similar, isoTimeToDate, date_time_to_timestamp
+from utility import (
+    commandInfo,
+    tanjunEmbed,
+    isoTimeToDate,
+    date_time_to_timestamp,
+)
 import discord
 from localizer import tanjunLocalizer
-import json
-from commands.utility.brawlstars.bshelper import (
-    parseName,
-    getGadgetEmoji,
-    getStarPowerEmoji,
-    getGearEmoji,
-)
 
 
 async def getEventRotation():
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            f"https://api.brawlstars.com/v1/events/rotation",
+            "https://api.brawlstars.com/v1/events/rotation",
             headers=headers,
         ) as response:
             if response.status != 200:
-                respo = await response.json()
                 return None
             return await response.json()
 

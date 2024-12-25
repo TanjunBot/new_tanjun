@@ -3,6 +3,7 @@ import utility
 from localizer import tanjunLocalizer
 from api import set_report_channel, get_report_channel
 
+
 async def set_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel):
     if not commandInfo.user.guild_permissions.manage_guild:
         embed = utility.tanjunEmbed(
@@ -29,7 +30,7 @@ async def set_channel(commandInfo: utility.commandInfo, channel: discord.TextCha
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if await get_report_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.set_channel.alreadySet.title"),

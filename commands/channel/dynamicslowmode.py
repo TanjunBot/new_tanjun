@@ -12,7 +12,7 @@ from api import (
     cash_slowmode_delay,
     remove_cashed_slowmode_delay,
 )
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 async def addDynamicslowmode(
@@ -194,9 +194,7 @@ async def dynamicslowmodeMessage(message: discord.Message):
         cashed_slowmode_delay = message.channel.slowmode_delay
 
     message_time = message.created_at.replace(tzinfo=None)
-    await add_dynamicslowmode_message(
-        message.channel.id, message.id, message_time
-    )
+    await add_dynamicslowmode_message(message.channel.id, message.id, message_time)
 
     dynamicSlowmodeMessages = await get_dynamicslowmode_messages(message.channel.id)
 

@@ -1,18 +1,19 @@
 import discord
-from discord.ui import View, Button, Modal, TextInput, Select
+from discord.ui import View, Modal, TextInput, Select
 import utility
 from localizer import tanjunLocalizer
-from typing import Optional
 import re
 import asyncio
 
 
-async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextChannel, title: str):
+async def create_embed(
+    commandInfo: utility.commandInfo, channel: discord.TextChannel, title: str
+):
     class EmbedCreatorView(View):
         def __init__(self, commandInfo, target_channel):
             super().__init__(timeout=1800)  # 30 minutes timeout
             self.commandInfo = commandInfo
-            self.embed = discord.Embed( title=title, color=0xFFFFFF)
+            self.embed = discord.Embed(title=title, color=0xFFFFFF)
             self.preview_message = None
             self.target_channel = target_channel
             self.field_count = 0
@@ -40,7 +41,8 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
         ):
             await interaction.response.send_message(
                 content=tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.admin.embed.setDescription.message"
+                    self.commandInfo.locale,
+                    "commands.admin.embed.setDescription.message",
                 ),
                 embed=None,
                 ephemeral=True,
@@ -49,13 +51,15 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             try:
                 message = await self.commandInfo.client.wait_for(
                     "message",
-                    check=lambda m: m.author == interaction.user and m.channel == interaction.channel,
+                    check=lambda m: m.author == interaction.user
+                    and m.channel == interaction.channel,
                     timeout=300.0,
                 )
             except asyncio.TimeoutError:
                 await interaction.followup.send_message(
                     tanjunLocalizer.localize(
-                        self.commandInfo.locale, "commands.admin.embed.setDescription.timeout"
+                        self.commandInfo.locale,
+                        "commands.admin.embed.setDescription.timeout",
                     ),
                     ephemeral=True,
                 )
@@ -64,7 +68,8 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
                 self.embed.description = message.content
                 await interaction.edit_original_response(
                     content=tanjunLocalizer.localize(
-                        self.commandInfo.locale, "commands.admin.embed.descriptionUpdated",
+                        self.commandInfo.locale,
+                        "commands.admin.embed.descriptionUpdated",
                     )
                 )
 

@@ -1,7 +1,7 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from api import close_ticket, get_ticket_by_id, get_ticket_messages_by_id
+from api import get_ticket_by_id, get_ticket_messages_by_id
 import datetime
 
 
@@ -88,22 +88,42 @@ async def close_ticket(interaction: discord.Interaction):
         )
 
         view = discord.ui.View()
-        btn1 = discord.ui.Button(label=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.viewOnlineSummary"), url=url)
+        btn1 = discord.ui.Button(
+            label=tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.admin.close_ticket.success.viewOnlineSummary",
+            ),
+            url=url,
+        )
         view.add_item(btn1)
-        btn2 = discord.ui.Button(label=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.viewThread"), url=f"https://discord.com/channels/{interaction.guild.id}/{ticket_channel.id}")
+        btn2 = discord.ui.Button(
+            label=tanjunLocalizer.localize(
+                interaction.locale, "commands.admin.close_ticket.success.viewThread"
+            ),
+            url=f"https://discord.com/channels/{interaction.guild.id}/{ticket_channel.id}",
+        )
         view.add_item(btn2)
 
         await summary_channel.send(
-            content=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.ticketClosed", user=interaction.user.mention),
+            content=tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.admin.close_ticket.success.ticketClosed",
+                user=interaction.user.mention,
+            ),
             embed=embed,
-            view=view
+            view=view,
         )
 
         await interaction.channel.edit(archived=True, locked=True)
-        
+
         await interaction.channel.send(
-            content=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.ticketClosed", user=interaction.user.mention),
+            content=tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.admin.close_ticket.success.ticketClosed",
+                user=interaction.user.mention,
+            ),
         )
+
 
 async def generate_summary_html(
     channel: discord.abc.GuildChannel,
@@ -1003,7 +1023,7 @@ async def generate_summary_html(
             continue
         html += '<div class="message">'
         html += f'<img src="{message.author.display_avatar.url}" alt="Profile Picture" class="profile-picture">'
-        html += f'<div class="message-content">'
+        html += '<div class="message-content">'
         html += f'<div class="username">{message.author.name}</div>'
         html += f'<div class="name">{message.author.name}</div>'
         html += f'<div class="text">{message.content}</div>'
@@ -4092,17 +4112,17 @@ async def generate_summary_html(
                 font-weight: 500;
                 display: inline-block;
             }
-            
+
             .user-mention {
                 background-color: rgba(88, 101, 242, 0.15);
                 color: var(--brand);
             }
-            
+
             .channel-mention {
                 background-color: rgba(35, 165, 89, 0.15);
                 color: var(--brand);
             }
-            
+
             .role-mention:hover, .user-mention:hover, .channel-mention:hover {
                 opacity: 0.8;
             }
@@ -4124,7 +4144,7 @@ async def generate_summary_html(
                 <div class="role-popover-header">
                     <h3 class="role-popover-title">@${role.name}</h3>
                 </div>
-                
+
                 <div class="role-popover-section">
                     <div class="role-popover-label">${t.popover.members}</div>
                     <div class="role-member-list">
@@ -4133,7 +4153,7 @@ async def generate_summary_html(
                         `).join('')}
                     </div>
                 </div>
-                
+
                 <div class="role-popover-section">
                     <div class="role-popover-label">${t.popover.permissions}</div>
                     <div class="role-popover-value">

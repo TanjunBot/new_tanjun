@@ -2,15 +2,17 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 
-async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason: str = None):
+
+async def kick(
+    commandInfo: utility.commandInfo, target: discord.Member, reason: str = None
+):
     if not commandInfo.user.guild_permissions.kick_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.kick.missingPermission.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.kick.missingPermission.description"
+                commandInfo.locale, "commands.admin.kick.missingPermission.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -23,7 +25,7 @@ async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason:
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.kick.missingPermissionBot.description"
+                "commands.admin.kick.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -35,8 +37,7 @@ async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason:
                 commandInfo.locale, "commands.admin.kick.targetTooHigh.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.kick.targetTooHigh.description"
+                commandInfo.locale, "commands.admin.kick.targetTooHigh.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -52,7 +53,13 @@ async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason:
                 commandInfo.locale,
                 "commands.admin.kick.success.description",
                 user=target.name,
-                reason=reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.kick.noReasonProvided")
+                reason=(
+                    reason
+                    if reason
+                    else tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.admin.kick.noReasonProvided"
+                    )
+                ),
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -62,8 +69,7 @@ async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason:
                 commandInfo.locale, "commands.admin.kick.forbidden.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.kick.forbidden.description"
+                commandInfo.locale, "commands.admin.kick.forbidden.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -73,8 +79,7 @@ async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason:
                 commandInfo.locale, "commands.admin.kick.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.kick.error.description"
+                commandInfo.locale, "commands.admin.kick.error.description"
             ),
         )
         await commandInfo.reply(embed=embed)

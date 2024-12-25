@@ -3,7 +3,6 @@ import aiohttp
 from utility import commandInfo, tanjunEmbed, similar, addThousandsSeparator
 import discord
 from localizer import tanjunLocalizer
-import json
 
 
 async def getClubInfo(clubTag: str):
@@ -14,7 +13,6 @@ async def getClubInfo(clubTag: str):
             headers=headers,
         ) as response:
             if response.status != 200:
-                respo = await response.json()
                 return None
             return await response.json()
 
@@ -194,7 +192,7 @@ async def club(commandInfo: commandInfo, clubTag: str):
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
-            except:
+            except Exception:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
                         self.commandInfo.locale,

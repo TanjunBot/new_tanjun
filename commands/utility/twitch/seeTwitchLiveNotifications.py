@@ -3,8 +3,6 @@ from localizer import tanjunLocalizer
 from api import get_twitch_notification_by_guild_id, remove_twitch_online_notification
 import discord
 from commands.utility.twitch.twitchApi import (
-    get_uuid_by_twitch_name,
-    subscribe_to_twitch_online_notification,
     parse_twitch_notification_message,
 )
 
@@ -78,7 +76,9 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
                 )
                 return
             global notifications
-            await remove_twitch_online_notification(self.notifications[self.current_page][0])
+            await remove_twitch_online_notification(
+                self.notifications[self.current_page][0]
+            )
             self.notifications = await get_twitch_notification_by_guild_id(
                 commandInfo.guild.id
             )
@@ -149,7 +149,9 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
                 view = TwitchLiveNotification(self.current_page, self.notifications)
                 await interaction.response.edit_message(embed=embed, view=view)
             else:
-                await interaction.response.edit_message(embed=embed, view=discord.ui.View())
+                await interaction.response.edit_message(
+                    embed=embed, view=discord.ui.View()
+                )
 
     view = TwitchLiveNotification(0, notifications)
     notification = parse_twitch_notification_message(

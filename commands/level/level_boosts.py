@@ -17,9 +17,13 @@ from api import (
 import discord
 
 
-async def calculate_user_channel_boost_command(commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel):
+async def calculate_user_channel_boost_command(
+    commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel
+):
     user_boost = await get_user_boost(str(commandInfo.guild.id), str(user.id))
-    role_boosts = await get_user_roles_boosts(str(commandInfo.guild.id), [str(role.id) for role in user.roles])
+    role_boosts = await get_user_roles_boosts(
+        str(commandInfo.guild.id), [str(role.id) for role in user.roles]
+    )
     channel_boost = await get_channel_boost(str(commandInfo.guild.id), str(channel.id))
 
     total_additive_boost = 0
@@ -46,17 +50,18 @@ async def calculate_user_channel_boost_command(commandInfo: commandInfo, user: d
     total_boost = (1 + total_additive_boost) * total_multiplicative_boost
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.calculate_user_channel.title"),
+        title=tanjunLocalizer.localize(
+            commandInfo.locale, "commands.level.boosts.calculate_user_channel.title"
+        ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, 
+            commandInfo.locale,
             "commands.level.boosts.calculate_user_channel.description",
             user=user.mention,
             channel=channel.mention,
-            boost=f"{total_boost:.2f}"
-        )
+            boost=f"{total_boost:.2f}",
+        ),
     )
     await commandInfo.reply(embed=embed)
-
 
 
 async def add_role_boost_command(
@@ -238,7 +243,7 @@ async def show_boosts_command(commandInfo: commandInfo):
     if boosts["roles"]:
         role_boosts = "\n".join(
             [
-                f"<@&{role_id}>: {boost} ({tanjunLocalizer.localize(commandInfo.locale,'commands.level.boosts.additive') if additive else tanjunLocalizer.localize(commandInfo.locale,'commands.level.boosts.multiplicative')})"
+                f"<@&{role_id}>: {boost} ({tanjunLocalizer.localize(commandInfo.locale, 'commands.level.boosts.additive') if additive else tanjunLocalizer.localize(commandInfo.locale, 'commands.level.boosts.multiplicative')})"
                 for role_id, boost, additive in boosts["roles"]
             ]
         )
@@ -253,7 +258,7 @@ async def show_boosts_command(commandInfo: commandInfo):
     if boosts["channels"]:
         channel_boosts = "\n".join(
             [
-                f"<#{channel_id}>: {boost} ({tanjunLocalizer.localize(commandInfo.locale,'commands.level.boosts.additive') if additive else tanjunLocalizer.localize(commandInfo.locale,'commands.level.boosts.multiplicative')})"
+                f"<#{channel_id}>: {boost} ({tanjunLocalizer.localize(commandInfo.locale, 'commands.level.boosts.additive') if additive else tanjunLocalizer.localize(commandInfo.locale, 'commands.level.boosts.multiplicative')})"
                 for channel_id, boost, additive in boosts["channels"]
             ]
         )
@@ -268,7 +273,7 @@ async def show_boosts_command(commandInfo: commandInfo):
     if boosts["users"]:
         user_boosts = "\n".join(
             [
-                f"<@{user_id}>: {boost} ({tanjunLocalizer.localize(commandInfo.locale,'commands.level.boosts.additive') if additive else tanjunLocalizer.localize(commandInfo.locale,'commands.level.boosts.multiplicative')})"
+                f"<@{user_id}>: {boost} ({tanjunLocalizer.localize(commandInfo.locale, 'commands.level.boosts.additive') if additive else tanjunLocalizer.localize(commandInfo.locale, 'commands.level.boosts.multiplicative')})"
                 for user_id, boost, additive in boosts["users"]
             ]
         )

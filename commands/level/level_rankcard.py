@@ -2,15 +2,9 @@ import discord
 from utility import commandInfo, tanjunEmbed, checkIfhasPlus, draw_text_with_outline
 from localizer import tanjunLocalizer
 from api import get_user_level_info, set_custom_background
-import config
-from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageSequence
+from PIL import Image, ImageDraw, ImageFont, ImageSequence
 import io
-import requests
-from typing import Tuple
-import tempfile
 import asyncio
-import os
-from io import BytesIO
 import aiohttp
 from concurrent.futures import ThreadPoolExecutor
 from utility import upload_image_to_imgbb
@@ -79,7 +73,7 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
     uploaded_image = await upload_image_to_imgbb(
         await image.read(), image.content_type.split("/")[1]
     )
-    
+
     await set_custom_background(
         str(commandInfo.guild.id),
         str(commandInfo.user.id),
@@ -107,12 +101,14 @@ async def fetch_image(url):
             image_data = io.BytesIO(await response.read())
             return image_data
 
+
 async def get_image_or_gif_frames(url):
     image_data = await fetch_image(url)
     image = Image.open(image_data)
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
-    duration = image.info.get('duration', 100)
+    duration = image.info.get("duration", 100)
     return frames, duration
+
 
 def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
     x1, y1, x2, y2 = xy
@@ -123,14 +119,35 @@ def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
     draw.pieslice([x1, y2 - 2 * radius, x1 + 2 * radius, y2], 90, 180, fill=fill)
     draw.pieslice([x2 - 2 * radius, y2 - 2 * radius, x2, y2], 0, 90, fill=fill)
     if outline:
-        draw.arc([x1, y1, x1 + 2 * radius, y1 + 2 * radius], 180, 270, fill=outline, width=width)
-        draw.arc([x2 - 2 * radius, y1, x2, y1 + 2 * radius], 270, 360, fill=outline, width=width)
-        draw.arc([x1, y2 - 2 * radius, x1 + 2 * radius, y2], 90, 180, fill=outline, width=width)
-        draw.arc([x2 - 2 * radius, y2 - 2 * radius, x2, y2], 0, 90, fill=outline, width=width)
+        draw.arc(
+            [x1, y1, x1 + 2 * radius, y1 + 2 * radius],
+            180,
+            270,
+            fill=outline,
+            width=width,
+        )
+        draw.arc(
+            [x2 - 2 * radius, y1, x2, y1 + 2 * radius],
+            270,
+            360,
+            fill=outline,
+            width=width,
+        )
+        draw.arc(
+            [x1, y2 - 2 * radius, x1 + 2 * radius, y2],
+            90,
+            180,
+            fill=outline,
+            width=width,
+        )
+        draw.arc(
+            [x2 - 2 * radius, y2 - 2 * radius, x2, y2], 0, 90, fill=outline, width=width
+        )
         draw.line([x1 + radius, y1, x2 - radius, y1], fill=outline, width=width)
         draw.line([x1 + radius, y2, x2 - radius, y2], fill=outline, width=width)
         draw.line([x1, y1 + radius, x1, y2 - radius], fill=outline, width=width)
         draw.line([x2, y1 + radius, x2, y2 - radius], fill=outline, width=width)
+
 
 def process_image(background_frames, avatar_frames, user, user_info):
     num_frames = max(len(background_frames), len(avatar_frames))
@@ -145,7 +162,7 @@ def process_image(background_frames, avatar_frames, user, user_info):
     for i in range(len(avatar_frames)):
         avatar_frames[i] = avatar_frames[i].resize((200, 200))
 
-    mask = Image.new('L', (200, 200), 0)
+    mask = Image.new("L", (200, 200), 0)
     mask_draw = ImageDraw.Draw(mask)
     mask_draw.ellipse((0, 0, 200, 200), fill=255)
 
@@ -159,7 +176,7 @@ def process_image(background_frames, avatar_frames, user, user_info):
         draw = ImageDraw.Draw(frame)
 
         # Draw a semi-transparent black rectangle over the background
-        overlay = Image.new('RGBA', frame.size, (0, 0, 0, 0))
+        overlay = Image.new("RGBA", frame.size, (0, 0, 0, 0))
         overlay_draw = ImageDraw.Draw(overlay)
         overlay_draw.rectangle([0, 0, 1000, 300], fill=(0, 0, 0, 100))
         frame = Image.alpha_composite(frame, overlay)
@@ -169,38 +186,83 @@ def process_image(background_frames, avatar_frames, user, user_info):
 
         draw = ImageDraw.Draw(frame)  # Redefine draw to work on the composite image
 
-        draw_text_with_outline(draw, (250, 50), user.name, username_font, (255, 255, 255, 255), (0, 0, 0, 255))
-        draw_text_with_outline(draw, (250, 105), f"Level: {user_info['level']}", info_font, (255, 255, 255, 255), (0, 0, 0, 255))
-        draw_text_with_outline(draw, (250, 150), f"XP: {user_info['xp']}/{user_info['xp_needed']}", info_font, (255, 255, 255, 255), (0, 0, 0, 255))
+        draw_text_with_outline(
+            draw,
+            (250, 50),
+            user.name,
+            username_font,
+            (255, 255, 255, 255),
+            (0, 0, 0, 255),
+        )
+        draw_text_with_outline(
+            draw,
+            (250, 105),
+            f"Level: {user_info['level']}",
+            info_font,
+            (255, 255, 255, 255),
+            (0, 0, 0, 255),
+        )
+        draw_text_with_outline(
+            draw,
+            (250, 150),
+            f"XP: {user_info['xp']}/{user_info['xp_needed']}",
+            info_font,
+            (255, 255, 255, 255),
+            (0, 0, 0, 255),
+        )
 
         bar_width = 700
         bar_height = 30
-        xp_percentage = user_info['xp'] / user_info['xp_needed']
+        xp_percentage = user_info["xp"] / user_info["xp_needed"]
         filled_width = int(bar_width * xp_percentage)
         radius = bar_height // 4  # Slightly rounded corners
 
         # Background bar
-        draw_rounded_rectangle(draw, [250, 200, 250 + bar_width, 200 + bar_height], radius, fill=(50, 50, 50, 200), outline=(255, 255, 255, 255), width=2)
+        draw_rounded_rectangle(
+            draw,
+            [250, 200, 250 + bar_width, 200 + bar_height],
+            radius,
+            fill=(50, 50, 50, 200),
+            outline=(255, 255, 255, 255),
+            width=2,
+        )
         # Filled bar
         if xp_percentage >= 0.02:
-            draw_rounded_rectangle(draw, [250, 200, 250 + filled_width, 200 + bar_height], radius, fill=(127, 219, 255, 200), outline=(255, 255, 255, 200), width=2)
+            draw_rounded_rectangle(
+                draw,
+                [250, 200, 250 + filled_width, 200 + bar_height],
+                radius,
+                fill=(127, 219, 255, 200),
+                outline=(255, 255, 255, 200),
+                width=2,
+            )
 
-        output = Image.new('RGBA', (200, 200), (0, 0, 0, 0))
+        output = Image.new("RGBA", (200, 200), (0, 0, 0, 0))
         output.paste(avatar_frame, (0, 0), mask)
         frame.paste(output, (25, 50), output)
 
         result_frames.append(frame)
 
     img_byte_arr = io.BytesIO()
-    result_frames[0].save(img_byte_arr, format='GIF', save_all=True, append_images=result_frames[1:], loop=0, duration=background_frames[0].info.get('duration', 100))
+    result_frames[0].save(
+        img_byte_arr,
+        format="GIF",
+        save_all=True,
+        append_images=result_frames[1:],
+        loop=0,
+        duration=background_frames[0].info.get("duration", 100),
+    )
     img_byte_arr.seek(0)
 
     return img_byte_arr
 
+
 async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO:
     # Load background image or frames
-    if user_info['customBackground']:
-        background_frames, _ = await get_image_or_gif_frames(user_info['customBackground'])
+    if user_info["customBackground"]:
+        background_frames, _ = await get_image_or_gif_frames(
+            user_info["customBackground"]
+        )
     else:
         background_frames = [Image.open("assets/rankCard.png").convert("RGBA")]
 
@@ -210,6 +272,8 @@ async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO
 
     # Process image in executor
     loop = asyncio.get_event_loop()
-    img_byte_arr = await loop.run_in_executor(executor, process_image, background_frames, avatar_frames, user, user_info)
+    img_byte_arr = await loop.run_in_executor(
+        executor, process_image, background_frames, avatar_frames, user, user_info
+    )
 
     return img_byte_arr

@@ -4,6 +4,7 @@ from localizer import tanjunLocalizer
 import random
 from commands.games.hangman_words.words import words
 
+# flake8: noqa: E501 # No trailing whitespace (formatting for the hangman steps)
 hangmanSteps = [
     """
 
@@ -129,8 +130,10 @@ def get_guessed_letters(guesses: list[str], word: str):
             guessed_letters += "_"
     return guessed_letters
 
+
 def wrong_letters(guesses: list[str], word):
     return len([x for x in guesses if len(x) == 1 and x != word and x not in word])
+
 
 async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
     locale = str(commandInfo.locale)
@@ -231,10 +234,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                     hanged_man=hanged_man,
                     guessed_letters=guessed_letters,
                     used_letters=", ".join(
-                        [
-                            f"{letter}"
-                            for letter in [x for x in guesses if len(x) == 1]
-                        ]
+                        [f"{letter}" for letter in [x for x in guesses if len(x) == 1]]
                     ),
                 ),
             )
@@ -306,7 +306,12 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"), ephemeral=True)
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.hangman.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             modal = HangmanInputModal(self.commandInfo, guesses)
             await interaction.response.send_modal(modal)
@@ -317,7 +322,12 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"), ephemeral=True)
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.hangman.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             guesses.append(word)
             guesses.append("THISAINTBEINGTHEWORD")

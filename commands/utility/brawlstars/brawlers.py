@@ -21,7 +21,6 @@ async def getPlayerInfo(playerTag: str):
             headers=headers,
         ) as response:
             if response.status != 200:
-                respo = await response.json()
                 return None
             return await response.json()
 
@@ -62,7 +61,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                 rank=rank,
                 trophies=trophies,
                 highestTrophies=highestTrophies,
-                levelEmoji=levelEmoji
+                levelEmoji=levelEmoji,
             )
             description += "\n"
         else:
@@ -74,7 +73,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                 rank=rank,
                 trophies=trophies,
                 highestTrophies=highestTrophies,
-                levelEmoji=levelEmoji
+                levelEmoji=levelEmoji,
             )
             description += "\n"
 
@@ -130,7 +129,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                 description += "\n"
             description += "\n"
             description += "\n"
-            
+
         if commandInfo.user.id == 1295625022454370346:
             description += "\n"
             description += f"raw: \n```json\n{json.dumps(brawler, indent=4)}\n```"
@@ -266,7 +265,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
-            except:
+            except Exception:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
                         self.commandInfo.locale,

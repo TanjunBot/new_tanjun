@@ -1,10 +1,8 @@
 import discord
 from discord import ui
 import utility
-from utility import commandInfo, relativeTimeStrToDate, dateToRelativeTimeStr
+from utility import relativeTimeStrToDate, dateToRelativeTimeStr
 from localizer import tanjunLocalizer
-from typing import List, Optional
-import asyncio
 from commands.giveaway.utility import generateGiveawayEmbed, updateGiveawayMessage
 from api import (
     get_giveaway,
@@ -12,15 +10,15 @@ from api import (
     get_giveaway_channel_requirements,
     update_giveaway,
 )
-import datetime
 import commands.giveaway.start as start_giveaway
+import asyncio
 
 
 class GiveawayEditor(ui.View):
     def __init__(
         self,
-        commandInfo,
-        giveawayId,
+        commandInfo: utility.commandInfo,
+        giveawayId: int,
     ):
         super().__init__(timeout=600)  # 10 minutes timeout
         self.commandInfo = commandInfo
@@ -200,7 +198,10 @@ class GiveawayEditor(ui.View):
                 style=discord.ButtonStyle.primary,
             )
         )
-        if "self.giveaway_data" in self.giveaway_data and self.giveaway_data["channel_requirements"]:
+        if (
+            "self.giveaway_data" in self.giveaway_data
+            and self.giveaway_data["channel_requirements"]
+        ):
             self.add_item(
                 start_giveaway.GiveawayBuilderButton(
                     label=tanjunLocalizer.localize(
@@ -568,6 +569,7 @@ class GiveawayEditor(ui.View):
 
     async def pro_required_error(self, interaction: discord.Interaction):
         await self.pro_required_error(interaction)
+
     async def custom_name(
         self,
         interaction: discord.Interaction,
