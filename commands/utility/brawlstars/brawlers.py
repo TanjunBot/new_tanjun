@@ -9,6 +9,7 @@ from commands.utility.brawlstars.bshelper import (
     getGadgetEmoji,
     getStarPowerEmoji,
     getGearEmoji,
+    getLevelEmoji,
 )
 
 
@@ -50,17 +51,32 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
         gears = brawler["gears"]
         gadgets = brawler["gadgets"]
         starPowers = brawler["starPowers"]
+        levelEmoji = getLevelEmoji(rank)
 
-        description = tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.utility.brawlstars.brawlers.description.overview",
-            name=name,
-            power=power,
-            rank=rank,
-            trophies=trophies,
-            highestTrophies=highestTrophies,
-        )
-        description += "\n"
+        if rank <= 50:
+            description = tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.utility.brawlstars.brawlers.description.overview",
+                name=name,
+                power=power,
+                rank=rank,
+                trophies=trophies,
+                highestTrophies=highestTrophies,
+                levelEmoji=levelEmoji
+            )
+            description += "\n"
+        else:
+            description = tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.utility.brawlstars.brawlers.description.overviewMaxTier",
+                name=name,
+                power=power,
+                rank=rank,
+                trophies=trophies,
+                highestTrophies=highestTrophies,
+                levelEmoji=levelEmoji
+            )
+            description += "\n"
 
         if len(starPowers) > 0:
             description += tanjunLocalizer.localize(
@@ -84,6 +100,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                 commandInfo.locale,
                 "commands.utility.brawlstars.brawlers.description.gadgets",
             )
+            description += "\n"
             description += "\n"
 
             for gadget in gadgets:
@@ -109,9 +126,9 @@ async def brawlers(commandInfo: commandInfo, playerTag: str):
                     commandInfo.locale,
                     "commands.utility.brawlstars.brawlers.description.gear",
                     name=name,
-                    level=gear["level"],
                 )
                 description += "\n"
+            description += "\n"
             description += "\n"
             
         if commandInfo.user.id == 1295625022454370346:
