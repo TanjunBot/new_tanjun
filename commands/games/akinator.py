@@ -62,6 +62,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_yes(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             await update_embed(interaction, "y")
 
         @discord.ui.button(
@@ -75,8 +76,9 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_no(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.akinator.notYourGame"
                     ),
@@ -96,8 +98,9 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_idk(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.akinator.notYourGame"
                     ),
@@ -117,8 +120,9 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_probably(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.akinator.notYourGame"
                     ),
@@ -138,8 +142,9 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_probably_not(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.akinator.notYourGame"
                     ),
@@ -159,8 +164,9 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_back(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.akinator.notYourGame"
                     ),
@@ -221,7 +227,9 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
                 ),
             )
             embed.set_image(url=aki.photo)
-            await interaction.response.edit_message(embed=embed, view=None)
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id, embed=embed, view=None
+            )
         else:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
@@ -236,7 +244,9 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
                 ),
             )
             embed.set_image(url=aki.akitude)
-            await interaction.response.edit_message(embed=embed, view=AkinatorView())
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id, embed=embed, view=AkinatorView()
+            )
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(

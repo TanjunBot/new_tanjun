@@ -53,8 +53,11 @@ async def flag_quiz(commandInfo: utility.commandInfo):
                 ),
             )
             embed.set_image(url="attachment://flag.png")
-            await interaction.response.edit_message(
-                embed=embed, attachments=[file], view=None
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id,
+                embed=embed,
+                attachments=[file],
+                view=None,
             )
             return
 
@@ -70,8 +73,11 @@ async def flag_quiz(commandInfo: utility.commandInfo):
                 ),
             )
             embed.set_image(url="attachment://flag.png")
-            await interaction.response.edit_message(
-                embed=embed, attachments=[file], view=None
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id,
+                embed=embed,
+                attachments=[file],
+                view=None,
             )
             return
 
@@ -87,8 +93,11 @@ async def flag_quiz(commandInfo: utility.commandInfo):
                 ),
             )
             embed.set_image(url="attachment://flag.png")
-            await interaction.response.edit_message(
-                embed=embed, attachments=[file], view=None
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id,
+                embed=embed,
+                attachments=[file],
+                view=None,
             )
             return
 
@@ -115,8 +124,11 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         embed.set_image(url="attachment://flag.png")
 
         view = FlagQuizView(commandInfo)
-        await interaction.response.edit_message(
-            embed=embed, attachments=[file], view=view
+        await interaction.followup.edit_message(
+            message_id=interaction.message.id,
+            embed=embed,
+            attachments=[file],
+            view=view,
         )
 
     class FlagQuizModal(discord.ui.Modal):
@@ -160,8 +172,9 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         async def guess_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.flagquiz.notYourGame"
                     ),
@@ -180,8 +193,9 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         async def hint_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.flagquiz.notYourGame"
                     ),
@@ -193,7 +207,7 @@ async def flag_quiz(commandInfo: utility.commandInfo):
                 hints_used += 1
                 await update_game(interaction, hint_used=True)
             else:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.flagquiz.error.hintUsed"
                     ),
@@ -209,8 +223,9 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         async def give_up_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.flagquiz.notYourGame"
                     ),

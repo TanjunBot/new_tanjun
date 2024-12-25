@@ -230,7 +230,7 @@ class Connect4:
         if initial:
             await self.message.edit(view=view, embed=embed)
         else:
-            await interaction.response.edit_message(view=view, embed=embed)
+            await interaction.followup.edit_message(message_id=interaction.message.id, view=view, embed=embed)
 
     async def drop(self, interaction: discord.Interaction):
         drop_column = self.highlighted_column
@@ -307,11 +307,12 @@ class Connect4:
             async def move_left(
                 self, interaction: discord.Interaction, button: discord.ui.Button
             ):
+                await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
                     self.connect4.player2 == "tanjun"
                     or interaction.user.id != self.connect4.player2.id
                 ):
-                    await interaction.response.send_message(
+                    await interaction.followup.send(
                         tanjunLocalizer.localize(
                             interaction.locale, "commands.games.connect4.notYourGame"
                         ),
@@ -320,7 +321,7 @@ class Connect4:
                     return
 
                 if not interaction.user.id == self.connect4.current_player.id:
-                    await interaction.response.send_message(
+                    await interaction.followup.send(
                         tanjunLocalizer.localize(
                             interaction.locale, "commands.games.connect4.notYourTurn"
                         ),
@@ -351,11 +352,12 @@ class Connect4:
             async def drop(
                 self, interaction: discord.Interaction, button: discord.ui.Button
             ):
+                await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
                     self.connect4.player2 == "tanjun"
                     or interaction.user.id != self.connect4.player2.id
                 ):
-                    await interaction.response.send_message(
+                    await interaction.followup.send(
                         tanjunLocalizer.localize(
                             interaction.locale, "commands.games.connect4.notYourGame"
                         ),
@@ -364,7 +366,7 @@ class Connect4:
                     return
 
                 if not interaction.user.id == self.connect4.current_player.id:
-                    await interaction.response.send_message(
+                    await interaction.followup.send(
                         tanjunLocalizer.localize(
                             interaction.locale, "commands.games.connect4.notYourTurn"
                         ),
@@ -386,11 +388,12 @@ class Connect4:
             async def move_right(
                 self, interaction: discord.Interaction, button: discord.ui.Button
             ):
+                await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
                     self.connect4.player2 == "tanjun"
                     or interaction.user.id != self.connect4.player2.id
                 ):
-                    await interaction.response.send_message(
+                    await interaction.followup.send(
                         tanjunLocalizer.localize(
                             interaction.locale, "commands.games.connect4.notYourGame"
                         ),
@@ -399,7 +402,7 @@ class Connect4:
                     return
 
                 if not interaction.user.id == self.connect4.current_player.id:
-                    await interaction.response.send_message(
+                    await interaction.followup.send(
                         tanjunLocalizer.localize(
                             interaction.locale, "commands.games.connect4.notYourTurn"
                         ),

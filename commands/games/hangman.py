@@ -245,7 +245,9 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             or given_up
             else WordleView(commandInfo)
         )
-        await interaction.response.edit_message(embed=embed, view=view)
+        await interaction.followup.edit_message(
+            message_id=interaction.message.id, embed=embed, view=view
+        )
 
     class HangmanInputModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.commandInfo, config):
@@ -294,7 +296,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                         "commands.games.hangman.error.invalidInput",
                     ),
                 )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.followup.send(embed=embed, ephemeral=True)
 
     class WordleView(discord.ui.View):
         def __init__(self, commandInfo: utility.commandInfo):
@@ -305,8 +307,9 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
         async def guess_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.hangman.notYourGame"
                     ),
@@ -314,15 +317,16 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                 )
                 return
             modal = HangmanInputModal(self.commandInfo, guesses)
-            await interaction.response.send_modal(modal)
+            await interaction.followup.send_modal(modal)
             self.stop()
 
         @discord.ui.button(label="Give up", style=discord.ButtonStyle.red)
         async def give_up_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.hangman.notYourGame"
                     ),
