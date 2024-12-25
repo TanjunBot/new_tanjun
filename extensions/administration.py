@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands
 from localizer import tanjunLocalizer
 import config
-from utility import addFeedback
+from utility import addFeedback, tanjunEmbed
 from api import feedbackBlockUser, feedbackUnblockUser
 from tests import (
     test_ping,
@@ -26,8 +26,8 @@ import aiohttp
 from commands.channel.welcome import welcomeNewUser
 
 from commands.channel.farewell import farewellUser
-from PIL import Image
 import json
+import asyncio
 
 
 class administrationCog(commands.Cog):
@@ -152,7 +152,7 @@ class administrationCog(commands.Cog):
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
             async with session.get(
-                f"https://api.brawlstars.com/v1/brawlers", headers=headers
+                "https://api.brawlstars.com/v1/brawlers", headers=headers
             ) as response:
                 return await response.json()
 
@@ -192,7 +192,7 @@ class administrationCog(commands.Cog):
                         emoji = await ctx.guild.create_custom_emoji(
                             name=f"{gadget['id']}", image=image
                         )
-                        
+
                         await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
 
     async def getAccData(self, id: str):
@@ -210,6 +210,20 @@ class administrationCog(commands.Cog):
         accData = await self.getAccData(id)
         accData["brawlers"] = accData["brawlers"][1]
         await ctx.send(f"```json\n{(json.dumps(accData, indent=4))[0:1900]}\n```")
+
+    @commands.command()
+    async def editembedmessage(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+        message = await ctx.send(
+            embed=tanjunEmbed(title="test", description="test. I will edit this soon..")
+        )
+        await asyncio.sleep(2)
+        await message.edit(
+            embed=tanjunEmbed(
+                title="test2", description="test2. I have edited this!"
+            )
+        )
 
 
 async def setup(bot):

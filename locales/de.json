@@ -6034,6 +6034,7 @@
             "truncatedNotice": "… (abgeschnitten)",
             "tooLongNotice": "Die Nachricht ist sehr lang. Um die Logs sauber zu halten, wurde der Nachrichtenhinhalt auf Hastbin hochgeladen. Um den Inhalt anzusehen, klicke [hier](${url}).",
             "content": "Nachrichteninhalt: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+            "embeds": "Es wurden Embeds in der Nachricht bearbeitet. Die Bearbeiteten Embeds sind unter diesem Log-Eintrag zu finden. Als erstes das Embed wie es vorher war, dann das Embed wie es nachher ist.",
             "diff": "Nachrichtenänderungen: \n```\n${diff}\n```",
             "title": "Nachricht bearbeitet",
             "addedAttachments": "hinzugefügte Anhänge: \n${attachments}",

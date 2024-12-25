@@ -3042,12 +3042,18 @@ class LogsCog(commands.Cog):
             ]
 
             removed_attachments = []
-            urlNotAvaiableLocale = tanjunLocalizer.localize(locale, "logs.messageEdit.urlNotAvaiableLocale")
+            urlNotAvaiableLocale = tanjunLocalizer.localize(
+                locale, "logs.messageEdit.urlNotAvaiableLocale"
+            )
             for attachment in before.attachments:
                 if attachment not in after.attachments:
-                    if attachment.content_type and attachment.content_type.startswith('image/'):
+                    if attachment.content_type and attachment.content_type.startswith(
+                        "image/"
+                    ):
                         attachmentBytes = await attachment.read()
-                        url = await upload_image_to_imgbb(attachmentBytes, attachment.filename.split(".")[-1])
+                        url = await upload_image_to_imgbb(
+                            attachmentBytes, attachment.filename.split(".")[-1]
+                        )
                         if url:
                             url = url["data"]["display_url"]
                     else:
@@ -3074,6 +3080,16 @@ class LogsCog(commands.Cog):
                     )
                 )
 
+        if before.embeds != after.embeds:
+            description_parts.append(
+                tanjunLocalizer.localize(
+                    locale,
+                    "logs.messageEdit.embeds",
+                    before=before.embeds,
+                    after=after.embeds,
+                )
+            )
+
         if len(description_parts) == 1:
             return
 
@@ -3092,6 +3108,14 @@ class LogsCog(commands.Cog):
         if not str(after.guild.id) in embeds:
             embeds[str(after.guild.id)] = []
         embeds[str(after.guild.id)].append(embed)
+
+        if before.embeds != after.embeds:
+            for i, emb in enumerate(before.embeds):
+                beforeEmbed = emb
+                afterEmbed = after.embeds[i]
+                if beforeEmbed.to_dict() != afterEmbed.to_dict():
+                    embeds[str(after.guild.id)].append(beforeEmbed)
+                    embeds[str(after.guild.id)].append(afterEmbed)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
@@ -3147,13 +3171,19 @@ class LogsCog(commands.Cog):
         if message.attachments:
             sendLog = True
             attachment_parts = []
-            urlNotAvaiableLocale = tanjunLocalizer.localize(locale, "logs.messageDelete.urlNotAvaiableLocale")
+            urlNotAvaiableLocale = tanjunLocalizer.localize(
+                locale, "logs.messageDelete.urlNotAvaiableLocale"
+            )
 
             for attachment in message.attachments:
-                if attachment.content_type and attachment.content_type.startswith('image/'):
+                if attachment.content_type and attachment.content_type.startswith(
+                    "image/"
+                ):
                     try:
                         attachmentBytes = await attachment.read()
-                        url = await upload_image_to_imgbb(attachmentBytes, attachment.filename.split(".")[-1])
+                        url = await upload_image_to_imgbb(
+                            attachmentBytes, attachment.filename.split(".")[-1]
+                        )
                         if url:
                             url = url["data"]["display_url"]
                     except Exception:
