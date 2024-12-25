@@ -4,7 +4,7 @@ from api import get_brawlstars_linked_account, remove_brawlstars_linked_account
 
 
 async def unlink(commandInfo: commandInfo):
-    if not await get_brawlstars_linked_account(commandInfo.author.id):
+    if not await get_brawlstars_linked_account(commandInfo.user.id):
         return await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
@@ -18,7 +18,7 @@ async def unlink(commandInfo: commandInfo):
             )
         )
 
-    await remove_brawlstars_linked_account(commandInfo.author.id)
+    await remove_brawlstars_linked_account(commandInfo.user.id)
 
     return await commandInfo.reply(
         embed=tanjunEmbed(

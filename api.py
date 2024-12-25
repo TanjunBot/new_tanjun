@@ -714,9 +714,9 @@ async def create_tables():
     ) ENGINE=InnoDB;
     """
     tables[
-        "brawlstarsLinkedAccoutns"
+        "brawlstarsLinkedAccounts"
     ] = """
-    CREATE TABLE IF NOT EXISTS `brawlstarsLinkedAccoutns` (
+    CREATE TABLE IF NOT EXISTS `brawlstarsLinkedAccounts` (
         `userId` VARCHAR(20),
         `brawlstarsTag` VARCHAR(20),
         PRIMARY KEY(`userId`)
@@ -2944,7 +2944,9 @@ async def get_twitch_notification_by_guild_id(guild_id: str):
 async def get_brawlstars_linked_account(user_id: str):
     query = "SELECT brawlstarsTag FROM brawlstarsLinkedAccounts WHERE userId = %s"
     params = (user_id,)
-    return await execute_query(query, params)
+    result = await execute_query(query, params)
+    print("result", result)
+    return result
 
 
 async def add_brawlstars_linked_account(user_id: str, brawlstars_tag: str):
@@ -2952,10 +2954,10 @@ async def add_brawlstars_linked_account(user_id: str, brawlstars_tag: str):
         "INSERT INTO brawlstarsLinkedAccounts (userId, brawlstarsTag) VALUES (%s, %s)"
     )
     params = (user_id, brawlstars_tag)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def remove_brawlstars_linked_account(user_id: str):
     query = "DELETE FROM brawlstarsLinkedAccounts WHERE userId = %s"
     params = (user_id,)
-    await execute_query(query, params)
+    await execute_action(query, params)

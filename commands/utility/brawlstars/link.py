@@ -35,7 +35,7 @@ async def link(commandInfo: commandInfo, playerTag: str):
             )
         )
 
-    if await get_brawlstars_linked_account(commandInfo.author.id):
+    if await get_brawlstars_linked_account(commandInfo.user.id):
         return await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
@@ -49,7 +49,7 @@ async def link(commandInfo: commandInfo, playerTag: str):
             )
         )
 
-    await add_brawlstars_linked_account(commandInfo.author.id, playerTag)
+    await add_brawlstars_linked_account(commandInfo.user.id, playerTag)
 
     return await commandInfo.reply(
         embed=tanjunEmbed(
@@ -60,6 +60,7 @@ async def link(commandInfo: commandInfo, playerTag: str):
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.brawlstars.link.success.description",
+                tag=playerTag,
             ),
         )
     )
