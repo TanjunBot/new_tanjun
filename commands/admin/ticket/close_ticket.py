@@ -939,7 +939,7 @@ async def generate_summary_html(
     </style>
 </head>
 
-<body class="fire">
+<body class="dark">
     <div class="container">
     """
     html += f"""
