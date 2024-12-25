@@ -2,7 +2,13 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 
-async def moverole(commandInfo: utility.commandInfo, role: discord.Role, target_role: discord.Role, position: str):
+
+async def moverole(
+    commandInfo: utility.commandInfo,
+    role: discord.Role,
+    target_role: discord.Role,
+    position: str,
+):
     if not commandInfo.user.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -10,7 +16,7 @@ async def moverole(commandInfo: utility.commandInfo, role: discord.Role, target_
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.moverole.missingPermission.description"
+                "commands.admin.moverole.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -23,7 +29,7 @@ async def moverole(commandInfo: utility.commandInfo, role: discord.Role, target_
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.moverole.missingPermissionBot.description"
+                "commands.admin.moverole.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -35,8 +41,7 @@ async def moverole(commandInfo: utility.commandInfo, role: discord.Role, target_
                 commandInfo.locale, "commands.admin.moverole.roleTooHigh.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.moverole.roleTooHigh.description"
+                commandInfo.locale, "commands.admin.moverole.roleTooHigh.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -57,7 +62,7 @@ async def moverole(commandInfo: utility.commandInfo, role: discord.Role, target_
                 "commands.admin.moverole.success.description",
                 role=role.mention,
                 target_role=target_role.mention,
-                position=position
+                position=position,
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -67,8 +72,7 @@ async def moverole(commandInfo: utility.commandInfo, role: discord.Role, target_
                 commandInfo.locale, "commands.admin.moverole.forbidden.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.moverole.forbidden.description"
+                commandInfo.locale, "commands.admin.moverole.forbidden.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -78,8 +82,7 @@ async def moverole(commandInfo: utility.commandInfo, role: discord.Role, target_
                 commandInfo.locale, "commands.admin.moverole.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.moverole.error.description"
+                commandInfo.locale, "commands.admin.moverole.error.description"
             ),
         )
         await commandInfo.reply(embed=embed)

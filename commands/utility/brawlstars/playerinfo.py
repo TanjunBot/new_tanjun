@@ -2,7 +2,6 @@ from config import brawlstarsToken
 import aiohttp
 from utility import commandInfo, tanjunEmbed
 from localizer import tanjunLocalizer
-from commands.utility.brawlstars.bshelper import getLevelEmoji
 from api import get_brawlstars_linked_account
 
 
@@ -57,7 +56,6 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
         highestTrophies=playerInfo["highestTrophies"],
     )
     description += "\n"
-    levelEmoji = getLevelEmoji(playerInfo["expLevel"])
     description += tanjunLocalizer.localize(
         commandInfo.locale,
         "commands.utility.brawlstars.playerinfo.description.expLevel",

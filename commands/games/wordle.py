@@ -6,6 +6,7 @@ import utility
 from PIL import Image, ImageDraw, ImageFont
 import io
 
+
 def generate_wordle_background():
     # Create a new image with a purple background
     width = 500
@@ -16,10 +17,14 @@ def generate_wordle_background():
     # Calculate spacing to evenly distribute rectangles
     rect_width = 80
     rect_height = 80
-    
+
     # Calculate padding to center the grid
-    h_padding = (width - (5 * rect_width)) // 6  # Horizontal padding between rectangles and edges
-    v_padding = (height - (6 * rect_height)) // 7 # Vertical padding between rectangles and edges
+    h_padding = (
+        width - (5 * rect_width)
+    ) // 6  # Horizontal padding between rectangles and edges
+    v_padding = (
+        height - (6 * rect_height)
+    ) // 7  # Vertical padding between rectangles and edges
 
     # Draw rectangles in a 5x6 grid
     for row in range(6):
@@ -28,7 +33,7 @@ def generate_wordle_background():
             y1 = v_padding + row * (rect_height + v_padding)
             x2 = x1 + rect_width
             y2 = y1 + rect_height
-            
+
             draw.rectangle(xy=(x1, y1, x2, y2), fill=(59, 59, 59, 255))
 
     # Save image to file
@@ -73,8 +78,12 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
         height = 600
         rect_width = 80
         rect_height = 80
-        h_padding = (width - (5 * rect_width)) // 6  # Horizontal padding between rectangles and edges
-        v_padding = (height - (6 * rect_height)) // 7 # Vertical padding between rectangles and edges
+        h_padding = (
+            width - (5 * rect_width)
+        ) // 6  # Horizontal padding between rectangles and edges
+        v_padding = (
+            height - (6 * rect_height)
+        ) // 7  # Vertical padding between rectangles and edges
 
         for i, guess in enumerate(guesses):
             if guess == "NOTHING":
@@ -83,7 +92,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
                 # Calculate box position (same as background generation)
                 x1 = h_padding + j * (rect_width + h_padding)
                 y1 = v_padding + i * (rect_height + v_padding)
-                
+
                 # Determine color based on letter match
                 if char == word[j]:
                     color = (0, 255, 0)  # Green for correct position
@@ -94,8 +103,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
 
                 # Draw the box
                 draw.rectangle(
-                    xy=(x1, y1, x1 + rect_width, y1 + rect_height),
-                    fill=color
+                    xy=(x1, y1, x1 + rect_width, y1 + rect_height), fill=color
                 )
 
                 # Get text size for centering
@@ -105,7 +113,12 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
 
                 # Calculate centered position with a slight upward adjustment
                 text_x = x1 + (rect_width - text_width) // 2
-                text_y = y1 + (rect_height - text_height) // 2 - 15 - (10 if language == "ja" else 0)
+                text_y = (
+                    y1
+                    + (rect_height - text_height) // 2
+                    - 15
+                    - (10 if language == "ja" else 0)
+                )
 
                 # Draw the letter centered in the box
                 utility.draw_text_with_outline(
@@ -175,9 +188,17 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
                 ),
             )
         embed.set_image(url="attachment://wordle.png")
-        view = None if len(guesses) > 6 or (len(guesses) > 0 and guesses[-1] == word) or given_up else WordleView(commandInfo)
+        view = (
+            None
+            if len(guesses) > 6
+            or (len(guesses) > 0 and guesses[-1] == word)
+            or given_up
+            else WordleView(commandInfo)
+        )
         await interaction.response.edit_message(
-            embed=embed, attachments=[discord.File(img_byte_arr, filename="wordle.png")], view=view
+            embed=embed,
+            attachments=[discord.File(img_byte_arr, filename="wordle.png")],
+            view=view,
         )
 
     class WordleInputModal(discord.ui.Modal):
@@ -221,9 +242,9 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
                     )
                     await interaction.response.send_message(embed=embed, ephemeral=True)
                     return
-                
+
                 guesses.append(guess)
-                
+
                 await update_wordle_game(interaction)
             except ValueError:
                 embed = utility.tanjunEmbed(
@@ -247,7 +268,12 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.wordle.notYourGame"), ephemeral=True)
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.wordle.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             modal = WordleInputModal(self.commandInfo, guesses)
             await interaction.response.send_modal(modal)
@@ -258,7 +284,12 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.wordle.notYourGame"), ephemeral=True)
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.wordle.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             guesses.append(word)
             guesses.append("NOTHING")
@@ -281,7 +312,11 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
             "commands.games.wordle.initial.description",
             guesses=len(guesses),
         )
-        + (f"\n\n{tanjunLocalizer.localize(commandInfo.locale, 'commands.games.wordle.initial.descriptionextra.ja')}" if language == "ja" else ""),
+        + (
+            f"\n\n{tanjunLocalizer.localize(commandInfo.locale, 'commands.games.wordle.initial.descriptionextra.ja')}"
+            if language == "ja"
+            else ""
+        ),
     )
     embed.set_image(url="attachment://wordle.png")
     img_byte_arr = await generate_wordle_image(guesses, word)

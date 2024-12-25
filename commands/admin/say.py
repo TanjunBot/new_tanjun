@@ -2,15 +2,17 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 
-async def say(commandInfo: utility.commandInfo, channel: discord.TextChannel, *, message: str):
+
+async def say(
+    commandInfo: utility.commandInfo, channel: discord.TextChannel, *, message: str
+):
     if not commandInfo.user.guild_permissions.manage_messages:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.say.missingPermission.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.say.missingPermission.description"
+                commandInfo.locale, "commands.admin.say.missingPermission.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -23,7 +25,7 @@ async def say(commandInfo: utility.commandInfo, channel: discord.TextChannel, *,
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.say.missingPermissionBot.description"
+                "commands.admin.say.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -38,7 +40,7 @@ async def say(commandInfo: utility.commandInfo, channel: discord.TextChannel, *,
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.say.success.description",
-                channel=channel.mention
+                channel=channel.mention,
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -48,8 +50,7 @@ async def say(commandInfo: utility.commandInfo, channel: discord.TextChannel, *,
                 commandInfo.locale, "commands.admin.say.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.say.error.description"
+                commandInfo.locale, "commands.admin.say.error.description"
             ),
         )
         await commandInfo.reply(embed=embed)

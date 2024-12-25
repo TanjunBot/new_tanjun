@@ -3,10 +3,7 @@ import utility
 from localizer import tanjunLocalizer
 from api import (
     get_reports,
-    accept_report,
-    reject_report,
     resolve_report,
-    delete_report,
 )
 
 
@@ -74,9 +71,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
             self.page -= 1
             if self.page < 0:
                 self.page = len(self.reports) - 1
-            await interaction.response.edit_message(
-                view=self, embed=self.get_embed()
-            )
+            await interaction.response.edit_message(view=self, embed=self.get_embed())
 
         # @discord.ui.button(
         #     label=tanjunLocalizer.localize(
@@ -129,10 +124,10 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
                 return
 
             await resolve_report(commandInfo.guild.id, self.reports[self.page][0])
-            self.reports = await get_reports(commandInfo.guild.id, user.id if user else None)
-            await interaction.response.edit_message(
-                view=self, embed=self.get_embed()
+            self.reports = await get_reports(
+                commandInfo.guild.id, user.id if user else None
             )
+            await interaction.response.edit_message(view=self, embed=self.get_embed())
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
@@ -159,11 +154,9 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
             self.page += 1
             if self.page >= len(self.reports):
                 self.page = 0
-            await interaction.response.edit_message(
-                view=self, embed=self.get_embed()
-            )
+            await interaction.response.edit_message(view=self, embed=self.get_embed())
 
-        def get_embed(self = None):
+        def get_embed(self=None):
             if self is None:
                 self = reportsView(reports)
             report = self.reports[self.page]
@@ -220,7 +213,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
             )
             return embed
 
-    def get_embed(self = None):
+    def get_embed(self=None):
         if self is None:
             self = reportsView(reports)
         report = self.reports[self.page]
@@ -276,6 +269,5 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
             description=description,
         )
         return embed
-
 
     await commandInfo.reply(embed=get_embed(), view=reportsView(reports))

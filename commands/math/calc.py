@@ -1,10 +1,10 @@
-import discord
 import utility
 from localizer import tanjunLocalizer
 
+
 async def calc(commandInfo: utility.commandInfo, expression: str):
     nsp = utility.NumericStringParser()
-    
+
     try:
         result = nsp.eval(expression)
         embed = utility.tanjunEmbed(
@@ -15,7 +15,7 @@ async def calc(commandInfo: utility.commandInfo, expression: str):
                 commandInfo.locale,
                 "commands.math.calc.success.description",
                 expression=expression,
-                result=result
+                result=result,
             ),
         )
     except Exception as e:
@@ -24,10 +24,8 @@ async def calc(commandInfo: utility.commandInfo, expression: str):
                 commandInfo.locale, "commands.math.calc.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.math.calc.error.description",
-                error=str(e)
+                commandInfo.locale, "commands.math.calc.error.description", error=str(e)
             ),
         )
-    
+
     await commandInfo.reply(embed=embed)

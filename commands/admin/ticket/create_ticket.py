@@ -3,6 +3,7 @@ import utility
 from localizer import tanjunLocalizer
 from api import create_ticket_message
 
+
 async def create_ticket(
     commandInfo: utility.commandInfo,
     channel: discord.TextChannel,

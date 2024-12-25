@@ -6,7 +6,7 @@ from utility import (
     get_xp_for_level,
 )
 from localizer import tanjunLocalizer
-from api import set_xp_scaling, get_xp_scaling, set_custom_formula, get_custom_formula
+from api import set_xp_scaling, set_custom_formula, get_custom_formula
 import discord
 from discord.ui import View, Button
 import math

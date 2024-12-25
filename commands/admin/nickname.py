@@ -2,7 +2,10 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 
-async def change_nickname(commandInfo: utility.commandInfo, member: discord.Member, nickname: str = None):
+
+async def change_nickname(
+    commandInfo: utility.commandInfo, member: discord.Member, nickname: str = None
+):
     if not commandInfo.user.guild_permissions.manage_nicknames:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -10,7 +13,7 @@ async def change_nickname(commandInfo: utility.commandInfo, member: discord.Memb
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.nickname.missingPermission.description"
+                "commands.admin.nickname.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -23,20 +26,22 @@ async def change_nickname(commandInfo: utility.commandInfo, member: discord.Memb
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.nickname.missingPermissionBot.description"
+                "commands.admin.nickname.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    if member.top_role >= commandInfo.user.top_role and commandInfo.user != commandInfo.guild.owner:
+    if (
+        member.top_role >= commandInfo.user.top_role
+        and commandInfo.user != commandInfo.guild.owner
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.nickname.targetTooHigh.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.nickname.targetTooHigh.description"
+                commandInfo.locale, "commands.admin.nickname.targetTooHigh.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -55,7 +60,7 @@ async def change_nickname(commandInfo: utility.commandInfo, member: discord.Memb
                     "commands.admin.nickname.changed.description",
                     user=member.name,
                     old_nick=old_nick,
-                    new_nick=nickname
+                    new_nick=nickname,
                 ),
             )
         else:
@@ -67,7 +72,7 @@ async def change_nickname(commandInfo: utility.commandInfo, member: discord.Memb
                     commandInfo.locale,
                     "commands.admin.nickname.removed.description",
                     user=member.name,
-                    old_nick=old_nick
+                    old_nick=old_nick,
                 ),
             )
         await commandInfo.reply(embed=embed)
@@ -77,8 +82,7 @@ async def change_nickname(commandInfo: utility.commandInfo, member: discord.Memb
                 commandInfo.locale, "commands.admin.nickname.forbidden.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.nickname.forbidden.description"
+                commandInfo.locale, "commands.admin.nickname.forbidden.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -88,8 +92,7 @@ async def change_nickname(commandInfo: utility.commandInfo, member: discord.Memb
                 commandInfo.locale, "commands.admin.nickname.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.nickname.error.description"
+                commandInfo.locale, "commands.admin.nickname.error.description"
             ),
         )
         await commandInfo.reply(embed=embed)
