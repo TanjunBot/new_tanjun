@@ -21,7 +21,6 @@ async def getPlayerInfo(playerTag: str):
             headers=headers,
         ) as response:
             if response.status != 200:
-                respo = await response.json()
                 return None
             return await response.json()
 

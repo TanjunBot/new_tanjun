@@ -2,15 +2,20 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 
-async def ban(commandInfo: utility.commandInfo, target: discord.Member, reason: str = None, delete_message_days: int = 0):
+
+async def ban(
+    commandInfo: utility.commandInfo,
+    target: discord.Member,
+    reason: str = None,
+    delete_message_days: int = 0,
+):
     if not commandInfo.user.guild_permissions.ban_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.ban.missingPermission.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.ban.missingPermission.description"
+                commandInfo.locale, "commands.admin.ban.missingPermission.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -23,7 +28,7 @@ async def ban(commandInfo: utility.commandInfo, target: discord.Member, reason: 
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.ban.missingPermissionBot.description"
+                "commands.admin.ban.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -35,8 +40,7 @@ async def ban(commandInfo: utility.commandInfo, target: discord.Member, reason: 
                 commandInfo.locale, "commands.admin.ban.targetTooHigh.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.ban.targetTooHigh.description"
+                commandInfo.locale, "commands.admin.ban.targetTooHigh.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -52,7 +56,13 @@ async def ban(commandInfo: utility.commandInfo, target: discord.Member, reason: 
                 commandInfo.locale,
                 "commands.admin.ban.success.description",
                 user=target.name,
-                reason=reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.ban.noReasonProvided")
+                reason=(
+                    reason
+                    if reason
+                    else tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.admin.ban.noReasonProvided"
+                    )
+                ),
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -62,8 +72,7 @@ async def ban(commandInfo: utility.commandInfo, target: discord.Member, reason: 
                 commandInfo.locale, "commands.admin.ban.forbidden.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.ban.forbidden.description"
+                commandInfo.locale, "commands.admin.ban.forbidden.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -73,8 +82,7 @@ async def ban(commandInfo: utility.commandInfo, target: discord.Member, reason: 
                 commandInfo.locale, "commands.admin.ban.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.ban.error.description"
+                commandInfo.locale, "commands.admin.ban.error.description"
             ),
         )
         await commandInfo.reply(embed=embed)

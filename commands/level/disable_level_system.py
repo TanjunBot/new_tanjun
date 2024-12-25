@@ -107,7 +107,8 @@ async def disable_level_system(commandInfo: commandInfo):
                 commandInfo.locale, "commands.level.disablelevelsystem.cancel.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.disablelevelsystem.cancel.description"
+                commandInfo.locale,
+                "commands.level.disablelevelsystem.cancel.description",
             ),
         )
         await message.edit(embed=cancel_embed, view=None)

@@ -1,18 +1,20 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from datetime import timedelta, datetime
-from typing import Union
 
-async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Member, reason: str = None):
+
+async def remove_timeout(
+    commandInfo: utility.commandInfo, member: discord.Member, reason: str = None
+):
     if not commandInfo.user.guild_permissions.moderate_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.remove_timeout.missingPermission.title"
+                commandInfo.locale,
+                "commands.admin.remove_timeout.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.remove_timeout.missingPermission.description"
+                "commands.admin.remove_timeout.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -21,11 +23,12 @@ async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Membe
     if not commandInfo.guild.me.guild_permissions.moderate_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.remove_timeout.missingPermissionBot.title"
+                commandInfo.locale,
+                "commands.admin.remove_timeout.missingPermissionBot.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.remove_timeout.missingPermissionBot.description"
+                "commands.admin.remove_timeout.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -38,7 +41,7 @@ async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Membe
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.remove_timeout.targetTooHigh.description"
+                "commands.admin.remove_timeout.targetTooHigh.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -48,12 +51,13 @@ async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Membe
         if not member.is_timed_out():
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.admin.remove_timeout.notTimedOut.title"
+                    commandInfo.locale,
+                    "commands.admin.remove_timeout.notTimedOut.title",
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.remove_timeout.notTimedOut.description",
-                    user=member.name
+                    user=member.name,
                 ),
             )
             await commandInfo.reply(embed=embed)
@@ -69,7 +73,14 @@ async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Membe
                 commandInfo.locale,
                 "commands.admin.remove_timeout.success.description",
                 user=member.name,
-                reason=reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.remove_timeout.noReasonProvided")
+                reason=(
+                    reason
+                    if reason
+                    else tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.remove_timeout.noReasonProvided",
+                    )
+                ),
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -80,7 +91,7 @@ async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Membe
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.remove_timeout.forbidden.description"
+                "commands.admin.remove_timeout.forbidden.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -90,9 +101,7 @@ async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Membe
                 commandInfo.locale, "commands.admin.remove_timeout.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.remove_timeout.error.description"
+                commandInfo.locale, "commands.admin.remove_timeout.error.description"
             ),
         )
         await commandInfo.reply(embed=embed)
-

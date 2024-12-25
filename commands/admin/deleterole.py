@@ -3,7 +3,9 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reason: str = None):
+async def deleterole(
+    commandInfo: utility.commandInfo, role: discord.Role, reason: str = None
+):
     if not commandInfo.user.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

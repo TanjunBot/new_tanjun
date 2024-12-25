@@ -63,7 +63,7 @@ async def configure_trigger_messages(
                 ),
             )
             return embed
-    
+
         trigger_message = trigger_messages[page]
         description = tanjunLocalizer.localize(
             commandInfo.locale,
@@ -199,9 +199,15 @@ async def configure_trigger_messages(
 
         async def on_channel_select(self, interaction: discord.Interaction):
             nonlocal channels
-            await add_trigger_message_channel(commandInfo.guild.id, interaction.data["values"][0], trigger_messages[page][0])
+            await add_trigger_message_channel(
+                commandInfo.guild.id,
+                interaction.data["values"][0],
+                trigger_messages[page][0],
+            )
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page][0])
+            channels = await get_trigger_message_channels(
+                commandInfo.guild.id, trigger_messages[page][0]
+            )
             embed = await generate_embed()
             view = TriggerMessageView()
             await interaction.response.edit_message(embed=embed, view=view)
@@ -351,7 +357,9 @@ async def configure_trigger_messages(
         ):
             nonlocal channels
             await remove_trigger_message_channel(
-                commandInfo.guild.id, channels[selected_channel][1], trigger_messages[page][0]
+                commandInfo.guild.id,
+                channels[selected_channel][1],
+                trigger_messages[page][0],
             )
             channels = await get_trigger_message_channels(
                 commandInfo.guild.id, trigger_messages[page][0]

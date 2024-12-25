@@ -1,14 +1,11 @@
-# noqa: E501
-import discord
 from discord import ui
 import utility
-from utility import commandInfo, relativeTimeStrToDate
 from localizer import tanjunLocalizer
-from typing import List, Optional
+from api import add_giveaway
+import discord
 import asyncio
-from commands.giveaway.utility import generateGiveawayEmbed, sendGiveaway
-from api import add_giveaway, set_giveaway_started
 import datetime
+
 
 class GiveawayBuilderButton(ui.Button):
     def __init__(self, label, custom_id, style, row=None):
@@ -300,82 +297,6 @@ class StartTimeModal(ui.Modal):
             self.commandInfo.locale, "commands.giveaway.builder.start_time.updated"
         )
         await self.view.update_embed(interaction.response.edit_message)
-
-
-class RoleRequirementView(ui.View):
-    def __init__(self, commandInfo, view):
-        super().__init__(timeout=300)
-        self.commandInfo = commandInfo
-        self.selected_roles = []
-        self.view = view
-        self.add_item(
-            discord.ui.Select(
-                placeholder=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
-                    "commands.giveaway.builder.role_requirement.placeholder",
-                ),
-                min_values=1,
-                max_values=25,
-                options=[
-                    discord.SelectOption(label=role.name, value=role.id, default=False)
-                    for role in self.commandInfo.guild.roles
-                ],
-                custom_id="role_select",
-            )
-        )
-        self.add_item(
-            discord.ui.Button(
-                label=tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.confirm"
-                ),
-                style=discord.ButtonStyle.green,
-                custom_id="confirm",
-            )
-        )
-        self.add_item(
-            discord.ui.Button(
-                label=tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.cancel"
-                ),
-                style=discord.ButtonStyle.red,
-                custom_id="cancel",
-            )
-        )
-
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        if interaction.user != self.commandInfo.user:
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.not_authorized"
-                ),
-                ephemeral=True,
-            )
-            return False
-        return True
-
-    async def on_timeout(self):
-        self.view.last_action = tanjunLocalizer.localize(
-            self.commandInfo.locale, "commands.giveaway.builder.modal.timeout"
-        )
-        await self.view.update_embed()
-
-    async def on_button_press(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ):
-        if button.custom_id == "confirm":
-            role_ids = [role.value for role in self.selected_roles]
-            self.view.giveaway_data["role_requirement"] = role_ids
-            self.view.last_action = tanjunLocalizer.localize(
-                self.commandInfo.locale,
-                "commands.giveaway.builder.role_requirement.updated",
-            )
-            await self.view.update_embed(interaction.response.edit_message)
-        elif button.custom_id == "cancel":
-            self.view.last_action = tanjunLocalizer.localize(
-                self.commandInfo.locale,
-                "commands.giveaway.builder.role_requirement.cancelled",
-            )
-            await self.view.update_embed(interaction.response.edit_message)
 
 
 class MessageRequirementModal(ui.Modal):
@@ -1145,7 +1066,7 @@ class GiveawayBuilder(ui.View):
                 self.commandInfo.locale, "commands.giveaway.builder.end_time.label"
             ),
             value=(
-                f"<t:{int(relativeTimeStrToDate(self.giveaway_data['end_time']).timestamp())}:R>"
+                f"<t:{int(utility.relativeTimeStrToDate(self.giveaway_data['end_time']).timestamp())}:R>"
                 if self.giveaway_data["end_time"]
                 else tanjunLocalizer.localize(
                     self.commandInfo.locale, "commands.giveaway.builder.none"
@@ -1157,7 +1078,7 @@ class GiveawayBuilder(ui.View):
                 self.commandInfo.locale, "commands.giveaway.builder.start_time.label"
             ),
             value=(
-                f"<t:{int(relativeTimeStrToDate(self.giveaway_data['start_time']).timestamp())}:R>"
+                f"<t:{int(utility.relativeTimeStrToDate(self.giveaway_data['start_time']).timestamp())}:R>"
                 if self.giveaway_data["start_time"]
                 else tanjunLocalizer.localize(
                     self.commandInfo.locale, "commands.giveaway.builder.none"
@@ -1445,7 +1366,8 @@ class GiveawayBuilder(ui.View):
             await message.delete()
             if len(message.content) > 128:
                 self.last_action = tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.giveaway.builder.message.too_long"
+                    self.commandInfo.locale,
+                    "commands.giveaway.builder.message.too_long",
                 )
                 await self.update_embed()
                 return
@@ -1624,7 +1546,9 @@ class GiveawayBuilder(ui.View):
     async def preview(
         self, interaction: discord.Interaction, button: GiveawayBuilderButton
     ):
-        embed = await generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)
+        embed = await utility.generateGiveawayEmbed(
+            self.giveaway_data, self.commandInfo.locale
+        )
         await interaction.response.send_message(
             content=tanjunLocalizer.localize(
                 self.commandInfo.locale, "commands.giveaway.builder.preview"
@@ -1644,14 +1568,14 @@ class GiveawayBuilder(ui.View):
         sponsor = self.giveaway_data["sponsor"]
         price = self.giveaway_data["price"]
         message = self.giveaway_data["message"]
-        end_time = relativeTimeStrToDate(self.giveaway_data["end_time"])
-        start_time = relativeTimeStrToDate(self.giveaway_data["start_time"])
+        end_time = utility.relativeTimeStrToDate(self.giveaway_data["end_time"])
+        start_time = utility.relativeTimeStrToDate(self.giveaway_data["start_time"])
         new_message_requirement = self.giveaway_data["new_message_requirement"]
         day_requirement = self.giveaway_data["day_requirement"]
         role_requirement = self.giveaway_data["role_requirement"]
         voice_requirement = self.giveaway_data["voice_requirement"]
         channel_requirements = self.giveaway_data["channel_requirements"]
-        target_channel=self.giveaway_data["target_channel"]
+        target_channel = self.giveaway_data["target_channel"]
 
         giveawayId = await add_giveaway(
             self.commandInfo.guild.id,
@@ -1683,13 +1607,12 @@ class GiveawayBuilder(ui.View):
         )
 
         await interaction.response.edit_message(
-            content = None,
-            embed=embed,
-            view=ui.View()
+            content=None, embed=embed, view=ui.View()
         )
 
         if start_time < datetime.datetime.now():
-            await sendGiveaway(giveawayId, self.commandInfo.client)
+            await utility.sendGiveaway(giveawayId, self.commandInfo.client)
+
 
 async def start_giveaway(
     commandInfo,

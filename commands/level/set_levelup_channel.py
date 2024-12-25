@@ -1,16 +1,21 @@
-from utility import commandInfo, tanjunEmbed, checkIfHasPro
+from utility import commandInfo, tanjunEmbed
 from localizer import tanjunLocalizer
-from api import set_levelup_channel, get_levelup_channel
+from api import set_levelup_channel
 import discord
 
-async def set_levelup_channel_command(commandInfo: commandInfo, channel: discord.TextChannel = None):
+
+async def set_levelup_channel_command(
+    commandInfo: commandInfo, channel: discord.TextChannel = None
+):
     if not commandInfo.user.guild_permissions.administrator:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.setlevelupchannel.error.no_permission.title"
+                commandInfo.locale,
+                "commands.level.setlevelupchannel.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.setlevelupchannel.error.no_permission.description"
+                commandInfo.locale,
+                "commands.level.setlevelupchannel.error.no_permission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -23,8 +28,9 @@ async def set_levelup_channel_command(commandInfo: commandInfo, channel: discord
                 commandInfo.locale, "commands.level.setlevelupchannel.success.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.setlevelupchannel.success.description",
-                channel=channel.mention
+                commandInfo.locale,
+                "commands.level.setlevelupchannel.success.description",
+                channel=channel.mention,
             ),
         )
     else:

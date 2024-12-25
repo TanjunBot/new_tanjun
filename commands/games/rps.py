@@ -6,13 +6,17 @@ import utility
 
 async def rps(commandInfo: utility.commandInfo, user: discord.Member):
     player1 = commandInfo.user
-    player2 = user if user != None else "tanjun"
+    player2 = user if user is not None else "tanjun"
     player1_choice = None
     player2_choice = None
 
     rockLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.rock")
-    paperLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.paper")
-    scissorsLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.scissors")
+    paperLocale = tanjunLocalizer.localize(
+        commandInfo.locale, "commands.games.rps.paper"
+    )
+    scissorsLocale = tanjunLocalizer.localize(
+        commandInfo.locale, "commands.games.rps.scissors"
+    )
 
     if player2 == "tanjun" or user.bot:
         player2_choice = random.choice([rockLocale, paperLocale, scissorsLocale])
@@ -24,7 +28,8 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                     commandInfo.locale, "commands.games.rps.draw"
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.games.rps.drawDescription",
+                    commandInfo.locale,
+                    "commands.games.rps.drawDescription",
                     player1=player1.mention,
                     player2=player2.mention if player2 != "tanjun" else "tanjun",
                     player1_choice=player1_choice,
@@ -43,7 +48,8 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                     commandInfo.locale, "commands.games.rps.win"
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.games.rps.winDescription",
+                    commandInfo.locale,
+                    "commands.games.rps.winDescription",
                     player1=player1.mention,
                     player2=player2.mention if player2 != "tanjun" else "tanjun",
                     player1_choice=player1_choice,
@@ -80,7 +86,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
             nonlocal player1_choice, player2_choice
-            
+
             if self.is_player1 and interaction.user.id != player1.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -109,7 +115,8 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                             commandInfo.locale, "commands.games.rps.title"
                         ),
                         description=tanjunLocalizer.localize(
-                            commandInfo.locale, "commands.games.rps.description",
+                            commandInfo.locale,
+                            "commands.games.rps.description",
                             player1=player1.mention,
                             player2=player2.mention,
                         ),
@@ -128,7 +135,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
             nonlocal player1_choice, player2_choice
-            
+
             if self.is_player1 and interaction.user.id != player1.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -157,7 +164,8 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                             commandInfo.locale, "commands.games.rps.title"
                         ),
                         description=tanjunLocalizer.localize(
-                            commandInfo.locale, "commands.games.rps.description",
+                            commandInfo.locale,
+                            "commands.games.rps.description",
                             player1=player1.mention,
                             player2=player2.mention,
                         ),
@@ -170,13 +178,15 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 await interaction.response.defer()
 
         @discord.ui.button(
-            label=scissorsLocale, style=discord.ButtonStyle.primary, custom_id="scissors"
+            label=scissorsLocale,
+            style=discord.ButtonStyle.primary,
+            custom_id="scissors",
         )
         async def scissors(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
             nonlocal player1_choice, player2_choice
-            
+
             if self.is_player1 and interaction.user.id != player1.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -205,7 +215,8 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                             commandInfo.locale, "commands.games.rps.title"
                         ),
                         description=tanjunLocalizer.localize(
-                            commandInfo.locale, "commands.games.rps.description",
+                            commandInfo.locale,
+                            "commands.games.rps.description",
                             player1=player1.mention,
                             player2=player2.mention,
                         ),
@@ -219,11 +230,10 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
 
     view = RPSView(commandInfo, True)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.games.rps.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.games.rps.description",
+            commandInfo.locale,
+            "commands.games.rps.description",
             player1=player1.mention,
             player2=player2.mention if player2 != "tanjun" else "tanjun",
         ),

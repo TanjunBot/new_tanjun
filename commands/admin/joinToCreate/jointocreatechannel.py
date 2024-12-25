@@ -3,6 +3,7 @@ import utility
 from localizer import tanjunLocalizer
 from api import set_join_to_create_channel, get_join_to_create_channel
 
+
 async def jointocreatechannel(commandInfo: utility.commandInfo, channel: discord.TextChannel):
     if not commandInfo.user.guild_permissions.manage_channels:
         embed = utility.tanjunEmbed(
@@ -11,7 +12,7 @@ async def jointocreatechannel(commandInfo: utility.commandInfo, channel: discord
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if await get_join_to_create_channel(channel.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.jointocreatechannel.alreadySet.title"),
