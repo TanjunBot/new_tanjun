@@ -2945,8 +2945,7 @@ async def get_brawlstars_linked_account(user_id: str):
     query = "SELECT brawlstarsTag FROM brawlstarsLinkedAccounts WHERE userId = %s"
     params = (user_id,)
     result = await execute_query(query, params)
-    print("result", result)
-    return result
+    return result[0][0] if result else None
 
 
 async def add_brawlstars_linked_account(user_id: str, brawlstars_tag: str):

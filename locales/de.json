@@ -6004,7 +6004,7 @@
         "userUpdate": {
             "title": "Benutzer aktualisiert",
             "name": "Der Nutzer ${user} hat seinen globalen Discord Account geändert",
-            "avatar": "Der Nuter hat seinen Avatar geändert. Allerdings löscht Discord den alten Avatar, bevor ich darauf zugreifen kann. Daher kann ich den alten Avatar leider nicht anzeigen.",
+            "avatar": "Der Nuter hat seinen Avatar geändert. Allerdings löscht Discord den alten Avatar, bevor ich darauf zugreifen kann. Daher kann ich den alten Avatar leider nicht anzeigen.s",
             "guildAvatarLocales": {
                 "none": "Keins",
                 "url": "LINK"
