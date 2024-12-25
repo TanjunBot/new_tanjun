@@ -156,7 +156,7 @@ async def format_level_up_message(
 
 
 async def update_user_roles(message: discord.Message, new_level: int, guild_id: str):
-    level_roles = await get_level_roles(guild_id, new_level)
+    level_roles = await get_level_roles(guild_id)
     roles_to_add = [
         role_id for role_id in level_roles
     ]
