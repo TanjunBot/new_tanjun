@@ -2032,18 +2032,15 @@
                         }
                     },
                     "description": {
-                        "nameColor": "Namefarbe: ${nameColor}",
-                        "trophies": "Trophäen: ${trophies}",
-                        "highestTrophies": "Höchste Trophäen: ${highestTrophies}",
-                        "expLevel": "Level: ${expLevel}",
-                        "club": "Club: ${name} (${tag})",
-                        "3v3Victories": "3v3 Siege: ${victories}",
-                        "soloVictories": "Solo Siege: ${victories}",
-                        "duoVictories": "Duo Siege: ${victories}",
-                        "bestRoboRumbleTime": "Beste Robo-Rumble Zeit: ${time}",
-                        "bestTimeAsBigBrawler": "Beste Zeit als Big Brawler: ${time}"
+                        "trophies": "### Trophäen: \n${trophies} <:icon_trophy:1320752979653165077>",
+                        "highestTrophies": "### Höchste Trophäen:\n ${highestTrophies} <:icon_trophy:1320752979653165077>",
+                        "expLevel": "### Level:\n ${expLevel} <:level_icoon:1321100513982419025>",
+                        "club": "### Club:\n<:icon_club:1321085345131139132> ${name} (${tag})",
+                        "3v3Victories": "### 3v3 Siege:\n${victories}<:3v3_icoon:1321098052454449212>",
+                        "soloVictories": "### Solo Siege:\n${victories}<:showdown_icon:1321095408058896484>",
+                        "duoVictories": "### Duo Siege:\n${victories}<:duo_showdown_icoon:1321095263213060187>"
                     },
-                    "title": "<:bs_logo:1320640700446015488> Informationen über ${playerName} (${tag})"
+                    "title": "Infos von ${playerName} (${tag})"
                 },
                 "club": {
                     "error": {
@@ -2077,13 +2074,15 @@
                         }
                     },
                     "description": {
-                        "overview": "## ${name}\nPower: ${power}\nRang: ${rank}\nTrophäen: ${trophies}\nHöchste Trophäen: ${highestTrophies}",
-                        "starPowers": "Star Powers:",
+                        "maxTier": "Tier Max",
+                        "overviewMaxTier": "## ${name}\nPower: ${power} <:power:1321089824211468369>\nRang: Max Tier ${levelEmoji}\nTrophäen: ${trophies} <:icon_trophy:1320752979653165077>\nHöchste Trophäen: ${highestTrophies} <:icon_trophy:1320752979653165077>",
+                        "overview": "## ${name}\nPower: ${power} <:power:1321089824211468369>\nRang: ${rank} ${levelEmoji}\nTrophäen: ${trophies} <:icon_trophy:1320752979653165077>\nHöchste Trophäen: ${highestTrophies} <:icon_trophy:1320752979653165077>",
+                        "starPowers": "### Star Powers:",
                         "starPower": " ${name}",
-                        "gadgets": "Gadgets:",
+                        "gadgets": "### Gadgets:",
                         "gadget": " ${name}",
-                        "gears": "Gears:",
-                        "gear": " ${name} (Level ${level})"
+                        "gears": "### Gears:",
+                        "gear": " ${name}"
                     },
                     "title": "Brawler von ${name} (${tag}) - Seite ${current_page} von ${total_pages}",
                     "titleNoPages": "Brawler von ${name} (${tag})",
@@ -3110,6 +3109,12 @@
                 "success": {
                     "title": "Details verbessert",
                     "description": "Die Details des Bildes wurden verbessert."
+                }
+            },
+            "background": {
+                "success": {
+                    "title": "Hintergrund Entfernt",
+                    "description": "Der Hintergrund deines Bildes wurde entfernt."
                 }
             },
             "edgeenhance": {
@@ -6170,6 +6175,16 @@
                 "image": {
                     "name": "bild",
                     "description": "Das Bild, das detailiert werden soll"
+                }
+            }
+        },
+        "background": {
+            "name": "hintergrund_entfernen",
+            "description": "Hintergrund Entfernen",
+            "params": {
+                "image": {
+                    "name": "bild",
+                    "description": "Das Bild, von dem der Hintergrund entfernt werden soll"
                 }
             }
         },

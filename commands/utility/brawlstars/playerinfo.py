@@ -4,6 +4,7 @@ from utility import commandInfo, tanjunEmbed, isoTimeToDate, date_time_to_timest
 import discord
 from localizer import tanjunLocalizer
 import json
+from commands.utility.brawlstars.bshelper import getLevelEmoji
 
 
 async def getPlayerInfo(playerTag: str):
@@ -33,12 +34,6 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str):
     description = ""
     description += tanjunLocalizer.localize(
         commandInfo.locale,
-        "commands.utility.brawlstars.playerinfo.description.nameColor",
-        nameColor=playerInfo["nameColor"],
-    )
-    description += "\n"
-    description += tanjunLocalizer.localize(
-        commandInfo.locale,
         "commands.utility.brawlstars.playerinfo.description.trophies",
         trophies=playerInfo["trophies"],
     )
@@ -49,16 +44,11 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str):
         highestTrophies=playerInfo["highestTrophies"],
     )
     description += "\n"
+    levelEmoji = getLevelEmoji(playerInfo["expLevel"])
     description += tanjunLocalizer.localize(
         commandInfo.locale,
         "commands.utility.brawlstars.playerinfo.description.expLevel",
         expLevel=playerInfo["expLevel"],
-    )
-    description += "\n"
-    description += tanjunLocalizer.localize(
-        commandInfo.locale,
-        "commands.utility.brawlstars.playerinfo.description.expPoints",
-        expPoints=playerInfo["expPoints"],
     )
     description += "\n"
     if "club" in playerInfo:
@@ -88,20 +78,6 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str):
             commandInfo.locale,
             "commands.utility.brawlstars.playerinfo.description.duoVictories",
             victories=playerInfo["duoVictories"],
-        )
-    description += "\n"
-    if playerInfo["bestRoboRumbleTime"] != 0:
-        description += tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.utility.brawlstars.playerinfo.description.bestRoboRumbleTime",
-            time=playerInfo["bestRoboRumbleTime"],
-        )
-    description += "\n"
-    if playerInfo["bestTimeAsBigBrawler"] != 0:
-        description += tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.utility.brawlstars.playerinfo.description.bestTimeAsBigBrawler",
-            time=playerInfo["bestTimeAsBigBrawler"],
         )
     description += "\n"
     embed = tanjunEmbed(

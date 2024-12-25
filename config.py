@@ -4,7 +4,7 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 
-version = "0.8.18"
+version = "0.8.20"
 token = config["token"]
 applicationId = config["applicationId"]
 adminIds = [int(id) for id in config["adminIds"].split(",")]
@@ -21,6 +21,7 @@ openAiKey = config["openAIKey"]
 bytebin_url = config["bytebin_url"]
 bytebin_password = config["bytebin_password"]
 bytebin_username = config["bytebin_username"]
+
 brawlstarsToken = config["brawlstarsToken"]
 twitchSecret = config["twitchSecret"]
 twitchId = config["twitchId"]

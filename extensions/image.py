@@ -17,6 +17,7 @@ from commands.image.resize import resize
 from commands.image.rescale import rescale
 from commands.image.mirror import mirror
 from commands.image.compress import compress
+from commands.image.background import background
 
 
 class ImageCommands(discord.app_commands.Group):
@@ -358,6 +359,31 @@ class ImageCommands(discord.app_commands.Group):
             quality=quality
         )
 
+    @app_commands.command(
+        name=app_commands.locale_str("image_background_name"),
+        description=app_commands.locale_str("image_background_description")
+    )
+    @app_commands.describe(
+        image=app_commands.locale_str("image_background_params_image_description"),
+    )
+    async def background(self, interaction: discord.Interaction, image: discord.Attachment):
+        await interaction.response.defer()
+        commandInfo = utility.commandInfo(
+            user=interaction.user,
+            channel=interaction.channel,
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
+        )
+
+        await background(
+            commandInfo=commandInfo,
+            image=image,
+        )
 
 class ImageCog(commands.Cog):
     def __init__(self, bot):

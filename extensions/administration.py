@@ -27,6 +27,7 @@ from commands.channel.welcome import welcomeNewUser
 
 from commands.channel.farewell import farewellUser
 from PIL import Image
+import json
 
 
 class administrationCog(commands.Cog):
@@ -193,6 +194,22 @@ class administrationCog(commands.Cog):
                         )
                         
                         await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
+
+    async def getAccData(self, id: str):
+        async with aiohttp.ClientSession() as session:
+            headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
+            async with session.get(
+                f"https://api.brawlstars.com/v1/players/%23{id}", headers=headers
+            ) as response:
+                return await response.json()
+
+    @commands.command()
+    async def bsaccdata(self, ctx, id: str):
+        if ctx.author.id not in config.adminIds:
+            return
+        accData = await self.getAccData(id)
+        accData["brawlers"] = accData["brawlers"][1]
+        await ctx.send(f"```json\n{(json.dumps(accData, indent=4))[0:1900]}\n```")
 
 
 async def setup(bot):
