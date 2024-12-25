@@ -18,7 +18,10 @@ from loops.giveaway import handleVoiceChange
 
 from config import adminIds
 
-from commands.ai.add_custom_situation_button_handler import approve_custom_situation, deny_custom_situation
+from commands.ai.add_custom_situation_button_handler import (
+    approve_custom_situation,
+    deny_custom_situation,
+)
 
 from commands.utility.autopublish import publish_message
 from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
@@ -58,28 +61,39 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
         try:
-            if interaction.data["custom_id"].startswith("giveaway_enter"):
-                giveaway_id = interaction.data["custom_id"].split("; ")[1]
-                embed = await add_giveaway_participant(giveawayid=giveaway_id, userid=interaction.user.id, client=self.bot)
-                if embed:
-                    await interaction.response.send_message(embed=embed, ephemeral=True)
-            elif interaction.data["custom_id"].startswith("ai_add_custom_situation_approve"):
-                if interaction.user.id not in adminIds:
+            if hasattr(interaction, "data") and hasattr(interaction.data, "custom_id"):
+                if interaction.data["custom_id"].startswith("giveaway_enter"):
+                    giveaway_id = interaction.data["custom_id"].split("; ")[1]
+                    embed = await add_giveaway_participant(
+                        giveawayid=giveaway_id,
+                        userid=interaction.user.id,
+                        client=self.bot,
+                    )
+                    if embed:
+                        await interaction.response.send_message(
+                            embed=embed, ephemeral=True
+                        )
+                elif interaction.data["custom_id"].startswith(
+                    "ai_add_custom_situation_approve"
+                ):
+                    if interaction.user.id not in adminIds:
+                        return
+                    await approve_custom_situation(interaction)
+                elif interaction.data["custom_id"].startswith(
+                    "ai_add_custom_situation_deny"
+                ):
+                    if interaction.user.id not in adminIds:
+                        return
+                    await deny_custom_situation(interaction)
+                elif interaction.data["custom_id"].startswith("report_"):
+                    await report_btn_click(interaction, interaction.data["custom_id"])
                     return
-                await approve_custom_situation(interaction)
-            elif interaction.data["custom_id"].startswith("ai_add_custom_situation_deny"):
-                if interaction.user.id not in adminIds:
+                elif interaction.data["custom_id"].startswith("ticket_create"):
+                    await openTicketListener(interaction)
                     return
-                await deny_custom_situation(interaction)
-            elif interaction.data["custom_id"].startswith("report_"):
-                await report_btn_click(interaction, interaction.data["custom_id"])
-                return
-            elif interaction.data["custom_id"].startswith("ticket_create"):
-                await openTicketListener(interaction)
-                return
-            elif interaction.data["custom_id"].startswith("ticket_close"):
-                await closeTicketListener(interaction)
-                return
+                elif interaction.data["custom_id"].startswith("ticket_close"):
+                    await closeTicketListener(interaction)
+                    return
         except Exception as e:
             print(f"An error occurred: {e}")
             raise
@@ -94,7 +108,9 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
         if after.reference:
-            await update_scheduled_message_content(after.reference.message_id, after.content)
+            await update_scheduled_message_content(
+                after.reference.message_id, after.content
+            )
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
