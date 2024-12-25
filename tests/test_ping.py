@@ -1,4 +1,6 @@
-import time
+# Unused imports:
+# import time
+
 
 async def test_ping(self, ctx):
     ping = ctx.bot.latency * 1000

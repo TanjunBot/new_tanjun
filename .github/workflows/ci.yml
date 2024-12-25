@@ -66,24 +66,37 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -X POST -H 'Content-Type: application/json' -d '{
-            "content": null,
-            "embeds": [
-              {
-                "title": "${{ env.title }}",
-                "description": null,
-                "color": ${{ env.color }},
-                "author": {
-                  "name": "${{ env.author_name }}",
-                  "url": "${{ env.author_url }}",
-                  "icon_url": "${{ env.author_profileicon }}"
-                },
-                "footer": {
-                  "text": "${{ env.footer_text }}"
-                },
-                "timestamp": "${{ env.timestamp }}"
-              }
-            ],
-            "username": "${{ env.username }}",
-            "attachments": []
-          }' $DISCORD_WEBHOOK_URL
+          for i in {1..5}; do
+            response=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'Content-Type: application/json' -d '{
+              "content": null,
+              "embeds": [
+                {
+                  "title": "${{ env.title }}",
+                  "description": null,
+                  "color": ${{ env.color }},
+                  "author": {
+                    "name": "${{ env.author_name }}",
+                    "url": "${{ env.author_url }}",
+                    "icon_url": "${{ env.author_profileicon }}"
+                  },
+                  "footer": {
+                    "text": "${{ env.footer_text }}"
+                  },
+                  "timestamp": "${{ env.timestamp }}"
+                }
+              ],
+              "username": "${{ env.username }}",
+              "attachments": []
+            }' $DISCORD_WEBHOOK_URL)
+            if [ $response -eq 204 ]; then
+              echo "Discord notification sent successfully."
+              break
+            else
+              echo "Failed to send Discord notification. Attempt $i of 5."
+              sleep 10
+            fi
+          done
+          if [ $response -ne 204 ]; then
+            echo "::error::Failed to send Discord notification after 5 attempts."
+            exit 1
+          fi

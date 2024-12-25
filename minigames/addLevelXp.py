@@ -17,10 +17,11 @@ from api import (
     get_user_roles_boosts,
     get_channel_boost,
 )
-from utility import checkIfHasPro, get_level_for_xp
+from utility import get_level_for_xp  # , checkIfHasPro
 from localizer import tanjunLocalizer
 
 notifiedUsers = []
+
 
 async def addLevelXp(message: discord.Message):
     if message.author.bot or await check_if_opted_out(str(message.author.id)):
@@ -40,7 +41,7 @@ async def addLevelXp(message: discord.Message):
 
     new_xp = current_xp + xp_to_add
     new_level = get_level_for_xp(new_xp, scaling, custom_formula)
-    
+
     await update_user_xp(guild_id, str(message.author.id), xp_to_add, respect_cooldown=True)
     if new_level > current_level:
         await handle_level_up(message, new_level)
@@ -70,7 +71,7 @@ async def fetch_xp_details(message: discord.Message, guild_id: str):
 
 
 async def calculate_xp(message: discord.Message, guild_id: str) -> int:
-    #nosec: B311
+    # nosec: B311
     base_xp = random.randint(1, 3)
     user_boost = await get_user_boost(guild_id, str(message.author.id))
     if not user_boost:
@@ -123,9 +124,11 @@ async def handle_level_up(message: discord.Message, new_level: int):
 
     await update_user_roles(message, new_level, guild_id)
 
+
 def clearNotifiedUsers():
     global notifiedUsers
     notifiedUsers = []
+
 
 async def determine_levelup_channel(
     message: discord.Message, guild_id: str
@@ -164,5 +167,5 @@ async def update_user_roles(message: discord.Message, new_level: int, guild_id: 
                 await message.author.add_roles(
                     role, reason=f"Reached level {new_level}"
                 )
-            except:
+            except discord.Forbidden:
                 pass

@@ -1,8 +1,9 @@
+# Unused imports:
+# from localizer import tanjunLocalizer
 import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from localizer import tanjunLocalizer
 
 from commands.channel.welcome import (
     setWelcomeChannel as setWelcomeChannelCommand,

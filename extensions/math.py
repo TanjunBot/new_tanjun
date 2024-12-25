@@ -1,9 +1,10 @@
+# Unused imports:
+# from localizer import tanjunLocalizer
 import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from localizer import tanjunLocalizer
-from typing import List, Optional
+from typing import List  # , Optional
 
 from commands.math.calc import calc as calcCommand
 from commands.math.calculator import calculator_command
@@ -321,7 +322,7 @@ class mathCog(commands.Cog):
     async def on_ready(self):
         mathcmds = mathCommands(name="math", description="Math is fun!")
         self.bot.tree.add_command(mathcmds)
-    
+
     @commands.command(name="faculty", aliases=["fac"])
     async def faculty(self, ctx, number: int):
         commandInfo = utility.commandInfo(
@@ -337,8 +338,6 @@ class mathCog(commands.Cog):
         )
 
         await faculty_command(commandInfo, number)
-
-    
 
 
 async def setup(bot):

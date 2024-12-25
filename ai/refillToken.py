@@ -2,6 +2,7 @@ from api import resetToken
 from discord import Client
 from datetime import datetime
 
+
 async def refillAiToken(client: Client):
     now = datetime.now()
 

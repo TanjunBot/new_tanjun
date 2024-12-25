@@ -1,10 +1,11 @@
+# Unused imports:
+# from utility import tanjunEmbed
+# from localizer import tanjunLocalizer
+# from typing import List, Optional
 import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from utility import tanjunEmbed
-from localizer import tanjunLocalizer
-from typing import List, Optional
 
 from commands.minigames.counting.setcountingchannel import (
     setCountingChannel as setCountingChannelCommand,
@@ -39,6 +40,7 @@ from commands.minigames.wordchain.setwordchainchannel import (
 from commands.minigames.wordchain.removewordchainchannel import (
     removewordchainchannel as removeWordChainChannelCommand,
 )
+
 
 class CountingCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -375,7 +377,8 @@ class WordChainCommands(discord.app_commands.Group):
         await removeWordChainChannelCommand(commandInfo, channel)
 
 
-class minigameCommands(discord.app_commands.Group): ...
+class minigameCommands(discord.app_commands.Group):
+    pass
 
 
 class minigameCog(commands.Cog):

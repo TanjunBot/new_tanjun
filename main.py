@@ -9,6 +9,7 @@ import asyncmy
 from config import database_ip, database_password, database_user, database_schema
 from commands.utility.twitch.twitchApi import initTwitch
 
+
 async def loadextension(bot, extensionname):
     extensionname = f"extensions.{extensionname}"
     try:
@@ -51,6 +52,7 @@ async def main():
             await loadextension(bot, extension)
     await loadTranslator(bot)
 
+
 async def create_pool():
     try:
         p = await asyncmy.create_pool(
@@ -70,6 +72,7 @@ async def create_pool():
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
+
 
 @bot.event
 async def on_ready():
