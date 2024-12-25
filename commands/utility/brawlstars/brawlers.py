@@ -11,6 +11,7 @@ from commands.utility.brawlstars.bshelper import (
     getGearEmoji,
     getLevelEmoji,
 )
+from api import get_brawlstars_linked_account
 
 
 async def getPlayerInfo(playerTag: str):
@@ -26,9 +27,24 @@ async def getPlayerInfo(playerTag: str):
             return await response.json()
 
 
-async def brawlers(commandInfo: commandInfo, playerTag: str):
+async def brawlers(commandInfo: commandInfo, playerTag: str = None):
     if not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
+    if not playerTag:
+        playerTag = await get_brawlstars_linked_account(commandInfo.author.id)
+    if not playerTag:
+        return await commandInfo.reply(
+            embed=tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.utility.brawlstars.brawlers.error.notLinked.title",
+                ),
+                description=tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.utility.brawlstars.brawlers.error.notLinked.description",
+                ),
+            )
+        )
     playerInfo = await getPlayerInfo(playerTag)
     if not playerInfo:
         return await commandInfo.reply(

@@ -3,7 +3,7 @@ import aiohttp
 from utility import commandInfo, tanjunEmbed, isoTimeToDate, date_time_to_timestamp
 import discord
 from localizer import tanjunLocalizer
-import json
+from api import get_brawlstars_linked_account
 
 
 async def getBattloeLog(playerTag: str):
@@ -14,14 +14,28 @@ async def getBattloeLog(playerTag: str):
             headers=headers,
         ) as response:
             if response.status != 200:
-                respo = await response.json()
                 return None
             return await response.json()
 
 
-async def battlelog(commandInfo: commandInfo, playerTag: str):
+async def battlelog(commandInfo: commandInfo, playerTag: str = None):
     if not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
+    if not playerTag:
+        playerTag = await get_brawlstars_linked_account(commandInfo.author.id)
+    if not playerTag:
+        return await commandInfo.reply(
+            embed=tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.utility.brawlstars.battlelog.error.notLinked.title",
+                ),
+                description=tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.utility.brawlstars.battlelog.error.notLinked.description",
+                ),
+            )
+        )
     battleLog = await getBattloeLog(playerTag)
     if not battleLog:
         await commandInfo.reply(

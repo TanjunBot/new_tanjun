@@ -2005,6 +2005,10 @@
                         "notFound": {
                             "title": "Spieler nicht gefunden",
                             "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        },
+                        "notLinked": {
+                            "title": "Spieler nicht verlinkt",
+                            "description": "Du hast noch keinen Spieler verlinkt. Bitte verlinke deinen Brawl Stars Account oder gebe deinen Spieler Tag ein."
                         }
                     },
                     "description": {
@@ -2029,6 +2033,10 @@
                         "notFound": {
                             "title": "Spieler nicht gefunden",
                             "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        },
+                        "notLinked": {
+                            "title": "Spieler nicht verlinkt",
+                            "description": "Du hast noch keinen Spieler verlinkt. Bitte verlinke deinen Brawl Stars Account oder gebe deinen Spieler Tag ein."
                         }
                     },
                     "description": {
@@ -2071,6 +2079,10 @@
                         "notFound": {
                             "title": "Spieler nicht gefunden",
                             "description": "Der Spieler mit der Tag ID ${tag} wurde nicht gefunden."
+                        },
+                        "notLinked": {
+                            "title": "Spieler nicht verlinkt",
+                            "description": "Du hast noch keinen Spieler verlinkt. Bitte verlinke deinen Brawl Stars Account oder gebe deinen Spieler Tag ein."
                         }
                     },
                     "description": {
@@ -2106,6 +2118,34 @@
                     "title": "Events - Seite ${current_page} von ${total_pages}",
                     "titleNoPages": "Events",
                     "notYourEmbed": "Du darfst das nicht."
+                },
+                "link": {
+                    "error": {
+                        "notFound": {
+                            "title": "Spieler nicht gefunden",
+                            "description": "Es existiert kein Spieler mit dem Tag ${tag}."
+                        },
+                        "alreadyLinked": {
+                            "title": "Spieler bereits verlinkt",
+                            "description": "Du hast bereits deinen Brawl Stars Account verlinkt. Bitte entferne diese, bevor du einen anderen Account verlinkst."
+                        }
+                    },
+                    "success": {
+                        "title": "Spieler erfolgreich verlinkt",
+                        "description": "Der Spieler mit dem Tag ${tag} wurde erfolgreich verlinkt."
+                    }
+                },
+                "unlink": {
+                    "error": {
+                        "notLinked": {
+                            "title": "Spieler nicht verlinkt",
+                            "description": "Du hast noch keinen Spieler verlinkt."
+                        }
+                    },
+                    "success": {
+                        "title": "Verlinkung erfolgreich entfernt",
+                        "description": "Die Verlinkung von deinem Brawl Stars Account wurde erfolgreich entfernt."
+                    }
                 }
             },
             "twitch": {
@@ -4298,7 +4338,7 @@
                 "params": {
                     "tag": {
                         "name": "tag",
-                        "description": "Der Tag des Spielers, dessen Kampflogbuch angezeigt werden soll"
+                        "description": "Der Tag des Spielers, dessen Kampflogbuch angezeigt werden soll (optional wenn verlinkt)"
                     }
                 }
             },
@@ -4308,7 +4348,7 @@
                 "params": {
                     "tag": {
                         "name": "tag",
-                        "description": "Der Tag des Spielers, dessen Informationen angezeigt werden sollen"
+                        "description": "Der Tag des Spielers, dessen Informationen angezeigt werden sollen (optional wenn verlinkt)"
                     }
                 }
             },
@@ -4318,7 +4358,7 @@
                 "params": {
                     "tag": {
                         "name": "tag",
-                        "description": "Der Tag des Spielers, dessen Brawlers angezeigt werden sollen"
+                        "description": "Der Tag des Spielers, dessen Brawlers angezeigt werden sollen (optional wenn verlinkt)"
                     }
                 }
             },
@@ -4335,6 +4375,20 @@
             "events": {
                 "name": "events",
                 "description": "Zeigt die aktuellen Events von Brawl Stars an"
+            },
+            "link": {
+                "name": "verknüpfen",
+                "description": "Verknüpft deinen Brawl Stars Account mit deinem Discord Account",
+                "params": {
+                    "tag": {
+                        "name": "tag",
+                        "description": "Der Tag des Spielers, dessen Informationen angezeigt werden sollen"
+                    }
+                }
+            },
+            "unlink": {
+                "name": "entfernen",
+                "description": "Entfernt die Verknüpfung zwischen deinem Brawl Stars Account und deinem Discord Account"
             }
         },
         "twitch": {

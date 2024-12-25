@@ -5,7 +5,7 @@
 import json
 from typing import Optional, List, Dict
 from utility import get_xp_for_level, get_level_for_xp
-from datetime import datetime  # , timezone
+from datetime import datetime
 from discord import Entitlement
 
 pool = None
@@ -24,7 +24,8 @@ async def execute_query(query, params=None):
     if not pool:
         print(
             "Tried to execute action without pool. Pool is not yet initialized."
-            "Returning...\nquery: ", query,
+            "Returning...\nquery: ",
+            query,
         )
         return
 
@@ -35,9 +36,7 @@ async def execute_query(query, params=None):
                 result = await cursor.fetchall()
                 return result
     except Exception as e:
-        print(
-            f"An error occurred during query execution: {e}"
-        )
+        print(f"An error occurred during query execution: {e}")
 
 
 async def execute_action(query, params=None):
@@ -629,21 +628,27 @@ async def create_tables():
             ON DELETE CASCADE
     ) ENGINE=InnoDB;
     """
-    tables["joinToCreateChannel"] = """
+    tables[
+        "joinToCreateChannel"
+    ] = """
     CREATE TABLE IF NOT EXISTS `joinToCreateChannel` (
         `guildId` VARCHAR(20),
         `channelId` VARCHAR(20),
         PRIMARY KEY(`guildId`, `channelId`)
     ) ENGINE=InnoDB;
     """
-    tables["mediaChannel"] = """
+    tables[
+        "mediaChannel"
+    ] = """
     CREATE TABLE IF NOT EXISTS `mediaChannel` (
         `channelId` VARCHAR(20),
         `guildId` VARCHAR(20),
         PRIMARY KEY(`channelId`)
     ) ENGINE=InnoDB;
     """
-    tables["welcomeChannel"] = """
+    tables[
+        "welcomeChannel"
+    ] = """
     CREATE TABLE IF NOT EXISTS `welcomeChannel` (
         `channelId` VARCHAR(20),
         `guildId` VARCHAR(20),
@@ -652,7 +657,9 @@ async def create_tables():
         PRIMARY KEY(`channelId`, `guildId`)
     ) ENGINE=InnoDB;
     """
-    tables["leaveChannel"] = """
+    tables[
+        "leaveChannel"
+    ] = """
     CREATE TABLE IF NOT EXISTS `leaveChannel` (
         `channelId` VARCHAR(20),
         `guildId` VARCHAR(20),
@@ -661,7 +668,9 @@ async def create_tables():
         PRIMARY KEY(`channelId`, `guildId`)
     ) ENGINE=InnoDB;
     """
-    tables["dynamicslowmode"] = """
+    tables[
+        "dynamicslowmode"
+    ] = """
     CREATE TABLE IF NOT EXISTS `dynamicslowmode` (
         `guildId` VARCHAR(20),
         `channelId` VARCHAR(20),
@@ -672,7 +681,9 @@ async def create_tables():
         PRIMARY KEY(`channelId`)
     ) ENGINE=InnoDB;
     """
-    tables["dynamicslowmode_messages"] = """
+    tables[
+        "dynamicslowmode_messages"
+    ] = """
     CREATE TABLE IF NOT EXISTS `dynamicslowmode_messages` (
         `id` INT AUTO_INCREMENT,
         `channelId` VARCHAR(20),
@@ -687,7 +698,9 @@ async def create_tables():
             ON DELETE CASCADE
     ) ENGINE=InnoDB;
     """
-    tables["twitchOnlineNotification"] = """
+    tables[
+        "twitchOnlineNotification"
+    ] = """
     CREATE TABLE IF NOT EXISTS `twitchOnlineNotification` (
         `id` INT AUTO_INCREMENT,
         `channelId` VARCHAR(20),
@@ -698,6 +711,15 @@ async def create_tables():
         PRIMARY KEY(`id`),
         INDEX `idx_channel` (`channelId`),
         INDEX `idx_guild` (`guildId`)
+    ) ENGINE=InnoDB;
+    """
+    tables[
+        "brawlstarsLinkedAccoutns"
+    ] = """
+    CREATE TABLE IF NOT EXISTS `brawlstarsLinkedAccoutns` (
+        `userId` VARCHAR(20),
+        `brawlstarsTag` VARCHAR(20),
+        PRIMARY KEY(`userId`)
     ) ENGINE=InnoDB;
     """
 
@@ -765,18 +787,16 @@ async def set_warn_config(
     ban_threshold,
 ):
     query = (
-        (
-            "INSERT INTO warn_config (guild_id, expiration_days, "
-            "timeout_threshold, timeout_duration, "
-            "kick_threshold, ban_threshold) "
-            "VALUES (%s, %s, %s, %s, %s, %s) "
-            "ON DUPLICATE KEY UPDATE "
-            "expiration_days = VALUES(expiration_days), "
-            "timeout_threshold = VALUES(timeout_threshold), "
-            "timeout_duration = VALUES(timeout_duration), "
-            "kick_threshold = VALUES(kick_threshold), "
-            "ban_threshold = VALUES(ban_threshold)"
-        )
+        "INSERT INTO warn_config (guild_id, expiration_days, "
+        "timeout_threshold, timeout_duration, "
+        "kick_threshold, ban_threshold) "
+        "VALUES (%s, %s, %s, %s, %s, %s) "
+        "ON DUPLICATE KEY UPDATE "
+        "expiration_days = VALUES(expiration_days), "
+        "timeout_threshold = VALUES(timeout_threshold), "
+        "timeout_duration = VALUES(timeout_duration), "
+        "kick_threshold = VALUES(kick_threshold), "
+        "ban_threshold = VALUES(ban_threshold)"
     )
     params = (
         guild_id,
@@ -824,8 +844,7 @@ async def save_channel_overwrites(channel_id, role_id, overwrites):
 
 async def get_channel_overwrites(channel_id):
     query = (
-        "SELECT role_id, overwrites FROM channel_overwrites "
-        "WHERE channel_id = %s"
+        "SELECT role_id, overwrites FROM channel_overwrites " "WHERE channel_id = %s"
     )
     params = (channel_id,)
     result = await execute_query(query, params)
@@ -944,9 +963,7 @@ async def clear_counting_challenge(channel_id):
 
 
 async def get_counting_challenge_channel_amount(guild_id):
-    query = (
-        "SELECT COUNT(progress) FROM counting_challenge WHERE guild_id = %s"
-    )
+    query = "SELECT COUNT(progress) FROM counting_challenge WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return len(result) if result else 0
@@ -1194,13 +1211,13 @@ async def remove_level_role(guild_id: str, role_id: str, level: int):
 
 
 # redefinition of unused 'get_level_roles' from line 1129Flake8(F811)
-'''
+"""
 async def get_level_roles(guild_id: str, level: int) -> List[str]:
     query = "SELECT role_id FROM levelRole WHERE guild_id = %s AND level <= %s"
     params = (guild_id, level)
     result = await execute_query(query, params)
     return [row[0] for row in result]
-'''
+"""
 
 
 async def get_all_level_roles(guild_id: str) -> Dict[int, List[str]]:
@@ -2311,23 +2328,23 @@ async def get_log_channel(guild_id: str):
 
 
 # redefinition of unused 'get_log_role_blacklist' from line 2227 Flake8(F811)
-'''
+"""
 async def get_log_role_blacklist(guild_id: str):
     query = "SELECT roleId FROM logRoleBlacklist WHERE guildId = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result if result else []
-'''
+"""
 
 
 # redefinition of unused 'get_log_user_blacklist' from line 2253 Flake8(F811)
-'''
+"""
 async def get_log_user_blacklist(guild_id: str):
     query = "SELECT userId FROM logUserBlacklist WHERE guildId = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result if result else []
-'''
+"""
 
 
 async def set_log_enable(guild_id: str, **kwargs):
@@ -2502,9 +2519,7 @@ async def get_reports(guild_id: str, user_id: str = None):
         result = await execute_query(query, tuple(params))
         return result
     except Exception as e:
-        print(
-            f"An error occurred during query execution: {e}"
-        )
+        print(f"An error occurred during query execution: {e}")
         return []
 
 
@@ -2664,7 +2679,11 @@ async def get_ticket_messages(guild_id: str):
 async def get_ticket_messages_by_id(ticket_message_id: str):
     query = "SELECT * FROM ticketMessages WHERE id = %s"
     params = (ticket_message_id,)
-    return (await execute_query(query, params))[0] if (await execute_query(query, params)) else None
+    return (
+        (await execute_query(query, params))[0]
+        if (await execute_query(query, params))
+        else None
+    )
 
 
 async def open_ticket(
@@ -2741,14 +2760,15 @@ async def remove_join_to_create_channel(guild_id: str):
     params = (guild_id,)
     await execute_action(query, params)
 
+
 # redefinition of unused 'get_join_to_create_channel' from line 2813 Flake8(F811)
-'''
+"""
 async def get_join_to_create_channel(channel_id: str):
     query = "SELECT * FROM joinToCreateChannel WHERE channelId = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0] if result else None
-'''
+"""
 
 
 async def get_media_channel(channel_id: str):
@@ -2772,10 +2792,16 @@ async def remove_media_channel(guild_id: str, channel_id: str):
 async def get_welcome_channel(guild_id: str):
     query = "SELECT * FROM welcomeChannel WHERE guildId = %s"
     params = (guild_id,)
-    return (await execute_query(query, params))[0] if (await execute_query(query, params)) else None
+    return (
+        (await execute_query(query, params))[0]
+        if (await execute_query(query, params))
+        else None
+    )
 
 
-async def set_welcome_channel(guild_id: str, channel_id: str, message: str, image_background: str):
+async def set_welcome_channel(
+    guild_id: str, channel_id: str, message: str, image_background: str
+):
     query = "INSERT INTO welcomeChannel (guildId, channelId, message, imageBackground) VALUES (%s, %s, %s, %s)"
     params = (guild_id, channel_id, message, image_background)
     await execute_action(query, params)
@@ -2790,10 +2816,16 @@ async def remove_welcome_channel(guild_id: str):
 async def get_leave_channel(guild_id: str):
     query = "SELECT * FROM leaveChannel WHERE guildId = %s"
     params = (guild_id,)
-    return (await execute_query(query, params))[0] if (await execute_query(query, params)) else None
+    return (
+        (await execute_query(query, params))[0]
+        if (await execute_query(query, params))
+        else None
+    )
 
 
-async def set_leave_channel(guild_id: str, channel_id: str, message: str, image_background: str):
+async def set_leave_channel(
+    guild_id: str, channel_id: str, message: str, image_background: str
+):
     query = "INSERT INTO leaveChannel (guildId, channelId, message, imageBackground) VALUES (%s, %s, %s, %s)"
     params = (guild_id, channel_id, message, image_background)
     await execute_action(query, params)
@@ -2811,7 +2843,9 @@ async def get_dynamicslowmode_channels(guild_id: str):
     return await execute_query(pool, query, params)
 
 
-async def add_dynamicslowmode(guild_id: str, channel_id: str, messages: int, per: int, resetafter: int):
+async def add_dynamicslowmode(
+    guild_id: str, channel_id: str, messages: int, per: int, resetafter: int
+):
     query = "INSERT INTO dynamicslowmode (guildId, channelId, messages, per, resetafter) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, channel_id, messages, per, resetafter)
     await execute_action(pool, query, params)
@@ -2830,7 +2864,9 @@ async def get_dynamicslowmode(channel_id: str):
     return result[0] if result else None
 
 
-async def add_dynamicslowmode_message(channel_id: str, message_id: str, send_time: datetime):
+async def add_dynamicslowmode_message(
+    channel_id: str, message_id: str, send_time: datetime
+):
     query = "INSERT INTO dynamicslowmode_messages (channelId, messageId, sendTime) VALUES (%s, %s, %s)"
     params = (channel_id, message_id, send_time)
     await execute_action(pool, query, params)
@@ -2838,7 +2874,9 @@ async def add_dynamicslowmode_message(channel_id: str, message_id: str, send_tim
 
 async def clear_old_dynamicslowmode_messages(channel_id: str, send_time: datetime):
     # Only delete messages older than the specified time, ensuring UTC comparison
-    query = "DELETE FROM dynamicslowmode_messages WHERE channelId = %s AND sendTime < %s"
+    query = (
+        "DELETE FROM dynamicslowmode_messages WHERE channelId = %s AND sendTime < %s"
+    )
     params = (channel_id, send_time)
     await execute_action(pool, query, params)
 
@@ -2867,7 +2905,13 @@ async def get_twitch_online_notification(channel_id: str):
     return await execute_query(pool, query, params)
 
 
-async def set_twitch_online_notification(guild_id: str, channel_id: str, twitch_uuid: str, twitch_name: str, notification_message: str):
+async def set_twitch_online_notification(
+    guild_id: str,
+    channel_id: str,
+    twitch_uuid: str,
+    twitch_name: str,
+    notification_message: str,
+):
     query = "INSERT INTO twitchOnlineNotification (guildId, channelId, twitchUuid, twitchName, notificationMessage) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, channel_id, twitch_uuid, twitch_name, notification_message)
     await execute_action(pool, query, params)
@@ -2895,3 +2939,23 @@ async def get_twitch_notification_by_guild_id(guild_id: str):
     query = "SELECT * FROM twitchOnlineNotification WHERE guildId = %s"
     params = (guild_id,)
     return await execute_query(pool, query, params)
+
+
+async def get_brawlstars_linked_account(user_id: str):
+    query = "SELECT brawlstarsTag FROM brawlstarsLinkedAccounts WHERE userId = %s"
+    params = (user_id,)
+    return await execute_query(pool, query, params)
+
+
+async def add_brawlstars_linked_account(user_id: str, brawlstars_tag: str):
+    query = (
+        "INSERT INTO brawlstarsLinkedAccounts (userId, brawlstarsTag) VALUES (%s, %s)"
+    )
+    params = (user_id, brawlstars_tag)
+    await execute_action(pool, query, params)
+
+
+async def remove_brawlstars_linked_account(user_id: str):
+    query = "DELETE FROM brawlstarsLinkedAccounts WHERE userId = %s"
+    params = (user_id,)
+    await execute_action(pool, query, params)
