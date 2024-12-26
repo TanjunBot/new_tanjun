@@ -220,10 +220,15 @@ class administrationCog(commands.Cog):
         )
         await asyncio.sleep(2)
         await message.edit(
-            embed=tanjunEmbed(
-                title="test2", description="test2. I have edited this!"
-            )
+            embed=tanjunEmbed(title="test2", description="test2. I have edited this!")
         )
+
+    @commands.command()
+    async def setguildlocale(self, ctx, locale: str):
+        if ctx.author.id not in config.adminIds:
+            return
+        await ctx.guild.edit(preferred_locale=locale)
+        await ctx.send(f"The guild locale has been set to {locale}")
 
 
 async def setup(bot):

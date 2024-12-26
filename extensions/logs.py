@@ -3082,7 +3082,15 @@ class LogsCog(commands.Cog):
                     )
                 )
 
-        if before.embeds != after.embeds:
+        embedsChanged = False
+        for i in range(len(before.embeds)):
+            if before.embeds[i].to_dict() != after.embeds[i].to_dict():
+                print(before.embeds[i].to_dict())
+                print(after.embeds[i].to_dict())
+                embedsChanged = True
+                break
+
+        if embedsChanged:
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -3111,9 +3119,9 @@ class LogsCog(commands.Cog):
             embeds[str(after.guild.id)] = []
         embeds[str(after.guild.id)].append(embed)
 
-        if before.embeds != after.embeds:
-            for i, emb in enumerate(before.embeds):
-                beforeEmbed = emb
+        if embedsChanged:
+            for i in range(len(before.embeds)):
+                beforeEmbed = before.embeds[i]
                 afterEmbed = after.embeds[i]
                 if beforeEmbed.to_dict() != afterEmbed.to_dict():
                     embeds[str(after.guild.id)].append(beforeEmbed)
