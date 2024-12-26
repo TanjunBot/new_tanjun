@@ -6761,7 +6761,7 @@
     },
     {
         "identifier": "commands.utility.claimboosterrole.invalid_color.description",
-        "source_string": "Die Farbe muss ein gültiges Hex-Farbcode sein.\nSolltest du nicht wissen, was eine Hex-Farbe ist, klicke [hier](https://www.google.com/search?q=hex+farbe).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
+        "source_string": "Die Farbe muss ein gültiger Hex-Farbcode sein.\nSolltest du nicht wissen, was ein Hex-Farbcode ist, klicke [hier](https://www.google.com/search?q=hex+farbcode).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
         "translation": "The color must be a valid hex color code.\nIf you do not know what a hex color is, click [here](https://www.google.com/search?q=hex+color).\nYou can enter hex colors like this: `#ffffffff`. You can find them using an online color picker.",
         "context": "commands -> utility -> claimboosterrole -> invalid_color -> description",
         "labels": "de.json",
@@ -7449,8 +7449,8 @@
     },
     {
         "identifier": "commands.utility.schedulemessage.referenceMessage",
-        "source_string": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zugewiesen, wenn die geplante Nachricht gesendet wird. Sollte diese Nachricht bearbeitet werden, werden in Zukunft geplante Nachrichten auch so bearbeitet gesendet. Sollte diese Nachricht gelöscht werden, wird die geplante Nachricht nicht mehr gesendet.",
-        "translation": "This message is used as a reference. It is assigned when the scheduled message is sent. If this message is edited, scheduled messages will also be sent as edited in future. If this message is deleted, the scheduled message will no longer be sent.",
+        "source_string": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zurückgegriffen, wenn die geplante Nachricht gesendet wird. Wenn diese Nachricht bearbeitet wird, werden zukünftige geplante Nachrichten der bearbeiteten Version entsprechen. Wenn diese Nachricht gelöscht wird, wird die geplante Nachricht nicht mehr gesendet.",
+        "translation": "This message is used as a reference when the scheduled message is sent. If this message is edited, future scheduled messages will correspond to the edited version. If this message is deleted, scheduled messages will no longer be sent.",
         "context": "commands -> utility -> schedulemessage -> referenceMessage",
         "labels": "de.json",
         "max_length": null
@@ -7617,8 +7617,8 @@
     },
     {
         "identifier": "commands.utility.reports.new_report.description",
-        "source_string": "${reporter} hat ${user} reportet.\nGrund: ${reason}",
-        "translation": "${reporter} has reported ${user} .\nReason: ${reason}",
+        "source_string": "${reporter} hat ${user} gemeldet.\nGrund: ${reason}",
+        "translation": "${reporter} has reported ${user}.\nReason: ${reason}",
         "context": "commands -> utility -> reports -> new_report -> description",
         "labels": "de.json",
         "max_length": null
@@ -7786,7 +7786,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.Kaboom Canyon",
         "source_string": "Kabumm-Canyon",
-        "translation": "Kabumm Canyon",
+        "translation": "Kaboom Canyon",
         "context": "commands -> utility -> brawlstars -> maps -> Kaboom Canyon",
         "labels": "de.json",
         "max_length": null
@@ -7826,7 +7826,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.\"Gg 2.0\"",
         "source_string": "G. G. 2.0",
-        "translation": "G. G. 2.0",
+        "translation": "GG 2.0",
         "context": "commands -> utility -> brawlstars -> maps -> Gg 2.0",
         "labels": "de.json",
         "max_length": null
@@ -7978,7 +7978,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.Skull Creek",
         "source_string": "Schadelufer",
-        "translation": "Schadelufer",
+        "translation": "Skull Creek",
         "context": "commands -> utility -> brawlstars -> maps -> Skull Creek",
         "labels": "de.json",
         "max_length": null
@@ -8002,7 +8002,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.Acid Lakes",
         "source_string": "Sureseen",
-        "translation": "Sureseen",
+        "translation": "Acid Lakes",
         "context": "commands -> utility -> brawlstars -> maps -> Acid Lakes",
         "labels": "de.json",
         "max_length": null
@@ -8162,7 +8162,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.Flarning Phoenix",
         "source_string": "Brennender Phonix",
-        "translation": "Burning Phonix",
+        "translation": "Flaring Phoenix",
         "context": "commands -> utility -> brawlstars -> maps -> Flarning Phoenix",
         "labels": "de.json",
         "max_length": null
@@ -8450,7 +8450,7 @@
     {
         "identifier": "commands.utility.brawlstars.gameModes.hotZone",
         "source_string": "Hotzone",
-        "translation": "Hotzone",
+        "translation": "Hot Zone",
         "context": "commands -> utility -> brawlstars -> gameModes -> hotZone",
         "labels": "de.json",
         "max_length": null
@@ -9234,7 +9234,7 @@
     {
         "identifier": "commands.utility.twitch.addTwitchLiveNotification.success.description",
         "source_string": "Die Twitch Live Benachrichtigung wurde erfolgreich hinzugefügt. Wenn ${twitch_name} online ist, werde ich in ${channel} eine Nachricht schreiben.",
-        "translation": "The Twitch Live notification has been successfully added. When ${twitch_name} is online, I will post a message to ${channel} .",
+        "translation": "The Twitch Live notification has been successfully added. When ${twitch_name} is online, I will write a message in ${channel}.",
         "context": "commands -> utility -> twitch -> addTwitchLiveNotification -> success -> description",
         "labels": "de.json",
         "max_length": null
