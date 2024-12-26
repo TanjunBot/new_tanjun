@@ -461,8 +461,8 @@ class TriggerMessagesCommands(discord.app_commands.Group):
     )
     @app_commands.choices(
         casesensitive=[
-            app_commands.Choice(name="Case Sensitive", value="t"),
-            app_commands.Choice(name="Case Insensitive", value="f"),
+            app_commands.Choice(name=app_commands.locale_str("admin_tm_add_params_casesensitive_true"), value="t"),
+            app_commands.Choice(name=app_commands.locale_str("admin_tm_add_params_casesensitive_false"), value="f"),
         ]
     )
     async def add(
@@ -1612,20 +1612,20 @@ class adminCog(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         admincmds = administrationCommands(
-            name="admin", description="Administrate the Server"
+            name=app_commands.locale_str("admin_name"), description=app_commands.locale_str("admin_description")
         )
-        warncmds = WarnCommands(name="warn", description="Manage Warns")
+        warncmds = WarnCommands(name=app_commands.locale_str("admin_warn_name"), description=app_commands.locale_str("admin_warn_description"))
         admincmds.add_command(warncmds)
-        rolecmds = RoleCommands(name="role", description="Manage Roles")
+        rolecmds = RoleCommands(name=app_commands.locale_str("admin_role_name"), description=app_commands.locale_str("admin_role_description"))
         admincmds.add_command(rolecmds)
-        reportcmds = ReportCommands(name="report", description="Manage Reports")
+        reportcmds = ReportCommands(name=app_commands.locale_str("admin_report_name"), description=app_commands.locale_str("admin_report_description"))
         admincmds.add_command(reportcmds)
         trigger_messages_cmds = TriggerMessagesCommands(
-            name="triggermessages", description="Manage Trigger Messages"
+            name=app_commands.locale_str("admin_triggermessages_name"), description=app_commands.locale_str("admin_triggermessages_description")
         )
         admincmds.add_command(trigger_messages_cmds)
         join_to_create_cmds = JoinToCreateCommands(
-            name="jointocreate", description="Manage Join-to-Create Channels"
+            name=app_commands.locale_str("admin_jointocreate_name"), description=app_commands.locale_str("admin_jointocreate_description")
         )
         admincmds.add_command(join_to_create_cmds)
         self.bot.tree.add_command(admincmds)

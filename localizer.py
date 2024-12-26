@@ -31,7 +31,7 @@ class Localizer:
                 for translation in translations
                 if translation["identifier"] == key
             ),
-            "No translation found.",
+            None,
         )
 
         return translation
@@ -40,7 +40,8 @@ class Localizer:
         """Retrieve the localized text for the specified locale and format it with any arguments provided."""
         translations = self.load_translations(locale)
         translation = self.get_translation(translations, key)
-        if translation == "err: no translation found.":
+        if translation is None:
+            print(f"No translation found for key '{key}'.")
             missingLocalization(locale)
             return "err: no translation found."
 

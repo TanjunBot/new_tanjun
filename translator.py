@@ -4,6 +4,7 @@ from __future__ import annotations
 import discord
 from discord import app_commands
 import json
+from localizer import tanjunLocalizer
 
 
 class TanjunTranslator(app_commands.Translator):
@@ -12,7 +13,7 @@ class TanjunTranslator(app_commands.Translator):
         self.load_translations()
 
     def load_translations(self):
-        with open('locales/de.json', 'r', encoding='utf-8') as f:
+        with open("locales/de.json", "r", encoding="utf-8") as f:
             self.translations = json.load(f)
 
     async def translate(
@@ -21,35 +22,30 @@ class TanjunTranslator(app_commands.Translator):
         locale: discord.Locale,
         context: app_commands.TranslationContext,
     ) -> str | None:
-        if locale.value not in ['de', 'de-DE']:
+        if locale.value not in ["de", "de-DE"]:
             return None
 
-        path = string.message.split('_')
-
-        current = self.translations
-        for part in path:
-            if part in current:
-                current = current[part]
-            else:
-                if str(string) in current:
-                    return current[str(string)]
-                else:
-                    print("Missing translation for string: " + string.message, ". Please fix ASAP!\nskipping this for now :)")
-                    # text = input("Should I open a Issue on GitHub? (y/n): ")
-                    # if text.lower() == 'y':
-                    # missingLocalization(string)
-                    return None
+        current = tanjunLocalizer.localize(locale, str(string))
 
         if isinstance(current, str):
             return current
         elif isinstance(current, dict):
             if context.location == app_commands.TranslationContextLocation.command_name:
-                return current.get('name')
-            elif context.location == app_commands.TranslationContextLocation.command_description:
-                return current.get('description')
-            elif context.location == app_commands.TranslationContextLocation.parameter_name:
-                return current.get('name')
-            elif context.location == app_commands.TranslationContextLocation.parameter_description:
-                return current.get('description')
+                return current.get("name")
+            elif (
+                context.location
+                == app_commands.TranslationContextLocation.command_description
+            ):
+                return current.get("description")
+            elif (
+                context.location
+                == app_commands.TranslationContextLocation.parameter_name
+            ):
+                return current.get("name")
+            elif (
+                context.location
+                == app_commands.TranslationContextLocation.parameter_description
+            ):
+                return current.get("description")
 
         return None

@@ -864,7 +864,7 @@ class levelCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        levelCmds = levelCommands(name="levelcommands", description="Level Commands")
+        levelCmds = levelCommands(name=app_commands.locale_str("levelcommands_name"), description=app_commands.locale_str("levelcommands_description"))
         levelConfigCmds = LevelConfigCommands(
             name=app_commands.locale_str("level_config_name"),
             description=app_commands.locale_str("level_config_description"),

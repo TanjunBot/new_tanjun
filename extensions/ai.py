@@ -34,9 +34,9 @@ class CustomSituationCommands(discord.app_commands.Group):
         name=app_commands.locale_str("ai_createcustom_params_name_description"),
         personality=app_commands.locale_str("ai_createcustom_params_personality_description"),
         temperature=app_commands.locale_str("ai_createcustom_params_temperature_description"),
-        top_p=app_commands.locale_str("ai_createcustom_params_top_p_description"),
-        frequency_penalty=app_commands.locale_str("ai_createcustom_params_frequency_penalty_description"),
-        presence_penalty=app_commands.locale_str("ai_createcustom_params_presence_penalty_description"),
+        topp=app_commands.locale_str("ai_createcustom_params_topp_description"),
+        frequencypenalty=app_commands.locale_str("ai_createcustom_params_frequencypenalty_description"),
+        presencepenalty=app_commands.locale_str("ai_createcustom_params_presencepenalty_description"),
     )
     async def add_custom(
         self,
@@ -44,9 +44,9 @@ class CustomSituationCommands(discord.app_commands.Group):
         name: app_commands.Range[str, 3, 15],
         personality: app_commands.Range[str, 10, 4000],
         temperature: app_commands.Range[float, 0, 2] = 1,
-        top_p: app_commands.Range[float, 0, 1] = 1,
-        frequency_penalty: app_commands.Range[float, 0, 2] = 0,
-        presence_penalty: app_commands.Range[float, 0, 2] = 0,
+        topp: app_commands.Range[float, 0, 1] = 1,
+        frequencypenalty: app_commands.Range[float, 0, 2] = 0,
+        presencepenalty: app_commands.Range[float, 0, 2] = 0,
     ):
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -67,9 +67,9 @@ class CustomSituationCommands(discord.app_commands.Group):
             name=name,
             situation=personality,
             temperature=temperature,
-            top_p=top_p,
-            frequency_penalty=frequency_penalty,
-            presence_penalty=presence_penalty,
+            top_p=topp,
+            frequency_penalty=frequencypenalty,
+            presence_penalty=presencepenalty,
         )
 
     @app_commands.command(
@@ -134,18 +134,18 @@ class AiCommands(discord.app_commands.Group):
     @app_commands.describe(
         prompt=app_commands.locale_str("ai_askgpt_params_prompt_description"),
         temperature=app_commands.locale_str("ai_askgpt_params_temperature_description"),
-        top_p=app_commands.locale_str("ai_askgpt_params_top_p_description"),
-        frequency_penalty=app_commands.locale_str("ai_askgpt_params_frequency_penalty_description"),
-        presence_penalty=app_commands.locale_str("ai_askgpt_params_presence_penalty_description"),
+        topp=app_commands.locale_str("ai_askgpt_params_topp_description"),
+        frequencypenalty=app_commands.locale_str("ai_askgpt_params_frequencypenalty_description"),
+        presencepenalty=app_commands.locale_str("ai_askgpt_params_presencepenalty_description"),
     )
     async def ask_gpt_command(
             self,
             interaction: discord.Interaction,
             prompt: app_commands.Range[str, 1, 1000],
             temperature: app_commands.Range[float, 0, 2] = 1,
-            top_p: app_commands.Range[float, 0, 1] = 1,
-            frequency_penalty: app_commands.Range[float, 0, 2] = 0,
-            presence_penalty: app_commands.Range[float, 0, 2] = 0,
+            topp: app_commands.Range[float, 0, 1] = 1,
+            frequencypenalty: app_commands.Range[float, 0, 2] = 0,
+            presencepenalty: app_commands.Range[float, 0, 2] = 0,
             ):
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
@@ -160,7 +160,7 @@ class AiCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await ask_gpt(commandInfo, name="GPT", situation="", prompt=prompt, temperature=temperature, top_p=top_p, frequency_penalty=frequency_penalty, presence_penalty=presence_penalty)
+        await ask_gpt(commandInfo, name="GPT", situation="", prompt=prompt, temperature=temperature, top_p=topp, frequency_penalty=frequencypenalty, presence_penalty=presencepenalty)
 
     @app_commands.command(
         name=app_commands.locale_str("ai_asktanjuwun_name"),
@@ -169,18 +169,18 @@ class AiCommands(discord.app_commands.Group):
     @app_commands.describe(
         prompt=app_commands.locale_str("ai_asktanjuwun_params_prompt_description"),
         temperature=app_commands.locale_str("ai_asktanjuwun_params_temperature_description"),
-        top_p=app_commands.locale_str("ai_asktanjuwun_params_top_p_description"),
-        frequency_penalty=app_commands.locale_str("ai_asktanjuwun_params_frequency_penalty_description"),
-        presence_penalty=app_commands.locale_str("ai_asktanjuwun_params_presence_penalty_description"),
+        topp=app_commands.locale_str("ai_asktanjuwun_params_topp_description"),
+        frequencypenalty=app_commands.locale_str("ai_asktanjuwun_params_frequencypenalty_description"),
+        presencepenalty=app_commands.locale_str("ai_asktanjuwun_params_presencepenalty_description"),
     )
     async def ask_tanjuwun_command(
             self,
             interaction: discord.Interaction,
             prompt: app_commands.Range[str, 1, 1000],
             temperature: app_commands.Range[float, 0, 2] = 1,
-            top_p: app_commands.Range[float, 0, 1] = 1,
-            frequency_penalty: app_commands.Range[float, 0, 2] = 0,
-            presence_penalty: app_commands.Range[float, 0, 2] = 0,
+            topp: app_commands.Range[float, 0, 1] = 1,
+            frequencypenalty: app_commands.Range[float, 0, 2] = 0,
+            presencepenalty: app_commands.Range[float, 0, 2] = 0,
             ):
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
@@ -202,7 +202,7 @@ class AiCommands(discord.app_commands.Group):
         name: {interaction.user} server: {interaction.guild} channel: {interaction.channel}
         """
 
-        await ask_gpt(commandInfo, name="tanjuwun", situation=situation, prompt=prompt, temperature=temperature, top_p=top_p, frequency_penalty=frequency_penalty, presence_penalty=presence_penalty)
+        await ask_gpt(commandInfo, name="tanjuwun", situation=situation, prompt=prompt, temperature=temperature, top_p=topp, frequency_penalty=frequencypenalty, presence_penalty=presencepenalty)
 
 
 class AiCog(commands.Cog):
