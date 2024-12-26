@@ -1341,7 +1341,7 @@ def addThousandsSeparator(number: int) -> str:
 
 async def run_in_thread(client, func, thread_id: str, *args, **kwargs):
     """
-    Runs a coroutine in a separate thread.
+    Runs a coroutine in a separate thread without blocking.
 
     Args:
         client: The bot client with thread_pool
@@ -1350,24 +1350,23 @@ async def run_in_thread(client, func, thread_id: str, *args, **kwargs):
         *args: Arguments to pass to the function
         **kwargs: Keyword arguments to pass to the function
     """
-    # Submit the function to thread pool
-    future = client.thread_pool.submit(
-        lambda: asyncio.run_coroutine_threadsafe(
-            func(*args, **kwargs), client.loop
-        ).result()
-    )
 
-    # Track the thread
+    def thread_worker():
+        # Create a new event loop for this thread
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            # Run the coroutine in this thread's event loop
+            return loop.run_until_complete(func(*args, **kwargs))
+        finally:
+            loop.close()
+
+    # Submit to thread pool
+    future = client.thread_pool.submit(thread_worker)
     client.active_threads[thread_id] = future
 
-    try:
-        # Clean up thread when done
-        future.add_done_callback(lambda _: client.active_threads.pop(thread_id, None))
-        # Wait for and return the result
-        return await asyncio.wrap_future(future)
-    except Exception as e:
-        print(f"Error in thread {thread_id}: {e}")
-        raise e
+    # Clean up when done
+    future.add_done_callback(lambda _: client.active_threads.pop(thread_id, None))
 
 
 def uuid4():
