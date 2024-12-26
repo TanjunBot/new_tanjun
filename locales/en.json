@@ -4426,7 +4426,7 @@
     {
         "identifier": "commands.logs.configureLogs.configurationEmbed.automodAction",
         "source_string": "Automod-Aktion",
-        "translation": "Automod action",
+        "translation": "AutoMod action",
         "context": "commands -> logs -> configureLogs -> configurationEmbed -> automodAction",
         "labels": "de.json",
         "max_length": null
@@ -5490,7 +5490,7 @@
     {
         "identifier": "commands.math.num2word.locales.kn",
         "source_string": "Kannadadisch",
-        "translation": "Kannadian",
+        "translation": "Cannadic",
         "context": "commands -> math -> num2word -> locales -> kn",
         "labels": "de.json",
         "max_length": 100
@@ -5610,7 +5610,7 @@
     {
         "identifier": "commands.math.num2word.locales.tg",
         "source_string": "Tadschikisch",
-        "translation": "Tajik",
+        "translation": "Tajikistani",
         "context": "commands -> math -> num2word -> locales -> tg",
         "labels": "de.json",
         "max_length": 100
@@ -5666,7 +5666,7 @@
     {
         "identifier": "commands.math.randomnumber.success.description",
         "source_string": "${amount} Zufallszahl(en) zwischen ${min} und ${max} generiert:\n${numbers}",
-        "translation": "${amount} Random number(s) generated between ${min} and ${max} :\n${numbers}",
+        "translation": "${amount} random number(s) generated between ${min} and ${max}:\n${numbers}",
         "context": "commands -> math -> randomnumber -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -14097,9 +14097,9 @@
     },
     {
         "identifier": "admin.name",
-        "source_string": "Administration",
-        "translation": "Administration",
-        "context": "admin -> name",
+        "source_string": "administration",
+        "translation": "administration",
+        "context": "admin -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16209,9 +16209,9 @@
     },
     {
         "identifier": "math.name",
-        "source_string": "Mathe",
-        "translation": "Math",
-        "context": "math -> name",
+        "source_string": "mathe",
+        "translation": "mathe",
+        "context": "math -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16513,9 +16513,9 @@
     },
     {
         "identifier": "utility.help.name",
-        "source_string": "Hilfe",
-        "translation": "Help",
-        "context": "utility -> help -> name",
+        "source_string": "hilfe",
+        "translation": "help",
+        "context": "utility -> help -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },

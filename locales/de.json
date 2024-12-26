@@ -14097,9 +14097,9 @@
     },
     {
         "identifier": "admin.name",
-        "source_string": "Administration",
-        "translation": "Administration",
-        "context": "admin -> name",
+        "source_string": "administration",
+        "translation": "administration",
+        "context": "admin -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16209,9 +16209,9 @@
     },
     {
         "identifier": "math.name",
-        "source_string": "Mathe",
-        "translation": "Mathe",
-        "context": "math -> name",
+        "source_string": "mathe",
+        "translation": "mathe",
+        "context": "math -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16513,9 +16513,9 @@
     },
     {
         "identifier": "utility.help.name",
-        "source_string": "Hilfe",
-        "translation": "Hilfe",
-        "context": "utility -> help -> name",
+        "source_string": "hilfe",
+        "translation": "hilfe",
+        "context": "utility -> help -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
