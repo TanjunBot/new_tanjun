@@ -5,6 +5,7 @@ from discord.ext import commands
 from discord import app_commands
 import utility
 from localizer import tanjunLocalizer
+from utility import run_in_thread, uuid4
 
 from commands.utility.messagetrackingoptout import optOut as optOutCommand
 from commands.utility.messagetrackingoptin import optIn as optInCommand
@@ -388,7 +389,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await battlelogCommand(commandInfo=commandInfo, playerTag=tag)
+        thread_id = str(uuid4())
+        await run_in_thread(
+            ctx.client,
+            battlelogCommand,
+            thread_id=thread_id,
+            commandInfo=commandInfo,
+            playerTag=tag,
+        )
         return
 
     @app_commands.command(
@@ -412,7 +420,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await brawlstarsPlayerInfoCommand(commandInfo=commandInfo, playerTag=tag)
+        thread_id = str(uuid4())
+        await run_in_thread(
+            ctx.client,
+            brawlstarsPlayerInfoCommand,
+            thread_id=thread_id,
+            commandInfo=commandInfo,
+            playerTag=tag,
+        )
         return
 
     @app_commands.command(
@@ -436,7 +451,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await brawlstarsBrawlersCommand(commandInfo=commandInfo, playerTag=tag)
+        thread_id = str(uuid4())
+        await run_in_thread(
+            ctx.client,
+            brawlstarsBrawlersCommand,
+            thread_id=thread_id,
+            commandInfo=commandInfo,
+            playerTag=tag,
+        )
         return
 
     @app_commands.command(
@@ -460,7 +482,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await brawlstarsClubCommand(commandInfo=commandInfo, clubTag=tag)
+        thread_id = str(uuid4())
+        await run_in_thread(
+            ctx.client,
+            brawlstarsClubCommand,
+            thread_id=thread_id,
+            commandInfo=commandInfo,
+            clubTag=tag,
+        )
         return
 
     @app_commands.command(
@@ -481,7 +510,13 @@ class BrawlStarsCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await brawlstarsEventsCommand(commandInfo=commandInfo)
+        thread_id = str(uuid4())
+        await run_in_thread(
+            ctx.client,
+            brawlstarsEventsCommand,
+            thread_id=thread_id,
+            commandInfo=commandInfo,
+        )
         return
 
     @app_commands.command(
@@ -505,7 +540,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await brawlstarsLinkCommand(commandInfo=commandInfo, playerTag=tag)
+        thread_id = str(uuid4())
+        await run_in_thread(
+            ctx.client,
+            brawlstarsLinkCommand,
+            thread_id=thread_id,
+            commandInfo=commandInfo,
+            playerTag=tag,
+        )
         return
 
     @app_commands.command(
@@ -525,7 +567,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
-        await brawlstarsUnlinkCommand(commandInfo=commandInfo)
+
+        thread_id = str(uuid4())
+        await run_in_thread(
+            ctx.client,
+            brawlstarsUnlinkCommand,
+            thread_id=thread_id,
+            commandInfo=commandInfo,
+        )
         return
 
 
@@ -535,9 +584,15 @@ class TwitchCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_twitch_add_description"),
     )
     @app_commands.describe(
-        twitchname=app_commands.locale_str("utility_twitch_add_params_twitchname_description"),
-        channel=app_commands.locale_str("utility_twitch_add_params_channel_description"),
-        notificationmessage=app_commands.locale_str("utility_twitch_add_params_notificationmessage_description"),
+        twitchname=app_commands.locale_str(
+            "utility_twitch_add_params_twitchname_description"
+        ),
+        channel=app_commands.locale_str(
+            "utility_twitch_add_params_channel_description"
+        ),
+        notificationmessage=app_commands.locale_str(
+            "utility_twitch_add_params_notificationmessage_description"
+        ),
     )
     async def add(
         self,
