@@ -90,21 +90,21 @@ class LoopCog(commands.Cog):
         try:
             await sendLogEmbeds(self.bot)
         except Exception:
-            raise
+            pass
 
     @tasks.loop(seconds=10)
     async def removeExpiredClaimedBoosterRoles(self):
         try:
             await remove_claimed_booster_roles_that_are_expired(self.bot)
         except Exception:
-            raise
+            pass
 
     @tasks.loop(seconds=10)
     async def removeExpiredClaimedBoosterChannels(self):
         try:
             await remove_claimed_booster_channels_that_are_expired(self.bot)
         except Exception:
-            raise
+            pass
 
     @tasks.loop(seconds=10)
     async def sendScheduledMessages(self):
