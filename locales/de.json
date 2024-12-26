@@ -29734,5 +29734,125 @@
         "context": "The notificationmessage param in the twitch add command",
         "labels": "command_description, unassigned",
         "max_length": 100
+    },
+    {
+        "identifier": "admin.copyrole.params.copymembers.true",
+        "source_string": "Mitglieder Kopieren",
+        "translation": "Mitglieder Kopieren",
+        "context": "The copyMembers true choice from the copyrole command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.copyrole.params.copymembers.false",
+        "source_string": "Mitglieder nicht kopieren",
+        "translation": "Mitglieder nicht kopieren",
+        "context": "The copymembers false prop in the copyrole command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "topp",
+        "source_string": "höchstes_p",
+        "translation": "höchstes_p",
+        "context": "The topp param from some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "frequencypenalty",
+        "source_string": "wiederholungs_bestrafung",
+        "translation": "wiederholungs_bestrafung",
+        "context": "The frequency_penalty used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "ai.askgpt.params.frequencypenalty.description",
+        "source_string": "Wie sehr Wiederholungen bestraft werden sollen",
+        "translation": "Wie sehr Wiederholungen bestraft werden sollen",
+        "context": "The description of the frequency_penalty from the askgpt command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "presencepenalty",
+        "source_string": "presence_penalty",
+        "translation": "presence_penalty",
+        "context": "The presencepenalty param used in some commands.  Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "ai.createcustom.params.topp.description",
+        "source_string": "Das höchste P der Nutzerdefinierten Ki",
+        "translation": "Das höchste P der Nutzerdefinierten Ki",
+        "context": "The description of the topp param from the createcustom command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "ai.createcustom.params.frequencypenalty.description",
+        "source_string": "Die Wiederholungsbestrafung für deine KI Persönlichkeit",
+        "translation": "Die Wiederholungsbestrafung für deine KI Persönlichkeit",
+        "context": "The description for the frequencypanelty for the createcustom command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "ai.createcustom.params.presencepenalty.description",
+        "source_string": "Die Tokenwiederholungs-bestrafung für deine KI Persönlichkeit",
+        "translation": "Die Tokenwiederholungs-bestrafung für deine KI Persönlichkeit",
+        "context": "The description for the presencepenalty param in the createcustom command.",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "channel-commands",
+        "source_string": "kanal-befehle",
+        "translation": "kanal-befehle",
+        "context": "The channel-commands param used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "hangman.name",
+        "source_string": "galgenmännchen",
+        "translation": "galgenmännchen",
+        "context": "The name for the hangman command.  Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "hangman.description",
+        "source_string": "Spiele Hangman",
+        "translation": "Spiele Hangman",
+        "context": "The description for the hangman command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "height",
+        "source_string": "höhe",
+        "translation": "höhe",
+        "context": "The height param used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "image.rescale.params.factor.description",
+        "source_string": "Um welchen Faktor das Bild skaliert werden soll",
+        "translation": "Um welchen Faktor das Bild skaliert werden soll",
+        "context": "The description for the factor param in the image rescale command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.deleteboosterch.name",
+        "source_string": "boosterkanal_loeschen",
+        "translation": "boosterkanal_loeschen",
+        "context": "The name from the deleteboosterchannel command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
     }
 ]
