@@ -51,8 +51,6 @@ from config import ImgBBApiKey
 import gzip
 from typing_extensions import Self
 from difflib import SequenceMatcher
-import asyncio
-import uuid
 
 
 class EmbedProxy:
@@ -1337,37 +1335,3 @@ def similar(a, b):
 
 def addThousandsSeparator(number: int) -> str:
     return "{:,}".format(number).replace(",", " ")
-
-
-async def run_in_thread(client, func, thread_id: str, *args, **kwargs):
-    """
-    Runs a coroutine in a separate thread without blocking.
-
-    Args:
-        client: The bot client with thread_pool
-        func: The coroutine function to run
-        thread_id: Unique identifier for this thread
-        *args: Arguments to pass to the function
-        **kwargs: Keyword arguments to pass to the function
-    """
-
-    def thread_worker():
-        # Create a new event loop for this thread
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            # Run the coroutine in this thread's event loop
-            return loop.run_until_complete(func(*args, **kwargs))
-        finally:
-            loop.close()
-
-    # Submit to thread pool
-    future = client.thread_pool.submit(thread_worker)
-    client.active_threads[thread_id] = future
-
-    # Clean up when done
-    future.add_done_callback(lambda _: client.active_threads.pop(thread_id, None))
-
-
-def uuid4():
-    return str(uuid.uuid4())
