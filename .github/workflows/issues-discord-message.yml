@@ -1,3 +1,4 @@
+name: Issue closed - Notify Discord
 on:
   issues:
     types: [closed]
