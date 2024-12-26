@@ -91,9 +91,9 @@
         "identifier": "commands.admin.addrole.alreadyHasRole.title",
         "source_string": "Rolle bereits vergeben",
         "translation": "Rolle bereits vergeben",
-        "context": "commands -> admin -> addrole -> alreadyHasRole -> title",
-        "labels": "de.json",
-        "max_length": null
+        "context": "When the user already has the desired Role",
+        "labels": "de.json, embed_description",
+        "max_length": 4096
     },
     {
         "identifier": "commands.admin.addrole.alreadyHasRole.description",
