@@ -2,7 +2,7 @@
     {
         "identifier": "commands.help.select.placeholder",
         "source_string": "Befehls-Kategorie",
-        "translation": "Befehls-Kategorie",
+        "translation": "Command category",
         "context": "commands -> help -> select -> placeholder",
         "labels": "de.json",
         "max_length": 100
@@ -10,7 +10,7 @@
     {
         "identifier": "commands.help.select.title",
         "source_string": "Hilfe",
-        "translation": "Hilfe",
+        "translation": "Help",
         "context": "commands -> help -> select -> title",
         "labels": "de.json",
         "max_length": null
@@ -16522,7 +16522,7 @@
     {
         "identifier": "utility.help.name",
         "source_string": "hilfe",
-        "translation": "hilfe",
+        "translation": "help",
         "context": "utility -> help -> name",
         "labels": "command_name, de.json",
         "max_length": 32
@@ -28682,7 +28682,7 @@
     {
         "identifier": "help",
         "source_string": "hilfe",
-        "translation": "hilfe",
+        "translation": "help",
         "context": " -> help",
         "labels": "de.json",
         "max_length": 32
