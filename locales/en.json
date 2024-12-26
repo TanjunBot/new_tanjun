@@ -29902,5 +29902,13 @@
         "context": "A unknown gamemode",
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "commands.level.defaultLevelUpMessage",
+        "source_string": "Herzlichen Glückwunsch, {user}! Du bist jetzt Level {level}!",
+        "translation": "Congratulations, {user}! You are now level {level}!",
+        "context": "The default level up message",
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
