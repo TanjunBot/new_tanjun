@@ -535,9 +535,15 @@ class TwitchCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_twitch_add_description"),
     )
     @app_commands.describe(
-        twitchname=app_commands.locale_str("utility_twitch_add_params_twitchname_description"),
-        channel=app_commands.locale_str("utility_twitch_add_params_channel_description"),
-        notificationmessage=app_commands.locale_str("utility_twitch_add_params_notificationmessage_description"),
+        twitchname=app_commands.locale_str(
+            "utility_twitch_add_params_twitchname_description"
+        ),
+        channel=app_commands.locale_str(
+            "utility_twitch_add_params_channel_description"
+        ),
+        notificationmessage=app_commands.locale_str(
+            "utility_twitch_add_params_notificationmessage_description"
+        ),
     )
     async def add(
         self,
