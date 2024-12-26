@@ -6330,7 +6330,7 @@
     {
         "identifier": "commands.utility.messagetrackingoptout.success.description",
         "source_string": "Nachrichtenverfolgung wurde deaktiviert.\nDer Bot wird deine Nachrichten nicht mehr lesen. **Das heißt auch, dass einige Funktionen des Bots nicht mehr funktionieren.**",
-        "translation": "Message tracking has been deactivated.\nThe bot will no longer read your messages. **This also means that some functions of the bot will no longer work.",
+        "translation": "Message tracking has been deactivated.\nThe bot will no longer read your messages. **This also means that some functions of the bot will no longer work.**",
         "context": "commands -> utility -> messagetrackingoptout -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -6394,7 +6394,7 @@
     {
         "identifier": "commands.utility.autopublish.error.no_permission.description",
         "source_string": "Du benötigst die Berechtigung 'Nachrichten verwalten', um den Autopublish-Modus zu aktivieren.",
-        "translation": "You need the 'Manage messages' authorization to activate the autopublish mode.",
+        "translation": "You need the 'Manage messages' permission to activate the autopublish mode.",
         "context": "commands -> utility -> autopublish -> error -> no_permission -> description",
         "labels": "de.json",
         "max_length": null
@@ -6409,8 +6409,8 @@
     },
     {
         "identifier": "commands.utility.autopublish.error.not_news_channel.description",
-        "source_string": "Der Autopublish-Modus kann nur in einem Nachrichtenkanal aktiviert werden.",
-        "translation": "Autopublish mode can only be activated in one news channel.",
+        "source_string": "Der Autopublish-Modus kann nur in einem Ankündigungskanal aktiviert werden.",
+        "translation": "Autopublish mode can only be activated in an announcement channel.",
         "context": "commands -> utility -> autopublish -> error -> not_news_channel -> description",
         "labels": "de.json",
         "max_length": null
@@ -6617,8 +6617,8 @@
     },
     {
         "identifier": "commands.utility.avatarDecoration.description",
-        "source_string": "-# Aktuell ist es aufgrund der DiscordAPI nicht möglich die Server-Avatar Dekoration zu erhalten. Genauso wie die Banner Dekoration.",
-        "translation": "-# Currently it is not possible to get the server avatar decoration due to the DiscordAPI. Just like the banner decoration.",
+        "source_string": "-# Aktuell ist es aufgrund der Discord-API nicht möglich, die Serveravatar-Dekoration zu erhalten. Dasselbe gilt für die Bannerdekoration.",
+        "translation": "-# Currently it is not possible to get the server avatar decoration due to the Discord API. The same applies to the banner decoration.",
         "context": "commands -> utility -> avatarDecoration -> description",
         "labels": "de.json",
         "max_length": null
@@ -6713,8 +6713,8 @@
     },
     {
         "identifier": "commands.utility.afk.mentions.description",
-        "source_string": "Die folgenden Nutzer sind momentan AFk und werden von mir mit benachrichtigt, sobald sie zurück sind:\n",
-        "translation": "The following users are currently AFk and will be notified by me as soon as they are back:\n",
+        "source_string": "Die folgenden Nutzer sind momentan AFK und werden von mir benachrichtigt, sobald sie zurück sind:\n",
+        "translation": "The following users are currently AFK and will be notified by me as soon as they are back:\n",
         "context": "commands -> utility -> afk -> mentions -> description",
         "labels": "de.json",
         "max_length": null
@@ -6761,7 +6761,7 @@
     },
     {
         "identifier": "commands.utility.claimboosterrole.invalid_color.description",
-        "source_string": "Die Farbe muss ein gültiges Hex-Farbcode sein.\nSolltest du nicht wissen, was eine Hex-Farbe ist, klicke [hier](https://www.google.com/search?q=hex+farbe).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
+        "source_string": "Die Farbe muss ein gültiger Hex-Farbcode sein.\nSolltest du nicht wissen, was ein Hex-Farbcode ist, klicke [hier](https://www.google.com/search?q=hex+farbcode).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
         "translation": "The color must be a valid hex color code.\nIf you do not know what a hex color is, click [here](https://www.google.com/search?q=hex+color).\nYou can enter hex colors like this: `#ffffffff`. You can find them using an online color picker.",
         "context": "commands -> utility -> claimboosterrole -> invalid_color -> description",
         "labels": "de.json",
@@ -7449,8 +7449,8 @@
     },
     {
         "identifier": "commands.utility.schedulemessage.referenceMessage",
-        "source_string": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zugewiesen, wenn die geplante Nachricht gesendet wird. Sollte diese Nachricht bearbeitet werden, werden in Zukunft geplante Nachrichten auch so bearbeitet gesendet. Sollte diese Nachricht gelöscht werden, wird die geplante Nachricht nicht mehr gesendet.",
-        "translation": "This message is used as a reference. It is assigned when the scheduled message is sent. If this message is edited, scheduled messages will also be sent as edited in future. If this message is deleted, the scheduled message will no longer be sent.",
+        "source_string": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zurückgegriffen, wenn die geplante Nachricht gesendet wird. Wenn diese Nachricht bearbeitet wird, werden zukünftige geplante Nachrichten der bearbeiteten Version entsprechen. Wenn diese Nachricht gelöscht wird, wird die geplante Nachricht nicht mehr gesendet.",
+        "translation": "This message is used as a reference when the scheduled message is sent. If this message is edited, future scheduled messages will correspond to the edited version. If this message is deleted, scheduled messages will no longer be sent.",
         "context": "commands -> utility -> schedulemessage -> referenceMessage",
         "labels": "de.json",
         "max_length": null
@@ -7617,8 +7617,8 @@
     },
     {
         "identifier": "commands.utility.reports.new_report.description",
-        "source_string": "${reporter} hat ${user} reportet.\nGrund: ${reason}",
-        "translation": "${reporter} has reported ${user} .\nReason: ${reason}",
+        "source_string": "${reporter} hat ${user} gemeldet.\nGrund: ${reason}",
+        "translation": "${reporter} has reported ${user}.\nReason: ${reason}",
         "context": "commands -> utility -> reports -> new_report -> description",
         "labels": "de.json",
         "max_length": null
@@ -7786,7 +7786,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.Kaboom Canyon",
         "source_string": "Kabumm-Canyon",
-        "translation": "Kabumm Canyon",
+        "translation": "Kaboom Canyon",
         "context": "commands -> utility -> brawlstars -> maps -> Kaboom Canyon",
         "labels": "de.json",
         "max_length": null
@@ -7826,7 +7826,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.\"Gg 2.0\"",
         "source_string": "G. G. 2.0",
-        "translation": "G. G. 2.0",
+        "translation": "GG 2.0",
         "context": "commands -> utility -> brawlstars -> maps -> Gg 2.0",
         "labels": "de.json",
         "max_length": null
@@ -7978,7 +7978,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.Skull Creek",
         "source_string": "Schadelufer",
-        "translation": "Schadelufer",
+        "translation": "Skull Creek",
         "context": "commands -> utility -> brawlstars -> maps -> Skull Creek",
         "labels": "de.json",
         "max_length": null
@@ -8002,7 +8002,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.Acid Lakes",
         "source_string": "Sureseen",
-        "translation": "Sureseen",
+        "translation": "Acid Lakes",
         "context": "commands -> utility -> brawlstars -> maps -> Acid Lakes",
         "labels": "de.json",
         "max_length": null
@@ -8064,7 +8064,7 @@
         "max_length": null
     },
     {
-        "identifier": "commands.utility.brawlstars.maps.Marksmans Paradise",
+        "identifier": "commands.utility.brawlstars.maps.Marksman's Paradise",
         "source_string": "Schutzenparadies",
         "translation": "Protective paradise",
         "context": "commands -> utility -> brawlstars -> maps -> Marksmans Paradise",
@@ -8162,7 +8162,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.Flarning Phoenix",
         "source_string": "Brennender Phonix",
-        "translation": "Burning Phonix",
+        "translation": "Flaring Phoenix",
         "context": "commands -> utility -> brawlstars -> maps -> Flarning Phoenix",
         "labels": "de.json",
         "max_length": null
@@ -8384,7 +8384,7 @@
         "max_length": null
     },
     {
-        "identifier": "commands.utility.brawlstars.maps.Cool Shapes",
+        "identifier": "commands.utility.brawlstars.maps.Cool shapes",
         "source_string": "Coole Formen",
         "translation": "Cool shapes",
         "context": "commands -> utility -> brawlstars -> maps -> Cool Shapes",
@@ -8450,7 +8450,7 @@
     {
         "identifier": "commands.utility.brawlstars.gameModes.hotZone",
         "source_string": "Hotzone",
-        "translation": "Hotzone",
+        "translation": "Hot Zone",
         "context": "commands -> utility -> brawlstars -> gameModes -> hotZone",
         "labels": "de.json",
         "max_length": null
@@ -9234,7 +9234,7 @@
     {
         "identifier": "commands.utility.twitch.addTwitchLiveNotification.success.description",
         "source_string": "Die Twitch Live Benachrichtigung wurde erfolgreich hinzugefügt. Wenn ${twitch_name} online ist, werde ich in ${channel} eine Nachricht schreiben.",
-        "translation": "The Twitch Live notification has been successfully added. When ${twitch_name} is online, I will post a message to ${channel} .",
+        "translation": "The Twitch Live notification has been successfully added. When ${twitch_name} is online, I will write a message in ${channel}.",
         "context": "commands -> utility -> twitch -> addTwitchLiveNotification -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -29346,7 +29346,7 @@
     {
         "identifier": "minigame.name",
         "source_string": "minispiel",
-        "translation": "minigame",
+        "translation": "Minigame",
         "context": "The name of the minigame command group. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
@@ -29858,7 +29858,7 @@
     {
         "identifier": "ai.asktanjuwun.params.topp.description",
         "source_string": "höchstes P für tanjuwun",
-        "translation": "highest P for tanjuwun",
+        "translation": "Highest P for tanjuwun",
         "context": "The description for the top p param for the ai asktanjuwun command.",
         "labels": "command_description, unassigned",
         "max_length": 100
@@ -29878,5 +29878,29 @@
         "context": "The name for the twitchname param used in some commands. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
+    },
+    {
+        "identifier": "commands.utility.brawlstars.brawlers.error.notFound",
+        "source_string": "Es wurde kein Spieler mit den angegebenen Tag gefunden.",
+        "translation": "No player with the specified tag was found.",
+        "context": "When no Player is found",
+        "labels": "embed_description, unassigned",
+        "max_length": 4096
+    },
+    {
+        "identifier": "commands.utility.brawlstars.maps.Broiler Room",
+        "source_string": "Broiler Room",
+        "translation": "Broiler Room",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.brawlstars.gameModes.unknown",
+        "source_string": "unbekannt",
+        "translation": "unknown",
+        "context": "A unknown gamemode",
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
