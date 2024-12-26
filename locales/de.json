@@ -29158,5 +29158,229 @@
         "context": "The button to give up the wordle game",
         "labels": "unassigned",
         "max_length": 80
+    },
+    {
+        "identifier": "admin.tm.add.params.casesensitive.true",
+        "source_string": "casesensitive",
+        "translation": "casesensitive",
+        "context": "If the trigger message is case sensitive. Only lowercase Characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.tm.add.params.casesensitive.false",
+        "source_string": "caseinsensitive",
+        "translation": "caseinsensitive",
+        "context": "If the trigger message should not be case sensitive. Only lowercase Characters and no spaces allowed",
+        "labels": "unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.warn.name",
+        "source_string": "admin",
+        "translation": "admin",
+        "context": "The name of the warn command category. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.warn.description",
+        "source_string": "Verwalte die Warn Befehle",
+        "translation": "Verwalte die Warn Befehle",
+        "context": "The description of the warn command group.",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.role.name",
+        "source_string": "rolle",
+        "translation": "rolle",
+        "context": "The name of the role command category. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.role.description",
+        "source_string": "Verwalte die Rollen auf dem Server",
+        "translation": "Verwalte die Rollen auf dem Server",
+        "context": "The description of the role command category.",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.report.name",
+        "source_string": "report",
+        "translation": "report",
+        "context": "The name of the report command category. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.report.description",
+        "source_string": "Das Report System",
+        "translation": "Das Report System",
+        "context": "The description of the report command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.triggermessages.name",
+        "source_string": "triggernachrichten",
+        "translation": "triggernachrichten",
+        "context": "the name of the triggermessages command group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.triggermessages.description",
+        "source_string": "Verwalte die Triggernachrichten",
+        "translation": "Verwalte die Triggernachrichten",
+        "context": "The description of the Trigger messages command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.jointocreate.name",
+        "source_string": "jointocreate",
+        "translation": "jointocreate",
+        "context": "The name of the joinToCreate command Group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.jointocreate.description",
+        "source_string": "Verwalte die Join To Create kanäle",
+        "translation": "Verwalte die Join To Create kanäle",
+        "context": "The description of the joinToCreate Command Group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "funcmd.name",
+        "source_string": "fun",
+        "translation": "fun",
+        "context": "The name of the Fun command group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "fun.description",
+        "source_string": "Interagiere mit anderen Usern",
+        "translation": "Interagiere mit anderen Usern",
+        "context": "The description of the Fun command Group.",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "games.name",
+        "source_string": "spiele",
+        "translation": "spiele",
+        "context": "the locale for the games command group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "games.description",
+        "source_string": "Spiele einige tolle Spiele",
+        "translation": "Spiele einige tolle Spiele",
+        "context": "The description of the game command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "giveaway.name",
+        "source_string": "gewinnspiel",
+        "translation": "gewinnspiel",
+        "context": "The name of the giveaway command group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "giveaway.description",
+        "source_string": "Veranstalte Gewinnspiele",
+        "translation": "Veranstalte Gewinnspiele",
+        "context": "The description of the giveaway command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "giveaway.blacklist.name",
+        "source_string": "blacklist",
+        "translation": "blacklist",
+        "context": "The name of the giveaway blacklist command group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "giveaway.blacklist.description",
+        "source_string": "Verwalte die Gewinnspiel-Blacklist",
+        "translation": "Verwalte die Gewinnspiel-Blacklist",
+        "context": "The description of the giveaway blacklist command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "levelcommands.name",
+        "source_string": "level",
+        "translation": "level",
+        "context": "The name of the level command group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "levelcommands.description",
+        "source_string": "Das Level System des Servers",
+        "translation": "Das Level System des Servers",
+        "context": "The description of the level command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "math.name",
+        "source_string": "mathe",
+        "translation": "mathe",
+        "context": "The name of the math command group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "math.description",
+        "source_string": "Mathe Befehle",
+        "translation": "Mathe Befehle",
+        "context": "The description of the math command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "minigame.name",
+        "source_string": "minispiel",
+        "translation": "minispiel",
+        "context": "The name of the minigame command group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "minigame.description",
+        "source_string": "Aktiviere und Konfiguriere einige Minispiele für den Server",
+        "translation": "Aktiviere und Konfiguriere einige Minispiele für den Server",
+        "context": "the description of the minigames command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utilitycmd.name",
+        "source_string": "verschiedenes",
+        "translation": "verschiedenes",
+        "context": "The name of the utilitycmd command group. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utilitycmd.description",
+        "source_string": "Einige Befehle für die verschiedensten sachen",
+        "translation": "Einige Befehle für die verschiedensten sachen",
+        "context": "The description of the utility command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
     }
 ]
