@@ -4267,7 +4267,7 @@
         "identifier": "commands.admin.channel.farewell.defaultFarewellMessage",
         "source_string": "{user}, wir freuen uns, dass du bei uns warst! Wir hoffen, dass du viel Spaß auf dem Server hatte! Wir wünschen dir alles Gute und wir freuen uns, dich bald wieder zu sehen! Du bist das {member}. Mitglied.",
         "translation": "{user}, wir freuen uns, dass du bei uns warst! Wir hoffen, dass du viel Spaß auf dem Server hatte! Wir wünschen dir alles Gute und wir freuen uns, dich bald wieder zu sehen! Du bist das {member}. Mitglied.",
-        "context": "commands -> admin -> channel -> farewell -> defaultFarewellMessage",
+        "context": "commands -> admin -> channel -> farewell -> defaultFarewellMessage\n\n\"{member}. Mitglied\" will turn into something like \"1. Mitglied\", \"2. Mitglied\", ...",
         "labels": "de.json",
         "max_length": null
     },
@@ -29628,6 +29628,110 @@
         "source_string": "Auf welcher Achse soll das Bild gespiegelt werden",
         "translation": "Auf welcher Achse soll das Bild gespiegelt werden",
         "context": "The description of the direction param in the image mirror command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.mirror.params.direction.horizontal",
+        "source_string": "horizontal",
+        "translation": "horizontal",
+        "context": "The horizontal option for the image mirror command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.mirror.params.direction.vertical",
+        "source_string": "vertikal",
+        "translation": "vertikal",
+        "context": "The vertical option in the image mirror command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.compress.params.quality.description",
+        "source_string": "Die Komprimierungsqualität (mehr = mehr komprimiert)",
+        "translation": "Die Komprimierungsqualität (mehr = mehr komprimiert)",
+        "context": "The description of the quality param in the image compress command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "icon",
+        "source_string": "icon",
+        "translation": "icon",
+        "context": "The icon prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.boosterroleinfo.name",
+        "source_string": "boosterrollen_informationen",
+        "translation": "boosterrollen_informationen",
+        "context": "The name of the utility boosterroleinfo command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.boosterroleinfo.description",
+        "source_string": "Bekomme einige Informationen über die Boosterrollen",
+        "translation": "Bekomme einige Informationen über die Boosterrollen",
+        "context": "The description for the boosterroleinfo command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.setupboosterchannel.params.category.description",
+        "source_string": "Kategorie, in den die Booster kanäle erstellt werden sollen",
+        "translation": "Kategorie, in den die Booster kanäle erstellt werden sollen",
+        "context": "The category param description in the setupboosterchannel command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "tag",
+        "source_string": "tag",
+        "translation": "tag",
+        "context": "the tag prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "notificationmessage",
+        "source_string": "benachrichtigungs_nachricht",
+        "translation": "benachrichtigungs_nachricht",
+        "context": "the notificationmessage param used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.bs.link.params.tag.description",
+        "source_string": "Dein Brawl Stars Tag",
+        "translation": "Dein Brawl Stars Tag",
+        "context": "The description of the tag param in the bs link command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.twitch.add.params.twitch.name.description",
+        "source_string": "der Name des Twitch Kanals",
+        "translation": "der Name des Twitch Kanals",
+        "context": "The description of the name param in the twitch add command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.twitch.add.params.channel.description",
+        "source_string": "Der Kanal in den die Benachrichtigung gesendet werden soll",
+        "translation": "Der Kanal in den die Benachrichtigung gesendet werden soll",
+        "context": "The description from the channel param in the twitch add command.",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.twitch.add.params.notificationmessage.description",
+        "source_string": "Die Nachricht, die gesendet werden soll, wenn der Streamer live ist",
+        "translation": "Die Nachricht, die gesendet werden soll, wenn der Streamer live ist",
+        "context": "The notificationmessage param in the twitch add command",
         "labels": "command_description, unassigned",
         "max_length": 100
     }
