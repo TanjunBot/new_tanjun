@@ -530,7 +530,7 @@
     {
         "identifier": "commands.admin.createrole.invalidIcon.description",
         "source_string": "Die dateiendung deines Icons ist ungültig. Aktuell werden nur `.png`, `.gif`, `.jpg` und `.jpeg` Dateien unterstützt.",
-        "translation": "The file extension of your icon is invalid. Currently only `.png`, `.gif`, `.jpg` and `.jpeg` files are supported.",
+        "translation": "The file extension of your icon is invalid. Currently, only `.png`, `.gif`, `.jpg` and `.jpeg` files are supported.",
         "context": "commands -> admin -> createrole -> invalidIcon -> description",
         "labels": "de.json",
         "max_length": null
@@ -714,7 +714,7 @@
     {
         "identifier": "commands.admin.moverole.success.description",
         "source_string": "Die Rolle ${role} wurde erfolgreich ${position} die Rolle ${target_role} verschoben.",
-        "translation": "The role ${role} was successfully ${position} moved to ${target_role} .",
+        "translation": "The role ${role} was successfully ${position} moved to ${target_role}.",
         "context": "commands -> admin -> moverole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -1130,7 +1130,7 @@
     {
         "identifier": "commands.admin.timeout.success.description",
         "source_string": "${user} wurde für ${duration} ausgeschlossen. Grund: ${reason}",
-        "translation": "${user} was excluded for ${duration} . Reason: ${reason}",
+        "translation": "${user} was excluded for ${duration}. Reason: ${reason}",
         "context": "commands -> admin -> timeout -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -1370,7 +1370,7 @@
     {
         "identifier": "commands.admin.purge.success.description",
         "source_string": "${amount} Nachrichten wurden erfolgreich in ${channel} gelöscht.",
-        "translation": "${amount} Messages have been successfully deleted in ${channel} .",
+        "translation": "${amount} Messages have been successfully deleted in ${channel}.",
         "context": "commands -> admin -> purge -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -2170,7 +2170,7 @@
     {
         "identifier": "commands.admin.warn.dmNotification.description",
         "source_string": "Sie wurden auf dem Server {guild} verwarnt. Grund: {reason}. Dies ist Ihre {count}. Warnung.",
-        "translation": "You have been warned on the server {guild} . Reason: {reason}. This is your {count}. Warning.",
+        "translation": "You have been warned on the server {guild}. Reason: {reason}. This is your {count}. Warning.",
         "context": "commands -> admin -> warn -> dmNotification -> description",
         "labels": "de.json",
         "max_length": null
@@ -2234,7 +2234,7 @@
     {
         "identifier": "commands.admin.nuke.confirmationDescription",
         "source_string": "Bist du sicher, dass du alle Nachrichten in ${channel} löschen möchtest? Dies kann nicht rückgängig gemacht werden!",
-        "translation": "Are you sure you want to delete all messages in ${channel} ? This cannot be undone!",
+        "translation": "Are you sure you want to delete all messages in ${channel}? This cannot be undone!",
         "context": "commands -> admin -> nuke -> confirmationDescription",
         "labels": "de.json",
         "max_length": null
@@ -2282,7 +2282,7 @@
     {
         "identifier": "commands.admin.nuke.nukeSuccessMessage",
         "source_string": "Dieser Kanal wurde von ${user} gelöscht und neu erstellt.",
-        "translation": "This channel has been deleted and recreated by ${user} .",
+        "translation": "This channel has been deleted and recreated by ${user}.",
         "context": "commands -> admin -> nuke -> nukeSuccessMessage",
         "labels": "de.json",
         "max_length": null
@@ -2354,7 +2354,7 @@
     {
         "identifier": "commands.admin.say.success.description",
         "source_string": "Die Nachricht wurde erfolgreich in ${channel} gesendet.",
-        "translation": "The message has been successfully sent to ${channel} .",
+        "translation": "The message has been successfully sent to ${channel}.",
         "context": "commands -> admin -> say -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -2426,7 +2426,7 @@
     {
         "identifier": "commands.admin.embed.creatorDescription",
         "source_string": "Verwende die Schaltflächen unten, um dein Embed zu erstellen. Klicke auf 'Vorschau', um das aktuelle Embed anzuzeigen, und auf 'Senden', wenn du fertig bist. Das Embed wird in ${channel} gesendet.",
-        "translation": "Use the buttons below to create your embed. Click 'Preview' to view the current embed and 'Send' when you're done. The embed will be sent to ${channel} .",
+        "translation": "Use the buttons below to create your embed. Click 'Preview' to view the current embed and 'Send' when you're done. The embed will be sent to ${channel}.",
         "context": "commands -> admin -> embed -> creatorDescription",
         "labels": "de.json",
         "max_length": null
@@ -2522,7 +2522,7 @@
     {
         "identifier": "commands.admin.embed.embedSent",
         "source_string": "Embed wurde in ${channel} gesendet!",
-        "translation": "Embed was sent to ${channel} !",
+        "translation": "Embed was sent to ${channel}!",
         "context": "commands -> admin -> embed -> embedSent",
         "labels": "de.json",
         "max_length": null
@@ -3354,7 +3354,7 @@
     {
         "identifier": "commands.admin.trigger_messages.configure.trigger.caseSensitive",
         "source_string": "Groß-/Kleinschreibung wird beachtet",
-        "translation": "Case sensitive",
+        "translation": "Case-sensitive",
         "context": "commands -> admin -> trigger_messages -> configure -> trigger -> caseSensitive",
         "labels": "de.json",
         "max_length": null
@@ -3466,7 +3466,7 @@
     {
         "identifier": "commands.admin.trigger_messages.configure.modal.caseSensitive.label",
         "source_string": "Groß-/Kleinschreibung beachten (y/n)",
-        "translation": "Case sensitive (y/n)",
+        "translation": "Case-sensitive (y/n)",
         "context": "commands -> admin -> trigger_messages -> configure -> modal -> caseSensitive -> label",
         "labels": "de.json",
         "max_length": 45
@@ -3474,7 +3474,7 @@
     {
         "identifier": "commands.admin.trigger_messages.configure.modal.caseSensitive.placeholder",
         "source_string": "Groß-/Kleinschreibung beachten (y/n)",
-        "translation": "Case sensitive (y/n)",
+        "translation": "Case-sensitive (y/n)",
         "context": "commands -> admin -> trigger_messages -> configure -> modal -> caseSensitive -> placeholder",
         "labels": "de.json",
         "max_length": 100
@@ -3594,7 +3594,7 @@
     {
         "identifier": "commands.admin.create_ticket.embed.description",
         "source_string": "Klicke auf den Button, um ein Ticket ${name} zu erstellen.\n${description}",
-        "translation": "Click on the button to create a ticket ${name} .\n${description}",
+        "translation": "Click on the button to create a ticket ${name}.\n${description}",
         "context": "commands -> admin -> create_ticket -> embed -> description",
         "labels": "de.json",
         "max_length": null
@@ -4114,7 +4114,7 @@
     {
         "identifier": "commands.admin.channel.welcome.success.description",
         "source_string": "Der Kanal wurde erfolgreich festgelegt. Willkommens-Nachrichten werden jetzt in ${channel} gesendet.",
-        "translation": "The channel has been set successfully. Welcome messages are now sent in ${channel} .",
+        "translation": "The channel has been set successfully. Welcome messages are now sent in ${channel}.",
         "context": "commands -> admin -> channel -> welcome -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -4154,7 +4154,7 @@
     {
         "identifier": "commands.admin.channel.welcome.defaultWelcomeMessage",
         "source_string": "{user}, ist leider nicht mehr auf {guild}.\nSo'n mist aber auch :(",
-        "translation": "{user}is unfortunately no longer on {guild}.\nWhat a bummer :(",
+        "translation": "{user} is unfortunately no longer on {guild}.\nWhat a bummer :(",
         "context": "commands -> admin -> channel -> welcome -> defaultWelcomeMessage",
         "labels": "de.json",
         "max_length": null
@@ -4226,7 +4226,7 @@
     {
         "identifier": "commands.admin.channel.farewell.success.description",
         "source_string": "Der Kanal wurde erfolgreich festgelegt. Verabschiedungs-Nachrichten werden jetzt in ${channel} gesendet.",
-        "translation": "The channel has been set successfully. Farewell messages are now sent in ${channel} .",
+        "translation": "The channel has been set successfully. Farewell messages are now sent in ${channel}.",
         "context": "commands -> admin -> channel -> farewell -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -4266,8 +4266,8 @@
     {
         "identifier": "commands.admin.channel.farewell.defaultFarewellMessage",
         "source_string": "{user}, wir freuen uns, dass du bei uns warst! Wir hoffen, dass du viel Spaß auf dem Server hatte! Wir wünschen dir alles Gute und wir freuen uns, dich bald wieder zu sehen! Du bist das {member}. Mitglied.",
-        "translation": "{user}We are glad that you were with us! We hope you had a lot of fun on the server! We wish you all the best and we look forward to seeing you again soon! You are the {member}. member.",
-        "context": "commands -> admin -> channel -> farewell -> defaultFarewellMessage",
+        "translation": "{user}, we are glad that you were with us! We hope you had a lot of fun on the server! We wish you all the best and we look forward to seeing you again soon! You are the {member}. member.",
+        "context": "commands -> admin -> channel -> farewell -> defaultFarewellMessage\n\n\"{member}. Mitglied\" will turn into something like \"1. Mitglied\", \"2. Mitglied\", ...",
         "labels": "de.json",
         "max_length": null
     },
@@ -4338,7 +4338,7 @@
     {
         "identifier": "commands.logs.setLogChannel.success.description",
         "source_string": "Der Log-Kanal wurde erfolgreich festgelegt. Logs werden jetzt in ${channel} gesendet.\nBitte beachte, dass du ggf. die einzelnen Logs anschalten musst, um sie zu sehen.",
-        "translation": "The log channel has been set successfully. Logs are now sent to ${channel} .\nPlease note that you may have to switch on the individual logs in order to see them.",
+        "translation": "The log channel has been set successfully. Logs are now sent to ${channel}.\nPlease note that you may have to switch on the individual logs in order to see them.",
         "context": "commands -> logs -> setLogChannel -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -29628,6 +29628,110 @@
         "source_string": "Auf welcher Achse soll das Bild gespiegelt werden",
         "translation": "On which axis should the image be mirrored",
         "context": "The description of the direction param in the image mirror command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.mirror.params.direction.horizontal",
+        "source_string": "horizontal",
+        "translation": "horizontal",
+        "context": "The horizontal option for the image mirror command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.mirror.params.direction.vertical",
+        "source_string": "vertikal",
+        "translation": "Vertical",
+        "context": "The vertical option in the image mirror command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.compress.params.quality.description",
+        "source_string": "Die Komprimierungsqualität (mehr = mehr komprimiert)",
+        "translation": "The compression quality (more = more compressed)",
+        "context": "The description of the quality param in the image compress command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "icon",
+        "source_string": "icon",
+        "translation": "icon",
+        "context": "The icon prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.boosterroleinfo.name",
+        "source_string": "boosterrollen_informationen",
+        "translation": "booster_rolls_information",
+        "context": "The name of the utility boosterroleinfo command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.boosterroleinfo.description",
+        "source_string": "Bekomme einige Informationen über die Boosterrollen",
+        "translation": "Get some information about the booster rolls",
+        "context": "The description for the boosterroleinfo command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.setupboosterchannel.params.category.description",
+        "source_string": "Kategorie, in den die Booster kanäle erstellt werden sollen",
+        "translation": "Category in which the booster channels are to be created",
+        "context": "The category param description in the setupboosterchannel command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "tag",
+        "source_string": "tag",
+        "translation": "day",
+        "context": "the tag prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "notificationmessage",
+        "source_string": "benachrichtigungs_nachricht",
+        "translation": "notification_message",
+        "context": "the notificationmessage param used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.bs.link.params.tag.description",
+        "source_string": "Dein Brawl Stars Tag",
+        "translation": "Your Brawl Stars tag",
+        "context": "The description of the tag param in the bs link command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.twitch.add.params.twitch.name.description",
+        "source_string": "der Name des Twitch Kanals",
+        "translation": "the name of the Twitch channel",
+        "context": "The description of the name param in the twitch add command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.twitch.add.params.channel.description",
+        "source_string": "Der Kanal in den die Benachrichtigung gesendet werden soll",
+        "translation": "The channel to which the notification is to be sent",
+        "context": "The description from the channel param in the twitch add command.",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.twitch.add.params.notificationmessage.description",
+        "source_string": "Die Nachricht, die gesendet werden soll, wenn der Streamer live ist",
+        "translation": "Die Nachricht, die gesendet werden soll, wenn der Streamer live ist",
+        "context": "The notificationmessage param in the twitch add command",
         "labels": "command_description, unassigned",
         "max_length": 100
     }
