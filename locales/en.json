@@ -42,7 +42,7 @@
     {
         "identifier": "commands.help.not_authorized.title",
         "source_string": "Nicht autorisiert",
-        "translation": "Nicht autorisiert",
+        "translation": "Not authorized",
         "context": "Title of the Embed when someone tries to interact with the view of someone else",
         "labels": "de.json, embed_title",
         "max_length": 256
@@ -91,9 +91,9 @@
         "identifier": "commands.admin.addrole.alreadyHasRole.title",
         "source_string": "Rolle bereits vergeben",
         "translation": "Rolle bereits vergeben",
-        "context": "commands -> admin -> addrole -> alreadyHasRole -> title",
-        "labels": "de.json",
-        "max_length": null
+        "context": "When the user already has the desired Role",
+        "labels": "de.json, embed_description",
+        "max_length": 4096
     },
     {
         "identifier": "commands.admin.addrole.alreadyHasRole.description",
