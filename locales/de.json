@@ -81,8 +81,8 @@
     },
     {
         "identifier": "commands.admin.addrole.missingPermissionBot.description",
-        "source_string": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen hinzuzufügen.",
-        "translation": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen hinzuzufügen.",
+        "source_string": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen hinzuzufügen.",
+        "translation": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen hinzuzufügen.",
         "context": "The description of the embed that shows when the bot doesn't have the manage roles permission",
         "labels": "de.json, embed_description",
         "max_length": 4096
@@ -4267,7 +4267,7 @@
         "identifier": "commands.admin.channel.farewell.defaultFarewellMessage",
         "source_string": "{user}, wir freuen uns, dass du bei uns warst! Wir hoffen, dass du viel Spaß auf dem Server hatte! Wir wünschen dir alles Gute und wir freuen uns, dich bald wieder zu sehen! Du bist das {member}. Mitglied.",
         "translation": "{user}, wir freuen uns, dass du bei uns warst! Wir hoffen, dass du viel Spaß auf dem Server hatte! Wir wünschen dir alles Gute und wir freuen uns, dich bald wieder zu sehen! Du bist das {member}. Mitglied.",
-        "context": "commands -> admin -> channel -> farewell -> defaultFarewellMessage",
+        "context": "commands -> admin -> channel -> farewell -> defaultFarewellMessage\n\n\"{member}. Mitglied\" will turn into something like \"1. Mitglied\", \"2. Mitglied\", ...",
         "labels": "de.json",
         "max_length": null
     },
@@ -16513,8 +16513,8 @@
     },
     {
         "identifier": "utility.help.name",
-        "source_string": "hilfe",
-        "translation": "hilfe",
+        "source_string": "Hilfe",
+        "translation": "Hilfe",
         "context": "utility -> help -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -28673,8 +28673,8 @@
     },
     {
         "identifier": "help",
-        "source_string": "hilfe",
-        "translation": "hilfe",
+        "source_string": "Hilfe",
+        "translation": "Hilfe",
         "context": " -> help",
         "labels": "de.json",
         "max_length": 32
@@ -28748,14 +28748,6 @@
         "source_string": "prompt",
         "translation": "prompt",
         "context": " -> prompt",
-        "labels": "de.json",
-        "max_length": 32
-    },
-    {
-        "identifier": "The prompt for the custom situation",
-        "source_string": "Der Prompt für die benutzerdefinierte Situation",
-        "translation": "Der Prompt für die benutzerdefinierte Situation",
-        "context": " -> The prompt for the custom situation",
         "labels": "de.json",
         "max_length": 32
     },
@@ -29380,6 +29372,366 @@
         "source_string": "Einige Befehle für die verschiedensten sachen",
         "translation": "Einige Befehle für die verschiedensten sachen",
         "context": "The description of the utility command group",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "channel",
+        "source_string": "kanal",
+        "translation": "kanal",
+        "context": "The name for channel parameters. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.moverole.params.position.above",
+        "source_string": "darüber",
+        "translation": "darüber",
+        "context": "The above choice in the moverole command.",
+        "labels": "embed_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.moverole.params.position.below",
+        "source_string": "darunter",
+        "translation": "darunter",
+        "context": "The below choice for the moverole position param",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.moverole.params.copymembers.true",
+        "source_string": "Mitglieder kopieren",
+        "translation": "Mitglieder kopieren",
+        "context": "The copy members choise for the moverole params",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.moverole.params.copymembers.false",
+        "source_string": "Mitglieder nicht kopieren",
+        "translation": "Mitglieder nicht kopieren",
+        "context": "The copymembers locale for the moverole command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "ai.askgpt.params.topp.description",
+        "source_string": "höchstes P für die AI",
+        "translation": "höchstes P für die AI",
+        "context": "The description for the top p param for the ai ask_gpt command.",
+        "labels": "command_name, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "ai.askgpt.params.topp.name",
+        "source_string": "top_p",
+        "translation": "top_p",
+        "context": "The name of the top_p param from the ask-gpt command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "ai.askgpt.params.frequencypanelty.description",
+        "source_string": "Bestrafung für Wiederholung",
+        "translation": "Bestrafung für Wiederholung",
+        "context": "The description of the frequency_panelty parameter of the ask_gpt command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "ai.askgpt.params.frequencypanelty.name",
+        "source_string": "frequency_penalty",
+        "translation": "frequency_penalty",
+        "context": "The name of the frequency_panelty in the ask-gpt command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "ai.asktanjuwun.params.frequencypanelty.description",
+        "source_string": "Bestrafung für wiederholung",
+        "translation": "Bestrafung für wiederholung",
+        "context": "The description of the frequency_panelty param from the asktanjuwun command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "ai.asktanjuwun.params.frequencypanelty.name",
+        "source_string": "frequency_panelty",
+        "translation": "frequency_panelty",
+        "context": "The name for the frequency_panelty param from the ask-tanjuwun command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "ai.askgpt.params.presencepenalty.description",
+        "source_string": "Wiederholungen verringern",
+        "translation": "Wiederholungen verringern",
+        "context": "The presence_penalty parameter description in the ask-gpt command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "ai.askgpt.params.presencepenalty.name",
+        "source_string": "presence_penalty",
+        "translation": "presence_penalty",
+        "context": "The presence_panelty param name from the ask-gpt command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "ai.asktanjuwun.params.presencepenalty.description",
+        "source_string": "Verringert wiederholungen",
+        "translation": "Verringert wiederholungen",
+        "context": "The presence_penalty parameters description from the asktanjuwun command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "ai.asktanjuwun.params.presencepenalty.name",
+        "source_string": "presence_penalty",
+        "translation": "presence_penalty",
+        "context": "The presence_penalty parameter name from the ask-tanjuwn command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "messages",
+        "source_string": "nachrichten",
+        "translation": "nachrichten",
+        "context": "the messages param name for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "per",
+        "source_string": "pro",
+        "translation": "pro",
+        "context": "The per param name for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "resetafter",
+        "source_string": "zurücksetzen_nach",
+        "translation": "zurücksetzen_nach",
+        "context": "the resetafter param for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "funcmd.description",
+        "source_string": "Interagiere mit anderen Mitgliedern",
+        "translation": "Interagiere mit anderen Mitgliedern",
+        "context": "Fun commands Command Description",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "language",
+        "source_string": "sprache",
+        "translation": "sprache",
+        "context": "The language prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "image",
+        "source_string": "bild",
+        "translation": "bild",
+        "context": "the image prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "type",
+        "source_string": "typ",
+        "translation": "typ",
+        "context": "The type prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "radius",
+        "source_string": "radius",
+        "translation": "radius",
+        "context": "the radius prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "width",
+        "source_string": "breite",
+        "translation": "breite",
+        "context": "the width prop used for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "image.resize.params.width.description",
+        "source_string": "Die breite des Bildes",
+        "translation": "Die breite des Bildes",
+        "context": "The width param description for the resize param",
+        "labels": "command_name, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.resize.params.height.description",
+        "source_string": "Die neue Höhe des Bildes",
+        "translation": "Die neue Höhe des Bildes",
+        "context": "The description of the height param in the image resize command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "factor",
+        "source_string": "faktor",
+        "translation": "faktor",
+        "context": "the factor prop used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "direction",
+        "source_string": "richtung",
+        "translation": "richtung",
+        "context": "The direction prop used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "newmessage",
+        "source_string": "neue_nachricht",
+        "translation": "neue_nachricht",
+        "context": "the newmessage prop used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "level",
+        "source_string": "level",
+        "translation": "level",
+        "context": "the level prop used in some commands.",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "image.resize.params.factor.description",
+        "source_string": "Um den Faktor das Bild skaliert werden soll",
+        "translation": "Um den Faktor das Bild skaliert werden soll",
+        "context": "The description of the factor prop in the image resize command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.mirror.params.direction.description",
+        "source_string": "Auf welcher Achse soll das Bild gespiegelt werden",
+        "translation": "Auf welcher Achse soll das Bild gespiegelt werden",
+        "context": "The description of the direction param in the image mirror command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.mirror.params.direction.horizontal",
+        "source_string": "horizontal",
+        "translation": "horizontal",
+        "context": "The horizontal option for the image mirror command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.mirror.params.direction.vertical",
+        "source_string": "vertikal",
+        "translation": "vertikal",
+        "context": "The vertical option in the image mirror command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "image.compress.params.quality.description",
+        "source_string": "Die Komprimierungsqualität (mehr = mehr komprimiert)",
+        "translation": "Die Komprimierungsqualität (mehr = mehr komprimiert)",
+        "context": "The description of the quality param in the image compress command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "icon",
+        "source_string": "icon",
+        "translation": "icon",
+        "context": "The icon prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.boosterroleinfo.name",
+        "source_string": "boosterrollen_informationen",
+        "translation": "boosterrollen_informationen",
+        "context": "The name of the utility boosterroleinfo command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.boosterroleinfo.description",
+        "source_string": "Bekomme einige Informationen über die Boosterrollen",
+        "translation": "Bekomme einige Informationen über die Boosterrollen",
+        "context": "The description for the boosterroleinfo command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.setupboosterchannel.params.category.description",
+        "source_string": "Kategorie, in den die Booster kanäle erstellt werden sollen",
+        "translation": "Kategorie, in den die Booster kanäle erstellt werden sollen",
+        "context": "The category param description in the setupboosterchannel command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "tag",
+        "source_string": "tag",
+        "translation": "tag",
+        "context": "the tag prop for some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "notificationmessage",
+        "source_string": "benachrichtigungs_nachricht",
+        "translation": "benachrichtigungs_nachricht",
+        "context": "the notificationmessage param used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.bs.link.params.tag.description",
+        "source_string": "Dein Brawl Stars Tag",
+        "translation": "Dein Brawl Stars Tag",
+        "context": "The description of the tag param in the bs link command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.twitch.add.params.twitch.name.description",
+        "source_string": "der Name des Twitch Kanals",
+        "translation": "der Name des Twitch Kanals",
+        "context": "The description of the name param in the twitch add command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.twitch.add.params.channel.description",
+        "source_string": "Der Kanal in den die Benachrichtigung gesendet werden soll",
+        "translation": "Der Kanal in den die Benachrichtigung gesendet werden soll",
+        "context": "The description from the channel param in the twitch add command.",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "utility.twitch.add.params.notificationmessage.description",
+        "source_string": "Die Nachricht, die gesendet werden soll, wenn der Streamer live ist",
+        "translation": "Die Nachricht, die gesendet werden soll, wenn der Streamer live ist",
+        "context": "The notificationmessage param in the twitch add command",
         "labels": "command_description, unassigned",
         "max_length": 100
     }
