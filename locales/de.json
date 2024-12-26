@@ -6409,8 +6409,8 @@
     },
     {
         "identifier": "commands.utility.autopublish.error.not_news_channel.description",
-        "source_string": "Der Autopublish-Modus kann nur in einem Nachrichtenkanal aktiviert werden.",
-        "translation": "Der Autopublish-Modus kann nur in einem Nachrichtenkanal aktiviert werden.",
+        "source_string": "Der Autopublish-Modus kann nur in einem Ankündigungskanal aktiviert werden.",
+        "translation": "Der Autopublish-Modus kann nur in einem Ankündigungskanal aktiviert werden.",
         "context": "commands -> utility -> autopublish -> error -> not_news_channel -> description",
         "labels": "de.json",
         "max_length": null
@@ -6617,8 +6617,8 @@
     },
     {
         "identifier": "commands.utility.avatarDecoration.description",
-        "source_string": "-# Aktuell ist es aufgrund der DiscordAPI nicht möglich die Server-Avatar Dekoration zu erhalten. Genauso wie die Banner Dekoration.",
-        "translation": "-# Aktuell ist es aufgrund der DiscordAPI nicht möglich die Server-Avatar Dekoration zu erhalten. Genauso wie die Banner Dekoration.",
+        "source_string": "-# Aktuell ist es aufgrund der Discord-API nicht möglich, die Serveravatar-Dekoration zu erhalten. Dasselbe gilt für die Bannerdekoration.",
+        "translation": "-# Aktuell ist es aufgrund der Discord-API nicht möglich, die Serveravatar-Dekoration zu erhalten. Dasselbe gilt für die Bannerdekoration.",
         "context": "commands -> utility -> avatarDecoration -> description",
         "labels": "de.json",
         "max_length": null
@@ -6713,8 +6713,8 @@
     },
     {
         "identifier": "commands.utility.afk.mentions.description",
-        "source_string": "Die folgenden Nutzer sind momentan AFk und werden von mir mit benachrichtigt, sobald sie zurück sind:\n",
-        "translation": "Die folgenden Nutzer sind momentan AFk und werden von mir mit benachrichtigt, sobald sie zurück sind:\n",
+        "source_string": "Die folgenden Nutzer sind momentan AFK und werden von mir benachrichtigt, sobald sie zurück sind:\n",
+        "translation": "Die folgenden Nutzer sind momentan AFK und werden von mir benachrichtigt, sobald sie zurück sind:\n",
         "context": "commands -> utility -> afk -> mentions -> description",
         "labels": "de.json",
         "max_length": null
