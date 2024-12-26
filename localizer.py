@@ -42,7 +42,7 @@ class Localizer:
         translation = self.get_translation(translations, key)
         if translation is None:
             print(f"No translation found for key '{key}'.")
-            missingLocalization(locale)
+            missingLocalization(key)
             return "err: no translation found."
 
         template_string = translation["translation"]
