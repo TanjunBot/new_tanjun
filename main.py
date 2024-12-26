@@ -40,7 +40,9 @@ intents.auto_moderation_execution = True
 intents.invites = True
 intents.presences = False
 
-bot = commands.Bot("t.", intents=intents, application_id=config.applicationId)
+bot = commands.AutoShardedBot(
+    "t.", intents=intents, application_id=config.applicationId
+)
 
 
 async def main():
@@ -85,5 +87,6 @@ async def on_ready():
     await api.create_tables()
     await initTwitch()
     print("Bot is running!")
+
 
 bot.run(config.token)
