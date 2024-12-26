@@ -8064,7 +8064,7 @@
         "max_length": null
     },
     {
-        "identifier": "commands.utility.brawlstars.maps.Marksmans Paradise",
+        "identifier": "commands.utility.brawlstars.maps.Marksman's Paradise",
         "source_string": "Schutzenparadies",
         "translation": "Schutzenparadies",
         "context": "commands -> utility -> brawlstars -> maps -> Marksmans Paradise",
@@ -8384,7 +8384,7 @@
         "max_length": null
     },
     {
-        "identifier": "commands.utility.brawlstars.maps.Cool Shapes",
+        "identifier": "commands.utility.brawlstars.maps.Cool shapes",
         "source_string": "Coole Formen",
         "translation": "Coole Formen",
         "context": "commands -> utility -> brawlstars -> maps -> Cool Shapes",
@@ -29886,5 +29886,21 @@
         "context": "When no Player is found",
         "labels": "embed_description, unassigned",
         "max_length": 4096
+    },
+    {
+        "identifier": "commands.utility.brawlstars.maps.Broiler Room",
+        "source_string": "Broiler Room",
+        "translation": "Broiler Room",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.brawlstars.gameModes.unknown",
+        "source_string": "unbekannt",
+        "translation": "unbekannt",
+        "context": "A unknown gamemode",
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
