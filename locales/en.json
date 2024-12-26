@@ -18233,9 +18233,9 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.normal.name",
-        "source_string": "Normal",
-        "translation": "Normal",
-        "context": "minigames -> counting -> modes -> modes -> normal -> name",
+        "source_string": "Positive Zahlen",
+        "translation": "Positive Zahlen",
+        "context": "Zähle einfach immer um 1 hoch.",
         "labels": "de.json",
         "max_length": null
     },
@@ -29900,6 +29900,22 @@
         "source_string": "unbekannt",
         "translation": "unknown",
         "context": "A unknown gamemode",
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.level.defaultLevelUpMessage",
+        "source_string": "Herzlichen Glückwunsch, {user}! Du bist jetzt Level {level}!",
+        "translation": "Congratulations, {user}! You are now level {level}!",
+        "context": "The default level up message",
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.brawlstars.maps.Hoop Boot Hill",
+        "source_string": "Hoop Boot Hill",
+        "translation": "Hoop Boot Hill",
+        "context": null,
         "labels": "unassigned",
         "max_length": null
     }
