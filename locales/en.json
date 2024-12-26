@@ -34,7 +34,7 @@
     {
         "identifier": "commands.help.timeout.description",
         "source_string": "Der Help Befehl ist Getimeouted. Du kannst nicht länger mit ihm interagieren",
-        "translation": "Der Help Befehl ist Getimeouted. Du kannst nicht länger mit ihm interagieren",
+        "translation": "The help command has been timed out. You can no longer interact with it",
         "context": "The Description of the Embed when the view is timed out",
         "labels": "de.json, embed_description",
         "max_length": 4096
@@ -82,7 +82,7 @@
     {
         "identifier": "commands.admin.addrole.missingPermissionBot.description",
         "source_string": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen hinzuzufügen.",
-        "translation": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen hinzuzufügen.",
+        "translation": null,
         "context": "The description of the embed that shows when the bot doesn't have the manage roles permission",
         "labels": "de.json, embed_description",
         "max_length": 4096
