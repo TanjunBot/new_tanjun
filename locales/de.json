@@ -6761,8 +6761,8 @@
     },
     {
         "identifier": "commands.utility.claimboosterrole.invalid_color.description",
-        "source_string": "Die Farbe muss ein gültiges Hex-Farbcode sein.\nSolltest du nicht wissen, was eine Hex-Farbe ist, klicke [hier](https://www.google.com/search?q=hex+farbe).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
-        "translation": "Die Farbe muss ein gültiges Hex-Farbcode sein.\nSolltest du nicht wissen, was eine Hex-Farbe ist, klicke [hier](https://www.google.com/search?q=hex+farbe).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
+        "source_string": "Die Farbe muss ein gültiger Hex-Farbcode sein.\nSolltest du nicht wissen, was ein Hex-Farbcode ist, klicke [hier](https://www.google.com/search?q=hex+farbcode).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
+        "translation": "Die Farbe muss ein gültiger Hex-Farbcode sein.\nSolltest du nicht wissen, was ein Hex-Farbcode ist, klicke [hier](https://www.google.com/search?q=hex+farbcode).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
         "context": "commands -> utility -> claimboosterrole -> invalid_color -> description",
         "labels": "de.json",
         "max_length": null
@@ -7449,8 +7449,8 @@
     },
     {
         "identifier": "commands.utility.schedulemessage.referenceMessage",
-        "source_string": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zugewiesen, wenn die geplante Nachricht gesendet wird. Sollte diese Nachricht bearbeitet werden, werden in Zukunft geplante Nachrichten auch so bearbeitet gesendet. Sollte diese Nachricht gelöscht werden, wird die geplante Nachricht nicht mehr gesendet.",
-        "translation": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zugewiesen, wenn die geplante Nachricht gesendet wird. Sollte diese Nachricht bearbeitet werden, werden in Zukunft geplante Nachrichten auch so bearbeitet gesendet. Sollte diese Nachricht gelöscht werden, wird die geplante Nachricht nicht mehr gesendet.",
+        "source_string": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zurückgegriffen, wenn die geplante Nachricht gesendet wird. Wenn diese Nachricht bearbeitet wird, werden zukünftige geplante Nachrichten der bearbeiteten Version entsprechen. Wenn diese Nachricht gelöscht wird, wird die geplante Nachricht nicht mehr gesendet.",
+        "translation": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zurückgegriffen, wenn die geplante Nachricht gesendet wird. Wenn diese Nachricht bearbeitet wird, werden zukünftige geplante Nachrichten der bearbeiteten Version entsprechen. Wenn diese Nachricht gelöscht wird, wird die geplante Nachricht nicht mehr gesendet.",
         "context": "commands -> utility -> schedulemessage -> referenceMessage",
         "labels": "de.json",
         "max_length": null
@@ -7617,8 +7617,8 @@
     },
     {
         "identifier": "commands.utility.reports.new_report.description",
-        "source_string": "${reporter} hat ${user} reportet.\nGrund: ${reason}",
-        "translation": "${reporter} hat ${user} reportet.\nGrund: ${reason}",
+        "source_string": "${reporter} hat ${user} gemeldet.\nGrund: ${reason}",
+        "translation": "${reporter} hat ${user} gemeldet.\nGrund: ${reason}",
         "context": "commands -> utility -> reports -> new_report -> description",
         "labels": "de.json",
         "max_length": null
