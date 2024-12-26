@@ -1,5 +1,6 @@
 import json
 from string import Template
+from utility import missingLocalization
 
 
 class Localizer:
@@ -7,7 +8,7 @@ class Localizer:
         self.translations = {}
 
     def load_translations(self, locale):
-        """ Load the translations from a JSON file based on the specified locale. """
+        """Load the translations from a JSON file based on the specified locale."""
         try:
             with open(f"locales/{locale}.json", "r", encoding="utf-8") as file:
                 return json.load(file)
@@ -15,35 +16,49 @@ class Localizer:
             print(f"No translation file found for locale '{locale}'.")
             return {}
         except json.JSONDecodeError:
-            print(f"Error decoding JSON from the translation file for locale '{locale}'.")
+            print(
+                f"Error decoding JSON from the translation file for locale '{locale}'."
+            )
             return {}
 
-    def get_nested_translation(self, translations, key):
-        """ Retrieve a nested translation using dot notation for nested keys. """
-        keys = key.split('.')
-        translation = translations
-        for k in keys:
-            if k in translation:
-                translation = translation[k]
-            else:
-                return None  # Key does not exist in the nested structure
+    def get_translation(self, translations, key):
+        """Retrieve a nested translation using dot notation for nested keys."""
+        key = key.replace("_", ".")
+
+        translation = next(
+            (
+                translation
+                for translation in translations
+                if translation["identifier"] == key
+            ),
+            "No translation found.",
+        )
+
         return translation
 
     def localize(self, locale, key, **args):
-        """ Retrieve the localized text for the specified locale and format it with any arguments provided. """
+        """Retrieve the localized text for the specified locale and format it with any arguments provided."""
         translations = self.load_translations(locale)
-        template_string = self.get_nested_translation(translations, key)
-        if template_string is None:
-            return self.localize("de", key, **args) if locale != "de" else f"No translation found for key '{key}'."
+        translation = self.get_translation(translations, key)
+        if translation == "err: no translation found.":
+            missingLocalization(locale)
+            return "err: no translation found."
+
+        template_string = translation["translation"]
         template = Template(template_string)
         return template.safe_substitute(args)
 
     def test_localize(self, locale, key, **args):
         translations = self.load_translations(locale)
-        template_string = self.get_nested_translation(translations, key)
+        template_string = self.get_translation(translations, key)
         if template_string is None:
-            return self.localize("de", key, **args) if locale != "de" else f"No translation found for key '{key}'."
-        return template_string
+            return (
+                self.localize("de", key, **args)
+                if locale != "de"
+                else f"No translation found for key '{key}'."
+            )
+        template = Template(template_string)
+        return template.safe_substitute(args)
 
 
 tanjunLocalizer = Localizer()
