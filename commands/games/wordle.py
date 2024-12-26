@@ -264,7 +264,12 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
             super().__init__(timeout=3600)
             self.commandInfo = commandInfo
 
-        @discord.ui.button(label="Guess", style=discord.ButtonStyle.green)
+        @discord.ui.button(
+            label=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.wordle.buttons.guess"
+            ),
+            style=discord.ButtonStyle.green,
+        )
         async def guess_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
@@ -281,7 +286,12 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
             await interaction.response.send_modal(modal)
             self.stop()
 
-        @discord.ui.button(label="Give up", style=discord.ButtonStyle.red)
+        @discord.ui.button(
+            label=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.wordle.buttons.giveUp"
+            ),
+            style=discord.ButtonStyle.red,
+        )
         async def give_up_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):

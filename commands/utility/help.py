@@ -213,7 +213,12 @@ async def help(commandInfo, ctx):
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))
 
-        @discord.ui.button(label="Previous", style=discord.ButtonStyle.gray)
+        @discord.ui.button(
+            label=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.help.buttons.previous"
+            ),
+            style=discord.ButtonStyle.gray,
+        )
         async def previous_button(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
@@ -222,7 +227,12 @@ async def help(commandInfo, ctx):
                 embeds=[self.embeds[self.current_page]]
             )
 
-        @discord.ui.button(label="Next", style=discord.ButtonStyle.gray)
+        @discord.ui.button(
+            label=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.help.buttons.next"
+            ),
+            style=discord.ButtonStyle.gray,
+        )
         async def next_button(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):

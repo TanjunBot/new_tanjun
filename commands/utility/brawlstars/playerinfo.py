@@ -17,6 +17,16 @@ async def getPlayerInfo(playerTag: str):
             return await response.json()
 
 
+async def getAllBrawlers():
+    headers = {"Authorization": f"Bearer {brawlstarsToken}"}
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            "https://api.brawlstars.com/v1/brawlers",
+            headers=headers,
+        ) as response:
+            return await response.json()
+
+
 async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
     if not playerTag:
         playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
@@ -91,6 +101,13 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
             victories=playerInfo["duoVictories"],
         )
     description += "\n"
+    allBrawlers = await getAllBrawlers()
+    description += tanjunLocalizer.localize(
+        commandInfo.locale,
+        "commands.utility.brawlstars.playerinfo.description.brawlers",
+        brawlers=len(allBrawlers["items"]),
+        owned=len(playerInfo["brawlers"]),
+    )
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,
