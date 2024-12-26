@@ -1,11 +1,9 @@
 import discord
-from discord import ui
 import utility
-from utility import commandInfo
 from localizer import tanjunLocalizer
 from api import get_giveaway, get_giveaway_participants
 import random
-from commands.giveaway.utility import endGiveaway
+
 
 async def reroll_giveaway(
     commandInfo: utility.commandInfo,
@@ -39,7 +37,7 @@ async def reroll_giveaway(
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if giveaway[1] != str(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -53,7 +51,7 @@ async def reroll_giveaway(
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if not giveaway[13]:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -85,10 +83,12 @@ async def reroll_giveaway(
     else:
         await perform_reroll(commandInfo, giveawayId, 1)
 
-async def perform_reroll(commandInfo: utility.commandInfo, giveawayId: int, reroll_count: int):
-    giveaway = await get_giveaway(giveawayId)
+
+async def perform_reroll(
+    commandInfo: utility.commandInfo, giveawayId: int, reroll_count: int
+):
     participants = await get_giveaway_participants(giveawayId)
-    
+
     if not participants:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -107,8 +107,8 @@ async def perform_reroll(commandInfo: utility.commandInfo, giveawayId: int, rero
     for _ in range(min(reroll_count, len(participants))):
         if not participants:
             break
-        #Nobody cares enough if the winner is choosen using a real(er) rng.
-        #nosec: B311
+        # Nobody cares enough if the winner is choosen using a real(er) rng.
+        # nosec: B311
         winner = random.choice(participants)
         new_winners.append(winner)
         participants.remove(winner)
@@ -138,6 +138,7 @@ async def perform_reroll(commandInfo: utility.commandInfo, giveawayId: int, rero
                 )
             )
 
+
 class RerollOptionsView(discord.ui.View):
     def __init__(self, commandInfo: utility.commandInfo, giveawayId: int):
         super().__init__()
@@ -145,13 +146,17 @@ class RerollOptionsView(discord.ui.View):
         self.giveawayId = giveawayId
 
     @discord.ui.button(label="Reroll One Winner", style=discord.ButtonStyle.primary)
-    async def reroll_one(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def reroll_one(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         await interaction.response.defer()
         await perform_reroll(self.commandInfo, self.giveawayId, 1)
         self.stop()
 
     @discord.ui.button(label="Reroll All Winners", style=discord.ButtonStyle.primary)
-    async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def reroll_all(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         await interaction.response.defer()
         giveaway = await get_giveaway(self.giveawayId)
         await perform_reroll(self.commandInfo, self.giveawayId, giveaway[4])

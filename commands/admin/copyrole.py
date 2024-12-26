@@ -1,7 +1,6 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from typing import Union
 
 
 async def copyrole(

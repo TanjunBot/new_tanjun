@@ -1,6 +1,8 @@
+# Unused imports:
+# import asyncio
 from discord import Client
 import aiohttp
-import asyncio
+
 
 async def ping_server(client: Client):
     url = "https://botstatus-api.tanjun.bot"

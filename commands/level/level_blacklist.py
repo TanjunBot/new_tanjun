@@ -11,14 +11,19 @@ from api import (
 )
 import discord
 
-async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: discord.TextChannel, reason: str = None):
+
+async def add_channel_to_blacklist_command(
+    commandInfo: commandInfo, channel: discord.TextChannel, reason: str = None
+):
     if not commandInfo.user.guild_permissions.administrator:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_channel.error.no_permission.title"
+                commandInfo.locale,
+                "commands.level.blacklist.add_channel.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_channel.error.no_permission.description"
+                commandInfo.locale,
+                "commands.level.blacklist.add_channel.error.no_permission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -27,10 +32,12 @@ async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: di
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_channel.error.no_pro.title"
+                commandInfo.locale,
+                "commands.level.blacklist.add_channel.error.no_pro.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_channel.error.no_pro.description"
+                commandInfo.locale,
+                "commands.level.blacklist.add_channel.error.no_pro.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -42,21 +49,33 @@ async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: di
             commandInfo.locale, "commands.level.blacklist.add_channel.success.title"
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.blacklist.add_channel.success.description",
+            commandInfo.locale,
+            "commands.level.blacklist.add_channel.success.description",
             channel=channel.mention,
-            reason=reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.level.blacklist.no_reason")
+            reason=(
+                reason
+                if reason
+                else tanjunLocalizer.localize(
+                    commandInfo.locale, "commands.level.blacklist.no_reason"
+                )
+            ),
         ),
     )
     await commandInfo.reply(embed=embed)
 
-async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channel: discord.TextChannel):
+
+async def remove_channel_from_blacklist_command(
+    commandInfo: commandInfo, channel: discord.TextChannel
+):
     if not commandInfo.user.guild_permissions.administrator:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.remove_channel.error.no_permission.title"
+                commandInfo.locale,
+                "commands.level.blacklist.remove_channel.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.remove_channel.error.no_permission.description"
+                commandInfo.locale,
+                "commands.level.blacklist.remove_channel.error.no_permission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -68,20 +87,26 @@ async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channe
             commandInfo.locale, "commands.level.blacklist.remove_channel.success.title"
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.blacklist.remove_channel.success.description",
-            channel=channel.mention
+            commandInfo.locale,
+            "commands.level.blacklist.remove_channel.success.description",
+            channel=channel.mention,
         ),
     )
     await commandInfo.reply(embed=embed)
 
-async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.Role, reason: str = None):
+
+async def add_role_to_blacklist_command(
+    commandInfo: commandInfo, role: discord.Role, reason: str = None
+):
     if not commandInfo.user.guild_permissions.administrator:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_role.error.no_permission.title"
+                commandInfo.locale,
+                "commands.level.blacklist.add_role.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_role.error.no_permission.description"
+                commandInfo.locale,
+                "commands.level.blacklist.add_role.error.no_permission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -93,21 +118,33 @@ async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.
             commandInfo.locale, "commands.level.blacklist.add_role.success.title"
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.blacklist.add_role.success.description",
+            commandInfo.locale,
+            "commands.level.blacklist.add_role.success.description",
             role=role.mention,
-            reason=reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.level.blacklist.no_reason")
+            reason=(
+                reason
+                if reason
+                else tanjunLocalizer.localize(
+                    commandInfo.locale, "commands.level.blacklist.no_reason"
+                )
+            ),
         ),
     )
     await commandInfo.reply(embed=embed)
 
-async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: discord.Role):
+
+async def remove_role_from_blacklist_command(
+    commandInfo: commandInfo, role: discord.Role
+):
     if not commandInfo.user.guild_permissions.administrator:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.remove_role.error.no_permission.title"
+                commandInfo.locale,
+                "commands.level.blacklist.remove_role.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.remove_role.error.no_permission.description"
+                commandInfo.locale,
+                "commands.level.blacklist.remove_role.error.no_permission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -119,20 +156,26 @@ async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: dis
             commandInfo.locale, "commands.level.blacklist.remove_role.success.title"
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.blacklist.remove_role.success.description",
-            role=role.mention
+            commandInfo.locale,
+            "commands.level.blacklist.remove_role.success.description",
+            role=role.mention,
         ),
     )
     await commandInfo.reply(embed=embed)
 
-async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.Member, reason: str = None):
+
+async def add_user_to_blacklist_command(
+    commandInfo: commandInfo, user: discord.Member, reason: str = None
+):
     if not commandInfo.user.guild_permissions.administrator:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_user.error.no_permission.title"
+                commandInfo.locale,
+                "commands.level.blacklist.add_user.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_user.error.no_permission.description"
+                commandInfo.locale,
+                "commands.level.blacklist.add_user.error.no_permission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -141,10 +184,12 @@ async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_channel.error.no_pro.title"
+                commandInfo.locale,
+                "commands.level.blacklist.add_channel.error.no_pro.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.add_channel.error.no_pro.description"
+                commandInfo.locale,
+                "commands.level.blacklist.add_channel.error.no_pro.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -156,21 +201,33 @@ async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.
             commandInfo.locale, "commands.level.blacklist.add_user.success.title"
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.blacklist.add_user.success.description",
+            commandInfo.locale,
+            "commands.level.blacklist.add_user.success.description",
             user=user.mention,
-            reason=reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.level.blacklist.no_reason")
+            reason=(
+                reason
+                if reason
+                else tanjunLocalizer.localize(
+                    commandInfo.locale, "commands.level.blacklist.no_reason"
+                )
+            ),
         ),
     )
     await commandInfo.reply(embed=embed)
 
-async def remove_user_from_blacklist_command(commandInfo: commandInfo, user: discord.Member):
+
+async def remove_user_from_blacklist_command(
+    commandInfo: commandInfo, user: discord.Member
+):
     if not commandInfo.user.guild_permissions.administrator:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.remove_user.error.no_permission.title"
+                commandInfo.locale,
+                "commands.level.blacklist.remove_user.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.remove_user.error.no_permission.description"
+                commandInfo.locale,
+                "commands.level.blacklist.remove_user.error.no_permission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -182,27 +239,31 @@ async def remove_user_from_blacklist_command(commandInfo: commandInfo, user: dis
             commandInfo.locale, "commands.level.blacklist.remove_user.success.title"
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.blacklist.remove_user.success.description",
-            user=user.mention
+            commandInfo.locale,
+            "commands.level.blacklist.remove_user.success.description",
+            user=user.mention,
         ),
     )
     await commandInfo.reply(embed=embed)
+
 
 async def show_blacklist_command(commandInfo: commandInfo):
     if not commandInfo.user.guild_permissions.administrator:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.show.error.no_permission.title"
+                commandInfo.locale,
+                "commands.level.blacklist.show.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.blacklist.show.error.no_permission.description"
+                commandInfo.locale,
+                "commands.level.blacklist.show.error.no_permission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
     blacklist = await get_blacklist(str(commandInfo.guild.id))
-    
+
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.blacklist.show.title"
@@ -212,31 +273,52 @@ async def show_blacklist_command(commandInfo: commandInfo):
         ),
     )
 
-    if blacklist['channels']:
-        channel_list = "\n".join([f"<#{channel_id}> - {reason if reason else tanjunLocalizer.localize(commandInfo.locale, 'commands.level.blacklist.no_reason')}" for channel_id, reason in blacklist['channels']])
+    if blacklist["channels"]:
+        channel_list = "\n".join(
+            [
+                f"<#{channel_id}> - {reason if reason else tanjunLocalizer.localize(commandInfo.locale, 'commands.level.blacklist.no_reason')}"
+                for channel_id, reason in blacklist["channels"]
+            ]
+        )
         embed.add_field(
-            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.blacklist.show.channels"),
+            name=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.level.blacklist.show.channels"
+            ),
             value=channel_list,
-            inline=False
+            inline=False,
         )
 
-    if blacklist['roles']:
-        role_list = "\n".join([f"<@&{role_id}> - {reason if reason else tanjunLocalizer.localize(commandInfo.locale, 'commands.level.blacklist.no_reason')}" for role_id, reason in blacklist['roles']])
+    if blacklist["roles"]:
+        role_list = "\n".join(
+            [
+                f"<@&{role_id}> - {reason if reason else tanjunLocalizer.localize(commandInfo.locale, 'commands.level.blacklist.no_reason')}"
+                for role_id, reason in blacklist["roles"]
+            ]
+        )
         embed.add_field(
-            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.blacklist.show.roles"),
+            name=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.level.blacklist.show.roles"
+            ),
             value=role_list,
-            inline=False
+            inline=False,
         )
 
-    if blacklist['users']:
-        user_list = "\n".join([f"<@{user_id}> - {reason if reason else tanjunLocalizer.localize(commandInfo.locale,'commands.level.blacklist.no_reason')}" for user_id, reason in blacklist['users']])
+    if blacklist["users"]:
+        user_list = "\n".join(
+            [
+                f"<@{user_id}> - {reason if reason else tanjunLocalizer.localize(commandInfo.locale, 'commands.level.blacklist.no_reason')}"
+                for user_id, reason in blacklist["users"]
+            ]
+        )
         embed.add_field(
-            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.blacklist.show.users"),
+            name=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.level.blacklist.show.users"
+            ),
             value=user_list,
-            inline=False
+            inline=False,
         )
 
-    if not (blacklist['channels'] or blacklist['roles'] or blacklist['users']):
+    if not (blacklist["channels"] or blacklist["roles"] or blacklist["users"]):
         embed.description = tanjunLocalizer.localize(
             commandInfo.locale, "commands.level.blacklist.show.empty"
         )

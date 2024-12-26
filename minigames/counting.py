@@ -3,6 +3,7 @@ import discord
 from localizer import tanjunLocalizer
 import random
 
+
 async def counting(message: discord.Message):
     if message.author.bot:
         return
@@ -13,7 +14,7 @@ async def counting(message: discord.Message):
 
     if not progress and progress != 0:
         return
-    
+
     if await check_if_opted_out(message.author.id):
         try:
             await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
@@ -45,7 +46,7 @@ async def counting(message: discord.Message):
         return
 
     await increase_counting_progress(message.channel.id, message.author.id)
-    #nosec: B311
+    # nosec: B311
     if random.randint(1, 100) == 1:
         await message.channel.send(progress + 2)
         await increase_counting_progress(message.channel.id, "me")

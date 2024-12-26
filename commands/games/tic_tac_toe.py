@@ -2,17 +2,15 @@ import utility
 import discord
 from localizer import tanjunLocalizer
 import random
+
+
 class TicTacToe:
     def __init__(self, player1: discord.Member, player2: discord.Member = None):
         self.player1 = player1
         self.player2 = player2
         if self.player2 is None:
             self.player2 = "tanjun"
-        self.board = [
-            ["-", "-", "-"],
-            ["-", "-", "-"],
-            ["-", "-", "-"]
-        ]
+        self.board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         self.current_player = player1
         self.winner = None
         self.game_over = False
@@ -34,7 +32,7 @@ class TicTacToe:
         if board[0][2] == board[1][1] == board[2][0] and board[0][2] != "-":
             return board[0][2]
         return None
-    
+
     def is_full(self, board: list[list[str]] = None):
         if not board:
             board = self.board
@@ -43,7 +41,7 @@ class TicTacToe:
                 if cell == "-":
                     return False
         return True
-    
+
     def evaluate_board(self, board: list[list[str]]):
         winner = self.check_winner(board)
         if winner == self.player1_move:
@@ -51,7 +49,7 @@ class TicTacToe:
         elif winner == self.player2_move:
             return 1
         return 0
-    
+
     def get_available_moves(self, board: list[list[str]]):
         moves = []
         for i in range(9):
@@ -59,7 +57,13 @@ class TicTacToe:
                 moves.append(i)
         return moves
 
-    def minimax(self, current_player: str, depth: int, board: list[list[str]], maximizing_player: bool):
+    def minimax(
+        self,
+        current_player: str,
+        depth: int,
+        board: list[list[str]],
+        maximizing_player: bool,
+    ):
         # Check terminal states first
         winner = self.check_winner(board)
         if winner:
@@ -70,20 +74,22 @@ class TicTacToe:
                 return -10 - depth, ""  # Player win
         if self.is_full(board):
             return 0, ""
-        
+
         if depth == 0:
             return 0, ""
-        
+
         scores = []
         moves = []
         current_move = self.player2_move if maximizing_player else self.player1_move
 
         for move in self.get_available_moves(board):
             new_board = self.minimax_make_move(board, move, current_move)
-            score, _ = self.minimax(current_player, depth - 1, new_board, not maximizing_player)
+            score, _ = self.minimax(
+                current_player, depth - 1, new_board, not maximizing_player
+            )
             scores.append(score)
             moves.append(move)
-        
+
         if maximizing_player:
             best_score = max(scores)
             best_indices = [i for i, score in enumerate(scores) if score == best_score]
@@ -98,41 +104,80 @@ class TicTacToe:
     def minimax_make_move(self, board: list[list[str]], move: int, player: str):
         # Create a copy of the board
         new_board = [row[:] for row in board]
-        
+
         # The player parameter is now the actual symbol (X or O), not the player object
         new_board[move // 3][move % 3] = player
-        
+
         return new_board
 
-    async def update_board(self, interaction: discord.Interaction, initial: bool = False, timeout: bool = False):
+    async def update_board(
+        self,
+        interaction: discord.Interaction,
+        initial: bool = False,
+        timeout: bool = False,
+    ):
         self.winner = self.check_winner()
-        title = tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.title")
-        description = tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.description", player1=self.player1.mention, player2=self.player2.mention if self.player2 != "tanjun" else "Tanjun")
+        title = tanjunLocalizer.localize(
+            interaction.locale, "commands.games.ticTacToe.title"
+        )
+        description = tanjunLocalizer.localize(
+            interaction.locale,
+            "commands.games.ticTacToe.description",
+            player1=self.player1.mention,
+            player2=self.player2.mention if self.player2 != "tanjun" else "Tanjun",
+        )
         if self.player2 == "tanjun":
-            description += "\n" + tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.descriptionBotEnemy", difficulty=self.bot_difficulty)
+            description += "\n" + tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.games.ticTacToe.descriptionBotEnemy",
+                difficulty=self.bot_difficulty,
+            )
         if self.winner is not None:
             winner = self.player1 if self.winner == self.player1_move else self.player2
-            description += "\n" + tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.winner", winner=winner.mention if winner != "tanjun" else "Tanjun")
+            description += "\n" + tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.games.ticTacToe.winner",
+                winner=winner.mention if winner != "tanjun" else "Tanjun",
+            )
         elif self.is_full():
-            description += "\n" + tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.draw")
-        else: 
-            description += "\n" + tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.currentTurn", player=self.current_player.mention if self.current_player != "tanjun" else "Tanjun")
+            description += "\n" + tanjunLocalizer.localize(
+                interaction.locale, "commands.games.ticTacToe.draw"
+            )
+        else:
+            description += "\n" + tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.games.ticTacToe.currentTurn",
+                player=(
+                    self.current_player.mention
+                    if self.current_player != "tanjun"
+                    else "Tanjun"
+                ),
+            )
         embed = utility.tanjunEmbed(title=title, description=description)
         if initial:
             self.message = await interaction.reply(embed=embed)
-        view = self.getBoardView(timeout=3600, disable_on_timeout=timeout, message=self.message)
+        view = self.getBoardView(
+            timeout=3600, disable_on_timeout=timeout, message=self.message
+        )
         if initial:
             await self.message.edit(view=view, embed=embed)
         else:
-            await interaction.response.edit_message(view=view, embed=embed)
+            await interaction.followup.edit_message(message_id=interaction.message.id, view=view, embed=embed)
 
     def toggle_turn(self):
-        if self.player2.bot:
+        if self.player2 == "tanjun" or self.player2.bot:
             self.current_player = self.player1
         else:
-            self.current_player = self.player2 if self.current_player == self.player1 else self.player1
+            self.current_player = (
+                self.player2 if self.current_player == self.player1 else self.player1
+            )
 
-    def getBoardView(self, timeout: int = 3600, disable_on_timeout: bool = True, message: discord.Message = None):
+    def getBoardView(
+        self,
+        timeout: int = 3600,
+        disable_on_timeout: bool = True,
+        message: discord.Message = None,
+    ):
         class TicTacToeView(discord.ui.View):
             def __init__(self, ticTacToe: TicTacToe):
                 super().__init__(timeout=timeout)
@@ -157,142 +202,384 @@ class TicTacToe:
 
                 await message.edit(view=self)
 
-            @discord.ui.button(label=self.board[0][0], style=discord.ButtonStyle.secondary, custom_id="0", disabled=self.board[0][0] != "-" or self.winner is not None or disable_on_timeout, row=0)
-            async def play_0(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if not interaction.user.id in [self.player1.id, self.player2.id if self.player2 != "tanjun" else "tanjun"]:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourGame"), ephemeral=True)
+            @discord.ui.button(
+                label=self.board[0][0],
+                style=discord.ButtonStyle.secondary,
+                custom_id="0",
+                disabled=self.board[0][0] != "-"
+                or self.winner is not None
+                or disable_on_timeout,
+                row=0,
+            )
+            async def play_0(
+                self, interaction: discord.Interaction, button: discord.ui.Button
+            ):
+                await interaction.response.defer()
+                if interaction.user.id not in [
+                    self.player1.id,
+                    self.player2.id if self.player2 != "tanjun" else "tanjun",
+                ]:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourGame"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 await self.make_move(interaction, int(button.custom_id))
 
-            @discord.ui.button(label=self.board[0][1], style=discord.ButtonStyle.secondary, custom_id="1", disabled=self.board[0][1] != "-" or self.winner is not None or disable_on_timeout, row=0)
-            async def play_1(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if not interaction.user.id in [self.player1.id, self.player2.id if self.player2 != "tanjun" else "tanjun"]:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourGame"), ephemeral=True)
+            @discord.ui.button(
+                label=self.board[0][1],
+                style=discord.ButtonStyle.secondary,
+                custom_id="1",
+                disabled=self.board[0][1] != "-"
+                or self.winner is not None
+                or disable_on_timeout,
+                row=0,
+            )
+            async def play_1(
+                self, interaction: discord.Interaction, button: discord.ui.Button
+            ):
+                await interaction.response.defer()
+                if interaction.user.id not in [
+                    self.player1.id,
+                    self.player2.id if self.player2 != "tanjun" else "tanjun",
+                ]:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourGame"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 await self.make_move(interaction, int(button.custom_id))
 
-            @discord.ui.button(label=self.board[0][2], style=discord.ButtonStyle.secondary, custom_id="2", disabled=self.board[0][2] != "-" or self.winner is not None or disable_on_timeout, row=0)
-            async def play_2(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if not interaction.user.id in [self.player1.id, self.player2.id if self.player2 != "tanjun" else "tanjun"]:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourGame"), ephemeral=True)
+            @discord.ui.button(
+                label=self.board[0][2],
+                style=discord.ButtonStyle.secondary,
+                custom_id="2",
+                disabled=self.board[0][2] != "-"
+                or self.winner is not None
+                or disable_on_timeout,
+                row=0,
+            )
+            async def play_2(
+                self, interaction: discord.Interaction, button: discord.ui.Button
+            ):
+                await interaction.response.defer()
+                if interaction.user.id not in [
+                    self.player1.id,
+                    self.player2.id if self.player2 != "tanjun" else "tanjun",
+                ]:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourGame"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 await self.make_move(interaction, int(button.custom_id))
 
-            @discord.ui.button(label=self.board[1][0], style=discord.ButtonStyle.secondary, custom_id="3", disabled=self.board[1][0] != "-" or self.winner is not None or disable_on_timeout, row=1)
-            async def play_3(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if not interaction.user.id in [self.player1.id, self.player2.id if self.player2 != "tanjun" else "tanjun"]:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourGame"), ephemeral=True)
+            @discord.ui.button(
+                label=self.board[1][0],
+                style=discord.ButtonStyle.secondary,
+                custom_id="3",
+                disabled=self.board[1][0] != "-"
+                or self.winner is not None
+                or disable_on_timeout,
+                row=1,
+            )
+            async def play_3(
+                self, interaction: discord.Interaction, button: discord.ui.Button
+            ):
+                await interaction.response.defer()
+                if interaction.user.id not in [
+                    self.player1.id,
+                    self.player2.id if self.player2 != "tanjun" else "tanjun",
+                ]:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourGame"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 await self.make_move(interaction, int(button.custom_id))
 
-            @discord.ui.button(label=self.board[1][1], style=discord.ButtonStyle.secondary, custom_id="4", disabled=self.board[1][1] != "-" or self.winner is not None or disable_on_timeout, row=1)
-            async def play_4(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if not interaction.user.id in [self.player1.id, self.player2.id if self.player2 != "tanjun" else "tanjun"]:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourGame"), ephemeral=True)
+            @discord.ui.button(
+                label=self.board[1][1],
+                style=discord.ButtonStyle.secondary,
+                custom_id="4",
+                disabled=self.board[1][1] != "-"
+                or self.winner is not None
+                or disable_on_timeout,
+                row=1,
+            )
+            async def play_4(
+                self, interaction: discord.Interaction, button: discord.ui.Button
+            ):
+                await interaction.response.defer()
+                if interaction.user.id not in [
+                    self.player1.id,
+                    self.player2.id if self.player2 != "tanjun" else "tanjun",
+                ]:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourGame"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 await self.make_move(interaction, int(button.custom_id))
 
-            @discord.ui.button(label=self.board[1][2], style=discord.ButtonStyle.secondary, custom_id="5", disabled=self.board[1][2] != "-" or self.winner is not None or disable_on_timeout, row=1)
-            async def play_5(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if not interaction.user.id in [self.player1.id, self.player2.id if self.player2 != "tanjun" else "tanjun"]:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourGame"), ephemeral=True)
+            @discord.ui.button(
+                label=self.board[1][2],
+                style=discord.ButtonStyle.secondary,
+                custom_id="5",
+                disabled=self.board[1][2] != "-"
+                or self.winner is not None
+                or disable_on_timeout,
+                row=1,
+            )
+            async def play_5(
+                self, interaction: discord.Interaction, button: discord.ui.Button
+            ):
+                await interaction.response.defer()
+                if interaction.user.id not in [
+                    self.player1.id,
+                    self.player2.id if self.player2 != "tanjun" else "tanjun",
+                ]:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourGame"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 await self.make_move(interaction, int(button.custom_id))
 
-            @discord.ui.button(label=self.board[2][0], style=discord.ButtonStyle.secondary, custom_id="6", disabled=self.board[2][0] != "-" or self.winner is not None or disable_on_timeout, row=2)
-            async def play_6(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if not interaction.user.id in [self.player1.id, self.player2.id if self.player2 != "tanjun" else "tanjun"]:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourGame"), ephemeral=True)
+            @discord.ui.button(
+                label=self.board[2][0],
+                style=discord.ButtonStyle.secondary,
+                custom_id="6",
+                disabled=self.board[2][0] != "-"
+                or self.winner is not None
+                or disable_on_timeout,
+                row=2,
+            )
+            async def play_6(
+                self, interaction: discord.Interaction, button: discord.ui.Button
+            ):
+                await interaction.response.defer()
+                if interaction.user.id not in [
+                    self.player1.id,
+                    self.player2.id if self.player2 != "tanjun" else "tanjun",
+                ]:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourGame"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 await self.make_move(interaction, int(button.custom_id))
 
-            @discord.ui.button(label=self.board[2][1], style=discord.ButtonStyle.secondary, custom_id="7", disabled=self.board[2][1] != "-" or self.winner is not None or disable_on_timeout, row=2)
-            async def play_7(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if not interaction.user.id in [self.player1.id, self.player2.id if self.player2 != "tanjun" else "tanjun"]:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourGame"), ephemeral=True)
+            @discord.ui.button(
+                label=self.board[2][1],
+                style=discord.ButtonStyle.secondary,
+                custom_id="7",
+                disabled=self.board[2][1] != "-"
+                or self.winner is not None
+                or disable_on_timeout,
+                row=2,
+            )
+            async def play_7(
+                self, interaction: discord.Interaction, button: discord.ui.Button
+            ):
+                await interaction.response.defer()
+                if interaction.user.id not in [
+                    self.player1.id,
+                    self.player2.id if self.player2 != "tanjun" else "tanjun",
+                ]:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourGame"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 await self.make_move(interaction, int(button.custom_id))
 
-            @discord.ui.button(label=self.board[2][2], style=discord.ButtonStyle.secondary, custom_id="8", disabled=self.board[2][2] != "-" or self.winner is not None or disable_on_timeout, row=2)
-            async def play_8(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if not interaction.user.id in [self.player1.id, self.player2.id if self.player2 != "tanjun" else "tanjun"]:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourGame"), ephemeral=True)
+            @discord.ui.button(
+                label=self.board[2][2],
+                style=discord.ButtonStyle.secondary,
+                custom_id="8",
+                disabled=self.board[2][2] != "-"
+                or self.winner is not None
+                or disable_on_timeout,
+                row=2,
+            )
+            async def play_8(
+                self, interaction: discord.Interaction, button: discord.ui.Button
+            ):
+                await interaction.response.defer()
+                if interaction.user.id not in [
+                    self.player1.id,
+                    self.player2.id if self.player2 != "tanjun" else "tanjun",
+                ]:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourGame"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
+
                 await self.make_move(interaction, int(button.custom_id))
 
             async def make_move(self, interaction: discord.Interaction, place: int):
                 place = int(place)
 
                 if place < 0 or place > 8:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.invalidMove"), ephemeral=True)
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.invalidMove"
+                        ),
+                        ephemeral=True,
+                    )
                     return
-                
-                if self.board[place // 3][place % 3] != "-":
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.cellAlreadyTaken"), ephemeral=True)
-                    return
-                
-                if interaction.user != self.current_player:
-                    await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.games.ticTacToe.notYourTurn"), ephemeral=True)
-                    return
-                
-                self.board[place // 3][place % 3] = self.player1_move if self.current_player == self.player1 else self.player2_move
-                self.toggle_turn()
 
+                if self.board[place // 3][place % 3] != "-":
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale,
+                            "commands.games.ticTacToe.cellAlreadyTaken",
+                        ),
+                        ephemeral=True,
+                    )
+                    return
+
+                if interaction.user != self.current_player:
+                    await interaction.followup.send(
+                        tanjunLocalizer.localize(
+                            interaction.locale, "commands.games.ticTacToe.notYourTurn"
+                        ),
+                        ephemeral=True,
+                    )
+                    return
+
+                self.board[place // 3][place % 3] = (
+                    self.player1_move
+                    if self.current_player == self.player1
+                    else self.player2_move
+                )
+                self.toggle_turn()
 
                 if self.check_winners():
                     await self.update_board(interaction)
                     return
-                
+
+                print("made move")
+
                 if self.player2 == "tanjun" or self.player2.bot:
+                    print("minimaxing")
                     self.current_player = self.player2
-                    _, best_move = self.minimax(self.current_player, self.bot_difficulty * 2, self.board, True)
+                    _, best_move = self.minimax(
+                        self.current_player, self.bot_difficulty * 2, self.board, True
+                    )
+                    print("minimaxed")
                     self.board[best_move // 3][best_move % 3] = self.player2_move
                     self.current_player = self.player1
+                    print("updated board")
 
                 await self.update_board(interaction)
 
@@ -301,18 +588,22 @@ class TicTacToe:
                     self.game_over = True
                     self.winner = self.check_winner()
                     return True
-                
+
                 if self.is_full():
                     self.game_over = True
                     return True
                 return False
-            
+
         return TicTacToeView(self)
 
 
-async def tic_tac_toe(commandInfo: utility.commandInfo, player1: discord.Member, player2: discord.Member = None):
+async def tic_tac_toe(
+    commandInfo: utility.commandInfo,
+    player1: discord.Member,
+    player2: discord.Member = None,
+):
     if player2 is None:
         player2 = "tanjun"
-    
+
     ticTacToe = TicTacToe(player1, player2)
     await ticTacToe.update_board(commandInfo, initial=True)

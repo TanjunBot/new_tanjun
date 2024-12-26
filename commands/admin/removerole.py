@@ -1,5 +1,4 @@
 import discord
-from discord import app_commands
 import utility
 from localizer import tanjunLocalizer
 
@@ -60,7 +59,7 @@ class RoleManagementView(discord.ui.View):
                 f"commands.admin.{self.action}role.multipleSuccess",
                 count=success_count,
             ),
-            view=discord.ui.View()
+            view=discord.ui.View(),
         )
         self.stop()
 
@@ -70,7 +69,7 @@ class RoleManagementView(discord.ui.View):
             tanjunLocalizer.localize(
                 self.commandInfo.locale, f"commands.admin.{self.action}role.cancelled"
             ),
-            view=discord.ui.View()
+            view=discord.ui.View(),
         )
         self.stop()
 

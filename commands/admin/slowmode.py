@@ -2,7 +2,10 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 
-async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: discord.TextChannel = None):
+
+async def set_slowmode(
+    commandInfo: utility.commandInfo, seconds: int, channel: discord.TextChannel = None
+):
     if channel is None:
         channel = commandInfo.channel
 
@@ -13,7 +16,7 @@ async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: 
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.slowmode.missingPermission.description"
+                "commands.admin.slowmode.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -26,7 +29,7 @@ async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: 
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.slowmode.missingPermissionBot.description"
+                "commands.admin.slowmode.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -39,7 +42,7 @@ async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: 
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.slowmode.invalidDuration.description"
+                "commands.admin.slowmode.invalidDuration.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -55,7 +58,7 @@ async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: 
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.slowmode.disabled.description",
-                    channel=channel.mention
+                    channel=channel.mention,
                 ),
             )
         else:
@@ -67,7 +70,7 @@ async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: 
                     commandInfo.locale,
                     "commands.admin.slowmode.enabled.description",
                     channel=channel.mention,
-                    seconds=seconds
+                    seconds=seconds,
                 ),
             )
         await commandInfo.reply(embed=embed)
@@ -77,8 +80,7 @@ async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: 
                 commandInfo.locale, "commands.admin.slowmode.forbidden.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.slowmode.forbidden.description"
+                commandInfo.locale, "commands.admin.slowmode.forbidden.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -88,8 +90,7 @@ async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: 
                 commandInfo.locale, "commands.admin.slowmode.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.slowmode.error.description"
+                commandInfo.locale, "commands.admin.slowmode.error.description"
             ),
         )
         await commandInfo.reply(embed=embed)

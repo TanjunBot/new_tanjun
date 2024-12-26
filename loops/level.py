@@ -2,20 +2,20 @@ from api import (
     update_user_xp_from_voice,
     check_if_opted_out,
     get_level_system_status,
-    get_blacklist,
+    # get_blacklist,
     get_xp_scaling,
     get_custom_formula,
     get_user_boost,
     get_user_roles_boosts,
     get_channel_boost,
 )
-from minigames.addLevelXp import fetch_xp_details, is_blacklisted
+from minigames.addLevelXp import is_blacklisted  # , fetch_xp_details
 import random
 import math
 
 voiceUsers = []
 
-
+""" redefinition of unused 'is_blacklisted' from line 12 Flake8(F811):
 async def is_blacklisted(user) -> bool:
     blacklist = await get_blacklist(user.guild.id)
     user_id = str(user.id)
@@ -30,6 +30,7 @@ async def is_blacklisted(user) -> bool:
             for role_id in (role[0] for role in blacklist["roles"])
         )
     )
+"""
 
 
 async def fetch_xp_details(user):
@@ -40,7 +41,7 @@ async def fetch_xp_details(user):
 
 
 async def calculate_xp(user) -> int:
-    #nosec: B311
+    # nosec: B311
     base_xp = random.randint(1, 3)
     user_boost = await get_user_boost(user.guild.id, str(user.id))
     if not user_boost:
@@ -112,6 +113,7 @@ async def handleVoiceChange(user, before, after):
     else:
         updateVoiceUsers(active_members)
 
+
 def updateVoiceUsers(active_members):
     global voiceUsers
     current_users_set = set(voiceUsers)
@@ -125,11 +127,12 @@ def updateVoiceUsers(active_members):
     for user in users_to_remove:
         removeVoiceUser(user)
 
+
 def addVoiceUser(user):
     if user not in voiceUsers:
         voiceUsers.append(user)
 
+
 def removeVoiceUser(user):
     if user in voiceUsers:
         voiceUsers.remove(user)
-

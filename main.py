@@ -7,6 +7,8 @@ from translator import TanjunTranslator
 import api
 import asyncmy
 from config import database_ip, database_password, database_user, database_schema
+from commands.utility.twitch.twitchApi import initTwitch
+
 
 async def loadextension(bot, extensionname):
     extensionname = f"extensions.{extensionname}"
@@ -50,6 +52,7 @@ async def main():
             await loadextension(bot, extension)
     await loadTranslator(bot)
 
+
 async def create_pool():
     try:
         p = await asyncmy.create_pool(
@@ -70,6 +73,7 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
 
+
 @bot.event
 async def on_ready():
     await bot.change_presence(
@@ -79,7 +83,7 @@ async def on_ready():
     print(pool)
     api.set_pool(pool)
     await api.create_tables()
+    await initTwitch()
     print("Bot is running!")
-
 
 bot.run(config.token)

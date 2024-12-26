@@ -1,10 +1,11 @@
+# Unused imports:
+# from localizer import tanjunLocalizer
 import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from utility import tanjunEmbed, LEVEL_SCALINGS
-from localizer import tanjunLocalizer
-from typing import List, Optional
+from utility import LEVEL_SCALINGS  # , tanjunEmbed
+from typing import Optional  # , List
 
 from commands.level.disable_level_system import (
     disable_level_system as disableLevelSystemCommand,
@@ -51,13 +52,14 @@ from commands.level.level_rankcard import (
     show_rankcard_command,
     set_background_command,
 )
-from commands.level.give_xp import give_xp_command 
+from commands.level.give_xp import give_xp_command
 from commands.level.take_xp import take_xp_command
 from commands.level.level_set_xp_cooldown import (
     set_text_cooldown_command,
     set_voice_cooldown_command,
 )
 from commands.level.leaderboard import leaderboard
+
 
 class BlacklistCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -475,12 +477,12 @@ class LevelConfigCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_changelevelupmessage_description"),
     )
     @app_commands.describe(
-        new_message=app_commands.locale_str(
+        newmessage=app_commands.locale_str(
             "level_changelevelupmessage_params_newmessage_description"
         ),
     )
     async def changelevelupmessage(
-        self, ctx, new_message: app_commands.Range[str, 1, 255]
+        self, ctx, newmessage: app_commands.Range[str, 1, 255]
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -495,7 +497,7 @@ class LevelConfigCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await changeLevelupMessageCommand(commandInfo, new_message)
+        await changeLevelupMessageCommand(commandInfo, newmessage)
 
     @app_commands.command(
         name=app_commands.locale_str("level_disablelevelupmessage_name"),
@@ -786,6 +788,7 @@ class LevelConfigCommands(discord.app_commands.Group):
         )
         await set_voice_cooldown_command(commandInfo, cooldown)
 
+
 class levelCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("level_rank_name"),
@@ -852,6 +855,7 @@ class levelCommands(discord.app_commands.Group):
             client=ctx.client,
         )
         await leaderboard(commandInfo, page)
+
 
 class levelCog(commands.Cog):
 

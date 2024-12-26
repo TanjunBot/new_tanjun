@@ -2,12 +2,12 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 from api import (
-    get_leave_channel,
-    set_leave_channel,
-    remove_leave_channel,
+    get_welcome_channel,
+    set_welcome_channel,
+    remove_welcome_channel,
 )
 import aiohttp
-from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageSequence
+from PIL import Image, ImageDraw, ImageFont, ImageSequence
 from utility import commandInfo, draw_text_with_outline
 import io
 import asyncio
@@ -16,7 +16,7 @@ from concurrent.futures import ThreadPoolExecutor
 executor = ThreadPoolExecutor()
 
 
-async def setFarewellChannel(
+async def setWelcomeChannel(
     commandInfo: utility.commandInfo,
     channel: discord.TextChannel,
     message: str = None,
@@ -26,11 +26,11 @@ async def setFarewellChannel(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.farewell.missingPermission.title",
+                "commands.admin.channel.welcome.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.farewell.missingPermission.description",
+                "commands.admin.channel.welcome.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -44,25 +44,25 @@ async def setFarewellChannel(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.farewell.missingBotPermission.title",
+                "commands.admin.channel.welcome.missingBotPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.farewell.missingBotPermission.description",
+                "commands.admin.channel.welcome.missingBotPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    if await get_leave_channel(commandInfo.guild.id):
+    if await get_welcome_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.farewell.alreadySet.title",
+                "commands.admin.channel.welcome.alreadySet.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.farewell.alreadySet.description",
+                "commands.admin.channel.welcome.alreadySet.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -77,59 +77,59 @@ async def setFarewellChannel(
             )
         )["data"]["url"]
     else:
-        imgUrl = "https://i.ibb.co/G5G0mVr/leave-background.png"
+        imgUrl = "https://i.ibb.co/rQZHnbs/welcome-background.png"
 
-    await set_leave_channel(commandInfo.guild.id, channel.id, message, imgUrl)
+    await set_welcome_channel(commandInfo.guild.id, channel.id, message, imgUrl)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.channel.farewell.success.title"
+            commandInfo.locale, "commands.admin.channel.welcome.success.title"
         ),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.admin.channel.farewell.success.description",
+            "commands.admin.channel.welcome.success.description",
             channel=channel.mention,
         ),
     )
     await commandInfo.reply(embed=embed)
 
 
-async def removeFarewellChannel(commandInfo: utility.commandInfo):
+async def removeWelcomeChannel():
     if not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.farewell.missingPermission.title",
+                "commands.admin.channel.welcome.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.channel.farewell.missingPermission.description",
+                "commands.admin.channel.welcome.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    if not await get_leave_channel(commandInfo.guild.id):
+    if not await get_welcome_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.channel.farewell.notSet.title"
+                commandInfo.locale, "commands.admin.channel.welcome.notSet.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.channel.farewell.notSet.description"
+                commandInfo.locale, "commands.admin.channel.welcome.notSet.description"
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    await remove_leave_channel(commandInfo.guild.id)
+    await remove_welcome_channel(commandInfo.guild.id)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.channel.farewell.deleteSuccess.title"
+            commandInfo.locale, "commands.admin.channel.welcome.deleteSuccess.title"
         ),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
-            "commands.admin.channel.farewell.deleteSuccess.description",
+            "commands.admin.channel.welcome.deleteSuccess.description",
         ),
     )
     await commandInfo.reply(embed=embed)
@@ -140,15 +140,12 @@ async def fetch_image(url):
         async with session.get(url) as response:
             if response.status != 200:
                 return None
-            print("response: ", response)
             image_data = io.BytesIO(await response.read())
-            print("image_data: ", image_data)
             return image_data
 
 
 async def get_image_or_gif_frames(url):
     image_data = await fetch_image(url)
-    print("image_data: ", image_data)
     image = Image.open(image_data)
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
     duration = image.info.get("duration", 100)
@@ -167,7 +164,7 @@ def process_image(background_frames, avatar_frames, user):
             if hasattr(user.guild, "preferred_locale")
             else "en"
         ),
-        "commands.admin.channel.farewell.memberNumber",
+        "commands.admin.channel.welcome.memberNumber",
         member_count=user.guild.member_count,
     )
 
@@ -247,13 +244,13 @@ def process_image(background_frames, avatar_frames, user):
     return img_byte_arr
 
 
-async def farewellUser(member: discord.Member):
-    farewellChannel = await get_leave_channel(member.guild.id)
-    print(farewellChannel)
-    if farewellChannel is None:
+async def welcomeNewUser(member: discord.Member):
+    welcomeChannel = await get_welcome_channel(member.guild.id)
+    print(welcomeChannel)
+    if welcomeChannel is None:
         return
 
-    background_frames, _ = await get_image_or_gif_frames(farewellChannel[3])
+    background_frames, _ = await get_image_or_gif_frames(welcomeChannel[3])
 
     avatar_url = str(member.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
@@ -269,7 +266,7 @@ async def farewellUser(member: discord.Member):
 
     file = discord.File(img_byte_arr, filename="bg.gif")
 
-    description = farewellChannel[2]
+    description = welcomeChannel[2]
 
     if not description:
         description = tanjunLocalizer.localize(
@@ -278,7 +275,7 @@ async def farewellUser(member: discord.Member):
                 if hasattr(member.guild, "preferred_locale")
                 else "en"
             ),
-            "commands.admin.channel.farewell.success.description",
+            "commands.admin.channel.welcome.success.description",
         )
 
     description = description.replace("{user}", member.mention)
@@ -290,6 +287,6 @@ async def farewellUser(member: discord.Member):
     )
     embed.set_image(url="attachment://bg.gif")
 
-    channel = await member.guild.fetch_channel(int(farewellChannel[0]))
+    channel = await member.guild.fetch_channel(int(welcomeChannel[0]))
 
     await channel.send(embed=embed, file=file)

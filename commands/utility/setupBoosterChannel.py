@@ -4,17 +4,24 @@ from api import get_booster_channel, add_booster_channel
 import utility
 import discord
 
-async def setupBoosterChannel(commandInfo: commandInfo, category: discord.CategoryChannel):
+
+async def setupBoosterChannel(
+    commandInfo: commandInfo, category: discord.CategoryChannel
+):
     if not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale,
-                "commands.utility.setupboosterchannel.missingPermission.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale,
-                "commands.utility.setupboosterchannel.missingPermission.description")
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.utility.setupboosterchannel.missingPermission.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.utility.setupboosterchannel.missingPermission.description",
+            ),
         )
         await commandInfo.reply(embed=embed)
-        return 
-    
+        return
+
     booster_channel = await get_booster_channel(commandInfo.guild.id)
     if booster_channel:
         embed = tanjunEmbed(
@@ -37,7 +44,8 @@ async def setupBoosterChannel(commandInfo: commandInfo, category: discord.Catego
             commandInfo.locale, "commands.utility.setupboosterchannel.success.title"
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.setupboosterchannel.success.description"
+            commandInfo.locale,
+            "commands.utility.setupboosterchannel.success.description",
         ),
     )
     await commandInfo.reply(embed=embed)

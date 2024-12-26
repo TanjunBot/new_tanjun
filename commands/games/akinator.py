@@ -47,8 +47,6 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
     aki = Akinator(lang=language, child_mode=True, theme=theme)
     aki.start_game()
 
-    first_question = aki.question
-
     class AkinatorView(discord.ui.View):
         def __init__(self):
             super().__init__()
@@ -64,6 +62,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_yes(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             await update_embed(interaction, "y")
 
         @discord.ui.button(
@@ -75,10 +74,16 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
             emoji="❌",
         )
         async def akinator_no(
-                self, interaction: discord.Interaction, button: discord.ui.Button
+            self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.notYourGame"), ephemeral=True)
+                await interaction.followup.send(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.akinator.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             await update_embed(interaction, "n")
 
@@ -93,8 +98,14 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_idk(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.notYourGame"), ephemeral=True)
+                await interaction.followup.send(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.akinator.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             await update_embed(interaction, "idk")
 
@@ -109,8 +120,14 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_probably(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.notYourGame"), ephemeral=True)
+                await interaction.followup.send(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.akinator.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             await update_embed(interaction, "p")
 
@@ -125,8 +142,14 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_probably_not(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.notYourGame"), ephemeral=True)
+                await interaction.followup.send(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.akinator.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             await update_embed(interaction, "pn")
 
@@ -141,26 +164,46 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         async def akinator_back(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.notYourGame"), ephemeral=True)
+                await interaction.followup.send(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.akinator.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             await update_embed(interaction, "b")
 
     def answer_to_locale_string(answer: str):
         if answer == "y":
-            return tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.yes")
+            return tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.akinator.yes"
+            )
         elif answer == "n":
-            return tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.no")
+            return tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.akinator.no"
+            )
         elif answer == "idk":
-            return tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.idk")
+            return tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.akinator.idk"
+            )
         elif answer == "p":
-            return tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.probably")
+            return tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.akinator.probably"
+            )
         elif answer == "pn":
-            return tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.probably_not")
+            return tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.akinator.probably_not"
+            )
         elif answer == "end":
-            return tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.end")
+            return tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.akinator.end"
+            )
         else:
-            return tanjunLocalizer.localize(commandInfo.locale, "commands.games.akinator.no_answer")
+            return tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.akinator.no_answer"
+            )
 
     async def update_embed(interaction: discord.Interaction, answer: str):
         if answer == "b":
@@ -184,7 +227,9 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
                 ),
             )
             embed.set_image(url=aki.photo)
-            await interaction.response.edit_message(embed=embed, view=None)
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id, embed=embed, view=None
+            )
         else:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
@@ -199,7 +244,9 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
                 ),
             )
             embed.set_image(url=aki.akitude)
-            await interaction.response.edit_message(embed=embed, view=AkinatorView())
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id, embed=embed, view=AkinatorView()
+            )
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(

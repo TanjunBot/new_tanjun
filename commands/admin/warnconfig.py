@@ -3,51 +3,90 @@ import utility
 from localizer import tanjunLocalizer
 from api import set_warn_config, get_warn_config
 
+
 async def warn_config(commandInfo: utility.commandInfo):
-    config = await get_warn_config(commandInfo.guild.id)  # Retrieve current configuration settings
+    config = await get_warn_config(
+        commandInfo.guild.id
+    )  # Retrieve current configuration settings
 
     class WarnConfigModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.commandInfo, config):
-            super().__init__(title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.title"))
+            super().__init__(
+                title=tanjunLocalizer.localize(
+                    commandInfo.locale, "commands.admin.warnconfig.modal.title"
+                )
+            )
             self.commandInfo = commandInfo
 
             # Provide default values from the current configuration
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.warn_expiration.label"),
-                    placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.warn_expiration.placeholder"),
-                    default=str(config.get("expiration_days", "")),  # Provide current setting or empty string if not set
+                    label=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.warn_expiration.label",
+                    ),
+                    placeholder=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.warn_expiration.placeholder",
+                    ),
+                    default=str(
+                        config.get("expiration_days", "")
+                    ),  # Provide current setting or empty string if not set
                     required=False,
                 )
             )
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.timeout_threshold.label"),
-                    placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.timeout_threshold.placeholder"),
+                    label=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.timeout_threshold.label",
+                    ),
+                    placeholder=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.timeout_threshold.placeholder",
+                    ),
                     default=str(config.get("timeout_threshold", "") or "2"),
                     required=False,
                 )
             )
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.timeout_duration.label"),
-                    placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.timeout_duration.placeholder"),
+                    label=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.timeout_duration.label",
+                    ),
+                    placeholder=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.timeout_duration.placeholder",
+                    ),
                     default=str(config.get("timeout_duration", "") or "3600"),
                     required=False,
                 )
             )
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.kick_threshold.label"),
-                    placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.kick_threshold.placeholder"),
+                    label=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.kick_threshold.label",
+                    ),
+                    placeholder=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.kick_threshold.placeholder",
+                    ),
                     default=str(config.get("kick_threshold", "") or "5"),
                     required=False,
                 )
             )
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.ban_threshold.label"),
-                    placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.ban_threshold.placeholder"),
+                    label=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.ban_threshold.label",
+                    ),
+                    placeholder=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.warnconfig.modal.ban_threshold.placeholder",
+                    ),
                     default=str(config.get("ban_threshold", "") or "10"),
                     required=False,
                 )
@@ -72,22 +111,38 @@ async def warn_config(commandInfo: utility.commandInfo):
                 )
 
                 embed = utility.tanjunEmbed(
-                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.warnconfig.success.title"),
-                    description=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.warnconfig.success.description"),
+                    title=tanjunLocalizer.localize(
+                        self.commandInfo.locale,
+                        "commands.admin.warnconfig.success.title",
+                    ),
+                    description=tanjunLocalizer.localize(
+                        self.commandInfo.locale,
+                        "commands.admin.warnconfig.success.description",
+                    ),
                 )
                 await interaction.response.send_message(embed=embed)
 
             except ValueError:
                 embed = utility.tanjunEmbed(
-                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.warnconfig.error.title"),
-                    description=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.warnconfig.error.invalidInput"),
+                    title=tanjunLocalizer.localize(
+                        self.commandInfo.locale, "commands.admin.warnconfig.error.title"
+                    ),
+                    description=tanjunLocalizer.localize(
+                        self.commandInfo.locale,
+                        "commands.admin.warnconfig.error.invalidInput",
+                    ),
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
     if not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.missingPermission.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.missingPermission.description"),
+            title=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.admin.warnconfig.missingPermission.title"
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.admin.warnconfig.missingPermission.description",
+            ),
         )
         await commandInfo.reply(embed=embed)
         return

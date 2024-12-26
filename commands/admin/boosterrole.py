@@ -3,6 +3,7 @@ import utility
 from localizer import tanjunLocalizer
 from api import add_booster_role, delete_booster_role
 
+
 async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Role):
     if not commandInfo.user.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
@@ -11,7 +12,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.boosterRole.missingPermission.description"
+                "commands.admin.boosterRole.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -20,16 +21,17 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
     if not commandInfo.guild.me.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.boosterRole.missingPermissionBot.title"
+                commandInfo.locale,
+                "commands.admin.boosterRole.missingPermissionBot.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.boosterRole.missingPermissionBot.description"
+                "commands.admin.boosterRole.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if not role:
         await delete_booster_role(commandInfo.guild.id)
         embed = utility.tanjunEmbed(
@@ -50,12 +52,12 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.boosterRole.targetTooHigh.description"
+                "commands.admin.boosterRole.targetTooHigh.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if role.position >= commandInfo.client.user.top_role.position:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -63,12 +65,12 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.boosterRole.roleTooHighBot.description"
+                "commands.admin.boosterRole.roleTooHighBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     try:
         await add_booster_role(commandInfo.guild.id, role.id)
         if role.permissions.administrator:
@@ -78,7 +80,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
-                    "commands.admin.boosterRole.success.descriptionWarning"
+                    "commands.admin.boosterRole.success.descriptionWarning",
                 ),
             )
         else:
@@ -87,8 +89,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
                     commandInfo.locale, "commands.admin.boosterRole.success.title"
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.admin.boosterRole.success.description"
+                    commandInfo.locale, "commands.admin.boosterRole.success.description"
                 ),
             )
         await commandInfo.reply(embed=embed)
@@ -98,8 +99,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
                 commandInfo.locale, "commands.admin.boosterRole.forbidden.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.boosterRole.forbidden.description"
+                commandInfo.locale, "commands.admin.boosterRole.forbidden.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -109,8 +109,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
                 commandInfo.locale, "commands.admin.boosterRole.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.boosterRole.error.description"
+                commandInfo.locale, "commands.admin.boosterRole.error.description"
             ),
         )
         await commandInfo.reply(embed=embed)

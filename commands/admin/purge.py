@@ -2,7 +2,13 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 
-async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.TextChannel = None, setting: str = "all"):
+
+async def purge(
+    commandInfo: utility.commandInfo,
+    amount: int,
+    channel: discord.TextChannel = None,
+    setting: str = "all",
+):
     if channel is None:
         channel = commandInfo.channel
 
@@ -12,8 +18,7 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
                 commandInfo.locale, "commands.admin.purge.missingPermission.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.purge.missingPermission.description"
+                commandInfo.locale, "commands.admin.purge.missingPermission.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -26,7 +31,7 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
-                "commands.admin.purge.missingPermissionBot.description"
+                "commands.admin.purge.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -38,14 +43,14 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
                 commandInfo.locale, "commands.admin.purge.invalidAmount.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.purge.invalidAmount.description"
+                commandInfo.locale, "commands.admin.purge.invalidAmount.description"
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
     try:
+
         def check(m: discord.Message):
             if setting == "all":
                 return True
@@ -69,7 +74,7 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
                 return m.attachments
             elif setting == "notAdminNotPinned":
                 return not m.author.guild_permissions.administrator and not m.pinned
-            
+
         deleted = await channel.purge(limit=amount, check=check, bulk=True)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -79,7 +84,7 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
                 commandInfo.locale,
                 "commands.admin.purge.success.description",
                 amount=len(deleted),
-                channel=channel.mention
+                channel=channel.mention,
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -89,8 +94,7 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
                 commandInfo.locale, "commands.admin.purge.forbidden.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.purge.forbidden.description"
+                commandInfo.locale, "commands.admin.purge.forbidden.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -100,8 +104,7 @@ async def purge(commandInfo: utility.commandInfo, amount: int, channel: discord.
                 commandInfo.locale, "commands.admin.purge.error.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.purge.error.description"
+                commandInfo.locale, "commands.admin.purge.error.description"
             ),
         )
         await commandInfo.reply(embed=embed)

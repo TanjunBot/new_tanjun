@@ -1,7 +1,16 @@
 from utility import commandInfo, tanjunEmbed
 from localizer import tanjunLocalizer
-from api import checkIfUserIsAfk, setAfk, getAfkMessages, removeAfk, addAfkMessage, getAfkReason, check_if_opted_out
+from api import (
+    checkIfUserIsAfk,
+    setAfk,
+    getAfkMessages,
+    removeAfk,
+    addAfkMessage,
+    getAfkReason,
+    check_if_opted_out,
+)
 import discord
+
 
 async def afk(commandInfo: commandInfo, reason: str):
 
@@ -30,7 +39,7 @@ async def afk(commandInfo: commandInfo, reason: str):
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     await setAfk(commandInfo.user.id, reason)
 
     embed = tanjunEmbed(
@@ -44,6 +53,7 @@ async def afk(commandInfo: commandInfo, reason: str):
         ),
     )
     await commandInfo.reply(embed=embed)
+
 
 async def checkIfAfkHasToBeRemoved(message: discord.message):
     if await check_if_opted_out(message.author.id):
@@ -71,24 +81,27 @@ async def checkIfAfkHasToBeRemoved(message: discord.message):
             description=tanjunLocalizer.localize(
                 locale,
                 "commands.utility.afk.removed.description",
-                messages = "\n".join([f"- https://discord.com/channels/{message.guild.id}/{msg[1]}/{msg[0]}" for msg in messages ]),
+                messages="\n".join(
+                    [
+                        f"- https://discord.com/channels/{message.guild.id}/{msg[1]}/{msg[0]}"
+                        for msg in messages
+                    ]
+                ),
             ),
         )
         await removeAfk(message.author.id)
         await message.channel.send(embed=embed)
 
+
 async def checkIfMentionsAreAfk(message: discord.message):
     if await check_if_opted_out(message.author.id):
         return
-    
-    locale = message.guild.locale if hasattr(message.guild, "locale") else "de"
 
-    print("mentions: ", message.mentions)
+    locale = message.guild.locale if hasattr(message.guild, "locale") else "de"
 
     afkUsers = []
     reasons = []
     for mention in message.mentions:
-        print("mention: ", mention, mention.id)
         if await checkIfUserIsAfk(mention.id):
             afkUsers.append(mention)
             reason = await getAfkReason(mention.id)
@@ -98,14 +111,15 @@ async def checkIfMentionsAreAfk(message: discord.message):
         if len(afkUsers) == 1:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    locale, "commands.utility.afk.mentions_one.title",
-                    user = afkUsers[0].display_name,
+                    locale,
+                    "commands.utility.afk.mentions_one.title",
+                    user=afkUsers[0].display_name,
                 ),
                 description=tanjunLocalizer.localize(
                     locale,
                     "commands.utility.afk.mentions_one.description",
-                    user = afkUsers[0].mention,
-                    reason = reasons[0],
+                    user=afkUsers[0].mention,
+                    reason=reasons[0],
                 ),
             )
             await message.channel.send(embed=embed)
@@ -117,7 +131,7 @@ async def checkIfMentionsAreAfk(message: discord.message):
             description=tanjunLocalizer.localize(
                 locale,
                 "commands.utility.afk.mentions.description",
-                users = (f"- {user.mention}\n" for user in afkUsers),
+                users=(f"- {user.mention}\n" for user in afkUsers),
             ),
         )
         await message.channel.send(embed=embed)

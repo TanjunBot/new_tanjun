@@ -2,7 +2,7 @@ import discord
 from discord.ui import View, Button
 import utility
 from localizer import tanjunLocalizer
-from api import get_detailed_warnings, remove_warning, get_warn_config
+from api import get_detailed_warnings, remove_warning
 import math
 from datetime import datetime
 

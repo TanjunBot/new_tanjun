@@ -4,6 +4,7 @@ from localizer import tanjunLocalizer
 import random
 from commands.games.hangman_words.words import words
 
+# flake8: noqa: E501 # No trailing whitespace (formatting for the hangman steps)
 hangmanSteps = [
     """
 
@@ -129,8 +130,10 @@ def get_guessed_letters(guesses: list[str], word: str):
             guessed_letters += "_"
     return guessed_letters
 
+
 def wrong_letters(guesses: list[str], word):
     return len([x for x in guesses if len(x) == 1 and x != word and x not in word])
+
 
 async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
     locale = str(commandInfo.locale)
@@ -231,10 +234,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                     hanged_man=hanged_man,
                     guessed_letters=guessed_letters,
                     used_letters=", ".join(
-                        [
-                            f"{letter}"
-                            for letter in [x for x in guesses if len(x) == 1]
-                        ]
+                        [f"{letter}" for letter in [x for x in guesses if len(x) == 1]]
                     ),
                 ),
             )
@@ -245,7 +245,9 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             or given_up
             else WordleView(commandInfo)
         )
-        await interaction.response.edit_message(embed=embed, view=view)
+        await interaction.followup.edit_message(
+            message_id=interaction.message.id, embed=embed, view=view
+        )
 
     class HangmanInputModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.commandInfo, config):
@@ -294,7 +296,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                         "commands.games.hangman.error.invalidInput",
                     ),
                 )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.followup.send(embed=embed, ephemeral=True)
 
     class WordleView(discord.ui.View):
         def __init__(self, commandInfo: utility.commandInfo):
@@ -305,19 +307,31 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
         async def guess_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"), ephemeral=True)
+                await interaction.followup.send(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.hangman.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             modal = HangmanInputModal(self.commandInfo, guesses)
-            await interaction.response.send_modal(modal)
+            await interaction.followup.send_modal(modal)
             self.stop()
 
         @discord.ui.button(label="Give up", style=discord.ButtonStyle.red)
         async def give_up_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
+            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.response.send_message(tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"), ephemeral=True)
+                await interaction.followup.send(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale, "commands.games.hangman.notYourGame"
+                    ),
+                    ephemeral=True,
+                )
                 return
             guesses.append(word)
             guesses.append("THISAINTBEINGTHEWORD")

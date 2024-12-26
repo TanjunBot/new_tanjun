@@ -1,8 +1,9 @@
+# Unused imports:
+# from localizer import tanjunLocalizer
 import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from localizer import tanjunLocalizer
 
 from commands.giveaway.start import start_giveaway
 from commands.giveaway.add_blacklist_role import add_blacklist_role
@@ -10,9 +11,10 @@ from commands.giveaway.remove_blacklist_role import remove_blacklist_role
 from commands.giveaway.add_blacklist_user import add_blacklist_user
 from commands.giveaway.remove_blacklist_user import remove_blacklist_user
 from commands.giveaway.list_blacklist import list_blacklist
-from commands.giveaway.end_giveaway import end_giveaway 
+from commands.giveaway.end_giveaway import end_giveaway
 from commands.giveaway.reroll_giveaway import reroll_giveaway
 from commands.giveaway.edit_giveaway import edit_giveaway
+
 
 class BlacklistCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -160,6 +162,7 @@ class BlacklistCommands(discord.app_commands.Group):
             commandInfo=commandInfo,
         )
 
+
 class GiveawayCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("giveaway_start_name"),
@@ -286,7 +289,6 @@ class GiveawayCommands(discord.app_commands.Group):
             commandInfo=commandInfo,
             giveawayId=giveawayid,
         )
-
 
 
 class GiveawayCog(commands.Cog):

@@ -1,6 +1,11 @@
 from utility import commandInfo, tanjunEmbed
 from localizer import tanjunLocalizer
-from api import get_booster_role, get_claimed_booster_role, remove_claimed_booster_role, add_claimed_booster_role
+from api import (
+    get_booster_role,
+    get_claimed_booster_role,
+    remove_claimed_booster_role,
+    add_claimed_booster_role,
+)
 import utility
 import discord
 
@@ -96,7 +101,9 @@ async def claimBoosterRole(
         reason=reason,
     )
     await newRole.edit(position=role.position + 1)
-    await add_claimed_booster_role(commandInfo.user.id, newRole.id, commandInfo.guild.id)
+    await add_claimed_booster_role(
+        commandInfo.user.id, newRole.id, commandInfo.guild.id
+    )
     await commandInfo.user.add_roles(newRole)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -111,7 +118,6 @@ async def claimBoosterRole(
 
 async def remove_claimed_booster_roles_that_are_expired(client: discord.Client):
     claimed_booster_roles = await get_claimed_booster_role()
-    print("claimed_booster_roles", claimed_booster_roles)
     for user, role, guild_id in claimed_booster_roles:
         guild = client.get_guild(int(guild_id))
         user = guild.get_member(int(user))

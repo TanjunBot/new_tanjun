@@ -1,7 +1,7 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from api import close_ticket, get_ticket_by_id, get_ticket_messages_by_id
+from api import get_ticket_by_id, get_ticket_messages_by_id
 import datetime
 
 
@@ -28,9 +28,6 @@ async def close_ticket(interaction: discord.Interaction):
 
     ticket = await get_ticket_by_id(interaction.guild.id, ticket_id, ticket_channel_id)
 
-    print("ticket", ticket)
-    print("interaction.guild.id", interaction.guild.id)
-    print("ticket_id", ticket_id)
     if not ticket:
         await interaction.followup.send(
             tanjunLocalizer.localize(
@@ -41,9 +38,6 @@ async def close_ticket(interaction: discord.Interaction):
         return
 
     ticket_channel = interaction.channel
-
-    print("ticket_channel", ticket_channel)
-    print("ticket_channel.id", ticket_channel.id)
 
     if not ticket_channel.id == int(ticket[6]):
         await interaction.followup.send(
@@ -59,13 +53,8 @@ async def close_ticket(interaction: discord.Interaction):
 
     ticket_open_time = ticket[2]
 
-    print("ticket_message", ticket_message)
-
     summary_channel_id = int(ticket_message[7]) if ticket_message[7] else None
-    print("summary_channel_id", summary_channel_id)
     summary_channel = interaction.guild.get_channel(summary_channel_id)
-
-    print("summary_channel", summary_channel)
 
     if not summary_channel:
         await interaction.channel.edit(archived=True, locked=True)
@@ -99,22 +88,42 @@ async def close_ticket(interaction: discord.Interaction):
         )
 
         view = discord.ui.View()
-        btn1 = discord.ui.Button(label=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.viewOnlineSummary"), url=url)
+        btn1 = discord.ui.Button(
+            label=tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.admin.close_ticket.success.viewOnlineSummary",
+            ),
+            url=url,
+        )
         view.add_item(btn1)
-        btn2 = discord.ui.Button(label=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.viewThread"), url=f"https://discord.com/channels/{interaction.guild.id}/{ticket_channel.id}")
+        btn2 = discord.ui.Button(
+            label=tanjunLocalizer.localize(
+                interaction.locale, "commands.admin.close_ticket.success.viewThread"
+            ),
+            url=f"https://discord.com/channels/{interaction.guild.id}/{ticket_channel.id}",
+        )
         view.add_item(btn2)
 
         await summary_channel.send(
-            content=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.ticketClosed", user=interaction.user.mention),
+            content=tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.admin.close_ticket.success.ticketClosed",
+                user=interaction.user.mention,
+            ),
             embed=embed,
-            view=view
+            view=view,
         )
 
         await interaction.channel.edit(archived=True, locked=True)
-        
+
         await interaction.channel.send(
-            content=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.ticketClosed", user=interaction.user.mention),
+            content=tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.admin.close_ticket.success.ticketClosed",
+                user=interaction.user.mention,
+            ),
         )
+
 
 async def generate_summary_html(
     channel: discord.abc.GuildChannel,
@@ -134,12 +143,15 @@ async def generate_summary_html(
     """
 
     html += f"""
-    <title>{channel.name}</title>
+    <title>{channel.name} - Ticket Transcript</title>
     """
 
     html += """
-    <link rel="icon" href="https://images-ext-1.discordapp.net/external/FWSPdGnm0UWSgnF35SzaxUBfNYSKLDEZ2aP7lWFGwpo/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/885984139315122206/31004c06c072a0ec1760eebb1358f210.png?format=webp&quality=lossless&width=671&height=671">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://static.tanjun.bot/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://static.tanjun.bot/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://static.tanjun.bot/favicons/favicon-16x16.png">
+    <link rel="manifest" href="https://static.tanjun.bot/favicons/site.webmanifest">
+    <link href="https://static.tanjun.bot/fonts/Roboto" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -149,6 +161,8 @@ async def generate_summary_html(
             justify-content: center;
             align-items: flex-start;
             transition: background 0.5s, color 0.5s;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
 
         .container {
@@ -945,7 +959,7 @@ async def generate_summary_html(
     </style>
 </head>
 
-<body class="fire">
+<body class="dark">
     <div class="container">
     """
     html += f"""
@@ -1009,7 +1023,7 @@ async def generate_summary_html(
             continue
         html += '<div class="message">'
         html += f'<img src="{message.author.display_avatar.url}" alt="Profile Picture" class="profile-picture">'
-        html += f'<div class="message-content">'
+        html += '<div class="message-content">'
         html += f'<div class="username">{message.author.name}</div>'
         html += f'<div class="name">{message.author.name}</div>'
         html += f'<div class="text">{message.content}</div>'
@@ -1627,7 +1641,7 @@ async def generate_summary_html(
                         manage_guild: "Spravovat server",
                         manage_messages: "Spravovat zprávy",
                         manage_nicknames: "Spravovat přezdívky",
-                        manage_permissions: "Spravovat oprávn��ní",
+                        manage_permissions: "Spravovat oprávnění",
                         manage_roles: "Spravovat role",
                         manage_threads: "Spravovat vlákna",
                         manage_webhooks: "Spravovat webhooky",
@@ -2340,7 +2354,7 @@ async def generate_summary_html(
                         create_instant_invite: "तत्काल आमंत्रण बनाएं",
                         create_polls: "पोल बनाएं",
                         create_private_threads: "निजी थ्रेड बनाएं",
-                        create_public_threads: "स���र्वजनिक थ्रेड बनाएं",
+                        create_public_threads: "सार्वजनिक थ्रेड बनाएं",
                         deafen_members: "सदस्यों को बधिर करें",
                         embed_links: "लिंक एम्बेड करें",
                         external_emojis: "बाहरी इमोजी का उपयोग करें",
@@ -2384,7 +2398,7 @@ async def generate_summary_html(
                         use_voice_activation: "वॉइस एक्टिवेशन का उपयोग करें",
                         view_audit_log: "ऑडिट लॉग देखें",
                         view_channel: "चैनल देखें",
-                        view_creator_monetization_analytics: "क्रिएटर मौद���रीकरण विश्लेषण देखें",
+                        view_creator_monetization_analytics: "क्रिएटर मौद्रिकरण विश्लेषण देखें",
                         view_guild_insights: "सर्वर इनसाइट्स देखें",
                         userPopover: {
                             memberSince: "Miembro desde"
@@ -2602,7 +2616,7 @@ async def generate_summary_html(
                         typeChannel: "チャンネル"
                     },
                     permissions: {
-                        add_reaction: "��アクションを追加",
+                        add_reaction: "リアクションを追加",
                         administrator: "管理者",
                         attach_files: "ファイルを添付",
                         ban_members: "メンバーをBAN",
@@ -2658,7 +2672,7 @@ async def generate_summary_html(
                         view_audit_log: "監査ログを表示",
                         view_channel: "チャンネルを表示",
                         view_creator_monetization_analytics: "クリエイター収益化分析を表示",
-                        view_guild_insights: "サーバーインサ���トを表示",
+                        view_guild_insights: "サーバーインサイトを表示",
                         userPopover: {
                             memberSince: "メンバー登録日"
                         }
@@ -2738,8 +2752,8 @@ async def generate_summary_html(
                         send_voice_messages: "음성 메시지 보내기",
                         speak: "말하기",
                         stream: "스트리밍",
-                        use_application_commands: "애플리케이션 ���령어 사용",
-                        use_embedded_activities: "임베드 활동 사���",
+                        use_application_commands: "애플리케이션 명령어 사용",
+                        use_embedded_activities: "임베드 활동 사용",
                         use_external_apps: "외부 앱 사용",
                         use_external_emojis: "외부 이모티콘 사용",
                         use_external_sounds: "외부 소리 사용",
@@ -3376,7 +3390,7 @@ async def generate_summary_html(
                         speak: "Говорить",
                         stream: "Стримить",
                         use_application_commands: "Использовать команды приложений",
-                        use_embedded_activities: "Использовать встроенные ак��ивность",
+                        use_embedded_activities: "Использовать встроенные активность",
                         use_external_apps: "Использовать внешние приложения",
                         use_external_emojis: "Использовать внешние эмодзи",
                         use_external_sounds: "Использовать внешние звуки",
@@ -3385,7 +3399,7 @@ async def generate_summary_html(
                         use_voice_activation: "Использовать активацию голоса",
                         view_audit_log: "Просмотреть журнал аудита",
                         view_channel: "Просмотреть канал",
-                        view_creator_monetization_analytics: "Просмотреть анализ монетизац��и создателей",
+                        view_creator_monetization_analytics: "Просмотреть анализ монетизации создателей",
                         view_guild_insights: "Просмотреть анализ гильдии",
                         userPopover: {
                             memberSince: "Участник с"
@@ -3493,7 +3507,7 @@ async def generate_summary_html(
                         fire: "Eld",
                         underwater: "Under vatten",
                         neonNight: "Neon natt",
-                        highContrastDark: "Hög kontrast m��rk",
+                        highContrastDark: "Hög kontrast mörk",
                         highContrastLight: "Hög kontrast ljus"
                     },
                     searchPlaceholder: "Sök i meddelanden eller avsändare",
@@ -3972,7 +3986,7 @@ async def generate_summary_html(
                     const option = document.createElement('option');
                     option.value = key;
                     option.textContent = value;
-                    if (key === 'fire') option.selected = true;
+                    if (key === 'dark') option.selected = true;
                     themeSelector.appendChild(option);
                 }
 
@@ -4098,17 +4112,17 @@ async def generate_summary_html(
                 font-weight: 500;
                 display: inline-block;
             }
-            
+
             .user-mention {
                 background-color: rgba(88, 101, 242, 0.15);
                 color: var(--brand);
             }
-            
+
             .channel-mention {
                 background-color: rgba(35, 165, 89, 0.15);
                 color: var(--brand);
             }
-            
+
             .role-mention:hover, .user-mention:hover, .channel-mention:hover {
                 opacity: 0.8;
             }
@@ -4130,7 +4144,7 @@ async def generate_summary_html(
                 <div class="role-popover-header">
                     <h3 class="role-popover-title">@${role.name}</h3>
                 </div>
-                
+
                 <div class="role-popover-section">
                     <div class="role-popover-label">${t.popover.members}</div>
                     <div class="role-member-list">
@@ -4139,7 +4153,7 @@ async def generate_summary_html(
                         `).join('')}
                     </div>
                 </div>
-                
+
                 <div class="role-popover-section">
                     <div class="role-popover-label">${t.popover.permissions}</div>
                     <div class="role-popover-value">

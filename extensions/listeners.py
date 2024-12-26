@@ -1,9 +1,10 @@
-import discord
+# Unused imports:
+# import discord
+# import utility
+# from discord import app_commands
+# from localizer import tanjunLocalizer
+# from typing import List, Optional
 from discord.ext import commands
-from discord import app_commands
-import utility
-from localizer import tanjunLocalizer
-from typing import List, Optional
 
 from minigames.counting import counting
 from minigames.countingChallenge import counting as countingChallenge
@@ -17,7 +18,10 @@ from loops.giveaway import handleVoiceChange
 
 from config import adminIds
 
-from commands.ai.add_custom_situation_button_handler import approve_custom_situation, deny_custom_situation
+from commands.ai.add_custom_situation_button_handler import (
+    approve_custom_situation,
+    deny_custom_situation,
+)
 
 from commands.utility.autopublish import publish_message
 from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
@@ -28,9 +32,11 @@ from commands.admin.trigger_messages.send import send_trigger_message
 from commands.admin.ticket.open_ticket import openTicket as openTicketListener
 from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
 from commands.admin.joinToCreate.joinToCreateListener import memberLeave, memberJoin
-from commands.admin.channel.media import mediaChannelMessage
-from commands.admin.channel.welcome import welcomeNewUser
-from commands.admin.channel.farewell import farewellUser
+from commands.channel.media import mediaChannelMessage
+from commands.channel.welcome import welcomeNewUser
+from commands.channel.farewell import farewellUser
+from commands.channel.dynamicslowmode import dynamicslowmodeMessage
+
 
 class ListenerCog(commands.Cog):
 
@@ -50,33 +56,46 @@ class ListenerCog(commands.Cog):
         await checkIfMentionsAreAfk(message)
         await send_trigger_message(message)
         await mediaChannelMessage(message)
+        await dynamicslowmodeMessage(message)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
         try:
-            if interaction.data["custom_id"].startswith("giveaway_enter"):
-                giveaway_id = interaction.data["custom_id"].split("; ")[1]
-                embed = await add_giveaway_participant(giveawayid=giveaway_id, userid=interaction.user.id, client=self.bot)
-                if embed:
-                    await interaction.response.send_message(embed=embed, ephemeral=True)
-            elif interaction.data["custom_id"].startswith("ai_add_custom_situation_approve"):
-                if interaction.user.id not in adminIds:
+            if hasattr(interaction, "data") and hasattr(interaction.data, "custom_id"):
+                if interaction.data["custom_id"].startswith("giveaway_enter"):
+                    giveaway_id = interaction.data["custom_id"].split("; ")[1]
+                    embed = await add_giveaway_participant(
+                        giveawayid=giveaway_id,
+                        userid=interaction.user.id,
+                        client=self.bot,
+                    )
+                    if embed:
+                        await interaction.response.send_message(
+                            embed=embed, ephemeral=True
+                        )
+                elif interaction.data["custom_id"].startswith(
+                    "ai_add_custom_situation_approve"
+                ):
+                    if interaction.user.id not in adminIds:
+                        return
+                    await approve_custom_situation(interaction)
+                elif interaction.data["custom_id"].startswith(
+                    "ai_add_custom_situation_deny"
+                ):
+                    if interaction.user.id not in adminIds:
+                        return
+                    await deny_custom_situation(interaction)
+                elif interaction.data["custom_id"].startswith("report_"):
+                    await report_btn_click(interaction, interaction.data["custom_id"])
                     return
-                await approve_custom_situation(interaction)
-            elif interaction.data["custom_id"].startswith("ai_add_custom_situation_deny"):
-                if interaction.user.id not in adminIds:
+                elif interaction.data["custom_id"].startswith("ticket_create"):
+                    await openTicketListener(interaction)
                     return
-                await deny_custom_situation(interaction)
-            elif interaction.data["custom_id"].startswith("report_"):
-                await report_btn_click(interaction, interaction.data["custom_id"])
-                return
-            elif interaction.data["custom_id"].startswith("ticket_create"):
-                await openTicketListener(interaction)
-                return
-            elif interaction.data["custom_id"].startswith("ticket_close"):
-                await closeTicketListener(interaction)
-                return
-        except:
+                elif interaction.data["custom_id"].startswith("ticket_close"):
+                    await closeTicketListener(interaction)
+                    return
+        except Exception as e:
+            print(f"An error occurred: {e}")
             raise
 
     @commands.Cog.listener()
@@ -89,7 +108,9 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
         if after.reference:
-            await update_scheduled_message_content(after.reference.message_id, after.content)
+            await update_scheduled_message_content(
+                after.reference.message_id, after.content
+            )
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
@@ -102,6 +123,7 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_member_remove(self, member):
         await farewellUser(member)
+
 
 async def setup(bot):
     await bot.add_cog(ListenerCog(bot))

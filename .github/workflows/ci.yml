@@ -92,8 +92,8 @@ jobs:
               ],
               "username": "${{ env.username }}",
               "attachments": []
-            }' "$DISCORD_WEBHOOK_URL")
-            
+            }' $DISCORD_WEBHOOK_URL)
+
             if [ $response -eq 204 ]; then
               echo "Discord notification sent successfully."
               break

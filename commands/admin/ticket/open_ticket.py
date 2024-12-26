@@ -1,11 +1,14 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from api import get_ticket_messages_by_id, open_ticket, check_if_opted_out
+from api import get_ticket_messages_by_id, check_if_opted_out
 
 
 async def openTicket(interaction: discord.Interaction):
-    if interaction.data["custom_id"].split(";")[0] != "ticket_create" or interaction.data["custom_id"].split(";")[-1] == "optedOutConfirm":
+    if (
+        interaction.data["custom_id"].split(";")[0] != "ticket_create"
+        or interaction.data["custom_id"].split(";")[-1] == "optedOutConfirm"
+    ):
         return
 
     await interaction.response.defer(ephemeral=True)
@@ -14,15 +17,35 @@ async def openTicket(interaction: discord.Interaction):
         def __init__(self):
             super().__init__()
 
-        @discord.ui.button(label=tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.confirm"), custom_id=interaction.data["custom_id"] + ";optedOutConfirm")
-        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button):
+        @discord.ui.button(
+            label=tanjunLocalizer.localize(
+                interaction.locale, "commands.admin.open_ticket.optedOutWarning.confirm"
+            ),
+            custom_id=interaction.data["custom_id"] + ";optedOutConfirm",
+        )
+        async def optedOutConfirm(
+            self, interaction: discord.Interaction, button: discord.ui.Button
+        ):
             await open_ticket_2(interaction)
             return
 
-        @discord.ui.button(label=tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.decline"), custom_id="optedOutDecline")
-        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button):
-            await interaction.response.send_message(tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.declined"), ephemeral=True)
-            return 
+        @discord.ui.button(
+            label=tanjunLocalizer.localize(
+                interaction.locale, "commands.admin.open_ticket.optedOutWarning.decline"
+            ),
+            custom_id="optedOutDecline",
+        )
+        async def optedOutDecline(
+            self, interaction: discord.Interaction, button: discord.ui.Button
+        ):
+            await interaction.response.send_message(
+                tanjunLocalizer.localize(
+                    interaction.locale,
+                    "commands.admin.open_ticket.optedOutWarning.declined",
+                ),
+                ephemeral=True,
+            )
+            return
 
         async def on_timeout(self):
             for item in self.children:
@@ -32,13 +55,17 @@ async def openTicket(interaction: discord.Interaction):
     if not await check_if_opted_out(interaction.user.id):
         view = optedOutView()
         await interaction.followup.send(
-            tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.description"), 
+            tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.admin.open_ticket.optedOutWarning.description",
+            ),
             view=view,
-            ephemeral=True
+            ephemeral=True,
         )
         return
     else:
         await open_ticket_2(interaction)
+
 
 async def open_ticket_2(interaction: discord.Interaction):
     ticket_id = interaction.data["custom_id"].split(";")[1]
@@ -53,13 +80,9 @@ async def open_ticket_2(interaction: discord.Interaction):
             ephemeral=True,
         )
         return
-    
-    print("ticket", ticket)
 
     introduction = ticket[3]
     ping_role = ticket[4]
-    name = ticket[5]
-    description = ticket[6]
 
     channel = interaction.channel
 
@@ -83,23 +106,12 @@ async def open_ticket_2(interaction: discord.Interaction):
         user=interaction.user,
     )
 
-    overwrites = {
-        interaction.guild.me: discord.PermissionOverwrite(
-            view_channel=True,
-            send_messages=True,
-            read_messages=True,
-        ),
-        interaction.user: discord.PermissionOverwrite(
-            view_channel=True,
-            send_messages=True,
-            read_messages=True,
-            attach_files=True,
-            embed_links=True,
-            send_messages_in_threads=True,
-        ),
-    }
-
-    thread = await channel.create_thread(name=interaction.user.name, reason=ticket_created_locale, type=discord.ChannelType.private_thread, invitable=False)
+    thread = await channel.create_thread(
+        name=interaction.user.name,
+        reason=ticket_created_locale,
+        type=discord.ChannelType.private_thread,
+        invitable=False,
+    )
 
     await thread.add_user(interaction.user)
 
@@ -108,10 +120,6 @@ async def open_ticket_2(interaction: discord.Interaction):
 
     if introduction:
         await thread.send(introduction)
-
-    ticket_channel_id = await open_ticket(
-        interaction.guild.id, interaction.user.id, ticket_id, thread.id
-    )
 
     view = discord.ui.View()
     btn = discord.ui.Button(
@@ -139,4 +147,3 @@ async def open_ticket_2(interaction: discord.Interaction):
         ),
         ephemeral=True,
     )
-

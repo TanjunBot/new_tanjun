@@ -3,13 +3,14 @@ from localizer import tanjunLocalizer
 from api import addAutoPublish, checkIfChannelIsAutopublish, removeAutoPublish
 import discord
 
+
 async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel):
 
-    print("channel: ", channel)
     if not commandInfo.user.guild_permissions.manage_guild:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.autopublish.error.no_permission.title"
+                commandInfo.locale,
+                "commands.utility.autopublish.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -18,12 +19,13 @@ async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel):
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if await checkIfChannelIsAutopublish(channel.id):
         await removeAutoPublish(channel.id)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.autopublish.error.is_already.title"
+                commandInfo.locale,
+                "commands.utility.autopublish.error.is_already.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -36,7 +38,8 @@ async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel):
     if not channel.is_news():
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.autopublish.error.not_news_channel.title"
+                commandInfo.locale,
+                "commands.utility.autopublish.error.not_news_channel.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -57,12 +60,14 @@ async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel):
         ),
     )
     await commandInfo.reply(embed=embed)
-    
+
+
 async def autopublish_remove(commandInfo: commandInfo, channel: discord.TextChannel):
     if not commandInfo.user.guild_permissions.manage_guild:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.autopublish.error.no_permission.title"
+                commandInfo.locale,
+                "commands.utility.autopublish.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -71,7 +76,7 @@ async def autopublish_remove(commandInfo: commandInfo, channel: discord.TextChan
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if not await checkIfChannelIsAutopublish(channel.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -97,10 +102,11 @@ async def autopublish_remove(commandInfo: commandInfo, channel: discord.TextChan
     )
     await commandInfo.reply(embed=embed)
 
-async def publish_message(message:discord.Message):
+
+async def publish_message(message: discord.Message):
     if message.channel.is_news():
         if await checkIfChannelIsAutopublish(message.channel.id):
             try:
                 await message.publish()
-            except:
+            except Exception:
                 pass

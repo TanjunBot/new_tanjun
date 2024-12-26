@@ -1,9 +1,10 @@
+# Unused imports:
+# from localizer import tanjunLocalizer
 import discord
 from discord.ext import commands
 from discord import app_commands
 import utility
-from localizer import tanjunLocalizer
-from typing import List, Optional
+from typing import List  # , Optional
 
 from commands.math.calc import calc as calcCommand
 from commands.math.calculator import calculator_command
@@ -187,10 +188,10 @@ class mathCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         func=app_commands.locale_str("math_plotfunction_params_func_description"),
-        x_min=app_commands.locale_str("math_plotfunction_params_xmin_description"),
-        x_max=app_commands.locale_str("math_plotfunction_params_xmax_description"),
+        xmin=app_commands.locale_str("math_plotfunction_params_xmin_description"),
+        xmax=app_commands.locale_str("math_plotfunction_params_xmax_description"),
     )
-    async def plot_function(self, ctx, func: str, x_min: float = None, x_max: float = None):
+    async def plot_function(self, ctx, func: str, xmin: float = None, xmax: float = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -204,7 +205,7 @@ class mathCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await plot_function_command(commandInfo, func, x_min, x_max)
+        await plot_function_command(commandInfo, func, xmin, xmax)
 
     @app_commands.command(
         name=app_commands.locale_str("math_faculty_name"),
@@ -321,7 +322,7 @@ class mathCog(commands.Cog):
     async def on_ready(self):
         mathcmds = mathCommands(name="math", description="Math is fun!")
         self.bot.tree.add_command(mathcmds)
-    
+
     @commands.command(name="faculty", aliases=["fac"])
     async def faculty(self, ctx, number: int):
         commandInfo = utility.commandInfo(
@@ -337,8 +338,6 @@ class mathCog(commands.Cog):
         )
 
         await faculty_command(commandInfo, number)
-
-    
 
 
 async def setup(bot):
