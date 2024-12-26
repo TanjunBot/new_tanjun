@@ -29346,7 +29346,7 @@
     {
         "identifier": "minigame.name",
         "source_string": "minispiel",
-        "translation": "minigame",
+        "translation": "Minigame",
         "context": "The name of the minigame command group. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
@@ -29858,7 +29858,7 @@
     {
         "identifier": "ai.asktanjuwun.params.topp.description",
         "source_string": "höchstes P für tanjuwun",
-        "translation": "highest P for tanjuwun",
+        "translation": "Highest P for tanjuwun",
         "context": "The description for the top p param for the ai asktanjuwun command.",
         "labels": "command_description, unassigned",
         "max_length": 100
