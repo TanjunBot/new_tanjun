@@ -29878,5 +29878,13 @@
         "context": "The name for the twitchname param used in some commands. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
+    },
+    {
+        "identifier": "commands.utility.brawlstars.brawlers.error.notFound",
+        "source_string": "Es wurde kein Spieler mit den angegebenen Tag gefunden.",
+        "translation": "No player with the specified tag was found.",
+        "context": "When no Player is found",
+        "labels": "embed_description, unassigned",
+        "max_length": 4096
     }
 ]
