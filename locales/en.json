@@ -6330,7 +6330,7 @@
     {
         "identifier": "commands.utility.messagetrackingoptout.success.description",
         "source_string": "Nachrichtenverfolgung wurde deaktiviert.\nDer Bot wird deine Nachrichten nicht mehr lesen. **Das heißt auch, dass einige Funktionen des Bots nicht mehr funktionieren.**",
-        "translation": "Message tracking has been deactivated.\nThe bot will no longer read your messages. **This also means that some functions of the bot will no longer work.",
+        "translation": "Message tracking has been deactivated.\nThe bot will no longer read your messages. **This also means that some functions of the bot will no longer work.**",
         "context": "commands -> utility -> messagetrackingoptout -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -6394,7 +6394,7 @@
     {
         "identifier": "commands.utility.autopublish.error.no_permission.description",
         "source_string": "Du benötigst die Berechtigung 'Nachrichten verwalten', um den Autopublish-Modus zu aktivieren.",
-        "translation": "You need the 'Manage messages' authorization to activate the autopublish mode.",
+        "translation": "You need the 'Manage messages' permission to activate the autopublish mode.",
         "context": "commands -> utility -> autopublish -> error -> no_permission -> description",
         "labels": "de.json",
         "max_length": null
@@ -6409,8 +6409,8 @@
     },
     {
         "identifier": "commands.utility.autopublish.error.not_news_channel.description",
-        "source_string": "Der Autopublish-Modus kann nur in einem Nachrichtenkanal aktiviert werden.",
-        "translation": "Autopublish mode can only be activated in one news channel.",
+        "source_string": "Der Autopublish-Modus kann nur in einem Ankündigungskanal aktiviert werden.",
+        "translation": "Autopublish mode can only be activated in an announcement channel.",
         "context": "commands -> utility -> autopublish -> error -> not_news_channel -> description",
         "labels": "de.json",
         "max_length": null
@@ -6617,8 +6617,8 @@
     },
     {
         "identifier": "commands.utility.avatarDecoration.description",
-        "source_string": "-# Aktuell ist es aufgrund der DiscordAPI nicht möglich die Server-Avatar Dekoration zu erhalten. Genauso wie die Banner Dekoration.",
-        "translation": "-# Currently it is not possible to get the server avatar decoration due to the DiscordAPI. Just like the banner decoration.",
+        "source_string": "-# Aktuell ist es aufgrund der Discord-API nicht möglich, die Serveravatar-Dekoration zu erhalten. Dasselbe gilt für die Bannerdekoration.",
+        "translation": "-# Currently it is not possible to get the server avatar decoration due to the Discord API. The same applies to the banner decoration.",
         "context": "commands -> utility -> avatarDecoration -> description",
         "labels": "de.json",
         "max_length": null
@@ -6713,8 +6713,8 @@
     },
     {
         "identifier": "commands.utility.afk.mentions.description",
-        "source_string": "Die folgenden Nutzer sind momentan AFk und werden von mir mit benachrichtigt, sobald sie zurück sind:\n",
-        "translation": "The following users are currently AFk and will be notified by me as soon as they are back:\n",
+        "source_string": "Die folgenden Nutzer sind momentan AFK und werden von mir benachrichtigt, sobald sie zurück sind:\n",
+        "translation": "The following users are currently AFK and will be notified by me as soon as they are back:\n",
         "context": "commands -> utility -> afk -> mentions -> description",
         "labels": "de.json",
         "max_length": null
