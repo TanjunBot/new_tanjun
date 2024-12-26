@@ -2046,6 +2046,7 @@
                         "club": "### Club:\n<:icon_club:1321085345131139132> ${name} (${tag})",
                         "3v3Victories": "### 3v3 Siege:\n${victories}<:3v3_icoon:1321098052454449212>",
                         "soloVictories": "### Solo Siege:\n${victories}<:showdown_icon:1321095408058896484>",
+                        "brawlers": "\n${owned}/${brawlers} Brawler Freigeschaltet",
                         "duoVictories": "### Duo Siege:\n${victories}<:duo_showdown_icoon:1321095263213060187>"
                     },
                     "title": "Infos von ${playerName} (${tag})"
@@ -3246,6 +3247,10 @@
                     "title": "Aufgegeben",
                     "description": "Du hast nach ${guesses} Versuchen aufgegeben."
                 },
+                "buttons": {
+                    "guess": "Erraten",
+                    "giveUp": "Aufgeben"
+                },
                 "title": "Wordle",
                 "description": "Versuche, das gesuchte Wort in 6 Versuchen zu erraten. Viel Spaß!",
                 "modal": {
@@ -3279,6 +3284,10 @@
             "hangman": {
                 "notYourGame": "Dies ist nicht dein Spiel. Bitte erstelle ein eigenes Spiel.",
                 "title": "Hangman",
+                "buttons": {
+                    "guess": "Erraten",
+                    "giveUp": "Aufgeben"
+                },
                 "givenUp": {
                     "title": "Aufgegeben",
                     "description": "Du hast nach ${guesses} Versuchen aufgegeben.\n```\n${guessed_letters}\n\n${hanged_man}\n${used_letters}\n```"
