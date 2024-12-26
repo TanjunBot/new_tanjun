@@ -4418,7 +4418,7 @@
     {
         "identifier": "commands.logs.configureLogs.configurationEmbed.automodRuleDelete",
         "source_string": "Automod-Regel löschen",
-        "translation": "Delete automod rule",
+        "translation": "Delete AuoMod rule",
         "context": "commands -> logs -> configureLogs -> configurationEmbed -> automodRuleDelete",
         "labels": "de.json",
         "max_length": null
@@ -17552,18 +17552,18 @@
         "max_length": 100
     },
     {
-        "identifier": "utility.twitch.add.params.twitch_name.name",
+        "identifier": "utility.twitch.add.params.twitchname.name",
         "source_string": "twitch_name",
         "translation": "twitch_name",
-        "context": "utility -> twitch -> add -> params -> twitch_name -> name",
+        "context": "utility -> twitch -> add -> params -> twitchname -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
-        "identifier": "utility.twitch.add.params.twitch_name.description",
+        "identifier": "utility.twitch.add.params.twitchname.description",
         "source_string": "Der Name des Twitch-Streamers",
         "translation": "The name of the Twitch streamer",
-        "context": "utility -> twitch -> add -> params -> twitch_name -> description",
+        "context": "utility -> twitch -> add -> params -> twitchname -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
@@ -29842,7 +29842,7 @@
     {
         "identifier": "image.rescale.params.factor.description",
         "source_string": "Um welchen Faktor das Bild skaliert werden soll",
-        "translation": "Um welchen Faktor das Bild skaliert werden soll",
+        "translation": "By which factor the image should be scaled",
         "context": "The description for the factor param in the image rescale command",
         "labels": "command_description, unassigned",
         "max_length": 100
@@ -29850,8 +29850,32 @@
     {
         "identifier": "utility.deleteboosterch.name",
         "source_string": "boosterkanal_loeschen",
-        "translation": "boosterkanal_loeschen",
+        "translation": "booster_channel_delete",
         "context": "The name from the deleteboosterchannel command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "ai.asktanjuwun.params.topp.description",
+        "source_string": "höchstes P für tanjuwun",
+        "translation": "highest P for tanjuwun",
+        "context": "The description for the top p param for the ai asktanjuwun command.",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "ai.asktanjuwun.params.frequencypenalty.description",
+        "source_string": "Wie sehr Wiederholungen bestraft werden sollen",
+        "translation": "How much repetition should be penalized",
+        "context": "The description of the frequency_penalty from the asktanjuwun command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "twitchname",
+        "source_string": "twitch_name",
+        "translation": "twitch_name",
+        "context": "The name for the twitchname param used in some commands. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
     }
