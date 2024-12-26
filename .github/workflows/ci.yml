@@ -6,9 +6,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: 'ubuntu-latest'
     container:
-      image: "python:3.10"
+      image: "python:3.12"
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
@@ -17,10 +17,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@main
         with:
-          python-version: "3.10"
+          python-version: "3.12"
       - name: Install dependencies
         run: |
-          /usr/local/bin/python3.10 -m pip install --upgrade pip
+          /usr/local/bin/python3 -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install flake8
       - name: Lint with flake8
@@ -28,9 +28,9 @@ jobs:
           python run_flake8.py
 
   notify_discord:
-    runs-on: ubuntu-latest
+    runs-on: 'ubuntu-latest'
     needs: build
-    if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/ver/')
+    if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/Development') || startsWith(github.ref, 'refs/heads/development') || startsWith(github.ref, 'refs/heads/dev') || startsWith(github.ref, 'refs/heads/ver/')
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
@@ -43,8 +43,8 @@ jobs:
           GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
           COMMIT_HASH=$(git log -1 --pretty=format:'%H')
           COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
+
           echo "title=${COMMIT_TITLE}" >> $GITHUB_ENV
-          
           echo "author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
           echo "author_profileicon=${GITHUB_AUTHOR_PROFILE_ICON}" >> $GITHUB_ENV
@@ -56,8 +56,8 @@ jobs:
         id: check_commit_message
         run: |
           if [[ "${{ env.title }}" == *"[ignore changelog]"* ]]; then
-            echo "::error::Commit message starts with '[ignore changelog]'. Skipping Discord notification."
-            exit 1
+            echo "::error::Commit message includes '[ignore changelog]'. Skipping Discord notification."
+            echo "skip_discord_notification=true" >> $GITHUB_ENV
           else
             echo "skip_discord_notification=false" >> $GITHUB_ENV
           fi
@@ -66,6 +66,11 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "::error::DISCORD_WEBHOOK_URL is not set."
+            exit 1
+          fi
+
           for i in {1..5}; do
             response=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'Content-Type: application/json' -d '{
               "content": null,
@@ -88,6 +93,7 @@ jobs:
               "username": "${{ env.username }}",
               "attachments": []
             }' $DISCORD_WEBHOOK_URL)
+
             if [ $response -eq 204 ]; then
               echo "Discord notification sent successfully."
               break
