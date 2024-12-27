@@ -11051,7 +11051,7 @@
         "identifier": "commands.level.boosts.add_user.success.description",
         "source_string": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Nutzer ${user} hinzugefügt.",
         "translation": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Nutzer ${user} hinzugefügt.",
-        "context": "Example: \"Ein Beispiel Boost von 100 wurde erfolgreich zum Benutzer Test hinzugefügt.\"",
+        "context": "Example: \"Ein Beispiel Boost von 100 wurde erfolgreich zum Nutzer Test hinzugefügt.\"",
         "labels": "de.json",
         "max_length": null
     },
@@ -20617,8 +20617,8 @@
     },
     {
         "identifier": "level.config.name",
-        "source_string": "settings",
-        "translation": "settings",
+        "source_string": "einstellungen",
+        "translation": "einstellungen",
         "context": "level -> config -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -25369,8 +25369,8 @@
     },
     {
         "identifier": "image.contour.name",
-        "source_string": "contour",
-        "translation": "contour",
+        "source_string": "kontur",
+        "translation": "kontur",
         "context": "image -> contour -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -25529,8 +25529,8 @@
     },
     {
         "identifier": "image.findedges.name",
-        "source_string": "findedges",
-        "translation": "findedges",
+        "source_string": "rand_finden",
+        "translation": "rand_finden",
         "context": "image -> findedges -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -25561,8 +25561,8 @@
     },
     {
         "identifier": "image.sharpen.name",
-        "source_string": "sharpen",
-        "translation": "sharpen",
+        "source_string": "schärfen",
+        "translation": "schärfen",
         "context": "image -> sharpen -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -25625,8 +25625,8 @@
     },
     {
         "identifier": "image.resize.name",
-        "source_string": "resize",
-        "translation": "resize",
+        "source_string": "größe_änderm",
+        "translation": "größe_änderm",
         "context": "image -> resize -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -25657,8 +25657,8 @@
     },
     {
         "identifier": "image.rescale.name",
-        "source_string": "rescale",
-        "translation": "rescale",
+        "source_string": "skalieren",
+        "translation": "skalieren",
         "context": "image -> rescale -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -25689,8 +25689,8 @@
     },
     {
         "identifier": "image.mirror.name",
-        "source_string": "mirror",
-        "translation": "mirror",
+        "source_string": "spiegeln",
+        "translation": "spiegeln",
         "context": "image -> mirror -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -25721,8 +25721,8 @@
     },
     {
         "identifier": "image.compress.name",
-        "source_string": "compress",
-        "translation": "compress",
+        "source_string": "komprimieren",
+        "translation": "komprimieren",
         "context": "image -> compress -> name",
         "labels": "de.json, command_name",
         "max_length": 32
