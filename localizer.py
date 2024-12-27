@@ -13,8 +13,9 @@ class Localizer:
             with open(f"locales/{locale}.json", "r", encoding="utf-8") as file:
                 return json.load(file)
         except FileNotFoundError:
-            print(f"No translation file found for locale '{locale}'.")
-            return {}
+            print(f"No translation file found for locale '{locale}'. using english instead.")
+            with open("locales/en.json", "r", encoding="utf-8") as file:
+                return json.load(file)
         except json.JSONDecodeError:
             print(
                 f"Error decoding JSON from the translation file for locale '{locale}'."
@@ -38,6 +39,8 @@ class Localizer:
 
     def localize(self, locale, key, **args):
         """Retrieve the localized text for the specified locale and format it with any arguments provided."""
+        if locale in ["en", "en-US", "en-GB"]:
+            locale = "en"
         translations = self.load_translations(locale)
         translation = self.get_translation(translations, key)
         if translation is None:
