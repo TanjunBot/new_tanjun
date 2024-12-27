@@ -497,16 +497,16 @@
     },
     {
         "identifier": "commands.admin.createrole.invalidColor.description",
-        "source_string": "Die Farbe die du angegeben hast ist ungültig. Bitte gib einen gültigen Hexadezimalcode als Farbe an. Diesen kannst du beispielsweise [hier](https://htmlcolorcodes.com) generieren.",
-        "translation": "Die Farbe die du angegeben hast ist ungültig. Bitte gib einen gültigen Hexadezimalcode als Farbe an. Diesen kannst du beispielsweise [hier](https://htmlcolorcodes.com) generieren.",
+        "source_string": "Die Farbe, die du angegeben hast, ist ungültig. Bitte gib einen gültigen Hexadezimalcode als Farbe an. Diesen kannst du beispielsweise [hier](https://htmlcolorcodes.com) generieren.",
+        "translation": "Die Farbe, die du angegeben hast, ist ungültig. Bitte gib einen gültigen Hexadezimalcode als Farbe an. Diesen kannst du beispielsweise [hier](https://htmlcolorcodes.com) generieren.",
         "context": "commands -> admin -> createrole -> invalidColor -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.createrole.roleIconsNotEnabled.title",
-        "source_string": "Rollen Icons nicht verfügbar",
-        "translation": "Rollen Icons nicht verfügbar",
+        "source_string": "Rollenicons nicht verfügbar",
+        "translation": "Rollenicons nicht verfügbar",
         "context": "commands -> admin -> createrole -> roleIconsNotEnabled -> title",
         "labels": "de.json",
         "max_length": null
@@ -19961,8 +19961,8 @@
     },
     {
         "identifier": "games.flagquiz.name",
-        "source_string": "flaggem_quiz",
-        "translation": "flaggem_quiz",
+        "source_string": "flaggen_quiz",
+        "translation": "flaggen_quiz",
         "context": "games -> flagquiz -> name",
         "labels": "de.json, command_description",
         "max_length": 100
