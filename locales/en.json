@@ -272,6 +272,22 @@
         "max_length": null
     },
     {
+        "identifier": "commands.admin.createrole.invalidColor.description",
+        "source_string": "Die Farbe, die du angegeben hast, ist ungültig. Bitte gib einen gültigen Hexadezimalcode als Farbe an. Diesen kannst du beispielsweise [hier](https://htmlcolorcodes.com) generieren.",
+        "translation": "The color you have specified is invalid. Please enter a valid hexadecimal code as the color. You can generate this for example [here](https://htmlcolorcodes.com).",
+        "context": "commands -> admin -> createrole -> invalidColor -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.createrole.roleIconsNotEnabled.title",
+        "source_string": "Rollenicons nicht verfügbar",
+        "translation": "Role icons not available",
+        "context": "commands -> admin -> createrole -> roleIconsNotEnabled -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
         "identifier": "commands.utility.messagetrackingoptout.success.description",
         "source_string": "Nachrichtenverfolgung wurde deaktiviert.\nDer Bot wird deine Nachrichten nicht mehr lesen. **Das heißt auch, dass einige Funktionen des Bots nicht mehr funktionieren.**",
         "translation": "Message tracking has been deactivated.\nThe bot will no longer read your messages. **This also means that some functions of the bot will no longer work.**",
@@ -798,6 +814,14 @@
         "context": "games -> wordle -> name",
         "labels": "de.json, command_name",
         "max_length": 32
+    },
+    {
+        "identifier": "games.flagquiz.name",
+        "source_string": "flaggen_quiz",
+        "translation": "flag_quiz",
+        "context": "games -> flagquiz -> name",
+        "labels": "de.json, command_description",
+        "max_length": 100
     },
     {
         "identifier": "level.leaderboard.name",
