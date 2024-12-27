@@ -56,6 +56,94 @@
         "max_length": 4096
     },
     {
+        "identifier": "commands.admin.addrole.alreadyHasRole.description",
+        "source_string": "Dieser Benutzer hat bereits diese Rolle.",
+        "translation": "This user already has this role.",
+        "context": "commands -> admin -> addrole -> alreadyHasRole -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.roleTooHigh.title",
+        "source_string": "Rolle zu hoch",
+        "translation": "Role too high",
+        "context": "commands -> admin -> addrole -> roleTooHigh -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.roleTooHighBot.title",
+        "source_string": "Rolle zu hoch",
+        "translation": "Role too high",
+        "context": "commands -> admin -> addrole -> roleTooHighBot -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.noUser.title",
+        "source_string": "Kein Nutzer angegeben",
+        "translation": "No user specified",
+        "context": "commands -> admin -> addrole -> noUser -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.noUser.description",
+        "source_string": "Du musst einen Nutzer angeben, dem du die Rolle hinzufügen möchtest.",
+        "translation": "You must specify a user to whom you want to add the role.",
+        "context": "commands -> admin -> addrole -> noUser -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.noRole.title",
+        "source_string": "Keine Rolle angegeben",
+        "translation": "No role specified",
+        "context": "commands -> admin -> addrole -> noRole -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.noRole.description",
+        "source_string": "Du musst eine Rolle angeben, die du hinzufügen möchtest.",
+        "translation": "You must specify a role that you want to add.",
+        "context": "commands -> admin -> addrole -> noRole -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.success.title",
+        "source_string": "Rolle hinzugefügt",
+        "translation": "Role added",
+        "context": "commands -> admin -> addrole -> success -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.success.description",
+        "source_string": "Die Rolle wurde erfolgreich hinzugefügt.",
+        "translation": "The role has been successfully added.",
+        "context": "commands -> admin -> addrole -> success -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.managedRole.title",
+        "source_string": "Rolle nicht vergeben",
+        "translation": "Role not assigned",
+        "context": "commands -> admin -> addrole -> managedRole -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.managedRole.description",
+        "source_string": "Diese Rolle wird von einer Integration verwaltet und kann nicht manuell vergeben werden.",
+        "translation": "This role is managed by an integration and cannot be assigned manually.",
+        "context": "commands -> admin -> addrole -> managedRole -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
         "identifier": "commands.utility.messagetrackingoptout.success.description",
         "source_string": "Nachrichtenverfolgung wurde deaktiviert.\nDer Bot wird deine Nachrichten nicht mehr lesen. **Das heißt auch, dass einige Funktionen des Bots nicht mehr funktionieren.**",
         "translation": "Message tracking has been deactivated.\nThe bot will no longer read your messages. **This also means that some functions of the bot will no longer work.**",
@@ -696,6 +784,22 @@
         "max_length": 32
     },
     {
+        "identifier": "image.edgeenhance.name",
+        "source_string": "edgeenhance",
+        "translation": "edgeenhance",
+        "context": "image -> edgeenhance -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
+        "identifier": "image.findedges.name",
+        "source_string": "findedges",
+        "translation": "findedges",
+        "context": "image -> findedges -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
         "identifier": "channel.welcome.name",
         "source_string": "wilkommenskanal",
         "translation": "welcome_channel",
@@ -744,6 +848,78 @@
         "max_length": 32
     },
     {
+        "identifier": "channel.ds.add.params.resetafter.name",
+        "source_string": "resetafter",
+        "translation": "resetafter",
+        "context": "channel -> ds -> add -> params -> resetafter -> name",
+        "labels": "de.json, command_name, command_description",
+        "max_length": 32
+    },
+    {
+        "identifier": "countries.Bouvet Island",
+        "source_string": "Bouvetinsel",
+        "translation": "Bouvet Island",
+        "context": "countries -> Bouvet Island",
+        "labels": "de.json, command_description",
+        "max_length": 100
+    },
+    {
+        "identifier": "countries.Faroe Islands",
+        "source_string": "Färöer",
+        "translation": "Faroe Islands",
+        "context": "countries -> Faroe Islands",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "countries.Niue",
+        "source_string": "Niue",
+        "translation": "Niue",
+        "context": "countries -> Niue",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "countries.Palau",
+        "source_string": "Palau",
+        "translation": "Palau",
+        "context": "countries -> Palau",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "countries.St Barthélemy",
+        "source_string": "Saint-Barthélemy",
+        "translation": "Saint-Barthélemy",
+        "context": "countries -> St Barthélemy",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "countries.St Kitts and Nevis",
+        "source_string": "St. Kitts und Nevis",
+        "translation": "St. Kitts and Nevis",
+        "context": "countries -> St Kitts and Nevis",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "countries.Turks and Caicos Islands",
+        "source_string": "Turks- und Caicosinseln",
+        "translation": "Turks and Caicos Islands",
+        "context": "countries -> Turks and Caicos Islands",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "Minigame Commands",
+        "source_string": "Minispiel Befehle",
+        "translation": "Minigame commands",
+        "context": " -> Minigame Commands",
+        "labels": "de.json",
+        "max_length": 32
+    },
+    {
         "identifier": "help",
         "source_string": "Hilfe",
         "translation": "Help",
@@ -768,10 +944,34 @@
         "max_length": 32
     },
     {
+        "identifier": "jointocreate",
+        "source_string": "jointocreate",
+        "translation": "jointocreate",
+        "context": " -> jointocreate",
+        "labels": "de.json",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.tm.add.params.casesensitive.false",
+        "source_string": "caseinsensitive",
+        "translation": "caseinsensitive",
+        "context": "If the trigger message should not be case sensitive. Only lowercase Characters and no spaces allowed",
+        "labels": "unassigned",
+        "max_length": 32
+    },
+    {
         "identifier": "admin.warn.name",
         "source_string": "warn",
         "translation": "warn",
         "context": "The name of the warn command category. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.jointocreate.name",
+        "source_string": "jointocreate",
+        "translation": "jointocreate",
+        "context": "The name of the joinToCreate command Group. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
     },
