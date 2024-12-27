@@ -57,15 +57,22 @@ async def main():
 
 async def create_pool():
     try:
-        p = await asyncmy.create_pool(
+        # p = await asyncmy.create_pool(
+        #     host=database_ip,
+        #     user=database_user,
+        #     password=database_password,
+        #     db=database_schema,
+        #     maxsize=1,
+        #     minsize=1,
+        # )
+        # return p
+        connection = await asyncmy.connect(
             host=database_ip,
             user=database_user,
             password=database_password,
             db=database_schema,
-            maxsize=1,
-            minsize=1,
         )
-        return p
+        return connection
     except Exception as e:
         print(f"Error creating pool: {e}")
         return None

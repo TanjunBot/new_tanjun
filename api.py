@@ -30,11 +30,10 @@ async def execute_query(query, params=None):
         return
 
     try:
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(query, params)
-                result = await cursor.fetchall()
-                return result
+        async with pool.cursor() as cursor:
+            await cursor.execute(query, params)
+            result = await cursor.fetchall()
+            return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}")
 
@@ -51,11 +50,10 @@ async def execute_action(query, params=None):
         )
         return
     try:
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(query, params)
-                await conn.commit()
-                return cursor.rowcount
+        async with pool.cursor() as cursor:
+            await cursor.execute(query, params)
+            await pool.commit()
+            return cursor.rowcount
     except Exception as e:
         print(f"An error occurred during action execution: {e}")
 
@@ -64,13 +62,12 @@ async def execute_insert_and_get_id(query, params=None):
     if not pool:
         return
     try:
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(query, params)
-                await conn.commit()
-                await cursor.execute("SELECT LAST_INSERT_ID()")
-                last_id = await cursor.fetchone()
-                return last_id[0] if last_id else None
+        async with pool.cursor() as cursor:
+            await cursor.execute(query, params)
+            await pool.commit()
+            await cursor.execute("SELECT LAST_INSERT_ID()")
+            last_id = await cursor.fetchone()
+            return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}")
 
