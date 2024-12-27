@@ -14938,7 +14938,7 @@
     {
         "identifier": "admin.slowmode.name",
         "source_string": "slowmodus",
-        "translation": "slow mode",
+        "translation": "slow_mode",
         "context": "The name for the slowmode command. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -15314,7 +15314,7 @@
     {
         "identifier": "admin.boosterrole.name",
         "source_string": "boosterrolle",
-        "translation": "booster roll",
+        "translation": "booster_role",
         "context": "admin -> boosterrole -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -16250,7 +16250,7 @@
     {
         "identifier": "math.calculator.name",
         "source_string": "taschenrechner",
-        "translation": "pocket calculator",
+        "translation": "pocket_calculator",
         "context": "math -> calculator -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -16794,7 +16794,7 @@
     {
         "identifier": "utility.autopublish.remove.name",
         "source_string": "entfernen",
-        "translation": "Remove",
+        "translation": "remove",
         "context": "utility -> autopublish -> remove -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17610,7 +17610,7 @@
     {
         "identifier": "minigames.wordchaincmds.name",
         "source_string": "wortkette",
-        "translation": "word chain",
+        "translation": "wordchain",
         "context": "minigames -> wordchaincmds -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -28882,8 +28882,8 @@
     {
         "identifier": "description",
         "source_string": "beschreibung",
-        "translation": "Description",
-        "context": " -> description",
+        "translation": "description",
+        "context": "Name of the description param in some commands. Only lowercase characters and no spaces allowed",
         "labels": "de.json",
         "max_length": 32
     },
@@ -28906,7 +28906,7 @@
     {
         "identifier": "summarychannel",
         "source_string": "zusammenfassungskanal",
-        "translation": "summary channel",
+        "translation": "summary_channel",
         "context": " -> summarychannel",
         "labels": "de.json",
         "max_length": 32
@@ -28962,7 +28962,7 @@
     {
         "identifier": "background",
         "source_string": "hintergrund",
-        "translation": "Background",
+        "translation": "background",
         "context": " -> background",
         "labels": "de.json",
         "max_length": 32
