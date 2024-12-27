@@ -7,6 +7,8 @@ from typing import Optional, List, Dict
 from utility import get_xp_for_level, get_level_for_xp
 from datetime import datetime
 from discord import Entitlement
+import asyncmy
+from config import database_ip, database_password, database_user, database_schema
 
 pool = None
 
@@ -30,7 +32,13 @@ async def execute_query(query, params=None):
         return
 
     try:
-        async with pool.cursor() as cursor:
+        connection = await asyncmy.connect(
+            host=database_ip,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+        )
+        async with connection.cursor() as cursor:
             await cursor.execute(query, params)
             result = await cursor.fetchall()
             return result
@@ -50,9 +58,15 @@ async def execute_action(query, params=None):
         )
         return
     try:
-        async with pool.cursor() as cursor:
+        connection = await asyncmy.connect(
+            host=database_ip,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+        )
+        async with connection.cursor() as cursor:
             await cursor.execute(query, params)
-            await pool.commit()
+            await connection.commit()
             return cursor.rowcount
     except Exception as e:
         print(f"An error occurred during action execution: {e}")
@@ -62,9 +76,15 @@ async def execute_insert_and_get_id(query, params=None):
     if not pool:
         return
     try:
-        async with pool.cursor() as cursor:
+        connection = await asyncmy.connect(
+            host=database_ip,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+        )
+        async with connection.cursor() as cursor:
             await cursor.execute(query, params)
-            await pool.commit()
+            await connection.commit()
             await cursor.execute("SELECT LAST_INSERT_ID()")
             last_id = await cursor.fetchone()
             return last_id[0] if last_id else None
