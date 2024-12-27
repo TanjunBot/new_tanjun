@@ -28883,7 +28883,7 @@
         "identifier": "description",
         "source_string": "beschreibung",
         "translation": "beschreibung",
-        "context": " -> description",
+        "context": "Name of the description param in some commands. Only lowercase characters and no spaces allowed",
         "labels": "de.json",
         "max_length": 32
     },
