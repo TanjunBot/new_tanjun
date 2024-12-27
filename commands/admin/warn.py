@@ -36,7 +36,7 @@ async def warn_user(
     user_id = member.id
 
     await add_warning(guild_id, user_id, reason)
-    warn_count, warn_reasons = await get_warnings(guild_id, user_id)
+    warn_count = await get_warnings(guild_id, user_id)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
