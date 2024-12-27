@@ -10697,8 +10697,8 @@
     },
     {
         "identifier": "commands.level.removelevelrole.error.role_not_found.description",
-        "source_string": "Die Rolle {role} ist nicht Level {level} zugewiesen.",
-        "translation": "Die Rolle {role} ist nicht Level {level} zugewiesen.",
+        "source_string": "Die Rolle ${role} ist keine Levelrolle.",
+        "translation": "Die Rolle ${role} ist keine Levelrolle.",
         "context": "commands -> level -> removelevelrole -> error -> role_not_found -> description",
         "labels": "de.json",
         "max_length": null
@@ -10713,8 +10713,8 @@
     },
     {
         "identifier": "commands.level.removelevelrole.success.description",
-        "source_string": "Die Rolle {role} wurde erfolgreich von Level {level} entfernt.",
-        "translation": "Die Rolle {role} wurde erfolgreich von Level {level} entfernt.",
+        "source_string": "Die Rolle ${role} wurde erfolgreich entfernt.",
+        "translation": "Die Rolle ${role} wurde erfolgreich entfernt.",
         "context": "commands -> level -> removelevelrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -21177,8 +21177,8 @@
     },
     {
         "identifier": "level.boosts.adduser.name",
-        "source_string": "Nutzer_hinzufügen",
-        "translation": "Nutzer_hinzufügen",
+        "source_string": "nutzer_hinzufügen",
+        "translation": "nutzer_hinzufügen",
         "context": "level -> boosts -> adduser -> name",
         "labels": "de.json, command_name",
         "max_length": 32
