@@ -14939,7 +14939,7 @@
         "identifier": "admin.slowmode.name",
         "source_string": "slowmodus",
         "translation": "slow mode",
-        "context": "admin -> slowmode -> name",
+        "context": "The name for the slowmode command. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15018,8 +15018,8 @@
     {
         "identifier": "admin.unlock.name",
         "source_string": "entsperren",
-        "translation": "Unlock",
-        "context": "admin -> unlock -> name",
+        "translation": "unlock",
+        "context": "name for the unlock command. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15106,8 +15106,8 @@
     {
         "identifier": "admin.warn.config.name",
         "source_string": "konfigurieren",
-        "translation": "Configure",
-        "context": "admin -> warn -> config -> name",
+        "translation": "configure",
+        "context": "admin -> warn -> config -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15371,7 +15371,7 @@
         "identifier": "admin.createticket.params.description.name",
         "source_string": "beschreibung",
         "translation": "Description",
-        "context": "admin -> createticket -> params -> description -> name",
+        "context": "name of the description parameter. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15418,8 +15418,8 @@
     {
         "identifier": "admin.createticket.params.summarychannel.name",
         "source_string": "zusammenfassungskanal",
-        "translation": "summary channel",
-        "context": "admin -> createticket -> params -> summarychannel -> name",
+        "translation": "summary_channel",
+        "context": "admin -> createticket -> params -> summarychannel -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15610,8 +15610,8 @@
     {
         "identifier": "admin.tm.configure.name",
         "source_string": "konfigurieren",
-        "translation": "Configure",
-        "context": "admin -> tm -> configure -> name",
+        "translation": "configure",
+        "context": "admin -> tm -> configure -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16218,8 +16218,8 @@
     {
         "identifier": "math.calc.name",
         "source_string": "berechnen",
-        "translation": "Calculate",
-        "context": "math -> calc -> name",
+        "translation": "calculate",
+        "context": "math -> calc -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16330,8 +16330,8 @@
     {
         "identifier": "math.randomnumber.name",
         "source_string": "zufallszahl",
-        "translation": "random number",
-        "context": "math -> randomnumber -> name",
+        "translation": "random_number",
+        "context": "math -> randomnumber -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16394,8 +16394,8 @@
     {
         "identifier": "math.plotfunction.name",
         "source_string": "funktionsplot",
-        "translation": "function plot",
-        "context": "math -> plotfunction -> name",
+        "translation": "function_plot",
+        "context": "math -> plotfunction -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16586,8 +16586,8 @@
     {
         "identifier": "utility.avatardecoration.name",
         "source_string": "avatardekoration",
-        "translation": "avatar decoration",
-        "context": "utility -> avatardecoration -> name",
+        "translation": "avatar_decoration",
+        "context": "utility -> avatardecoration -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16746,8 +16746,8 @@
     {
         "identifier": "utility.messagetracking.name",
         "source_string": "nachrichtenverfolgung",
-        "translation": "news tracking",
-        "context": "utility -> messagetracking -> name",
+        "translation": "message_tracking",
+        "context": "utility -> messagetracking -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16826,8 +16826,8 @@
     {
         "identifier": "utility.boosterrole.name",
         "source_string": "boosterrolle",
-        "translation": "booster roll",
-        "context": "utility -> boosterrole -> name",
+        "translation": "booster_role",
+        "context": "utility -> boosterrole -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16843,7 +16843,7 @@
         "identifier": "utility.claimboosterrole.name",
         "source_string": "boosterrolle_einfordern",
         "translation": "booster_roll_claim",
-        "context": "utility -> claimboosterrole -> name",
+        "context": "name for the claim booster role command. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16954,8 +16954,8 @@
     {
         "identifier": "utility.boosterchannel.name",
         "source_string": "boosterkanal",
-        "translation": "booster channel",
-        "context": "utility -> boosterchannel -> name",
+        "translation": "booster_channel",
+        "context": "utility -> boosterchannel -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -17322,8 +17322,8 @@
     {
         "identifier": "utility.bs.battlelog.name",
         "source_string": "kampflogbuch",
-        "translation": "combat logbook",
-        "context": "utility -> bs -> battlelog -> name",
+        "translation": "battle_log",
+        "context": "utility -> bs -> battlelog -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -17354,8 +17354,8 @@
     {
         "identifier": "utility.bs.playerinfo.name",
         "source_string": "spielerinfo",
-        "translation": "player info",
-        "context": "utility -> bs -> playerinfo -> name",
+        "translation": "playerinfo",
+        "context": "utility -> bs -> playerinfo -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -17498,8 +17498,8 @@
     {
         "identifier": "utility.bs.unlink.name",
         "source_string": "entfernen",
-        "translation": "Remove",
-        "context": "utility -> bs -> unlink -> name",
+        "translation": "remove",
+        "context": "utility -> bs -> unlink -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -20010,8 +20010,8 @@
     {
         "identifier": "level.leaderboard.name",
         "source_string": "rangliste",
-        "translation": "ranking list",
-        "context": "level -> leaderboard -> name",
+        "translation": "leaderboard",
+        "context": "level -> leaderboard -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -21450,8 +21450,8 @@
     {
         "identifier": "giveaway.reroll.name",
         "source_string": "neuverlosung",
-        "translation": "new raffle",
-        "context": "giveaway -> reroll -> name",
+        "translation": "reroll",
+        "context": "giveaway -> reroll -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25074,8 +25074,8 @@
     {
         "identifier": "logs.blacklistc.remove.name",
         "source_string": "entfernen",
-        "translation": "Remove",
-        "context": "logs -> blacklistc -> remove -> name",
+        "translation": "remove",
+        "context": "logs -> blacklistc -> remove -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25154,8 +25154,8 @@
     {
         "identifier": "logs.blacklistr.remove.name",
         "source_string": "entfernen",
-        "translation": "Remove",
-        "context": "logs -> blacklistr -> remove -> name",
+        "translation": "remove",
+        "context": "logs -> blacklistr -> remove -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25234,8 +25234,8 @@
     {
         "identifier": "logs.blacklistu.remove.name",
         "source_string": "entfernen",
-        "translation": "Remove",
-        "context": "logs -> blacklistu -> remove -> name",
+        "translation": "remove",
+        "context": "logs -> blacklistu -> remove -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25754,8 +25754,8 @@
     {
         "identifier": "channel.welcome.name",
         "source_string": "wilkommenskanal",
-        "translation": "welcome channel",
-        "context": "channel -> welcome -> name",
+        "translation": "welcome_channel",
+        "context": "channel -> welcome -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25770,8 +25770,8 @@
     {
         "identifier": "channel.media.name",
         "source_string": "medienkanal",
-        "translation": "media channel",
-        "context": "channel -> media -> name",
+        "translation": "media_channel",
+        "context": "channel -> media -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25834,8 +25834,8 @@
     {
         "identifier": "channel.w.name",
         "source_string": "wilkommenskanal",
-        "translation": "welcome channel",
-        "context": "channel -> w -> name",
+        "translation": "welcome_channel",
+        "context": "channel -> w -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25882,8 +25882,8 @@
     {
         "identifier": "channel.w.params.image.name",
         "source_string": "hintergrund",
-        "translation": "Background",
-        "context": "channel -> w -> params -> image -> name",
+        "translation": "background",
+        "context": "channel -> w -> params -> image -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25914,8 +25914,8 @@
     {
         "identifier": "channel.farewell.name",
         "source_string": "verabschiedungskanal",
-        "translation": "farewell channel",
-        "context": "channel -> farewell -> name",
+        "translation": "farewell_channel",
+        "context": "channel -> farewell -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25930,8 +25930,8 @@
     {
         "identifier": "channel.farewell.set.ch.name",
         "source_string": "verabschiedungskanal",
-        "translation": "farewell channel",
-        "context": "channel -> farewell -> set -> ch -> name",
+        "translation": "farewell_channel",
+        "context": "channel -> farewell -> set -> ch -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -25978,8 +25978,8 @@
     {
         "identifier": "channel.farewell.set.ch.params.image.name",
         "source_string": "hintergrund",
-        "translation": "Background",
-        "context": "channel -> farewell -> set -> ch -> params -> image -> name",
+        "translation": "background",
+        "context": "channel -> farewell -> set -> ch -> params -> image -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -29338,7 +29338,7 @@
     {
         "identifier": "minigame.name",
         "source_string": "minispiel",
-        "translation": "Minigame",
+        "translation": "minigame",
         "context": "The name of the minigame command group. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
