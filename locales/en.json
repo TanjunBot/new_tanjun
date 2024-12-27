@@ -1202,7 +1202,7 @@
     {
         "identifier": "commands.admin.remove_timeout.missingPermission.description",
         "source_string": "Du hast nicht die erforderlichen Berechtigungen, um Timeouts aufzuheben.",
-        "translation": "You do not have the necessary permissions to remove timeouts.",
+        "translation": "You do not have the required permissions to remove timeouts.",
         "context": "commands -> admin -> remove_timeout -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
@@ -8625,16 +8625,16 @@
     },
     {
         "identifier": "commands.utility.brawlstars.battlelog.description.team1",
-        "source_string": "Team 1",
-        "translation": "Team 1",
+        "source_string": "### Team 1",
+        "translation": "### Team 1",
         "context": "commands -> utility -> brawlstars -> battlelog -> description -> team1",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.utility.brawlstars.battlelog.description.team2",
-        "source_string": "Team 2",
-        "translation": "Team 2",
+        "source_string": "### Team 2",
+        "translation": "### Team 2",
         "context": "commands -> utility -> brawlstars -> battlelog -> description -> team2",
         "labels": "de.json",
         "max_length": null
@@ -9504,14 +9504,6 @@
         "max_length": null
     },
     {
-        "identifier": "commands.level.defaultLevelUpMessage",
-        "source_string": "Herzlichen Glückwunsch, {user}! Du bist jetzt Level {level}!",
-        "translation": "Congratulations, {user}! You are now level {level}!",
-        "context": "commands -> level -> defaultLevelUpMessage",
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
         "identifier": "commands.level.givexp.error.no_permission.title",
         "source_string": "Fehlende Berechtigung",
         "translation": "Lack of authorization",
@@ -9553,8 +9545,8 @@
     },
     {
         "identifier": "commands.level.givexp.success.description",
-        "source_string": "${amount} XP wurden ${user} gegeben. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}",
-        "translation": "${amount} XP have been given to ${user} . New XP level: ${new_xp}. Level: ${old_level} -> ${new_level}",
+        "source_string": "${amount} XP wurden ${user} gegeben. Neuer XP-Stand: ${new_xp}. Level: ${old_level} → ${new_level}",
+        "translation": "${amount} XP have been given to ${user}. New XP level: ${new_xp}. Level: ${old_level} → ${new_level}",
         "context": "commands -> level -> givexp -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9601,8 +9593,8 @@
     },
     {
         "identifier": "commands.level.takexp.success.description",
-        "source_string": "${amount} XP wurden ${user} weggenommen. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}",
-        "translation": "${amount} XP have been removed ${user} . New XP level: ${new_xp}. Level: ${old_level} -> ${new_level}",
+        "source_string": "${amount} XP wurden ${user} weggenommen. Neuer XP-Stand: ${new_xp}. Level: ${old_level} → ${new_level}",
+        "translation": "${amount} XP have been removed ${user}. New XP level: ${new_xp}. Level: ${old_level} → ${new_level}",
         "context": "commands -> level -> takexp -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9649,8 +9641,8 @@
     },
     {
         "identifier": "commands.level.setxp.success.description",
-        "source_string": "XP für ${user} wurde von ${old_xp} auf ${new_xp} gesetzt. Level: ${old_level} -> ${new_level}",
-        "translation": "XP for ${user} has been changed from ${old_xp} to ${new_xp} . Level: ${old_level} -> ${new_level}",
+        "source_string": "XP für ${user} wurde von ${old_xp} auf ${new_xp} gesetzt. Level: ${old_level} → ${new_level}",
+        "translation": "XP for ${user} has been changed from ${old_xp} to ${new_xp}. Level: ${old_level} → ${new_level}",
         "context": "commands -> level -> setxp -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9666,7 +9658,7 @@
     {
         "identifier": "commands.level.rank.error.no_data.description",
         "source_string": "Es sind keine Leveldaten für ${user} verfügbar.",
-        "translation": "There is no level data available for ${user} .",
+        "translation": "There is no level data available for ${user}.",
         "context": "commands -> level -> rank -> error -> no_data -> description",
         "labels": "de.json",
         "max_length": null
@@ -10386,7 +10378,7 @@
     {
         "identifier": "commands.level.setlevelupchannel.success.description",
         "source_string": "Level-Up-Nachrichten werden nun in ${channel} gesendet.",
-        "translation": "Level-up messages are now sent in ${channel} .",
+        "translation": "Level-up messages are now sent in ${channel}.",
         "context": "commands -> level -> setlevelupchannel -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10482,7 +10474,7 @@
     {
         "identifier": "commands.level.changexpscaling.success.description",
         "source_string": "Die XP-Skalierung wurde erfolgreich auf ${scaling} geändert. Formel: ${formula}",
-        "translation": "The XP scaling has been successfully changed to ${scaling} . Formula: ${formula}",
+        "translation": "The XP scaling has been successfully changed to ${scaling}. Formula: ${formula}",
         "context": "commands -> level -> changexpscaling -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10641,8 +10633,8 @@
     },
     {
         "identifier": "commands.level.addlevelrole.error.role_exists.description",
-        "source_string": "Die Rolle {role} ist bereits für Level {level} zugewiesen.",
-        "translation": "The role {role} is already assigned to level {level} .",
+        "source_string": "Die Rolle {role} ist bereits Level {level} zugewiesen.",
+        "translation": "The role {role} is already assigned to level {level}.",
         "context": "commands -> level -> addlevelrole -> error -> role_exists -> description",
         "labels": "de.json",
         "max_length": null
@@ -10657,8 +10649,8 @@
     },
     {
         "identifier": "commands.level.addlevelrole.success.description",
-        "source_string": "Die Rolle {role} wurde erfolgreich für Level {level} hinzugefügt.",
-        "translation": "The role {role} was successfully added for level {level} .",
+        "source_string": "Die Rolle {role} wurde erfolgreich Level {level} hinzugefügt.",
+        "translation": "The role {role} was successfully added to level {level}.",
         "context": "commands -> level -> addlevelrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10705,8 +10697,8 @@
     },
     {
         "identifier": "commands.level.removelevelrole.error.role_not_found.description",
-        "source_string": "Die Rolle {role} ist nicht für Level {level} zugewiesen.",
-        "translation": "The role {role} is not assigned to level {level} .",
+        "source_string": "Die Rolle {role} ist nicht Level {level} zugewiesen.",
+        "translation": "The role {role} is not assigned to level {level}.",
         "context": "commands -> level -> removelevelrole -> error -> role_not_found -> description",
         "labels": "de.json",
         "max_length": null
@@ -10722,7 +10714,7 @@
     {
         "identifier": "commands.level.removelevelrole.success.description",
         "source_string": "Die Rolle {role} wurde erfolgreich von Level {level} entfernt.",
-        "translation": "The role {role} was successfully removed from level {level} .",
+        "translation": "The role {role} was successfully removed from level {level}.",
         "context": "commands -> level -> removelevelrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10810,7 +10802,7 @@
     {
         "identifier": "commands.level.showlevelroles.selected_level.description",
         "source_string": "Folgende Rollen sind für Level {level} konfiguriert:\n{roles}",
-        "translation": "The following roles are configured for level {level} :\n{roles}",
+        "translation": "The following roles are configured for level {level}:\n{roles}",
         "context": "commands -> level -> showlevelroles -> selected_level -> description",
         "labels": "de.json",
         "max_length": null
@@ -10922,7 +10914,7 @@
     {
         "identifier": "commands.level.showlevelroles.add_role_modal.success",
         "source_string": "Die Rolle {role} wurde erfolgreich als Level-Rolle für Level {level} hinzugefügt.",
-        "translation": "The role {role} has been successfully added as a level role for level {level} .",
+        "translation": "The role {role} has been successfully added as a level role for level {level}.",
         "context": "commands -> level -> showlevelroles -> add_role_modal -> success",
         "labels": "de.json",
         "max_length": null
@@ -11058,8 +11050,8 @@
     {
         "identifier": "commands.level.boosts.add_user.success.description",
         "source_string": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Benutzer ${user} hinzugefügt.",
-        "translation": "A ${type} boost from ${boost} has been successfully added to the user ${user} .",
-        "context": "commands -> level -> boosts -> add_user -> success -> description",
+        "translation": "A ${type} boost from ${boost} has been successfully added to the user ${user}.",
+        "context": "Example: \"Ein Beispiel Boost von 100 wurde erfolgreich zum Benutzer Test hinzugefügt.\"",
         "labels": "de.json",
         "max_length": null
     },
@@ -11314,7 +11306,7 @@
     {
         "identifier": "commands.giveaway.reroll_giveaway.winnerDM",
         "source_string": "🎉 **Gewinnspiel-Neuauslosung** 🎉\n\nHerzlichen Glückwunsch! Du wurdest bei einer Neuauslosung als Gewinner für ein Gewinnspiel auf dem Server ${guild_name} ausgewählt! Wende dich ggf. an die Serverleitung, um deinen Preis zu erhalten.",
-        "translation": "🎉 **Redraw** 🎉\n\nCongratulations! You have been selected as the winner of a prize draw for a competition on the server ${guild_name} ! Please contact the server administration to claim your prize.",
+        "translation": "🎉 **Giveaway Reroll** 🎉\n\nCongratulations! You have been selected as the winner of a reroll for a giveaway on the server ${guild_name}! Please contact the server administration to claim your prize.",
         "context": "commands -> giveaway -> reroll_giveaway -> winnerDM",
         "labels": "de.json",
         "max_length": null
@@ -11722,7 +11714,7 @@
     {
         "identifier": "commands.giveaway.endedGiveaway.dm",
         "source_string": "🎉 **Gewinnspiel beendet** 🎉\n\nHerzlichen Glückwunsch! Du hast ein Gewinnspiel auf den Server ${guild_name} gewonnen! Wende dich ggf. an die Serverleitung, um deinen Preis zu erhalten.",
-        "translation": "🎉 **Contest ended** 🎉\n\nCongratulations! You have won a competition on the server ${guild_name} ! Please contact the server administration to claim your prize.",
+        "translation": "🎉 **Giveaway ended** 🎉\n\nCongratulations! You have won a giveaway on the server ${guild_name}! Please contact the server administration to claim your prize.",
         "context": "commands -> giveaway -> endedGiveaway -> dm",
         "labels": "de.json",
         "max_length": null
@@ -11762,7 +11754,7 @@
     {
         "identifier": "commands.giveaway.giveawayEmbed.no_requirements",
         "source_string": "- `Keine spezifischen Bedingungen.`",
-        "translation": "- `No specific conditions.",
+        "translation": "- `No specific conditions.`",
         "context": "commands -> giveaway -> giveawayEmbed -> no_requirements",
         "labels": "de.json",
         "max_length": null
@@ -11810,7 +11802,7 @@
     {
         "identifier": "commands.giveaway.giveawayEmbed.end_time",
         "source_string": "🗓️Endet ${date}",
-        "translation": "🗓️Endet ${date}",
+        "translation": "🗓️Ends ${date}",
         "context": "commands -> giveaway -> giveawayEmbed -> end_time",
         "labels": "de.json",
         "max_length": null
@@ -11969,8 +11961,8 @@
     },
     {
         "identifier": "commands.giveaway.builder.custom_name.description",
-        "source_string": "Passe den Namen deines Gewinnspiels in der giveaways.tanjun.bot domaine an!",
-        "translation": "Customize the name of your giveaway in the giveaways.tanjun.bot domain!",
+        "source_string": "Passe den Namen deines Gewinnspiels unter [giveaways.tanjun.bot](https://giveaways.tanjun.bot) an!",
+        "translation": "Customize the name of your giveaway at [giveaways.tanjun.bot](https://giveaways.tanjun.bot)!",
         "context": "commands -> giveaway -> builder -> custom_name -> description",
         "labels": "de.json",
         "max_length": null
@@ -12105,8 +12097,8 @@
     },
     {
         "identifier": "commands.giveaway.builder.end_time.placeholder",
-        "source_string": "Gib die Endzeit ein z.B. 10m für in 10 Minuten",
-        "translation": "Enter the end time e.g. 10m for in 10 minutes",
+        "source_string": "Gib die Endzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten endet",
+        "translation": "Enter the end time, e.g. `10m`, so that the giveaway ends in 10 minutes",
         "context": "commands -> giveaway -> builder -> end_time -> placeholder",
         "labels": "de.json",
         "max_length": 100
@@ -12145,8 +12137,8 @@
     },
     {
         "identifier": "commands.giveaway.builder.start_time.placeholder",
-        "source_string": "Gib die Startzeit ein z.B. 10m für in 10 Minuten",
-        "translation": "Enter the start time e.g. 10m for in 10 minutes",
+        "source_string": "Gib die Startzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten beginnt",
+        "translation": "Enter the start time, e.g. `10m`, so that the giveaway starts in 10 minutes",
         "context": "commands -> giveaway -> builder -> start_time -> placeholder",
         "labels": "de.json",
         "max_length": 100
@@ -13154,7 +13146,7 @@
     {
         "identifier": "commands.games.ticTacToe.description",
         "source_string": "${player1} (⭕) vs ${player2} (❌)",
-        "translation": "${player1} (⭕) vs ${player2}(❌)",
+        "translation": "${player1} (⭕) vs ${player2} (❌)",
         "context": "commands -> games -> ticTacToe -> description",
         "labels": "de.json",
         "max_length": null
@@ -13218,7 +13210,7 @@
     {
         "identifier": "commands.games.ticTacToe.currentTurn",
         "source_string": "Aktuell am Zug: ${player}",
-        "translation": "Currently on the move: ${player}",
+        "translation": "Current turn: ${player}",
         "context": "commands -> games -> ticTacToe -> currentTurn",
         "labels": "de.json",
         "max_length": null
@@ -13234,7 +13226,7 @@
     {
         "identifier": "commands.games.connect4.description",
         "source_string": "${player1} (🔴) vs ${player2} (🟡)",
-        "translation": "${player1} (🔴) vs ${player2}(🟡)",
+        "translation": "${player1} (🔴) vs ${player2} (🟡)",
         "context": "commands -> games -> connect4 -> description",
         "labels": "de.json",
         "max_length": null
@@ -13282,7 +13274,7 @@
     {
         "identifier": "commands.games.connect4.currentTurn",
         "source_string": "Aktuell am Zug: ${player}",
-        "translation": "Currently on the move: ${player}",
+        "translation": "Current turn: ${player}",
         "context": "commands -> games -> connect4 -> currentTurn",
         "labels": "de.json",
         "max_length": null
@@ -13378,7 +13370,7 @@
     {
         "identifier": "commands.games.akinator.title",
         "source_string": "Akinator",
-        "translation": "Acinator",
+        "translation": "Akinator",
         "context": "commands -> games -> akinator -> title",
         "labels": "de.json",
         "max_length": null
@@ -13386,7 +13378,7 @@
     {
         "identifier": "commands.games.akinator.result",
         "source_string": "Ich bin mir sehr sicher, dass es sich um ${guess_name} handelt. Ich habe ${steps} Schritte benötigt, um ihn/sie zu erraten.\n${guess_description}",
-        "translation": "I am very sure that it is ${guess_name} . It took me ${steps} steps to guess him/her.\n${guess_description}",
+        "translation": "I am very sure that it is ${guess_name}. It took me ${steps} steps to guess him/her.\n${guess_description}",
         "context": "commands -> games -> akinator -> result",
         "labels": "de.json",
         "max_length": null
@@ -13866,7 +13858,7 @@
     {
         "identifier": "commands.games.rps.drawDescription",
         "source_string": "${player1} und ${player2} haben ${player1_choice} gewählt. Es ist ein Unentschieden!",
-        "translation": "${player1} and ${player2} have chosen ${player1_choice} . It's a draw!",
+        "translation": "${player1} and ${player2} have chosen ${player1_choice}. It's a draw!",
         "context": "commands -> games -> rps -> drawDescription",
         "labels": "de.json",
         "max_length": null
@@ -18234,32 +18226,32 @@
     {
         "identifier": "minigames.counting.modes.modes.normal.name",
         "source_string": "Positive Zahlen",
-        "translation": "Positive Zahlen",
+        "translation": "Positive numbers",
         "context": "Zähle einfach immer um 1 hoch.",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.normal.description",
-        "source_string": "Zähle einfach immer um 1 hoch.",
-        "translation": "Simply count up by 1.",
-        "context": "minigames -> counting -> modes -> modes -> normal -> description",
+        "source_string": "Zähle einfach aufwärts von eins an: `1`, `2`, `3`, `4`, ...",
+        "translation": "Just count up from one: `1`, `2`, `3`, `4`, ...",
+        "context": "Counting Minigame - Mode: Normal (Positive Zahlen)",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.negative.name",
-        "source_string": "Negativ",
-        "translation": "Negative",
-        "context": "minigames -> counting -> modes -> modes -> negative -> name",
+        "source_string": "Negative Zahlen",
+        "translation": "Negative numbers",
+        "context": "Zähle ins Negative.",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.negative.description",
-        "source_string": "Zähle ins Negative.",
-        "translation": "Count into the negative.",
-        "context": "minigames -> counting -> modes -> modes -> negative -> description",
+        "source_string": "Zähle abwärts von null: `-1`, `-2`, `-3`, `-4`, ...",
+        "translation": "Count down from zero: `-1`, `-2`, `-3`, `-4`, ...",
+        "context": "Counting Minigame - Mode: Negative (Negative Zahlen)",
         "labels": "de.json",
         "max_length": null
     },
@@ -18267,7 +18259,7 @@
         "identifier": "minigames.counting.modes.modes.reverse.name",
         "source_string": "Reverse",
         "translation": "Reverse",
-        "context": "minigames -> counting -> modes -> modes -> reverse -> name",
+        "context": "Zähle rückwärts zur 0.",
         "labels": "de.json",
         "max_length": null
     },
@@ -18289,57 +18281,57 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.prime.description",
-        "source_string": "Zähle nur Primzahlen.",
-        "translation": "Count only prime numbers.",
-        "context": "minigames -> counting -> modes -> modes -> prime -> description",
+        "source_string": "Zähle nur die Primzahlen: `2`, `3`, `5`, `7`, ...",
+        "translation": "Count only the prime numbers: `2`, `3`, `5`, `7`, ...",
+        "context": "Counting Minigame - Mode: Prime (Primzahlen)",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.even.name",
-        "source_string": "Gerade",
-        "translation": "Straight",
-        "context": "minigames -> counting -> modes -> modes -> even -> name",
+        "source_string": "Gerade Zahlen",
+        "translation": "Even numbers",
+        "context": "Zähle nur gerade Zahlen.",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.even.description",
-        "source_string": "Zähle nur gerade Zahlen.",
-        "translation": "Only count even numbers.",
-        "context": "minigames -> counting -> modes -> modes -> even -> description",
+        "source_string": "Zähle nur die geraden Zahlen: `2`, `4`, `6`, `8`, ...",
+        "translation": "Count only the even numbers: `2`, `4`, `6`, `8`, ...",
+        "context": "Counting Minigame - Mode: Even (Gerade Zahlen)",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.odd.name",
-        "source_string": "Ungerade",
-        "translation": "Odd",
-        "context": "minigames -> counting -> modes -> modes -> odd -> name",
+        "source_string": "Ungerade Zahlen",
+        "translation": "Odd numbers",
+        "context": "Zähle nur ungerade Zahlen.",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.odd.description",
-        "source_string": "Zähle nur ungerade Zahlen.",
-        "translation": "Only count odd numbers.",
-        "context": "minigames -> counting -> modes -> modes -> odd -> description",
+        "source_string": "Zähle nur die ungeraden Zahlen: `1`, `3`, `5`, `7`, ...",
+        "translation": "Count only the odd numbers: `1`, `3`, `5`, `7`, ...",
+        "context": "Counting Minigame - Mode: Odd (Ungerade Zahlen)",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.fibonacci.name",
-        "source_string": "Fibonacci",
-        "translation": "Fibonacci",
-        "context": "minigames -> counting -> modes -> modes -> fibonacci -> name",
+        "source_string": "Fibonacci-Zahlen",
+        "translation": "Fibonacci numbers",
+        "context": "Zähle die Fibonacci-Zahlen.",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.fibonacci.description",
-        "source_string": "Zähle die Fibonacci-Zahlen.",
-        "translation": "Count the Fibonacci numbers.",
-        "context": "minigames -> counting -> modes -> modes -> fibonacci -> description",
+        "source_string": "Zähle nur die Fibonacci-Zahlen: `1`, `1`, `2`, `3`, ...",
+        "translation": "Count only the Fibonacci numbers: `1`, `1`, `2`, `3`, ...",
+        "context": "Counting Minigame - Mode: Fibonacci (Fibonacci-Zahlen)",
         "labels": "de.json",
         "max_length": null
     },
@@ -18353,9 +18345,9 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.square.description",
-        "source_string": "Zähle die Quadratzahlen.",
-        "translation": "Count the squares.",
-        "context": "minigames -> counting -> modes -> modes -> square -> description",
+        "source_string": "Zähle nur die Quadratzahlen: `1`, `4`, `9`, `16`, ...",
+        "translation": "Count only the square numbers: `1`, `4`, `9`, `16`, ...",
+        "context": "Counting Minigame - Mode: Square (Quadratzahlen)",
         "labels": "de.json",
         "max_length": null
     },
@@ -18369,9 +18361,9 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.cube.description",
-        "source_string": "Zähle die Kubikzahlen.",
-        "translation": "Count the cubic numbers.",
-        "context": "minigames -> counting -> modes -> modes -> cube -> description",
+        "source_string": "Zähle nur die Kubikzahlen: `1`, `8`, `27`, `64`, ...",
+        "translation": "Count only the cube numbers: `1`, `8`, `27`, `64`, ...",
+        "context": "Counting Minigame - Mode: Cube (Kubikzahlen)",
         "labels": "de.json",
         "max_length": null
     },
@@ -18385,41 +18377,41 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.houndreds.description",
-        "source_string": "Zähle nur Zahlen, die auf 00 enden.",
-        "translation": "Only count numbers that end in 00.",
-        "context": "minigames -> counting -> modes -> modes -> houndreds -> description",
+        "source_string": "Zähle nur die Hunderterzahlen: `100`, `200`, `300`, `400`, ...",
+        "translation": "Count only the hundreds: `100`, `200`, `300`, `400`, ...",
+        "context": "Counting Minigame - Mode: Houndreds (Hunderter)",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.binary.name",
-        "source_string": "Binär",
-        "translation": "Binary",
-        "context": "minigames -> counting -> modes -> modes -> binary -> name",
+        "source_string": "Binärzahlen",
+        "translation": "Binary numbers",
+        "context": "Zähle in Binärzahlen.",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.binary.description",
-        "source_string": "Zähle in Binärzahlen.",
-        "translation": "Count in binary numbers.",
-        "context": "minigames -> counting -> modes -> modes -> binary -> description",
+        "source_string": "Zähle in Binärzahlen: `1`, `10`, `11`, `100`, ...",
+        "translation": "Count in binary numbers: `1`, `10`, `11`, `100`, ...",
+        "context": "Counting Minigame - Mode: Binary (Binärzahlen)",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.romean.name",
-        "source_string": "Römisch",
-        "translation": "Roman",
-        "context": "minigames -> counting -> modes -> modes -> romean -> name",
+        "source_string": "Römische Zahlen",
+        "translation": "Roman numerals",
+        "context": "Zähle in römischen Zahlen.",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.romean.description",
-        "source_string": "Zähle in römischen Zahlen.",
-        "translation": "Count in Roman numerals.",
-        "context": "minigames -> counting -> modes -> modes -> romean -> description",
+        "source_string": "Zähle in römischen Zahlen: `I`, `II`, `III`, `IV`, ...",
+        "translation": "Count in Roman numerals: `I`, `II`, `III`, `IV`, ...",
+        "context": "Counting Minigame - Mode: Romean (Römische Zahlen)",
         "labels": "de.json",
         "max_length": null
     },
@@ -29113,7 +29105,7 @@
     },
     {
         "identifier": "commands.utility.brawlstars.playerinfo.description.brawlers",
-        "source_string": "\\n${owned}/${brawlers} Brawler Freigeschaltet",
+        "source_string": "${owned}/${brawlers} Brawler Freigeschaltet",
         "translation": "\\n${owned}/${brawlers} Brawler Unlocked",
         "context": "Unlocked brawlers in brawlstars playerinfo command",
         "labels": "unassigned",
@@ -29904,11 +29896,11 @@
         "max_length": null
     },
     {
-        "identifier": "commands.level.defaultLevelUpMessage",
+        "identifier": "commands.level.defaultlevelupmessage",
         "source_string": "Herzlichen Glückwunsch, {user}! Du bist jetzt Level {level}!",
         "translation": "Congratulations, {user}! You are now level {level}!",
         "context": "The default level up message",
-        "labels": "unassigned",
+        "labels": "command_description, unassigned",
         "max_length": null
     },
     {
