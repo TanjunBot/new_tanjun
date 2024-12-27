@@ -32,6 +32,14 @@
         "max_length": 256
     },
     {
+        "identifier": "commands.help.not_authorized.description",
+        "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen.",
+        "translation": "You do not have the required permissions to execute this command.",
+        "context": "The description of the embed when someone else tries to interact with the view of someone else",
+        "labels": "de.json, embed_description",
+        "max_length": 4096
+    },
+    {
         "identifier": "commands.admin.addrole.missingPermissionBot.title",
         "source_string": "Fehlende Rechte",
         "translation": "Insufficient permissions",
@@ -96,6 +104,14 @@
         "max_length": null
     },
     {
+        "identifier": "commands.utility.brawlstars.maps.Skull Creek",
+        "source_string": "Schädelufer",
+        "translation": "Skull Creek",
+        "context": "commands -> utility -> brawlstars -> maps -> Skull Creek",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
         "identifier": "commands.utility.brawlstars.gameModes.brawlBall",
         "source_string": "Brawlball",
         "translation": "Brawlball",
@@ -124,6 +140,14 @@
         "source_string": "### Team 2",
         "translation": "### Team 2",
         "context": "commands -> utility -> brawlstars -> battlelog -> description -> team2",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.brawlstars.playerinfo.description.highestTrophies",
+        "source_string": "### Höchste Trophäen:\n${highestTrophies} <:icon_trophy:1320752979653165077>",
+        "translation": "### Highest trophies:\n${highestTrophies} <:icon_trophy:1320752979653165077>",
+        "context": "commands -> utility -> brawlstars -> playerinfo -> description -> highestTrophies",
         "labels": "de.json",
         "max_length": null
     },
@@ -296,6 +320,14 @@
         "max_length": 32
     },
     {
+        "identifier": "utility.help.name",
+        "source_string": "hilfe",
+        "translation": "help",
+        "context": "utility -> help -> name. Only lowercase characters and no spaces allowed",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
         "identifier": "utility.avatardecoration.name",
         "source_string": "avatardekoration",
         "translation": "avatar_decoration",
@@ -408,10 +440,58 @@
         "max_length": 32
     },
     {
+        "identifier": "minigames.counting.modes.modes.normal.description",
+        "source_string": "Zähle einfach aufwärts von eins an: `1`, `2`, `3`, `4`, ...",
+        "translation": "Just count up from one: `1`, `2`, `3`, `4`, ...",
+        "context": "Counting Minigame - Mode: Normal (Positive Zahlen)",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.negative.description",
+        "source_string": "Zähle abwärts von null: `-1`, `-2`, `-3`, `-4`, ...",
+        "translation": "Count down from zero: `-1`, `-2`, `-3`, `-4`, ...",
+        "context": "Counting Minigame - Mode: Negative (Negative Zahlen)",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
         "identifier": "minigames.counting.modes.modes.prime.name",
         "source_string": "Primzahlen",
         "translation": "Prime numbers",
         "context": "minigames -> counting -> modes -> modes -> prime -> name",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.prime.description",
+        "source_string": "Zähle nur die Primzahlen: `2`, `3`, `5`, `7`, ...",
+        "translation": "Count only the prime numbers: `2`, `3`, `5`, `7`, ...",
+        "context": "Counting Minigame - Mode: Prime (Primzahlen)",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.even.description",
+        "source_string": "Zähle nur die geraden Zahlen: `2`, `4`, `6`, `8`, ...",
+        "translation": "Count only the even numbers: `2`, `4`, `6`, `8`, ...",
+        "context": "Counting Minigame - Mode: Even (Gerade Zahlen)",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.odd.description",
+        "source_string": "Zähle nur die ungeraden Zahlen: `1`, `3`, `5`, `7`, ...",
+        "translation": "Count only the odd numbers: `1`, `3`, `5`, `7`, ...",
+        "context": "Counting Minigame - Mode: Odd (Ungerade Zahlen)",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.fibonacci.description",
+        "source_string": "Zähle nur die Fibonacci-Zahlen: `1`, `1`, `2`, `3`, ...",
+        "translation": "Count only the Fibonacci numbers: `1`, `1`, `2`, `3`, ...",
+        "context": "Counting Minigame - Mode: Fibonacci (Fibonacci-Zahlen)",
         "labels": "de.json",
         "max_length": null
     },
@@ -424,10 +504,26 @@
         "max_length": null
     },
     {
+        "identifier": "minigames.counting.modes.modes.square.description",
+        "source_string": "Zähle nur die Quadratzahlen: `1`, `4`, `9`, `16`, ...",
+        "translation": "Count only the square numbers: `1`, `4`, `9`, `16`, ...",
+        "context": "Counting Minigame - Mode: Square (Quadratzahlen)",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
         "identifier": "minigames.counting.modes.modes.cube.name",
         "source_string": "Kubikzahlen",
         "translation": "Cubic numbers",
         "context": "minigames -> counting -> modes -> modes -> cube -> name",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.cube.description",
+        "source_string": "Zähle nur die Kubikzahlen: `1`, `8`, `27`, `64`, ...",
+        "translation": "Count only the cube numbers: `1`, `8`, `27`, `64`, ...",
+        "context": "Counting Minigame - Mode: Cube (Kubikzahlen)",
         "labels": "de.json",
         "max_length": null
     },
@@ -440,6 +536,46 @@
         "max_length": null
     },
     {
+        "identifier": "minigames.counting.modes.modes.houndreds.description",
+        "source_string": "Zähle nur die Hunderterzahlen: `100`, `200`, `300`, `400`, ...",
+        "translation": "Count only the hundreds: `100`, `200`, `300`, `400`, ...",
+        "context": "Counting Minigame - Mode: Houndreds (Hunderter)",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.binary.description",
+        "source_string": "Zähle in Binärzahlen: `1`, `10`, `11`, `100`, ...",
+        "translation": "Count in binary numbers: `1`, `10`, `11`, `100`, ...",
+        "context": "Counting Minigame - Mode: Binary (Binärzahlen)",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.romean.description",
+        "source_string": "Zähle in römischen Zahlen: `I`, `II`, `III`, `IV`, ...",
+        "translation": "Count in Roman numerals: `I`, `II`, `III`, `IV`, ...",
+        "context": "Counting Minigame - Mode: Romean (Römische Zahlen)",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "games.akinator.name",
+        "source_string": "akinator",
+        "translation": "akinator",
+        "context": "games -> akinator -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
+        "identifier": "games.wordle.name",
+        "source_string": "wordle",
+        "translation": "wordle",
+        "context": "games -> wordle -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
         "identifier": "level.leaderboard.name",
         "source_string": "rangliste",
         "translation": "leaderboard",
@@ -448,12 +584,92 @@
         "max_length": 32
     },
     {
+        "identifier": "level.boosts.addrole.params.boost.description",
+        "source_string": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
+        "translation": "The boost value (e.g. 1.5 for 50% more XP)",
+        "context": "level -> boosts -> addrole -> params -> boost -> description",
+        "labels": "de.json, command_description",
+        "max_length": 100
+    },
+    {
+        "identifier": "level.boosts.addchannel.params.boost.description",
+        "source_string": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
+        "translation": "The boost value (e.g. 1.5 for 50% more XP)",
+        "context": "level -> boosts -> addchannel -> params -> boost -> description",
+        "labels": "de.json, command_description",
+        "max_length": 100
+    },
+    {
+        "identifier": "level.boosts.adduser.params.boost.description",
+        "source_string": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
+        "translation": "The boost value (e.g. 1.5 for 50% more XP)",
+        "context": "level -> boosts -> adduser -> params -> boost -> description",
+        "labels": "de.json, command_description",
+        "max_length": 100
+    },
+    {
         "identifier": "giveaway.reroll.name",
         "source_string": "neuverlosung",
         "translation": "reroll",
         "context": "giveaway -> reroll -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
+    },
+    {
+        "identifier": "ai.asktanjuwun.params.prompt.description",
+        "source_string": "Der Prompt der Tanjuwun-KI",
+        "translation": "The prompt of the Tanjuwun AI",
+        "context": "ai -> asktanjuwun -> params -> prompt -> description",
+        "labels": "de.json, command_description",
+        "max_length": 100
+    },
+    {
+        "identifier": "logs.automodRuleCreate.title",
+        "source_string": "AutoMod-Regel erstellt",
+        "translation": "AutoMod rule created",
+        "context": "logs -> automodRuleCreate -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "logs.automodRuleUpdate.title",
+        "source_string": "AutoMod-Regel aktualisiert",
+        "translation": "AutoMod rule updated",
+        "context": "logs -> automodRuleUpdate -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "logs.automodRuleDelete.title",
+        "source_string": "AutoMod-Regel gelöscht",
+        "translation": "AutoMod rule deleted",
+        "context": "logs -> automodRuleDelete -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "logs.automodAction.title",
+        "source_string": "AutoMod-Aktion",
+        "translation": "AutoMod action",
+        "context": "logs -> automodAction -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "logs.automodAction.actionWasTaken",
+        "source_string": "Der AutoMod hat Maßnahmen gegen ${user} in ${channel} ergriffen",
+        "translation": "The AutoMod has taken action against ${user} in ${channel}",
+        "context": "logs -> automodAction -> actionWasTaken",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "logs.guildUpdate.featuresLocales.AUTO_MODERATION",
+        "source_string": "AutoMod",
+        "translation": "AutoMod",
+        "context": "logs -> guildUpdate -> featuresLocales -> AUTO_MODERATION",
+        "labels": "de.json",
+        "max_length": null
     },
     {
         "identifier": "logs.blacklistc.remove.name",
