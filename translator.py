@@ -25,10 +25,12 @@ class TanjunTranslator(app_commands.Translator):
         if locale.value not in ["de", "de-DE", "en", "en-US", "en-GB"]:
             return None
 
-        if locale in ["en-US", "en-GB"]:
+        if locale.value in ["en-US", "en-GB"]:
             locale = "en"
 
-        current = tanjunLocalizer.localize(locale, str(string))
+        string = str(string).replace("_", ".")
+
+        current = tanjunLocalizer.localize(locale, string)
 
         if isinstance(current, str):
             return current

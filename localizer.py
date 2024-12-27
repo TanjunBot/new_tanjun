@@ -13,7 +13,6 @@ class Localizer:
             with open(f"locales/{locale}.json", "r", encoding="utf-8") as file:
                 return json.load(file)
         except FileNotFoundError:
-            print(f"No translation file found for locale '{locale}'. using english instead.")
             with open("locales/en.json", "r", encoding="utf-8") as file:
                 return json.load(file)
         except json.JSONDecodeError:
@@ -24,8 +23,6 @@ class Localizer:
 
     def get_translation(self, translations, key):
         """Retrieve a nested translation using dot notation for nested keys."""
-        key = key.replace("_", ".")
-
         translation = next(
             (
                 translation
