@@ -16,6 +16,14 @@
         "max_length": 256
     },
     {
+        "identifier": "commands.help.timeout.title",
+        "source_string": "Timeout",
+        "translation": "Timeout",
+        "context": "The Title of the Embed when the Select is Timed out",
+        "labels": "de.json, embed_title",
+        "max_length": 256
+    },
+    {
         "identifier": "commands.help.timeout.description",
         "source_string": "Der Help Befehl ist Getimeouted. Du kannst nicht länger mit ihm interagieren",
         "translation": "The help command has been timed out. You can no longer interact with it",
@@ -57,7 +65,7 @@
     },
     {
         "identifier": "commands.admin.addrole.alreadyHasRole.description",
-        "source_string": "Dieser Benutzer hat bereits diese Rolle.",
+        "source_string": "Dieser Nutzer hat bereits diese Rolle.",
         "translation": "This user already has this role.",
         "context": "commands -> admin -> addrole -> alreadyHasRole -> description",
         "labels": "de.json",
@@ -140,6 +148,126 @@
         "source_string": "Diese Rolle wird von einer Integration verwaltet und kann nicht manuell vergeben werden.",
         "translation": "This role is managed by an integration and cannot be assigned manually.",
         "context": "commands -> admin -> addrole -> managedRole -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.noSelection",
+        "source_string": "Du musst mindestens eine Rolle und einen Nutzer auswählen.",
+        "translation": "You must select at least one role and one user.",
+        "context": "commands -> admin -> addrole -> noSelection",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.multipleSuccess",
+        "source_string": "${count} Rollen wurden erfolgreich vergeben.",
+        "translation": "${count} Roles were successfully assigned.",
+        "context": "commands -> admin -> addrole -> multipleSuccess",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.cancelled",
+        "source_string": "Vorgang abgebrochen.",
+        "translation": "Operation cancelled.",
+        "context": "commands -> admin -> addrole -> cancelled",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.roleTooHigh.title",
+        "source_string": "Rolle zu hoch",
+        "translation": "Role too high",
+        "context": "commands -> admin -> removerole -> roleTooHigh -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.roleTooHighBot.title",
+        "source_string": "Rolle zu hoch",
+        "translation": "Role too high",
+        "context": "commands -> admin -> removerole -> roleTooHighBot -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.noUser.title",
+        "source_string": "Kein Nutzer angegeben",
+        "translation": "No user specified",
+        "context": "commands -> admin -> removerole -> noUser -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.noRole.title",
+        "source_string": "Keine Rolle angegeben",
+        "translation": "No role specified",
+        "context": "commands -> admin -> removerole -> noRole -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.doesNotHaveRole.title",
+        "source_string": "Nutzer hat die Rolle nicht",
+        "translation": "User does not have the role",
+        "context": "commands -> admin -> removerole -> doesNotHaveRole -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.doesNotHaveRole.description",
+        "source_string": "Dieser Nutzer hat diese Rolle nicht.",
+        "translation": "This user does not have this role.",
+        "context": "commands -> admin -> removerole -> doesNotHaveRole -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.noSelection",
+        "source_string": "Du musst mindestens eine Rolle und einen Nutzer auswählen.",
+        "translation": "You must select at least one role and one user.",
+        "context": "commands -> admin -> removerole -> noSelection",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.cancelled",
+        "source_string": "Vorgang abgebrochen.",
+        "translation": "Operation cancelled.",
+        "context": "commands -> admin -> removerole -> cancelled",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.createrole.missingName.title",
+        "source_string": "Fehlender Name",
+        "translation": "Missing name",
+        "context": "commands -> admin -> createrole -> missingName -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.createrole.nameTooLong.title",
+        "source_string": "Name zu lang",
+        "translation": "Name too long",
+        "context": "commands -> admin -> createrole -> nameTooLong -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.createrole.reasonTooLong.title",
+        "source_string": "Grund zu lang",
+        "translation": "Reason too long",
+        "context": "commands -> admin -> createrole -> reasonTooLong -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.createrole.invalidColor.title",
+        "source_string": "Ungültige Farbe",
+        "translation": "Invalid color",
+        "context": "commands -> admin -> createrole -> invalidColor -> title",
         "labels": "de.json",
         "max_length": null
     },
@@ -372,6 +500,14 @@
         "source_string": "boosterrolle",
         "translation": "booster_role",
         "context": "admin -> boosterrole -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.createticket.params.pingrole.name",
+        "source_string": "pingrole",
+        "translation": "pingrole",
+        "context": "admin -> createticket -> params -> pingrole -> name. Only lower case characters and no spaces allowed.",
         "labels": "de.json, command_name",
         "max_length": 32
     },
