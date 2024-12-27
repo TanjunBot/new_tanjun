@@ -2145,8 +2145,8 @@
     },
     {
         "identifier": "commands.admin.warn.success.description",
-        "source_string": "Der Benutzer {user} wurde erfolgreich verwarnt. Grund: {reason}. Dies ist seine {count}. Warnung.",
-        "translation": "Der Benutzer {user} wurde erfolgreich verwarnt. Grund: {reason}. Dies ist seine {count}. Warnung.",
+        "source_string": "Der Benutzer ${user} wurde erfolgreich verwarnt. Grund: ${reason}. Dies ist seine ${count}. Warnung.",
+        "translation": "Der Benutzer ${user} wurde erfolgreich verwarnt. Grund: ${reason}. Dies ist seine ${count}. Warnung.",
         "context": "commands -> admin -> warn -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -2169,8 +2169,8 @@
     },
     {
         "identifier": "commands.admin.warn.dmNotification.description",
-        "source_string": "Sie wurden auf dem Server {guild} verwarnt. Grund: {reason}. Dies ist Ihre {count}. Warnung.",
-        "translation": "Sie wurden auf dem Server {guild} verwarnt. Grund: {reason}. Dies ist Ihre {count}. Warnung.",
+        "source_string": "Sie wurden auf dem Server ${guild} verwarnt. Grund: ${reason}. Dies ist Ihre ${count}. Warnung.",
+        "translation": "Sie wurden auf dem Server ${guild} verwarnt. Grund: ${reason}. Dies ist Ihre ${count}. Warnung.",
         "context": "commands -> admin -> warn -> dmNotification -> description",
         "labels": "de.json",
         "max_length": null
