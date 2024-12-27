@@ -6265,8 +6265,8 @@
     },
     {
         "identifier": "commands.fun.boop.title",
-        "source_string": "<:boop:1096037035611009064>${user} macht BOOP bei ${member}<:boop:1096037035611009064>",
-        "translation": "<:boop:1096037035611009064>${user} macht BOOP bei ${member}<:boop:1096037035611009064>",
+        "source_string": "<:boop:1096037035611009064>${user} stupst ${member} an <:boop:1096037035611009064>",
+        "translation": "<:boop:1096037035611009064>${user} stupst ${member} an <:boop:1096037035611009064>",
         "context": "commands -> fun -> boop -> title",
         "labels": "de.json",
         "max_length": null
@@ -6297,8 +6297,8 @@
     },
     {
         "identifier": "commands.fun.pat.title",
-        "source_string": "<a:pat:1096036467601575998>${user} pattet ${member}<a:pat:1096036467601575998>",
-        "translation": "<a:pat:1096036467601575998>${user} pattet ${member}<a:pat:1096036467601575998>",
+        "source_string": "<a:pat:1096036467601575998>${user} streichelt ${member}<a:pat:1096036467601575998>",
+        "translation": "<a:pat:1096036467601575998>${user} streichelt ${member}<a:pat:1096036467601575998>",
         "context": "commands -> fun -> pat -> title",
         "labels": "de.json",
         "max_length": null
@@ -13865,8 +13865,8 @@
     },
     {
         "identifier": "commands.games.rps.win",
-        "source_string": "Herazsforderer hat gewonnen!",
-        "translation": "Herazsforderer hat gewonnen!",
+        "source_string": "Herausforderer hat gewonnen!",
+        "translation": "Herausforderer hat gewonnen!",
         "context": "commands -> games -> rps -> win",
         "labels": "de.json",
         "max_length": null
@@ -13881,8 +13881,8 @@
     },
     {
         "identifier": "commands.games.rps.lose",
-        "source_string": "Wie peinlich... Herazsforderer hat verloren!",
-        "translation": "Wie peinlich... Herazsforderer hat verloren!",
+        "source_string": "Wie peinlich... Herausforderer hat verloren!",
+        "translation": "Wie peinlich... Herausforderer hat verloren!",
         "context": "commands -> games -> rps -> lose",
         "labels": "de.json",
         "max_length": null
@@ -14065,8 +14065,8 @@
     },
     {
         "identifier": "commands.channel.dynamicslowmode.channels.description",
-        "source_string": "Kanal: <#${channel_id}> | Nachrichten: ${messages} | pro: ${per} Sekunden | Resetafter: ${resetafter} Sekunden",
-        "translation": "Kanal: <#${channel_id}> | Nachrichten: ${messages} | pro: ${per} Sekunden | Resetafter: ${resetafter} Sekunden",
+        "source_string": "Kanal: <#${channel_id}> | Nachrichten: ${messages} | Pro: ${per} Sekunden | Zurücksetzen nach: ${resetafter} Sekunden",
+        "translation": "Kanal: <#${channel_id}> | Nachrichten: ${messages} | Pro: ${per} Sekunden | Zurücksetzen nach: ${resetafter} Sekunden",
         "context": "commands -> channel -> dynamicslowmode -> channels -> description",
         "labels": "de.json",
         "max_length": null
@@ -15873,8 +15873,8 @@
     },
     {
         "identifier": "fun.boop.description",
-        "source_string": "Boope jemanden",
-        "translation": "Boope jemanden",
+        "source_string": "Stupse jemanden an",
+        "translation": "Stupse jemanden an",
         "context": "fun -> boop -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -15889,8 +15889,8 @@
     },
     {
         "identifier": "fun.boop.params.member.description",
-        "source_string": "Wähle das Mitglied aus, das du boopen möchtest",
-        "translation": "Wähle das Mitglied aus, das du boopen möchtest",
+        "source_string": "Wähle das Mitglied aus, das du anstupsen möchtest",
+        "translation": "Wähle das Mitglied aus, das du anstupsen möchtest",
         "context": "fun -> boop -> params -> member -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -16017,8 +16017,8 @@
     },
     {
         "identifier": "fun.pat.description",
-        "source_string": "Patte jemanden",
-        "translation": "Patte jemanden",
+        "source_string": "Streichle jemanden",
+        "translation": "Streichle jemanden",
         "context": "fun -> pat -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -16033,8 +16033,8 @@
     },
     {
         "identifier": "fun.pat.params.member.description",
-        "source_string": "Wähle das Mitglied aus, das du patten möchtest",
-        "translation": "Wähle das Mitglied aus, das du patten möchtest",
+        "source_string": "Wähle das Mitglied aus, das du streicheln möchtest",
+        "translation": "Wähle das Mitglied aus, das du streicheln möchtest",
         "context": "fun -> pat -> params -> member -> description",
         "labels": "de.json, command_description",
         "max_length": 100
