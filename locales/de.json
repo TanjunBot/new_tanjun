@@ -113,8 +113,8 @@
     },
     {
         "identifier": "commands.admin.addrole.roleTooHigh.description",
-        "source_string": "Die Rolle die du hinzufügen möchtest ist höher als deine höchste Rolle. Du darfst diese Rolle nicht vergeben.",
-        "translation": "Die Rolle die du hinzufügen möchtest ist höher als deine höchste Rolle. Du darfst diese Rolle nicht vergeben.",
+        "source_string": "Die Rolle, die du hinzufügen möchtest, ist höher als deine höchste Rolle. Du kannst diese Rolle nicht vergeben.",
+        "translation": "Die Rolle, die du hinzufügen möchtest, ist höher als deine höchste Rolle. Du kannst diese Rolle nicht vergeben.",
         "context": "commands -> admin -> addrole -> roleTooHigh -> description",
         "labels": "de.json",
         "max_length": null
@@ -129,24 +129,24 @@
     },
     {
         "identifier": "commands.admin.addrole.roleTooHighBot.description",
-        "source_string": "Die Rolle die du hinzufügen möchtest ist höher als meine höchste Rolle. Ich darf diese Rolle nicht vergeben.",
-        "translation": "Die Rolle die du hinzufügen möchtest ist höher als meine höchste Rolle. Ich darf diese Rolle nicht vergeben.",
+        "source_string": "Die Rolle, die du hinzufügen möchtest, ist höher als meine höchste Rolle. Ich kann diese Rolle nicht vergeben.",
+        "translation": "Die Rolle, die du hinzufügen möchtest, ist höher als meine höchste Rolle. Ich kann diese Rolle nicht vergeben.",
         "context": "commands -> admin -> addrole -> roleTooHighBot -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.addrole.noUser.title",
-        "source_string": "Kein Benutzer angegeben",
-        "translation": "Kein Benutzer angegeben",
+        "source_string": "Kein Nutzer angegeben",
+        "translation": "Kein Nutzer angegeben",
         "context": "commands -> admin -> addrole -> noUser -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.addrole.noUser.description",
-        "source_string": "Du musst einen Benutzer angeben dem du die Rolle hinzufügen möchtest.",
-        "translation": "Du musst einen Benutzer angeben dem du die Rolle hinzufügen möchtest.",
+        "source_string": "Du musst einen Nutzer angeben, dem du die Rolle hinzufügen möchtest.",
+        "translation": "Du musst einen Nutzer angeben, dem du die Rolle hinzufügen möchtest.",
         "context": "commands -> admin -> addrole -> noUser -> description",
         "labels": "de.json",
         "max_length": null
@@ -161,8 +161,8 @@
     },
     {
         "identifier": "commands.admin.addrole.noRole.description",
-        "source_string": "Du musst eine Rolle angeben die du hinzufügen möchtest.",
-        "translation": "Du musst eine Rolle angeben die du hinzufügen möchtest.",
+        "source_string": "Du musst eine Rolle angeben, die du hinzufügen möchtest.",
+        "translation": "Du musst eine Rolle angeben, die du hinzufügen möchtest.",
         "context": "commands -> admin -> addrole -> noRole -> description",
         "labels": "de.json",
         "max_length": null
@@ -193,8 +193,8 @@
     },
     {
         "identifier": "commands.admin.addrole.managedRole.description",
-        "source_string": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell vergeben werden.",
-        "translation": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell vergeben werden.",
+        "source_string": "Diese Rolle wird von einer Integration verwaltet und kann nicht manuell vergeben werden.",
+        "translation": "Diese Rolle wird von einer Integration verwaltet und kann nicht manuell vergeben werden.",
         "context": "commands -> admin -> addrole -> managedRole -> description",
         "labels": "de.json",
         "max_length": null
@@ -24457,8 +24457,8 @@
     },
     {
         "identifier": "logs.userUpdate.avatar",
-        "source_string": "Der Nuter hat seinen Avatar geändert. Allerdings löscht Discord den alten Avatar, bevor ich darauf zugreifen kann. Daher kann ich den alten Avatar leider nicht anzeigen.s",
-        "translation": "Der Nuter hat seinen Avatar geändert. Allerdings löscht Discord den alten Avatar, bevor ich darauf zugreifen kann. Daher kann ich den alten Avatar leider nicht anzeigen.s",
+        "source_string": "Der Nutzer hat seinen Avatar geändert. Allerdings hat Discord den alten Avatar gelöscht, bevor ich darauf zugreifen konnte. Daher kann ich den alten Avatar leider nicht anzeigen.",
+        "translation": "Der Nutzer hat seinen Avatar geändert. Allerdings hat Discord den alten Avatar gelöscht, bevor ich darauf zugreifen konnte. Daher kann ich den alten Avatar leider nicht anzeigen.",
         "context": "logs -> userUpdate -> avatar",
         "labels": "de.json",
         "max_length": null
@@ -24729,8 +24729,8 @@
     },
     {
         "identifier": "logs.reactionAdd.name",
-        "source_string": "${user} hat auf die Nachricht ${message} eine Reaktion hinzugefügt: ${emoji}",
-        "translation": "${user} hat auf die Nachricht ${message} eine Reaktion hinzugefügt: ${emoji}",
+        "source_string": "${user} hat auf zur Nachricht ${message} eine Reaktion hinzugefügt: ${emoji}",
+        "translation": "${user} hat auf zur Nachricht ${message} eine Reaktion hinzugefügt: ${emoji}",
         "context": "logs -> reactionAdd -> name",
         "labels": "de.json",
         "max_length": null
@@ -24745,8 +24745,8 @@
     },
     {
         "identifier": "logs.reactionRemove.name",
-        "source_string": "${user} hat auf die Nachricht ${message} eine Reaktion entfernt: ${emoji}",
-        "translation": "${user} hat auf die Nachricht ${message} eine Reaktion entfernt: ${emoji}",
+        "source_string": "${user} hat von der Nachricht ${message} eine Reaktion entfernt: ${emoji}",
+        "translation": "${user} hat von der Nachricht ${message} eine Reaktion entfernt: ${emoji}",
         "context": "logs -> reactionRemove -> name",
         "labels": "de.json",
         "max_length": null
@@ -25337,16 +25337,16 @@
     },
     {
         "identifier": "image.blur.params.type.gaussian",
-        "source_string": "Gaußscher Unscharfmacher",
-        "translation": "Gaußscher Unscharfmacher",
+        "source_string": "Gaußscher Weichzeichner",
+        "translation": "Gaußscher Weichzeichner",
         "context": "image -> blur -> params -> type -> gaussian",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "image.blur.params.type.boxblurr",
-        "source_string": "Box Unscharfmacher",
-        "translation": "Box Unscharfmacher",
+        "source_string": "Box Weichzeichner",
+        "translation": "Box Weichzeichner",
         "context": "image -> blur -> params -> type -> boxblurr",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -25361,8 +25361,8 @@
     },
     {
         "identifier": "image.blur.params.radius.description",
-        "source_string": "Der Radius der Unscharfmacher",
-        "translation": "Der Radius der Unscharfmacher",
+        "source_string": "Der Radius der Weichzeichner",
+        "translation": "Der Radius der Weichzeichner",
         "context": "image -> blur -> params -> radius -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -26585,8 +26585,8 @@
     },
     {
         "identifier": "countries.Curacao",
-        "source_string": "Curacao",
-        "translation": "Curacao",
+        "source_string": "Curaçao",
+        "translation": "Curaçao",
         "context": "countries -> Curacao",
         "labels": "de.json",
         "max_length": null
@@ -28169,8 +28169,8 @@
     },
     {
         "identifier": "countries.Åland Islands",
-        "source_string": "Aland",
-        "translation": "Aland",
+        "source_string": "Åland",
+        "translation": "Åland",
         "context": "countries -> Åland Islands",
         "labels": "de.json",
         "max_length": null
@@ -29777,9 +29777,9 @@
     },
     {
         "identifier": "ai.createcustom.params.topp.description",
-        "source_string": "Das höchste P der Nutzerdefinierten Ki",
-        "translation": "Das höchste P der Nutzerdefinierten Ki",
-        "context": "The description of the topp param from the createcustom command",
+        "source_string": "Das höchste P der nutzerdefinierten KI",
+        "translation": "Das höchste P der nutzerdefinierten KI",
+        "context": "The description of the top param from the createcustom command",
         "labels": "command_description, unassigned",
         "max_length": 100
     },
@@ -29849,8 +29849,8 @@
     },
     {
         "identifier": "ai.asktanjuwun.params.topp.description",
-        "source_string": "höchstes P für tanjuwun",
-        "translation": "höchstes P für tanjuwun",
+        "source_string": "Höchstes P für Tanjuwun",
+        "translation": "Höchstes P für Tanjuwun",
         "context": "The description for the top p param for the ai asktanjuwun command.",
         "labels": "command_description, unassigned",
         "max_length": 100
