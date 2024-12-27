@@ -280,6 +280,14 @@
         "max_length": 32
     },
     {
+        "identifier": "admin.tm.add.params.casesensitive.name",
+        "source_string": "casesensitive",
+        "translation": "casesensitive",
+        "context": "admin -> tm -> add -> params -> casesensitive -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
         "identifier": "math.calculator.name",
         "source_string": "taschenrechner",
         "translation": "pocket_calculator",
@@ -292,6 +300,14 @@
         "source_string": "avatardekoration",
         "translation": "avatar_decoration",
         "context": "utility -> avatardecoration -> name. Only lowercase characters and no spaces allowed",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility.afk.name",
+        "source_string": "afk",
+        "translation": "afk",
+        "context": "utility -> afk -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -336,6 +352,14 @@
         "max_length": 32
     },
     {
+        "identifier": "utility.bs.name",
+        "source_string": "brawlstars",
+        "translation": "brawlstars",
+        "context": "utility -> bs -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
         "identifier": "utility.bs.battlelog.name",
         "source_string": "kampflogbuch",
         "translation": "battle_log",
@@ -364,6 +388,22 @@
         "source_string": "wortkette",
         "translation": "wordchain",
         "context": "minigames -> wordchaincmds -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
+        "identifier": "minigames.cchcmds.name",
+        "source_string": "countingchallenge",
+        "translation": "countingchallenge",
+        "context": "minigames -> cchcmds -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
+        "identifier": "minigames.cmodescmds.name",
+        "source_string": "countingmodes",
+        "translation": "countingmodes",
+        "context": "minigames -> cmodescmds -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
