@@ -432,6 +432,22 @@
         "max_length": null
     },
     {
+        "identifier": "commands.level.removelevelrole.error.role_not_found.description",
+        "source_string": "Die Rolle ${role} ist keine Levelrolle.",
+        "translation": "The role ${role} is not a level role.",
+        "context": "commands -> level -> removelevelrole -> error -> role_not_found -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.level.removelevelrole.success.description",
+        "source_string": "Die Rolle ${role} wurde erfolgreich entfernt.",
+        "translation": "The role ${role} was successfully removed.",
+        "context": "commands -> level -> removelevelrole -> success -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
         "identifier": "commands.image.typenotsupported.description",
         "source_string": "Der angegebene Typ wird nicht unterstützt. Unterstützte Typen: `jpeg`, `png`, `webp`.",
         "translation": "The specified type is not supported. Supported types: `jpeg`, `png`, `webp`.",
