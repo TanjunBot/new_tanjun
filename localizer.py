@@ -29,7 +29,7 @@ class Localizer:
             (
                 translation
                 for translation in translations
-                if translation["identifier"] == key
+                if translation["identifier"].lower() == key.lower()
             ),
             None,
         )
