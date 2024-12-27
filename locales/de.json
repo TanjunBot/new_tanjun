@@ -65,8 +65,8 @@
     },
     {
         "identifier": "commands.admin.addrole.missingPermission.description",
-        "source_string": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen hinzuzufügen.",
-        "translation": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen hinzuzufügen.",
+        "source_string": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen zu vergeben.",
+        "translation": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen zu vergeben.",
         "context": "The description of the embed that shows when the user dont have manage roles permission ",
         "labels": "de.json, embed_description",
         "max_length": 4096
@@ -81,8 +81,8 @@
     },
     {
         "identifier": "commands.admin.addrole.missingPermissionBot.description",
-        "source_string": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen hinzuzufügen.",
-        "translation": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen hinzuzufügen.",
+        "source_string": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen zu vergeben.",
+        "translation": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen zu vergeben.",
         "context": "The description of the embed that shows when the bot doesn't have the manage roles permission",
         "labels": "de.json, embed_description",
         "max_length": 4096
@@ -97,8 +97,8 @@
     },
     {
         "identifier": "commands.admin.addrole.alreadyHasRole.description",
-        "source_string": "Dieser Benutzer hat bereits diese Rolle.",
-        "translation": "Dieser Benutzer hat bereits diese Rolle.",
+        "source_string": "Dieser Nutzer hat bereits diese Rolle.",
+        "translation": "Dieser Nutzer hat bereits diese Rolle.",
         "context": "commands -> admin -> addrole -> alreadyHasRole -> description",
         "labels": "de.json",
         "max_length": null
@@ -201,16 +201,16 @@
     },
     {
         "identifier": "commands.admin.addrole.multiplePrompt",
-        "source_string": "Bitte wähle die Rollen und Benutzer aus, denen du Rollen hinzufügen möchtest.",
-        "translation": "Bitte wähle die Rollen und Benutzer aus, denen du Rollen hinzufügen möchtest.",
+        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, denen du Rollen hinzufügen möchtest.",
+        "translation": "Bitte wähle die Besitzer von Rollen und Nutzer aus, denen du Rollen hinzufügen möchtest.",
         "context": "commands -> admin -> addrole -> multiplePrompt",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.addrole.noSelection",
-        "source_string": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
-        "translation": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
+        "source_string": "Du musst mindestens eine Rolle und einen Nutzer auswählen.",
+        "translation": "Du musst mindestens eine Rolle und einen Nutzer auswählen.",
         "context": "commands -> admin -> addrole -> noSelection",
         "labels": "de.json",
         "max_length": null
@@ -241,8 +241,8 @@
     },
     {
         "identifier": "commands.admin.removerole.missingPermission.description",
-        "source_string": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen zu entfernen.",
-        "translation": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen zu entfernen.",
+        "source_string": "Du benötigst die `Rollen Verwalten` Berechtigung, um Rollen zu entziehen.",
+        "translation": "Du benötigst die `Rollen Verwalten` Berechtigung, um Rollen zu entziehen.",
         "context": "commands -> admin -> removerole -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
@@ -257,8 +257,8 @@
     },
     {
         "identifier": "commands.admin.removerole.missingPermissionBot.description",
-        "source_string": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen zu entfernen.",
-        "translation": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen zu entfernen.",
+        "source_string": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen zu entziehen.",
+        "translation": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen zu entziehen.",
         "context": "commands -> admin -> removerole -> missingPermissionBot -> description",
         "labels": "de.json",
         "max_length": null
@@ -273,8 +273,8 @@
     },
     {
         "identifier": "commands.admin.removerole.roleTooHigh.description",
-        "source_string": "Die Rolle die du entfernen möchtest ist höher als deine höchste Rolle. Du darfst diese Rolle nicht entfernen.",
-        "translation": "Die Rolle die du entfernen möchtest ist höher als deine höchste Rolle. Du darfst diese Rolle nicht entfernen.",
+        "source_string": "Die Rolle, die du entziehen möchtest, ist höher als deine höchste Rolle. Du kannst diese Rolle nicht entziehen.",
+        "translation": "Die Rolle, die du entziehen möchtest, ist höher als deine höchste Rolle. Du kannst diese Rolle nicht entziehen.",
         "context": "commands -> admin -> removerole -> roleTooHigh -> description",
         "labels": "de.json",
         "max_length": null
@@ -289,24 +289,24 @@
     },
     {
         "identifier": "commands.admin.removerole.roleTooHighBot.description",
-        "source_string": "Die Rolle die du entfernen möchtest ist höher als meine höchste Rolle. Ich darf diese Rolle nicht entfernen.",
-        "translation": "Die Rolle die du entfernen möchtest ist höher als meine höchste Rolle. Ich darf diese Rolle nicht entfernen.",
+        "source_string": "Die Rolle, die du entziehen möchtest, ist höher als meine höchste Rolle. Ich kann diese Rolle nicht entziehen.",
+        "translation": "Die Rolle, die du entziehen möchtest, ist höher als meine höchste Rolle. Ich kann diese Rolle nicht entziehen.",
         "context": "commands -> admin -> removerole -> roleTooHighBot -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.removerole.noUser.title",
-        "source_string": "Kein Benutzer angegeben",
-        "translation": "Kein Benutzer angegeben",
+        "source_string": "Kein Nutzer angegeben",
+        "translation": "Kein Nutzer angegeben",
         "context": "commands -> admin -> removerole -> noUser -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.removerole.noUser.description",
-        "source_string": "Du musst einen Benutzer angeben dem du die Rolle entfernen möchtest.",
-        "translation": "Du musst einen Benutzer angeben dem du die Rolle entfernen möchtest.",
+        "source_string": "Du musst einen Nutzer angeben, dem du die Rolle entziehen möchtest.",
+        "translation": "Du musst einen Nutzer angeben, dem du die Rolle entziehen möchtest.",
         "context": "commands -> admin -> removerole -> noUser -> description",
         "labels": "de.json",
         "max_length": null
@@ -329,16 +329,16 @@
     },
     {
         "identifier": "commands.admin.removerole.doesNotHaveRole.title",
-        "source_string": "Benutzer hat Rolle nicht",
-        "translation": "Benutzer hat Rolle nicht",
+        "source_string": "Nutzer hat die Rolle nicht",
+        "translation": "Nutzer hat die Rolle nicht",
         "context": "commands -> admin -> removerole -> doesNotHaveRole -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.removerole.doesNotHaveRole.description",
-        "source_string": "Dieser Benutzer hat diese Rolle nicht.",
-        "translation": "Dieser Benutzer hat diese Rolle nicht.",
+        "source_string": "Dieser Nutzer hat diese Rolle nicht.",
+        "translation": "Dieser Nutzer hat diese Rolle nicht.",
         "context": "commands -> admin -> removerole -> doesNotHaveRole -> description",
         "labels": "de.json",
         "max_length": null
@@ -369,24 +369,24 @@
     },
     {
         "identifier": "commands.admin.removerole.managedRole.description",
-        "source_string": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell entfernt werden.",
-        "translation": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell entfernt werden.",
+        "source_string": "Diese Rolle wird von einer Integration verwaltet und kann nicht manuell entzogen werden.",
+        "translation": "Diese Rolle wird von einer Integration verwaltet und kann nicht manuell entzogen werden.",
         "context": "commands -> admin -> removerole -> managedRole -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.removerole.multiplePrompt",
-        "source_string": "Bitte wähle die Rollen und Benutzer aus, von denen du Rollen entfernen möchtest.",
-        "translation": "Bitte wähle die Rollen und Benutzer aus, von denen du Rollen entfernen möchtest.",
+        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, von denen du Rollen entfernen möchtest.",
+        "translation": "Bitte wähle die Besitzer von Rollen und Nutzer aus, von denen du Rollen entfernen möchtest.",
         "context": "commands -> admin -> removerole -> multiplePrompt",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.removerole.noSelection",
-        "source_string": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
-        "translation": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
+        "source_string": "Du musst mindestens eine Rolle und einen Nutzer auswählen.",
+        "translation": "Du musst mindestens eine Rolle und einen Nutzer auswählen.",
         "context": "commands -> admin -> removerole -> noSelection",
         "labels": "de.json",
         "max_length": null
@@ -417,8 +417,8 @@
     },
     {
         "identifier": "commands.admin.createrole.missingPermission.description",
-        "source_string": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen zu erstellen.",
-        "translation": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen zu erstellen.",
+        "source_string": "Du benötigst die `Rollen Verwalten` Berechtigung, um Rollen zu erstellen.",
+        "translation": "Du benötigst die `Rollen Verwalten` Berechtigung, um Rollen zu erstellen.",
         "context": "commands -> admin -> createrole -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
@@ -433,8 +433,8 @@
     },
     {
         "identifier": "commands.admin.createrole.missingPermissionBot.description",
-        "source_string": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen zu erstellen.",
-        "translation": "Ich benötige die `Rollen Verwalten` Berechtigung um Rollen zu erstellen.",
+        "source_string": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen zu erstellen.",
+        "translation": "Ich benötige die `Rollen Verwalten` Berechtigung, um Rollen zu erstellen.",
         "context": "commands -> admin -> createrole -> missingPermissionBot -> description",
         "labels": "de.json",
         "max_length": null
@@ -985,16 +985,16 @@
     },
     {
         "identifier": "commands.admin.unban.userNotFound.title",
-        "source_string": "Benutzer nicht gefunden",
-        "translation": "Benutzer nicht gefunden",
+        "source_string": "Nutzer nicht gefunden",
+        "translation": "Nutzer nicht gefunden",
         "context": "commands -> admin -> unban -> userNotFound -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.unban.userNotFound.description",
-        "source_string": "Es wurde kein gebannter Benutzer mit dem Namen ${username} gefunden.",
-        "translation": "Es wurde kein gebannter Benutzer mit dem Namen ${username} gefunden.",
+        "source_string": "Es wurde kein gebannter Nutzer mit dem Namen ${username} gefunden.",
+        "translation": "Es wurde kein gebannter Nutzer mit dem Namen ${username} gefunden.",
         "context": "commands -> admin -> unban -> userNotFound -> description",
         "labels": "de.json",
         "max_length": null
@@ -1993,8 +1993,8 @@
     },
     {
         "identifier": "commands.admin.viewwarns.unauthorizedUser",
-        "source_string": "Unbefugter Benutzer. Sie sind nicht berechtigt, diese Aktion durchzuführen.",
-        "translation": "Unbefugter Benutzer. Sie sind nicht berechtigt, diese Aktion durchzuführen.",
+        "source_string": "Unbefugter Nutzer. Sie sind nicht berechtigt, diese Aktion durchzuführen.",
+        "translation": "Unbefugter Nutzer. Sie sind nicht berechtigt, diese Aktion durchzuführen.",
         "context": "commands -> admin -> viewwarns -> unauthorizedUser",
         "labels": "de.json",
         "max_length": null
@@ -2033,8 +2033,8 @@
     },
     {
         "identifier": "commands.admin.viewwarns.noWarnings.description",
-        "source_string": "Es gibt keine Warnungen für den Benutzer ${user}.",
-        "translation": "Es gibt keine Warnungen für den Benutzer ${user}.",
+        "source_string": "Es gibt keine Warnungen für den Nutzer ${user}.",
+        "translation": "Es gibt keine Warnungen für den Nutzer ${user}.",
         "context": "commands -> admin -> viewwarns -> noWarnings -> description",
         "labels": "de.json",
         "max_length": null
@@ -2129,8 +2129,8 @@
     },
     {
         "identifier": "commands.admin.warn.targetTooHigh.description",
-        "source_string": "Sie können keine Warnungen für Benutzer mit einem höheren oder gleichrangigen Rang ausstellen.",
-        "translation": "Sie können keine Warnungen für Benutzer mit einem höheren oder gleichrangigen Rang ausstellen.",
+        "source_string": "Sie können keine Warnungen für Nutzer mit einem höheren oder gleichrangigen Rang ausstellen.",
+        "translation": "Sie können keine Warnungen für Nutzer mit einem höheren oder gleichrangigen Rang ausstellen.",
         "context": "commands -> admin -> warn -> targetTooHigh -> description",
         "labels": "de.json",
         "max_length": null
@@ -2145,8 +2145,8 @@
     },
     {
         "identifier": "commands.admin.warn.success.description",
-        "source_string": "Der Benutzer ${user} wurde erfolgreich verwarnt. Grund: ${reason}. Dies ist seine ${count}. Warnung.",
-        "translation": "Der Benutzer ${user} wurde erfolgreich verwarnt. Grund: ${reason}. Dies ist seine ${count}. Warnung.",
+        "source_string": "Der Nutzer ${user} wurde erfolgreich verwarnt. Grund: ${reason}. Dies ist seine ${count}. Warnung.",
+        "translation": "Der Nutzer ${user} wurde erfolgreich verwarnt. Grund: ${reason}. Dies ist seine ${count}. Warnung.",
         "context": "commands -> admin -> warn -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -4505,8 +4505,8 @@
     },
     {
         "identifier": "commands.logs.configureLogs.configurationEmbed.userUpdate",
-        "source_string": "Benutzer aktualisieren",
-        "translation": "Benutzer aktualisieren",
+        "source_string": "Nutzer aktualisieren",
+        "translation": "Nutzer aktualisieren",
         "context": "commands -> logs -> configureLogs -> configurationEmbed -> userUpdate",
         "labels": "de.json",
         "max_length": null
@@ -4857,40 +4857,40 @@
     },
     {
         "identifier": "commands.logs.blacklistUser.missingPermission.description",
-        "source_string": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten.",
-        "translation": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten.",
+        "source_string": "Du benötigst Administratorrechte, um die Nutzer-Blacklist zu verwalten.",
+        "translation": "Du benötigst Administratorrechte, um die Nutzer-Blacklist zu verwalten.",
         "context": "commands -> logs -> blacklistUser -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistUser.alreadyBlacklisted.title",
-        "source_string": "Benutzer bereits auf der Blacklist",
-        "translation": "Benutzer bereits auf der Blacklist",
+        "source_string": "Nutzer bereits auf der Blacklist",
+        "translation": "Nutzer bereits auf der Blacklist",
         "context": "commands -> logs -> blacklistUser -> alreadyBlacklisted -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistUser.alreadyBlacklisted.description",
-        "source_string": "Dieser Benutzer ist bereits auf der Blacklist.",
-        "translation": "Dieser Benutzer ist bereits auf der Blacklist.",
+        "source_string": "Dieser Nutzer ist bereits auf der Blacklist.",
+        "translation": "Dieser Nutzer ist bereits auf der Blacklist.",
         "context": "commands -> logs -> blacklistUser -> alreadyBlacklisted -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistUser.blacklisted.title",
-        "source_string": "Benutzer zur Blacklist hinzugefügt",
-        "translation": "Benutzer zur Blacklist hinzugefügt",
+        "source_string": "Nutzer zur Blacklist hinzugefügt",
+        "translation": "Nutzer zur Blacklist hinzugefügt",
         "context": "commands -> logs -> blacklistUser -> blacklisted -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistUser.blacklisted.description",
-        "source_string": "Der Benutzer wurde erfolgreich zur Blacklist hinzugefügt.",
-        "translation": "Der Benutzer wurde erfolgreich zur Blacklist hinzugefügt.",
+        "source_string": "Der Nutzer wurde erfolgreich zur Blacklist hinzugefügt.",
+        "translation": "Der Nutzer wurde erfolgreich zur Blacklist hinzugefügt.",
         "context": "commands -> logs -> blacklistUser -> blacklisted -> description",
         "labels": "de.json",
         "max_length": null
@@ -4905,40 +4905,40 @@
     },
     {
         "identifier": "commands.logs.blacklistRemoveUser.missingPermission.description",
-        "source_string": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten.",
-        "translation": "Du benötigst Administratorrechte, um die Benutzer-Blacklist zu verwalten.",
+        "source_string": "Du benötigst Administratorrechte, um die Nutzer-Blacklist zu verwalten.",
+        "translation": "Du benötigst Administratorrechte, um die Nutzer-Blacklist zu verwalten.",
         "context": "commands -> logs -> blacklistRemoveUser -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistRemoveUser.notBlacklisted.title",
-        "source_string": "Benutzer nicht auf der Blacklist",
-        "translation": "Benutzer nicht auf der Blacklist",
+        "source_string": "Nutzer nicht auf der Blacklist",
+        "translation": "Nutzer nicht auf der Blacklist",
         "context": "commands -> logs -> blacklistRemoveUser -> notBlacklisted -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistRemoveUser.notBlacklisted.description",
-        "source_string": "Dieser Benutzer ist nicht auf der Blacklist.",
-        "translation": "Dieser Benutzer ist nicht auf der Blacklist.",
+        "source_string": "Dieser Nutzer ist nicht auf der Blacklist.",
+        "translation": "Dieser Nutzer ist nicht auf der Blacklist.",
         "context": "commands -> logs -> blacklistRemoveUser -> notBlacklisted -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistRemoveUser.success.title",
-        "source_string": "Benutzer von der Blacklist entfernt",
-        "translation": "Benutzer von der Blacklist entfernt",
+        "source_string": "Nutzer von der Blacklist entfernt",
+        "translation": "Nutzer von der Blacklist entfernt",
         "context": "commands -> logs -> blacklistRemoveUser -> success -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistRemoveUser.success.description",
-        "source_string": "Der Benutzer wurde erfolgreich von der Blacklist entfernt.",
-        "translation": "Der Benutzer wurde erfolgreich von der Blacklist entfernt.",
+        "source_string": "Der Nutzer wurde erfolgreich von der Blacklist entfernt.",
+        "translation": "Der Nutzer wurde erfolgreich von der Blacklist entfernt.",
         "context": "commands -> logs -> blacklistRemoveUser -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -5041,24 +5041,24 @@
     },
     {
         "identifier": "commands.logs.blacklistListUser.title",
-        "source_string": "Benutzer-Blacklist",
-        "translation": "Benutzer-Blacklist",
+        "source_string": "Nutzer-Blacklist",
+        "translation": "Nutzer-Blacklist",
         "context": "commands -> logs -> blacklistListUser -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistListUser.noBlacklistedUsers",
-        "source_string": "Es sind keine Benutzer auf der Blacklist.",
-        "translation": "Es sind keine Benutzer auf der Blacklist.",
+        "source_string": "Es sind keine Nutzer auf der Blacklist.",
+        "translation": "Es sind keine Nutzer auf der Blacklist.",
         "context": "commands -> logs -> blacklistListUser -> noBlacklistedUsers",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.logs.blacklistListUser.addUser.placeholder",
-        "source_string": "Benutzer hinzufügen",
-        "translation": "Benutzer hinzufügen",
+        "source_string": "Nutzer hinzufügen",
+        "translation": "Nutzer hinzufügen",
         "context": "commands -> logs -> blacklistListUser -> addUser -> placeholder",
         "labels": "de.json",
         "max_length": null
@@ -5073,8 +5073,8 @@
     },
     {
         "identifier": "commands.logs.blacklistListUser.missingPermission.description",
-        "source_string": "Du benötigst Administratorrechte, um die Benutzer-Blacklist anzuzeigen.",
-        "translation": "Du benötigst Administratorrechte, um die Benutzer-Blacklist anzuzeigen.",
+        "source_string": "Du benötigst Administratorrechte, um die Nutzer-Blacklist anzuzeigen.",
+        "translation": "Du benötigst Administratorrechte, um die Nutzer-Blacklist anzuzeigen.",
         "context": "commands -> logs -> blacklistListUser -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
@@ -6601,8 +6601,8 @@
     },
     {
         "identifier": "commands.utility.avatarDecoration.no_decoration.description",
-        "source_string": "Dieser Benutzer hat keine Dekoration.",
-        "translation": "Dieser Benutzer hat keine Dekoration.",
+        "source_string": "Dieser Nutzer hat keine Dekoration.",
+        "translation": "Dieser Nutzer hat keine Dekoration.",
         "context": "commands -> utility -> avatarDecoration -> no_decoration -> description",
         "labels": "de.json",
         "max_length": null
@@ -9681,8 +9681,8 @@
     },
     {
         "identifier": "commands.level.setbackground.error.no_plus.description",
-        "source_string": "Diese Funktion ist nur für Tanjun Plus Benutzer verfügbar.",
-        "translation": "Diese Funktion ist nur für Tanjun Plus Benutzer verfügbar.",
+        "source_string": "Diese Funktion ist nur für Tanjun Plus Nutzer verfügbar.",
+        "translation": "Diese Funktion ist nur für Tanjun Plus Nutzer verfügbar.",
         "context": "commands -> level -> setbackground -> error -> no_plus -> description",
         "labels": "de.json",
         "max_length": null
@@ -9713,8 +9713,8 @@
     },
     {
         "identifier": "commands.level.setbackground.success.description",
-        "source_string": "Dein benutzerdefinierter Hintergrund wurde erfolgreich gesetzt.",
-        "translation": "Dein benutzerdefinierter Hintergrund wurde erfolgreich gesetzt.",
+        "source_string": "Dein Nutzerdefinierter Hintergrund wurde erfolgreich gesetzt.",
+        "translation": "Dein Nutzerdefinierter Hintergrund wurde erfolgreich gesetzt.",
         "context": "commands -> level -> setbackground -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9881,16 +9881,16 @@
     },
     {
         "identifier": "commands.level.blacklist.add_user.success.title",
-        "source_string": "Benutzer zur Blacklist hinzugefügt",
-        "translation": "Benutzer zur Blacklist hinzugefügt",
+        "source_string": "Nutzer zur Blacklist hinzugefügt",
+        "translation": "Nutzer zur Blacklist hinzugefügt",
         "context": "commands -> level -> blacklist -> add_user -> success -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.level.blacklist.add_user.success.description",
-        "source_string": "Der Benutzer ${user} wurde zur Blacklist hinzugefügt. Grund: ${reason}",
-        "translation": "Der Benutzer ${user} wurde zur Blacklist hinzugefügt. Grund: ${reason}",
+        "source_string": "Der Nutzer ${user} wurde zur Blacklist hinzugefügt. Grund: ${reason}",
+        "translation": "Der Nutzer ${user} wurde zur Blacklist hinzugefügt. Grund: ${reason}",
         "context": "commands -> level -> blacklist -> add_user -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9913,16 +9913,16 @@
     },
     {
         "identifier": "commands.level.blacklist.remove_user.success.title",
-        "source_string": "Benutzer von der Blacklist entfernt",
-        "translation": "Benutzer von der Blacklist entfernt",
+        "source_string": "Nutzer von der Blacklist entfernt",
+        "translation": "Nutzer von der Blacklist entfernt",
         "context": "commands -> level -> blacklist -> remove_user -> success -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.level.blacklist.remove_user.success.description",
-        "source_string": "Der Benutzer ${user} wurde von der Blacklist entfernt.",
-        "translation": "Der Benutzer ${user} wurde von der Blacklist entfernt.",
+        "source_string": "Der Nutzer ${user} wurde von der Blacklist entfernt.",
+        "translation": "Der Nutzer ${user} wurde von der Blacklist entfernt.",
         "context": "commands -> level -> blacklist -> remove_user -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9961,8 +9961,8 @@
     },
     {
         "identifier": "commands.level.blacklist.show.users",
-        "source_string": "Blacklisted Benutzer:",
-        "translation": "Blacklisted Benutzer:",
+        "source_string": "Blacklisted Nutzer:",
+        "translation": "Blacklisted Nutzer:",
         "context": "commands -> level -> blacklist -> show -> users",
         "labels": "de.json",
         "max_length": null
@@ -10265,8 +10265,8 @@
     },
     {
         "identifier": "commands.level.disablelevelupmessage.success.description",
-        "source_string": "Die Level-Up-Nachricht wurde erfolgreich deaktiviert. Benutzer werden keine Benachrichtigungen mehr erhalten, wenn sie ein Level aufsteigen.",
-        "translation": "Die Level-Up-Nachricht wurde erfolgreich deaktiviert. Benutzer werden keine Benachrichtigungen mehr erhalten, wenn sie ein Level aufsteigen.",
+        "source_string": "Die Level-Up-Nachricht wurde erfolgreich deaktiviert. Nutzer werden keine Benachrichtigungen mehr erhalten, wenn sie ein Level aufsteigen.",
+        "translation": "Die Level-Up-Nachricht wurde erfolgreich deaktiviert. Nutzer werden keine Benachrichtigungen mehr erhalten, wenn sie ein Level aufsteigen.",
         "context": "commands -> level -> disablelevelupmessage -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10329,8 +10329,8 @@
     },
     {
         "identifier": "commands.level.enablelevelupmessage.success.description",
-        "source_string": "Die Level-Up-Nachricht wurde erfolgreich aktiviert. Benutzer werden nun Benachrichtigungen erhalten, wenn sie ein Level aufsteigen.",
-        "translation": "Die Level-Up-Nachricht wurde erfolgreich aktiviert. Benutzer werden nun Benachrichtigungen erhalten, wenn sie ein Level aufsteigen.",
+        "source_string": "Die Level-Up-Nachricht wurde erfolgreich aktiviert. Nutzer werden nun Benachrichtigungen erhalten, wenn sie ein Level aufsteigen.",
+        "translation": "Die Level-Up-Nachricht wurde erfolgreich aktiviert. Nutzer werden nun Benachrichtigungen erhalten, wenn sie ein Level aufsteigen.",
         "context": "commands -> level -> enablelevelupmessage -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10425,24 +10425,24 @@
     },
     {
         "identifier": "commands.level.changexpscaling.error.no_pro.description",
-        "source_string": "Die benutzerdefinierte Skalierung ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen.",
-        "translation": "Die benutzerdefinierte Skalierung ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen.",
+        "source_string": "Die Nutzerdefinierte Skalierung ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen.",
+        "translation": "Die Nutzerdefinierte Skalierung ist nur für Tanjun Pro Server verfügbar. Upgrade auf Tanjun Pro, um diese Funktion zu nutzen.",
         "context": "commands -> level -> changexpscaling -> error -> no_pro -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.level.changexpscaling.error.no_custom_formula.title",
-        "source_string": "Keine benutzerdefinierte Formel angegeben",
-        "translation": "Keine benutzerdefinierte Formel angegeben",
+        "source_string": "Keine Nutzerdefinierte Formel angegeben",
+        "translation": "Keine Nutzerdefinierte Formel angegeben",
         "context": "commands -> level -> changexpscaling -> error -> no_custom_formula -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.level.changexpscaling.error.no_custom_formula.description",
-        "source_string": "Bitte gib eine benutzerdefinierte Formel an, wenn du die benutzerdefinierte Skalierung verwendest.",
-        "translation": "Bitte gib eine benutzerdefinierte Formel an, wenn du die benutzerdefinierte Skalierung verwendest.",
+        "source_string": "Bitte gib eine Nutzerdefinierte Formel an, wenn du die Nutzerdefinierte Skalierung verwendest.",
+        "translation": "Bitte gib eine Nutzerdefinierte Formel an, wenn du die Nutzerdefinierte Skalierung verwendest.",
         "context": "commands -> level -> changexpscaling -> error -> no_custom_formula -> description",
         "labels": "de.json",
         "max_length": null
@@ -10553,8 +10553,8 @@
     },
     {
         "identifier": "commands.level.changexpscaling.scalings.custom",
-        "source_string": "Benutzerdefiniert",
-        "translation": "Benutzerdefiniert",
+        "source_string": "Nutzerdefiniert",
+        "translation": "Nutzerdefiniert",
         "context": "commands -> level -> changexpscaling -> scalings -> custom",
         "labels": "de.json",
         "max_length": null
@@ -10977,8 +10977,8 @@
     },
     {
         "identifier": "commands.level.boosts.calculate_user_channel.title",
-        "source_string": "XP-Boost Berechnung für Benutzer in Kanal",
-        "translation": "XP-Boost Berechnung für Benutzer in Kanal",
+        "source_string": "XP-Boost Berechnung für Nutzer in Kanal",
+        "translation": "XP-Boost Berechnung für Nutzer in Kanal",
         "context": "commands -> level -> boosts -> calculate_user_channel -> title",
         "labels": "de.json",
         "max_length": null
@@ -11041,16 +11041,16 @@
     },
     {
         "identifier": "commands.level.boosts.add_user.success.title",
-        "source_string": "Benutzer-Boost hinzugefügt",
-        "translation": "Benutzer-Boost hinzugefügt",
+        "source_string": "Nutzer-Boost hinzugefügt",
+        "translation": "Nutzer-Boost hinzugefügt",
         "context": "commands -> level -> boosts -> add_user -> success -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.level.boosts.add_user.success.description",
-        "source_string": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Benutzer ${user} hinzugefügt.",
-        "translation": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Benutzer ${user} hinzugefügt.",
+        "source_string": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Nutzer ${user} hinzugefügt.",
+        "translation": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Nutzer ${user} hinzugefügt.",
         "context": "Example: \"Ein Beispiel Boost von 100 wurde erfolgreich zum Benutzer Test hinzugefügt.\"",
         "labels": "de.json",
         "max_length": null
@@ -11089,16 +11089,16 @@
     },
     {
         "identifier": "commands.level.boosts.remove_user.success.title",
-        "source_string": "Benutzer-Boost entfernt",
-        "translation": "Benutzer-Boost entfernt",
+        "source_string": "Nutzer-Boost entfernt",
+        "translation": "Nutzer-Boost entfernt",
         "context": "commands -> level -> boosts -> remove_user -> success -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.level.boosts.remove_user.success.description",
-        "source_string": "Der Boost für den Benutzer ${user} wurde erfolgreich entfernt.",
-        "translation": "Der Boost für den Benutzer ${user} wurde erfolgreich entfernt.",
+        "source_string": "Der Boost für den Nutzer ${user} wurde erfolgreich entfernt.",
+        "translation": "Der Boost für den Nutzer ${user} wurde erfolgreich entfernt.",
         "context": "commands -> level -> boosts -> remove_user -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -11137,8 +11137,8 @@
     },
     {
         "identifier": "commands.level.boosts.show.users",
-        "source_string": "Benutzer-Boosts",
-        "translation": "Benutzer-Boosts",
+        "source_string": "Nutzer-Boosts",
+        "translation": "Nutzer-Boosts",
         "context": "commands -> level -> boosts -> show -> users",
         "labels": "de.json",
         "max_length": null
@@ -11425,8 +11425,8 @@
     },
     {
         "identifier": "commands.giveaway.list_blacklist.users",
-        "source_string": "Blacklisted Benutzer:",
-        "translation": "Blacklisted Benutzer:",
+        "source_string": "Blacklisted Nutzer:",
+        "translation": "Blacklisted Nutzer:",
         "context": "commands -> giveaway -> list_blacklist -> users",
         "labels": "de.json",
         "max_length": null
@@ -11465,32 +11465,32 @@
     },
     {
         "identifier": "commands.giveaway.remove_blacklist_user.notBlacklisted.title",
-        "source_string": "Benutzer nicht auf der Blacklist",
-        "translation": "Benutzer nicht auf der Blacklist",
+        "source_string": "Nutzer nicht auf der Blacklist",
+        "translation": "Nutzer nicht auf der Blacklist",
         "context": "commands -> giveaway -> remove_blacklist_user -> notBlacklisted -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.giveaway.remove_blacklist_user.notBlacklisted.description",
-        "source_string": "Der Benutzer ist nicht auf der Blacklist.",
-        "translation": "Der Benutzer ist nicht auf der Blacklist.",
+        "source_string": "Der Nutzer ist nicht auf der Blacklist.",
+        "translation": "Der Nutzer ist nicht auf der Blacklist.",
         "context": "commands -> giveaway -> remove_blacklist_user -> notBlacklisted -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.giveaway.remove_blacklist_user.success.title",
-        "source_string": "Benutzer von der Blacklist entfernt",
-        "translation": "Benutzer von der Blacklist entfernt",
+        "source_string": "Nutzer von der Blacklist entfernt",
+        "translation": "Nutzer von der Blacklist entfernt",
         "context": "commands -> giveaway -> remove_blacklist_user -> success -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.giveaway.remove_blacklist_user.success.description",
-        "source_string": "Der Benutzer wurde erfolgreich von der Blacklist entfernt.",
-        "translation": "Der Benutzer wurde erfolgreich von der Blacklist entfernt.",
+        "source_string": "Der Nutzer wurde erfolgreich von der Blacklist entfernt.",
+        "translation": "Der Nutzer wurde erfolgreich von der Blacklist entfernt.",
         "context": "commands -> giveaway -> remove_blacklist_user -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -11505,24 +11505,24 @@
     },
     {
         "identifier": "commands.giveaway.remove_blacklist_user.missingPermission.description",
-        "source_string": "Du benötigst die Berechtigung 'Server verwalten', um Benutzer von der Blacklist zu entfernen.",
-        "translation": "Du benötigst die Berechtigung 'Server verwalten', um Benutzer von der Blacklist zu entfernen.",
+        "source_string": "Du benötigst die Berechtigung 'Server verwalten', um Nutzer von der Blacklist zu entfernen.",
+        "translation": "Du benötigst die Berechtigung 'Server verwalten', um Nutzer von der Blacklist zu entfernen.",
         "context": "commands -> giveaway -> remove_blacklist_user -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.giveaway.add_blacklist_user.alreadyBlacklisted.title",
-        "source_string": "Benutzer bereits auf der Blacklist",
-        "translation": "Benutzer bereits auf der Blacklist",
+        "source_string": "Nutzer bereits auf der Blacklist",
+        "translation": "Nutzer bereits auf der Blacklist",
         "context": "commands -> giveaway -> add_blacklist_user -> alreadyBlacklisted -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.giveaway.add_blacklist_user.alreadyBlacklisted.description",
-        "source_string": "Der Benutzer ist bereits auf der Blacklist.",
-        "translation": "Der Benutzer ist bereits auf der Blacklist.",
+        "source_string": "Der Nutzer ist bereits auf der Blacklist.",
+        "translation": "Der Nutzer ist bereits auf der Blacklist.",
         "context": "commands -> giveaway -> add_blacklist_user -> alreadyBlacklisted -> description",
         "labels": "de.json",
         "max_length": null
@@ -11537,24 +11537,24 @@
     },
     {
         "identifier": "commands.giveaway.add_blacklist_user.missingPermission.description",
-        "source_string": "Du benötigst die Berechtigung 'Server verwalten', um Benutzer auf die Blacklist zu setzen.",
-        "translation": "Du benötigst die Berechtigung 'Server verwalten', um Benutzer auf die Blacklist zu setzen.",
+        "source_string": "Du benötigst die Berechtigung 'Server verwalten', um Nutzer auf die Blacklist zu setzen.",
+        "translation": "Du benötigst die Berechtigung 'Server verwalten', um Nutzer auf die Blacklist zu setzen.",
         "context": "commands -> giveaway -> add_blacklist_user -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.giveaway.add_blacklist_user.success.title",
-        "source_string": "Benutzer zur Blacklist hinzugefügt",
-        "translation": "Benutzer zur Blacklist hinzugefügt",
+        "source_string": "Nutzer zur Blacklist hinzugefügt",
+        "translation": "Nutzer zur Blacklist hinzugefügt",
         "context": "commands -> giveaway -> add_blacklist_user -> success -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.giveaway.add_blacklist_user.success.description",
-        "source_string": "Der Benutzer wurde erfolgreich zur Blacklist hinzugefügt. Dieser Benutzer kann nicht an Gewinnspielen teilnehmen.",
-        "translation": "Der Benutzer wurde erfolgreich zur Blacklist hinzugefügt. Dieser Benutzer kann nicht an Gewinnspielen teilnehmen.",
+        "source_string": "Der Nutzer wurde erfolgreich zur Blacklist hinzugefügt. Dieser Nutzer kann nicht an Gewinnspielen teilnehmen.",
+        "translation": "Der Nutzer wurde erfolgreich zur Blacklist hinzugefügt. Dieser Nutzer kann nicht an Gewinnspielen teilnehmen.",
         "context": "commands -> giveaway -> add_blacklist_user -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -11929,32 +11929,32 @@
     },
     {
         "identifier": "commands.giveaway.builder.custom_name.label",
-        "source_string": "Benutzerdefinierter Name",
-        "translation": "Benutzerdefinierter Name",
+        "source_string": "Nutzerdefinierter Name",
+        "translation": "Nutzerdefinierter Name",
         "context": "commands -> giveaway -> builder -> custom_name -> label",
         "labels": "de.json",
         "max_length": 45
     },
     {
         "identifier": "commands.giveaway.builder.custom_name.placeholder",
-        "source_string": "Gib den benutzerdefinierten Namen ein",
-        "translation": "Gib den benutzerdefinierten Namen ein",
+        "source_string": "Gib den Nutzerdefinierten Namen ein",
+        "translation": "Gib den Nutzerdefinierten Namen ein",
         "context": "commands -> giveaway -> builder -> custom_name -> placeholder",
         "labels": "de.json",
         "max_length": 100
     },
     {
         "identifier": "commands.giveaway.builder.custom_name.updated",
-        "source_string": "Benutzerdefinierter Name aktualisiert",
-        "translation": "Benutzerdefinierter Name aktualisiert",
+        "source_string": "Nutzerdefinierter Name aktualisiert",
+        "translation": "Nutzerdefinierter Name aktualisiert",
         "context": "commands -> giveaway -> builder -> custom_name -> updated",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.giveaway.builder.custom_name.title",
-        "source_string": "Benutzerdefinierter Name",
-        "translation": "Benutzerdefinierter Name",
+        "source_string": "Nutzerdefinierter Name",
+        "translation": "Nutzerdefinierter Name",
         "context": "commands -> giveaway -> builder -> custom_name -> title",
         "labels": "de.json",
         "max_length": null
@@ -12633,8 +12633,8 @@
     },
     {
         "identifier": "commands.ai.addcustom.notplus.description",
-        "source_string": "Benutzerdefinierte KI-Persönlichkeit sind nur für Tanjun Plus Nutzer verfügbar. Upgrade auf Tanjun Plus, um diese Funktion zu nutzen.",
-        "translation": "Benutzerdefinierte KI-Persönlichkeit sind nur für Tanjun Plus Nutzer verfügbar. Upgrade auf Tanjun Plus, um diese Funktion zu nutzen.",
+        "source_string": "Nutzerdefinierte KI-Persönlichkeit sind nur für Tanjun Plus Nutzer verfügbar. Upgrade auf Tanjun Plus, um diese Funktion zu nutzen.",
+        "translation": "Nutzerdefinierte KI-Persönlichkeit sind nur für Tanjun Plus Nutzer verfügbar. Upgrade auf Tanjun Plus, um diese Funktion zu nutzen.",
         "context": "commands -> ai -> addcustom -> notplus -> description",
         "labels": "de.json",
         "max_length": null
@@ -14113,24 +14113,24 @@
     },
     {
         "identifier": "admin.addrole.description",
-        "source_string": "Fügt einem Benutzer eine Rolle hinzu",
-        "translation": "Fügt einem Benutzer eine Rolle hinzu",
+        "source_string": "Fügt einem Nutzer eine Rolle hinzu",
+        "translation": "Fügt einem Nutzer eine Rolle hinzu",
         "context": "admin -> addrole -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "admin.addrole.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "admin -> addrole -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "admin.addrole.params.user.description",
-        "source_string": "Der Benutzer, dem die Rolle hinzugefügt werden soll",
-        "translation": "Der Benutzer, dem die Rolle hinzugefügt werden soll",
+        "source_string": "Der Nutzer, dem die Rolle hinzugefügt werden soll",
+        "translation": "Der Nutzer, dem die Rolle hinzugefügt werden soll",
         "context": "admin -> addrole -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -14161,24 +14161,24 @@
     },
     {
         "identifier": "admin.removerole.description",
-        "source_string": "Entfernt eine Rolle von einem Benutzer",
-        "translation": "Entfernt eine Rolle von einem Benutzer",
+        "source_string": "Entfernt eine Rolle von einem Nutzer",
+        "translation": "Entfernt eine Rolle von einem Nutzer",
         "context": "admin -> removerole -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "admin.removerole.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "admin -> removerole -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "admin.removerole.params.user.description",
-        "source_string": "Der Benutzer, von dem die Rolle entfernt werden soll",
-        "translation": "Der Benutzer, von dem die Rolle entfernt werden soll",
+        "source_string": "Der Nutzer, von dem die Rolle entfernt werden soll",
+        "translation": "Der Nutzer, von dem die Rolle entfernt werden soll",
         "context": "admin -> removerole -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -14489,8 +14489,8 @@
     },
     {
         "identifier": "admin.kick.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "admin -> kick -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -14537,8 +14537,8 @@
     },
     {
         "identifier": "admin.ban.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "admin -> ban -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -14601,16 +14601,16 @@
     },
     {
         "identifier": "admin.unban.params.username.name",
-        "source_string": "benutzername",
-        "translation": "benutzername",
+        "source_string": "Nutzername",
+        "translation": "Nutzername",
         "context": "admin -> unban -> params -> username -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "admin.unban.params.username.description",
-        "source_string": "Der Benutzername des zu entbannenden Mitglieds",
-        "translation": "Der Benutzername des zu entbannenden Mitglieds",
+        "source_string": "Der Nutzername des zu entbannenden Mitglieds",
+        "translation": "Der Nutzername des zu entbannenden Mitglieds",
         "context": "admin -> unban -> params -> username -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -14825,8 +14825,8 @@
     },
     {
         "identifier": "admin.purge.params.setting.userNotPinned",
-        "source_string": "nur nicht angeheftete Nachrichten von Benutzern löschen",
-        "translation": "nur nicht angeheftete Nachrichten von Benutzern löschen",
+        "source_string": "nur nicht angeheftete Nachrichten von Nutzern löschen",
+        "translation": "nur nicht angeheftete Nachrichten von Nutzern löschen",
         "context": "admin -> purge -> params -> setting -> userNotPinned",
         "labels": "de.json",
         "max_length": 100
@@ -14993,8 +14993,8 @@
     },
     {
         "identifier": "admin.lock.description",
-        "source_string": "Sperrt einen Kanal für normale Benutzer",
-        "translation": "Sperrt einen Kanal für normale Benutzer",
+        "source_string": "Sperrt einen Kanal für normale Nutzer",
+        "translation": "Sperrt einen Kanal für normale Nutzer",
         "context": "admin -> lock -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -15057,16 +15057,16 @@
     },
     {
         "identifier": "admin.warn.add.description",
-        "source_string": "Verwarnt einen Benutzer",
-        "translation": "Verwarnt einen Benutzer",
+        "source_string": "Verwarnt einen Nutzer",
+        "translation": "Verwarnt einen Nutzer",
         "context": "admin -> warn -> add -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "admin.warn.add.params.member.description",
-        "source_string": "Der zu verwarnende Benutzer",
-        "translation": "Der zu verwarnende Benutzer",
+        "source_string": "Der zu verwarnende Nutzer",
+        "translation": "Der zu verwarnende Nutzer",
         "context": "admin -> warn -> add -> params -> member -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -15089,16 +15089,16 @@
     },
     {
         "identifier": "admin.warn.view.description",
-        "source_string": "Zeigt die Verwarnungen eines Benutzers an",
-        "translation": "Zeigt die Verwarnungen eines Benutzers an",
+        "source_string": "Zeigt die Verwarnungen eines Nutzers an",
+        "translation": "Zeigt die Verwarnungen eines Nutzers an",
         "context": "admin -> warn -> view -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "admin.warn.view.params.member.description",
-        "source_string": "Der Benutzer, dessen Verwarnungen angezeigt werden sollen",
-        "translation": "Der Benutzer, dessen Verwarnungen angezeigt werden sollen",
+        "source_string": "Der Nutzer, dessen Verwarnungen angezeigt werden sollen",
+        "translation": "Der Nutzer, dessen Verwarnungen angezeigt werden sollen",
         "context": "admin -> warn -> view -> params -> member -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -15209,8 +15209,8 @@
     },
     {
         "identifier": "admin.embed.description",
-        "source_string": "Öffnet den Embed-Creator, um ein benutzerdefiniertes Embed zu erstellen und zu senden",
-        "translation": "Öffnet den Embed-Creator, um ein benutzerdefiniertes Embed zu erstellen und zu senden",
+        "source_string": "Öffnet den Embed-Creator, um ein Nutzerdefiniertes Embed zu erstellen und zu senden",
+        "translation": "Öffnet den Embed-Creator, um ein Nutzerdefiniertes Embed zu erstellen und zu senden",
         "context": "admin -> embed -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -18265,8 +18265,8 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.reverse.description",
-        "source_string": "Zähle rückwärts zur 0.",
-        "translation": "Zähle rückwärts zur 0.",
+        "source_string": "Zähle von -100 Richtung 0: `-100`, `-99`, `-98`, `-97`, ...",
+        "translation": "Zähle von -100 Richtung 0: `-100`, `-99`, `-98`, `-97`, ...",
         "context": "minigames -> counting -> modes -> modes -> reverse -> description",
         "labels": "de.json",
         "max_length": null
@@ -19377,16 +19377,16 @@
     },
     {
         "identifier": "games.ttt.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "games -> ttt -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "games.ttt.params.user.description",
-        "source_string": "Der Benutzer, gegen den das Spiel gespielt werden soll (optional)",
-        "translation": "Der Benutzer, gegen den das Spiel gespielt werden soll (optional)",
+        "source_string": "Der Nutzer, gegen den das Spiel gespielt werden soll (optional)",
+        "translation": "Der Nutzer, gegen den das Spiel gespielt werden soll (optional)",
         "context": "games -> ttt -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -19993,16 +19993,16 @@
     },
     {
         "identifier": "games.rps.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "games -> rps -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "games.rps.params.user.description",
-        "source_string": "Der Benutzer, gegen den das Spiel gespielt werden soll (optional)",
-        "translation": "Der Benutzer, gegen den das Spiel gespielt werden soll (optional)",
+        "source_string": "Der Nutzer, gegen den das Spiel gespielt werden soll (optional)",
+        "translation": "Der Nutzer, gegen den das Spiel gespielt werden soll (optional)",
         "context": "games -> rps -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20113,24 +20113,24 @@
     },
     {
         "identifier": "level.givexp.description",
-        "source_string": "Vergibt Erfahrungspunkte an einen Benutzer",
-        "translation": "Vergibt Erfahrungspunkte an einen Benutzer",
+        "source_string": "Vergibt Erfahrungspunkte an einen Nutzer",
+        "translation": "Vergibt Erfahrungspunkte an einen Nutzer",
         "context": "level -> givexp -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.givexp.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> givexp -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.givexp.params.user.description",
-        "source_string": "Der Benutzer, dem die Erfahrungspunkte vergeben werden sollen",
-        "translation": "Der Benutzer, dem die Erfahrungspunkte vergeben werden sollen",
+        "source_string": "Der Nutzer, dem die Erfahrungspunkte vergeben werden sollen",
+        "translation": "Der Nutzer, dem die Erfahrungspunkte vergeben werden sollen",
         "context": "level -> givexp -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20161,24 +20161,24 @@
     },
     {
         "identifier": "level.takexp.description",
-        "source_string": "Entzieht Erfahrungspunkte von einem Benutzer",
-        "translation": "Entzieht Erfahrungspunkte von einem Benutzer",
+        "source_string": "Entzieht Erfahrungspunkte von einem Nutzer",
+        "translation": "Entzieht Erfahrungspunkte von einem Nutzer",
         "context": "level -> takexp -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.takexp.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> takexp -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.takexp.params.user.description",
-        "source_string": "Der Benutzer, dem die Erfahrungspunkte entzogen werden sollen",
-        "translation": "Der Benutzer, dem die Erfahrungspunkte entzogen werden sollen",
+        "source_string": "Der Nutzer, dem die Erfahrungspunkte entzogen werden sollen",
+        "translation": "Der Nutzer, dem die Erfahrungspunkte entzogen werden sollen",
         "context": "level -> takexp -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20209,24 +20209,24 @@
     },
     {
         "identifier": "level.setxp.description",
-        "source_string": "Setzt die Erfahrungspunkte eines Benutzers auf einen bestimmten Wert",
-        "translation": "Setzt die Erfahrungspunkte eines Benutzers auf einen bestimmten Wert",
+        "source_string": "Setzt die Erfahrungspunkte eines Nutzers auf einen bestimmten Wert",
+        "translation": "Setzt die Erfahrungspunkte eines Nutzers auf einen bestimmten Wert",
         "context": "level -> setxp -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.setxp.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> setxp -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.setxp.params.user.description",
-        "source_string": "Der Benutzer, dessen Erfahrungspunkte gesetzt werden sollen",
-        "translation": "Der Benutzer, dessen Erfahrungspunkte gesetzt werden sollen",
+        "source_string": "Der Nutzer, dessen Erfahrungspunkte gesetzt werden sollen",
+        "translation": "Der Nutzer, dessen Erfahrungspunkte gesetzt werden sollen",
         "context": "level -> setxp -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20257,24 +20257,24 @@
     },
     {
         "identifier": "level.rank.description",
-        "source_string": "Zeigt die Rangkarte eines Benutzers an",
-        "translation": "Zeigt die Rangkarte eines Benutzers an",
+        "source_string": "Zeigt die Rangkarte eines Nutzers an",
+        "translation": "Zeigt die Rangkarte eines Nutzers an",
         "context": "level -> rank -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.rank.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> rank -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.rank.params.user.description",
-        "source_string": "Der Benutzer, dessen Rangkarte angezeigt werden soll (optional)",
-        "translation": "Der Benutzer, dessen Rangkarte angezeigt werden soll (optional)",
+        "source_string": "Der Nutzer, dessen Rangkarte angezeigt werden soll (optional)",
+        "translation": "Der Nutzer, dessen Rangkarte angezeigt werden soll (optional)",
         "context": "level -> rank -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20289,8 +20289,8 @@
     },
     {
         "identifier": "level.setbackground.description",
-        "source_string": "Setzt ein benutzerdefiniertes Hintergrundbild für die Rangkarte",
-        "translation": "Setzt ein benutzerdefiniertes Hintergrundbild für die Rangkarte",
+        "source_string": "Setzt ein Nutzerdefiniertes Hintergrundbild für die Rangkarte",
+        "translation": "Setzt ein Nutzerdefiniertes Hintergrundbild für die Rangkarte",
         "context": "level -> setbackground -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20441,32 +20441,32 @@
     },
     {
         "identifier": "level.blacklist.addu.name",
-        "source_string": "benutzer_hinzufügen",
-        "translation": "benutzer_hinzufügen",
+        "source_string": "Nutzer_hinzufügen",
+        "translation": "Nutzer_hinzufügen",
         "context": "level -> blacklist -> addu -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.blacklist.addu.description",
-        "source_string": "Fügt einen Benutzer zur Blacklist hinzu",
-        "translation": "Fügt einen Benutzer zur Blacklist hinzu",
+        "source_string": "Fügt einen Nutzer zur Blacklist hinzu",
+        "translation": "Fügt einen Nutzer zur Blacklist hinzu",
         "context": "level -> blacklist -> addu -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.blacklist.addu.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> blacklist -> addu -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.blacklist.addu.params.user.description",
-        "source_string": "Der Benutzer, der zur Blacklist hinzugefügt werden soll",
-        "translation": "Der Benutzer, der zur Blacklist hinzugefügt werden soll",
+        "source_string": "Der Nutzer, der zur Blacklist hinzugefügt werden soll",
+        "translation": "Der Nutzer, der zur Blacklist hinzugefügt werden soll",
         "context": "level -> blacklist -> addu -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20537,32 +20537,32 @@
     },
     {
         "identifier": "level.blacklist.removeu.name",
-        "source_string": "benutzer_entfernen",
-        "translation": "benutzer_entfernen",
+        "source_string": "Nutzer_entfernen",
+        "translation": "Nutzer_entfernen",
         "context": "level -> blacklist -> removeu -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.blacklist.removeu.description",
-        "source_string": "Entfernt einen Benutzer von der Blacklist",
-        "translation": "Entfernt einen Benutzer von der Blacklist",
+        "source_string": "Entfernt einen Nutzer von der Blacklist",
+        "translation": "Entfernt einen Nutzer von der Blacklist",
         "context": "level -> blacklist -> removeu -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.blacklist.removeu.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> blacklist -> removeu -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.blacklist.removeu.params.user.description",
-        "source_string": "Der Benutzer, der von der Blacklist entfernt werden soll",
-        "translation": "Der Benutzer, der von der Blacklist entfernt werden soll",
+        "source_string": "Der Nutzer, der von der Blacklist entfernt werden soll",
+        "translation": "Der Nutzer, der von der Blacklist entfernt werden soll",
         "context": "level -> blacklist -> removeu -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20673,8 +20673,8 @@
     },
     {
         "identifier": "level.changelevelupmessage.params.newmessage.description",
-        "source_string": "Die neue Level-Up-Nachricht. Verwende {user} für den Benutzernamen und {level} für das neue Level.",
-        "translation": "Die neue Level-Up-Nachricht. Verwende {user} für den Benutzernamen und {level} für das neue Level.",
+        "source_string": "Die neue Level-Up-Nachricht. Verwende {user} für den Nutzernamen und {level} für das neue Level.",
+        "translation": "Die neue Level-Up-Nachricht. Verwende {user} für den Nutzernamen und {level} für das neue Level.",
         "context": "level -> changelevelupmessage -> params -> newmessage -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20777,16 +20777,16 @@
     },
     {
         "identifier": "level.changexpscaling.params.customformula.name",
-        "source_string": "benutzerdefinierte_formel",
-        "translation": "benutzerdefinierte_formel",
+        "source_string": "Nutzerdefinierte_formel",
+        "translation": "Nutzerdefinierte_formel",
         "context": "level -> changexpscaling -> params -> customformula -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.changexpscaling.params.customformula.description",
-        "source_string": "Die benutzerdefinierte Formel für die XP-Berechnung (x für level)",
-        "translation": "Die benutzerdefinierte Formel für die XP-Berechnung (x für level)",
+        "source_string": "Die Nutzerdefinierte Formel für die XP-Berechnung (x für level)",
+        "translation": "Die Nutzerdefinierte Formel für die XP-Berechnung (x für level)",
         "context": "level -> changexpscaling -> params -> customformula -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20969,32 +20969,32 @@
     },
     {
         "identifier": "level.boosts.calculate_user.name",
-        "source_string": "benutzer_berechnen",
-        "translation": "benutzer_berechnen",
+        "source_string": "Nutzer_berechnen",
+        "translation": "Nutzer_berechnen",
         "context": "level -> boosts -> calculate_user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.boosts.calculate_user.description",
-        "source_string": "Berechnet den Gesamt-XP-Boost für einen Benutzer",
-        "translation": "Berechnet den Gesamt-XP-Boost für einen Benutzer",
+        "source_string": "Berechnet den Gesamt-XP-Boost für einen Nutzer",
+        "translation": "Berechnet den Gesamt-XP-Boost für einen Nutzer",
         "context": "level -> boosts -> calculate_user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.boosts.calculate_user.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> boosts -> calculate_user -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.boosts.calculate_user.params.user.description",
-        "source_string": "Der Benutzer, für den der Boost berechnet werden soll",
-        "translation": "Der Benutzer, für den der Boost berechnet werden soll",
+        "source_string": "Der Nutzer, für den der Boost berechnet werden soll",
+        "translation": "Der Nutzer, für den der Boost berechnet werden soll",
         "context": "level -> boosts -> calculate_user -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21009,24 +21009,24 @@
     },
     {
         "identifier": "level.boosts.calculate.description",
-        "source_string": "Berechnet den Gesamt-XP-Boost für einen Benutzer in einem bestimmten Kanal",
-        "translation": "Berechnet den Gesamt-XP-Boost für einen Benutzer in einem bestimmten Kanal",
+        "source_string": "Berechnet den Gesamt-XP-Boost für einen Nutzer in einem bestimmten Kanal",
+        "translation": "Berechnet den Gesamt-XP-Boost für einen Nutzer in einem bestimmten Kanal",
         "context": "level -> boosts -> calculate -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.boosts.calculate.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> boosts -> calculate -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.boosts.calculate.params.user.description",
-        "source_string": "Der Benutzer, für den der Boost berechnet werden soll",
-        "translation": "Der Benutzer, für den der Boost berechnet werden soll",
+        "source_string": "Der Nutzer, für den der Boost berechnet werden soll",
+        "translation": "Der Nutzer, für den der Boost berechnet werden soll",
         "context": "level -> boosts -> calculate -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21177,32 +21177,32 @@
     },
     {
         "identifier": "level.boosts.adduser.name",
-        "source_string": "benutzer_hinzufügen",
-        "translation": "benutzer_hinzufügen",
+        "source_string": "Nutzer_hinzufügen",
+        "translation": "Nutzer_hinzufügen",
         "context": "level -> boosts -> adduser -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.boosts.adduser.description",
-        "source_string": "Fügt einen XP-Boost zu einem Benutzer hinzu",
-        "translation": "Fügt einen XP-Boost zu einem Benutzer hinzu",
+        "source_string": "Fügt einen XP-Boost zu einem Nutzer hinzu",
+        "translation": "Fügt einen XP-Boost zu einem Nutzer hinzu",
         "context": "level -> boosts -> adduser -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.boosts.adduser.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> boosts -> adduser -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.boosts.adduser.params.user.description",
-        "source_string": "Der Benutzer, zu dem der Boost hinzugefügt werden soll",
-        "translation": "Der Benutzer, zu dem der Boost hinzugefügt werden soll",
+        "source_string": "Der Nutzer, zu dem der Boost hinzugefügt werden soll",
+        "translation": "Der Nutzer, zu dem der Boost hinzugefügt werden soll",
         "context": "level -> boosts -> adduser -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21305,32 +21305,32 @@
     },
     {
         "identifier": "level.boosts.removeuser.name",
-        "source_string": "benutzer_entfernen",
-        "translation": "benutzer_entfernen",
+        "source_string": "Nutzer_entfernen",
+        "translation": "Nutzer_entfernen",
         "context": "level -> boosts -> removeuser -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.boosts.removeuser.description",
-        "source_string": "Entfernt einen XP-Boost von einem Benutzer",
-        "translation": "Entfernt einen XP-Boost von einem Benutzer",
+        "source_string": "Entfernt einen XP-Boost von einem Nutzer",
+        "translation": "Entfernt einen XP-Boost von einem Nutzer",
         "context": "level -> boosts -> removeuser -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "level.boosts.removeuser.params.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "level -> boosts -> removeuser -> params -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "level.boosts.removeuser.params.user.description",
-        "source_string": "Der Benutzer, von dem der Boost entfernt werden soll",
-        "translation": "Der Benutzer, von dem der Boost entfernt werden soll",
+        "source_string": "Der Nutzer, von dem der Boost entfernt werden soll",
+        "translation": "Der Nutzer, von dem der Boost entfernt werden soll",
         "context": "level -> boosts -> removeuser -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21513,32 +21513,32 @@
     },
     {
         "identifier": "giveaway.bl.add.user.name",
-        "source_string": "benutzer_hinzufügen",
-        "translation": "benutzer_hinzufügen",
+        "source_string": "Nutzer_hinzufügen",
+        "translation": "Nutzer_hinzufügen",
         "context": "giveaway -> bl -> add -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "giveaway.bl.add.user.description",
-        "source_string": "Fügt einen Benutzer zur Blacklist für Gewinnspiele hinzu",
-        "translation": "Fügt einen Benutzer zur Blacklist für Gewinnspiele hinzu",
+        "source_string": "Fügt einen Nutzer zur Blacklist für Gewinnspiele hinzu",
+        "translation": "Fügt einen Nutzer zur Blacklist für Gewinnspiele hinzu",
         "context": "giveaway -> bl -> add -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "giveaway.bl.add.user.user.name",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": "giveaway -> bl -> add -> user -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "giveaway.bl.add.user.user.description",
-        "source_string": "Der Benutzer, der zur Blacklist hinzugefügt werden soll",
-        "translation": "Der Benutzer, der zur Blacklist hinzugefügt werden soll",
+        "source_string": "Der Nutzer, der zur Blacklist hinzugefügt werden soll",
+        "translation": "Der Nutzer, der zur Blacklist hinzugefügt werden soll",
         "context": "giveaway -> bl -> add -> user -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21569,24 +21569,24 @@
     },
     {
         "identifier": "giveaway.bl.remove.user.name",
-        "source_string": "benutzer_entfernen",
-        "translation": "benutzer_entfernen",
+        "source_string": "Nutzer_entfernen",
+        "translation": "Nutzer_entfernen",
         "context": "giveaway -> bl -> remove -> user -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "giveaway.bl.remove.user.description",
-        "source_string": "Entfernt einen Benutzer von der Blacklist für Gewinnspiele",
-        "translation": "Entfernt einen Benutzer von der Blacklist für Gewinnspiele",
+        "source_string": "Entfernt einen Nutzer von der Blacklist für Gewinnspiele",
+        "translation": "Entfernt einen Nutzer von der Blacklist für Gewinnspiele",
         "context": "giveaway -> bl -> remove -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "giveaway.bl.remove.user.user.description",
-        "source_string": "Der Benutzer, der von der Blacklist entfernt werden soll",
-        "translation": "Der Benutzer, der von der Blacklist entfernt werden soll",
+        "source_string": "Der Nutzer, der von der Blacklist entfernt werden soll",
+        "translation": "Der Nutzer, der von der Blacklist entfernt werden soll",
         "context": "giveaway -> bl -> remove -> user -> user -> description",
         "labels": "de.json",
         "max_length": null
@@ -21649,32 +21649,32 @@
     },
     {
         "identifier": "ai.customsituations.name",
-        "source_string": "benutzerdefinierte_situationen",
-        "translation": "benutzerdefinierte_situationen",
+        "source_string": "Nutzerdefinierte_situationen",
+        "translation": "Nutzerdefinierte_situationen",
         "context": "ai -> customsituations -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "ai.customsituations.description",
-        "source_string": "Benutzerdefinierte KI-Persönlichkeiten",
-        "translation": "Benutzerdefinierte KI-Persönlichkeiten",
+        "source_string": "Nutzerdefinierte KI-Persönlichkeiten",
+        "translation": "Nutzerdefinierte KI-Persönlichkeiten",
         "context": "ai -> customsituations -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "ai.createcustom.name",
-        "source_string": "benutzerdefiniert_erstellen",
-        "translation": "benutzerdefiniert_erstellen",
+        "source_string": "Nutzerdefiniert_erstellen",
+        "translation": "Nutzerdefiniert_erstellen",
         "context": "ai -> createcustom -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "ai.createcustom.description",
-        "source_string": "Erstellt eine benutzerdefinierte KI",
-        "translation": "Erstellt eine benutzerdefinierte KI",
+        "source_string": "Erstellt eine Nutzerdefinierte KI",
+        "translation": "Erstellt eine Nutzerdefinierte KI",
         "context": "ai -> createcustom -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21689,8 +21689,8 @@
     },
     {
         "identifier": "ai.createcustom.params.name.description",
-        "source_string": "Der Name der benutzerdefinierten KI",
-        "translation": "Der Name der benutzerdefinierten KI",
+        "source_string": "Der Name der Nutzerdefinierten KI",
+        "translation": "Der Name der Nutzerdefinierten KI",
         "context": "ai -> createcustom -> params -> name -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21705,8 +21705,8 @@
     },
     {
         "identifier": "ai.createcustom.params.personality.description",
-        "source_string": "Die Persönlichkeit der benutzerdefinierten KI",
-        "translation": "Die Persönlichkeit der benutzerdefinierten KI",
+        "source_string": "Die Persönlichkeit der Nutzerdefinierten KI",
+        "translation": "Die Persönlichkeit der Nutzerdefinierten KI",
         "context": "ai -> createcustom -> params -> personality -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21721,8 +21721,8 @@
     },
     {
         "identifier": "ai.createcustom.params.temperature.description",
-        "source_string": "Die Temperatur der benutzerdefinierten KI (optional, Standard: 1)",
-        "translation": "Die Temperatur der benutzerdefinierten KI (optional, Standard: 1)",
+        "source_string": "Die Temperatur der Nutzerdefinierten KI (optional, Standard: 1)",
+        "translation": "Die Temperatur der Nutzerdefinierten KI (optional, Standard: 1)",
         "context": "ai -> createcustom -> params -> temperature -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21737,8 +21737,8 @@
     },
     {
         "identifier": "ai.createcustom.params.top_p.description",
-        "source_string": "Der Top-P-Wert der benutzerdefinierten KI (optional, Standard: 1)",
-        "translation": "Der Top-P-Wert der benutzerdefinierten KI (optional, Standard: 1)",
+        "source_string": "Der Top-P-Wert der Nutzerdefinierten KI (optional, Standard: 1)",
+        "translation": "Der Top-P-Wert der Nutzerdefinierten KI (optional, Standard: 1)",
         "context": "ai -> createcustom -> params -> top_p -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21753,8 +21753,8 @@
     },
     {
         "identifier": "ai.createcustom.params.frequency_penalty.description",
-        "source_string": "Die frequency penalty der benutzerdefinierten KI (optional, Standard: 0)",
-        "translation": "Die frequency penalty der benutzerdefinierten KI (optional, Standard: 0)",
+        "source_string": "Die frequency penalty der Nutzerdefinierten KI (optional, Standard: 0)",
+        "translation": "Die frequency penalty der Nutzerdefinierten KI (optional, Standard: 0)",
         "context": "ai -> createcustom -> params -> frequency_penalty -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21769,40 +21769,40 @@
     },
     {
         "identifier": "ai.createcustom.params.presence_penalty.description",
-        "source_string": "Die presence penalty der benutzerdefinierten KI (optional, Standard: 0)",
-        "translation": "Die presence penalty der benutzerdefinierten KI (optional, Standard: 0)",
+        "source_string": "Die presence penalty der Nutzerdefinierten KI (optional, Standard: 0)",
+        "translation": "Die presence penalty der Nutzerdefinierten KI (optional, Standard: 0)",
         "context": "ai -> createcustom -> params -> presence_penalty -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "ai.deletecustom.name",
-        "source_string": "benutzerdefiniert_löschen",
-        "translation": "benutzerdefiniert_löschen",
+        "source_string": "Nutzerdefiniert_löschen",
+        "translation": "Nutzerdefiniert_löschen",
         "context": "ai -> deletecustom -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "ai.deletecustom.description",
-        "source_string": "Löscht eine benutzerdefinierte KI",
-        "translation": "Löscht eine benutzerdefinierte KI",
+        "source_string": "Löscht eine Nutzerdefinierte KI",
+        "translation": "Löscht eine Nutzerdefinierte KI",
         "context": "ai -> deletecustom -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "ai.askcustom.name",
-        "source_string": "benutzerdefiniert_fragen",
-        "translation": "benutzerdefiniert_fragen",
+        "source_string": "Nutzerdefiniert_fragen",
+        "translation": "Nutzerdefiniert_fragen",
         "context": "ai -> askcustom -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
     {
         "identifier": "ai.askcustom.description",
-        "source_string": "Fragt eine benutzerdefinierte KI",
-        "translation": "Fragt eine benutzerdefinierte KI",
+        "source_string": "Fragt eine Nutzerdefinierte KI",
+        "translation": "Fragt eine Nutzerdefinierte KI",
         "context": "ai -> askcustom -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21817,8 +21817,8 @@
     },
     {
         "identifier": "ai.askcustom.params.prompt.description",
-        "source_string": "Der Prompt der benutzerdefinierten KI",
-        "translation": "Der Prompt der benutzerdefinierten KI",
+        "source_string": "Der Prompt der Nutzerdefinierten KI",
+        "translation": "Der Prompt der Nutzerdefinierten KI",
         "context": "ai -> askcustom -> params -> prompt -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21833,8 +21833,8 @@
     },
     {
         "identifier": "ai.askcustom.params.personality.description",
-        "source_string": "Die benutzerdefinierten KI die du Fragen möchtest",
-        "translation": "Die benutzerdefinierten KI die du Fragen möchtest",
+        "source_string": "Die Nutzerdefinierten KI die du Fragen möchtest",
+        "translation": "Die Nutzerdefinierten KI die du Fragen möchtest",
         "context": "ai -> askcustom -> params -> personality -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -24441,8 +24441,8 @@
     },
     {
         "identifier": "logs.userUpdate.title",
-        "source_string": "Benutzer aktualisiert",
-        "translation": "Benutzer aktualisiert",
+        "source_string": "Nutzer aktualisiert",
+        "translation": "Nutzer aktualisiert",
         "context": "logs -> userUpdate -> title",
         "labels": "de.json",
         "max_length": null
@@ -24481,8 +24481,8 @@
     },
     {
         "identifier": "logs.userUpdate.userName",
-        "source_string": "Benutzername (@) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
-        "translation": "Benutzername (@) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+        "source_string": "Nutzername (@) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+        "translation": "Nutzername (@) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
         "context": "logs -> userUpdate -> userName",
         "labels": "de.json",
         "max_length": null
@@ -25201,8 +25201,8 @@
     },
     {
         "identifier": "logs.blacklistu.description",
-        "source_string": "Verwalte die Benutzer-Blacklist für Logs",
-        "translation": "Verwalte die Benutzer-Blacklist für Logs",
+        "source_string": "Verwalte die Nutzer-Blacklist für Logs",
+        "translation": "Verwalte die Nutzer-Blacklist für Logs",
         "context": "logs -> blacklistu -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -25217,16 +25217,16 @@
     },
     {
         "identifier": "logs.blacklistu.add.description",
-        "source_string": "Fügt einen Benutzer zur Blacklist hinzu",
-        "translation": "Fügt einen Benutzer zur Blacklist hinzu",
+        "source_string": "Fügt einen Nutzer zur Blacklist hinzu",
+        "translation": "Fügt einen Nutzer zur Blacklist hinzu",
         "context": "logs -> blacklistu -> add -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "logs.blacklistu.add.params.user.description",
-        "source_string": "Der Benutzer, der zur Blacklist hinzugefügt werden soll",
-        "translation": "Der Benutzer, der zur Blacklist hinzugefügt werden soll",
+        "source_string": "Der Nutzer, der zur Blacklist hinzugefügt werden soll",
+        "translation": "Der Nutzer, der zur Blacklist hinzugefügt werden soll",
         "context": "logs -> blacklistu -> add -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -25241,16 +25241,16 @@
     },
     {
         "identifier": "logs.blacklistu.remove.description",
-        "source_string": "Entfernt einen Benutzer von der Blacklist",
-        "translation": "Entfernt einen Benutzer von der Blacklist",
+        "source_string": "Entfernt einen Nutzer von der Blacklist",
+        "translation": "Entfernt einen Nutzer von der Blacklist",
         "context": "logs -> blacklistu -> remove -> description",
         "labels": "de.json, command_description",
         "max_length": 100
     },
     {
         "identifier": "logs.blacklistu.remove.params.user.description",
-        "source_string": "Der Benutzer, der von der Blacklist entfernt werden soll",
-        "translation": "Der Benutzer, der von der Blacklist entfernt werden soll",
+        "source_string": "Der Nutzer, der von der Blacklist entfernt werden soll",
+        "translation": "Der Nutzer, der von der Blacklist entfernt werden soll",
         "context": "logs -> blacklistu -> remove -> params -> user -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -25265,8 +25265,8 @@
     },
     {
         "identifier": "logs.blacklistu.show.description",
-        "source_string": "Zeigt die aktuelle Benutzer-Blacklist an",
-        "translation": "Zeigt die aktuelle Benutzer-Blacklist an",
+        "source_string": "Zeigt die aktuelle Nutzer-Blacklist an",
+        "translation": "Zeigt die aktuelle Nutzer-Blacklist an",
         "context": "logs -> blacklistu -> show -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -27865,8 +27865,8 @@
     },
     {
         "identifier": "countries.Svalbard and Jan Mayen Islands",
-        "source_string": "Spitzbergen und Jan Mayen",
-        "translation": "Spitzbergen und Jan Mayen",
+        "source_string": "Spitzbergen",
+        "translation": "Spitzbergen",
         "context": "countries -> Svalbard and Jan Mayen Islands",
         "labels": "de.json",
         "max_length": null
@@ -28217,8 +28217,8 @@
     },
     {
         "identifier": "user",
-        "source_string": "benutzer",
-        "translation": "benutzer",
+        "source_string": "Nutzer",
+        "translation": "Nutzer",
         "context": " -> user",
         "labels": "de.json",
         "max_length": 32
@@ -28313,8 +28313,8 @@
     },
     {
         "identifier": "username",
-        "source_string": "benutzername",
-        "translation": "benutzername",
+        "source_string": "Nutzername",
+        "translation": "Nutzername",
         "context": " -> username",
         "labels": "de.json",
         "max_length": 32
@@ -28609,16 +28609,16 @@
     },
     {
         "identifier": "custom",
-        "source_string": "benutzerdefiniert",
-        "translation": "benutzerdefiniert",
+        "source_string": "Nutzerdefiniert",
+        "translation": "Nutzerdefiniert",
         "context": " -> custom",
         "labels": "de.json",
         "max_length": 32
     },
     {
         "identifier": "customformula",
-        "source_string": "benutzerdefinierte_formel",
-        "translation": "benutzerdefinierte_formel",
+        "source_string": "Nutzerdefinierte_formel",
+        "translation": "Nutzerdefinierte_formel",
         "context": " -> customformula",
         "labels": "de.json",
         "max_length": 32
@@ -28721,16 +28721,16 @@
     },
     {
         "identifier": "askcustom",
-        "source_string": "frage_benutzerdefiniert",
-        "translation": "frage_benutzerdefiniert",
+        "source_string": "frage_Nutzerdefiniert",
+        "translation": "frage_Nutzerdefiniert",
         "context": " -> askcustom",
         "labels": "de.json",
         "max_length": 32
     },
     {
         "identifier": "Ask a custom situation",
-        "source_string": "Eine benutzerdefinierte Situation erfragen",
-        "translation": "Eine benutzerdefinierte Situation erfragen",
+        "source_string": "Eine Nutzerdefinierte Situation erfragen",
+        "translation": "Eine Nutzerdefinierte Situation erfragen",
         "context": " -> Ask a custom situation",
         "labels": "de.json",
         "max_length": 32
@@ -28849,8 +28849,8 @@
     },
     {
         "identifier": "Awst Tanjuwun something uwu",
-        "source_string": "fwage Tanjuwun etwas uwu",
-        "translation": "fwage Tanjuwun etwas uwu",
+        "source_string": "Fwage Tanjuwun etwas uwu",
+        "translation": "Fwage Tanjuwun etwas uwu",
         "context": " -> Awst Tanjuwun something uwu",
         "labels": "de.json",
         "max_length": 32
@@ -29777,8 +29777,8 @@
     },
     {
         "identifier": "ai.createcustom.params.topp.description",
-        "source_string": "Das höchste P der nutzerdefinierten KI",
-        "translation": "Das höchste P der nutzerdefinierten KI",
+        "source_string": "Die Kernstichproben-Auswahl der nutzerdefinierten KI",
+        "translation": "Die Kernstichproben-Auswahl der nutzerdefinierten KI",
         "context": "The description of the top param from the createcustom command",
         "labels": "command_description, unassigned",
         "max_length": 100
@@ -29849,8 +29849,8 @@
     },
     {
         "identifier": "ai.asktanjuwun.params.topp.description",
-        "source_string": "Höchstes P für Tanjuwun",
-        "translation": "Höchstes P für Tanjuwun",
+        "source_string": "Kernstichproben-Auswahl für Tanjuwun",
+        "translation": "Kernstichproben-Auswahl für Tanjuwun",
         "context": "The description for the top p param for the ai asktanjuwun command.",
         "labels": "command_description, unassigned",
         "max_length": 100
