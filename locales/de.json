@@ -9545,8 +9545,8 @@
     },
     {
         "identifier": "commands.level.givexp.success.description",
-        "source_string": "${amount} XP wurden ${user} gegeben. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}",
-        "translation": "${amount} XP wurden ${user} gegeben. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}",
+        "source_string": "${amount} XP wurden ${user} gegeben. Neuer XP-Stand: ${new_xp}. Level: ${old_level} → ${new_level}",
+        "translation": "${amount} XP wurden ${user} gegeben. Neuer XP-Stand: ${new_xp}. Level: ${old_level} → ${new_level}",
         "context": "commands -> level -> givexp -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9593,8 +9593,8 @@
     },
     {
         "identifier": "commands.level.takexp.success.description",
-        "source_string": "${amount} XP wurden ${user} weggenommen. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}",
-        "translation": "${amount} XP wurden ${user} weggenommen. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}",
+        "source_string": "${amount} XP wurden ${user} weggenommen. Neuer XP-Stand: ${new_xp}. Level: ${old_level} → ${new_level}",
+        "translation": "${amount} XP wurden ${user} weggenommen. Neuer XP-Stand: ${new_xp}. Level: ${old_level} → ${new_level}",
         "context": "commands -> level -> takexp -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9641,8 +9641,8 @@
     },
     {
         "identifier": "commands.level.setxp.success.description",
-        "source_string": "XP für ${user} wurde von ${old_xp} auf ${new_xp} gesetzt. Level: ${old_level} -> ${new_level}",
-        "translation": "XP für ${user} wurde von ${old_xp} auf ${new_xp} gesetzt. Level: ${old_level} -> ${new_level}",
+        "source_string": "XP für ${user} wurde von ${old_xp} auf ${new_xp} gesetzt. Level: ${old_level} → ${new_level}",
+        "translation": "XP für ${user} wurde von ${old_xp} auf ${new_xp} gesetzt. Level: ${old_level} → ${new_level}",
         "context": "commands -> level -> setxp -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10633,8 +10633,8 @@
     },
     {
         "identifier": "commands.level.addlevelrole.error.role_exists.description",
-        "source_string": "Die Rolle {role} ist bereits für Level {level} zugewiesen.",
-        "translation": "Die Rolle {role} ist bereits für Level {level} zugewiesen.",
+        "source_string": "Die Rolle {role} ist bereits Level {level} zugewiesen.",
+        "translation": "Die Rolle {role} ist bereits Level {level} zugewiesen.",
         "context": "commands -> level -> addlevelrole -> error -> role_exists -> description",
         "labels": "de.json",
         "max_length": null
@@ -10649,8 +10649,8 @@
     },
     {
         "identifier": "commands.level.addlevelrole.success.description",
-        "source_string": "Die Rolle {role} wurde erfolgreich für Level {level} hinzugefügt.",
-        "translation": "Die Rolle {role} wurde erfolgreich für Level {level} hinzugefügt.",
+        "source_string": "Die Rolle {role} wurde erfolgreich Level {level} hinzugefügt.",
+        "translation": "Die Rolle {role} wurde erfolgreich Level {level} hinzugefügt.",
         "context": "commands -> level -> addlevelrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10697,8 +10697,8 @@
     },
     {
         "identifier": "commands.level.removelevelrole.error.role_not_found.description",
-        "source_string": "Die Rolle {role} ist nicht für Level {level} zugewiesen.",
-        "translation": "Die Rolle {role} ist nicht für Level {level} zugewiesen.",
+        "source_string": "Die Rolle {role} ist nicht Level {level} zugewiesen.",
+        "translation": "Die Rolle {role} ist nicht Level {level} zugewiesen.",
         "context": "commands -> level -> removelevelrole -> error -> role_not_found -> description",
         "labels": "de.json",
         "max_length": null
@@ -11051,7 +11051,7 @@
         "identifier": "commands.level.boosts.add_user.success.description",
         "source_string": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Benutzer ${user} hinzugefügt.",
         "translation": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Benutzer ${user} hinzugefügt.",
-        "context": "commands -> level -> boosts -> add_user -> success -> description",
+        "context": "Example: \"Ein Beispiel Boost von 100 wurde erfolgreich zum Benutzer Test hinzugefügt.\"",
         "labels": "de.json",
         "max_length": null
     },
@@ -11961,8 +11961,8 @@
     },
     {
         "identifier": "commands.giveaway.builder.custom_name.description",
-        "source_string": "Passe den Namen deines Gewinnspiels in der giveaways.tanjun.bot domaine an!",
-        "translation": "Passe den Namen deines Gewinnspiels in der giveaways.tanjun.bot domaine an!",
+        "source_string": "Passe den Namen deines Gewinnspiels unter [giveaways.tanjun.bot](https://giveaways.tanjun.bot) an!",
+        "translation": "Passe den Namen deines Gewinnspiels unter [giveaways.tanjun.bot](https://giveaways.tanjun.bot) an!",
         "context": "commands -> giveaway -> builder -> custom_name -> description",
         "labels": "de.json",
         "max_length": null
@@ -12097,8 +12097,8 @@
     },
     {
         "identifier": "commands.giveaway.builder.end_time.placeholder",
-        "source_string": "Gib die Endzeit ein z.B. 10m für in 10 Minuten",
-        "translation": "Gib die Endzeit ein z.B. 10m für in 10 Minuten",
+        "source_string": "Gib die Endzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten endet",
+        "translation": "Gib die Endzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten endet",
         "context": "commands -> giveaway -> builder -> end_time -> placeholder",
         "labels": "de.json",
         "max_length": 100
@@ -12137,8 +12137,8 @@
     },
     {
         "identifier": "commands.giveaway.builder.start_time.placeholder",
-        "source_string": "Gib die Startzeit ein z.B. 10m für in 10 Minuten",
-        "translation": "Gib die Startzeit ein z.B. 10m für in 10 Minuten",
+        "source_string": "Gib die Startzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten beginnt",
+        "translation": "Gib die Startzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten beginnt",
         "context": "commands -> giveaway -> builder -> start_time -> placeholder",
         "labels": "de.json",
         "max_length": 100
