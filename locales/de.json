@@ -8625,16 +8625,16 @@
     },
     {
         "identifier": "commands.utility.brawlstars.battlelog.description.team1",
-        "source_string": "Team 1",
-        "translation": "Team 1",
+        "source_string": "### Team 1",
+        "translation": "### Team 1",
         "context": "commands -> utility -> brawlstars -> battlelog -> description -> team1",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.utility.brawlstars.battlelog.description.team2",
-        "source_string": "Team 2",
-        "translation": "Team 2",
+        "source_string": "### Team 2",
+        "translation": "### Team 2",
         "context": "commands -> utility -> brawlstars -> battlelog -> description -> team2",
         "labels": "de.json",
         "max_length": null
