@@ -1206,6 +1206,13 @@ async def get_level_roles(guild_id: str) -> Dict[int, str]:
     return {row[0]: row[1] for row in result}
 
 
+async def get_level_role(guild_id: str, role_id: str) -> int:
+    query = "SELECT level FROM levelRole WHERE guild_id = %s AND role_id = %s"
+    params = (guild_id, role_id)
+    result = await execute_query(query, params)
+    return result[0][0] if result else None
+
+
 # redefinition of unused 'add_level_role' from line 1119 Flake8(F811)
 '''
 async def add_level_role(guild_id: str, role_id: str, level: int):
@@ -1218,12 +1225,12 @@ async def add_level_role(guild_id: str, role_id: str, level: int):
 '''
 
 
-async def remove_level_role(guild_id: str, role_id: str, level: int):
+async def remove_level_role(guild_id: str, role_id: str):
     query = """
     DELETE FROM levelRole
-    WHERE guild_id = %s AND role_id = %s AND level = %s
+    WHERE guild_id = %s AND role_id = %s
     """
-    params = (guild_id, role_id, level)
+    params = (guild_id, role_id)
     await execute_action(query, params)
 
 
