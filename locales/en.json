@@ -832,6 +832,14 @@
         "max_length": 32
     },
     {
+        "identifier": "level.config.name",
+        "source_string": "einstellungen",
+        "translation": "settings",
+        "context": "level -> config -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
         "identifier": "level.boosts.addrole.params.boost.description",
         "source_string": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
         "translation": "The boost value (e.g. 1.5 for 50% more XP)",
@@ -953,9 +961,33 @@
     },
     {
         "identifier": "image.findedges.name",
-        "source_string": "findedges",
-        "translation": "findedges",
+        "source_string": "rand_finden",
+        "translation": "find_edges",
         "context": "image -> findedges -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
+        "identifier": "image.resize.params.image.name",
+        "source_string": "bild",
+        "translation": "image",
+        "context": "image -> resize -> params -> image -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
+        "identifier": "image.mirror.name",
+        "source_string": "spiegeln",
+        "translation": "mirror",
+        "context": "image -> mirror -> name",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
+        "identifier": "image.compress.name",
+        "source_string": "komprimieren",
+        "translation": "compress",
+        "context": "image -> compress -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
