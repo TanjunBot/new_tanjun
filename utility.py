@@ -1037,22 +1037,92 @@ operators = {
     ast.Pow: op.pow,
     ast.BitXor: op.xor,
     ast.USub: op.neg,
+    ast.Mod: op.mod,
 }
 
 
-def eval_expr(expr):
-    return eval_(ast.parse(expr, mode="eval").body)
+# Add helper functions for all operations
+def sqrt_n(x, n=2):
+    return x ** (1 / n)
 
 
-def eval_(node):
+def log_n(x, base=math.e):
+    return math.log(x, base)
+
+
+def eval_expr(expr, variables=None):
+    if variables is None:
+        variables = {}
+
+    print("evaling expression", expr, "with variables", variables)
+
+    # Replace mathematical constants
+    expr = expr.replace("pi", str(math.pi))
+    expr = expr.replace("e", str(math.e))
+
+    # Handle special functions with base notation
+    expr = re.sub(r"log\[(\d+)\]\((.*?)\)", r"log_n(\2,\1)", expr)
+
+    # Handle special functions
+    expr = re.sub(r"sqrt\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
+    expr = re.sub(r"sqrt\((.*?)\)", r"sqrt_n(\1)", expr)
+    expr = re.sub(r"nthroot\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
+
+    # Handle logarithms
+    expr = re.sub(r"log2\((.*?)\)", r"log_n(\1,2)", expr)
+    expr = re.sub(r"log10\((.*?)\)", r"log_n(\1,10)", expr)
+    expr = re.sub(r"ln\((.*?)\)", r"log_n(\1)", expr)
+
+    # Handle trigonometric functions
+    expr = re.sub(r"sin\((.*?)\)", r"math.sin(\1)", expr)
+    expr = re.sub(r"cos\((.*?)\)", r"math.cos(\1)", expr)
+    expr = re.sub(r"tan\((.*?)\)", r"math.tan(\1)", expr)
+    expr = re.sub(r"asin\((.*?)\)", r"math.asin(\1)", expr)
+    expr = re.sub(r"acos\((.*?)\)", r"math.acos(\1)", expr)
+    expr = re.sub(r"atan\((.*?)\)", r"math.atan(\1)", expr)
+
+    # Handle floor and ceiling
+    expr = re.sub(r"floor\((.*?)\)", r"math.floor(\1)", expr)
+    expr = re.sub(r"ceil\((.*?)\)", r"math.ceil(\1)", expr)
+
+    # Handle absolute value
+    expr = re.sub(r"abs\((.*?)\)", r"abs(\1)", expr)
+
+    return eval_(ast.parse(expr, mode="eval").body, variables)
+
+
+def eval_(node, variables):
     if isinstance(node, ast.Num):
         return node.n
     elif isinstance(node, ast.BinOp):
-        return operators[type(node.op)](eval_(node.left), eval_(node.right))
+        return operators[type(node.op)](
+            eval_(node.left, variables), eval_(node.right, variables)
+        )
     elif isinstance(node, ast.UnaryOp):
-        return operators[type(node.op)](eval_(node.operand))
+        return operators[type(node.op)](eval_(node.operand, variables))
+    elif isinstance(node, ast.Call):
+        if isinstance(node.func, ast.Attribute):
+            if node.func.value.id == "math":
+                func = getattr(math, node.func.attr)
+                args = [eval_(arg, variables) for arg in node.args]
+                return func(*args)
+        elif isinstance(node.func, ast.Name):
+            if node.func.id == "sqrt_n":
+                args = [eval_(arg, variables) for arg in node.args]
+                return sqrt_n(*args)
+            elif node.func.id == "log_n":
+                args = [eval_(arg, variables) for arg in node.args]
+                return log_n(*args)
+            elif node.func.id == "abs":
+                args = [eval_(arg, variables) for arg in node.args]
+                return abs(*args)
+        raise TypeError(f"Unsupported function call: {node.func}")
+    elif isinstance(node, ast.Name):
+        if node.id in variables:
+            return variables[node.id]
+        raise NameError(f"Variable '{node.id}' is not defined")
     else:
-        raise TypeError(node)
+        raise TypeError(f"Unsupported operation: {node}")
 
 
 def get_xp_for_level(level: int, scaling: str, custom_formula: str = None) -> int:
