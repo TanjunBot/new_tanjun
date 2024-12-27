@@ -147,7 +147,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             description += "\n"
             description += "\n"
 
-        if commandInfo.user.id == 1295625022454370346:
+        if commandInfo.user.id == 1295625022454370346 and commandInfo.guild.id == 947219439764521060:
             description += "\n"
             description += f"raw: \n```json\n{json.dumps(brawler, indent=4)}\n```"
 
