@@ -1202,7 +1202,7 @@
     {
         "identifier": "commands.admin.remove_timeout.missingPermission.description",
         "source_string": "Du hast nicht die erforderlichen Berechtigungen, um Timeouts aufzuheben.",
-        "translation": "You do not have the necessary permissions to remove timeouts.",
+        "translation": "You do not have the required permissions to remove timeouts.",
         "context": "commands -> admin -> remove_timeout -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
@@ -9545,8 +9545,8 @@
     },
     {
         "identifier": "commands.level.givexp.success.description",
-        "source_string": "${amount} XP wurden ${user} gegeben. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}",
-        "translation": "${amount} XP have been given to ${user} . New XP level: ${new_xp}. Level: ${old_level} -> ${new_level}",
+        "source_string": "${amount} XP wurden ${user} gegeben. Neuer XP-Stand: ${new_xp}. Level: ${old_level} → ${new_level}",
+        "translation": "${amount} XP have been given to ${user}. New XP level: ${new_xp}. Level: ${old_level} → ${new_level}",
         "context": "commands -> level -> givexp -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9593,8 +9593,8 @@
     },
     {
         "identifier": "commands.level.takexp.success.description",
-        "source_string": "${amount} XP wurden ${user} weggenommen. Neuer XP-Stand: ${new_xp}. Level: ${old_level} -> ${new_level}",
-        "translation": "${amount} XP have been removed ${user} . New XP level: ${new_xp}. Level: ${old_level} -> ${new_level}",
+        "source_string": "${amount} XP wurden ${user} weggenommen. Neuer XP-Stand: ${new_xp}. Level: ${old_level} → ${new_level}",
+        "translation": "${amount} XP have been removed ${user}. New XP level: ${new_xp}. Level: ${old_level} → ${new_level}",
         "context": "commands -> level -> takexp -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9641,8 +9641,8 @@
     },
     {
         "identifier": "commands.level.setxp.success.description",
-        "source_string": "XP für ${user} wurde von ${old_xp} auf ${new_xp} gesetzt. Level: ${old_level} -> ${new_level}",
-        "translation": "XP for ${user} has been changed from ${old_xp} to ${new_xp} . Level: ${old_level} -> ${new_level}",
+        "source_string": "XP für ${user} wurde von ${old_xp} auf ${new_xp} gesetzt. Level: ${old_level} → ${new_level}",
+        "translation": "XP for ${user} has been changed from ${old_xp} to ${new_xp}. Level: ${old_level} → ${new_level}",
         "context": "commands -> level -> setxp -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9658,7 +9658,7 @@
     {
         "identifier": "commands.level.rank.error.no_data.description",
         "source_string": "Es sind keine Leveldaten für ${user} verfügbar.",
-        "translation": "There is no level data available for ${user} .",
+        "translation": "There is no level data available for ${user}.",
         "context": "commands -> level -> rank -> error -> no_data -> description",
         "labels": "de.json",
         "max_length": null
@@ -10378,7 +10378,7 @@
     {
         "identifier": "commands.level.setlevelupchannel.success.description",
         "source_string": "Level-Up-Nachrichten werden nun in ${channel} gesendet.",
-        "translation": "Level-up messages are now sent in ${channel} .",
+        "translation": "Level-up messages are now sent in ${channel}.",
         "context": "commands -> level -> setlevelupchannel -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10474,7 +10474,7 @@
     {
         "identifier": "commands.level.changexpscaling.success.description",
         "source_string": "Die XP-Skalierung wurde erfolgreich auf ${scaling} geändert. Formel: ${formula}",
-        "translation": "The XP scaling has been successfully changed to ${scaling} . Formula: ${formula}",
+        "translation": "The XP scaling has been successfully changed to ${scaling}. Formula: ${formula}",
         "context": "commands -> level -> changexpscaling -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10633,8 +10633,8 @@
     },
     {
         "identifier": "commands.level.addlevelrole.error.role_exists.description",
-        "source_string": "Die Rolle {role} ist bereits für Level {level} zugewiesen.",
-        "translation": "The role {role} is already assigned to level {level} .",
+        "source_string": "Die Rolle {role} ist bereits Level {level} zugewiesen.",
+        "translation": "The role {role} is already assigned to level {level}.",
         "context": "commands -> level -> addlevelrole -> error -> role_exists -> description",
         "labels": "de.json",
         "max_length": null
@@ -10649,8 +10649,8 @@
     },
     {
         "identifier": "commands.level.addlevelrole.success.description",
-        "source_string": "Die Rolle {role} wurde erfolgreich für Level {level} hinzugefügt.",
-        "translation": "The role {role} was successfully added for level {level} .",
+        "source_string": "Die Rolle {role} wurde erfolgreich Level {level} hinzugefügt.",
+        "translation": "The role {role} was successfully added to level {level}.",
         "context": "commands -> level -> addlevelrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10697,8 +10697,8 @@
     },
     {
         "identifier": "commands.level.removelevelrole.error.role_not_found.description",
-        "source_string": "Die Rolle {role} ist nicht für Level {level} zugewiesen.",
-        "translation": "The role {role} is not assigned to level {level} .",
+        "source_string": "Die Rolle {role} ist nicht Level {level} zugewiesen.",
+        "translation": "The role {role} is not assigned to level {level}.",
         "context": "commands -> level -> removelevelrole -> error -> role_not_found -> description",
         "labels": "de.json",
         "max_length": null
@@ -10714,7 +10714,7 @@
     {
         "identifier": "commands.level.removelevelrole.success.description",
         "source_string": "Die Rolle {role} wurde erfolgreich von Level {level} entfernt.",
-        "translation": "The role {role} was successfully removed from level {level} .",
+        "translation": "The role {role} was successfully removed from level {level}.",
         "context": "commands -> level -> removelevelrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10802,7 +10802,7 @@
     {
         "identifier": "commands.level.showlevelroles.selected_level.description",
         "source_string": "Folgende Rollen sind für Level {level} konfiguriert:\n{roles}",
-        "translation": "The following roles are configured for level {level} :\n{roles}",
+        "translation": "The following roles are configured for level {level}:\n{roles}",
         "context": "commands -> level -> showlevelroles -> selected_level -> description",
         "labels": "de.json",
         "max_length": null
@@ -10914,7 +10914,7 @@
     {
         "identifier": "commands.level.showlevelroles.add_role_modal.success",
         "source_string": "Die Rolle {role} wurde erfolgreich als Level-Rolle für Level {level} hinzugefügt.",
-        "translation": "The role {role} has been successfully added as a level role for level {level} .",
+        "translation": "The role {role} has been successfully added as a level role for level {level}.",
         "context": "commands -> level -> showlevelroles -> add_role_modal -> success",
         "labels": "de.json",
         "max_length": null
@@ -11050,8 +11050,8 @@
     {
         "identifier": "commands.level.boosts.add_user.success.description",
         "source_string": "Ein ${type} Boost von ${boost} wurde erfolgreich zum Benutzer ${user} hinzugefügt.",
-        "translation": "A ${type} boost from ${boost} has been successfully added to the user ${user} .",
-        "context": "commands -> level -> boosts -> add_user -> success -> description",
+        "translation": "A ${type} boost from ${boost} has been successfully added to the user ${user}.",
+        "context": "Example: \"Ein Beispiel Boost von 100 wurde erfolgreich zum Benutzer Test hinzugefügt.\"",
         "labels": "de.json",
         "max_length": null
     },
@@ -11306,7 +11306,7 @@
     {
         "identifier": "commands.giveaway.reroll_giveaway.winnerDM",
         "source_string": "🎉 **Gewinnspiel-Neuauslosung** 🎉\n\nHerzlichen Glückwunsch! Du wurdest bei einer Neuauslosung als Gewinner für ein Gewinnspiel auf dem Server ${guild_name} ausgewählt! Wende dich ggf. an die Serverleitung, um deinen Preis zu erhalten.",
-        "translation": "🎉 **Redraw** 🎉\n\nCongratulations! You have been selected as the winner of a prize draw for a competition on the server ${guild_name} ! Please contact the server administration to claim your prize.",
+        "translation": "🎉 **Giveaway Reroll** 🎉\n\nCongratulations! You have been selected as the winner of a reroll for a giveaway on the server ${guild_name}! Please contact the server administration to claim your prize.",
         "context": "commands -> giveaway -> reroll_giveaway -> winnerDM",
         "labels": "de.json",
         "max_length": null
@@ -11714,7 +11714,7 @@
     {
         "identifier": "commands.giveaway.endedGiveaway.dm",
         "source_string": "🎉 **Gewinnspiel beendet** 🎉\n\nHerzlichen Glückwunsch! Du hast ein Gewinnspiel auf den Server ${guild_name} gewonnen! Wende dich ggf. an die Serverleitung, um deinen Preis zu erhalten.",
-        "translation": "🎉 **Contest ended** 🎉\n\nCongratulations! You have won a competition on the server ${guild_name} ! Please contact the server administration to claim your prize.",
+        "translation": "🎉 **Giveaway ended** 🎉\n\nCongratulations! You have won a giveaway on the server ${guild_name}! Please contact the server administration to claim your prize.",
         "context": "commands -> giveaway -> endedGiveaway -> dm",
         "labels": "de.json",
         "max_length": null
@@ -11754,7 +11754,7 @@
     {
         "identifier": "commands.giveaway.giveawayEmbed.no_requirements",
         "source_string": "- `Keine spezifischen Bedingungen.`",
-        "translation": "- `No specific conditions.",
+        "translation": "- `No specific conditions.`",
         "context": "commands -> giveaway -> giveawayEmbed -> no_requirements",
         "labels": "de.json",
         "max_length": null
@@ -11802,7 +11802,7 @@
     {
         "identifier": "commands.giveaway.giveawayEmbed.end_time",
         "source_string": "🗓️Endet ${date}",
-        "translation": "🗓️Endet ${date}",
+        "translation": "🗓️Ends ${date}",
         "context": "commands -> giveaway -> giveawayEmbed -> end_time",
         "labels": "de.json",
         "max_length": null
@@ -11961,8 +11961,8 @@
     },
     {
         "identifier": "commands.giveaway.builder.custom_name.description",
-        "source_string": "Passe den Namen deines Gewinnspiels in der giveaways.tanjun.bot domaine an!",
-        "translation": "Customize the name of your giveaway in the giveaways.tanjun.bot domain!",
+        "source_string": "Passe den Namen deines Gewinnspiels unter [giveaways.tanjun.bot](https://giveaways.tanjun.bot) an!",
+        "translation": "Passe den Namen deines Gewinnspiels unter [giveaways.tanjun.bot](https://giveaways.tanjun.bot) an!",
         "context": "commands -> giveaway -> builder -> custom_name -> description",
         "labels": "de.json",
         "max_length": null
@@ -12097,8 +12097,8 @@
     },
     {
         "identifier": "commands.giveaway.builder.end_time.placeholder",
-        "source_string": "Gib die Endzeit ein z.B. 10m für in 10 Minuten",
-        "translation": "Enter the end time e.g. 10m for in 10 minutes",
+        "source_string": "Gib die Endzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten endet",
+        "translation": "Gib die Endzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten endet",
         "context": "commands -> giveaway -> builder -> end_time -> placeholder",
         "labels": "de.json",
         "max_length": 100
@@ -12137,8 +12137,8 @@
     },
     {
         "identifier": "commands.giveaway.builder.start_time.placeholder",
-        "source_string": "Gib die Startzeit ein z.B. 10m für in 10 Minuten",
-        "translation": "Enter the start time e.g. 10m for in 10 minutes",
+        "source_string": "Gib die Startzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten beginnt",
+        "translation": "Gib die Startzeit ein, z.B. `10m`, damit das Gewinnspiel in 10 Minuten beginnt",
         "context": "commands -> giveaway -> builder -> start_time -> placeholder",
         "labels": "de.json",
         "max_length": 100
@@ -13146,7 +13146,7 @@
     {
         "identifier": "commands.games.ticTacToe.description",
         "source_string": "${player1} (⭕) vs ${player2} (❌)",
-        "translation": "${player1} (⭕) vs ${player2}(❌)",
+        "translation": "${player1} (⭕) vs ${player2} (❌)",
         "context": "commands -> games -> ticTacToe -> description",
         "labels": "de.json",
         "max_length": null
@@ -13210,7 +13210,7 @@
     {
         "identifier": "commands.games.ticTacToe.currentTurn",
         "source_string": "Aktuell am Zug: ${player}",
-        "translation": "Currently on the move: ${player}",
+        "translation": "Current turn: ${player}",
         "context": "commands -> games -> ticTacToe -> currentTurn",
         "labels": "de.json",
         "max_length": null
@@ -13226,7 +13226,7 @@
     {
         "identifier": "commands.games.connect4.description",
         "source_string": "${player1} (🔴) vs ${player2} (🟡)",
-        "translation": "${player1} (🔴) vs ${player2}(🟡)",
+        "translation": "${player1} (🔴) vs ${player2} (🟡)",
         "context": "commands -> games -> connect4 -> description",
         "labels": "de.json",
         "max_length": null
@@ -13274,7 +13274,7 @@
     {
         "identifier": "commands.games.connect4.currentTurn",
         "source_string": "Aktuell am Zug: ${player}",
-        "translation": "Currently on the move: ${player}",
+        "translation": "Current turn: ${player}",
         "context": "commands -> games -> connect4 -> currentTurn",
         "labels": "de.json",
         "max_length": null
@@ -13370,7 +13370,7 @@
     {
         "identifier": "commands.games.akinator.title",
         "source_string": "Akinator",
-        "translation": "Acinator",
+        "translation": "Akinator",
         "context": "commands -> games -> akinator -> title",
         "labels": "de.json",
         "max_length": null
@@ -13378,7 +13378,7 @@
     {
         "identifier": "commands.games.akinator.result",
         "source_string": "Ich bin mir sehr sicher, dass es sich um ${guess_name} handelt. Ich habe ${steps} Schritte benötigt, um ihn/sie zu erraten.\n${guess_description}",
-        "translation": "I am very sure that it is ${guess_name} . It took me ${steps} steps to guess him/her.\n${guess_description}",
+        "translation": "I am very sure that it is ${guess_name}. It took me ${steps} steps to guess him/her.\n${guess_description}",
         "context": "commands -> games -> akinator -> result",
         "labels": "de.json",
         "max_length": null
@@ -13858,7 +13858,7 @@
     {
         "identifier": "commands.games.rps.drawDescription",
         "source_string": "${player1} und ${player2} haben ${player1_choice} gewählt. Es ist ein Unentschieden!",
-        "translation": "${player1} and ${player2} have chosen ${player1_choice} . It's a draw!",
+        "translation": "${player1} and ${player2} have chosen ${player1_choice}. It's a draw!",
         "context": "commands -> games -> rps -> drawDescription",
         "labels": "de.json",
         "max_length": null
