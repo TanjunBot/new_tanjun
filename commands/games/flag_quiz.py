@@ -172,9 +172,8 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         async def guess_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
-            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.followup.send(
+                await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.flagquiz.notYourGame"
                     ),
