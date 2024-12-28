@@ -34,11 +34,7 @@
     {
         "identifier": "commands.help.timeout.description",
         "source_string": "Der Help Befehl ist Getimeouted. Du kannst nicht länger mit ihm interagieren",
-<<<<<<< HEAD
-        "translation": "Der Help Befehl ist Getimeouted. Du kannst nicht länger mit ihm interagieren",
-=======
         "translation": "The help command has been timed out. You can no longer interact with it",
->>>>>>> Development
         "context": "The Description of the Embed when the view is timed out",
         "labels": "de.json, embed_description",
         "max_length": 4096
@@ -46,11 +42,7 @@
     {
         "identifier": "commands.help.not_authorized.title",
         "source_string": "Nicht autorisiert",
-<<<<<<< HEAD
-        "translation": "Nicht autorisiert",
-=======
         "translation": "Not authorized",
->>>>>>> Development
         "context": "Title of the Embed when someone tries to interact with the view of someone else",
         "labels": "de.json, embed_title",
         "max_length": 256
