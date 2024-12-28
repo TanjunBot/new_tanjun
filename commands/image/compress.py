@@ -36,11 +36,16 @@ async def compress(
 
     image = await image.read()
     image = Image.open(io.BytesIO(image))
-    image.save("image.png", quality=quality)
+
+    # Convert to RGB mode (required for JPEG)
+    if image.mode in ("RGBA", "P"):
+        image = image.convert("RGB")
 
     buffer = BytesIO()
-    image.save(buffer, format="png")
+    # Save as JPEG with the specified quality
+    image.save(buffer, format="JPEG", quality=quality, optimize=True)
     buffer.seek(0)
+
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale, "commands.image.compress.success.title"
@@ -48,11 +53,11 @@ async def compress(
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.image.compress.success.description",
-            newSize=f"{round(buffer.getbuffer().nbytes / 1024 / 1024, 2)}",
-            oldSize=f"{round(image.size / 1024 / 1024, 2)}",
+            newSize=f"{round(buffer.getbuffer().nbytes / 1024, 2)}",
+            oldSize=f"{round(len(image.tobytes()) / 1024, 2)}",
         ),
     )
-    embed.set_image(url="attachment://image.png")
+    embed.set_image(url="attachment://image.jpg")
     await commandInfo.reply(
-        embed=embed, file=discord.File(fp=buffer, filename="image.png")
+        embed=embed, file=discord.File(fp=buffer, filename="image.jpg")
     )
