@@ -24961,8 +24961,8 @@
     },
     {
         "identifier": "logs.set.name",
-        "source_string": "set",
-        "translation": "set",
+        "source_string": "festlegen",
+        "translation": "festlegen",
         "context": "logs -> set -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -24985,8 +24985,8 @@
     },
     {
         "identifier": "logs.remove.name",
-        "source_string": "remove",
-        "translation": "remove",
+        "source_string": "entfernen",
+        "translation": "entfernen",
         "context": "logs -> remove -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -25001,8 +25001,8 @@
     },
     {
         "identifier": "logs.configure.name",
-        "source_string": "configure",
-        "translation": "configure",
+        "source_string": "konfigurieren",
+        "translation": "konfigurieren",
         "context": "logs -> configure -> name",
         "labels": "de.json, command_name",
         "max_length": 32
