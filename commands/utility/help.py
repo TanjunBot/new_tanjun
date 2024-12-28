@@ -41,7 +41,11 @@ async def help(commandInfo, ctx):
                             command_text += f"{group_desc}\n\n"
                         except Exception:
                             command_text += (
-                                f"*No description available for {group.name}*\n\n"
+                                tanjunLocalizer.localize(
+                                    commandInfo.locale,
+                                    "commands.utility.help.noDescriptionAvailable",
+                                    group_name=group.name,
+                                )
                             )
 
                         # Process each subcommand
@@ -57,7 +61,11 @@ async def help(commandInfo, ctx):
                                     command_text += f"{cmd_desc}\n\n"
                                 except Exception:
                                     command_text += (
-                                        f"*No description available for {cmd.name}*\n\n"
+                                        tanjunLocalizer.localize(
+                                            commandInfo.locale,
+                                            "commands.utility.help.noDescriptionAvailable",
+                                            group_name=cmd.name,
+                                        )
                                     )
 
                                 # Process subcommands within the subcommand group
@@ -77,7 +85,10 @@ async def help(commandInfo, ctx):
                                         hasattr(subcmd, "parameters")
                                         and subcmd.parameters
                                     ):
-                                        command_text += "**Parameters:**\n"
+                                        command_text += tanjunLocalizer.localize(
+                                            commandInfo.locale,
+                                            "commands.utility.help.parameters",
+                                        )
                                         for param in subcmd.parameters:
                                             try:
                                                 param_name = tanjunLocalizer.localize(
@@ -90,7 +101,11 @@ async def help(commandInfo, ctx):
                                                 )
                                                 command_text += f"- **{param_name}**: {param_desc}\n"
                                             except Exception:
-                                                command_text += f"- **{param.name}**: *No description available*\n"
+                                                command_text += tanjunLocalizer.localize(
+                                                    commandInfo.locale,
+                                                    "commands.utility.help.noDescriptionAvailable",
+                                                    group_name=param.name,
+                                                )
                                         command_text += "\n"
 
                                     if (
@@ -112,8 +127,10 @@ async def help(commandInfo, ctx):
                                     )
                                     command_text += f"{cmd_desc}\n\n"
                                 except Exception:
-                                    command_text += (
-                                        f"*No description available for {cmd.name}*\n\n"
+                                    command_text += tanjunLocalizer.localize(
+                                        commandInfo.locale,
+                                        "commands.utility.help.noDescriptionAvailable",
+                                        group_name=cmd.name,
                                     )
 
                                 # Process parameters only if they exist
@@ -133,7 +150,11 @@ async def help(commandInfo, ctx):
                                                 f"- **{param_name}**: {param_desc}\n"
                                             )
                                         except Exception:
-                                            command_text += f"- **{param.name}**: *No description available*\n"
+                                            command_text += tanjunLocalizer.localize(
+                                                commandInfo.locale,
+                                                "commands.utility.help.noDescriptionAvailable",
+                                                group_name=param.name,
+                                            )
                                     command_text += "\n"
 
                                 if (
@@ -158,16 +179,28 @@ async def help(commandInfo, ctx):
             for i, text in enumerate(texts, 1):
                 overall_length += len(text)
                 if text.strip():
-                    embed = discord.Embed(
-                        title=(
-                            f"{self.values[0]}"
-                            + (f" - Page {i}/{len(texts)}" if len(texts) > 1 else "")
-                            if len(texts) > 1
-                            else None
-                        ),
-                        description=text,
-                        color=0xCB33F5,
-                    )
+                    if len(texts) > 1:
+                        embed = discord.Embed(
+                            title=tanjunLocalizer.localize(
+                                commandInfo.locale,
+                                "commands.utility.help.title",
+                                group_name=self.values[0],
+                                page=i,
+                                total_pages=len(texts),
+                            ),
+                            description=text,
+                            color=0xCB33F5,
+                        )
+                    else:
+                        embed = discord.Embed(
+                            title=tanjunLocalizer.localize(
+                                commandInfo.locale,
+                                "commands.utility.help.titleNoPages",
+                                group_name=self.values[0],
+                            ),
+                            description=text,
+                            color=0xCB33F5,
+                        )
                     embeds.append(embed)
 
             view = (
@@ -196,8 +229,13 @@ async def help(commandInfo, ctx):
             if not options:
                 options.append(
                     discord.SelectOption(
-                        label="No Commands",
-                        description="No commands available",
+                        label=tanjunLocalizer.localize(
+                            commandInfo.locale, "commands.utility.help.noCommands.label"
+                        ),
+                        description=tanjunLocalizer.localize(
+                            commandInfo.locale,
+                            "commands.utility.help.noCommands.description",
+                        ),
                         value="no_commands",
                     )
                 )

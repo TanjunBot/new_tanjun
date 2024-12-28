@@ -100,7 +100,15 @@ async def addrole(
                     self.commandInfo.locale,
                     f"commands.admin.{self.action}role.multipleSuccess",
                     count=success_count,
-                    action="added to" if self.action == "add" else "removed from",
+                    action=tanjunLocalizer.localize(
+                        self.commandInfo.locale,
+                        "commands.admin.add_role.multipleSuccess.action",
+                    )
+                    if self.action == "add"
+                    else tanjunLocalizer.localize(
+                        self.commandInfo.locale,
+                        "commands.admin.remove_role.multipleSuccess.action",
+                    ),
                 ),
                 view=discord.ui.View(),
             )

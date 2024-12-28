@@ -84,9 +84,8 @@ async def disable_level_system(commandInfo: commandInfo):
     await view.wait()
 
     if view.value is None:
-        await message.edit(
-            content="Timed out. The level system was not disabled.", view=None
-        )
+        await message.delete()
+        return
     elif view.value:
         await delete_level_system_data(str(commandInfo.guild.id))
         await set_level_system_status(str(commandInfo.guild.id), False)

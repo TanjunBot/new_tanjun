@@ -254,16 +254,16 @@ async def create_embed(
                 ),
                 style=discord.TextStyle.short,
                 required=True,
-                max_length=5,
-                min_length=2,
-                placeholder="true/false",
+                max_length=1,
+                min_length=1,
+                placeholder="y/n",
             )
             self.add_item(self.name)
             self.add_item(self.value)
             self.add_item(self.inline)
 
         async def on_submit(self, interaction: discord.Interaction):
-            inline = self.inline.value.lower() == "true"
+            inline = self.inline.value.lower() == "true" or self.inline.value.lower() == "y"
             self.view.embed.add_field(
                 name=self.name.value, value=self.value.value, inline=inline
             )
@@ -439,7 +439,14 @@ async def create_embed(
                     "commands.admin.embed.modals.editFieldModal.selectField",
                 ),
                 options=[
-                    discord.SelectOption(label=f"Field {i+1}", value=str(i))
+                    discord.SelectOption(
+                        label=tanjunLocalizer.localize(
+                            view.commandInfo.locale,
+                            "commands.admin.embed.modals.editFieldModal.fieldLabel",
+                            index=i + 1,
+                        ),
+                        value=str(i),
+                    )
                     for i in range(len(view.embed.fields))
                 ],
             )
@@ -470,9 +477,9 @@ async def create_embed(
                 ),
                 style=discord.TextStyle.short,
                 required=True,
-                max_length=5,
-                min_length=2,
-                placeholder="true/false",
+                max_length=1,
+                min_length=1,
+                placeholder="y/n",
             )
             self.add_item(self.field_index)
             self.add_item(self.name)
@@ -481,7 +488,7 @@ async def create_embed(
 
         async def on_submit(self, interaction: discord.Interaction):
             index = int(self.field_index.values[0])
-            inline = self.inline.value.lower() == "true"
+            inline = self.inline.value.lower() == "y"
             self.view.embed.set_field_at(
                 index, name=self.name.value, value=self.value.value, inline=inline
             )

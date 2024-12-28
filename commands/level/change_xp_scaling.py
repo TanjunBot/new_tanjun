@@ -184,7 +184,12 @@ async def show_xp_scalings(
 
             xp_examples = "\n".join(
                 [
-                    f"Level {i}: {get_xp_for_level(i, scaling, custom_formula if scaling == 'custom' else None)} XP"
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.level.showxpscalings.data",
+                        level=i,
+                        xp=get_xp_for_level(i, scaling, custom_formula if scaling == 'custom' else None),
+                    )
                     for i in range(current_start, current_end + 1)
                 ]
             )

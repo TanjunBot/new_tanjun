@@ -220,7 +220,9 @@ def process_image(
         draw_text_with_outline(
             draw,
             (250, 105),
-            f"Level: {user_info['level']}",
+            tanjunLocalizer.localize(
+                commandInfo.locale, "commands.level.rank.data.level", level=user_info["level"]
+            ),
             info_font,
             (255, 255, 255, 255),
             (0, 0, 0, 255),
@@ -228,7 +230,12 @@ def process_image(
         draw_text_with_outline(
             draw,
             (250, 150),
-            f"XP: {user_info['xp']}/{user_info['xp_needed']}",
+            tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.level.rank.data.xp",
+                xp=user_info["xp"],
+                xp_needed=user_info["xp_needed"],
+            ),
             info_font,
             (255, 255, 255, 255),
             (0, 0, 0, 255),

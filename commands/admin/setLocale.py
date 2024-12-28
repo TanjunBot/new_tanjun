@@ -17,7 +17,9 @@ async def set_locale(commandInfo: utility.commandInfo, locale: str):
 
     await commandInfo.guild.edit(
         preferred_locale=locale,
-        reason="Set locale",
+        reason=tanjunLocalizer.localize(
+            commandInfo.locale, "commands.admin.setLocale.setLocaleReason"
+        ),
     )
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
