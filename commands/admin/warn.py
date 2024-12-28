@@ -41,7 +41,7 @@ async def warn_user(
         days=warn_config["expiration_days"]
     )
 
-    await add_warning(guild_id, user_id, reason, expireDate)
+    await add_warning(guild_id, user_id, reason, expireDate, commandInfo.user.id)
     warn_count = len(await get_warnings(guild_id, user_id))
 
     embed = utility.tanjunEmbed(

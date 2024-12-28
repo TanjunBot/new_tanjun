@@ -102,6 +102,7 @@ async def create_tables():
         "  `reason` VARCHAR(255),"
         "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
         "  `expires_at` TIMESTAMP NULL,"
+        "  `created_by` VARCHAR(20) NOT NULL,"
         "  `escalation_level` INT DEFAULT 0"
         ") ENGINE=InnoDB"
     )
@@ -750,12 +751,12 @@ async def test_db(self, ctx):
     await execute_query(query)
 
 
-async def add_warning(guild_id, user_id, reason, expiration_date=None):
+async def add_warning(guild_id, user_id, reason, expiration_date, created_by):
     query = (
-        "INSERT INTO warnings (guild_id, user_id, reason, expires_at) "
-        "VALUES (%s, %s, %s, %s)"
+        "INSERT INTO warnings (guild_id, user_id, reason, expires_at, created_by) "
+        "VALUES (%s, %s, %s, %s, %s)"
     )
-    params = (guild_id, user_id, reason, expiration_date)
+    params = (guild_id, user_id, reason, expiration_date, created_by)
     await execute_action(query, params)
 
 
@@ -780,13 +781,13 @@ async def get_warnings(guild_id, user_id=None):
 
 async def get_detailed_warnings(guild_id, user_id):
     query = (
-        "SELECT id, reason, created_at, expires_at "
+        "SELECT id, reason, created_at, expires_at, created_by "
         "FROM warnings WHERE guild_id = %s AND user_id = %s "
         "ORDER BY created_at DESC"
     )
     params = (guild_id, user_id)
     result = await execute_query(query, params)
-    return [(row[0], row[1], row[2], row[3]) for row in result]
+    return [(row[0], row[1], row[2], row[3], row[4]) for row in result]
 
 
 async def remove_warning(warning_id):

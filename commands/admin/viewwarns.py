@@ -139,7 +139,7 @@ def create_warnings_embed(commandInfo, member, warnings, page):
         ),
     )
 
-    for i, (_, reason, created_at, expires_at) in enumerate(
+    for i, (_, reason, created_at, expires_at, created_by) in enumerate(
         current_warnings, start=start + 1
     ):
         expired = expires_at is not None and datetime.now() > expires_at
@@ -169,6 +169,7 @@ def create_warnings_embed(commandInfo, member, warnings, page):
                 ),
                 date=f"<t:{int(created_at.timestamp())}:D>",
                 expiration=expiration_str,
+                created_by={created_by},
             ),
             inline=False,
         )
