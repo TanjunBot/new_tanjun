@@ -27,82 +27,93 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
     if page > len(leaderboard) / 10 + 1:
         page = int(len(leaderboard) / 10 + 1)
 
-    def generateButtons(page: int, guild: discord.Guild):
-        buttons = []
-        if page > 1:
-            btn = discord.ui.Button(
-                label=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.level.leaderboard.previous"
-                ),
-                style=discord.ButtonStyle.primary,
-                custom_id=f"leaderboard_{page - 1}",
-            )
-            btn.callback = leaderboardButton
-            buttons.append(btn)
-        if page < int(len(leaderboard) / 10 + 1):
-            btn = discord.ui.Button(
-                label=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.level.leaderboard.next"
-                ),
-                style=discord.ButtonStyle.primary,
-                custom_id=f"leaderboard_{page + 1}",
-            )
-            btn.callback = leaderboardButton
-            buttons.append(btn)
-        return buttons
-
-    async def leaderboardButton(
-        button: discord.ui.Button, interaction: discord.Interaction
-    ):
-        page = int(button.custom_id.split("_")[1])
-        scaling = await get_xp_scaling(interaction.guild.id)
-        custom_formula = await get_custom_formula(interaction.guild.id)
-        embed = generateLeaderboardEmbed(
-            page, interaction.guild, scaling, custom_formula
-        )
-        buttons = generateButtons(page, interaction.guild)
-        view = discord.ui.View()
-        for button in buttons:
-            view.add_item(button)
-        await interaction.response.edit_message(embed=embed, view=view)
-
-    def generateLeaderboardEmbed(
-        page: int, guild: discord.Guild, scaling: str, custom_formula
-    ):
-        nonlocal leaderboard
+    async def generate_page(page_number: int) -> discord.Embed:
         description = ""
         for i in range(10):
             try:
-                placeData = leaderboard[i + (page - 1) * 10]
-
+                placeData = leaderboard[i + (page_number - 1) * 10]
                 user = placeData[0]
-
                 xp = placeData[1]
-
                 level = utility.get_level_for_xp(xp, scaling, custom_formula)
-
                 xp_from_last_level = xp - utility.get_xp_for_level(
                     level - 1, scaling, custom_formula
                 )
                 xp_till_next_level = utility.get_xp_for_level(
                     level, scaling, custom_formula
                 )
-
-                description += f"\n### {i + 1 + (page - 1) * 10}. <@{user}> - {tanjunLocalizer.localize(commandInfo.locale, 'commands.level.leaderboard.data', level=level, xp_from_last_level=xp_from_last_level, xp_till_next_level=xp_till_next_level)}"
+                description += f"\n{i + 1 + (page_number - 1) * 10}. <@{user}> - {tanjunLocalizer.localize(commandInfo.locale, 'commands.level.leaderboard.data', level=level, xp_from_last_level=xp_from_last_level, xp_till_next_level=xp_till_next_level)}"
             except Exception:
                 break
-        print(description)
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.leaderboard.title", page=page
-            ),
-            description=description,
-        )
+
+        if int(len(leaderboard) / 10 + 1) > 1:
+            embed = utility.tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.level.leaderboard.title",
+                    current_page=page_number,
+                    total_pages=int(len(leaderboard) / 10 + 1),
+                ),
+                description=description,
+            )
+        else:
+            embed = utility.tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    commandInfo.locale, "commands.level.leaderboard.titleNoPages"
+                ),
+                description=description,
+            )
         return embed
 
-    embed = generateLeaderboardEmbed(page, commandInfo.guild, scaling, custom_formula)
-    buttons = generateButtons(page, commandInfo.guild)
-    view = discord.ui.View()
-    for button in buttons:
-        view.add_item(button)
-    await commandInfo.reply(embed=embed, view=view)
+    class LeaderboardPaginator(discord.ui.View):
+        def __init__(self, current_page=1):
+            super().__init__(timeout=3600)
+            self.current_page = current_page
+            self.total_pages = int(len(leaderboard) / 10 + 1)
+
+        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
+        async def previous(
+            self, interaction: discord.Interaction, button: discord.ui.Button
+        ):
+            if not interaction.user.id == commandInfo.user.id:
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.level.leaderboard.notYourEmbed",
+                    ),
+                    ephemeral=True,
+                )
+                return
+
+            if self.current_page == 1:
+                self.current_page = self.total_pages
+            else:
+                self.current_page -= 1
+
+            new_page = await generate_page(self.current_page)
+            await interaction.response.edit_message(view=self, embed=new_page)
+
+        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
+        async def next(
+            self, interaction: discord.Interaction, button: discord.ui.Button
+        ):
+            if not interaction.user.id == commandInfo.user.id:
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.level.leaderboard.notYourEmbed",
+                    ),
+                    ephemeral=True,
+                )
+                return
+
+            if self.current_page == self.total_pages:
+                self.current_page = 1
+            else:
+                self.current_page += 1
+
+            new_page = await generate_page(self.current_page)
+            await interaction.response.edit_message(view=self, embed=new_page)
+
+    first_page = await generate_page(page)
+    view = LeaderboardPaginator(page)
+    await commandInfo.reply(embed=first_page, view=view)
