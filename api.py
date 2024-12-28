@@ -1204,7 +1204,7 @@ async def get_level_roles(guild_id: str) -> Dict[int, str]:
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return {row[0]: row[1] for row in result}
+    return result if result else []
 
 
 async def get_level_role(guild_id: str, role_id: str) -> int:

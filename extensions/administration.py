@@ -28,6 +28,7 @@ from commands.channel.welcome import welcomeNewUser
 from commands.channel.farewell import farewellUser
 import json
 import asyncio
+from minigames.addLevelXp import update_user_roles
 
 
 class administrationCog(commands.Cog):
@@ -236,6 +237,12 @@ class administrationCog(commands.Cog):
             return
         missingLocalization("JUSTATEST.IGNORETHIS.JUSTATEST")
         await ctx.send("jup gemacht :)")
+
+    @commands.command()
+    async def testupdateuserroles(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+        await update_user_roles(ctx.message, 10, str(ctx.guild.id))
 
 
 async def setup(bot):
