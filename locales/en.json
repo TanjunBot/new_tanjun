@@ -10633,8 +10633,8 @@
     },
     {
         "identifier": "commands.level.addlevelrole.error.role_exists.description",
-        "source_string": "Die Rolle {role} ist bereits Level {level} zugewiesen.",
-        "translation": "The role {role} is already assigned to level {level}.",
+        "source_string": "Die Rolle ${role} ist bereits eine Level Rolle.",
+        "translation": "Die Rolle ${role} ist bereits eine Level Rolle.",
         "context": "commands -> level -> addlevelrole -> error -> role_exists -> description",
         "labels": "de.json",
         "max_length": null
@@ -10649,8 +10649,8 @@
     },
     {
         "identifier": "commands.level.addlevelrole.success.description",
-        "source_string": "Die Rolle {role} wurde erfolgreich Level {level} hinzugefügt.",
-        "translation": "The role {role} was successfully added to level {level}.",
+        "source_string": "Die Rolle ${role} wurde erfolgreich als Levelrolle für das Level ${level} festgelegt. Mit dem Erreichen des Levels wird diese Rolle ab jetzt vergeben.",
+        "translation": "Die Rolle ${role} wurde erfolgreich als Levelrolle für das Level ${level} festgelegt. Mit dem Erreichen des Levels wird diese Rolle ab jetzt vergeben.",
         "context": "commands -> level -> addlevelrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -30283,6 +30283,14 @@
         "identifier": "commands.utility.help.noCommands.description",
         "source_string": "Es wurden keine Befehle gefunden. Vermutlich startet der Bot gerade noch. Bitte warte einen Moment.",
         "translation": "No commands were found. The bot is probably still starting. Please wait a moment.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.level.updateuserroles.reason",
+        "source_string": "Level ${level} wurde erreicht",
+        "translation": "Level ${level} has been reached",
         "context": null,
         "labels": "unassigned",
         "max_length": null
