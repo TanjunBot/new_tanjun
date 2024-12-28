@@ -30081,7 +30081,7 @@
     },
     {
         "identifier": "commands.image.compress.success.description",
-        "source_string": "Das Bild wurde erfolgreich komprimiert. Es ist jetzt ${newSize} MB groß. Vorher war es ${oldSize} MB groß.",
+        "source_string": "Das Bild wurde erfolgreich komprimiert. Es ist jetzt ${newSize} KB groß. Vorher war es ${oldSize} KB groß.",
         "translation": "The image has been successfully compressed. It is now ${newSize} MB in size. It was previously ${oldSize} MB in size.",
         "context": null,
         "labels": "embed_description, unassigned",
