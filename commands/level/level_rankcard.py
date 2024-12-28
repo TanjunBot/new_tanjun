@@ -312,7 +312,7 @@ async def generate_rankcard(user: discord.Member, user_info: dict, commandInfo: 
     # Load user avatar frames
     avatar_url = str(user.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
-
+    avatar_decoration_frames = None
     avatar_decoration_url = (
         str(user.avatar_decoration.url) if user.avatar_decoration else None
     )
