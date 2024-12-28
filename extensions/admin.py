@@ -59,7 +59,7 @@ class WarnCommands(discord.app_commands.Group):
         member=app_commands.locale_str("admin_warn_add_params_member_description"),
         reason=app_commands.locale_str("admin_warn_add_params_reason_description"),
     )
-    async def add(self, ctx, member: discord.Member, reason: str = None):
+    async def add(self, ctx, member: discord.Member, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -198,13 +198,13 @@ class RoleCommands(discord.app_commands.Group):
     async def createrole(
         self,
         ctx,
-        name: str,
-        color: str = None,
+        name: app_commands.Range[str, 1, 100],
+        color: app_commands.Range[str, 6, 7] = None,
         display_icon: discord.Attachment = None,
         hoist: bool = False,
         mentionable: bool = False,
-        reason: str = None,
-        display_emoji: str = None,
+        reason: app_commands.Range[str, 0, 100] = None,
+        display_emoji: app_commands.Range[str, 0, 1] = None,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -238,7 +238,7 @@ class RoleCommands(discord.app_commands.Group):
         role=app_commands.locale_str("admin_deleterole_params_role_description"),
         reason=app_commands.locale_str("admin_deleterole_params_reason_description"),
     )
-    async def deleterole(self, ctx, role: discord.Role, reason: str = None):
+    async def deleterole(self, ctx, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -475,8 +475,8 @@ class TriggerMessagesCommands(discord.app_commands.Group):
     async def add(
         self,
         ctx,
-        trigger: str,
-        response: str,
+        trigger: app_commands.Range[str, 1, 128],
+        response: app_commands.Range[str, 1, 1024],
         casesensitive: app_commands.Choice[str] = None,
     ):
         await ctx.response.defer()
@@ -564,7 +564,7 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_kick_params_user_description"),
         reason=app_commands.locale_str("admin_kick_params_reason_description"),
     )
-    async def kick(self, ctx, user: discord.Member, reason: str = None):
+    async def kick(self, ctx, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -596,8 +596,8 @@ class administrationCommands(discord.app_commands.Group):
         self,
         ctx,
         user: discord.Member,
-        reason: str = None,
-        delete_message_days: int = 0,
+        reason: app_commands.Range[str, 0, 100] = None,
+        delete_message_days: app_commands.Range[int, 0, 7] = 0,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -628,7 +628,7 @@ class administrationCommands(discord.app_commands.Group):
         username=app_commands.locale_str("admin_unban_params_username_description"),
         reason=app_commands.locale_str("admin_unban_params_reason_description"),
     )
-    async def unban(self, ctx, username: str, reason: str = None):
+    async def unban(self, ctx, username: app_commands.Range[str, 1, 100], reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -655,7 +655,7 @@ class administrationCommands(discord.app_commands.Group):
         reason=app_commands.locale_str("admin_timeout_params_reason_description"),
     )
     async def timeout(
-        self, ctx, member: discord.Member, duration: int, reason: str = None
+        self, ctx, member: discord.Member, duration: app_commands.Range[int, 1, 40320], reason: app_commands.Range[str, 0, 100] = None
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -683,7 +683,7 @@ class administrationCommands(discord.app_commands.Group):
         member=app_commands.locale_str("admin_removetimeout_params_member_description"),
         reason=app_commands.locale_str("admin_removetimeout_params_reason_description"),
     )
-    async def removetimeout(self, ctx, member: discord.Member, reason: str = None):
+    async def removetimeout(self, ctx, member: discord.Member, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -766,7 +766,7 @@ class administrationCommands(discord.app_commands.Group):
     async def purge(
         self,
         ctx,
-        limit: int,
+        limit: app_commands.Range[int, 1, 1000],
         channel: discord.TextChannel = None,
         setting: app_commands.Choice[str] = "all",
     ):
@@ -799,7 +799,7 @@ class administrationCommands(discord.app_commands.Group):
         member=app_commands.locale_str("admin_nickname_params_member_description"),
         nickname=app_commands.locale_str("admin_nickname_params_nickname_description"),
     )
-    async def nickname(self, ctx, member: discord.Member, nickname: str = None):
+    async def nickname(self, ctx, member: discord.Member, nickname: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -826,7 +826,7 @@ class administrationCommands(discord.app_commands.Group):
         seconds=app_commands.locale_str("admin_slowmode_params_seconds_description"),
         channel=app_commands.locale_str("admin_slowmode_params_channel_description"),
     )
-    async def slowmode(self, ctx, seconds: int, channel: discord.TextChannel = None):
+    async def slowmode(self, ctx, seconds: app_commands.Range[int, 1, 21600], channel: discord.TextChannel = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -928,7 +928,7 @@ class administrationCommands(discord.app_commands.Group):
         channel=app_commands.locale_str("admin_say_params_channel_description"),
         message=app_commands.locale_str("admin_say_params_message_description"),
     )
-    async def say(self, ctx, message: str, channel: discord.TextChannel = None):
+    async def say(self, ctx, message: app_commands.Range[str, 1, 2000], channel: discord.TextChannel = None):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -1079,12 +1079,12 @@ class administrationCommands(discord.app_commands.Group):
     async def create_ticket(
         self,
         ctx,
-        name: str,
-        description: str,
+        name: app_commands.Range[str, 1, 128],
+        description: app_commands.Range[str, 1, 1024],
         channel: discord.TextChannel = None,
         pingrole: discord.Role = None,
         summarychannel: discord.TextChannel = None,
-        introduction: str = None,
+        introduction: app_commands.Range[str, 0, 1024] = None,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(

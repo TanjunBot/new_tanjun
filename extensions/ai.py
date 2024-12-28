@@ -16,7 +16,9 @@ async def aiCustomSituationAutocomplete(
 ) -> List[app_commands.Choice[str]]:
     situations = await getCustomSituations()
     filtered_situations = [
-        situation[0] for situation in situations if current.lower() in situation[0].lower()
+        situation[0]
+        for situation in situations
+        if current.lower() in situation[0].lower()
     ]
 
     return [
@@ -28,15 +30,23 @@ async def aiCustomSituationAutocomplete(
 class CustomSituationCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("ai_createcustom_name"),
-        description=app_commands.locale_str("ai_createcustom_description")
+        description=app_commands.locale_str("ai_createcustom_description"),
     )
     @app_commands.describe(
         name=app_commands.locale_str("ai_createcustom_params_name_description"),
-        personality=app_commands.locale_str("ai_createcustom_params_personality_description"),
-        temperature=app_commands.locale_str("ai_createcustom_params_temperature_description"),
+        personality=app_commands.locale_str(
+            "ai_createcustom_params_personality_description"
+        ),
+        temperature=app_commands.locale_str(
+            "ai_createcustom_params_temperature_description"
+        ),
         topp=app_commands.locale_str("ai_createcustom_params_topp_description"),
-        frequencypenalty=app_commands.locale_str("ai_createcustom_params_frequencypenalty_description"),
-        presencepenalty=app_commands.locale_str("ai_createcustom_params_presencepenalty_description"),
+        frequencypenalty=app_commands.locale_str(
+            "ai_createcustom_params_frequencypenalty_description"
+        ),
+        presencepenalty=app_commands.locale_str(
+            "ai_createcustom_params_presencepenalty_description"
+        ),
     )
     async def add_custom(
         self,
@@ -74,7 +84,7 @@ class CustomSituationCommands(discord.app_commands.Group):
 
     @app_commands.command(
         name=app_commands.locale_str("ai_deletecustom_name"),
-        description=app_commands.locale_str("ai_deletecustom_description")
+        description=app_commands.locale_str("ai_deletecustom_description"),
     )
     async def delete_custom(
         self,
@@ -102,14 +112,21 @@ class CustomSituationCommands(discord.app_commands.Group):
 class AiCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("ai_askcustom_name"),
-        description=app_commands.locale_str("ai_askcustom_description")
+        description=app_commands.locale_str("ai_askcustom_description"),
     )
     @app_commands.describe(
         prompt=app_commands.locale_str("ai_askcustom_params_prompt_description"),
-        personality=app_commands.locale_str("ai_askcustom_params_personality_description"),
+        personality=app_commands.locale_str(
+            "ai_askcustom_params_personality_description"
+        ),
     )
     @app_commands.autocomplete(personality=aiCustomSituationAutocomplete)
-    async def ask_custom_situation(self, interaction: discord.Interaction, prompt: app_commands.Range[str, 1, 1000], personality: str):
+    async def ask_custom_situation(
+        self,
+        interaction: discord.Interaction,
+        prompt: app_commands.Range[str, 1, 1000],
+        personality: str,
+    ):
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -125,28 +142,41 @@ class AiCommands(discord.app_commands.Group):
 
         situation = await getCustomSituation(personality)
 
-        await ask_gpt(commandInfo, name=personality, situation=situation[1], prompt=prompt, temperature=situation[4], top_p=situation[5], frequency_penalty=situation[6], presence_penalty=situation[7])
+        await ask_gpt(
+            commandInfo,
+            name=personality,
+            situation=situation[1],
+            prompt=prompt,
+            temperature=situation[4],
+            top_p=situation[5],
+            frequency_penalty=situation[6],
+            presence_penalty=situation[7],
+        )
 
     @app_commands.command(
         name=app_commands.locale_str("ai_askgpt_name"),
-        description=app_commands.locale_str("ai_askgpt_description")
+        description=app_commands.locale_str("ai_askgpt_description"),
     )
     @app_commands.describe(
         prompt=app_commands.locale_str("ai_askgpt_params_prompt_description"),
         temperature=app_commands.locale_str("ai_askgpt_params_temperature_description"),
         topp=app_commands.locale_str("ai_askgpt_params_topp_description"),
-        frequencypenalty=app_commands.locale_str("ai_askgpt_params_frequencypenalty_description"),
-        presencepenalty=app_commands.locale_str("ai_askgpt_params_presencepenalty_description"),
+        frequencypenalty=app_commands.locale_str(
+            "ai_askgpt_params_frequencypenalty_description"
+        ),
+        presencepenalty=app_commands.locale_str(
+            "ai_askgpt_params_presencepenalty_description"
+        ),
     )
     async def ask_gpt_command(
-            self,
-            interaction: discord.Interaction,
-            prompt: app_commands.Range[str, 1, 1000],
-            temperature: app_commands.Range[float, 0, 2] = 1,
-            topp: app_commands.Range[float, 0, 1] = 1,
-            frequencypenalty: app_commands.Range[float, 0, 2] = 0,
-            presencepenalty: app_commands.Range[float, 0, 2] = 0,
-            ):
+        self,
+        interaction: discord.Interaction,
+        prompt: app_commands.Range[str, 1, 1000],
+        temperature: app_commands.Range[float, 0, 2] = 1,
+        topp: app_commands.Range[float, 0, 1] = 1,
+        frequencypenalty: app_commands.Range[float, 0, 2] = 0,
+        presencepenalty: app_commands.Range[float, 0, 2] = 0,
+    ):
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -160,28 +190,43 @@ class AiCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await ask_gpt(commandInfo, name="GPT", situation="", prompt=prompt, temperature=temperature, top_p=topp, frequency_penalty=frequencypenalty, presence_penalty=presencepenalty)
+        await ask_gpt(
+            commandInfo,
+            name="GPT",
+            situation="",
+            prompt=prompt,
+            temperature=temperature,
+            top_p=topp,
+            frequency_penalty=frequencypenalty,
+            presence_penalty=presencepenalty,
+        )
 
     @app_commands.command(
         name=app_commands.locale_str("ai_asktanjuwun_name"),
-        description=app_commands.locale_str("ai_asktanjuwun_description")
+        description=app_commands.locale_str("ai_asktanjuwun_description"),
     )
     @app_commands.describe(
         prompt=app_commands.locale_str("ai_asktanjuwun_params_prompt_description"),
-        temperature=app_commands.locale_str("ai_asktanjuwun_params_temperature_description"),
+        temperature=app_commands.locale_str(
+            "ai_asktanjuwun_params_temperature_description"
+        ),
         topp=app_commands.locale_str("ai_asktanjuwun_params_topp_description"),
-        frequencypenalty=app_commands.locale_str("ai_asktanjuwun_params_frequencypenalty_description"),
-        presencepenalty=app_commands.locale_str("ai_asktanjuwun_params_presencepenalty_description"),
+        frequencypenalty=app_commands.locale_str(
+            "ai_asktanjuwun_params_frequencypenalty_description"
+        ),
+        presencepenalty=app_commands.locale_str(
+            "ai_asktanjuwun_params_presencepenalty_description"
+        ),
     )
     async def ask_tanjuwun_command(
-            self,
-            interaction: discord.Interaction,
-            prompt: app_commands.Range[str, 1, 1000],
-            temperature: app_commands.Range[float, 0, 2] = 1,
-            topp: app_commands.Range[float, 0, 1] = 1,
-            frequencypenalty: app_commands.Range[float, 0, 2] = 0,
-            presencepenalty: app_commands.Range[float, 0, 2] = 0,
-            ):
+        self,
+        interaction: discord.Interaction,
+        prompt: app_commands.Range[str, 1, 1000],
+        temperature: app_commands.Range[float, 0, 2] = 1,
+        topp: app_commands.Range[float, 0, 1] = 1,
+        frequencypenalty: app_commands.Range[float, 0, 2] = 0,
+        presencepenalty: app_commands.Range[float, 0, 2] = 0,
+    ):
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -202,7 +247,16 @@ class AiCommands(discord.app_commands.Group):
         name: {interaction.user} server: {interaction.guild} channel: {interaction.channel}
         """
 
-        await ask_gpt(commandInfo, name="tanjuwun", situation=situation, prompt=prompt, temperature=temperature, top_p=topp, frequency_penalty=frequencypenalty, presence_penalty=presencepenalty)
+        await ask_gpt(
+            commandInfo,
+            name="tanjuwun",
+            situation=situation,
+            prompt=prompt,
+            temperature=temperature,
+            top_p=topp,
+            frequency_penalty=frequencypenalty,
+            presence_penalty=presencepenalty,
+        )
 
 
 class AiCog(commands.Cog):
@@ -211,8 +265,16 @@ class AiCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        aicmds = AiCommands(name=app_commands.locale_str("ai_name"), description=app_commands.locale_str("ai_description"))
-        aicmds.add_command(CustomSituationCommands(name=app_commands.locale_str("ai_customsituations_name"), description=app_commands.locale_str("ai_customsituations_description")))
+        aicmds = AiCommands(
+            name=app_commands.locale_str("ai_name"),
+            description=app_commands.locale_str("ai_description"),
+        )
+        aicmds.add_command(
+            CustomSituationCommands(
+                name=app_commands.locale_str("ai_customsituations_name"),
+                description=app_commands.locale_str("ai_customsituations_description"),
+            )
+        )
         self.bot.tree.add_command(aicmds)
 
 

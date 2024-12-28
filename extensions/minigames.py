@@ -112,7 +112,7 @@ class CountingCommands(discord.app_commands.Group):
         ),
     )
     async def setcountingprogress(
-        self, ctx, channel: discord.TextChannel = None, progress: int = 0
+        self, ctx, channel: discord.TextChannel = None, progress: app_commands.Range[int, 1, 100000] = 0
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -207,7 +207,7 @@ class CountingChallengeCommands(discord.app_commands.Group):
         ),
     )
     async def setcountingchallengeprogress(
-        self, ctx, channel: discord.TextChannel = None, progress: int = 0
+        self, ctx, channel: discord.TextChannel = None, progress: app_commands.Range[int, 1, 100000] = 0
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -298,7 +298,7 @@ class CountingModesCommands(discord.app_commands.Group):
         ),
     )
     async def setcountingmodesprogress(
-        self, ctx, channel: discord.TextChannel = None, progress: int = 0
+        self, ctx, channel: discord.TextChannel = None, progress: app_commands.Range[int, 1, 100000] = 0
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(

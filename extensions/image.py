@@ -47,7 +47,7 @@ class ImageCommands(discord.app_commands.Group):
         interaction: discord.Interaction,
         image: discord.Attachment,
         type: str = "gaussian",
-        radius: int = 3,
+        radius: app_commands.Range[int, 1, 10] = 3,
     ):
         await interaction.response.defer()
         commandInfo = utility.commandInfo(

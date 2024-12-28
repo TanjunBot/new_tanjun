@@ -120,7 +120,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
         ),
     )
     async def claimboosterrole(
-        self, ctx, name: str, color: str = None, icon: discord.Attachment = None
+        self, ctx, name: app_commands.Range[str, 1, 100], color: app_commands.Range[str, 6, 7] = None, icon: discord.Attachment = None
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -220,7 +220,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
             "utility_claimboosterchannel_params_name_description"
         ),
     )
-    async def claimboosterchannel(self, ctx, name: str):
+    async def claimboosterchannel(self, ctx, name: app_commands.Range[str, 1, 100]):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -550,7 +550,7 @@ class TwitchCommands(discord.app_commands.Group):
         ctx,
         twitchname: str,
         channel: discord.TextChannel,
-        notificationmessage: str = None,
+        notificationmessage: app_commands.Range[str, 0, 1024] = None,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -726,7 +726,7 @@ class utilityCommands(discord.app_commands.Group):
         user=app_commands.locale_str("utility_report_params_user_description"),
         reason=app_commands.locale_str("utility_report_params_reason_description"),
     )
-    async def report(self, ctx, user: discord.Member, reason: str):
+    async def report(self, ctx, user: discord.Member, reason: app_commands.Range[int, 12, 1024]):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -764,10 +764,10 @@ class ScheduledMessageCommands(discord.app_commands.Group):
     async def schedulemessage(
         self,
         ctx,
-        content: str,
-        sendin: str,
+        content: app_commands.Range[str, 1, 1024],
+        sendin: app_commands.Range[str, 1, 100],
         channel: discord.TextChannel = None,
-        repeat: str = None,
+        repeat: app_commands.Range[str, 1, 100] = None,
         # attachment1: discord.Attachment = None,
         # attachment2: discord.Attachment = None,
         # attachment3: discord.Attachment = None,

@@ -74,7 +74,7 @@ class BlacklistCommands(discord.app_commands.Group):
             "level_blacklist_addc_params_reason_description"
         ),
     )
-    async def add_channel(self, ctx, channel: discord.TextChannel, reason: str = None):
+    async def add_channel(self, ctx, channel: discord.TextChannel, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -123,7 +123,7 @@ class BlacklistCommands(discord.app_commands.Group):
             "level_blacklist_addr_params_reason_description"
         ),
     )
-    async def add_role(self, ctx, role: discord.Role, reason: str = None):
+    async def add_role(self, ctx, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -170,7 +170,7 @@ class BlacklistCommands(discord.app_commands.Group):
             "level_blacklist_addu_params_reason_description"
         ),
     )
-    async def add_user(self, ctx, user: discord.Member, reason: str = None):
+    async def add_user(self, ctx, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -240,7 +240,7 @@ class LevelBoostCommands(discord.app_commands.Group):
         ),
     )
     async def add_role_boost(
-        self, ctx, role: discord.Role, boost: float, additive: bool
+        self, ctx, role: discord.Role, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -272,7 +272,7 @@ class LevelBoostCommands(discord.app_commands.Group):
         ),
     )
     async def add_channel_boost(
-        self, ctx, channel: discord.TextChannel, boost: float, additive: bool
+        self, ctx, channel: discord.TextChannel, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -300,7 +300,7 @@ class LevelBoostCommands(discord.app_commands.Group):
         ),
     )
     async def add_user_boost(
-        self, ctx, user: discord.Member, boost: float, additive: bool
+        self, ctx, user: discord.Member, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(

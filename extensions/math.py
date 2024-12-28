@@ -90,7 +90,7 @@ class mathCommands(discord.app_commands.Group):
     @app_commands.describe(
         expression=app_commands.locale_str("math_calc_params_expression_description"),
     )
-    async def calc(self, ctx, expression: str):
+    async def calc(self, ctx, expression: app_commands.Range[str, 1, 128]):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -113,7 +113,7 @@ class mathCommands(discord.app_commands.Group):
     @app_commands.describe(
         equation=app_commands.locale_str("math_calculator_params_equation_description"),
     )
-    async def calculator(self, ctx, equation: str = ""):
+    async def calculator(self, ctx, equation: app_commands.Range[str, 1, 128] = ""):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -166,7 +166,7 @@ class mathCommands(discord.app_commands.Group):
         max=app_commands.locale_str("math_randomnumber_params_max_description"),
         amount=app_commands.locale_str("math_randomnumber_params_amount_description"),
     )
-    async def random_number(self, ctx, min: int, max: int, amount: int = 1):
+    async def random_number(self, ctx, min: int, max: int, amount: app_commands.Range[int, 1, 10] = 1):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,

@@ -38,7 +38,7 @@ class WelcomeCommands(discord.app_commands.Group):
         self,
         ctx,
         channel: discord.TextChannel = None,
-        message: str = None,
+        message: app_commands.Range[str, 0, 1024] = None,
         background: discord.Attachment = None,
     ):
         await ctx.response.defer()
@@ -104,7 +104,7 @@ class FarewellCommands(discord.app_commands.Group):
         self,
         ctx,
         channel: discord.TextChannel = None,
-        message: str = None,
+        message: app_commands.Range[str, 0, 1024] = None,
         background: discord.Attachment = None,
     ):
         await ctx.response.defer()
@@ -216,9 +216,9 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         self,
         ctx,
         channel: discord.TextChannel,
-        messages: int,
-        per: int,
-        resetafter: int = 60,
+        messages: app_commands.Range[int, 1, 2147483647],
+        per: app_commands.Range[int, 1, 2147483647],
+        resetafter: app_commands.Range[int, 1, 2147483647] = 60,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
