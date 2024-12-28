@@ -53,220 +53,227 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
         )
         return
 
-    pages = []
-
     playerName = ""
 
-    for item in battleLog["items"]:
-        description = ""
-        battleTime = isoTimeToDate(item["battleTime"])
-        battleTime = date_time_to_timestamp(battleTime)
-        description += tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.utility.brawlstars.battlelog.description.battleTime",
-            timestamp=battleTime,
-        )
-        description += "\n"
-        gameMode = item["event"]["mode"]
-        gameModeLocale = tanjunLocalizer.localize(
-            commandInfo.locale,
-            f"commands.utility.brawlstars.gameModes.{gameMode}",
-        )
-        description += tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.utility.brawlstars.battlelog.description.gameMode",
-            gameMode=gameModeLocale,
-        )
-        description += "\n"
-        gameMap = item["event"]["map"]
-        mapLocale = tanjunLocalizer.localize(
-            commandInfo.locale,
-            f"commands.utility.brawlstars.maps.{gameMap}",
-        )
-        description += tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.utility.brawlstars.battlelog.description.gameMap",
-            gameMap=mapLocale,
-        )
-        description += "\n"
-        battle = item["battle"]
-        trophyChange = battle["trophyChange"]
-        description += tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.utility.brawlstars.battlelog.description.trophyChange",
-            trophyChange=trophyChange,
-        )
-        description += "\n"
-        if "result" in battle:
-            result = battle["result"]
-            resultLocale = tanjunLocalizer.localize(
-                commandInfo.locale,
-                f"commands.utility.brawlstars.results.{result}",
-            )
-            description += tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.battlelog.description.result",
-                result=resultLocale,
-            )
-            description += "\n"
-        if "duration" in battle:
-            duration = battle["duration"]
-            description += tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.battlelog.description.duration",
-                duration=duration,
-            )
-            description += "\n"
-        if "starPlayer" in battle:
-            starPlayer = battle["starPlayer"]
-            description += tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.battlelog.description.starPlayer",
-                tag=starPlayer["tag"],
-                name=starPlayer["name"],
-                brawlerName=starPlayer["brawler"]["name"],
-                brawlerPower=starPlayer["brawler"]["power"],
-                brawlerTrophies=starPlayer["brawler"]["trophies"],
-            )
-            description += "\n"
-        if "players" in battle:
-            enemies = battle["players"]
-            description += tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.battlelog.description.enemies",
-            )
-            for enemie in enemies:
-                tag = enemie["tag"]
-                if tag.lower() == playerTag.lower():
-                    playerName = enemie["name"]
-                    continue
-
-                name = enemie["name"]
-                brawler = enemie["brawler"]
-                brawlerName = brawler["name"]
-                brawlerPower = brawler["power"]
-                brawlerTrophies = brawler["trophies"]
-
-                description += tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.utility.brawlstars.battlelog.description.enemy",
-                    tag=tag,
-                    name=name,
-                    brawlerName=brawlerName,
-                    brawlerPower=brawlerPower,
-                    brawlerTrophies=brawlerTrophies,
-                )
-                description += "\n"
-        elif "teams" in battle:
-            teams = battle["teams"]
-            description += tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.battlelog.description.team1",
-            )
-            for player in teams[0]:
-                tag = player["tag"]
-                name = player["name"]
-                brawler = player["brawler"]
-                brawlerName = brawler["name"]
-                brawlerPower = brawler["power"]
-                brawlerTrophies = brawler["trophies"]
-                description += tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.utility.brawlstars.battlelog.description.teamPlayer",
-                    tag=tag,
-                    name=name,
-                    brawlerName=brawlerName,
-                    brawlerPower=brawlerPower,
-                    brawlerTrophies=brawlerTrophies,
-                )
-                description += "\n"
-            description += tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.battlelog.description.team2",
-            )
-            for player in teams[1]:
-                tag = player["tag"]
-                name = player["name"]
-                brawler = player["brawler"]
-                brawlerName = brawler["name"]
-                brawlerPower = brawler["power"]
-                brawlerTrophies = brawler["trophies"]
-                description += tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.utility.brawlstars.battlelog.description.teamPlayer",
-                    tag=tag,
-                    name=name,
-                    brawlerName=brawlerName,
-                    brawlerPower=brawlerPower,
-                    brawlerTrophies=brawlerTrophies,
-                )
-                description += "\n"
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.battlelog.title",
-                playerName=playerName,
-                current_page=len(pages) + 1,
-                total_pages=len(battleLog["items"]),
-                tag=playerTag,
-            ),
-            description=description,
-        )
-        pages.append(embed)
-
     class BattleLogPaginator(discord.ui.View):
-        def __init__(self, pages: list[tanjunEmbed]):
+        def __init__(
+            self,
+            battle_log: dict,
+            command_info: commandInfo,
+            player_tag: str,
+            player_name: str,
+        ):
             super().__init__(timeout=3600)
-            self.pages = pages
+            self.battle_log = battle_log
+            self.command_info = command_info
+            self.player_tag = player_tag
+            self.player_name = player_name
             self.current_page = 0
+            self.total_pages = len(battle_log["items"])
+
+        def generate_page(self, page_num: int) -> discord.Embed:
+            item = self.battle_log["items"][page_num]
+            description = ""
+            battleTime = isoTimeToDate(item["battleTime"])
+            battleTime = date_time_to_timestamp(battleTime)
+            description += tanjunLocalizer.localize(
+                self.command_info.locale,
+                "commands.utility.brawlstars.battlelog.description.battleTime",
+                timestamp=battleTime,
+            )
+            description += "\n"
+            gameMode = item["event"]["mode"]
+            gameModeLocale = tanjunLocalizer.localize(
+                self.command_info.locale,
+                f"commands.utility.brawlstars.gameModes.{gameMode}",
+            )
+            description += tanjunLocalizer.localize(
+                self.command_info.locale,
+                "commands.utility.brawlstars.battlelog.description.gameMode",
+                gameMode=gameModeLocale,
+            )
+            description += "\n"
+            gameMap = item["event"]["map"]
+            mapLocale = tanjunLocalizer.localize(
+                self.command_info.locale,
+                f"commands.utility.brawlstars.maps.{gameMap}",
+            )
+            description += tanjunLocalizer.localize(
+                self.command_info.locale,
+                "commands.utility.brawlstars.battlelog.description.gameMap",
+                gameMap=mapLocale,
+            )
+            description += "\n"
+            battle = item["battle"]
+            trophyChange = battle["trophyChange"]
+            description += tanjunLocalizer.localize(
+                self.command_info.locale,
+                "commands.utility.brawlstars.battlelog.description.trophyChange",
+                trophyChange=trophyChange,
+            )
+            description += "\n"
+            if "result" in battle:
+                result = battle["result"]
+                resultLocale = tanjunLocalizer.localize(
+                    self.command_info.locale,
+                    f"commands.utility.brawlstars.results.{result}",
+                )
+                description += tanjunLocalizer.localize(
+                    self.command_info.locale,
+                    "commands.utility.brawlstars.battlelog.description.result",
+                    result=resultLocale,
+                )
+                description += "\n"
+            if "duration" in battle:
+                duration = battle["duration"]
+                description += tanjunLocalizer.localize(
+                    self.command_info.locale,
+                    "commands.utility.brawlstars.battlelog.description.duration",
+                    duration=duration,
+                )
+                description += "\n"
+            if "starPlayer" in battle:
+                starPlayer = battle["starPlayer"]
+                description += tanjunLocalizer.localize(
+                    self.command_info.locale,
+                    "commands.utility.brawlstars.battlelog.description.starPlayer",
+                    tag=starPlayer["tag"],
+                    name=starPlayer["name"],
+                    brawlerName=starPlayer["brawler"]["name"],
+                    brawlerPower=starPlayer["brawler"]["power"],
+                    brawlerTrophies=starPlayer["brawler"]["trophies"],
+                )
+                description += "\n"
+            if "players" in battle:
+                enemies = battle["players"]
+                description += tanjunLocalizer.localize(
+                    self.command_info.locale,
+                    "commands.utility.brawlstars.battlelog.description.enemies",
+                )
+                for enemie in enemies:
+                    tag = enemie["tag"]
+                    if tag.lower() == self.player_tag.lower():
+                        self.player_name = enemie["name"]
+                        continue
+
+                    name = enemie["name"]
+                    brawler = enemie["brawler"]
+                    brawlerName = brawler["name"]
+                    brawlerPower = brawler["power"]
+                    brawlerTrophies = brawler["trophies"]
+
+                    description += tanjunLocalizer.localize(
+                        self.command_info.locale,
+                        "commands.utility.brawlstars.battlelog.description.enemy",
+                        tag=tag,
+                        name=name,
+                        brawlerName=brawlerName,
+                        brawlerPower=brawlerPower,
+                        brawlerTrophies=brawlerTrophies,
+                    )
+                    description += "\n"
+            elif "teams" in battle:
+                teams = battle["teams"]
+                description += tanjunLocalizer.localize(
+                    self.command_info.locale,
+                    "commands.utility.brawlstars.battlelog.description.team1",
+                )
+                for player in teams[0]:
+                    tag = player["tag"]
+                    name = player["name"]
+                    brawler = player["brawler"]
+                    brawlerName = brawler["name"]
+                    brawlerPower = brawler["power"]
+                    brawlerTrophies = brawler["trophies"]
+                    description += tanjunLocalizer.localize(
+                        self.command_info.locale,
+                        "commands.utility.brawlstars.battlelog.description.teamPlayer",
+                        tag=tag,
+                        name=name,
+                        brawlerName=brawlerName,
+                        brawlerPower=brawlerPower,
+                        brawlerTrophies=brawlerTrophies,
+                    )
+                    description += "\n"
+                description += tanjunLocalizer.localize(
+                    self.command_info.locale,
+                    "commands.utility.brawlstars.battlelog.description.team2",
+                )
+                for player in teams[1]:
+                    tag = player["tag"]
+                    name = player["name"]
+                    brawler = player["brawler"]
+                    brawlerName = brawler["name"]
+                    brawlerPower = brawler["power"]
+                    brawlerTrophies = brawler["trophies"]
+                    description += tanjunLocalizer.localize(
+                        self.command_info.locale,
+                        "commands.utility.brawlstars.battlelog.description.teamPlayer",
+                        tag=tag,
+                        name=name,
+                        brawlerName=brawlerName,
+                        brawlerPower=brawlerPower,
+                        brawlerTrophies=brawlerTrophies,
+                    )
+                    description += "\n"
+            return tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    self.command_info.locale,
+                    "commands.utility.brawlstars.battlelog.title",
+                    playerName=self.player_name,
+                    current_page=page_num + 1,
+                    total_pages=self.total_pages,
+                    tag=self.player_tag,
+                ),
+                description=description,
+            )
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
         async def previous(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
-            if not interaction.user.id == commandInfo.user.id:
+            if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        self.command_info.locale,
                         "commands.utility.brawlstars.events.notYourEmbed",
                     ),
                     ephemeral=True,
                 )
                 return
             if self.current_page == 0:
-                self.current_page = len(self.pages) - 1
+                self.current_page = self.total_pages - 1
             else:
                 self.current_page -= 1
             await interaction.response.edit_message(
-                view=self, embed=pages[self.current_page]
+                view=self, embed=self.generate_page(self.current_page)
             )
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
         async def next(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
-            if not interaction.user.id == commandInfo.user.id:
+            if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        self.command_info.locale,
                         "commands.utility.brawlstars.events.notYourEmbed",
                     ),
                     ephemeral=True,
                 )
                 return
-            if self.current_page == len(self.pages) - 1:
+            if self.current_page == self.total_pages - 1:
                 self.current_page = 0
             else:
                 self.current_page += 1
             await interaction.response.edit_message(
-                view=self, embed=pages[self.current_page]
+                view=self, embed=self.generate_page(self.current_page)
             )
 
-    if len(pages) > 1:
-        view = BattleLogPaginator(pages)
-        await commandInfo.reply(embed=pages[0], view=view)
+    if len(battleLog["items"]) > 1:
+        view = BattleLogPaginator(battleLog, commandInfo, playerTag, playerName)
+        await commandInfo.reply(embed=view.generate_page(0), view=view)
     else:
-
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -274,6 +281,6 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
                 playerName=playerName,
                 tag=playerTag,
             ),
-            description=pages[0].description,
+            description="" if not battleLog["items"] else BattleLogPaginator(battleLog, commandInfo, playerTag, playerName).generate_page(0).description
         )
         await commandInfo.reply(embed=embed)

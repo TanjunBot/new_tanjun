@@ -40,7 +40,9 @@ intents.auto_moderation_execution = True
 intents.invites = True
 intents.presences = False
 
-bot = commands.Bot("t.", intents=intents, application_id=config.applicationId)
+bot = commands.AutoShardedBot(
+    "t.", intents=intents, application_id=config.applicationId
+)
 
 
 async def main():
@@ -55,15 +57,22 @@ async def main():
 
 async def create_pool():
     try:
-        p = await asyncmy.create_pool(
+        # p = await asyncmy.create_pool(
+        #     host=database_ip,
+        #     user=database_user,
+        #     password=database_password,
+        #     db=database_schema,
+        #     maxsize=1,
+        #     minsize=1,
+        # )
+        # return p
+        connection = await asyncmy.connect(
             host=database_ip,
             user=database_user,
             password=database_password,
             db=database_schema,
-            maxsize=1,
-            minsize=1,
         )
-        return p
+        return connection
     except Exception as e:
         print(f"Error creating pool: {e}")
         return None
@@ -85,5 +94,6 @@ async def on_ready():
     await api.create_tables()
     await initTwitch()
     print("Bot is running!")
+
 
 bot.run(config.token)

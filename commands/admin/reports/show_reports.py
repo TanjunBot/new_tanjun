@@ -4,6 +4,9 @@ from localizer import tanjunLocalizer
 from api import (
     get_reports,
     resolve_report,
+    block_reporter,
+    check_if_reporter_is_blocked,
+    unblock_reporter,
 )
 
 
@@ -38,11 +41,20 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
         await commandInfo.reply(embed=embed)
         return
 
+    async def checkIfCurrentReporterIsBlocked(self, reports: list, page: int):
+        return await check_if_reporter_is_blocked(
+            commandInfo.guild.id, reports[page][3]
+        )
+
+    currentReporterIsBlocked = await checkIfCurrentReporterIsBlocked(reports, 0)
+
     class reportsView(discord.ui.View):
-        def __init__(self, reports: list):
+        nonlocal currentReporterIsBlocked
+
+        def __init__(self, reports: list, page: int = 0):
             super().__init__()
             self.reports = reports
-            self.page = 0
+            self.page = page
             self.previous.disabled = len(reports) <= 1
             self.next.disabled = len(reports) <= 1
 
@@ -100,6 +112,68 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
         #     await interaction.response.edit_message(
         #         view=self, embed=self.get_embed()
         #     )
+
+        if not currentReporterIsBlocked:
+
+            @discord.ui.button(
+                label=tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.admin.reports.show_reports.block.label",
+                ),
+                style=discord.ButtonStyle.danger,
+                emoji="🚫",
+            )
+            async def block(
+                self,
+                interaction: discord.Interaction,
+                button: discord.ui.Button,
+            ):
+                if interaction.user.id != commandInfo.user.id:
+                    await interaction.response.send_message(
+                        tanjunLocalizer.localize(
+                            commandInfo.locale,
+                            "commands.admin.reports.show_reports.not_your_reports",
+                        ),
+                        ephemeral=True,
+                    )
+                    return
+                await block_reporter(commandInfo.guild.id, self.reports[self.page][3])
+                await interaction.response.edit_message(
+                    view=reportsView(reports, self.page), embed=self.get_embed()
+                )
+
+        else:
+
+            @discord.ui.button(
+                label=tanjunLocalizer.localize(
+                    commandInfo.locale,
+                    "commands.admin.reports.show_reports.unblock.label",
+                ),
+                style=discord.ButtonStyle.success,
+                emoji="🔓",
+            )
+            async def unblock(
+                self,
+                interaction: discord.Interaction,
+                button: discord.ui.Button,
+            ):
+                if interaction.user.id != commandInfo.user.id:
+                    await interaction.response.send_message(
+                        tanjunLocalizer.localize(
+                            commandInfo.locale,
+                            "commands.admin.reports.show_reports.not_your_reports",
+                        ),
+                        ephemeral=True,
+                    )
+                    return
+                await unblock_reporter(commandInfo.guild.id, self.reports[self.page][3])
+                nonlocal currentReporterIsBlocked
+                currentReporterIsBlocked = await checkIfCurrentReporterIsBlocked(
+                    reports, self.page
+                )
+                await interaction.response.edit_message(
+                    view=reportsView(reports, self.page), embed=self.get_embed()
+                )
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(

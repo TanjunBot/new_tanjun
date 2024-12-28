@@ -243,7 +243,7 @@ class funCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        utilityCmds = funCommands(name="funcmd", description="Fun Commands")
+        utilityCmds = funCommands(name=app_commands.locale_str("funcmd_name"), description=app_commands.locale_str("funcmd_description"))
         self.bot.tree.add_command(utilityCmds)
 
 

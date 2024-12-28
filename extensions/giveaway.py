@@ -298,10 +298,10 @@ class GiveawayCog(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         giveaway_commands = GiveawayCommands(
-            name="giveaway", description="Giveaway Commands"
+            name=app_commands.locale_str("giveaway_name"), description=app_commands.locale_str("giveaway_description")
         )
         blacklistCmds = BlacklistCommands(
-            name="blacklist", description="Blacklist Commands"
+            name=app_commands.locale_str("giveaway_blacklist_name"), description=app_commands.locale_str("giveaway_blacklist_description")
         )
         giveaway_commands.add_command(blacklistCmds)
         self.bot.tree.add_command(giveaway_commands)

@@ -148,7 +148,7 @@ async def format_level_up_message(
     if not level_up_message:
         level_up_message = tanjunLocalizer.localize(
             guild.locale if hasattr(guild, "locale") else "en_US",
-            "commands.level.defaultLevelUpMessage"
+            "commands.level.defaultlevelupmessage"
         )
     return level_up_message.replace("{user}", user_mention).replace(
         "{level}", str(new_level)

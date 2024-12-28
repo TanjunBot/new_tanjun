@@ -7,6 +7,8 @@ from typing import Optional, List, Dict
 from utility import get_xp_for_level, get_level_for_xp
 from datetime import datetime
 from discord import Entitlement
+import asyncmy
+from config import database_ip, database_password, database_user, database_schema
 
 pool = None
 
@@ -30,11 +32,16 @@ async def execute_query(query, params=None):
         return
 
     try:
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(query, params)
-                result = await cursor.fetchall()
-                return result
+        connection = await asyncmy.connect(
+            host=database_ip,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+        )
+        async with connection.cursor() as cursor:
+            await cursor.execute(query, params)
+            result = await cursor.fetchall()
+            return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}")
 
@@ -51,11 +58,16 @@ async def execute_action(query, params=None):
         )
         return
     try:
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(query, params)
-                await conn.commit()
-                return cursor.rowcount
+        connection = await asyncmy.connect(
+            host=database_ip,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+        )
+        async with connection.cursor() as cursor:
+            await cursor.execute(query, params)
+            await connection.commit()
+            return cursor.rowcount
     except Exception as e:
         print(f"An error occurred during action execution: {e}")
 
@@ -64,13 +76,18 @@ async def execute_insert_and_get_id(query, params=None):
     if not pool:
         return
     try:
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(query, params)
-                await conn.commit()
-                await cursor.execute("SELECT LAST_INSERT_ID()")
-                last_id = await cursor.fetchone()
-                return last_id[0] if last_id else None
+        connection = await asyncmy.connect(
+            host=database_ip,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+        )
+        async with connection.cursor() as cursor:
+            await cursor.execute(query, params)
+            await connection.commit()
+            await cursor.execute("SELECT LAST_INSERT_ID()")
+            last_id = await cursor.fetchone()
+            return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}")
 
@@ -85,6 +102,7 @@ async def create_tables():
         "  `reason` VARCHAR(255),"
         "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
         "  `expires_at` TIMESTAMP NULL,"
+        "  `created_by` VARCHAR(20) NOT NULL,"
         "  `escalation_level` INT DEFAULT 0"
         ") ENGINE=InnoDB"
     )
@@ -733,12 +751,12 @@ async def test_db(self, ctx):
     await execute_query(query)
 
 
-async def add_warning(guild_id, user_id, reason, expiration_date=None):
+async def add_warning(guild_id, user_id, reason, expiration_date, created_by):
     query = (
-        "INSERT INTO warnings (guild_id, user_id, reason, expires_at) "
-        "VALUES (%s, %s, %s, %s)"
+        "INSERT INTO warnings (guild_id, user_id, reason, expires_at, created_by) "
+        "VALUES (%s, %s, %s, %s, %s)"
     )
-    params = (guild_id, user_id, reason, expiration_date)
+    params = (guild_id, user_id, reason, expiration_date, created_by)
     await execute_action(query, params)
 
 
@@ -763,13 +781,13 @@ async def get_warnings(guild_id, user_id=None):
 
 async def get_detailed_warnings(guild_id, user_id):
     query = (
-        "SELECT id, reason, created_at, expires_at "
+        "SELECT id, reason, created_at, expires_at, created_by "
         "FROM warnings WHERE guild_id = %s AND user_id = %s "
         "ORDER BY created_at DESC"
     )
     params = (guild_id, user_id)
     result = await execute_query(query, params)
-    return [(row[0], row[1], row[2], row[3]) for row in result]
+    return [(row[0], row[1], row[2], row[3], row[4]) for row in result]
 
 
 async def remove_warning(warning_id):
@@ -1189,6 +1207,13 @@ async def get_level_roles(guild_id: str) -> Dict[int, str]:
     return {row[0]: row[1] for row in result}
 
 
+async def get_level_role(guild_id: str, role_id: str) -> int:
+    query = "SELECT level FROM levelRole WHERE guild_id = %s AND role_id = %s"
+    params = (guild_id, role_id)
+    result = await execute_query(query, params)
+    return result[0][0] if result else None
+
+
 # redefinition of unused 'add_level_role' from line 1119 Flake8(F811)
 '''
 async def add_level_role(guild_id: str, role_id: str, level: int):
@@ -1201,12 +1226,12 @@ async def add_level_role(guild_id: str, role_id: str, level: int):
 '''
 
 
-async def remove_level_role(guild_id: str, role_id: str, level: int):
+async def remove_level_role(guild_id: str, role_id: str):
     query = """
     DELETE FROM levelRole
-    WHERE guild_id = %s AND role_id = %s AND level = %s
+    WHERE guild_id = %s AND role_id = %s
     """
-    params = (guild_id, role_id, level)
+    params = (guild_id, role_id)
     await execute_action(query, params)
 
 

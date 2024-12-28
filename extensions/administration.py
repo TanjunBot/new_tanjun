@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands
 from localizer import tanjunLocalizer
 import config
-from utility import addFeedback, tanjunEmbed
+from utility import addFeedback, tanjunEmbed, missingLocalization
 from api import feedbackBlockUser, feedbackUnblockUser
 from tests import (
     test_ping,
@@ -229,6 +229,13 @@ class administrationCog(commands.Cog):
             return
         await ctx.guild.edit(preferred_locale=locale)
         await ctx.send(f"The guild locale has been set to {locale}")
+
+    @commands.command()
+    async def testgithubauthtoken(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+        missingLocalization("JUSTATEST.IGNORETHIS.JUSTATEST")
+        await ctx.send("jup gemacht :)")
 
 
 async def setup(bot):

@@ -47,6 +47,7 @@ from commands.admin.joinToCreate.jointocreatechannel import (
 from commands.admin.joinToCreate.removejointocreatechannel import (
     removejointocreatechannel as removeJoinToCreateChannelCommand,
 )
+from commands.admin.setLocale import set_locale as setLocaleCommand
 
 
 class WarnCommands(discord.app_commands.Group):
@@ -83,7 +84,7 @@ class WarnCommands(discord.app_commands.Group):
         member=app_commands.locale_str("admin_warn_view_params_member_description"),
     )
     async def view(self, ctx, member: discord.Member):
-        await ctx.response.defer()
+        await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
             channel=ctx.channel,
@@ -461,8 +462,14 @@ class TriggerMessagesCommands(discord.app_commands.Group):
     )
     @app_commands.choices(
         casesensitive=[
-            app_commands.Choice(name="Case Sensitive", value="t"),
-            app_commands.Choice(name="Case Insensitive", value="f"),
+            app_commands.Choice(
+                name=app_commands.locale_str("admin_tm_add_params_casesensitive_true"),
+                value="t",
+            ),
+            app_commands.Choice(
+                name=app_commands.locale_str("admin_tm_add_params_casesensitive_false"),
+                value="f",
+            ),
         ]
     )
     async def add(
@@ -1103,6 +1110,122 @@ class administrationCommands(discord.app_commands.Group):
         )
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_setlocale_name"),
+        description=app_commands.locale_str("admin_setlocale_description"),
+    )
+    @app_commands.describe(
+        locale=app_commands.locale_str("admin_setlocale_params_locale_description"),
+    )
+    @app_commands.choices(
+        locale=[
+            app_commands.Choice(
+                value="bg",
+                name=app_commands.locale_str("games_hangman_params_language_bg"),
+            ),
+            app_commands.Choice(
+                value="cs",
+                name=app_commands.locale_str("games_hangman_params_language_cs"),
+            ),
+            app_commands.Choice(
+                value="da",
+                name=app_commands.locale_str("games_hangman_params_language_da"),
+            ),
+            app_commands.Choice(
+                value="de",
+                name=app_commands.locale_str("games_hangman_params_language_de"),
+            ),
+            app_commands.Choice(
+                value="el",
+                name=app_commands.locale_str("games_hangman_params_language_el"),
+            ),
+            app_commands.Choice(
+                value="en",
+                name=app_commands.locale_str("games_hangman_params_language_en"),
+            ),
+            app_commands.Choice(
+                value="es",
+                name=app_commands.locale_str("games_hangman_params_language_es"),
+            ),
+            app_commands.Choice(
+                value="fi",
+                name=app_commands.locale_str("games_hangman_params_language_fi"),
+            ),
+            app_commands.Choice(
+                value="fr",
+                name=app_commands.locale_str("games_hangman_params_language_fr"),
+            ),
+            app_commands.Choice(
+                value="hi",
+                name=app_commands.locale_str("games_hangman_params_language_hi"),
+            ),
+            app_commands.Choice(
+                value="hu",
+                name=app_commands.locale_str("games_hangman_params_language_hu"),
+            ),
+            app_commands.Choice(
+                value="id",
+                name=app_commands.locale_str("games_hangman_params_language_id"),
+            ),
+            app_commands.Choice(
+                value="it",
+                name=app_commands.locale_str("games_hangman_params_language_it"),
+            ),
+            app_commands.Choice(
+                value="ja",
+                name=app_commands.locale_str("games_hangman_params_language_ja"),
+            ),
+            app_commands.Choice(
+                value="ko",
+                name=app_commands.locale_str("games_hangman_params_language_ko"),
+            ),
+            app_commands.Choice(
+                value="lt",
+                name=app_commands.locale_str("games_hangman_params_language_lt"),
+            ),
+            app_commands.Choice(
+                value="nb",
+                name=app_commands.locale_str("games_hangman_params_language_nb"),
+            ),
+            app_commands.Choice(
+                value="nl",
+                name=app_commands.locale_str("games_hangman_params_language_nl"),
+            ),
+            app_commands.Choice(
+                value="pl",
+                name=app_commands.locale_str("games_hangman_params_language_pl"),
+            ),
+            app_commands.Choice(
+                value="pt",
+                name=app_commands.locale_str("games_hangman_params_language_pt"),
+            ),
+            app_commands.Choice(
+                value="ru",
+                name=app_commands.locale_str("games_hangman_params_language_ru"),
+            ),
+            app_commands.Choice(
+                value="zh",
+                name=app_commands.locale_str("games_hangman_params_language_zh"),
+            ),
+        ]
+    )
+    async def set_locale(self, ctx, locale: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await setLocaleCommand(commandInfo=commandInfo, locale=locale)
+        return
+
 
 class adminCog(commands.Cog):
 
@@ -1612,20 +1735,32 @@ class adminCog(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         admincmds = administrationCommands(
-            name="admin", description="Administrate the Server"
+            name=app_commands.locale_str("admin_name"),
+            description=app_commands.locale_str("admin_description"),
         )
-        warncmds = WarnCommands(name="warn", description="Manage Warns")
+        warncmds = WarnCommands(
+            name=app_commands.locale_str("admin_warn_name"),
+            description=app_commands.locale_str("admin_warn_description"),
+        )
         admincmds.add_command(warncmds)
-        rolecmds = RoleCommands(name="role", description="Manage Roles")
+        rolecmds = RoleCommands(
+            name=app_commands.locale_str("admin_role_name"),
+            description=app_commands.locale_str("admin_role_description"),
+        )
         admincmds.add_command(rolecmds)
-        reportcmds = ReportCommands(name="report", description="Manage Reports")
+        reportcmds = ReportCommands(
+            name=app_commands.locale_str("admin_report_name"),
+            description=app_commands.locale_str("admin_report_description"),
+        )
         admincmds.add_command(reportcmds)
         trigger_messages_cmds = TriggerMessagesCommands(
-            name="triggermessages", description="Manage Trigger Messages"
+            name=app_commands.locale_str("admin_triggermessages_name"),
+            description=app_commands.locale_str("admin_triggermessages_description"),
         )
         admincmds.add_command(trigger_messages_cmds)
         join_to_create_cmds = JoinToCreateCommands(
-            name="jointocreate", description="Manage Join-to-Create Channels"
+            name=app_commands.locale_str("admin_jointocreate_name"),
+            description=app_commands.locale_str("admin_jointocreate_description"),
         )
         admincmds.add_command(join_to_create_cmds)
         self.bot.tree.add_command(admincmds)

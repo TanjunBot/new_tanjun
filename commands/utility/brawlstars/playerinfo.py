@@ -101,6 +101,7 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
             victories=playerInfo["duoVictories"],
         )
     description += "\n"
+    description += "\n"
     allBrawlers = await getAllBrawlers()
     description += tanjunLocalizer.localize(
         commandInfo.locale,

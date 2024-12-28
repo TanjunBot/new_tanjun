@@ -149,18 +149,43 @@ def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
         draw.line([x2, y1 + radius, x2, y2 - radius], fill=outline, width=width)
 
 
-def process_image(background_frames, avatar_frames, user, user_info):
-    num_frames = max(len(background_frames), len(avatar_frames))
+def process_image(
+    background_frames, avatar_frames, avatar_decoration_frames, user, user_info
+):
+    DECORATION_SIZE_MULTIPLIER = 1.2
+
+    num_frames = max(
+        len(background_frames),
+        len(avatar_frames),
+        len(avatar_decoration_frames) if avatar_decoration_frames else 0,
+    )
+
+    # Extend frames to match the longest animation
     background_frames *= (num_frames // len(background_frames)) + 1
     avatar_frames *= (num_frames // len(avatar_frames)) + 1
+    if avatar_decoration_frames:
+        avatar_decoration_frames *= (num_frames // len(avatar_decoration_frames)) + 1
+
+    # Trim excess frames
     background_frames = background_frames[:num_frames]
     avatar_frames = avatar_frames[:num_frames]
+    if avatar_decoration_frames:
+        avatar_decoration_frames = avatar_decoration_frames[:num_frames]
 
     for i in range(len(background_frames)):
         background_frames[i] = background_frames[i].resize((1000, 300))
 
     for i in range(len(avatar_frames)):
         avatar_frames[i] = avatar_frames[i].resize((200, 200))
+
+    # Resize decoration frames if they exist
+    if avatar_decoration_frames:
+        decoration_size = int(200 * DECORATION_SIZE_MULTIPLIER)
+        offset = int((decoration_size - 200) / 2)
+        for i in range(len(avatar_decoration_frames)):
+            avatar_decoration_frames[i] = avatar_decoration_frames[i].resize(
+                (decoration_size, decoration_size)
+            )
 
     mask = Image.new("L", (200, 200), 0)
     mask_draw = ImageDraw.Draw(mask)
@@ -170,8 +195,6 @@ def process_image(background_frames, avatar_frames, user, user_info):
 
     for frame_index in range(num_frames):
         bg_frame = background_frames[frame_index]
-        avatar_frame = avatar_frames[frame_index]
-
         frame = bg_frame.copy()
         draw = ImageDraw.Draw(frame)
 
@@ -237,9 +260,22 @@ def process_image(background_frames, avatar_frames, user, user_info):
                 width=2,
             )
 
+        # Create avatar output with mask
         output = Image.new("RGBA", (200, 200), (0, 0, 0, 0))
-        output.paste(avatar_frame, (0, 0), mask)
+        output.paste(avatar_frames[frame_index], (0, 0), mask)
         frame.paste(output, (25, 50), output)
+
+        # Add decoration if it exists
+        if avatar_decoration_frames:
+            decoration = avatar_decoration_frames[frame_index]
+            # Resize the decoration and ensure RGBA mode
+            decoration = decoration.resize((decoration_size, decoration_size)).convert('RGBA')
+            # Create a new transparent image for the decoration
+            decoration_layer = Image.new('RGBA', frame.size, (0, 0, 0, 0))
+            # Paste the decoration onto the transparent layer
+            decoration_layer.paste(decoration, (25 - offset, 50 - offset), decoration)
+            # Composite the decoration layer with the frame
+            frame = Image.alpha_composite(frame, decoration_layer)
 
         result_frames.append(frame)
 
@@ -270,10 +306,24 @@ async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO
     avatar_url = str(user.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
 
+    avatar_decoration_url = (
+        str(user.avatar_decoration.url) if user.avatar_decoration else None
+    )
+    if avatar_decoration_url:
+        avatar_decoration_frames, _ = await get_image_or_gif_frames(
+            avatar_decoration_url
+        )
+
     # Process image in executor
     loop = asyncio.get_event_loop()
     img_byte_arr = await loop.run_in_executor(
-        executor, process_image, background_frames, avatar_frames, user, user_info
+        executor,
+        process_image,
+        background_frames,
+        avatar_frames,
+        avatar_decoration_frames,
+        user,
+        user_info,
     )
 
     return img_byte_arr

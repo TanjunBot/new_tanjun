@@ -389,7 +389,8 @@ class minigameCog(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         minigameCmds = minigameCommands(
-            name="minigame", description="Minigame Commands"
+            name=app_commands.locale_str("minigame_name"),
+            description=app_commands.locale_str("minigame_description"),
         )
         countingCmds = CountingCommands(
             name=app_commands.locale_str("minigames_countingcmds_name"),

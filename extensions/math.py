@@ -191,7 +191,9 @@ class mathCommands(discord.app_commands.Group):
         xmin=app_commands.locale_str("math_plotfunction_params_xmin_description"),
         xmax=app_commands.locale_str("math_plotfunction_params_xmax_description"),
     )
-    async def plot_function(self, ctx, func: str, xmin: float = None, xmax: float = None):
+    async def plot_function(
+        self, ctx, func: str, xmin: float = None, xmax: float = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -320,7 +322,10 @@ class mathCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        mathcmds = mathCommands(name="math", description="Math is fun!")
+        mathcmds = mathCommands(
+            name=app_commands.locale_str("math_name"),
+            description=app_commands.locale_str("math_description"),
+        )
         self.bot.tree.add_command(mathcmds)
 
     @commands.command(name="faculty", aliases=["fac"])

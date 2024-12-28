@@ -660,9 +660,8 @@ class LevelConfigCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         role=app_commands.locale_str("level_removelevelrole_params_role_description"),
-        level=app_commands.locale_str("level_removelevelrole_params_level_description"),
     )
-    async def removelevelrole(self, ctx, role: discord.Role, level: int):
+    async def removelevelrole(self, ctx, role: discord.Role):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -676,7 +675,7 @@ class LevelConfigCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await remove_level_role_command(commandInfo, role, level)
+        await remove_level_role_command(commandInfo, role)
 
     @app_commands.command(
         name=app_commands.locale_str("level_showlevelroles_name"),
@@ -864,7 +863,7 @@ class levelCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        levelCmds = levelCommands(name="levelcommands", description="Level Commands")
+        levelCmds = levelCommands(name=app_commands.locale_str("levelcommands_name"), description=app_commands.locale_str("levelcommands_description"))
         levelConfigCmds = LevelConfigCommands(
             name=app_commands.locale_str("level_config_name"),
             description=app_commands.locale_str("level_config_description"),

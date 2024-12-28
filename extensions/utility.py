@@ -488,6 +488,9 @@ class BrawlStarsCommands(discord.app_commands.Group):
         name=app_commands.locale_str("utility_bs_link_name"),
         description=app_commands.locale_str("utility_bs_link_description"),
     )
+    @app_commands.describe(
+        tag=app_commands.locale_str("utility_bs_link_params_tag_description"),
+    )
     async def link(self, ctx, tag: str):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -531,12 +534,23 @@ class TwitchCommands(discord.app_commands.Group):
         name=app_commands.locale_str("utility_twitch_add_name"),
         description=app_commands.locale_str("utility_twitch_add_description"),
     )
+    @app_commands.describe(
+        twitchname=app_commands.locale_str(
+            "utility_twitch_add_params_twitchname_description"
+        ),
+        channel=app_commands.locale_str(
+            "utility_twitch_add_params_channel_description"
+        ),
+        notificationmessage=app_commands.locale_str(
+            "utility_twitch_add_params_notificationmessage_description"
+        ),
+    )
     async def add(
         self,
         ctx,
-        twitch_name: str,
+        twitchname: str,
         channel: discord.TextChannel,
-        notification_message: str = None,
+        notificationmessage: str = None,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -553,9 +567,9 @@ class TwitchCommands(discord.app_commands.Group):
 
         await addTwitchLiveNotificationCommand(
             commandInfo=commandInfo,
-            twitch_name=twitch_name,
+            twitch_name=twitchname,
             channel=channel,
-            notification_message=notification_message,
+            notification_message=notificationmessage,
         )
         return
 
@@ -866,7 +880,10 @@ class utilityCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        utilityCmds = utilityCommands(name="utilitycmd", description="Utility Commands")
+        utilityCmds = utilityCommands(
+            name=app_commands.locale_str("utilitycmd_name"),
+            description=app_commands.locale_str("utilitycmd_description"),
+        )
         messageTrackingCmds = MessageTrackingCommands(
             name=app_commands.locale_str("utility_messagetracking_name"),
             description=app_commands.locale_str("utility_messagetracking_description"),
