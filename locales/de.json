@@ -30054,5 +30054,37 @@
         "context": null,
         "labels": "embed_description, unassigned",
         "max_length": 4096
+    },
+    {
+        "identifier": "commands.giveaway.list_blacklist.noBlacklist.title",
+        "source_string": "Keine Einträge auf der Blacklist",
+        "translation": "Keine Einträge auf der Blacklist",
+        "context": null,
+        "labels": "embed_title, unassigned",
+        "max_length": 256
+    },
+    {
+        "identifier": "commands.giveaway.list_blacklist.noBlacklist.description",
+        "source_string": "Es sind noch keine Einträge auf der Gewinnspiel-Blacklist.",
+        "translation": "Es sind noch keine Einträge auf der Gewinnspiel-Blacklist.",
+        "context": null,
+        "labels": "embed_description, unassigned",
+        "max_length": 4096
+    },
+    {
+        "identifier": "commands.image.compress.success.title",
+        "source_string": "Bild komprimiert",
+        "translation": "Bild komprimiert",
+        "context": null,
+        "labels": "embed_title, unassigned",
+        "max_length": 256
+    },
+    {
+        "identifier": "commands.image.compress.success.description",
+        "source_string": "Das Bild wurde erfolgreich komprimiert. Es ist jetzt ${newSize} MB groß. Vorher war es ${oldSize} MB groß.",
+        "translation": "Das Bild wurde erfolgreich komprimiert. Es ist jetzt ${newSize} MB groß. Vorher war es ${oldSize} MB groß.",
+        "context": null,
+        "labels": "embed_description, unassigned",
+        "max_length": 4090
     }
 ]
