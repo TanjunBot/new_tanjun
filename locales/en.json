@@ -1945,8 +1945,8 @@
     },
     {
         "identifier": "commands.admin.warnconfig.modal.timeout_duration.label",
-        "source_string": "Dauer des Timeouts",
-        "translation": "Duration of the timeout",
+        "source_string": "Dauer des Timeouts in Minuten",
+        "translation": "Duration of the timeout in minutes",
         "context": "commands -> admin -> warnconfig -> modal -> timeout_duration -> label",
         "labels": "de.json",
         "max_length": 45
@@ -2065,7 +2065,7 @@
     },
     {
         "identifier": "commands.admin.viewwarns.warningDetails",
-        "source_string": "Grund: ${reason}, Ausgestellt am: ${date}, Läuft ab: ${expiration}",
+        "source_string": "Grund: ${reason}\nAusgestellt am: ${date}\nLäuft ab: ${expiration}\nAusgestellt von: <@${created_by}",
         "translation": "Reason: ${reason}, Issued on: ${date}, Expires: ${expiration}",
         "context": "commands -> admin -> viewwarns -> warningDetails",
         "labels": "de.json",
@@ -29990,5 +29990,37 @@
         "context": "the locale param used in some commands. only lowercase characters and no strings allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
+    },
+    {
+        "identifier": "commands.admin.addrole.roleSelect.placeholder",
+        "source_string": "Rolle Auswählen",
+        "translation": "Select role",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "commands.admin.addrole.userSelect.placeholder",
+        "source_string": "Nutzer auswählen",
+        "translation": "Select user",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.confirm.label",
+        "source_string": "Bestätigen",
+        "translation": "Confirm",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": 80
+    },
+    {
+        "identifier": "commands.admin.addrole.cancel.label",
+        "source_string": "Abbrechen",
+        "translation": "Cancel",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": 80
     }
 ]
