@@ -57,7 +57,7 @@ async def warn_config(commandInfo: utility.commandInfo):
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.timeout_duration.placeholder",
                     ),
-                    default=str(config.get("timeout_duration", "") or "3600") if config else "3600",
+                    default=str(config.get("timeout_duration", "") or "60") if config else "60",
                     required=False,
                 )
             )

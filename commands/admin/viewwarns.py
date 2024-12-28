@@ -173,14 +173,15 @@ def create_warnings_embed(commandInfo, member, warnings, page):
             inline=False,
         )
 
-    embed.set_footer(
-        text=tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.admin.viewwarns.pageFooter",
-            current=page + 1,
-            total=math.ceil(len(warnings) / WARNINGS_PER_PAGE),
+    if len(warnings) > WARNINGS_PER_PAGE > 1:
+        embed.set_footer(
+            text=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.admin.viewwarns.pageFooter",
+                current=page + 1,
+                total=math.ceil(len(warnings) / WARNINGS_PER_PAGE),
+            )
         )
-    )
 
     return embed
 

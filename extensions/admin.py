@@ -84,7 +84,7 @@ class WarnCommands(discord.app_commands.Group):
         member=app_commands.locale_str("admin_warn_view_params_member_description"),
     )
     async def view(self, ctx, member: discord.Member):
-        await ctx.response.defer()
+        await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
             channel=ctx.channel,
