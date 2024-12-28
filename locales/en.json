@@ -761,8 +761,8 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.square.description",
-        "source_string": "Zähle nur die Quadratzahlen: `1`, `4`, `9`, `16`, ...",
-        "translation": "Count only the square numbers: `1`, `4`, `9`, `16`, ...",
+        "source_string": "Zähle nur die Quadratzahlen: `2`, `4`, `8`, `16`, ...",
+        "translation": "Count only the square numbers: `2`, `4`, `8`, `16`, ...",
         "context": "Counting Minigame - Mode: Square (Quadratzahlen)",
         "labels": "de.json",
         "max_length": null
