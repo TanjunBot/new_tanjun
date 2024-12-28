@@ -30050,7 +30050,7 @@
     {
         "identifier": "commands.utility.report.reason_too_short.description",
         "source_string": "Bitte gebe ein paar mehr details in deinem Grund. Erkläre möglichst deutlich, wieso du den Report für gerechtfertigt hältst. ",
-        "translation": "Bitte gebe ein paar mehr details in deinem Grund. Erkläre möglichst deutlich, wieso du den Report für gerechtfertigt hältst. ",
+        "translation": "Please give a few more details in your reason. Explain as clearly as possible why you think the report is justified. ",
         "context": null,
         "labels": "embed_description, unassigned",
         "max_length": 4096
