@@ -50,11 +50,7 @@
     {
         "identifier": "commands.help.not_authorized.description",
         "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen.",
-<<<<<<< HEAD
-        "translation": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen.",
-=======
         "translation": "You do not have the required permissions to execute this command.",
->>>>>>> Development
         "context": "The description of the embed when someone else tries to interact with the view of someone else",
         "labels": "de.json, embed_description",
         "max_length": 4096
@@ -78,11 +74,7 @@
     {
         "identifier": "commands.admin.addrole.missingPermissionBot.title",
         "source_string": "Fehlende Rechte",
-<<<<<<< HEAD
-        "translation": "Fehlende Rechte",
-=======
         "translation": "Insufficient permissions",
->>>>>>> Development
         "context": "The embed that shows when the bot doesn't have the manage roles permission",
         "labels": "de.json, embed_title",
         "max_length": 256
@@ -98,17 +90,6 @@
     {
         "identifier": "commands.admin.addrole.alreadyHasRole.title",
         "source_string": "Rolle bereits vergeben",
-<<<<<<< HEAD
-        "translation": "Rolle bereits vergeben",
-        "context": "commands -> admin -> addrole -> alreadyHasRole -> title",
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "commands.admin.addrole.alreadyHasRole.description",
-        "source_string": "Dieser Benutzer hat bereits diese Rolle.",
-        "translation": "Dieser Benutzer hat bereits diese Rolle.",
-=======
         "translation": "Role already assigned",
         "context": "When the user already has the desired Role",
         "labels": "de.json, embed_description",
@@ -118,7 +99,6 @@
         "identifier": "commands.admin.addrole.alreadyHasRole.description",
         "source_string": "Dieser Nutzer hat bereits diese Rolle.",
         "translation": "This user already has this role.",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> alreadyHasRole -> description",
         "labels": "de.json",
         "max_length": null
@@ -126,11 +106,7 @@
     {
         "identifier": "commands.admin.addrole.roleTooHigh.title",
         "source_string": "Rolle zu hoch",
-<<<<<<< HEAD
-        "translation": "Rolle zu hoch",
-=======
         "translation": "Role too high",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> roleTooHigh -> title",
         "labels": "de.json",
         "max_length": null
@@ -146,11 +122,7 @@
     {
         "identifier": "commands.admin.addrole.roleTooHighBot.title",
         "source_string": "Rolle zu hoch",
-<<<<<<< HEAD
-        "translation": "Rolle zu hoch",
-=======
         "translation": "Role too high",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> roleTooHighBot -> title",
         "labels": "de.json",
         "max_length": null
@@ -165,26 +137,16 @@
     },
     {
         "identifier": "commands.admin.addrole.noUser.title",
-<<<<<<< HEAD
-        "source_string": "Kein Benutzer angegeben",
-        "translation": "Kein Benutzer angegeben",
-=======
         "source_string": "Kein Nutzer angegeben",
         "translation": "No user specified",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> noUser -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.addrole.noUser.description",
-<<<<<<< HEAD
-        "source_string": "Du musst einen Benutzer angeben dem du die Rolle hinzufügen möchtest.",
-        "translation": "Du musst einen Benutzer angeben dem du die Rolle hinzufügen möchtest.",
-=======
         "source_string": "Du musst einen Nutzer angeben, dem du die Rolle hinzufügen möchtest.",
         "translation": "You must specify a user to whom you want to add the role.",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> noUser -> description",
         "labels": "de.json",
         "max_length": null
@@ -192,24 +154,15 @@
     {
         "identifier": "commands.admin.addrole.noRole.title",
         "source_string": "Keine Rolle angegeben",
-<<<<<<< HEAD
-        "translation": "Keine Rolle angegeben",
-=======
         "translation": "No role specified",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> noRole -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.addrole.noRole.description",
-<<<<<<< HEAD
-        "source_string": "Du musst eine Rolle angeben die du hinzufügen möchtest.",
-        "translation": "Du musst eine Rolle angeben die du hinzufügen möchtest.",
-=======
         "source_string": "Du musst eine Rolle angeben, die du hinzufügen möchtest.",
         "translation": "You must specify a role that you want to add.",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> noRole -> description",
         "labels": "de.json",
         "max_length": null
@@ -217,11 +170,7 @@
     {
         "identifier": "commands.admin.addrole.success.title",
         "source_string": "Rolle hinzugefügt",
-<<<<<<< HEAD
-        "translation": "Rolle hinzugefügt",
-=======
         "translation": "Role added",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> success -> title",
         "labels": "de.json",
         "max_length": null
@@ -229,11 +178,7 @@
     {
         "identifier": "commands.admin.addrole.success.description",
         "source_string": "Die Rolle wurde erfolgreich hinzugefügt.",
-<<<<<<< HEAD
-        "translation": "Die Rolle wurde erfolgreich hinzugefügt.",
-=======
         "translation": "The role has been successfully added.",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -241,24 +186,15 @@
     {
         "identifier": "commands.admin.addrole.managedRole.title",
         "source_string": "Rolle nicht vergeben",
-<<<<<<< HEAD
-        "translation": "Rolle nicht vergeben",
-=======
         "translation": "Role not assigned",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> managedRole -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.addrole.managedRole.description",
-<<<<<<< HEAD
-        "source_string": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell vergeben werden.",
-        "translation": "Diese Rolle wird von einer integration verwaltet und kann nicht manuell vergeben werden.",
-=======
         "source_string": "Diese Rolle wird von einer Integration verwaltet und kann nicht manuell vergeben werden.",
         "translation": "This role is managed by an integration and cannot be assigned manually.",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> managedRole -> description",
         "labels": "de.json",
         "max_length": null
@@ -273,13 +209,8 @@
     },
     {
         "identifier": "commands.admin.addrole.noSelection",
-<<<<<<< HEAD
-        "source_string": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
-        "translation": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
-=======
         "source_string": "Du musst mindestens eine Rolle und einen Nutzer auswählen.",
         "translation": "You must select at least one role and one user.",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> noSelection",
         "labels": "de.json",
         "max_length": null
@@ -287,11 +218,7 @@
     {
         "identifier": "commands.admin.addrole.multipleSuccess",
         "source_string": "${count} Rollen wurden erfolgreich vergeben.",
-<<<<<<< HEAD
-        "translation": "${count} Rollen wurden erfolgreich vergeben.",
-=======
         "translation": "${count} Roles were successfully assigned.",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> multipleSuccess",
         "labels": "de.json",
         "max_length": null
@@ -299,11 +226,7 @@
     {
         "identifier": "commands.admin.addrole.cancelled",
         "source_string": "Vorgang abgebrochen.",
-<<<<<<< HEAD
-        "translation": "Vorgang abgebrochen.",
-=======
         "translation": "Operation cancelled.",
->>>>>>> Development
         "context": "commands -> admin -> addrole -> cancelled",
         "labels": "de.json",
         "max_length": null
@@ -343,11 +266,7 @@
     {
         "identifier": "commands.admin.removerole.roleTooHigh.title",
         "source_string": "Rolle zu hoch",
-<<<<<<< HEAD
-        "translation": "Rolle zu hoch",
-=======
         "translation": "Role too high",
->>>>>>> Development
         "context": "commands -> admin -> removerole -> roleTooHigh -> title",
         "labels": "de.json",
         "max_length": null
@@ -363,11 +282,7 @@
     {
         "identifier": "commands.admin.removerole.roleTooHighBot.title",
         "source_string": "Rolle zu hoch",
-<<<<<<< HEAD
-        "translation": "Rolle zu hoch",
-=======
         "translation": "Role too high",
->>>>>>> Development
         "context": "commands -> admin -> removerole -> roleTooHighBot -> title",
         "labels": "de.json",
         "max_length": null
@@ -382,13 +297,8 @@
     },
     {
         "identifier": "commands.admin.removerole.noUser.title",
-<<<<<<< HEAD
-        "source_string": "Kein Benutzer angegeben",
-        "translation": "Kein Benutzer angegeben",
-=======
         "source_string": "Kein Nutzer angegeben",
         "translation": "No user specified",
->>>>>>> Development
         "context": "commands -> admin -> removerole -> noUser -> title",
         "labels": "de.json",
         "max_length": null
@@ -404,11 +314,7 @@
     {
         "identifier": "commands.admin.removerole.noRole.title",
         "source_string": "Keine Rolle angegeben",
-<<<<<<< HEAD
-        "translation": "Keine Rolle angegeben",
-=======
         "translation": "No role specified",
->>>>>>> Development
         "context": "commands -> admin -> removerole -> noRole -> title",
         "labels": "de.json",
         "max_length": null
@@ -423,26 +329,16 @@
     },
     {
         "identifier": "commands.admin.removerole.doesNotHaveRole.title",
-<<<<<<< HEAD
-        "source_string": "Benutzer hat Rolle nicht",
-        "translation": "Benutzer hat Rolle nicht",
-=======
         "source_string": "Nutzer hat die Rolle nicht",
         "translation": "User does not have the role",
->>>>>>> Development
         "context": "commands -> admin -> removerole -> doesNotHaveRole -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.removerole.doesNotHaveRole.description",
-<<<<<<< HEAD
-        "source_string": "Dieser Benutzer hat diese Rolle nicht.",
-        "translation": "Dieser Benutzer hat diese Rolle nicht.",
-=======
         "source_string": "Dieser Nutzer hat diese Rolle nicht.",
         "translation": "This user does not have this role.",
->>>>>>> Development
         "context": "commands -> admin -> removerole -> doesNotHaveRole -> description",
         "labels": "de.json",
         "max_length": null
@@ -489,13 +385,8 @@
     },
     {
         "identifier": "commands.admin.removerole.noSelection",
-<<<<<<< HEAD
-        "source_string": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
-        "translation": "Du musst mindestens eine Rolle und einen Benutzer auswählen.",
-=======
         "source_string": "Du musst mindestens eine Rolle und einen Nutzer auswählen.",
         "translation": "You must select at least one role and one user.",
->>>>>>> Development
         "context": "commands -> admin -> removerole -> noSelection",
         "labels": "de.json",
         "max_length": null
@@ -511,11 +402,7 @@
     {
         "identifier": "commands.admin.removerole.cancelled",
         "source_string": "Vorgang abgebrochen.",
-<<<<<<< HEAD
-        "translation": "Vorgang abgebrochen.",
-=======
         "translation": "Operation cancelled.",
->>>>>>> Development
         "context": "commands -> admin -> removerole -> cancelled",
         "labels": "de.json",
         "max_length": null
@@ -555,11 +442,7 @@
     {
         "identifier": "commands.admin.createrole.missingName.title",
         "source_string": "Fehlender Name",
-<<<<<<< HEAD
-        "translation": "Fehlender Name",
-=======
         "translation": "Missing name",
->>>>>>> Development
         "context": "commands -> admin -> createrole -> missingName -> title",
         "labels": "de.json",
         "max_length": null
@@ -575,11 +458,7 @@
     {
         "identifier": "commands.admin.createrole.nameTooLong.title",
         "source_string": "Name zu lang",
-<<<<<<< HEAD
-        "translation": "Name zu lang",
-=======
         "translation": "Name too long",
->>>>>>> Development
         "context": "commands -> admin -> createrole -> nameTooLong -> title",
         "labels": "de.json",
         "max_length": null
@@ -595,11 +474,7 @@
     {
         "identifier": "commands.admin.createrole.reasonTooLong.title",
         "source_string": "Grund zu lang",
-<<<<<<< HEAD
-        "translation": "Grund zu lang",
-=======
         "translation": "Reason too long",
->>>>>>> Development
         "context": "commands -> admin -> createrole -> reasonTooLong -> title",
         "labels": "de.json",
         "max_length": null
@@ -615,37 +490,23 @@
     {
         "identifier": "commands.admin.createrole.invalidColor.title",
         "source_string": "Ungültige Farbe",
-<<<<<<< HEAD
-        "translation": "Ungültige Farbe",
-=======
         "translation": "Invalid color",
->>>>>>> Development
         "context": "commands -> admin -> createrole -> invalidColor -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.createrole.invalidColor.description",
-<<<<<<< HEAD
-        "source_string": "Die Farbe die du angegeben hast ist ungültig. Bitte gib einen gültigen Hexadezimalcode als Farbe an. Diesen kannst du beispielsweise [hier](https://htmlcolorcodes.com) generieren.",
-        "translation": "Die Farbe die du angegeben hast ist ungültig. Bitte gib einen gültigen Hexadezimalcode als Farbe an. Diesen kannst du beispielsweise [hier](https://htmlcolorcodes.com) generieren.",
-=======
         "source_string": "Die Farbe, die du angegeben hast, ist ungültig. Bitte gib einen gültigen Hexadezimalcode als Farbe an. Diesen kannst du beispielsweise [hier](https://htmlcolorcodes.com) generieren.",
         "translation": "The color you have specified is invalid. Please enter a valid hexadecimal code as the color. You can generate this for example [here](https://htmlcolorcodes.com).",
->>>>>>> Development
         "context": "commands -> admin -> createrole -> invalidColor -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.createrole.roleIconsNotEnabled.title",
-<<<<<<< HEAD
-        "source_string": "Rollen Icons nicht verfügbar",
-        "translation": "Rollen Icons nicht verfügbar",
-=======
         "source_string": "Rollenicons nicht verfügbar",
         "translation": "Role icons not available",
->>>>>>> Development
         "context": "commands -> admin -> createrole -> roleIconsNotEnabled -> title",
         "labels": "de.json",
         "max_length": null
@@ -6469,11 +6330,7 @@
     {
         "identifier": "commands.utility.messagetrackingoptout.success.description",
         "source_string": "Nachrichtenverfolgung wurde deaktiviert.\nDer Bot wird deine Nachrichten nicht mehr lesen. **Das heißt auch, dass einige Funktionen des Bots nicht mehr funktionieren.**",
-<<<<<<< HEAD
-        "translation": "Nachrichtenverfolgung wurde deaktiviert.\nDer Bot wird deine Nachrichten nicht mehr lesen. **Das heißt auch, dass einige Funktionen des Bots nicht mehr funktionieren.**",
-=======
         "translation": "Message tracking has been deactivated.\nThe bot will no longer read your messages. **This also means that some functions of the bot will no longer work.**",
->>>>>>> Development
         "context": "commands -> utility -> messagetrackingoptout -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -6904,13 +6761,8 @@
     },
     {
         "identifier": "commands.utility.claimboosterrole.invalid_color.description",
-<<<<<<< HEAD
-        "source_string": "Die Farbe muss ein gültiges Hex-Farbcode sein.\nSolltest du nicht wissen, was eine Hex-Farbe ist, klicke [hier](https://www.google.com/search?q=hex+farbe).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
-        "translation": "Die Farbe muss ein gültiges Hex-Farbcode sein.\nSolltest du nicht wissen, was eine Hex-Farbe ist, klicke [hier](https://www.google.com/search?q=hex+farbe).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
-=======
         "source_string": "Die Farbe muss ein gültiger Hex-Farbcode sein.\nSolltest du nicht wissen, was ein Hex-Farbcode ist, klicke [hier](https://www.google.com/search?q=hex+farbcode).\nDu kannst Hex-Farben z.B. so eingeben: `#ffffff`. Du kannst sie über einen Online Color-Picker finden.",
         "translation": "The color must be a valid hex color code.\nIf you do not know what a hex color is, click [here](https://www.google.com/search?q=hex+color).\nYou can enter hex colors like this: `#ffffffff`. You can find them using an online color picker.",
->>>>>>> Development
         "context": "commands -> utility -> claimboosterrole -> invalid_color -> description",
         "labels": "de.json",
         "max_length": null
@@ -7502,11 +7354,7 @@
     {
         "identifier": "commands.utility.schedulemessage.pastTime.title",
         "source_string": "Vergangene Zeit",
-<<<<<<< HEAD
-        "translation": "Vergangene Zeit",
-=======
         "translation": "Past time",
->>>>>>> Development
         "context": "commands -> utility -> schedulemessage -> pastTime -> title",
         "labels": "de.json",
         "max_length": null
@@ -7601,13 +7449,8 @@
     },
     {
         "identifier": "commands.utility.schedulemessage.referenceMessage",
-<<<<<<< HEAD
-        "source_string": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zugewiesen, wenn die geplante Nachricht gesendet wird. Sollte diese Nachricht bearbeitet werden, werden in Zukunft geplante Nachrichten auch so bearbeitet gesendet. Sollte diese Nachricht gelöscht werden, wird die geplante Nachricht nicht mehr gesendet.",
-        "translation": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zugewiesen, wenn die geplante Nachricht gesendet wird. Sollte diese Nachricht bearbeitet werden, werden in Zukunft geplante Nachrichten auch so bearbeitet gesendet. Sollte diese Nachricht gelöscht werden, wird die geplante Nachricht nicht mehr gesendet.",
-=======
         "source_string": "Diese Nachricht wird als Referenz verwendet. Auf sie wird zurückgegriffen, wenn die geplante Nachricht gesendet wird. Wenn diese Nachricht bearbeitet wird, werden zukünftige geplante Nachrichten der bearbeiteten Version entsprechen. Wenn diese Nachricht gelöscht wird, wird die geplante Nachricht nicht mehr gesendet.",
         "translation": "This message is used as a reference when the scheduled message is sent. If this message is edited, future scheduled messages will correspond to the edited version. If this message is deleted, scheduled messages will no longer be sent.",
->>>>>>> Development
         "context": "commands -> utility -> schedulemessage -> referenceMessage",
         "labels": "de.json",
         "max_length": null
@@ -7774,13 +7617,8 @@
     },
     {
         "identifier": "commands.utility.reports.new_report.description",
-<<<<<<< HEAD
-        "source_string": "${reporter} hat ${user} reportet.\nGrund: ${reason}",
-        "translation": "${reporter} hat ${user} reportet.\nGrund: ${reason}",
-=======
         "source_string": "${reporter} hat ${user} gemeldet.\nGrund: ${reason}",
         "translation": "${reporter} has reported ${user}.\nReason: ${reason}",
->>>>>>> Development
         "context": "commands -> utility -> reports -> new_report -> description",
         "labels": "de.json",
         "max_length": null
@@ -7988,11 +7826,7 @@
     {
         "identifier": "commands.utility.brawlstars.maps.\"Gg 2.0\"",
         "source_string": "G. G. 2.0",
-<<<<<<< HEAD
-        "translation": "G. G. 2.0",
-=======
         "translation": "GG 2.0",
->>>>>>> Development
         "context": "commands -> utility -> brawlstars -> maps -> Gg 2.0",
         "labels": "de.json",
         "max_length": null
@@ -8143,13 +7977,8 @@
     },
     {
         "identifier": "commands.utility.brawlstars.maps.Skull Creek",
-<<<<<<< HEAD
-        "source_string": "Schadelufer",
-        "translation": "Schadelufer",
-=======
         "source_string": "Schädelufer",
         "translation": "Skull Creek",
->>>>>>> Development
         "context": "commands -> utility -> brawlstars -> maps -> Skull Creek",
         "labels": "de.json",
         "max_length": null
@@ -8796,26 +8625,16 @@
     },
     {
         "identifier": "commands.utility.brawlstars.battlelog.description.team1",
-<<<<<<< HEAD
-        "source_string": "Team 1",
-        "translation": "Team 1",
-=======
         "source_string": "### Team 1",
         "translation": "### Team 1",
->>>>>>> Development
         "context": "commands -> utility -> brawlstars -> battlelog -> description -> team1",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.utility.brawlstars.battlelog.description.team2",
-<<<<<<< HEAD
-        "source_string": "Team 2",
-        "translation": "Team 2",
-=======
         "source_string": "### Team 2",
         "translation": "### Team 2",
->>>>>>> Development
         "context": "commands -> utility -> brawlstars -> battlelog -> description -> team2",
         "labels": "de.json",
         "max_length": null
@@ -8886,13 +8705,8 @@
     },
     {
         "identifier": "commands.utility.brawlstars.playerinfo.description.highestTrophies",
-<<<<<<< HEAD
-        "source_string": "### Höchste Trophäen:\n ${highestTrophies} <:icon_trophy:1320752979653165077>",
-        "translation": "### Höchste Trophäen:\n ${highestTrophies} <:icon_trophy:1320752979653165077>",
-=======
         "source_string": "### Höchste Trophäen:\n${highestTrophies} <:icon_trophy:1320752979653165077>",
         "translation": "### Highest trophies:\n${highestTrophies} <:icon_trophy:1320752979653165077>",
->>>>>>> Development
         "context": "commands -> utility -> brawlstars -> playerinfo -> description -> highestTrophies",
         "labels": "de.json",
         "max_length": null
@@ -9084,11 +8898,7 @@
     {
         "identifier": "commands.utility.brawlstars.brawlers.description.overviewMaxTier",
         "source_string": "## ${name}\nPower: ${power} <:power:1321089824211468369>\nRang: Max Tier ${levelEmoji}\nTrophäen: ${trophies} <:icon_trophy:1320752979653165077>\nHöchste Trophäen: ${highestTrophies} <:icon_trophy:1320752979653165077>",
-<<<<<<< HEAD
-        "translation": "## ${name}\nPower: ${power} <:power:1321089824211468369>\nRang: Max Tier ${levelEmoji}\nTrophäen: ${trophies} <:icon_trophy:1320752979653165077>\nHöchste Trophäen: ${highestTrophies} <:icon_trophy:1320752979653165077>",
-=======
         "translation": "## ${name}\nPower: ${power} <:power:1321089824211468369>\nRank: Max Tier ${levelEmoji}\nTrophies: ${trophies} <:icon_trophy:1320752979653165077>\nHighest trophies: ${highestTrophies} <:icon_trophy:1320752979653165077>",
->>>>>>> Development
         "context": "commands -> utility -> brawlstars -> brawlers -> description -> overviewMaxTier",
         "labels": "de.json",
         "max_length": null
@@ -9096,11 +8906,7 @@
     {
         "identifier": "commands.utility.brawlstars.brawlers.description.overview",
         "source_string": "## ${name}\nPower: ${power} <:power:1321089824211468369>\nRang: ${rank} ${levelEmoji}\nTrophäen: ${trophies} <:icon_trophy:1320752979653165077>\nHöchste Trophäen: ${highestTrophies} <:icon_trophy:1320752979653165077>",
-<<<<<<< HEAD
-        "translation": "## ${name}\nPower: ${power} <:power:1321089824211468369>\nRang: ${rank} ${levelEmoji}\nTrophäen: ${trophies} <:icon_trophy:1320752979653165077>\nHöchste Trophäen: ${highestTrophies} <:icon_trophy:1320752979653165077>",
-=======
         "translation": "## ${name}\nPower: ${power} <:power:1321089824211468369>\nRank: ${rank} ${levelEmoji}\nTrophies: ${trophies} <:icon_trophy:1320752979653165077>\nHighest trophies: ${highestTrophies} <:icon_trophy:1320752979653165077>",
->>>>>>> Development
         "context": "commands -> utility -> brawlstars -> brawlers -> description -> overview",
         "labels": "de.json",
         "max_length": null
@@ -10572,11 +10378,7 @@
     {
         "identifier": "commands.level.setlevelupchannel.success.description",
         "source_string": "Level-Up-Nachrichten werden nun in ${channel} gesendet.",
-<<<<<<< HEAD
-        "translation": "Level-Up-Nachrichten werden nun in ${channel} gesendet.",
-=======
         "translation": "Level-up messages are now sent in ${channel}.",
->>>>>>> Development
         "context": "commands -> level -> setlevelupchannel -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -10656,11 +10458,7 @@
     {
         "identifier": "commands.level.changexpscaling.error.invalid_scaling.description",
         "source_string": "Die angegebene Skalierung ist ungültig. Verfügbare Skalierungen sind: ${available_scalings}",
-<<<<<<< HEAD
-        "translation": "Die angegebene Skalierung ist ungültig. Verfügbare Skalierungen sind: ${available_scalings}",
-=======
         "translation": "The specified scaling is invalid. Available scalings are: ${available_scalings}",
->>>>>>> Development
         "context": "commands -> level -> changexpscaling -> error -> invalid_scaling -> description",
         "labels": "de.json",
         "max_length": null
@@ -10899,13 +10697,8 @@
     },
     {
         "identifier": "commands.level.removelevelrole.error.role_not_found.description",
-<<<<<<< HEAD
-        "source_string": "Die Rolle {role} ist nicht für Level {level} zugewiesen.",
-        "translation": "Die Rolle {role} ist nicht für Level {level} zugewiesen.",
-=======
         "source_string": "Die Rolle ${role} ist keine Levelrolle.",
         "translation": "The role ${role} is not a level role.",
->>>>>>> Development
         "context": "commands -> level -> removelevelrole -> error -> role_not_found -> description",
         "labels": "de.json",
         "max_length": null
@@ -10920,13 +10713,8 @@
     },
     {
         "identifier": "commands.level.removelevelrole.success.description",
-<<<<<<< HEAD
-        "source_string": "Die Rolle {role} wurde erfolgreich von Level {level} entfernt.",
-        "translation": "Die Rolle {role} wurde erfolgreich von Level {level} entfernt.",
-=======
         "source_string": "Die Rolle ${role} wurde erfolgreich entfernt.",
         "translation": "The role ${role} was successfully removed.",
->>>>>>> Development
         "context": "commands -> level -> removelevelrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -13150,11 +12938,7 @@
     {
         "identifier": "commands.image.typenotsupported.description",
         "source_string": "Der angegebene Typ wird nicht unterstützt. Unterstützte Typen: `jpeg`, `png`, `webp`.",
-<<<<<<< HEAD
-        "translation": "Der angegebene Typ wird nicht unterstützt. Unterstützte Typen: `jpeg`, `png`, `webp`.",
-=======
         "translation": "The specified type is not supported. Supported types: `jpeg`, `png`, `webp`.",
->>>>>>> Development
         "context": "commands -> image -> typenotsupported -> description",
         "labels": "de.json",
         "max_length": null
@@ -14305,15 +14089,9 @@
     },
     {
         "identifier": "admin.name",
-<<<<<<< HEAD
-        "source_string": "Administration",
-        "translation": "Administration",
-        "context": "admin -> name",
-=======
         "source_string": "admin",
         "translation": "admin",
         "context": "admin -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15160,13 +14938,8 @@
     {
         "identifier": "admin.slowmode.name",
         "source_string": "slowmodus",
-<<<<<<< HEAD
-        "translation": "slowmodus",
-        "context": "admin -> slowmode -> name",
-=======
         "translation": "slow_mode",
         "context": "The name for the slowmode command. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15245,13 +15018,8 @@
     {
         "identifier": "admin.unlock.name",
         "source_string": "entsperren",
-<<<<<<< HEAD
-        "translation": "entsperren",
-        "context": "admin -> unlock -> name",
-=======
         "translation": "unlock",
         "context": "name for the unlock command. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15338,13 +15106,8 @@
     {
         "identifier": "admin.warn.config.name",
         "source_string": "konfigurieren",
-<<<<<<< HEAD
-        "translation": "konfigurieren",
-        "context": "admin -> warn -> config -> name",
-=======
         "translation": "configure",
         "context": "admin -> warn -> config -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15551,11 +15314,7 @@
     {
         "identifier": "admin.boosterrole.name",
         "source_string": "boosterrolle",
-<<<<<<< HEAD
-        "translation": "boosterrolle",
-=======
         "translation": "booster_role",
->>>>>>> Development
         "context": "admin -> boosterrole -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -15644,11 +15403,7 @@
         "identifier": "admin.createticket.params.pingrole.name",
         "source_string": "pingrole",
         "translation": "pingrole",
-<<<<<<< HEAD
-        "context": "admin -> createticket -> params -> pingrole -> name",
-=======
         "context": "admin -> createticket -> params -> pingrole -> name. Only lower case characters and no spaces allowed.",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -15663,13 +15418,8 @@
     {
         "identifier": "admin.createticket.params.summarychannel.name",
         "source_string": "zusammenfassungskanal",
-<<<<<<< HEAD
-        "translation": "zusammenfassungskanal",
-        "context": "admin -> createticket -> params -> summarychannel -> name",
-=======
         "translation": "summary_channel",
         "context": "admin -> createticket -> params -> summarychannel -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -16500,11 +16250,7 @@
     {
         "identifier": "math.calculator.name",
         "source_string": "taschenrechner",
-<<<<<<< HEAD
-        "translation": "taschenrechner",
-=======
         "translation": "pocket_calculator",
->>>>>>> Development
         "context": "math -> calculator -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17048,11 +16794,7 @@
     {
         "identifier": "utility.autopublish.remove.name",
         "source_string": "entfernen",
-<<<<<<< HEAD
-        "translation": "entfernen",
-=======
         "translation": "remove",
->>>>>>> Development
         "context": "utility -> autopublish -> remove -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17100,13 +16842,8 @@
     {
         "identifier": "utility.claimboosterrole.name",
         "source_string": "boosterrolle_einfordern",
-<<<<<<< HEAD
-        "translation": "boosterrolle_einfordern",
-        "context": "utility -> claimboosterrole -> name",
-=======
         "translation": "booster_roll_claim",
         "context": "name for the claim booster role command. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -17585,13 +17322,8 @@
     {
         "identifier": "utility.bs.battlelog.name",
         "source_string": "kampflogbuch",
-<<<<<<< HEAD
-        "translation": "kampflogbuch",
-        "context": "utility -> bs -> battlelog -> name",
-=======
         "translation": "battle_log",
         "context": "utility -> bs -> battlelog -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -17622,13 +17354,8 @@
     {
         "identifier": "utility.bs.playerinfo.name",
         "source_string": "spielerinfo",
-<<<<<<< HEAD
-        "translation": "spielerinfo",
-        "context": "utility -> bs -> playerinfo -> name",
-=======
         "translation": "playerinfo",
         "context": "utility -> bs -> playerinfo -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -17771,13 +17498,8 @@
     {
         "identifier": "utility.bs.unlink.name",
         "source_string": "entfernen",
-<<<<<<< HEAD
-        "translation": "entfernen",
-        "context": "utility -> bs -> unlink -> name",
-=======
         "translation": "remove",
         "context": "utility -> bs -> unlink -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -17888,11 +17610,7 @@
     {
         "identifier": "minigames.wordchaincmds.name",
         "source_string": "wortkette",
-<<<<<<< HEAD
-        "translation": "wortkette",
-=======
         "translation": "wordchain",
->>>>>>> Development
         "context": "minigames -> wordchaincmds -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -18515,29 +18233,9 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.normal.description",
-<<<<<<< HEAD
-        "source_string": "Zähle einfach immer um 1 hoch.",
-        "translation": "Zähle einfach immer um 1 hoch.",
-        "context": "minigames -> counting -> modes -> modes -> normal -> description",
-=======
         "source_string": "Zähle einfach aufwärts von eins an: `1`, `2`, `3`, `4`, ...",
         "translation": "Just count up from one: `1`, `2`, `3`, `4`, ...",
         "context": "Counting Minigame - Mode: Normal (Positive Zahlen)",
->>>>>>> Development
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "minigames.counting.modes.modes.negative.name",
-<<<<<<< HEAD
-        "source_string": "Negativ",
-        "translation": "Negativ",
-        "context": "minigames -> counting -> modes -> modes -> negative -> name",
-=======
-        "source_string": "Negative Zahlen",
-        "translation": "Negative numbers",
-        "context": "Zähle ins Negative.",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
@@ -18551,40 +18249,9 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.negative.description",
-<<<<<<< HEAD
-        "source_string": "Zähle ins Negative.",
-        "translation": "Zähle ins Negative.",
-        "context": "minigames -> counting -> modes -> modes -> negative -> description",
-=======
         "source_string": "Zähle abwärts von null: `-1`, `-2`, `-3`, `-4`, ...",
         "translation": "Count down from zero: `-1`, `-2`, `-3`, `-4`, ...",
         "context": "Counting Minigame - Mode: Negative (Negative Zahlen)",
->>>>>>> Development
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "minigames.counting.modes.modes.reverse.name",
-        "source_string": "Reverse",
-        "translation": "Reverse",
-<<<<<<< HEAD
-        "context": "minigames -> counting -> modes -> modes -> reverse -> name",
-=======
-        "context": "Zähle rückwärts zur 0.",
->>>>>>> Development
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "minigames.counting.modes.modes.reverse.description",
-<<<<<<< HEAD
-        "source_string": "Zähle rückwärts zur 0.",
-        "translation": "Zähle rückwärts zur 0.",
-=======
-        "source_string": "Zähle von -100 Richtung 0: `-100`, `-99`, `-98`, `-97`, ...",
-        "translation": "Count from -100 towards 0: `-100`, `-99`, `-98`, `-97`, ...",
->>>>>>> Development
-        "context": "minigames -> counting -> modes -> modes -> reverse -> description",
         "labels": "de.json",
         "max_length": null
     },
@@ -18607,40 +18274,16 @@
     {
         "identifier": "minigames.counting.modes.modes.prime.name",
         "source_string": "Primzahlen",
-<<<<<<< HEAD
-        "translation": "Primzahlen",
-=======
         "translation": "Prime numbers",
->>>>>>> Development
         "context": "minigames -> counting -> modes -> modes -> prime -> name",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.prime.description",
-<<<<<<< HEAD
-        "source_string": "Zähle nur Primzahlen.",
-        "translation": "Zähle nur Primzahlen.",
-        "context": "minigames -> counting -> modes -> modes -> prime -> description",
-=======
         "source_string": "Zähle nur die Primzahlen: `2`, `3`, `5`, `7`, ...",
         "translation": "Count only the prime numbers: `2`, `3`, `5`, `7`, ...",
         "context": "Counting Minigame - Mode: Prime (Primzahlen)",
->>>>>>> Development
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "minigames.counting.modes.modes.even.name",
-<<<<<<< HEAD
-        "source_string": "Gerade",
-        "translation": "Gerade",
-        "context": "minigames -> counting -> modes -> modes -> even -> name",
-=======
-        "source_string": "Gerade Zahlen",
-        "translation": "Even numbers",
-        "context": "Zähle nur gerade Zahlen.",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
@@ -18654,29 +18297,9 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.even.description",
-<<<<<<< HEAD
-        "source_string": "Zähle nur gerade Zahlen.",
-        "translation": "Zähle nur gerade Zahlen.",
-        "context": "minigames -> counting -> modes -> modes -> even -> description",
-=======
         "source_string": "Zähle nur die geraden Zahlen: `2`, `4`, `6`, `8`, ...",
         "translation": "Count only the even numbers: `2`, `4`, `6`, `8`, ...",
         "context": "Counting Minigame - Mode: Even (Gerade Zahlen)",
->>>>>>> Development
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "minigames.counting.modes.modes.odd.name",
-<<<<<<< HEAD
-        "source_string": "Ungerade",
-        "translation": "Ungerade",
-        "context": "minigames -> counting -> modes -> modes -> odd -> name",
-=======
-        "source_string": "Ungerade Zahlen",
-        "translation": "Odd numbers",
-        "context": "Zähle nur ungerade Zahlen.",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
@@ -18690,29 +18313,9 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.odd.description",
-<<<<<<< HEAD
-        "source_string": "Zähle nur ungerade Zahlen.",
-        "translation": "Zähle nur ungerade Zahlen.",
-        "context": "minigames -> counting -> modes -> modes -> odd -> description",
-=======
         "source_string": "Zähle nur die ungeraden Zahlen: `1`, `3`, `5`, `7`, ...",
         "translation": "Count only the odd numbers: `1`, `3`, `5`, `7`, ...",
         "context": "Counting Minigame - Mode: Odd (Ungerade Zahlen)",
->>>>>>> Development
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "minigames.counting.modes.modes.fibonacci.name",
-<<<<<<< HEAD
-        "source_string": "Fibonacci",
-        "translation": "Fibonacci",
-        "context": "minigames -> counting -> modes -> modes -> fibonacci -> name",
-=======
-        "source_string": "Fibonacci-Zahlen",
-        "translation": "Fibonacci numbers",
-        "context": "Zähle die Fibonacci-Zahlen.",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
@@ -18726,107 +18329,57 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.fibonacci.description",
-<<<<<<< HEAD
-        "source_string": "Zähle die Fibonacci-Zahlen.",
-        "translation": "Zähle die Fibonacci-Zahlen.",
-        "context": "minigames -> counting -> modes -> modes -> fibonacci -> description",
-=======
         "source_string": "Zähle nur die Fibonacci-Zahlen: `1`, `1`, `2`, `3`, ...",
         "translation": "Count only the Fibonacci numbers: `1`, `1`, `2`, `3`, ...",
         "context": "Counting Minigame - Mode: Fibonacci (Fibonacci-Zahlen)",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.square.name",
         "source_string": "Quadratzahlen",
-<<<<<<< HEAD
-        "translation": "Quadratzahlen",
-=======
         "translation": "Square numbers",
->>>>>>> Development
         "context": "minigames -> counting -> modes -> modes -> square -> name",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.square.description",
-<<<<<<< HEAD
-        "source_string": "Zähle die Quadratzahlen.",
-        "translation": "Zähle die Quadratzahlen.",
-        "context": "minigames -> counting -> modes -> modes -> square -> description",
-=======
         "source_string": "Zähle nur die Quadratzahlen: `2`, `4`, `8`, `16`, ...",
         "translation": "Count only the square numbers: `2`, `4`, `8`, `16`, ...",
         "context": "Counting Minigame - Mode: Square (Quadratzahlen)",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.cube.name",
         "source_string": "Kubikzahlen",
-<<<<<<< HEAD
-        "translation": "Kubikzahlen",
-=======
         "translation": "Cubic numbers",
->>>>>>> Development
         "context": "minigames -> counting -> modes -> modes -> cube -> name",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.cube.description",
-<<<<<<< HEAD
-        "source_string": "Zähle die Kubikzahlen.",
-        "translation": "Zähle die Kubikzahlen.",
-        "context": "minigames -> counting -> modes -> modes -> cube -> description",
-=======
         "source_string": "Zähle nur die Kubikzahlen: `1`, `8`, `27`, `64`, ...",
         "translation": "Count only the cube numbers: `1`, `8`, `27`, `64`, ...",
         "context": "Counting Minigame - Mode: Cube (Kubikzahlen)",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.houndreds.name",
         "source_string": "Hunderter",
-<<<<<<< HEAD
-        "translation": "Hunderter",
-=======
         "translation": "Hundreds",
->>>>>>> Development
         "context": "minigames -> counting -> modes -> modes -> houndreds -> name",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.houndreds.description",
-<<<<<<< HEAD
-        "source_string": "Zähle nur Zahlen, die auf 00 enden.",
-        "translation": "Zähle nur Zahlen, die auf 00 enden.",
-        "context": "minigames -> counting -> modes -> modes -> houndreds -> description",
-=======
         "source_string": "Zähle nur die Hunderterzahlen: `100`, `200`, `300`, `400`, ...",
         "translation": "Count only the hundreds: `100`, `200`, `300`, `400`, ...",
         "context": "Counting Minigame - Mode: Houndreds (Hunderter)",
->>>>>>> Development
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "minigames.counting.modes.modes.binary.name",
-<<<<<<< HEAD
-        "source_string": "Binär",
-        "translation": "Binär",
-        "context": "minigames -> counting -> modes -> modes -> binary -> name",
-=======
-        "source_string": "Binärzahlen",
-        "translation": "Binary numbers",
-        "context": "Zähle in Binärzahlen.",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
@@ -18840,29 +18393,9 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.binary.description",
-<<<<<<< HEAD
-        "source_string": "Zähle in Binärzahlen.",
-        "translation": "Zähle in Binärzahlen.",
-        "context": "minigames -> counting -> modes -> modes -> binary -> description",
-=======
         "source_string": "Zähle in Binärzahlen: `1`, `10`, `11`, `100`, ...",
         "translation": "Count in binary numbers: `1`, `10`, `11`, `100`, ...",
         "context": "Counting Minigame - Mode: Binary (Binärzahlen)",
->>>>>>> Development
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "minigames.counting.modes.modes.romean.name",
-<<<<<<< HEAD
-        "source_string": "Römisch",
-        "translation": "Römisch",
-        "context": "minigames -> counting -> modes -> modes -> romean -> name",
-=======
-        "source_string": "Römische Zahlen",
-        "translation": "Roman numerals",
-        "context": "Zähle in römischen Zahlen.",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
@@ -18876,15 +18409,9 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.romean.description",
-<<<<<<< HEAD
-        "source_string": "Zähle in römischen Zahlen.",
-        "translation": "Zähle in römischen Zahlen.",
-        "context": "minigames -> counting -> modes -> modes -> romean -> description",
-=======
         "source_string": "Zähle in römischen Zahlen: `I`, `II`, `III`, `IV`, ...",
         "translation": "Count in Roman numerals: `I`, `II`, `III`, `IV`, ...",
         "context": "Counting Minigame - Mode: Romean (Römische Zahlen)",
->>>>>>> Development
         "labels": "de.json",
         "max_length": null
     },
@@ -20434,13 +19961,8 @@
     },
     {
         "identifier": "games.flagquiz.name",
-<<<<<<< HEAD
-        "source_string": "flaggem_quiz",
-        "translation": "flaggem_quiz",
-=======
         "source_string": "flaggen_quiz",
         "translation": "flag_quiz",
->>>>>>> Development
         "context": "games -> flagquiz -> name",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20488,13 +20010,8 @@
     {
         "identifier": "level.leaderboard.name",
         "source_string": "rangliste",
-<<<<<<< HEAD
-        "translation": "rangliste",
-        "context": "level -> leaderboard -> name",
-=======
         "translation": "leaderboard",
         "context": "level -> leaderboard -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -21100,11 +20617,7 @@
     },
     {
         "identifier": "level.config.name",
-<<<<<<< HEAD
-        "source_string": "settings",
-=======
         "source_string": "einstellungen",
->>>>>>> Development
         "translation": "settings",
         "context": "level -> config -> name",
         "labels": "de.json, command_name",
@@ -21577,11 +21090,7 @@
     {
         "identifier": "level.boosts.addrole.params.boost.description",
         "source_string": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
-<<<<<<< HEAD
-        "translation": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
-=======
         "translation": "The boost value (e.g. 1.5 for 50% more XP)",
->>>>>>> Development
         "context": "level -> boosts -> addrole -> params -> boost -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21645,11 +21154,7 @@
     {
         "identifier": "level.boosts.addchannel.params.boost.description",
         "source_string": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
-<<<<<<< HEAD
-        "translation": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
-=======
         "translation": "The boost value (e.g. 1.5 for 50% more XP)",
->>>>>>> Development
         "context": "level -> boosts -> addchannel -> params -> boost -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21713,11 +21218,7 @@
     {
         "identifier": "level.boosts.adduser.params.boost.description",
         "source_string": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
-<<<<<<< HEAD
-        "translation": "Der Boost-Wert (z.B. 1.5 für 50% mehr XP)",
-=======
         "translation": "The boost value (e.g. 1.5 for 50% more XP)",
->>>>>>> Development
         "context": "level -> boosts -> adduser -> params -> boost -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21949,753 +21450,8 @@
     {
         "identifier": "giveaway.reroll.name",
         "source_string": "neuverlosung",
-<<<<<<< HEAD
-        "translation": "neuverlosung",
-        "context": "giveaway -> reroll -> name",
-=======
         "translation": "reroll",
         "context": "giveaway -> reroll -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.reroll.description",
-        "source_string": "Startet eine Neuverlosung für ein beendetes Gewinnspiel",
-<<<<<<< HEAD
-        "translation": "Startet eine Neuverlosung für ein beendetes Gewinnspiel",
-=======
-        "translation": "Starts a new draw for a competition that has ended",
->>>>>>> Development
-        "context": "giveaway -> reroll -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.reroll.params.giveawayid.name",
-        "source_string": "gewinnspiel_id",
-<<<<<<< HEAD
-        "translation": "gewinnspiel_id",
-=======
-        "translation": "competition_id",
->>>>>>> Development
-        "context": "giveaway -> reroll -> params -> giveawayid -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.reroll.params.giveawayid.description",
-        "source_string": "Die ID des Gewinnspiels, das neu verlost werden soll",
-<<<<<<< HEAD
-        "translation": "Die ID des Gewinnspiels, das neu verlost werden soll",
-=======
-        "translation": "The ID of the lottery that is to be raffled off again",
->>>>>>> Development
-        "context": "giveaway -> reroll -> params -> giveawayid -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.edit.name",
-        "source_string": "bearbeiten",
-<<<<<<< HEAD
-        "translation": "bearbeiten",
-=======
-        "translation": "edit",
->>>>>>> Development
-        "context": "giveaway -> edit -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.edit.description",
-        "source_string": "Bearbeitet ein laufendes Gewinnspiel",
-<<<<<<< HEAD
-        "translation": "Bearbeitet ein laufendes Gewinnspiel",
-=======
-        "translation": "Processes an ongoing competition",
->>>>>>> Development
-        "context": "giveaway -> edit -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.edit.params.giveawayid.name",
-        "source_string": "gewinnspiel_id",
-<<<<<<< HEAD
-        "translation": "gewinnspiel_id",
-=======
-        "translation": "competition_id",
->>>>>>> Development
-        "context": "giveaway -> edit -> params -> giveawayid -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.edit.params.giveawayid.description",
-        "source_string": "Die ID des Gewinnspiels, das bearbeitet werden soll",
-<<<<<<< HEAD
-        "translation": "Die ID des Gewinnspiels, das bearbeitet werden soll",
-=======
-        "translation": "The ID of the competition to be processed",
->>>>>>> Development
-        "context": "giveaway -> edit -> params -> giveawayid -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.bl.add.user.name",
-<<<<<<< HEAD
-        "source_string": "benutzer_hinzufügen",
-        "translation": "benutzer_hinzufügen",
-=======
-        "source_string": "nutzer_hinzufügen",
-        "translation": "add_user",
->>>>>>> Development
-        "context": "giveaway -> bl -> add -> user -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.bl.add.user.description",
-<<<<<<< HEAD
-        "source_string": "Fügt einen Benutzer zur Blacklist für Gewinnspiele hinzu",
-        "translation": "Fügt einen Benutzer zur Blacklist für Gewinnspiele hinzu",
-=======
-        "source_string": "Fügt einen Nutzer zur Blacklist für Gewinnspiele hinzu",
-        "translation": "Adds a user to the blacklist for competitions",
->>>>>>> Development
-        "context": "giveaway -> bl -> add -> user -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.bl.add.user.user.name",
-<<<<<<< HEAD
-        "source_string": "benutzer",
-        "translation": "benutzer",
-=======
-        "source_string": "nutzer",
-        "translation": "user",
->>>>>>> Development
-        "context": "giveaway -> bl -> add -> user -> user -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.bl.add.user.user.description",
-<<<<<<< HEAD
-        "source_string": "Der Benutzer, der zur Blacklist hinzugefügt werden soll",
-        "translation": "Der Benutzer, der zur Blacklist hinzugefügt werden soll",
-=======
-        "source_string": "Der Nutzer, der zur Blacklist hinzugefügt werden soll",
-        "translation": "The user to be added to the blacklist",
->>>>>>> Development
-        "context": "giveaway -> bl -> add -> user -> user -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.bl.add.role.name",
-        "source_string": "rolle_hinzufügen",
-<<<<<<< HEAD
-        "translation": "rolle_hinzufügen",
-=======
-        "translation": "add_role",
->>>>>>> Development
-        "context": "giveaway -> bl -> add -> role -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.bl.add.role.description",
-        "source_string": "Fügt eine Rolle zur Blacklist für Gewinnspiele hinzu",
-<<<<<<< HEAD
-        "translation": "Fügt eine Rolle zur Blacklist für Gewinnspiele hinzu",
-=======
-        "translation": "Adds a role to the blacklist for competitions",
->>>>>>> Development
-        "context": "giveaway -> bl -> add -> role -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.bl.add.role.role.description",
-        "source_string": "Die Rolle, die zur Blacklist hinzugefügt werden soll",
-<<<<<<< HEAD
-        "translation": "Die Rolle, die zur Blacklist hinzugefügt werden soll",
-=======
-        "translation": "The role to be added to the blacklist",
->>>>>>> Development
-        "context": "giveaway -> bl -> add -> role -> role -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.bl.remove.user.name",
-<<<<<<< HEAD
-        "source_string": "benutzer_entfernen",
-        "translation": "benutzer_entfernen",
-=======
-        "source_string": "nutzer_entfernen",
-        "translation": "remove_user",
->>>>>>> Development
-        "context": "giveaway -> bl -> remove -> user -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.bl.remove.user.description",
-<<<<<<< HEAD
-        "source_string": "Entfernt einen Benutzer von der Blacklist für Gewinnspiele",
-        "translation": "Entfernt einen Benutzer von der Blacklist für Gewinnspiele",
-=======
-        "source_string": "Entfernt einen Nutzer von der Blacklist für Gewinnspiele",
-        "translation": "Removes a user from the blacklist for competitions",
->>>>>>> Development
-        "context": "giveaway -> bl -> remove -> user -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.bl.remove.user.user.description",
-<<<<<<< HEAD
-        "source_string": "Der Benutzer, der von der Blacklist entfernt werden soll",
-        "translation": "Der Benutzer, der von der Blacklist entfernt werden soll",
-=======
-        "source_string": "Der Nutzer, der von der Blacklist entfernt werden soll",
-        "translation": "The user to be removed from the blacklist",
->>>>>>> Development
-        "context": "giveaway -> bl -> remove -> user -> user -> description",
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "giveaway.bl.remove.role.name",
-        "source_string": "rolle_entfernen",
-<<<<<<< HEAD
-        "translation": "rolle_entfernen",
-=======
-        "translation": "remove_role",
->>>>>>> Development
-        "context": "giveaway -> bl -> remove -> role -> name",
-        "labels": "de.json, command_name, command_description",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.bl.remove.role.description",
-        "source_string": "Entfernt eine Rolle von der Blacklist für Gewinnspiele",
-<<<<<<< HEAD
-        "translation": "Entfernt eine Rolle von der Blacklist für Gewinnspiele",
-=======
-        "translation": "Removes a role from the blacklist for competitions",
->>>>>>> Development
-        "context": "giveaway -> bl -> remove -> role -> description",
-        "labels": "de.json",
-        "max_length": null
-    },
-    {
-        "identifier": "giveaway.bl.remove.role.role.description",
-        "source_string": "Die Rolle, die von der Blacklist entfernt werden soll",
-<<<<<<< HEAD
-        "translation": "Die Rolle, die von der Blacklist entfernt werden soll",
-=======
-        "translation": "The role to be removed from the blacklist",
->>>>>>> Development
-        "context": "giveaway -> bl -> remove -> role -> role -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "giveaway.bl.list.name",
-        "source_string": "anzeigen",
-<<<<<<< HEAD
-        "translation": "anzeigen",
-=======
-        "translation": "show",
->>>>>>> Development
-        "context": "giveaway -> bl -> list -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "giveaway.bl.list.description",
-        "source_string": "Zeigt die aktuelle Blacklist für Gewinnspiele an",
-<<<<<<< HEAD
-        "translation": "Zeigt die aktuelle Blacklist für Gewinnspiele an",
-=======
-        "translation": "Displays the current blacklist for competitions",
->>>>>>> Development
-        "context": "giveaway -> bl -> list -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.name",
-        "source_string": "ki",
-<<<<<<< HEAD
-        "translation": "ki",
-=======
-        "translation": "ai",
->>>>>>> Development
-        "context": "ai -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.description",
-        "source_string": "KI Befehle",
-<<<<<<< HEAD
-        "translation": "KI Befehle",
-=======
-        "translation": "AI commands",
->>>>>>> Development
-        "context": "ai -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.customsituations.name",
-<<<<<<< HEAD
-        "source_string": "benutzerdefinierte_situationen",
-        "translation": "benutzerdefinierte_situationen",
-=======
-        "source_string": "nutzerdefinierte_situationen",
-        "translation": "user_defined_situations",
->>>>>>> Development
-        "context": "ai -> customsituations -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.customsituations.description",
-<<<<<<< HEAD
-        "source_string": "Benutzerdefinierte KI-Persönlichkeiten",
-        "translation": "Benutzerdefinierte KI-Persönlichkeiten",
-=======
-        "source_string": "Nutzerdefinierte KI-Persönlichkeiten",
-        "translation": "User-defined AI personalities",
->>>>>>> Development
-        "context": "ai -> customsituations -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.createcustom.name",
-<<<<<<< HEAD
-        "source_string": "benutzerdefiniert_erstellen",
-        "translation": "benutzerdefiniert_erstellen",
-=======
-        "source_string": "nutzerdefiniert_erstellen",
-        "translation": "create_custom",
->>>>>>> Development
-        "context": "ai -> createcustom -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.createcustom.description",
-<<<<<<< HEAD
-        "source_string": "Erstellt eine benutzerdefinierte KI",
-        "translation": "Erstellt eine benutzerdefinierte KI",
-=======
-        "source_string": "Erstellt eine Nutzerdefinierte KI",
-        "translation": "Creates a custom AI",
->>>>>>> Development
-        "context": "ai -> createcustom -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.createcustom.params.name.name",
-        "source_string": "name",
-        "translation": "name",
-        "context": "ai -> createcustom -> params -> name -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.createcustom.params.name.description",
-<<<<<<< HEAD
-        "source_string": "Der Name der benutzerdefinierten KI",
-        "translation": "Der Name der benutzerdefinierten KI",
-=======
-        "source_string": "Der Name der Nutzerdefinierten KI",
-        "translation": "The name of the custom AI",
->>>>>>> Development
-        "context": "ai -> createcustom -> params -> name -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.createcustom.params.personality.name",
-        "source_string": "persönlichkeit",
-<<<<<<< HEAD
-        "translation": "persönlichkeit",
-=======
-        "translation": "personality",
->>>>>>> Development
-        "context": "ai -> createcustom -> params -> personality -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.createcustom.params.personality.description",
-<<<<<<< HEAD
-        "source_string": "Die Persönlichkeit der benutzerdefinierten KI",
-        "translation": "Die Persönlichkeit der benutzerdefinierten KI",
-=======
-        "source_string": "Die Persönlichkeit der Nutzerdefinierten KI",
-        "translation": "The personality of custom AI",
->>>>>>> Development
-        "context": "ai -> createcustom -> params -> personality -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.createcustom.params.temperature.name",
-        "source_string": "temperatur",
-<<<<<<< HEAD
-        "translation": "temperatur",
-=======
-        "translation": "temperature",
->>>>>>> Development
-        "context": "ai -> createcustom -> params -> temperature -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.createcustom.params.temperature.description",
-<<<<<<< HEAD
-        "source_string": "Die Temperatur der benutzerdefinierten KI (optional, Standard: 1)",
-        "translation": "Die Temperatur der benutzerdefinierten KI (optional, Standard: 1)",
-=======
-        "source_string": "Die Temperatur der Nutzerdefinierten KI (optional, Standard: 1)",
-        "translation": "The temperature of the user-defined AI (optional, default: 1)",
->>>>>>> Development
-        "context": "ai -> createcustom -> params -> temperature -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.createcustom.params.top_p.name",
-        "source_string": "top_p",
-        "translation": "top_p",
-        "context": "ai -> createcustom -> params -> top_p -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.createcustom.params.top_p.description",
-<<<<<<< HEAD
-        "source_string": "Der Top-P-Wert der benutzerdefinierten KI (optional, Standard: 1)",
-        "translation": "Der Top-P-Wert der benutzerdefinierten KI (optional, Standard: 1)",
-=======
-        "source_string": "Der Top-P-Wert der Nutzerdefinierten KI (optional, Standard: 1)",
-        "translation": "The top P value of the user-defined AI (optional, default: 1)",
->>>>>>> Development
-        "context": "ai -> createcustom -> params -> top_p -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.createcustom.params.frequency_penalty.name",
-        "source_string": "frequency_penalty",
-        "translation": "frequency_penalty",
-        "context": "ai -> createcustom -> params -> frequency_penalty -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.createcustom.params.frequency_penalty.description",
-<<<<<<< HEAD
-        "source_string": "Die frequency penalty der benutzerdefinierten KI (optional, Standard: 0)",
-        "translation": "Die frequency penalty der benutzerdefinierten KI (optional, Standard: 0)",
-=======
-        "source_string": "Die frequency penalty der Nutzerdefinierten KI (optional, Standard: 0)",
-        "translation": "The frequency penalty of the user-defined AI (optional, default: 0)",
->>>>>>> Development
-        "context": "ai -> createcustom -> params -> frequency_penalty -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.createcustom.params.presence_penalty.name",
-        "source_string": "presence_penalty",
-        "translation": "presence_penalty",
-        "context": "ai -> createcustom -> params -> presence_penalty -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.createcustom.params.presence_penalty.description",
-<<<<<<< HEAD
-        "source_string": "Die presence penalty der benutzerdefinierten KI (optional, Standard: 0)",
-        "translation": "Die presence penalty der benutzerdefinierten KI (optional, Standard: 0)",
-=======
-        "source_string": "Die presence penalty der Nutzerdefinierten KI (optional, Standard: 0)",
-        "translation": "The presence penalty of the user-defined AI (optional, default: 0)",
->>>>>>> Development
-        "context": "ai -> createcustom -> params -> presence_penalty -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.deletecustom.name",
-<<<<<<< HEAD
-        "source_string": "benutzerdefiniert_löschen",
-        "translation": "benutzerdefiniert_löschen",
-=======
-        "source_string": "nutzerdefiniert_löschen",
-        "translation": "delete_custom",
->>>>>>> Development
-        "context": "ai -> deletecustom -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.deletecustom.description",
-<<<<<<< HEAD
-        "source_string": "Löscht eine benutzerdefinierte KI",
-        "translation": "Löscht eine benutzerdefinierte KI",
-=======
-        "source_string": "Löscht eine Nutzerdefinierte KI",
-        "translation": "Deletes a user-defined AI",
->>>>>>> Development
-        "context": "ai -> deletecustom -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.askcustom.name",
-<<<<<<< HEAD
-        "source_string": "benutzerdefiniert_fragen",
-        "translation": "benutzerdefiniert_fragen",
-=======
-        "source_string": "nutzerdefiniert_fragen",
-        "translation": "custom_questions",
->>>>>>> Development
-        "context": "ai -> askcustom -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.askcustom.description",
-<<<<<<< HEAD
-        "source_string": "Fragt eine benutzerdefinierte KI",
-        "translation": "Fragt eine benutzerdefinierte KI",
-=======
-        "source_string": "Fragt eine Nutzerdefinierte KI",
-        "translation": "Asks a user-defined AI",
->>>>>>> Development
-        "context": "ai -> askcustom -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.askcustom.params.prompt.name",
-        "source_string": "prompt",
-        "translation": "prompt",
-        "context": "ai -> askcustom -> params -> prompt -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.askcustom.params.prompt.description",
-<<<<<<< HEAD
-        "source_string": "Der Prompt der benutzerdefinierten KI",
-        "translation": "Der Prompt der benutzerdefinierten KI",
-=======
-        "source_string": "Der Prompt der Nutzerdefinierten KI",
-        "translation": "The prompt of the user-defined AI",
->>>>>>> Development
-        "context": "ai -> askcustom -> params -> prompt -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.askcustom.params.personality.name",
-        "source_string": "persönlichkeit",
-<<<<<<< HEAD
-        "translation": "persönlichkeit",
-=======
-        "translation": "personality",
->>>>>>> Development
-        "context": "ai -> askcustom -> params -> personality -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.askcustom.params.personality.description",
-<<<<<<< HEAD
-        "source_string": "Die benutzerdefinierten KI die du Fragen möchtest",
-        "translation": "Die benutzerdefinierten KI die du Fragen möchtest",
-=======
-        "source_string": "Die Nutzerdefinierten KI die du Fragen möchtest",
-        "translation": "The custom AI you want to ask",
->>>>>>> Development
-        "context": "ai -> askcustom -> params -> personality -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.askgpt.name",
-        "source_string": "gpt_fragen",
-<<<<<<< HEAD
-        "translation": "gpt_fragen",
-=======
-        "translation": "gpt_questions",
->>>>>>> Development
-        "context": "ai -> askgpt -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.askgpt.description",
-        "source_string": "Fragt eine GPT-KI",
-<<<<<<< HEAD
-        "translation": "Fragt eine GPT-KI",
-=======
-        "translation": "Asks a GPT AI",
->>>>>>> Development
-        "context": "ai -> askgpt -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.askgpt.params.prompt.name",
-        "source_string": "prompt",
-        "translation": "prompt",
-        "context": "ai -> askgpt -> params -> prompt -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.askgpt.params.prompt.description",
-        "source_string": "Der Prompt der GPT-KI",
-<<<<<<< HEAD
-        "translation": "Der Prompt der GPT-KI",
-=======
-        "translation": "The prompt of the GPT AI",
->>>>>>> Development
-        "context": "ai -> askgpt -> params -> prompt -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.askgpt.params.temperature.name",
-        "source_string": "temperatur",
-<<<<<<< HEAD
-        "translation": "temperatur",
-=======
-        "translation": "temperature",
->>>>>>> Development
-        "context": "ai -> askgpt -> params -> temperature -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.askgpt.params.temperature.description",
-        "source_string": "Die Temperatur der GPT-KI (optional, Standard: 1)",
-<<<<<<< HEAD
-        "translation": "Die Temperatur der GPT-KI (optional, Standard: 1)",
-=======
-        "translation": "The temperature of the GPT AI (optional, default: 1)",
->>>>>>> Development
-        "context": "ai -> askgpt -> params -> temperature -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.askgpt.params.top_p.name",
-        "source_string": "top_p",
-        "translation": "top_p",
-        "context": "ai -> askgpt -> params -> top_p -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.askgpt.params.top_p.description",
-        "source_string": "Der Top-P-Wert der GPT-KI (optional, Standard: 1)",
-<<<<<<< HEAD
-        "translation": "Der Top-P-Wert der GPT-KI (optional, Standard: 1)",
-=======
-        "translation": "The top P value of the GPT AI (optional, default: 1)",
->>>>>>> Development
-        "context": "ai -> askgpt -> params -> top_p -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.askgpt.params.frequency_penalty.name",
-        "source_string": "frequency_penalty",
-        "translation": "frequency_penalty",
-        "context": "ai -> askgpt -> params -> frequency_penalty -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.askgpt.params.frequency_penalty.description",
-        "source_string": "Die frequency penalty der GPT-KI (optional, Standard: 0)",
-<<<<<<< HEAD
-        "translation": "Die frequency penalty der GPT-KI (optional, Standard: 0)",
-=======
-        "translation": "The frequency penalty of the GPT AI (optional, default: 0)",
->>>>>>> Development
-        "context": "ai -> askgpt -> params -> frequency_penalty -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.askgpt.params.presence_penalty.name",
-        "source_string": "presence_penalty",
-        "translation": "presence_penalty",
-        "context": "ai -> askgpt -> params -> presence_penalty -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.askgpt.params.presence_penalty.description",
-        "source_string": "Die presence penalty der GPT-KI (optional, Standard: 0)",
-<<<<<<< HEAD
-        "translation": "Die presence penalty der GPT-KI (optional, Standard: 0)",
-=======
-        "translation": "The presence penalty of the GPT AI (optional, default: 0)",
->>>>>>> Development
-        "context": "ai -> askgpt -> params -> presence_penalty -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.asktanjuwun.name",
-        "source_string": "tanjuwun_fragen",
-<<<<<<< HEAD
-        "translation": "tanjuwun_fragen",
-=======
-        "translation": "tanjuwun_questions",
->>>>>>> Development
-        "context": "ai -> asktanjuwun -> name",
-        "labels": "de.json, command_name",
-        "max_length": 32
-    },
-    {
-        "identifier": "ai.asktanjuwun.description",
-<<<<<<< HEAD
-        "source_string": "Fragt eine Tanjuwun-KI",
-        "translation": "Fragt eine Tanjuwun-KI",
-=======
-        "source_string": "Frage die Tanjuwun-KI",
-        "translation": "Ask the Tanjuwun AI",
->>>>>>> Development
-        "context": "ai -> asktanjuwun -> description",
-        "labels": "de.json, command_description",
-        "max_length": 100
-    },
-    {
-        "identifier": "ai.asktanjuwun.params.prompt.name",
-        "source_string": "prompt",
-        "translation": "prompt",
-        "context": "ai -> asktanjuwun -> params -> prompt -> name",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -23206,11 +21962,7 @@
     {
         "identifier": "ai.asktanjuwun.params.prompt.description",
         "source_string": "Der Prompt der Tanjuwun-KI",
-<<<<<<< HEAD
-        "translation": "Der Prompt der Tanjuwun-KI",
-=======
         "translation": "The prompt of the Tanjuwun AI",
->>>>>>> Development
         "context": "ai -> asktanjuwun -> params -> prompt -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -23801,13 +22553,8 @@
     },
     {
         "identifier": "logs.automodRuleCreate.title",
-<<<<<<< HEAD
-        "source_string": "Automod-Regel erstellt",
-        "translation": "Automod-Regel erstellt",
-=======
         "source_string": "AutoMod-Regel erstellt",
         "translation": "AutoMod rule created",
->>>>>>> Development
         "context": "logs -> automodRuleCreate -> title",
         "labels": "de.json",
         "max_length": null
@@ -24006,13 +22753,8 @@
     },
     {
         "identifier": "logs.automodRuleUpdate.title",
-<<<<<<< HEAD
-        "source_string": "Automod-Regel aktualisiert",
-        "translation": "Automod-Regel aktualisiert",
-=======
         "source_string": "AutoMod-Regel aktualisiert",
         "translation": "AutoMod rule updated",
->>>>>>> Development
         "context": "logs -> automodRuleUpdate -> title",
         "labels": "de.json",
         "max_length": null
@@ -24035,13 +22777,8 @@
     },
     {
         "identifier": "logs.automodRuleDelete.title",
-<<<<<<< HEAD
-        "source_string": "Automod-Regel gelöscht",
-        "translation": "Automod-Regel gelöscht",
-=======
         "source_string": "AutoMod-Regel gelöscht",
         "translation": "AutoMod rule deleted",
->>>>>>> Development
         "context": "logs -> automodRuleDelete -> title",
         "labels": "de.json",
         "max_length": null
@@ -24056,26 +22793,16 @@
     },
     {
         "identifier": "logs.automodAction.title",
-<<<<<<< HEAD
-        "source_string": "Automod-Aktion",
-        "translation": "Automod-Aktion",
-=======
         "source_string": "AutoMod-Aktion",
         "translation": "AutoMod action",
->>>>>>> Development
         "context": "logs -> automodAction -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "logs.automodAction.actionWasTaken",
-<<<<<<< HEAD
-        "source_string": "Der Automod hat etwas gegen ${user} in ${channel} unternommen",
-        "translation": "Der Automod hat etwas gegen ${user} in ${channel} unternommen",
-=======
         "source_string": "Der AutoMod hat Maßnahmen gegen ${user} in ${channel} ergriffen",
         "translation": "The AutoMod has taken action against ${user} in ${channel}",
->>>>>>> Development
         "context": "logs -> automodAction -> actionWasTaken",
         "labels": "de.json",
         "max_length": null
@@ -24730,13 +23457,8 @@
     },
     {
         "identifier": "logs.guildUpdate.featuresLocales.AUTO_MODERATION",
-<<<<<<< HEAD
-        "source_string": "Automod",
-        "translation": "Automod",
-=======
         "source_string": "AutoMod",
         "translation": "AutoMod",
->>>>>>> Development
         "context": "logs -> guildUpdate -> featuresLocales -> AUTO_MODERATION",
         "labels": "de.json",
         "max_length": null
@@ -26432,13 +25154,8 @@
     {
         "identifier": "logs.blacklistr.remove.name",
         "source_string": "entfernen",
-<<<<<<< HEAD
-        "translation": "entfernen",
-        "context": "logs -> blacklistr -> remove -> name",
-=======
         "translation": "remove",
         "context": "logs -> blacklistr -> remove -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -26812,13 +25529,8 @@
     },
     {
         "identifier": "image.findedges.name",
-<<<<<<< HEAD
-        "source_string": "findedges",
-        "translation": "findedges",
-=======
         "source_string": "rand_finden",
         "translation": "find_edges",
->>>>>>> Development
         "context": "image -> findedges -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -26930,11 +25642,7 @@
     {
         "identifier": "image.resize.params.image.name",
         "source_string": "bild",
-<<<<<<< HEAD
-        "translation": "bild",
-=======
         "translation": "image",
->>>>>>> Development
         "context": "image -> resize -> params -> image -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -26981,11 +25689,7 @@
     },
     {
         "identifier": "image.mirror.name",
-<<<<<<< HEAD
-        "source_string": "mirror",
-=======
         "source_string": "spiegeln",
->>>>>>> Development
         "translation": "mirror",
         "context": "image -> mirror -> name",
         "labels": "de.json, command_name",
@@ -27017,11 +25721,7 @@
     },
     {
         "identifier": "image.compress.name",
-<<<<<<< HEAD
-        "source_string": "compress",
-=======
         "source_string": "komprimieren",
->>>>>>> Development
         "translation": "compress",
         "context": "image -> compress -> name",
         "labels": "de.json, command_name",
@@ -27070,13 +25770,8 @@
     {
         "identifier": "channel.media.name",
         "source_string": "medienkanal",
-<<<<<<< HEAD
-        "translation": "medienkanal",
-        "context": "channel -> media -> name",
-=======
         "translation": "media_channel",
         "context": "channel -> media -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -27139,13 +25834,8 @@
     {
         "identifier": "channel.w.name",
         "source_string": "wilkommenskanal",
-<<<<<<< HEAD
-        "translation": "wilkommenskanal",
-        "context": "channel -> w -> name",
-=======
         "translation": "welcome_channel",
         "context": "channel -> w -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -27224,13 +25914,8 @@
     {
         "identifier": "channel.farewell.name",
         "source_string": "verabschiedungskanal",
-<<<<<<< HEAD
-        "translation": "verabschiedungskanal",
-        "context": "channel -> farewell -> name",
-=======
         "translation": "farewell_channel",
         "context": "channel -> farewell -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -27245,13 +25930,8 @@
     {
         "identifier": "channel.farewell.set.ch.name",
         "source_string": "verabschiedungskanal",
-<<<<<<< HEAD
-        "translation": "verabschiedungskanal",
-        "context": "channel -> farewell -> set -> ch -> name",
-=======
         "translation": "farewell_channel",
         "context": "channel -> farewell -> set -> ch -> name. Only lowercase characters and no spaces allowed",
->>>>>>> Development
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -27698,11 +26378,7 @@
     {
         "identifier": "countries.Bouvet Island",
         "source_string": "Bouvetinsel",
-<<<<<<< HEAD
-        "translation": "Bouvetinsel",
-=======
         "translation": "Bouvet Island",
->>>>>>> Development
         "context": "countries -> Bouvet Island",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -28054,11 +26730,7 @@
     {
         "identifier": "countries.Faroe Islands",
         "source_string": "Färöer",
-<<<<<<< HEAD
-        "translation": "Färöer",
-=======
         "translation": "Faroe Islands",
->>>>>>> Development
         "context": "countries -> Faroe Islands",
         "labels": "de.json",
         "max_length": null
@@ -29138,11 +27810,7 @@
     {
         "identifier": "countries.St Kitts and Nevis",
         "source_string": "St. Kitts und Nevis",
-<<<<<<< HEAD
-        "translation": "St. Kitts und Nevis",
-=======
         "translation": "St. Kitts and Nevis",
->>>>>>> Development
         "context": "countries -> St Kitts and Nevis",
         "labels": "de.json",
         "max_length": null
@@ -29334,11 +28002,7 @@
     {
         "identifier": "countries.Turks and Caicos Islands",
         "source_string": "Turks- und Caicosinseln",
-<<<<<<< HEAD
-        "translation": "Turks- und Caicosinseln",
-=======
         "translation": "Turks and Caicos Islands",
->>>>>>> Development
         "context": "countries -> Turks and Caicos Islands",
         "labels": "de.json",
         "max_length": null
@@ -29866,11 +28530,7 @@
     {
         "identifier": "Minigame Commands",
         "source_string": "Minispiel Befehle",
-<<<<<<< HEAD
-        "translation": "Minispiel Befehle",
-=======
         "translation": "Minigame commands",
->>>>>>> Development
         "context": " -> Minigame Commands",
         "labels": "de.json",
         "max_length": 32
@@ -30005,13 +28665,8 @@
     },
     {
         "identifier": "help",
-<<<<<<< HEAD
-        "source_string": "hilfe",
-        "translation": "help",
-=======
         "source_string": "Hilfe",
         "translation": "Help",
->>>>>>> Development
         "context": " -> help",
         "labels": "de.json",
         "max_length": 32
@@ -30227,37 +28882,8 @@
     {
         "identifier": "description",
         "source_string": "beschreibung",
-<<<<<<< HEAD
-        "translation": "beschreibung",
-        "context": " -> description",
-=======
         "translation": "description",
         "context": "Name of the description param in some commands. Only lowercase characters and no spaces allowed",
->>>>>>> Development
-        "labels": "de.json",
-        "max_length": 32
-    },
-    {
-        "identifier": "params",
-        "source_string": "parameter",
-<<<<<<< HEAD
-        "translation": "parameter",
-=======
-        "translation": "parameters",
->>>>>>> Development
-        "context": " -> params",
-        "labels": "de.json",
-        "max_length": 32
-    },
-    {
-        "identifier": "pingrole",
-        "source_string": "ping_rolle",
-<<<<<<< HEAD
-        "translation": "ping_rolle",
-=======
-        "translation": "ping_roll",
->>>>>>> Development
-        "context": " -> pingrole",
         "labels": "de.json",
         "max_length": 32
     },
@@ -30280,11 +28906,7 @@
     {
         "identifier": "summarychannel",
         "source_string": "zusammenfassungskanal",
-<<<<<<< HEAD
-        "translation": "zusammenfassungskanal",
-=======
         "translation": "summary_channel",
->>>>>>> Development
         "context": " -> summarychannel",
         "labels": "de.json",
         "max_length": 32
