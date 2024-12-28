@@ -30,6 +30,20 @@ async def list_blacklist(
         user[0] for user in await get_blacklist_user_api(commandInfo.guild.id)
     ]
 
+    if len(blacklistedRoles) == 0 and len(blacklistedUsers) == 0:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.giveaway.list_blacklist.noBlacklist.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.giveaway.list_blacklist.noBlacklist.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,
