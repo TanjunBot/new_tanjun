@@ -1945,8 +1945,8 @@
     },
     {
         "identifier": "commands.admin.warnconfig.modal.timeout_duration.label",
-        "source_string": "Dauer des Timeouts",
-        "translation": "Dauer des Timeouts",
+        "source_string": "Dauer des Timeouts in Minuten",
+        "translation": "Dauer des Timeouts in Minuten",
         "context": "commands -> admin -> warnconfig -> modal -> timeout_duration -> label",
         "labels": "de.json",
         "max_length": 45
@@ -2065,8 +2065,8 @@
     },
     {
         "identifier": "commands.admin.viewwarns.warningDetails",
-        "source_string": "Grund: ${reason}, Ausgestellt am: ${date}, Läuft ab: ${expiration}",
-        "translation": "Grund: ${reason}, Ausgestellt am: ${date}, Läuft ab: ${expiration}",
+        "source_string": "Grund: ${reason}\nAusgestellt am: ${date}\nLäuft ab: ${expiration}\nAusgestellt von: <@${created_by}>",
+        "translation": "Grund: ${reason}\nAusgestellt am: ${date}\nLäuft ab: ${expiration}\nAusgestellt von: <@${created_by}>",
         "context": "commands -> admin -> viewwarns -> warningDetails",
         "labels": "de.json",
         "max_length": null
@@ -29990,5 +29990,69 @@
         "context": "the locale param used in some commands. only lowercase characters and no strings allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
+    },
+    {
+        "identifier": "commands.admin.addrole.roleSelect.placeholder",
+        "source_string": "Rolle Auswählen",
+        "translation": "Rolle Auswählen",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "commands.admin.addrole.userSelect.placeholder",
+        "source_string": "Nutzer auswählen",
+        "translation": "Nutzer auswählen",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.addrole.confirm.label",
+        "source_string": "Bestätigen",
+        "translation": "Bestätigen",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": 80
+    },
+    {
+        "identifier": "commands.admin.addrole.cancel.label",
+        "source_string": "Abbrechen",
+        "translation": "Abbrechen",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": 80
+    },
+    {
+        "identifier": "commands.utility.report.blocked.title",
+        "source_string": "Du darfst niemanden mehr reporten",
+        "translation": "Du darfst niemanden mehr reporten",
+        "context": null,
+        "labels": "embed_title, unassigned",
+        "max_length": 256
+    },
+    {
+        "identifier": "commands.utility.report.blocked.description",
+        "source_string": "Du wurdest vom Report system ausgeschlossen und darfst niemanden mehr reporten.",
+        "translation": "Du wurdest vom Report system ausgeschlossen und darfst niemanden mehr reporten.",
+        "context": null,
+        "labels": "command_description, unassigned",
+        "max_length": 4096
+    },
+    {
+        "identifier": "commands.utility.report.reason_too_short.title",
+        "source_string": "Grund zu kurz",
+        "translation": "Grund zu kurz",
+        "context": null,
+        "labels": "embed_title, unassigned",
+        "max_length": 256
+    },
+    {
+        "identifier": "commands.utility.report.reason_too_short.description",
+        "source_string": "Bitte gebe ein paar mehr details in deinem Grund. Erkläre möglichst deutlich, wieso du den Report für gerechtfertigt hältst. ",
+        "translation": "Bitte gebe ein paar mehr details in deinem Grund. Erkläre möglichst deutlich, wieso du den Report für gerechtfertigt hältst. ",
+        "context": null,
+        "labels": "embed_description, unassigned",
+        "max_length": 4096
     }
 ]
