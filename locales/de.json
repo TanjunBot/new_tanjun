@@ -2065,8 +2065,8 @@
     },
     {
         "identifier": "commands.admin.viewwarns.warningDetails",
-        "source_string": "Grund: ${reason}\nAusgestellt am: ${date}\nLäuft ab: ${expiration}\nAusgestellt von: <@${created_by}",
-        "translation": "Grund: ${reason}\nAusgestellt am: ${date}\nLäuft ab: ${expiration}\nAusgestellt von: <@${created_by}",
+        "source_string": "Grund: ${reason}\nAusgestellt am: ${date}\nLäuft ab: ${expiration}\nAusgestellt von: <@${created_by}>",
+        "translation": "Grund: ${reason}\nAusgestellt am: ${date}\nLäuft ab: ${expiration}\nAusgestellt von: <@${created_by}>",
         "context": "commands -> admin -> viewwarns -> warningDetails",
         "labels": "de.json",
         "max_length": null
@@ -30022,5 +30022,37 @@
         "context": null,
         "labels": "unassigned",
         "max_length": 80
+    },
+    {
+        "identifier": "commands.utility.report.blocked.title",
+        "source_string": "Du darfst niemanden mehr reporten",
+        "translation": "Du darfst niemanden mehr reporten",
+        "context": null,
+        "labels": "embed_title, unassigned",
+        "max_length": 256
+    },
+    {
+        "identifier": "commands.utility.report.blocked.description",
+        "source_string": "Du wurdest vom Report system ausgeschlossen und darfst niemanden mehr reporten.",
+        "translation": "Du wurdest vom Report system ausgeschlossen und darfst niemanden mehr reporten.",
+        "context": null,
+        "labels": "command_description, unassigned",
+        "max_length": 4096
+    },
+    {
+        "identifier": "commands.utility.report.reason_too_short.title",
+        "source_string": "Grund zu kurz",
+        "translation": "Grund zu kurz",
+        "context": null,
+        "labels": "embed_title, unassigned",
+        "max_length": 256
+    },
+    {
+        "identifier": "commands.utility.report.reason_too_short.description",
+        "source_string": "Bitte gebe ein paar mehr details in deinem Grund. Erkläre möglichst deutlich, wieso du den Report für gerechtfertigt hältst. ",
+        "translation": "Bitte gebe ein paar mehr details in deinem Grund. Erkläre möglichst deutlich, wieso du den Report für gerechtfertigt hältst. ",
+        "context": null,
+        "labels": "embed_description, unassigned",
+        "max_length": 4096
     }
 ]
