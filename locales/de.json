@@ -29942,5 +29942,13 @@
         "context": "When locale Change was successfull.",
         "labels": "embed_description, unassigned",
         "max_length": 4096
+    },
+    {
+        "identifier": "user",
+        "source_string": "nutzer",
+        "translation": "nutzer",
+        "context": "the user param used in some commands. Only lowercase characters and no spaces allowed.",
+        "labels": "command_name, unassigned",
+        "max_length": 32
     }
 ]
