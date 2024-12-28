@@ -14121,7 +14121,7 @@
     },
     {
         "identifier": "admin.addrole.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "admin -> addrole -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -14169,7 +14169,7 @@
     },
     {
         "identifier": "admin.removerole.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "admin -> removerole -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -14489,7 +14489,7 @@
     },
     {
         "identifier": "admin.kick.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "admin -> kick -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -14537,7 +14537,7 @@
     },
     {
         "identifier": "admin.ban.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "admin -> ban -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -14601,7 +14601,7 @@
     },
     {
         "identifier": "admin.unban.params.username.name",
-        "source_string": "Nutzername",
+        "source_string": "nutzername",
         "translation": "username",
         "context": "admin -> unban -> params -> username -> name",
         "labels": "de.json, command_name",
@@ -19377,7 +19377,7 @@
     },
     {
         "identifier": "games.ttt.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "games -> ttt -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -19993,7 +19993,7 @@
     },
     {
         "identifier": "games.rps.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "games -> rps -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -20121,7 +20121,7 @@
     },
     {
         "identifier": "level.givexp.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> givexp -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -20169,7 +20169,7 @@
     },
     {
         "identifier": "level.takexp.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> takexp -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -20217,7 +20217,7 @@
     },
     {
         "identifier": "level.setxp.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> setxp -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -20265,7 +20265,7 @@
     },
     {
         "identifier": "level.rank.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> rank -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -20441,7 +20441,7 @@
     },
     {
         "identifier": "level.blacklist.addu.name",
-        "source_string": "Nutzer_hinzufügen",
+        "source_string": "nutzer_hinzufügen",
         "translation": "add_user",
         "context": "level -> blacklist -> addu -> name",
         "labels": "de.json, command_name",
@@ -20457,7 +20457,7 @@
     },
     {
         "identifier": "level.blacklist.addu.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> blacklist -> addu -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -20537,7 +20537,7 @@
     },
     {
         "identifier": "level.blacklist.removeu.name",
-        "source_string": "Nutzer_entfernen",
+        "source_string": "nutzer_entfernen",
         "translation": "remove_user",
         "context": "level -> blacklist -> removeu -> name",
         "labels": "de.json, command_name",
@@ -20553,7 +20553,7 @@
     },
     {
         "identifier": "level.blacklist.removeu.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> blacklist -> removeu -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -20985,7 +20985,7 @@
     },
     {
         "identifier": "level.boosts.calculate_user.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> boosts -> calculate_user -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -21017,7 +21017,7 @@
     },
     {
         "identifier": "level.boosts.calculate.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> boosts -> calculate -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -21193,7 +21193,7 @@
     },
     {
         "identifier": "level.boosts.adduser.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> boosts -> adduser -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -21305,7 +21305,7 @@
     },
     {
         "identifier": "level.boosts.removeuser.name",
-        "source_string": "Nutzer_entfernen",
+        "source_string": "nutzer_entfernen",
         "translation": "remove_user",
         "context": "level -> boosts -> removeuser -> name",
         "labels": "de.json, command_name",
@@ -21321,7 +21321,7 @@
     },
     {
         "identifier": "level.boosts.removeuser.params.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "level -> boosts -> removeuser -> params -> user -> name",
         "labels": "de.json, command_name",
@@ -21513,7 +21513,7 @@
     },
     {
         "identifier": "giveaway.bl.add.user.name",
-        "source_string": "Nutzer_hinzufügen",
+        "source_string": "nutzer_hinzufügen",
         "translation": "add_user",
         "context": "giveaway -> bl -> add -> user -> name",
         "labels": "de.json, command_name",
@@ -21529,7 +21529,7 @@
     },
     {
         "identifier": "giveaway.bl.add.user.user.name",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": "giveaway -> bl -> add -> user -> user -> name",
         "labels": "de.json, command_name",
@@ -21569,7 +21569,7 @@
     },
     {
         "identifier": "giveaway.bl.remove.user.name",
-        "source_string": "Nutzer_entfernen",
+        "source_string": "nutzer_entfernen",
         "translation": "remove_user",
         "context": "giveaway -> bl -> remove -> user -> name",
         "labels": "de.json, command_name",
@@ -21649,7 +21649,7 @@
     },
     {
         "identifier": "ai.customsituations.name",
-        "source_string": "Nutzerdefinierte_situationen",
+        "source_string": "nutzerdefinierte_situationen",
         "translation": "user_defined_situations",
         "context": "ai -> customsituations -> name",
         "labels": "de.json, command_name",
@@ -21665,8 +21665,8 @@
     },
     {
         "identifier": "ai.createcustom.name",
-        "source_string": "Nutzerdefiniert_erstellen",
-        "translation": "custom_create",
+        "source_string": "nutzerdefiniert_erstellen",
+        "translation": "create_custom",
         "context": "ai -> createcustom -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -21777,8 +21777,8 @@
     },
     {
         "identifier": "ai.deletecustom.name",
-        "source_string": "Nutzerdefiniert_löschen",
-        "translation": "custom_delete",
+        "source_string": "nutzerdefiniert_löschen",
+        "translation": "delete_custom",
         "context": "ai -> deletecustom -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -21793,7 +21793,7 @@
     },
     {
         "identifier": "ai.askcustom.name",
-        "source_string": "Nutzerdefiniert_fragen",
+        "source_string": "nutzerdefiniert_fragen",
         "translation": "custom_questions",
         "context": "ai -> askcustom -> name",
         "labels": "de.json, command_name",
@@ -28217,7 +28217,7 @@
     },
     {
         "identifier": "user",
-        "source_string": "Nutzer",
+        "source_string": "nutzer",
         "translation": "user",
         "context": " -> user",
         "labels": "de.json",
@@ -28313,7 +28313,7 @@
     },
     {
         "identifier": "username",
-        "source_string": "Nutzername",
+        "source_string": "nutzername",
         "translation": "username",
         "context": " -> username",
         "labels": "de.json",
@@ -28617,7 +28617,7 @@
     },
     {
         "identifier": "customformula",
-        "source_string": "Nutzerdefinierte_formel",
+        "source_string": "nutzerdefinierte_formel",
         "translation": "custom_formula",
         "context": " -> customformula",
         "labels": "de.json",
@@ -29948,6 +29948,46 @@
         "source_string": "nutzer",
         "translation": "user",
         "context": "the user param used in some commands. Only lowercase characters and no spaces allowed.",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.setlocale.name",
+        "source_string": "sprache_setzen",
+        "translation": "set_language",
+        "context": "The name for the set_locale command. Only lowercase characters and no spaces allowed",
+        "labels": "unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.setlocale.description",
+        "source_string": "Lege die Sprache des Servers fest",
+        "translation": "Set the language of the server",
+        "context": "The description of the setLocale command",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.setlocale.params.locale.description",
+        "source_string": "Die Sprache auf die der Server festgelegt werden soll",
+        "translation": "The language in which the server is to be set",
+        "context": "The description of the param locale",
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.setlocale.params.locale.name",
+        "source_string": "sprache",
+        "translation": "language",
+        "context": "The name of the locale param. Only lowercase characters and no spaces allowed.",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "locale",
+        "source_string": "sprache",
+        "translation": "language",
+        "context": "the locale param used in some commands. only lowercase characters and no strings allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
     }
