@@ -536,6 +536,14 @@
         "max_length": 32
     },
     {
+        "identifier": "admin.createticket.params.description.name",
+        "source_string": "beschreibung",
+        "translation": "description",
+        "context": "name of the description parameter. Only lowercase characters and no spaces allowed",
+        "labels": "de.json, command_name",
+        "max_length": 32
+    },
+    {
         "identifier": "admin.createticket.params.pingrole.name",
         "source_string": "pingrole",
         "translation": "pingrole",
