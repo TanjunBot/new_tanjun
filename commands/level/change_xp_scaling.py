@@ -13,28 +13,29 @@ import math
 
 
 class PaginationView(View):
-    def __init__(self, pages, commandInfo):
+    def __init__(self, generate_page, commandInfo, total_pages):
         super().__init__(timeout=60)
-        self.pages = pages
+        self.generate_page = generate_page
         self.current_page = 0
         self.commandInfo = commandInfo
+        self.total_pages = total_pages
 
-    @discord.ui.button(label="Previous", style=discord.ButtonStyle.gray, disabled=True)
+    @discord.ui.button(label="◀️", style=discord.ButtonStyle.gray, disabled=True)
     async def prev_button(self, interaction: discord.Interaction, button: Button):
         self.current_page = max(0, self.current_page - 1)
         await self.update_message(interaction)
 
-    @discord.ui.button(label="Next", style=discord.ButtonStyle.gray)
+    @discord.ui.button(label="▶️", style=discord.ButtonStyle.gray)
     async def next_button(self, interaction: discord.Interaction, button: Button):
-        self.current_page = min(len(self.pages) - 1, self.current_page + 1)
+        self.current_page = min(self.total_pages - 1, self.current_page + 1)
         await self.update_message(interaction)
 
     async def update_message(self, interaction: discord.Interaction):
         self.prev_button.disabled = self.current_page == 0
-        self.next_button.disabled = self.current_page == len(self.pages) - 1
+        self.next_button.disabled = self.current_page == self.total_pages - 1
 
         await interaction.response.edit_message(
-            embed=self.pages[self.current_page], view=self
+            embed=await self.generate_page(self.current_page), view=self
         )
 
 
@@ -150,9 +151,10 @@ async def show_xp_scalings(
 
     levels_per_page = 15
     total_pages = math.ceil((end_level - start_level + 1) / levels_per_page)
-    pages = []
 
-    for page in range(total_pages):
+    async def generatePage(page: int):
+        if page >= total_pages:
+            page = total_pages - 1
         current_start = start_level + page * levels_per_page
         current_end = min(current_start + levels_per_page - 1, end_level)
 
@@ -188,7 +190,9 @@ async def show_xp_scalings(
                         commandInfo.locale,
                         "commands.level.showxpscalings.data",
                         level=i,
-                        xp=get_xp_for_level(i, scaling, custom_formula if scaling == 'custom' else None),
+                        xp=get_xp_for_level(
+                            i, scaling, custom_formula if scaling == "custom" else None
+                        ),
                     )
                     for i in range(current_start, current_end + 1)
                 ]
@@ -205,19 +209,11 @@ async def show_xp_scalings(
                 inline=False,
             )
 
-        pages.append(embed)
+        return embed
 
-    if not pages:
-        await commandInfo.reply(
-            tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.showxpscalings.no_data"
-            )
-        )
-        return
-
-    if len(pages) == 1:
-        await commandInfo.reply(embed=pages[0])
+    if total_pages == 1:
+        await commandInfo.reply(embed=await generatePage(0))
     else:
-        view = PaginationView(pages, commandInfo)
-        message = await commandInfo.reply(embed=pages[0], view=view)
+        view = PaginationView(generatePage, commandInfo, total_pages)
+        message = await commandInfo.reply(embed=await generatePage(0), view=view)
         view.message = message
