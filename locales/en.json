@@ -145,8 +145,8 @@
     },
     {
         "identifier": "commands.admin.addrole.noUser.description",
-        "source_string": "Du musst einen Nutzer angeben, dem du die Rolle hinzufügen möchtest.",
-        "translation": "You must specify a user to whom you want to add the role.",
+        "source_string": "Du musst einen Nutzer angeben, dem du die Rolle geben möchtest.",
+        "translation": "You must specify a user to whom you want to assign the role.",
         "context": "commands -> admin -> addrole -> noUser -> description",
         "labels": "de.json",
         "max_length": null
@@ -161,24 +161,24 @@
     },
     {
         "identifier": "commands.admin.addrole.noRole.description",
-        "source_string": "Du musst eine Rolle angeben, die du hinzufügen möchtest.",
-        "translation": "You must specify a role that you want to add.",
+        "source_string": "Du musst eine Rolle angeben, die du vergeben möchtest.",
+        "translation": "You must specify a role that you want to assign.",
         "context": "commands -> admin -> addrole -> noRole -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.addrole.success.title",
-        "source_string": "Rolle hinzugefügt",
-        "translation": "Role added",
+        "source_string": "Rolle vergeben",
+        "translation": "Role assigned",
         "context": "commands -> admin -> addrole -> success -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.addrole.success.description",
-        "source_string": "Die Rolle wurde erfolgreich hinzugefügt.",
-        "translation": "The role has been successfully added.",
+        "source_string": "Die Rolle wurde erfolgreich vergeben.",
+        "translation": "The role has been successfully assigned.",
         "context": "commands -> admin -> addrole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -201,8 +201,8 @@
     },
     {
         "identifier": "commands.admin.addrole.multiplePrompt",
-        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, denen du Rollen hinzufügen möchtest.",
-        "translation": "Please select the owners of roles and users to whom you want to add roles.",
+        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, denen du Rollen vergeben möchtest.",
+        "translation": "Please select the owners of roles and users to whom you want to assign roles.",
         "context": "commands -> admin -> addrole -> multiplePrompt",
         "labels": "de.json",
         "max_length": null
@@ -321,8 +321,8 @@
     },
     {
         "identifier": "commands.admin.removerole.noRole.description",
-        "source_string": "Du musst eine Rolle angeben die du entfernen möchtest.",
-        "translation": "You must specify a role that you want to remove.",
+        "source_string": "Du musst eine Rolle angeben, die du entziehen möchtest.",
+        "translation": "You must specify a role that you want to unassign.",
         "context": "commands -> admin -> removerole -> noRole -> description",
         "labels": "de.json",
         "max_length": null
@@ -345,24 +345,24 @@
     },
     {
         "identifier": "commands.admin.removerole.success.title",
-        "source_string": "Rolle entfernt",
-        "translation": "Role removed",
+        "source_string": "Rolle entzogen",
+        "translation": "Role unassigned",
         "context": "commands -> admin -> removerole -> success -> title",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.removerole.success.description",
-        "source_string": "Die Rolle wurde erfolgreich entfernt.",
-        "translation": "The role was successfully removed.",
+        "source_string": "Die Rolle wurde erfolgreich entzogen.",
+        "translation": "The role was successfully unassigned.",
         "context": "commands -> admin -> removerole -> success -> description",
         "labels": "de.json",
         "max_length": null
     },
     {
         "identifier": "commands.admin.removerole.managedRole.title",
-        "source_string": "Rolle nicht entfernt",
-        "translation": "Role not removed",
+        "source_string": "Rolle nicht entzogen",
+        "translation": "Role not unassigned",
         "context": "commands -> admin -> removerole -> managedRole -> title",
         "labels": "de.json",
         "max_length": null
@@ -377,8 +377,8 @@
     },
     {
         "identifier": "commands.admin.removerole.multiplePrompt",
-        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, von denen du Rollen entfernen möchtest.",
-        "translation": "Please select the owners of roles and users from whom you want to remove roles.",
+        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, von denen du Rollen entziehen möchtest.",
+        "translation": "Please select the owners of roles and users from whom you want to unassign roles.",
         "context": "commands -> admin -> removerole -> multiplePrompt",
         "labels": "de.json",
         "max_length": null
@@ -393,8 +393,8 @@
     },
     {
         "identifier": "commands.admin.removerole.multipleSuccess",
-        "source_string": "${count} Rollen wurden erfolgreich entfernt.",
-        "translation": "${count} roles have been successfully removed.",
+        "source_string": "${count} Rollen wurden erfolgreich entzogen.",
+        "translation": "${count} roles have been successfully unassigned.",
         "context": "commands -> admin -> removerole -> multipleSuccess",
         "labels": "de.json",
         "max_length": null
@@ -513,7 +513,7 @@
     },
     {
         "identifier": "commands.admin.createrole.roleIconsNotEnabled.description",
-        "source_string": "Rollen Icons sind auf diesem Server nicht verfügbar. Der Server muss Boost level 2 erreicht haben, bevor du Rollen Icons festsetzen darfst.",
+        "source_string": "Rollenicons sind auf diesem Server nicht verfügbar. Der Server muss Boost-Level 2 erreicht haben, bevor du Rollenicons festlegen kannst.",
         "translation": "Role icons are not available on this server. The server must have reached boost level 2 before you can set role icons.",
         "context": "commands -> admin -> createrole -> roleIconsNotEnabled -> description",
         "labels": "de.json",
@@ -529,7 +529,7 @@
     },
     {
         "identifier": "commands.admin.createrole.invalidIcon.description",
-        "source_string": "Die dateiendung deines Icons ist ungültig. Aktuell werden nur `.png`, `.gif`, `.jpg` und `.jpeg` Dateien unterstützt.",
+        "source_string": "Die Dateiendung deines Icons ist ungültig. Aktuell werden nur die Dateiformate `.png`, `.gif`, `.jpg` und `.jpeg` unterstützt.",
         "translation": "The file extension of your icon is invalid. Currently, only `.png`, `.gif`, `.jpg` and `.jpeg` files are supported.",
         "context": "commands -> admin -> createrole -> invalidIcon -> description",
         "labels": "de.json",
@@ -570,7 +570,7 @@
     {
         "identifier": "commands.admin.deleterole.missingPermission.title",
         "source_string": "Fehlende Berechtigung",
-        "translation": "Missing authorization",
+        "translation": "Missing permission",
         "context": "commands -> admin -> deleterole -> missingPermission -> title",
         "labels": "de.json",
         "max_length": null
@@ -578,7 +578,7 @@
     {
         "identifier": "commands.admin.deleterole.missingPermission.description",
         "source_string": "Du hast nicht die erforderlichen Berechtigungen, um Rollen zu löschen.",
-        "translation": "You do not have the required authorizations to delete roles.",
+        "translation": "You do not have the required permissions to delete roles.",
         "context": "commands -> admin -> deleterole -> missingPermission -> description",
         "labels": "de.json",
         "max_length": null
@@ -586,7 +586,7 @@
     {
         "identifier": "commands.admin.deleterole.missingPermissionBot.title",
         "source_string": "Bot hat fehlende Berechtigung",
-        "translation": "Bot has missing authorization",
+        "translation": "Bot has missing permission",
         "context": "commands -> admin -> deleterole -> missingPermissionBot -> title",
         "labels": "de.json",
         "max_length": null
@@ -594,7 +594,7 @@
     {
         "identifier": "commands.admin.deleterole.missingPermissionBot.description",
         "source_string": "Der Bot hat nicht die erforderlichen Berechtigungen, um Rollen zu löschen.",
-        "translation": "The bot does not have the necessary authorizations to delete roles.",
+        "translation": "The bot does not have the required permissions to delete roles.",
         "context": "commands -> admin -> deleterole -> missingPermissionBot -> description",
         "labels": "de.json",
         "max_length": null
@@ -618,7 +618,7 @@
     {
         "identifier": "commands.admin.deleterole.roleTooHighBot.title",
         "source_string": "Rolle zu hoch für Bot",
-        "translation": "Roll too high for bot",
+        "translation": "Role too high for bot",
         "context": "commands -> admin -> deleterole -> roleTooHighBot -> title",
         "labels": "de.json",
         "max_length": null
@@ -2146,7 +2146,7 @@
     {
         "identifier": "commands.admin.warn.success.description",
         "source_string": "Der Nutzer ${user} wurde erfolgreich verwarnt. Grund: ${reason}. Dies ist seine ${count}. Warnung.",
-        "translation": "The user ${user} has been successfully warned. Reason: ${reason}. This is his ${count}. Warning.",
+        "translation": "The user ${user} has been successfully warned. Reason: ${reason}. This is his ${count}. warning.",
         "context": "commands -> admin -> warn -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -9322,7 +9322,7 @@
     {
         "identifier": "commands.level.leaderboard.title",
         "source_string": "XP Rangliste - Seite ${current_page}/${total_pages}",
-        "translation": "XP Rangliste - Seite ${current_page}/${total_pages}",
+        "translation": "XP Leaderboard - Page ${current_page}/${total_pages}",
         "context": "commands -> level -> leaderboard -> title",
         "labels": "de.json",
         "max_length": null
@@ -10633,8 +10633,8 @@
     },
     {
         "identifier": "commands.level.addlevelrole.error.role_exists.description",
-        "source_string": "Die Rolle ${role} ist bereits eine Level Rolle.",
-        "translation": "Die Rolle ${role} ist bereits eine Level Rolle.",
+        "source_string": "Die Rolle ${role} ist bereits eine Levelrolle.",
+        "translation": "The role ${role} is already a level role.",
         "context": "commands -> level -> addlevelrole -> error -> role_exists -> description",
         "labels": "de.json",
         "max_length": null
@@ -10650,7 +10650,7 @@
     {
         "identifier": "commands.level.addlevelrole.success.description",
         "source_string": "Die Rolle ${role} wurde erfolgreich als Levelrolle für das Level ${level} festgelegt. Mit dem Erreichen des Levels wird diese Rolle ab jetzt vergeben.",
-        "translation": "Die Rolle ${role} wurde erfolgreich als Levelrolle für das Level ${level} festgelegt. Mit dem Erreichen des Levels wird diese Rolle ab jetzt vergeben.",
+        "translation": "The role ${role} was successfully set as a level role for the level ${level}. When the level is reached, this role is now assigned.",
         "context": "commands -> level -> addlevelrole -> success -> description",
         "labels": "de.json",
         "max_length": null
