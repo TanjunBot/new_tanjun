@@ -29,7 +29,7 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
         await commandInfo.reply(embed=embed)
         return
 
-    rankcard_image = await generate_rankcard(user, user_info)
+    rankcard_image = await generate_rankcard(user, user_info, commandInfo)
 
     file = discord.File(rankcard_image, filename="rankcard.gif")
     embed = tanjunEmbed(
@@ -150,7 +150,7 @@ def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
 
 
 def process_image(
-    background_frames, avatar_frames, avatar_decoration_frames, user, user_info
+    background_frames, avatar_frames, avatar_decoration_frames, user, user_info, commandInfo
 ):
     DECORATION_SIZE_MULTIPLIER = 1.2
 
@@ -243,7 +243,7 @@ def process_image(
 
         bar_width = 700
         bar_height = 30
-        xp_percentage = user_info["xp"] / user_info["xp_needed"]
+        xp_percentage = user_info["xp"] / (user_info["xp_needed"] if user_info["xp_needed"] > 0 else 1)
         filled_width = int(bar_width * xp_percentage)
         radius = bar_height // 4  # Slightly rounded corners
 
@@ -300,7 +300,7 @@ def process_image(
     return img_byte_arr
 
 
-async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO:
+async def generate_rankcard(user: discord.Member, user_info: dict, commandInfo: commandInfo) -> io.BytesIO:
     # Load background image or frames
     if user_info["customBackground"]:
         background_frames, _ = await get_image_or_gif_frames(
@@ -331,6 +331,7 @@ async def generate_rankcard(user: discord.Member, user_info: dict) -> io.BytesIO
         avatar_decoration_frames,
         user,
         user_info,
+        commandInfo,
     )
 
     return img_byte_arr
