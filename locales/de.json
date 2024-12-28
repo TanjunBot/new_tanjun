@@ -29910,5 +29910,37 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "commands.admin.setLocale.missingPermission.title",
+        "source_string": "Fehlende Berechtigungen",
+        "translation": "Fehlende Berechtigungen",
+        "context": "Missing Permission when trying to set the locale",
+        "labels": "embed_title, unassigned",
+        "max_length": 256
+    },
+    {
+        "identifier": "commands.admin.setLocale.missingPermission.description",
+        "source_string": "Du hast nicht die nötigen Berechtigungen, um die Sprache zu ändern. Du benötigst die `Server Verwalten` Berechtigung.",
+        "translation": "Du hast nicht die nötigen Berechtigungen, um die Sprache zu ändern. Du benötigst die `Server Verwalten` Berechtigung.",
+        "context": "When missing Permission while trying to change locale",
+        "labels": "embed_description, unassigned",
+        "max_length": 4096
+    },
+    {
+        "identifier": "commands.admin.setLocale.success.title",
+        "source_string": "Sprache erfolgreich geändert",
+        "translation": "Sprache erfolgreich geändert",
+        "context": "When locale change was successfull",
+        "labels": "embed_title, unassigned",
+        "max_length": 256
+    },
+    {
+        "identifier": "commands.admin.setLocale.success.description",
+        "source_string": "Die Sprache wurde erfolgreich geändert. ",
+        "translation": "Die Sprache wurde erfolgreich geändert. ",
+        "context": "When locale Change was successfull.",
+        "labels": "embed_description, unassigned",
+        "max_length": 4096
     }
 ]
