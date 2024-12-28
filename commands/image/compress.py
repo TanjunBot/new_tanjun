@@ -43,10 +43,13 @@ async def compress(
     buffer.seek(0)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.image.resize.success.title"
+            commandInfo.locale, "commands.image.compress.success.title"
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.image.resize.success.description"
+            commandInfo.locale,
+            "commands.image.compress.success.description",
+            newSize=f"{round(buffer.getbuffer().nbytes / 1024 / 1024, 2)}",
+            oldSize=f"{round(image.size / 1024 / 1024, 2)}",
         ),
     )
     embed.set_image(url="attachment://image.png")
