@@ -9321,8 +9321,8 @@
     },
     {
         "identifier": "commands.level.leaderboard.title",
-        "source_string": "XP Rangliste",
-        "translation": "XP ranking",
+        "source_string": "XP Rangliste - Seite ${current_page}/${total_pages}",
+        "translation": "XP Rangliste - Seite ${current_page}/${total_pages}",
         "context": "commands -> level -> leaderboard -> title",
         "labels": "de.json",
         "max_length": null
@@ -30081,10 +30081,210 @@
     },
     {
         "identifier": "commands.image.compress.success.description",
-        "source_string": "Das Bild wurde erfolgreich komprimiert. Es ist jetzt ${newSize} MB groß. Vorher war es ${oldSize} MB groß.",
+        "source_string": "Das Bild wurde erfolgreich komprimiert. Es ist jetzt ${newSize} KB groß. Vorher war es ${oldSize} KB groß.",
         "translation": "The image has been successfully compressed. It is now ${newSize} MB in size. It was previously ${oldSize} MB in size.",
         "context": null,
         "labels": "embed_description, unassigned",
         "max_length": 4090
+    },
+    {
+        "identifier": "commands.level.leaderboard.titleNoPages",
+        "source_string": "XP Rangliste",
+        "translation": "XP ranking",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.level.showxpscalings.data",
+        "source_string": "Level ${level} - ${xp} XP",
+        "translation": "Level ${level} - ${xp} XP",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.level.showlevelroles.data",
+        "source_string": "Level ${level}",
+        "translation": "Level ${level}",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.level.showlevelroles.remove_role_data",
+        "source_string": "Level ${level} - Role <@&${role_id}>",
+        "translation": "Level ${level} - Role <@&${role_id}>",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.level.showlevelroles.remove_role_confirm.confirm_button",
+        "source_string": "Bestätigen",
+        "translation": "Confirm",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": 80
+    },
+    {
+        "identifier": "commands.level.showlevelroles.remove_role_confirm.cancel_button",
+        "source_string": "Abbrechen",
+        "translation": "Cancel",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": 80
+    },
+    {
+        "identifier": "commands.admin.add_role.multipleSuccess.action",
+        "source_string": "hinzugefügt",
+        "translation": "added",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.remove_role.multipleSuccess.action",
+        "source_string": "entfernt",
+        "translation": "removed",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.embed.modals.editFieldModal.fieldLabel",
+        "source_string": "Feld ${index}",
+        "translation": "Field ${index}",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.selectRoles",
+        "source_string": "Rollen auswählen",
+        "translation": "Select roles",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.confirm",
+        "source_string": "Bestätigen",
+        "translation": "Confirm",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.cancel",
+        "source_string": "Abbrechen",
+        "translation": "Cancel",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.error",
+        "source_string": "Ein Fehler ist aufgetreten. Bitte versuche es erneut.",
+        "translation": "An error has occurred. Please try again.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.nuke.nukeReason",
+        "source_string": "Kanal erfolgreich Genuked",
+        "translation": "Channel successfully Genuked",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.setLocale.setLocaleReason",
+        "source_string": "Serversprache über Tanjun geändert",
+        "translation": "Server language changed via Tanjun",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.giveaway.reroll_giveaway.rerollOneWinner",
+        "source_string": "Einen gewinner neu auslosen",
+        "translation": "Redraw a winner",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.giveaway.reroll_giveaway.rerollAllWinners",
+        "source_string": "Alle gewinner neu auslosen",
+        "translation": "Redraw all winners",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.level.rank.data.level",
+        "source_string": "Level ${level}",
+        "translation": "Level ${level}",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.level.rank.data.xp",
+        "source_string": "XP ${xp}/${xp_needed}",
+        "translation": "XP ${xp}/${xp_needed}",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.help.noDescriptionAvailable",
+        "source_string": "Keine Beschreibung für ${group_name} gefunden.",
+        "translation": "No description found for ${group_name} .",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.help.parameters",
+        "source_string": "**Parameter:**",
+        "translation": "**Parameters:**",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.help.title",
+        "source_string": "${group_name} - Seite ${page}/${total_pages}",
+        "translation": "${group_name} - Page ${page}/${total_pages}",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.help.titleNoPages",
+        "source_string": "${group_name}",
+        "translation": "${group_name}",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.help.noCommands.label",
+        "source_string": "Keine Befehle gefunden",
+        "translation": "No commands found",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.help.noCommands.description",
+        "source_string": "Es wurden keine Befehle gefunden. Vermutlich startet der Bot gerade noch. Bitte warte einen Moment.",
+        "translation": "No commands were found. The bot is probably still starting. Please wait a moment.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
