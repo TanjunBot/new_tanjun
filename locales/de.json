@@ -30534,5 +30534,37 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.double.name",
+        "source_string": "Verdopplung",
+        "translation": "Verdopplung",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.double.description",
+        "source_string": "Verdopple immer die vorherige Zahl. Gestartet wird bei 1. `1`, `2`, `4`, `8`, ...",
+        "translation": "Verdopple immer die vorherige Zahl. Gestartet wird bei 1. `1`, `2`, `4`, `8`, ...",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.triple.description",
+        "source_string": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 1. `1`, `3`, `9`, `27`, ...",
+        "translation": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 1. `1`, `3`, `9`, `27`, ...",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.triple.name",
+        "source_string": "Verdreifachung",
+        "translation": "Verdreifachung",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
