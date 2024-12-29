@@ -30566,5 +30566,37 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "commands.admin.channel.farewell.missingPro.title",
+        "source_string": "Tanjun Pro Benötigt",
+        "translation": "Tanjun Pro Benötigt",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.channel.farewell.missingPro.description",
+        "source_string": "Der Server benötigt ein Aktives Tanjun Pro Abonnement, um einen eigenen Hintergrund für die Verabschiedungsnachrichten festzusetzen.",
+        "translation": "Der Server benötigt ein Aktives Tanjun Pro Abonnement, um einen eigenen Hintergrund für die Verabschiedungsnachrichten festzusetzen.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.channel.welcome.missingPro.description",
+        "source_string": "Der Server benötigt ein Aktives Tanjun Pro Abonnement, um einen eigenen Hintergrund für die Willkommensnachricht festzusetzen.",
+        "translation": "Der Server benötigt ein Aktives Tanjun Pro Abonnement, um einen eigenen Hintergrund für die Willkommensnachricht festzusetzen.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.channel.welcome.missingPro.title",
+        "source_string": "Tanjun Pro benötigt",
+        "translation": "Tanjun Pro benötigt",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
