@@ -12170,7 +12170,7 @@
     {
         "identifier": "commands.giveaway.builder.new_message_requirement.label",
         "source_string": "Nachrichtenanforderung",
-        "translation": "Message request",
+        "translation": "Message requirement",
         "context": "commands -> giveaway -> builder -> new_message_requirement -> label",
         "labels": "de.json",
         "max_length": 45
@@ -12186,7 +12186,7 @@
     {
         "identifier": "commands.giveaway.builder.new_message_requirement.updated",
         "source_string": "Nachrichtenanforderung aktualisiert",
-        "translation": "Message request updated",
+        "translation": "Message requirement updated",
         "context": "commands -> giveaway -> builder -> new_message_requirement -> updated",
         "labels": "de.json",
         "max_length": null
@@ -12194,7 +12194,7 @@
     {
         "identifier": "commands.giveaway.builder.new_message_requirement.title",
         "source_string": "Nachrichtenanforderung festlegen",
-        "translation": "Set message request",
+        "translation": "Set message requirement",
         "context": "commands -> giveaway -> builder -> new_message_requirement -> title",
         "labels": "de.json",
         "max_length": null
@@ -12354,7 +12354,7 @@
     {
         "identifier": "commands.giveaway.builder.add_channel_requirement.label",
         "source_string": "Kanalanforderung hinzufügen",
-        "translation": "Add channel request",
+        "translation": "Add channel requirement",
         "context": "commands -> giveaway -> builder -> add_channel_requirement -> label",
         "labels": "de.json",
         "max_length": 45
@@ -12378,7 +12378,7 @@
     {
         "identifier": "commands.giveaway.builder.add_channel_requirement.v.t",
         "source_string": "Wert für Kanalanforderung festlegen",
-        "translation": "Set value for channel request",
+        "translation": "Value for channel requirement",
         "context": "commands -> giveaway -> builder -> add_channel_requirement -> v -> t",
         "labels": "de.json",
         "max_length": 45
@@ -12394,7 +12394,7 @@
     {
         "identifier": "commands.giveaway.builder.add_channel_requirement.value.updated",
         "source_string": "Kanalanforderungswert aktualisiert",
-        "translation": "Channel request value updated",
+        "translation": "Channel requirement value updated",
         "context": "commands -> giveaway -> builder -> add_channel_requirement -> value -> updated",
         "labels": "de.json",
         "max_length": null
@@ -12402,7 +12402,7 @@
     {
         "identifier": "commands.giveaway.builder.add_channel_requirement.cancelled",
         "source_string": "Kanalanforderung abgebrochen",
-        "translation": "Channel request canceled",
+        "translation": "Channel requirement canceled",
         "context": "commands -> giveaway -> builder -> add_channel_requirement -> cancelled",
         "labels": "de.json",
         "max_length": null
