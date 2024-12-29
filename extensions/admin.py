@@ -59,13 +59,13 @@ class WarnCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_warn_add_description"),
     )
     @app_commands.describe(
-        member=app_commands.locale_str("admin_warn_add_params_member_description"),
+        user=app_commands.locale_str("admin_warn_add_params_member_description"),
         reason=app_commands.locale_str("admin_warn_add_params_reason_description"),
     )
     async def add(
         self,
         ctx,
-        member: discord.Member,
+        user: discord.Member,
         reason: app_commands.Range[str, 0, 100] = None,
     ):
         await ctx.response.defer()
@@ -81,7 +81,7 @@ class WarnCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
+        await warnUserCommand(commandInfo=commandInfo, member=user, reason=reason)
         return
 
     @app_commands.command(
@@ -89,9 +89,9 @@ class WarnCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_warn_view_description"),
     )
     @app_commands.describe(
-        member=app_commands.locale_str("admin_warn_view_params_member_description"),
+        user=app_commands.locale_str("admin_warn_view_params_member_description"),
     )
-    async def view(self, ctx, member: discord.Member):
+    async def view(self, ctx, user: discord.Member):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -105,7 +105,7 @@ class WarnCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await viewWarningsCommand(commandInfo=commandInfo, member=member)
+        await viewWarningsCommand(commandInfo=commandInfo, member=user)
         return
 
     @app_commands.command(
@@ -691,14 +691,14 @@ class administrationCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_timeout_description"),
     )
     @app_commands.describe(
-        member=app_commands.locale_str("admin_timeout_params_member_description"),
+        user=app_commands.locale_str("admin_timeout_params_member_description"),
         duration=app_commands.locale_str("admin_timeout_params_duration_description"),
         reason=app_commands.locale_str("admin_timeout_params_reason_description"),
     )
     async def timeout(
         self,
         ctx,
-        member: discord.Member,
+        user: discord.Member,
         duration: app_commands.Range[int, 1, 40320],
         reason: app_commands.Range[str, 0, 100] = None,
     ):
@@ -716,7 +716,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await timeoutCommand(
-            commandInfo=commandInfo, member=member, duration=duration, reason=reason
+            commandInfo=commandInfo, member=user, duration=duration, reason=reason
         )
         return
 
@@ -725,13 +725,13 @@ class administrationCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_removetimeout_description"),
     )
     @app_commands.describe(
-        member=app_commands.locale_str("admin_removetimeout_params_member_description"),
+        user=app_commands.locale_str("admin_removetimeout_params_member_description"),
         reason=app_commands.locale_str("admin_removetimeout_params_reason_description"),
     )
     async def removetimeout(
         self,
         ctx,
-        member: discord.Member,
+        user: discord.Member,
         reason: app_commands.Range[str, 0, 100] = None,
     ):
         await ctx.response.defer()
@@ -748,7 +748,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await removeTimeoutCommand(
-            commandInfo=commandInfo, member=member, reason=reason
+            commandInfo=commandInfo, member=user, reason=reason
         )
         return
 
@@ -852,7 +852,7 @@ class administrationCommands(discord.app_commands.Group):
     async def nickname(
         self,
         ctx,
-        member: discord.Member,
+        user: discord.Member,
         nickname: app_commands.Range[str, 0, 100] = None,
     ):
         await ctx.response.defer()
@@ -869,7 +869,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await changeNicknameCommand(
-            commandInfo=commandInfo, member=member, nickname=nickname
+            commandInfo=commandInfo, member=user, nickname=nickname
         )
         return
 
@@ -1493,7 +1493,7 @@ class adminCog(commands.Cog):
         return
 
     @commands.command()
-    async def kick(self, ctx, member: discord.Member, *, reason: str = None):
+    async def kick(self, ctx, user: discord.Member, *, reason: str = None):
         commandInfo = utility.commandInfo(
             user=ctx.author,
             channel=ctx.channel,
@@ -1510,14 +1510,14 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        await kickCommand(commandInfo=commandInfo, target=member, reason=reason)
+        await kickCommand(commandInfo=commandInfo, target=user, reason=reason)
         return
 
     @commands.command()
     async def ban(
         self,
         ctx,
-        member: discord.Member,
+        user: discord.Member,
         delete_message_days: int = 0,
         *,
         reason: str = None
@@ -1540,7 +1540,7 @@ class adminCog(commands.Cog):
 
         await banCommand(
             commandInfo=commandInfo,
-            target=member,
+            target=user,
             reason=reason,
             delete_message_days=delete_message_days,
         )
@@ -1569,7 +1569,7 @@ class adminCog(commands.Cog):
 
     @commands.command()
     async def timeout(
-        self, ctx, member: discord.Member, duration: int, *, reason: str = None
+        self, ctx, user: discord.Member, duration: int, *, reason: str = None
     ):
         commandInfo = utility.commandInfo(
             user=ctx.author,
@@ -1588,12 +1588,12 @@ class adminCog(commands.Cog):
         )
 
         await timeoutCommand(
-            commandInfo=commandInfo, member=member, duration=duration, reason=reason
+            commandInfo=commandInfo, member=user, duration=duration, reason=reason
         )
         return
 
     @commands.command()
-    async def untimeout(self, ctx, member: discord.Member, *, reason: str = None):
+    async def untimeout(self, ctx, user: discord.Member, *, reason: str = None):
         commandInfo = utility.commandInfo(
             user=ctx.author,
             channel=ctx.channel,
@@ -1611,7 +1611,7 @@ class adminCog(commands.Cog):
         )
 
         await removeTimeoutCommand(
-            commandInfo=commandInfo, member=member, reason=reason
+            commandInfo=commandInfo, member=user, reason=reason
         )
         return
 
@@ -1639,7 +1639,7 @@ class adminCog(commands.Cog):
         return
 
     @commands.command()
-    async def nickname(self, ctx, member: discord.Member, *, nickname: str = None):
+    async def nickname(self, ctx, user: discord.Member, *, nickname: str = None):
         commandInfo = utility.commandInfo(
             user=ctx.author,
             channel=ctx.channel,
@@ -1657,7 +1657,7 @@ class adminCog(commands.Cog):
         )
 
         await changeNicknameCommand(
-            commandInfo=commandInfo, member=member, nickname=nickname
+            commandInfo=commandInfo, member=user, nickname=nickname
         )
         return
 
@@ -1727,7 +1727,7 @@ class adminCog(commands.Cog):
         return
 
     @commands.command()
-    async def warn(self, ctx, member: discord.Member, *, reason: str = None):
+    async def warn(self, ctx, user: discord.Member, *, reason: str = None):
         commandInfo = utility.commandInfo(
             user=ctx.author,
             channel=ctx.channel,
@@ -1744,11 +1744,11 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
+        await warnUserCommand(commandInfo=commandInfo, member=user, reason=reason)
         return
 
     @commands.command()
-    async def viewwarns(self, ctx, member: discord.Member):
+    async def viewwarns(self, ctx, user: discord.Member):
         commandInfo = utility.commandInfo(
             user=ctx.author,
             channel=ctx.channel,
@@ -1765,7 +1765,7 @@ class adminCog(commands.Cog):
             client=ctx.bot,
         )
 
-        await viewWarningsCommand(commandInfo=commandInfo, member=member)
+        await viewWarningsCommand(commandInfo=commandInfo, member=user)
         return
 
     @commands.command()
