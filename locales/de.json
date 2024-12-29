@@ -5320,7 +5320,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.en_GB",
+        "identifier": "commands.math.num2word.locales.en.GB",
         "source_string": "Britisches Englisch",
         "translation": "Britisches Englisch",
         "context": "commands -> math -> num2word -> locales -> en_GB",
@@ -5328,7 +5328,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.en_IN",
+        "identifier": "commands.math.num2word.locales.en.IN",
         "source_string": "Indisches Englisch",
         "translation": "Indisches Englisch",
         "context": "commands -> math -> num2word -> locales -> en_IN",
@@ -5339,7 +5339,7 @@
         "identifier": "commands.math.num2word.locales.en_NG",
         "source_string": "Nigerianisches Englisch",
         "translation": "Nigerianisches Englisch",
-        "context": "commands -> math -> num2word -> locales -> en_NG",
+        "context": "commands -> math -> num2word -> locales -> en.NG",
         "labels": "de.json",
         "max_length": 100
     },
@@ -5352,7 +5352,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.es_CO",
+        "identifier": "commands.math.num2word.locales.es.CO",
         "source_string": "Kolumbianisches Spanisch",
         "translation": "Kolumbianisches Spanisch",
         "context": "commands -> math -> num2word -> locales -> es_CO",
@@ -5360,7 +5360,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.es_CR",
+        "identifier": "commands.math.num2word.locales.es.CR",
         "source_string": "Costa-Ricanisches Spanisch",
         "translation": "Costa-Ricanisches Spanisch",
         "context": "commands -> math -> num2word -> locales -> es_CR",
@@ -5371,7 +5371,7 @@
         "identifier": "commands.math.num2word.locales.es_VE",
         "source_string": "Venezolanisches Spanisch",
         "translation": "Venezolanisches Spanisch",
-        "context": "commands -> math -> num2word -> locales -> es_VE",
+        "context": "commands -> math -> num2word -> locales -> es.VE",
         "labels": "de.json",
         "max_length": 100
     },
@@ -5379,7 +5379,7 @@
         "identifier": "commands.math.num2word.locales.es_GT",
         "source_string": "Guatemaltekisches Spanisch",
         "translation": "Guatemaltekisches Spanisch",
-        "context": "commands -> math -> num2word -> locales -> es_GT",
+        "context": "commands -> math -> num2word -> locales -> es.GT",
         "labels": "de.json",
         "max_length": 100
     },
@@ -5419,7 +5419,7 @@
         "identifier": "commands.math.num2word.locales.fr_CH",
         "source_string": "Schweizer Französisch",
         "translation": "Schweizer Französisch",
-        "context": "commands -> math -> num2word -> locales -> fr_CH",
+        "context": "commands -> math -> num2word -> locales -> fr.CH",
         "labels": "de.json",
         "max_length": 100
     },
@@ -5427,7 +5427,7 @@
         "identifier": "commands.math.num2word.locales.fr_BE",
         "source_string": "Belgisches Französisch",
         "translation": "Belgisches Französisch",
-        "context": "commands -> math -> num2word -> locales -> fr_BE",
+        "context": "commands -> math -> num2word -> locales -> fr.BE",
         "labels": "de.json",
         "max_length": 100
     },
@@ -5435,7 +5435,7 @@
         "identifier": "commands.math.num2word.locales.fr_DZ",
         "source_string": "Algerisches Französisch",
         "translation": "Algerisches Französisch",
-        "context": "commands -> math -> num2word -> locales -> fr_DZ",
+        "context": "commands -> math -> num2word -> locales -> fr.DZ",
         "labels": "de.json",
         "max_length": 100
     },
@@ -5555,7 +5555,7 @@
         "identifier": "commands.math.num2word.locales.pt_BR",
         "source_string": "Brasilianisches Portugiesisch",
         "translation": "Brasilianisches Portugiesisch",
-        "context": "commands -> math -> num2word -> locales -> pt_BR",
+        "context": "commands -> math -> num2word -> locales -> pt.BR",
         "labels": "de.json",
         "max_length": 100
     },
