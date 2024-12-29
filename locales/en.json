@@ -65,7 +65,7 @@
     },
     {
         "identifier": "commands.admin.addrole.missingPermission.description",
-        "source_string": "Du benötigst die `Rollen Verwalten` Berechtigung um Rollen zu vergeben.",
+        "source_string": "Du benötigst die `Rollen Verwalten` Berechtigung, um Rollen zu vergeben.",
         "translation": "You need the `Manage Roles` permission to assign roles.",
         "context": "The description of the embed that shows when the user dont have manage roles permission ",
         "labels": "de.json, embed_description",
@@ -14601,7 +14601,7 @@
     },
     {
         "identifier": "admin.unban.params.username.name",
-        "source_string": "nutzername",
+        "source_string": "benutzername",
         "translation": "username",
         "context": "admin -> unban -> params -> username -> name",
         "labels": "de.json, command_name",
@@ -14609,7 +14609,7 @@
     },
     {
         "identifier": "admin.unban.params.username.description",
-        "source_string": "Der Nutzername des zu entbannenden Mitglieds",
+        "source_string": "Der Benutzername des zu entbannenden Mitglieds",
         "translation": "The username of the member to be unbanned",
         "context": "admin -> unban -> params -> username -> description",
         "labels": "de.json, command_description",
@@ -20673,7 +20673,7 @@
     },
     {
         "identifier": "level.changelevelupmessage.params.newmessage.description",
-        "source_string": "Die neue Level-Up-Nachricht. Verwende {user} für den Nutzernamen und {level} für das neue Level.",
+        "source_string": "Die neue Level-Up-Nachricht. Verwende {user} für den Benutzernamen und {level} für das neue Level.",
         "translation": "The new level-up message. Use {user} for the username and {level} for the new level.",
         "context": "level -> changelevelupmessage -> params -> newmessage -> description",
         "labels": "de.json, command_description",
@@ -24481,7 +24481,7 @@
     },
     {
         "identifier": "logs.userUpdate.userName",
-        "source_string": "Nutzername (@) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+        "source_string": "Benutzername (@) geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
         "translation": "Username (@) changed: \n<:empty:1312126155897442416>Before: ${before}\n<:empty:1312126155897442416>After: ${after}",
         "context": "logs -> userUpdate -> userName",
         "labels": "de.json",
@@ -28313,7 +28313,7 @@
     },
     {
         "identifier": "username",
-        "source_string": "nutzername",
+        "source_string": "benutzername",
         "translation": "username",
         "context": " -> username",
         "labels": "de.json",
