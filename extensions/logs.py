@@ -2702,26 +2702,21 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_user_update(self, before: discord.User, after: discord.User):
-        print("user update")
         for guild in self.bot.guilds:
             user = guild.get_member(before.id)
             if not user:
-                print("user not in guild", guild.name)
                 continue
 
             logEnable = guild and (await get_log_enable(guild.id))[14]
             if not logEnable:
-                print("log enable false", guild.name)
                 continue
 
             if await is_log_user_blacklisted(guild.id, str(before.id)):
-                print("user blacklisted", guild.name)
                 continue
 
             blacklistedRoles = await get_log_role_blacklist(guild.id)
             for blacklistedRole in blacklistedRoles:
                 if blacklistedRole in user.roles:
-                    print("blacklisted role", guild.name)
                     continue
 
             locale = guild.preferred_locale if hasattr(guild, "preferred_locale") else "de"
@@ -2734,7 +2729,6 @@ class LogsCog(commands.Cog):
             )
 
             if before.avatar != after.avatar:
-                print("avatar changed")
                 # defaultAvatarUrl = "https://cdn.discordapp.com/embed/avatars/0.png"
                 # urlLocale = tanjunLocalizer.localize(
                 #     locale, "logs.userUpdate.guildAvatarLocales.url"
@@ -2822,9 +2816,6 @@ class LogsCog(commands.Cog):
                         after=f"[{urlLocale}]({new_banner_url})",
                     )
                 )
-
-            print(len(description_parts))
-            print(description_parts)
 
             if len(description_parts) == 1:
                 return

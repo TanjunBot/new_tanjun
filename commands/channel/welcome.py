@@ -246,7 +246,6 @@ def process_image(background_frames, avatar_frames, user):
 
 async def welcomeNewUser(member: discord.Member):
     welcomeChannel = await get_welcome_channel(member.guild.id)
-    print(welcomeChannel)
     if welcomeChannel is None:
         return
 

@@ -29,6 +29,7 @@ from commands.channel.farewell import farewellUser
 import json
 import asyncio
 from minigames.addLevelXp import update_user_roles
+from minigames.countingmodes import get_correct_next_number, get_first_number
 
 
 class administrationCog(commands.Cog):
@@ -243,6 +244,18 @@ class administrationCog(commands.Cog):
         if ctx.author.id not in config.adminIds:
             return
         await update_user_roles(ctx.message, 10, str(ctx.guild.id))
+
+    @commands.command()
+    async def testgetcorrectnextnumber(self, ctx, mode: int, numbers: int):
+        if ctx.author.id not in config.adminIds:
+            return
+        await ctx.send("look in the console")
+        current_correct_number = get_first_number(mode)
+        for i in range(numbers):
+            print(f"i: {i}, current_correct_number: {current_correct_number}")
+            current_correct_number = get_correct_next_number(
+                mode, current_correct_number
+            )
 
 
 async def setup(bot):

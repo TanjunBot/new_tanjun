@@ -1054,8 +1054,6 @@ def eval_expr(expr, variables=None):
     if variables is None:
         variables = {}
 
-    print("evaling expression", expr, "with variables", variables)
-
     # Replace mathematical constants
     expr = expr.replace("pi", str(math.pi))
     expr = expr.replace("e", str(math.e))
