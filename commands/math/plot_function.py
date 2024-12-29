@@ -56,6 +56,11 @@ async def plot_function_command(
             func_str = func_str.replace("log", "np.log")
             func_str = func_str.replace("sqrt", "np.sqrt")
 
+            # Check if the function is just a constant (only contains numbers and operators)
+            if all(c.isdigit() or c in '+-*/.() ' for c in func_str):
+                constant = eval(func_str)
+                return lambda x: np.full_like(x, constant) if isinstance(x, np.ndarray) else constant
+
             return lambda x: eval(func_str, {"x": x, "np": np})
 
         async def find_zeros(self, func: Callable) -> List[float]:
@@ -528,7 +533,6 @@ async def plot_function_command(
                     label=f"{name}(x)", value=str(i), description=f"{func_str}"
                 )
                 for i, (func_str, func, name) in enumerate(self.plotter.functions)
-                if utility.get_highest_exponent(func_str) > 1
             ]
             super().__init__(
                 placeholder=tanjunLocalizer.localize(
