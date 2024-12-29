@@ -58,7 +58,7 @@ async def change_nickname(
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.nickname.changed.description",
-                    user=member.name,
+                    user=member.mention,
                     old_nick=old_nick,
                     new_nick=nickname,
                 ),
