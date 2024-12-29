@@ -18329,8 +18329,8 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.fibonacci.description",
-        "source_string": "Zähle nur die Fibonacci-Zahlen: `1`, `1`, `2`, `3`, ...",
-        "translation": "Zähle nur die Fibonacci-Zahlen: `1`, `1`, `2`, `3`, ...",
+        "source_string": "Zähle nur die Fibonacci-Zahlen: `0`, `1`, `1`, `2`, `3`, ...",
+        "translation": "Zähle nur die Fibonacci-Zahlen: `0`, `1`, `1`, `2`, `3`, ...",
         "context": "Counting Minigame - Mode: Fibonacci (Fibonacci-Zahlen)",
         "labels": "de.json",
         "max_length": null
@@ -19273,8 +19273,8 @@
     },
     {
         "identifier": "minigames.setcchallengep.description",
-        "source_string": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
-        "translation": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
+        "source_string": "Setzt den Fortschritt für einen Counting-Challenge-Kanal",
+        "translation": "Setzt den Fortschritt für einen Counting-Challenge-Kanal",
         "context": "minigames -> setcchallengep -> description",
         "labels": "de.json, command_description",
         "max_length": 100
