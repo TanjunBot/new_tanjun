@@ -3609,7 +3609,7 @@
     },
     {
         "identifier": "commands.admin.create_ticket.success.description",
-        "source_string": "Das Ticket wurde erfolgreich erstellt. Du kannst das Ticket über den Button in der Nachricht sehen.\n#- Die Sprache der Ticket Nachricht wird auf deine Discord Sprache gesetzt. Wenn die Nachricht in der falschen Sprache ist, musst du ggf. die Sprache von deinem Discord kurzzeitig ändern.",
+        "source_string": "Das Ticket wurde erfolgreich erstellt. Du kannst das Ticket über den Button in der Nachricht sehen.\n-# Die Sprache der Ticket Nachricht wird auf deine Discord Sprache gesetzt. Wenn die Nachricht in der falschen Sprache ist, musst du ggf. die Sprache von deinem Discord kurzzeitig ändern.",
         "translation": "The ticket has been successfully created. You can see the ticket via the button in the message.\n#- The language of the ticket message will be set to your Discord language. If the message is in the wrong language, you may need to temporarily change the language of your Discord.",
         "context": "commands -> admin -> create_ticket -> success -> description",
         "labels": "de.json",
