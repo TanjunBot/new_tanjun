@@ -357,7 +357,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_automod_rule_create(self, rule: discord.AutoModRule):
-        logEnable = (await get_log_enable(rule.guild.id))[1]
+        logEnable = rule.guild and (await get_log_enable(rule.guild.id))[1]
         if not logEnable:
             return
 
@@ -557,7 +557,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_automod_rule_update(self, rule: discord.AutoModRule):
-        logEnable = (await get_log_enable(rule.guild.id))[2]
+        logEnable = rule.guild and (await get_log_enable(rule.guild.id))[2]
         if not logEnable:
             return
 
@@ -767,7 +767,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_automod_rule_delete(self, rule: discord.AutoModRule):
-        logEnable = (await get_log_enable(rule.guild.id))[3]
+        logEnable = rule.guild and (await get_log_enable(rule.guild.id))[3]
         if not logEnable:
             return
 
@@ -974,7 +974,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_automod_action(self, execution: discord.AutoModAction):
-        logEnable = (await get_log_enable(execution.guild.id))[4]
+        logEnable = execution.guild and (await get_log_enable(execution.guild.id))[4]
         if not logEnable:
             return
 
@@ -1071,7 +1071,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel):
-        logEnable = (await get_log_enable(channel.guild.id))[5]
+        logEnable = channel.guild and (await get_log_enable(channel.guild.id))[5]
         if not logEnable:
             return
 
@@ -1193,7 +1193,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: discord.abc.GuildChannel):
-        logEnable = (await get_log_enable(channel.guild.id))[6]
+        logEnable = channel.guild and (await get_log_enable(channel.guild.id))[6]
         if not logEnable:
             return
 
@@ -1298,7 +1298,7 @@ class LogsCog(commands.Cog):
     async def on_guild_channel_update(
         self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel
     ):
-        logEnable = (await get_log_enable(after.guild.id))[7]
+        logEnable = after.guild and (await get_log_enable(after.guild.id))[7]
         if not logEnable:
             return
 
@@ -1632,7 +1632,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_update(self, before: discord.Guild, after: discord.Guild):
-        logEnable = (await get_log_enable(after.id))[8]
+        logEnable = after.guild and (await get_log_enable(after.guild.id))[8]
         if not logEnable:
             return
 
@@ -2224,7 +2224,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_invite_create(self, invite: discord.Invite):
-        logEnable = (await get_log_enable(invite.guild.id))[9]
+        logEnable = invite.guild and (await get_log_enable(invite.guild.id))[9]
         if not logEnable:
             return
 
@@ -2337,7 +2337,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_invite_delete(self, invite: discord.Invite):
-        logEnable = (await get_log_enable(invite.guild.id))[10]
+        logEnable = invite.guild and (await get_log_enable(invite.guild.id))[10]
         if not logEnable:
             return
 
@@ -2445,7 +2445,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        logEnable = (await get_log_enable(member.guild.id))[11]
+        logEnable = member.guild and (await get_log_enable(member.guild.id))[11]
         if not logEnable:
             return
 
@@ -2480,7 +2480,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
-        logEnable = (await get_log_enable(member.guild.id))[12]
+        logEnable = member.guild and (await get_log_enable(member.guild.id))[12]
         if not logEnable:
             return
 
@@ -2522,7 +2522,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        logEnable = (await get_log_enable(after.guild.id))[13]
+        logEnable = after.guild and (await get_log_enable(after.guild.id))[13]
         if not logEnable:
             return
 
@@ -2709,7 +2709,7 @@ class LogsCog(commands.Cog):
                 print("user not in guild", guild.name)
                 continue
 
-            logEnable = (await get_log_enable(guild.id))[14]
+            logEnable = guild and (await get_log_enable(guild.id))[14]
             if not logEnable:
                 print("log enable false", guild.name)
                 continue
@@ -2843,7 +2843,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_ban(self, user: discord.Member):
-        logEnable = (await get_log_enable(user.guild.id))[15]
+        logEnable = user.guild and (await get_log_enable(user.guild.id))[15]
         if not logEnable:
             return
 
@@ -2887,7 +2887,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
-        logEnable = (await get_log_enable(guild.id))[16]
+        logEnable = guild and (await get_log_enable(guild.id))[16]
         if not logEnable:
             return
 
@@ -2928,7 +2928,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_presence_update(self, before: discord.Member, after: discord.Member):
-        logEnable = (await get_log_enable(after.guild.id))[17]
+        logEnable = after.guild and (await get_log_enable(after.guild.id))[17]
         if not logEnable:
             return
 
@@ -2976,7 +2976,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
-        logEnable = (await get_log_enable(after.guild.id))[18]
+        logEnable = after.guild and (await get_log_enable(after.guild.id))[18]
         if not logEnable:
             return
 
@@ -3148,7 +3148,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
-        logEnable = (await get_log_enable(message.guild.id))[19]
+        logEnable = message.guild and (await get_log_enable(message.guild.id))[19]
         if not logEnable:
             return
 
@@ -3257,7 +3257,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
-        logEnable = (await get_log_enable(reaction.guild.id))[20]
+        logEnable = reaction.guild and (await get_log_enable(reaction.guild.id))[20]
         if not logEnable:
             return
 
@@ -3301,7 +3301,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
-        logEnable = (await get_log_enable(reaction.guild.id))[21]
+        logEnable = reaction.guild and (await get_log_enable(reaction.guild.id))[21]
         if not logEnable:
             return
 
@@ -3345,7 +3345,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_role_create(self, role: discord.Role):
-        logEnable = (await get_log_enable(role.guild.id))[22]
+        logEnable = role.guild and (await get_log_enable(role.guild.id))[22]
         if not logEnable:
             return
 
@@ -3446,7 +3446,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role: discord.Role):
-        logEnable = (await get_log_enable(role.guild.id))[23]
+        logEnable = role.guild and (await get_log_enable(role.guild.id))[23]
         if not logEnable:
             return
 
@@ -3548,7 +3548,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_role_update(self, before: discord.Role, after: discord.Role):
-        logEnable = (await get_log_enable(after.guild.id))[24]
+        logEnable = after.guild and (await get_log_enable(after.guild.id))[24]
         if not logEnable:
             return
 

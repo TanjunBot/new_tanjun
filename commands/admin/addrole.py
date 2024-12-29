@@ -35,18 +35,19 @@ async def addrole(
         return
 
     class RoleManagementView(discord.ui.View):
-        def __init__(self, commandInfo, action="add"):
+        def __init__(self, commandInfo, action="add", users=None, roles=None):
             super().__init__(timeout=300)
             self.commandInfo = commandInfo
             self.action = action
-            self.selected_roles = []
-            self.selected_users = []
+            self.selected_roles = [discord.SelectDefaultValue(id=role.id, type=discord.SelectDefaultValueType.role)]
+            self.selected_users = [discord.SelectDefaultValue(id=user.id, type=discord.SelectDefaultValueType.user)]
             self.add_item(
                 discord.ui.RoleSelect(
                     placeholder=tanjunLocalizer.localize(
                         commandInfo.locale,
                         "commands.admin.addrole.roleSelect.placeholder",
                     ),
+                    default_values=self.selected_roles,
                     min_values=1,
                     max_values=25,
                     custom_id="role_select",
@@ -58,6 +59,7 @@ async def addrole(
                         commandInfo.locale,
                         "commands.admin.addrole.userSelect.placeholder",
                     ),
+                    default_values=self.selected_users,
                     min_values=1,
                     max_values=25,
                     custom_id="user_select",
@@ -202,7 +204,7 @@ async def addrole(
         await commandInfo.reply(embed=embed)
     else:
         # Multiple users or roles
-        view = RoleManagementView(commandInfo, action="add")
+        view = RoleManagementView(commandInfo, action="add", users=user, roles=role)
         await commandInfo.reply(
             tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.addrole.multiplePrompt"

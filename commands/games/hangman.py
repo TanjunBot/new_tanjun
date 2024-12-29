@@ -253,8 +253,8 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             or given_up
             else WordleView(commandInfo)
         )
-        await interaction.followup.edit_message(
-            message_id=interaction.message.id, embed=embed, view=view
+        await interaction.response.edit_message(
+            embed=embed, view=view
         )
 
     class HangmanInputModal(discord.ui.Modal):
@@ -294,7 +294,6 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
 
                 await update_hangman_game(interaction)
             except ValueError:
-                raise
                 embed = utility.tanjunEmbed(
                     title=tanjunLocalizer.localize(
                         self.commandInfo.locale, "commands.games.hangman.error.title"
@@ -304,7 +303,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                         "commands.games.hangman.error.invalidInput",
                     ),
                 )
-                await interaction.followup.send(embed=embed, ephemeral=True)
+                await interaction.response.send_message(embed=embed, ephemeral=True)
 
     class WordleView(discord.ui.View):
         def __init__(self, commandInfo: utility.commandInfo):
@@ -330,7 +329,6 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                 return
             modal = HangmanInputModal(self.commandInfo, guesses)
             await interaction.response.send_modal(modal)
-            self.stop()
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
@@ -341,9 +339,8 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
         async def give_up_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
-            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.followup.send(
+                await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.hangman.notYourGame"
                     ),
@@ -352,7 +349,6 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                 return
             guesses.append(word)
             await update_hangman_game(interaction, given_up=True)
-            self.stop()
 
     view = WordleView(commandInfo)
     hanged_man = hangmanSteps[wrong_letters(guesses, word)]

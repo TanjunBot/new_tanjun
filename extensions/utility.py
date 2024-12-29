@@ -726,7 +726,7 @@ class utilityCommands(discord.app_commands.Group):
         user=app_commands.locale_str("utility_report_params_user_description"),
         reason=app_commands.locale_str("utility_report_params_reason_description"),
     )
-    async def report(self, ctx, user: discord.Member, reason: app_commands.Range[int, 12, 1024]):
+    async def report(self, ctx, user: discord.Member, reason: app_commands.Range[str, 12, 1024]):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,

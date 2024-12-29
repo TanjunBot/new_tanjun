@@ -49,7 +49,7 @@ async def moverole(
 
     try:
         if position == "above":
-            await role.edit(position=target_role.position + 1)
+            await role.edit(position=target_role.position)
         else:  # below
             await role.edit(position=target_role.position - 1)
 

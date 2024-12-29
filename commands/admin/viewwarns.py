@@ -44,8 +44,7 @@ class WarningView(View):
             )
             prev_button.callback = self.prev_page
             self.add_item(prev_button)
-
-        for i, (warning_id, _, _, expires_at) in enumerate(
+        for i, (warning_id, _, _, expires_at, _) in enumerate(
             self.warnings[start:end], start=start + 1
         ):
             button = Button(
@@ -169,7 +168,7 @@ def create_warnings_embed(commandInfo, member, warnings, page):
                 ),
                 date=f"<t:{int(created_at.timestamp())}:D>",
                 expiration=expiration_str,
-                created_by={created_by},
+                created_by=created_by,
             ),
             inline=False,
         )

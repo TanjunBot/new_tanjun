@@ -61,42 +61,40 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
         try:
-            if hasattr(interaction, "data") and hasattr(interaction.data, "custom_id"):
-                if interaction.data["custom_id"].startswith("giveaway_enter"):
-                    giveaway_id = interaction.data["custom_id"].split("; ")[1]
-                    embed = await add_giveaway_participant(
-                        giveawayid=giveaway_id,
-                        userid=interaction.user.id,
-                        client=self.bot,
+            if interaction.data["custom_id"].startswith("giveaway_enter"):
+                giveaway_id = interaction.data["custom_id"].split("; ")[1]
+                embed = await add_giveaway_participant(
+                    giveawayid=giveaway_id,
+                    userid=interaction.user.id,
+                    client=self.bot,
+                )
+                if embed:
+                    await interaction.response.send_message(
+                        embed=embed, ephemeral=True
                     )
-                    if embed:
-                        await interaction.response.send_message(
-                            embed=embed, ephemeral=True
-                        )
-                elif interaction.data["custom_id"].startswith(
-                    "ai_add_custom_situation_approve"
-                ):
-                    if interaction.user.id not in adminIds:
-                        return
-                    await approve_custom_situation(interaction)
-                elif interaction.data["custom_id"].startswith(
-                    "ai_add_custom_situation_deny"
-                ):
-                    if interaction.user.id not in adminIds:
-                        return
-                    await deny_custom_situation(interaction)
-                elif interaction.data["custom_id"].startswith("report_"):
-                    await report_btn_click(interaction, interaction.data["custom_id"])
+            elif interaction.data["custom_id"].startswith(
+                "ai_add_custom_situation_approve"
+            ):
+                if interaction.user.id not in adminIds:
                     return
-                elif interaction.data["custom_id"].startswith("ticket_create"):
-                    await openTicketListener(interaction)
+                await approve_custom_situation(interaction)
+            elif interaction.data["custom_id"].startswith(
+                "ai_add_custom_situation_deny"
+            ):
+                if interaction.user.id not in adminIds:
                     return
-                elif interaction.data["custom_id"].startswith("ticket_close"):
-                    await closeTicketListener(interaction)
-                    return
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            raise
+                await deny_custom_situation(interaction)
+            elif interaction.data["custom_id"].startswith("report_"):
+                await report_btn_click(interaction, interaction.data["custom_id"])
+                return
+            elif interaction.data["custom_id"].startswith("ticket_create"):
+                await openTicketListener(interaction)
+                return
+            elif interaction.data["custom_id"].startswith("ticket_close"):
+                await closeTicketListener(interaction)
+                return
+        except Exception:
+            pass
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user, before, after):
