@@ -335,7 +335,7 @@ class mathCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.send,

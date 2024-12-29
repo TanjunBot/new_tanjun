@@ -290,7 +290,7 @@ async def counting(message: discord.Message):
 
     mode = await get_counting_mode_mode(message.channel.id)
 
-    locale = message.guild.locale if hasattr(message.guild, "locale") else "de"
+    locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "de"
 
     if not progress and progress != 0:
         return

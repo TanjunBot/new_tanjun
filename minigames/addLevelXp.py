@@ -154,7 +154,7 @@ async def format_level_up_message(
     level_up_message = await get_levelup_message(guild_id)
     if not level_up_message:
         level_up_message = tanjunLocalizer.localize(
-            guild.locale if hasattr(guild, "locale") else "en_US",
+            guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US",
             "commands.level.defaultlevelupmessage",
         )
     return level_up_message.replace("{user}", user_mention).replace(
@@ -173,8 +173,8 @@ async def update_user_roles(message: discord.Message, new_level: int, guild_id: 
                         role,
                         reason=tanjunLocalizer.localize(
                             (
-                                message.guild.locale
-                                if hasattr(message.guild, "locale")
+                                message.guild.preferred_locale
+                                if hasattr(message.guild, "preferred_locale")
                                 else "en_US"
                             ),
                             "commands.level.updateuserroles.reason",

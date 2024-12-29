@@ -14,7 +14,7 @@ async def wordchain(message: discord.Message):
     if wordchain_word is None:
         return
 
-    locale = message.guild.locale if hasattr(message.guild, "locale") else "en_US"
+    locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
 
     if await check_if_opted_out(message.author.id):
         try:

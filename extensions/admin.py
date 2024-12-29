@@ -1239,7 +1239,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1252,7 +1252,7 @@ class adminCog(commands.Cog):
             await ctx.reply(
                 tanjunLocalizer.localize(
                     locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
+                        ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US"
                     ),
                     key="commands.admin.addrole.noUser",
                 )
@@ -1264,7 +1264,7 @@ class adminCog(commands.Cog):
             await ctx.reply(
                 tanjunLocalizer.localize(
                     locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
+                        ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US"
                     ),
                     key="commands.admin.addrole.noRole",
                 )
@@ -1282,7 +1282,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1294,7 +1294,7 @@ class adminCog(commands.Cog):
             await ctx.reply(
                 tanjunLocalizer.localize(
                     locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
+                        ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US"
                     ),
                     key="commands.admin.removerole.noUser",
                 )
@@ -1306,7 +1306,7 @@ class adminCog(commands.Cog):
             await ctx.reply(
                 tanjunLocalizer.localize(
                     locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
+                        ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US"
                     ),
                     key="commands.admin.removerole.noRole",
                 )
@@ -1334,7 +1334,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1345,7 +1345,7 @@ class adminCog(commands.Cog):
             await ctx.reply(
                 tanjunLocalizer.localize(
                     locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
+                        ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US"
                     ),
                     key="commands.admin.createrole.noName",
                 )
@@ -1375,7 +1375,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1387,7 +1387,7 @@ class adminCog(commands.Cog):
             await ctx.reply(
                 tanjunLocalizer.localize(
                     locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
+                        ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US"
                     ),
                     key="commands.admin.deleterole.noRole",
                 )
@@ -1406,7 +1406,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1430,7 +1430,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1452,7 +1452,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1471,7 +1471,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1490,7 +1490,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1509,7 +1509,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1528,7 +1528,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1547,7 +1547,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1566,7 +1566,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1583,7 +1583,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1600,7 +1600,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1617,7 +1617,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1634,7 +1634,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1654,7 +1654,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1671,7 +1671,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1705,7 +1705,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
@@ -1723,7 +1723,7 @@ class adminCog(commands.Cog):
             channel=ctx.channel,
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
+            locale=ctx.guild.preferred_locale if hasattr(ctx.guild, "preferred_locale") else "en_US",
             message=ctx.message,
             permissions=ctx.author.guild_permissions,
             reply=ctx.reply,
