@@ -18041,8 +18041,8 @@
     },
     {
         "identifier": "minigames.setcountingchannel.modesintroduction.description",
-        "source_string": "Hier kann jetzt in verschiedenen Modi gezählt werden. Es gibt verschiedene Modi, die das Zählen erschweren oder erleichtern.\nFangen wir mal einfach an; Zähle in bis zu `128`. Also zähle `1`, `2`, `4`, `8`, etc. Wenn die `128` erreicht ist, fangen wir mit einem anderen Modus neu an!\nViel Spaß beim Zählen!",
-        "translation": "Hier kann jetzt in verschiedenen Modi gezählt werden. Es gibt verschiedene Modi, die das Zählen erschweren oder erleichtern.\nFangen wir mal einfach an; Zähle in bis zu `128`. Also zähle `1`, `2`, `4`, `8`, etc. Wenn die `128` erreicht ist, fangen wir mit einem anderen Modus neu an!\nViel Spaß beim Zählen!",
+        "source_string": "Hier kann jetzt in verschiedenen Modi gezählt werden. \nEs gibt verschiedene Modi, die das Zählen erschweren oder erleichtern.\nFangen wir mal einfach an; dem Verdopplungs-Modus. Verdopple die Zahlen bis zu `128`. Also zähle  `2`, `4`, `8`, `16`, etc. \nWenn die `128` erreicht ist, fangen wir mit einem anderen Modus neu an!\nViel Spaß beim Zählen!",
+        "translation": "Hier kann jetzt in verschiedenen Modi gezählt werden. \nEs gibt verschiedene Modi, die das Zählen erschweren oder erleichtern.\nFangen wir mal einfach an; dem Verdopplungs-Modus. Verdopple die Zahlen bis zu `128`. Also zähle  `2`, `4`, `8`, `16`, etc. \nWenn die `128` erreicht ist, fangen wir mit einem anderen Modus neu an!\nViel Spaß beim Zählen!",
         "context": "minigames -> setcountingchannel -> modesintroduction -> description",
         "labels": "de.json",
         "max_length": null
@@ -18265,8 +18265,8 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.reverse.description",
-        "source_string": "Zähle von -100 Richtung 0: `-100`, `-99`, `-98`, `-97`, ...",
-        "translation": "Zähle von -100 Richtung 0: `-100`, `-99`, `-98`, `-97`, ...",
+        "source_string": "Zähle von 100 Richtung 0: `100`, `99`, `98`, `97`, ...",
+        "translation": "Zähle von 100 Richtung 0: `100`, `99`, `98`, `97`, ...",
         "context": "minigames -> counting -> modes -> modes -> reverse -> description",
         "labels": "de.json",
         "max_length": null
@@ -30545,16 +30545,16 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.double.description",
-        "source_string": "Verdopple immer die vorherige Zahl. Gestartet wird bei 1. `1`, `2`, `4`, `8`, ...",
-        "translation": "Verdopple immer die vorherige Zahl. Gestartet wird bei 1. `1`, `2`, `4`, `8`, ...",
+        "source_string": "Verdopple immer die vorherige Zahl. Gestartet wird bei 2. Zähle also `2`, `4`, `8`, ...",
+        "translation": "Verdopple immer die vorherige Zahl. Gestartet wird bei 2. Zähle also `2`, `4`, `8`, ...",
         "context": null,
         "labels": "unassigned",
         "max_length": null
     },
     {
         "identifier": "minigames.counting.modes.modes.triple.description",
-        "source_string": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 1. `1`, `3`, `9`, `27`, ...",
-        "translation": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 1. `1`, `3`, `9`, `27`, ...",
+        "source_string": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 3. Zähle also `3`, `9`, `27`, ...",
+        "translation": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 3. Zähle also `3`, `9`, `27`, ...",
         "context": null,
         "labels": "unassigned",
         "max_length": null
