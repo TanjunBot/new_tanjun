@@ -29,6 +29,22 @@ async def getPlayerInfo(playerTag: str):
 async def brawlers(commandInfo: commandInfo, playerTag: str = None):
     if not playerTag:
         playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
+    if playerTag.startswith("<@"):
+        playerTagUserID = playerTag.split("<@")[1].split(">")[0]
+        playerTag = await get_brawlstars_linked_account(playerTagUserID)
+        if not playerTag:
+            return await commandInfo.reply(
+                embed=tanjunEmbed(
+                    title=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.brawlstars.battlelog.error.userNotLinked.title",
+                    ),
+                    description=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.brawlstars.battlelog.error.userNotLinked.description",
+                    ),
+                )
+            )
     if playerTag and not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
     if not playerTag:
