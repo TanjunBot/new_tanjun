@@ -77,7 +77,7 @@ async def num2wordLocaleAutocomplete(
     ]
 
     return [
-        app_commands.Choice(name=locale, value=locale)
+        app_commands.Choice(name=app_commands.locale_str("commands.math.num2word.locales." + locale), value=locale)
         for locale in filtered_locales[:25]
     ]
 
