@@ -77,7 +77,7 @@ async def setWelcomeChannel(
             )
         )["data"]["url"]
     else:
-        imgUrl = "https://i.ibb.co/rQZHnbs/welcome-background.png"
+        imgUrl = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"
 
     await set_welcome_channel(commandInfo.guild.id, channel.id, message, imgUrl)
 

@@ -77,7 +77,7 @@ async def setFarewellChannel(
             )
         )["data"]["url"]
     else:
-        imgUrl = "https://i.ibb.co/G5G0mVr/leave-background.png"
+        imgUrl = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"
 
     await set_leave_channel(commandInfo.guild.id, channel.id, message, imgUrl)
 

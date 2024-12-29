@@ -2817,11 +2817,8 @@ async def remove_media_channel(guild_id: str, channel_id: str):
 async def get_welcome_channel(guild_id: str):
     query = "SELECT * FROM welcomeChannel WHERE guildId = %s"
     params = (guild_id,)
-    return (
-        (await execute_query(query, params))[0]
-        if (await execute_query(query, params))
-        else None
-    )
+    result = await execute_query(query, params)
+    return result[0] if result else None
 
 
 async def set_welcome_channel(
@@ -2841,11 +2838,8 @@ async def remove_welcome_channel(guild_id: str):
 async def get_leave_channel(guild_id: str):
     query = "SELECT * FROM leaveChannel WHERE guildId = %s"
     params = (guild_id,)
-    return (
-        (await execute_query(query, params))[0]
-        if (await execute_query(query, params))
-        else None
-    )
+    result = await execute_query(query, params)
+    return result[0] if result else None
 
 
 async def set_leave_channel(
