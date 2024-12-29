@@ -641,8 +641,8 @@
     },
     {
         "identifier": "commands.admin.deleterole.success.description",
-        "source_string": "Die Rolle '{role}' wurde erfolgreich gelöscht.",
-        "translation": "Die Rolle '{role}' wurde erfolgreich gelöscht.",
+        "source_string": "Die Rolle `${role}` wurde erfolgreich gelöscht.",
+        "translation": "Die Rolle `${role}` wurde erfolgreich gelöscht.",
         "context": "commands -> admin -> deleterole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -18329,8 +18329,8 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.fibonacci.description",
-        "source_string": "Zähle nur die Fibonacci-Zahlen: `1`, `1`, `2`, `3`, ...",
-        "translation": "Zähle nur die Fibonacci-Zahlen: `1`, `1`, `2`, `3`, ...",
+        "source_string": "Zähle nur die Fibonacci-Zahlen: `0`, `1`, `1`, `2`, `3`, ...",
+        "translation": "Zähle nur die Fibonacci-Zahlen: `0`, `1`, `1`, `2`, `3`, ...",
         "context": "Counting Minigame - Mode: Fibonacci (Fibonacci-Zahlen)",
         "labels": "de.json",
         "max_length": null
@@ -19273,8 +19273,8 @@
     },
     {
         "identifier": "minigames.setcchallengep.description",
-        "source_string": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
-        "translation": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
+        "source_string": "Setzt den Fortschritt für einen Counting-Challenge-Kanal",
+        "translation": "Setzt den Fortschritt für einen Counting-Challenge-Kanal",
         "context": "minigames -> setcchallengep -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -30395,6 +30395,174 @@
         "identifier": "commands.admin.viewwarns.noReason",
         "source_string": "Kein Grund angegeben",
         "translation": "Kein Grund angegeben",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.selectUsers",
+        "source_string": "Nutzer auswählen",
+        "translation": "Nutzer auswählen",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_sent.title",
+        "source_string": "Report erfolgreich",
+        "translation": "Report erfolgreich",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_sent.description",
+        "source_string": "Der angegebene Nutzer wurde erfolgreich reportet.",
+        "translation": "Der angegebene Nutzer wurde erfolgreich reportet.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.accept.label",
+        "source_string": "Report Akzeptieren",
+        "translation": "Report Akzeptieren",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.reject.label",
+        "source_string": "Report ablehnen",
+        "translation": "Report ablehnen",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.block_reporter.label",
+        "source_string": "Reporter Blockieren",
+        "translation": "Reporter Blockieren",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.new_report.title",
+        "source_string": "Neuer Report",
+        "translation": "Neuer Report",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_report_channel.title",
+        "source_string": "Kein Report Kanal",
+        "translation": "Kein Report Kanal",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_report_channel.description",
+        "source_string": "Es wurde kein Report Kanal festgelegt, wohin dein Report gesendet werden könnte. Das Report System ist auf diesem Server also deaktiviert.",
+        "translation": "Es wurde kein Report Kanal festgelegt, wohin dein Report gesendet werden könnte. Das Report System ist auf diesem Server also deaktiviert.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_channel_not_found.title",
+        "source_string": "Report Kanal nicht gefunden",
+        "translation": "Report Kanal nicht gefunden",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_channel_not_found.description",
+        "source_string": "Es wurde zwar ein Report Kanal festgelegt, allerdings wurde dieser wahrscheinlich gelöscht. Das Report System wurde also automatisch deaktiviert.",
+        "translation": "Es wurde zwar ein Report Kanal festgelegt, allerdings wurde dieser wahrscheinlich gelöscht. Das Report System wurde also automatisch deaktiviert.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_permission.title",
+        "source_string": "Keine Berechtigungen",
+        "translation": "Keine Berechtigungen",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_permission.description",
+        "source_string": "Ich habe leider keine Berechtigungen, in den Report Kanal zu schreiben. Leite dies bitte an die Server Administration weiter.",
+        "translation": "Ich habe leider keine Berechtigungen, in den Report Kanal zu schreiben. Leite dies bitte an die Server Administration weiter.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_reason.title",
+        "source_string": "Kein Grund angegeben",
+        "translation": "Kein Grund angegeben",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_reason.description",
+        "source_string": "Du hast keinen Grund angegeben. Bitte gebe einen Grund für dein Report an.",
+        "translation": "Du hast keinen Grund angegeben. Bitte gebe einen Grund für dein Report an.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.new_report.description",
+        "source_string": "${reporter} hat ${user} mit dem Grund ${reason} Reportet. ",
+        "translation": "${reporter} hat ${user} mit dem Grund ${reason} Reportet. ",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.show_reports.block.label",
+        "source_string": "Reporter Blockieren",
+        "translation": "Reporter Blockieren",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.double.name",
+        "source_string": "Verdopplung",
+        "translation": "Verdopplung",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.double.description",
+        "source_string": "Verdopple immer die vorherige Zahl. Gestartet wird bei 1. `1`, `2`, `4`, `8`, ...",
+        "translation": "Verdopple immer die vorherige Zahl. Gestartet wird bei 1. `1`, `2`, `4`, `8`, ...",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.triple.description",
+        "source_string": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 1. `1`, `3`, `9`, `27`, ...",
+        "translation": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 1. `1`, `3`, `9`, `27`, ...",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.triple.name",
+        "source_string": "Verdreifachung",
+        "translation": "Verdreifachung",
         "context": null,
         "labels": "unassigned",
         "max_length": null

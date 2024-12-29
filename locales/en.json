@@ -641,8 +641,8 @@
     },
     {
         "identifier": "commands.admin.deleterole.success.description",
-        "source_string": "Die Rolle '{role}' wurde erfolgreich gelöscht.",
-        "translation": "The role '{role}' was successfully deleted.",
+        "source_string": "Die Rolle `${role}` wurde erfolgreich gelöscht.",
+        "translation": "The role `${role}` was successfully deleted.",
         "context": "commands -> admin -> deleterole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -17314,7 +17314,7 @@
     {
         "identifier": "utility.bs.description",
         "source_string": "Befehle für Brawl Stars",
-        "translation": "Orders for Brawl Stars",
+        "translation": "Commands for Brawl Stars",
         "context": "utility -> bs -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -17330,7 +17330,7 @@
     {
         "identifier": "utility.bs.battlelog.description",
         "source_string": "Zeigt das Kampflogbuch eines Spielers an",
-        "translation": "Displays a player's combat logbook",
+        "translation": "Shows a player's combat logbook",
         "context": "utility -> bs -> battlelog -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -17370,7 +17370,7 @@
     {
         "identifier": "utility.bs.playerinfo.params.tag.name",
         "source_string": "tag",
-        "translation": "day",
+        "translation": "tag",
         "context": "utility -> bs -> playerinfo -> params -> tag -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17394,7 +17394,7 @@
     {
         "identifier": "utility.bs.brawlers.description",
         "source_string": "Zeigt die Brawler eines Spielers an",
-        "translation": "Displays the brawlers of a player",
+        "translation": "Shows the brawlers of a player",
         "context": "utility -> bs -> brawlers -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -17402,7 +17402,7 @@
     {
         "identifier": "utility.bs.brawlers.params.tag.name",
         "source_string": "tag",
-        "translation": "day",
+        "translation": "tag",
         "context": "utility -> bs -> brawlers -> params -> tag -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17426,7 +17426,7 @@
     {
         "identifier": "utility.bs.club.description",
         "source_string": "Zeigt die Informationen eines Clubs an",
-        "translation": "Displays the information of a club",
+        "translation": "Shows the information of a club",
         "context": "utility -> bs -> club -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -17434,7 +17434,7 @@
     {
         "identifier": "utility.bs.club.params.tag.name",
         "source_string": "tag",
-        "translation": "day",
+        "translation": "tag",
         "context": "utility -> bs -> club -> params -> tag -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17458,7 +17458,7 @@
     {
         "identifier": "utility.bs.events.description",
         "source_string": "Zeigt die aktuellen Events von Brawl Stars an",
-        "translation": "Displays the current events of Brawl Stars",
+        "translation": "Shows the current events of Brawl Stars",
         "context": "utility -> bs -> events -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -17482,7 +17482,7 @@
     {
         "identifier": "utility.bs.link.params.tag.name",
         "source_string": "tag",
-        "translation": "day",
+        "translation": "tag",
         "context": "utility -> bs -> link -> params -> tag -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17498,7 +17498,7 @@
     {
         "identifier": "utility.bs.unlink.name",
         "source_string": "verlinkung_entfernen",
-        "translation": "remove_link",
+        "translation": "unlink",
         "context": "utility -> bs -> unlink -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17578,7 +17578,7 @@
     {
         "identifier": "utility.twitch.add.params.notification_message.name",
         "source_string": "benachrichtigungsnachricht",
-        "translation": "notification message",
+        "translation": "notification_message",
         "context": "utility -> twitch -> add -> params -> notification_message -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17690,7 +17690,7 @@
     {
         "identifier": "minigames.setwordchainchannel.error.no_send_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setwordchainchannel -> error -> no_send_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17698,7 +17698,7 @@
     {
         "identifier": "minigames.setwordchainchannel.error.no_send_perms.description",
         "source_string": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu senden.",
-        "translation": "The bot does not have the required authorizations to send messages in this channel.",
+        "translation": "The bot does not have the required permissions to send messages in this channel.",
         "context": "minigames -> setwordchainchannel -> error -> no_send_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -17706,7 +17706,7 @@
     {
         "identifier": "minigames.setwordchainchannel.error.no_message_delete_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setwordchainchannel -> error -> no_message_delete_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17722,7 +17722,7 @@
     {
         "identifier": "minigames.setwordchainchannel.error.no_read_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setwordchainchannel -> error -> no_read_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17738,7 +17738,7 @@
     {
         "identifier": "minigames.setwordchainchannel.error.no_view_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setwordchainchannel -> error -> no_view_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17754,7 +17754,7 @@
     {
         "identifier": "minigames.setwordchainchannel.error.no_moderate_members_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setwordchainchannel -> error -> no_moderate_members_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17762,7 +17762,7 @@
     {
         "identifier": "minigames.setwordchainchannel.error.no_moderate_members_perms.description",
         "source_string": "Du hast nicht die erforderlichen Rechte, dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`.",
-        "translation": "You do not have the required rights to do this. Required rights: 'Moderate members'.",
+        "translation": "You do not have the required permissions to do this. Required permissions: 'Moderate members'.",
         "context": "minigames -> setwordchainchannel -> error -> no_moderate_members_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -17842,7 +17842,7 @@
     {
         "identifier": "minigames.removewordchainchannel.error.no_moderate_members_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> removewordchainchannel -> error -> no_moderate_members_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17850,7 +17850,7 @@
     {
         "identifier": "minigames.removewordchainchannel.error.no_moderate_members_perms.description",
         "source_string": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`.",
-        "translation": "You do not have the rights to do this. Required rights: `Moderate members`.",
+        "translation": "You do not have the permissions to do this. Required permissions: `Moderate members`.",
         "context": "minigames -> removewordchainchannel -> error -> no_moderate_members_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -17898,7 +17898,7 @@
     {
         "identifier": "minigames.setcountingchannel.error.no_pro.description",
         "source_string": "Es gibt bereits einen Counting Channel in diesem Server. Entferne ihn bevor du einen neuen setzt. \n## Tanjun Pro Server können mehrere Counting Channels haben.",
-        "translation": "There is already a counting channel in this server. Remove it before creating a new one. \n## Tanjun Pro servers can have multiple counting channels.",
+        "translation": "There is already a counting channel in this server. Remove it before creating a new one.\n## Tanjun Pro servers can have multiple counting channels.",
         "context": "minigames -> setcountingchannel -> error -> no_pro -> description",
         "labels": "de.json",
         "max_length": null
@@ -17906,7 +17906,7 @@
     {
         "identifier": "minigames.setcountingchannel.error.no_send_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchannel -> error -> no_send_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17914,7 +17914,7 @@
     {
         "identifier": "minigames.setcountingchannel.error.no_send_perms.description",
         "source_string": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu senden.",
-        "translation": "The bot does not have the required authorizations to send messages in this channel.",
+        "translation": "The bot does not have the required permissions to send messages in this channel.",
         "context": "minigames -> setcountingchannel -> error -> no_send_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -17922,7 +17922,7 @@
     {
         "identifier": "minigames.setcountingchannel.error.no_message_delete_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchannel -> error -> no_message_delete_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17938,7 +17938,7 @@
     {
         "identifier": "minigames.setcountingchannel.error.no_read_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchannel -> error -> no_read_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17954,7 +17954,7 @@
     {
         "identifier": "minigames.setcountingchannel.error.no_view_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchannel -> error -> no_view_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17970,7 +17970,7 @@
     {
         "identifier": "minigames.setcountingchannel.error.no_moderate_members_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchannel -> error -> no_moderate_members_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -17978,7 +17978,7 @@
     {
         "identifier": "minigames.setcountingchannel.error.no_moderate_members_perms.description",
         "source_string": "Du hast nicht die erforderlichen Rechte, dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`.",
-        "translation": "You do not have the required rights to do this. Required rights: 'Moderate members'.",
+        "translation": "You do not have the required permissions to do this. Required permissions: 'Moderate members'.",
         "context": "minigames -> setcountingchannel -> error -> no_moderate_members_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -18329,8 +18329,8 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.fibonacci.description",
-        "source_string": "Zähle nur die Fibonacci-Zahlen: `1`, `1`, `2`, `3`, ...",
-        "translation": "Count only the Fibonacci numbers: `1`, `1`, `2`, `3`, ...",
+        "source_string": "Zähle nur die Fibonacci-Zahlen: `0`, `1`, `1`, `2`, `3`, ...",
+        "translation": "Count only the Fibonacci numbers: `0`, `1`, `1`, `2`, `3`, ...",
         "context": "Counting Minigame - Mode: Fibonacci (Fibonacci-Zahlen)",
         "labels": "de.json",
         "max_length": null
@@ -18578,7 +18578,7 @@
     {
         "identifier": "minigames.removecountingchallengechannel.error.no_moderate_members_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> removecountingchallengechannel -> error -> no_moderate_members_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18586,7 +18586,7 @@
     {
         "identifier": "minigames.removecountingchallengechannel.error.no_moderate_members_perms.description",
         "source_string": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`.",
-        "translation": "You do not have the rights to do this. Required rights: `Moderate members`.",
+        "translation": "You do not have the permissions to do this. Required permissions: `Moderate members`.",
         "context": "minigames -> removecountingchallengechannel -> error -> no_moderate_members_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -18642,7 +18642,7 @@
     {
         "identifier": "minigames.removecountingmodeschannel.error.no_moderate_members_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> removecountingmodeschannel -> error -> no_moderate_members_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18650,7 +18650,7 @@
     {
         "identifier": "minigames.removecountingmodeschannel.error.no_moderate_members_perms.description",
         "source_string": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`.",
-        "translation": "You do not have the rights to do this. Required rights: `Moderate members`.",
+        "translation": "You do not have the permissions to do this. Required permissions: `Moderate members`.",
         "context": "minigames -> removecountingmodeschannel -> error -> no_moderate_members_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -18722,7 +18722,7 @@
     {
         "identifier": "minigames.setcountingprogress.error.too_high.title",
         "source_string": "Zu hoher Fortschritt",
-        "translation": "Too much progress",
+        "translation": "Too high progress",
         "context": "minigames -> setcountingprogress -> error -> too_high -> title",
         "labels": "de.json",
         "max_length": null
@@ -18738,7 +18738,7 @@
     {
         "identifier": "minigames.setcountingprogress.error.no_moderate_members_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingprogress -> error -> no_moderate_members_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18746,7 +18746,7 @@
     {
         "identifier": "minigames.setcountingprogress.error.no_moderate_members_perms.description",
         "source_string": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`.",
-        "translation": "You do not have the rights to do this. Required rights: `Moderate members`.",
+        "translation": "You do not have the permissions to do this. Required permissions: `Moderate members`.",
         "context": "minigames -> setcountingprogress -> error -> no_moderate_members_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -18786,7 +18786,7 @@
     {
         "identifier": "minigames.setcountingchallengeprogress.name",
         "source_string": "fortschritt_setzen",
-        "translation": "progress_set",
+        "translation": "set_progress",
         "context": "minigames -> setcountingchallengeprogress -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -18866,7 +18866,7 @@
     {
         "identifier": "minigames.setcountingchallengeprogress.error.too_high.title",
         "source_string": "Zu hoher Fortschritt",
-        "translation": "Too much progress",
+        "translation": "Too high progress",
         "context": "minigames -> setcountingchallengeprogress -> error -> too_high -> title",
         "labels": "de.json",
         "max_length": null
@@ -18882,7 +18882,7 @@
     {
         "identifier": "minigames.setcountingchallengeprogress.error.no_moderate_members_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchallengeprogress -> error -> no_moderate_members_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18890,7 +18890,7 @@
     {
         "identifier": "minigames.setcountingchallengeprogress.error.no_moderate_members_perms.description",
         "source_string": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`.",
-        "translation": "You do not have the rights to do this. Required rights: `Moderate members`.",
+        "translation": "You do not have the permissions to do this. Required permissions: `Moderate members`.",
         "context": "minigames -> setcountingchallengeprogress -> error -> no_moderate_members_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -19273,7 +19273,7 @@
     },
     {
         "identifier": "minigames.setcchallengep.description",
-        "source_string": "Setzt den Fortschritt für einen Counting-Modes-Kanal",
+        "source_string": "Setzt den Fortschritt für einen Counting-Challenge-Kanal",
         "translation": "Sets the progress for a counting mode channel",
         "context": "minigames -> setcchallengep -> description",
         "labels": "de.json, command_description",
@@ -30395,6 +30395,174 @@
         "identifier": "commands.admin.viewwarns.noReason",
         "source_string": "Kein Grund angegeben",
         "translation": "No reason given",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.selectUsers",
+        "source_string": "Nutzer auswählen",
+        "translation": "Select user",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_sent.title",
+        "source_string": "Report erfolgreich",
+        "translation": "Report successful",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_sent.description",
+        "source_string": "Der angegebene Nutzer wurde erfolgreich reportet.",
+        "translation": "The specified user has been successfully reported.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.accept.label",
+        "source_string": "Report Akzeptieren",
+        "translation": "Accept report",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.reject.label",
+        "source_string": "Report ablehnen",
+        "translation": "Reject report",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.block_reporter.label",
+        "source_string": "Reporter Blockieren",
+        "translation": "Block reporter",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.new_report.title",
+        "source_string": "Neuer Report",
+        "translation": "New report",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_report_channel.title",
+        "source_string": "Kein Report Kanal",
+        "translation": "No report channel",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_report_channel.description",
+        "source_string": "Es wurde kein Report Kanal festgelegt, wohin dein Report gesendet werden könnte. Das Report System ist auf diesem Server also deaktiviert.",
+        "translation": "No report channel has been defined where your report could be sent. The report system is therefore deactivated on this server.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_channel_not_found.title",
+        "source_string": "Report Kanal nicht gefunden",
+        "translation": "Report channel not found",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_channel_not_found.description",
+        "source_string": "Es wurde zwar ein Report Kanal festgelegt, allerdings wurde dieser wahrscheinlich gelöscht. Das Report System wurde also automatisch deaktiviert.",
+        "translation": "A report channel has been defined, but this has probably been deleted. The report system was therefore automatically deactivated.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_permission.title",
+        "source_string": "Keine Berechtigungen",
+        "translation": "No authorizations",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_permission.description",
+        "source_string": "Ich habe leider keine Berechtigungen, in den Report Kanal zu schreiben. Leite dies bitte an die Server Administration weiter.",
+        "translation": "Unfortunately, I do not have permission to write to the report channel. Please forward this to the server administration.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_reason.title",
+        "source_string": "Kein Grund angegeben",
+        "translation": "No reason given",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_reason.description",
+        "source_string": "Du hast keinen Grund angegeben. Bitte gebe einen Grund für dein Report an.",
+        "translation": "You have not given a reason. Please give a reason for your report.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.new_report.description",
+        "source_string": "${reporter} hat ${user} mit dem Grund ${reason} Reportet. ",
+        "translation": "${reporter} has ${user} with the reason ${reason} Reported. ",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.show_reports.block.label",
+        "source_string": "Reporter Blockieren",
+        "translation": "Block reporter",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.double.name",
+        "source_string": "Verdopplung",
+        "translation": "Doubling",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.double.description",
+        "source_string": "Verdopple immer die vorherige Zahl. Gestartet wird bei 1. `1`, `2`, `4`, `8`, ...",
+        "translation": "Always double the previous number. Start at 1. `1`, `2`, `4`, `8`, ...",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.triple.description",
+        "source_string": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 1. `1`, `3`, `9`, `27`, ...",
+        "translation": "Always triple the previous number. Start at 1. `1`, `3`, `9`, `27`, ...",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "minigames.counting.modes.modes.triple.name",
+        "source_string": "Verdreifachung",
+        "translation": "Tripling",
         "context": null,
         "labels": "unassigned",
         "max_length": null
