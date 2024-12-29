@@ -5336,7 +5336,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.en_NG",
+        "identifier": "commands.math.num2word.locales.en.NG",
         "source_string": "Nigerianisches Englisch",
         "translation": "Nigerian English",
         "context": "commands -> math -> num2word -> locales -> en.NG",
@@ -5368,7 +5368,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.es_VE",
+        "identifier": "commands.math.num2word.locales.es.VE",
         "source_string": "Venezolanisches Spanisch",
         "translation": "Venezuelan Spanish",
         "context": "commands -> math -> num2word -> locales -> es.VE",
@@ -5376,7 +5376,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.es_GT",
+        "identifier": "commands.math.num2word.locales.es.GT",
         "source_string": "Guatemaltekisches Spanisch",
         "translation": "Guatemalan Spanish",
         "context": "commands -> math -> num2word -> locales -> es.GT",
@@ -5416,7 +5416,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.fr_CH",
+        "identifier": "commands.math.num2word.locales.fr.CH",
         "source_string": "Schweizer Französisch",
         "translation": "Swiss French",
         "context": "commands -> math -> num2word -> locales -> fr.CH",
@@ -5424,7 +5424,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.fr_BE",
+        "identifier": "commands.math.num2word.locales.fr.BE",
         "source_string": "Belgisches Französisch",
         "translation": "Belgian French",
         "context": "commands -> math -> num2word -> locales -> fr.BE",
@@ -5432,7 +5432,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.fr_DZ",
+        "identifier": "commands.math.num2word.locales.fr.DZ",
         "source_string": "Algerisches Französisch",
         "translation": "Algerian French",
         "context": "commands -> math -> num2word -> locales -> fr.DZ",
@@ -5552,7 +5552,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.pt_BR",
+        "identifier": "commands.math.num2word.locales.pt.BR",
         "source_string": "Brasilianisches Portugiesisch",
         "translation": "Brazilian Portuguese",
         "context": "commands -> math -> num2word -> locales -> pt.BR",
@@ -14633,7 +14633,7 @@
     },
     {
         "identifier": "admin.timeout.name",
-        "source_string": "ausschließen",
+        "source_string": "timeout",
         "translation": "exclude",
         "context": "admin -> timeout -> name",
         "labels": "de.json, command_name",
@@ -17497,8 +17497,8 @@
     },
     {
         "identifier": "utility.bs.unlink.name",
-        "source_string": "entfernen",
-        "translation": "remove",
+        "source_string": "verlinkung_entfernen",
+        "translation": "remove_link",
         "context": "utility -> bs -> unlink -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -30291,6 +30291,22 @@
         "identifier": "commands.level.updateuserroles.reason",
         "source_string": "Level ${level} wurde erreicht",
         "translation": "Level ${level} has been reached",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.brawlstars.battlelog.error.userNotLinked.title",
+        "source_string": "Account nicht verlinkt",
+        "translation": "Account not linked",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.brawlstars.battlelog.error.userNotLinked.description",
+        "source_string": "Der von dir Gepingte Nutzer hat seinen Account leider nicht verlinkt.",
+        "translation": "Unfortunately, the user you posted did not link his account.",
         "context": null,
         "labels": "unassigned",
         "max_length": null
