@@ -3083,12 +3083,31 @@ class LogsCog(commands.Cog):
                 )
 
         embedsChanged = False
-        for i in range(len(before.embeds)):
-            if before.embeds[i].to_dict() != after.embeds[i].to_dict():
-                print(before.embeds[i].to_dict())
-                print(after.embeds[i].to_dict())
-                embedsChanged = True
-                break
+        if len(before.embeds) == len(after.embeds):  # Only compare if lengths match
+            for i in range(len(before.embeds)):
+                # Compare only the relevant fields instead of the entire dict
+                before_dict = before.embeds[i].to_dict()
+                after_dict = after.embeds[i].to_dict()
+
+                # Compare only fields that matter for content changes
+                relevant_fields = [
+                    "title",
+                    "description",
+                    "fields",
+                    "image",
+                    "thumbnail",
+                    "author",
+                    "footer",
+                ]
+                for field in relevant_fields:
+                    if before_dict.get(field) != after_dict.get(field):
+                        embedsChanged = True
+                        break
+
+                if embedsChanged:
+                    break
+        else:
+            embedsChanged = True  # Different number of embeds means they changed
 
         if embedsChanged:
             description_parts.append(
