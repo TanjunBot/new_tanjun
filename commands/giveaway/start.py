@@ -5,7 +5,7 @@ from api import add_giveaway
 import discord
 import asyncio
 import datetime
-from commands.giveaway.utility import sendGiveaway
+from commands.giveaway.utility import sendGiveaway, generateGiveawayEmbed
 
 
 class GiveawayBuilderButton(ui.Button):
@@ -1547,9 +1547,7 @@ class GiveawayBuilder(ui.View):
     async def preview(
         self, interaction: discord.Interaction, button: GiveawayBuilderButton
     ):
-        embed = await utility.generateGiveawayEmbed(
-            self.giveaway_data, self.commandInfo.locale
-        )
+        embed = await generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)
         await interaction.response.send_message(
             content=tanjunLocalizer.localize(
                 self.commandInfo.locale, "commands.giveaway.builder.preview"
