@@ -11178,7 +11178,7 @@
     {
         "identifier": "commands.giveaway.editor.loading",
         "source_string": "Lade Gewinnspiel-Informationen...",
-        "translation": "Download raffle information...",
+        "translation": "Loading giveaway information...",
         "context": "commands -> giveaway -> editor -> loading",
         "labels": "de.json",
         "max_length": null
@@ -12210,7 +12210,7 @@
     {
         "identifier": "commands.giveaway.builder.day_requirement.label",
         "source_string": "Tagesanforderung",
-        "translation": "Daily request",
+        "translation": "Day-requirement",
         "context": "commands -> giveaway -> builder -> day_requirement -> label",
         "labels": "de.json",
         "max_length": 45
@@ -12226,7 +12226,7 @@
     {
         "identifier": "commands.giveaway.builder.day_requirement.updated",
         "source_string": "Tagesanforderung aktualisiert",
-        "translation": "Daily request updated",
+        "translation": "Day requirement updated",
         "context": "commands -> giveaway -> builder -> day_requirement -> updated",
         "labels": "de.json",
         "max_length": null
@@ -12234,7 +12234,7 @@
     {
         "identifier": "commands.giveaway.builder.day_requirement.title",
         "source_string": "Tagesanforderung festlegen",
-        "translation": "Set daily request",
+        "translation": "Set day-requirement",
         "context": "commands -> giveaway -> builder -> day_requirement -> title",
         "labels": "de.json",
         "max_length": null
@@ -12314,7 +12314,7 @@
     {
         "identifier": "commands.giveaway.builder.voice_requirement.label",
         "source_string": "Sprachanforderung",
-        "translation": "Language requirement",
+        "translation": "Voice chat requirement",
         "context": "commands -> giveaway -> builder -> voice_requirement -> label",
         "labels": "de.json",
         "max_length": 45
@@ -12330,7 +12330,7 @@
     {
         "identifier": "commands.giveaway.builder.voice_requirement.updated",
         "source_string": "Sprachanforderung aktualisiert",
-        "translation": "Language requirement updated",
+        "translation": "Voice chat requirement updated",
         "context": "commands -> giveaway -> builder -> voice_requirement -> updated",
         "labels": "de.json",
         "max_length": null
@@ -12338,7 +12338,7 @@
     {
         "identifier": "commands.giveaway.builder.voice_requirement.title",
         "source_string": "Sprachanforderung festlegen",
-        "translation": "Set language requirement",
+        "translation": "Set voice chat requirement",
         "context": "commands -> giveaway -> builder -> voice_requirement -> title",
         "labels": "de.json",
         "max_length": null
@@ -21362,7 +21362,7 @@
     {
         "identifier": "giveawaycmd",
         "source_string": "gewinnspiel",
-        "translation": "raffle",
+        "translation": "giveaway",
         "context": " -> giveawaycmd",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -21474,7 +21474,7 @@
     {
         "identifier": "giveaway.reroll.params.giveawayid.description",
         "source_string": "Die ID des Gewinnspiels, das neu verlost werden soll",
-        "translation": "The ID of the lottery that is to be raffled off again",
+        "translation": "The ID of the giveaway that is to be rerolled",
         "context": "giveaway -> reroll -> params -> giveawayid -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -29274,7 +29274,7 @@
     {
         "identifier": "giveaway.name",
         "source_string": "gewinnspiel",
-        "translation": "raffle",
+        "translation": "giveaway",
         "context": "The name of the giveaway command group. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
@@ -30563,6 +30563,38 @@
         "identifier": "minigames.counting.modes.modes.triple.name",
         "source_string": "Verdreifachung",
         "translation": "Tripling",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.channel.farewell.missingPro.title",
+        "source_string": "Tanjun Pro Benötigt",
+        "translation": "Tanjun Pro Required",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.channel.farewell.missingPro.description",
+        "source_string": "Der Server benötigt ein Aktives Tanjun Pro Abonnement, um einen eigenen Hintergrund für die Verabschiedungsnachrichten festzusetzen.",
+        "translation": "The server requires an active Tanjun Pro subscription to set its own background for the farewell messages.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.channel.welcome.missingPro.description",
+        "source_string": "Der Server benötigt ein Aktives Tanjun Pro Abonnement, um einen eigenen Hintergrund für die Willkommensnachricht festzusetzen.",
+        "translation": "The server requires an active Tanjun Pro subscription to set a custom background for the welcome message.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.channel.welcome.missingPro.title",
+        "source_string": "Tanjun Pro benötigt",
+        "translation": "Tanjun Pro required",
         "context": null,
         "labels": "unassigned",
         "max_length": null
