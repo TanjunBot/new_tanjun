@@ -5336,7 +5336,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.en_NG",
+        "identifier": "commands.math.num2word.locales.en.NG",
         "source_string": "Nigerianisches Englisch",
         "translation": "Nigerianisches Englisch",
         "context": "commands -> math -> num2word -> locales -> en.NG",
@@ -5368,7 +5368,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.es_VE",
+        "identifier": "commands.math.num2word.locales.es.VE",
         "source_string": "Venezolanisches Spanisch",
         "translation": "Venezolanisches Spanisch",
         "context": "commands -> math -> num2word -> locales -> es.VE",
@@ -5376,7 +5376,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.es_GT",
+        "identifier": "commands.math.num2word.locales.es.GT",
         "source_string": "Guatemaltekisches Spanisch",
         "translation": "Guatemaltekisches Spanisch",
         "context": "commands -> math -> num2word -> locales -> es.GT",
@@ -5416,7 +5416,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.fr_CH",
+        "identifier": "commands.math.num2word.locales.fr.CH",
         "source_string": "Schweizer Französisch",
         "translation": "Schweizer Französisch",
         "context": "commands -> math -> num2word -> locales -> fr.CH",
@@ -5424,7 +5424,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.fr_BE",
+        "identifier": "commands.math.num2word.locales.fr.BE",
         "source_string": "Belgisches Französisch",
         "translation": "Belgisches Französisch",
         "context": "commands -> math -> num2word -> locales -> fr.BE",
@@ -5432,7 +5432,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.fr_DZ",
+        "identifier": "commands.math.num2word.locales.fr.DZ",
         "source_string": "Algerisches Französisch",
         "translation": "Algerisches Französisch",
         "context": "commands -> math -> num2word -> locales -> fr.DZ",
@@ -5552,7 +5552,7 @@
         "max_length": 100
     },
     {
-        "identifier": "commands.math.num2word.locales.pt_BR",
+        "identifier": "commands.math.num2word.locales.pt.BR",
         "source_string": "Brasilianisches Portugiesisch",
         "translation": "Brasilianisches Portugiesisch",
         "context": "commands -> math -> num2word -> locales -> pt.BR",
@@ -14633,8 +14633,8 @@
     },
     {
         "identifier": "admin.timeout.name",
-        "source_string": "ausschließen",
-        "translation": "ausschließen",
+        "source_string": "timeout",
+        "translation": "timeout",
         "context": "admin -> timeout -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17497,8 +17497,8 @@
     },
     {
         "identifier": "utility.bs.unlink.name",
-        "source_string": "entfernen",
-        "translation": "entfernen",
+        "source_string": "verlinkung_entfernen",
+        "translation": "verlinkung_entfernen",
         "context": "utility -> bs -> unlink -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -30291,6 +30291,110 @@
         "identifier": "commands.level.updateuserroles.reason",
         "source_string": "Level ${level} wurde erreicht",
         "translation": "Level ${level} wurde erreicht",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.brawlstars.battlelog.error.userNotLinked.title",
+        "source_string": "Account nicht verlinkt",
+        "translation": "Account nicht verlinkt",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.brawlstars.battlelog.error.userNotLinked.description",
+        "source_string": "Der von dir Gepingte Nutzer hat seinen Account leider nicht verlinkt.",
+        "translation": "Der von dir Gepingte Nutzer hat seinen Account leider nicht verlinkt.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.math.calculator.unauthorizedUser",
+        "source_string": "Du darfst diesen Taschenrechner nicht bedienen.",
+        "translation": "Du darfst diesen Taschenrechner nicht bedienen.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.missingPermission.title",
+        "source_string": "Fehlende Berechtigung",
+        "translation": "Fehlende Berechtigung",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.missingPermission.description",
+        "source_string": "Du benötigst die `Server Verwalten` Berechtigung, um diesen Befehl auszuführen.",
+        "translation": "Du benötigst die `Server Verwalten` Berechtigung, um diesen Befehl auszuführen.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.notBlocked.title",
+        "source_string": "Nutzer nicht blockiert",
+        "translation": "Nutzer nicht blockiert",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.notBlocked.description",
+        "source_string": "Der angegebene Nutzer ist nicht blockiert.",
+        "translation": "Der angegebene Nutzer ist nicht blockiert.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.success.title",
+        "source_string": "Erfolgreich entblockiert",
+        "translation": "Erfolgreich entblockiert",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.success.description",
+        "source_string": "Der angegebene Nutzer wurde aus dem Report-System entblocket und darf nun wieder andere Nutzer Reporten.",
+        "translation": "Der angegebene Nutzer wurde aus dem Report-System entblocket und darf nun wieder andere Nutzer Reporten.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "admin.rps.unblockreporter.name",
+        "source_string": "nutzer_entblocken",
+        "translation": "nutzer_entblocken",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "admin.rps.unblockreporter.description",
+        "source_string": "Hebe die Blockierung eines Nutzers aus dem Report-System auf",
+        "translation": "Hebe die Blockierung eines Nutzers aus dem Report-System auf",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "admin.rps.unblockreporter.params.user.description",
+        "source_string": "Der Nutzer, der Entblockiert werden soll",
+        "translation": "Der Nutzer, der Entblockiert werden soll",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.viewwarns.noReason",
+        "source_string": "Kein Grund angegeben",
+        "translation": "Kein Grund angegeben",
         "context": null,
         "labels": "unassigned",
         "max_length": null
