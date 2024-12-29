@@ -1,7 +1,8 @@
 import json
 from string import Template
+from utility import missingLocalization
 
-# from utility import missingLocalization
+reported_locales = []
 
 
 class Localizer:
@@ -43,7 +44,9 @@ class Localizer:
         translation = self.get_translation(translations, key)
         if translation is None:
             print(f"No translation found for key '{key}'.")
-            # missingLocalization(key)
+            if locale not in reported_locales:
+                reported_locales.append(locale)
+                missingLocalization(key)
             return "err: no translation found."
 
         template_string = translation["translation"]
