@@ -30598,5 +30598,29 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "commands.giveaway.builder.winner.updated",
+        "source_string": "Gewinneranzahl aktualisiert",
+        "translation": "Number of winners updated",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removejointocreatechannel.alreadySet.title",
+        "source_string": "Kein kanal festgelegt",
+        "translation": "Channel already set",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removejointocreatechannel.alreadySet.description",
+        "source_string": "Es gibt keinen Join To Create Kanal, den du löschen könntest.",
+        "translation": "You have already set a Join To Create channel. Please delete it before creating a new one.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
