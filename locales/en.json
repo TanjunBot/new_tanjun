@@ -18233,7 +18233,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.normal.description",
-        "source_string": "Zähle einfach aufwärts von eins an: `1`, `2`, `3`, `4`, ...",
+        "source_string": "Zähle einfach aufwärts von eins an: `1`, `2`, `3`, `4`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/1)",
         "translation": "Just count up from one: `1`, `2`, `3`, `4`, ...",
         "context": "Counting Minigame - Mode: Normal (Positive Zahlen)",
         "labels": "de.json",
@@ -18249,7 +18249,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.negative.description",
-        "source_string": "Zähle abwärts von null: `-1`, `-2`, `-3`, `-4`, ...",
+        "source_string": "Zähle abwärts von null: `-1`, `-2`, `-3`, `-4`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/2)",
         "translation": "Count down from zero: `-1`, `-2`, `-3`, `-4`, ...",
         "context": "Counting Minigame - Mode: Negative (Negative Zahlen)",
         "labels": "de.json",
@@ -18265,7 +18265,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.reverse.description",
-        "source_string": "Zähle von 100 Richtung 0: `100`, `99`, `98`, `97`, ...",
+        "source_string": "Zähle von 100 Richtung 0: `100`, `99`, `98`, `97`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/5)",
         "translation": "Count from -100 towards 0: `-100`, `-99`, `-98`, `-97`, ...",
         "context": "minigames -> counting -> modes -> modes -> reverse -> description",
         "labels": "de.json",
@@ -18281,7 +18281,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.prime.description",
-        "source_string": "Zähle nur die Primzahlen: `2`, `3`, `5`, `7`, ...",
+        "source_string": "Zähle nur die Primzahlen: `2`, `3`, `5`, `7`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/9)",
         "translation": "Count only the prime numbers: `2`, `3`, `5`, `7`, ...",
         "context": "Counting Minigame - Mode: Prime (Primzahlen)",
         "labels": "de.json",
@@ -18297,7 +18297,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.even.description",
-        "source_string": "Zähle nur die geraden Zahlen: `2`, `4`, `6`, `8`, ...",
+        "source_string": "Zähle nur die geraden Zahlen: `2`, `4`, `6`, `8`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/3)",
         "translation": "Count only the even numbers: `2`, `4`, `6`, `8`, ...",
         "context": "Counting Minigame - Mode: Even (Gerade Zahlen)",
         "labels": "de.json",
@@ -18313,7 +18313,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.odd.description",
-        "source_string": "Zähle nur die ungeraden Zahlen: `1`, `3`, `5`, `7`, ...",
+        "source_string": "Zähle nur die ungeraden Zahlen: `1`, `3`, `5`, `7`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/4)",
         "translation": "Count only the odd numbers: `1`, `3`, `5`, `7`, ...",
         "context": "Counting Minigame - Mode: Odd (Ungerade Zahlen)",
         "labels": "de.json",
@@ -18329,7 +18329,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.fibonacci.description",
-        "source_string": "Zähle nur die Fibonacci-Zahlen: `0`, `1`, `1`, `2`, `3`, ...",
+        "source_string": "Zähle nur die Fibonacci-Zahlen: `0`, `1`, `1`, `2`, `3`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/10)",
         "translation": "Count only the Fibonacci numbers: `0`, `1`, `1`, `2`, `3`, ...",
         "context": "Counting Minigame - Mode: Fibonacci (Fibonacci-Zahlen)",
         "labels": "de.json",
@@ -18345,7 +18345,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.square.description",
-        "source_string": "Zähle nur die Quadratzahlen: `2`, `4`, `8`, `16`, ...",
+        "source_string": "Zähle nur die Quadratzahlen: `2`, `4`, `8`, `16`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/7)",
         "translation": "Count only the square numbers: `2`, `4`, `8`, `16`, ...",
         "context": "Counting Minigame - Mode: Square (Quadratzahlen)",
         "labels": "de.json",
@@ -18361,7 +18361,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.cube.description",
-        "source_string": "Zähle nur die Kubikzahlen: `1`, `8`, `27`, `64`, ...",
+        "source_string": "Zähle nur die Kubikzahlen: `1`, `8`, `27`, `64`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/8)",
         "translation": "Count only the cube numbers: `1`, `8`, `27`, `64`, ...",
         "context": "Counting Minigame - Mode: Cube (Kubikzahlen)",
         "labels": "de.json",
@@ -18377,7 +18377,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.houndreds.description",
-        "source_string": "Zähle nur die Hunderterzahlen: `100`, `200`, `300`, `400`, ...",
+        "source_string": "Zähle nur die Hunderterzahlen: `100`, `200`, `300`, `400`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/6)",
         "translation": "Count only the hundreds: `100`, `200`, `300`, `400`, ...",
         "context": "Counting Minigame - Mode: Houndreds (Hunderter)",
         "labels": "de.json",
@@ -18393,7 +18393,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.binary.description",
-        "source_string": "Zähle in Binärzahlen: `1`, `10`, `11`, `100`, ...",
+        "source_string": "Zähle in Binärzahlen: `1`, `10`, `11`, `100`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/11)",
         "translation": "Count in binary numbers: `1`, `10`, `11`, `100`, ...",
         "context": "Counting Minigame - Mode: Binary (Binärzahlen)",
         "labels": "de.json",
@@ -18409,7 +18409,7 @@
     },
     {
         "identifier": "minigames.counting.modes.modes.romean.description",
-        "source_string": "Zähle in römischen Zahlen: `I`, `II`, `III`, `IV`, ...",
+        "source_string": "Zähle in römischen Zahlen: `I`, `II`, `III`, `IV`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/12)",
         "translation": "Count in Roman numerals: `I`, `II`, `III`, `IV`, ...",
         "context": "Counting Minigame - Mode: Romean (Römische Zahlen)",
         "labels": "de.json",
