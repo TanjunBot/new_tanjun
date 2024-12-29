@@ -1164,6 +1164,9 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
+        if not channel:
+            channel = ctx.channel
+
         await createTicketCommand(
             commandInfo=commandInfo,
             channel=channel,
