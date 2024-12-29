@@ -30310,5 +30310,93 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "commands.math.calculator.unauthorizedUser",
+        "source_string": "Du darfst diesen Taschenrechner nicht bedienen.",
+        "translation": "Du darfst diesen Taschenrechner nicht bedienen.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.missingPermission.title",
+        "source_string": "Fehlende Berechtigung",
+        "translation": "Fehlende Berechtigung",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.missingPermission.description",
+        "source_string": "Du benötigst die `Server Verwalten` Berechtigung, um diesen Befehl auszuführen.",
+        "translation": "Du benötigst die `Server Verwalten` Berechtigung, um diesen Befehl auszuführen.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.notBlocked.title",
+        "source_string": "Nutzer nicht blockiert",
+        "translation": "Nutzer nicht blockiert",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.notBlocked.description",
+        "source_string": "Der angegebene Nutzer ist nicht blockiert.",
+        "translation": "Der angegebene Nutzer ist nicht blockiert.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.success.title",
+        "source_string": "Erfolgreich entblockiert",
+        "translation": "Erfolgreich entblockiert",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.unblock_reporter.success.description",
+        "source_string": "Der angegebene Nutzer wurde aus dem Report-System entblocket und darf nun wieder andere Nutzer Reporten.",
+        "translation": "Der angegebene Nutzer wurde aus dem Report-System entblocket und darf nun wieder andere Nutzer Reporten.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "admin.rps.unblockreporter.name",
+        "source_string": "nutzer_entblocken",
+        "translation": "nutzer_entblocken",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "admin.rps.unblockreporter.description",
+        "source_string": "Hebe die Blockierung eines Nutzers aus dem Report-System auf",
+        "translation": "Hebe die Blockierung eines Nutzers aus dem Report-System auf",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "admin.rps.unblockreporter.params.user.description",
+        "source_string": "Der Nutzer, der Entblockiert werden soll",
+        "translation": "Der Nutzer, der Entblockiert werden soll",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.viewwarns.noReason",
+        "source_string": "Kein Grund angegeben",
+        "translation": "Kein Grund angegeben",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
