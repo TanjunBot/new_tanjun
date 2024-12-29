@@ -48,6 +48,26 @@ class CalculatorView(ui.View):
         self.create_buttons()
         self.nsp = utility.NumericStringParser()
 
+    def set_message(self, message: discord.Message):
+        self.message = message
+
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        if self.message:
+            await self.message.edit(view=self)
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user != self.command_info.user:
+            await interaction.response.send_message(
+                tanjunLocalizer.localize(
+                    self.command_info.locale, "commands.math.calculator.unauthorizedUser"
+                ),
+                ephemeral=True,
+            )
+            return False
+        return True
+
     def create_buttons(self):
         self.clear_items()
         if self.current_page == 0:
@@ -452,11 +472,6 @@ class CalculatorView(ui.View):
             )
         await interaction.response.edit_message(embed=embed, view=self)
 
-    async def on_timeout(self):
-        for button in self.children:
-            button.disabled = True
-        await self.message.edit(view=self)
-
 
 async def calculator_command(
     command_info: utility.commandInfo, initial_equation: str = ""
@@ -474,4 +489,5 @@ async def calculator_command(
         value=f"```\n{initial_equation or '0'}\n```",
         inline=False,
     )
-    await command_info.reply(embed=embed, view=view)
+    message = await command_info.reply(embed=embed, view=view)
+    view.set_message(message)
