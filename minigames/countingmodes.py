@@ -565,7 +565,7 @@ async def counting(message: discord.Message):
         goal=goal,
     )
     # nosec: B311
-    if random.randint(1, 3) == 1:
+    if random.randint(1, 100) == 1:
         correctNumber = get_correct_next_number(mode, correctNumber)
         await message.channel.send(correctNumber)
         await set_counting_mode_progress(
