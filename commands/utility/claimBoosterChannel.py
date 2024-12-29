@@ -106,7 +106,7 @@ async def remove_claimed_booster_channels_that_are_expired(client: discord.Clien
             await remove_claimed_booster_channel(user.id, guild_id)
             await channel.delete(
                 reason=tanjunLocalizer.localize(
-                    guild.preferred_locale if hasattr(guild, "preferred_locale") else "de",
+                    guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US",
                     "commands.utility.claimboosterchannel.expired.reason",
                 )
             )
