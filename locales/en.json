@@ -641,8 +641,8 @@
     },
     {
         "identifier": "commands.admin.deleterole.success.description",
-        "source_string": "Die Rolle '{role}' wurde erfolgreich gelöscht.",
-        "translation": "The role '{role}' was successfully deleted.",
+        "source_string": "Die Rolle `${role}` wurde erfolgreich gelöscht.",
+        "translation": "Die Rolle `${role}` wurde erfolgreich gelöscht.",
         "context": "commands -> admin -> deleterole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -30395,6 +30395,142 @@
         "identifier": "commands.admin.viewwarns.noReason",
         "source_string": "Kein Grund angegeben",
         "translation": "No reason given",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.removerole.selectUsers",
+        "source_string": "Nutzer auswählen",
+        "translation": "Select user",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_sent.title",
+        "source_string": "Report erfolgreich",
+        "translation": "Report successful",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_sent.description",
+        "source_string": "Der angegebene Nutzer wurde erfolgreich reportet.",
+        "translation": "The specified user has been successfully reported.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.accept.label",
+        "source_string": "Report Akzeptieren",
+        "translation": "Accept report",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.reject.label",
+        "source_string": "Report ablehnen",
+        "translation": "Reject report",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.block_reporter.label",
+        "source_string": "Reporter Blockieren",
+        "translation": "Block reporter",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.new_report.title",
+        "source_string": "Neuer Report",
+        "translation": "New report",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_report_channel.title",
+        "source_string": "Kein Report Kanal",
+        "translation": "No report channel",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_report_channel.description",
+        "source_string": "Es wurde kein Report Kanal festgelegt, wohin dein Report gesendet werden könnte. Das Report System ist auf diesem Server also deaktiviert.",
+        "translation": "No report channel has been defined where your report could be sent. The report system is therefore deactivated on this server.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_channel_not_found.title",
+        "source_string": "Report Kanal nicht gefunden",
+        "translation": "Report channel not found",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.report_channel_not_found.description",
+        "source_string": "Es wurde zwar ein Report Kanal festgelegt, allerdings wurde dieser wahrscheinlich gelöscht. Das Report System wurde also automatisch deaktiviert.",
+        "translation": "A report channel has been defined, but this has probably been deleted. The report system was therefore automatically deactivated.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_permission.title",
+        "source_string": "Keine Berechtigungen",
+        "translation": "No authorizations",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_permission.description",
+        "source_string": "Ich habe leider keine Berechtigungen, in den Report Kanal zu schreiben. Leite dies bitte an die Server Administration weiter.",
+        "translation": "Unfortunately, I do not have permission to write to the report channel. Please forward this to the server administration.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_reason.title",
+        "source_string": "Kein Grund angegeben",
+        "translation": "No reason given",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.no_reason.description",
+        "source_string": "Du hast keinen Grund angegeben. Bitte gebe einen Grund für dein Report an.",
+        "translation": "You have not given a reason. Please give a reason for your report.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.report.new_report.description",
+        "source_string": "${reporter} hat ${user} mit dem Grund ${reason} Reportet. ",
+        "translation": "${reporter} has ${user} with the reason ${reason} Reported. ",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.reports.show_reports.block.label",
+        "source_string": "Reporter Blockieren",
+        "translation": "Block reporter",
         "context": null,
         "labels": "unassigned",
         "max_length": null
