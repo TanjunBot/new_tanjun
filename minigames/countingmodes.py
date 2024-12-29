@@ -190,7 +190,6 @@ def number_to_romeal(number):
 
 
 def get_correct_next_number(mode: int, number: int):
-    print("getting correct next number", mode, number)
     if mode == 1:
         return number + 1
     if mode == 2:
@@ -432,9 +431,6 @@ async def counting(message: discord.Message):
         await message.add_reaction("💀")
         # nosec: B311
         newMode = random.randint(1, len(modeMap))
-        workingModes = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14]
-        while newMode in workingModes:
-            newMode = random.randint(1, len(modeMap))
         goal = get_goal(newMode)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -471,7 +467,7 @@ async def counting(message: discord.Message):
 
     last_counter_id = await get_last_mode_counter_id(message.channel.id)
 
-    if last_counter_id == "jaja":  # str(message.author.id):
+    if last_counter_id == str(message.author.id):
         await message.add_reaction("💀")
         # nosec: B311
         newMode = random.randint(1, len(modeMap))
