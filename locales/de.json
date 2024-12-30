@@ -201,8 +201,8 @@
     },
     {
         "identifier": "commands.admin.addrole.multiplePrompt",
-        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, denen du Rollen vergeben möchtest.",
-        "translation": "Bitte wähle die Besitzer von Rollen und Nutzer aus, denen du Rollen vergeben möchtest.",
+        "source_string": "Bitte wähle die Besitzer von Rollen und die Nutzer aus, denen du Rollen geben möchtest.",
+        "translation": "Bitte wähle die Besitzer von Rollen und die Nutzer aus, denen du Rollen geben möchtest.",
         "context": "commands -> admin -> addrole -> multiplePrompt",
         "labels": "de.json",
         "max_length": null
