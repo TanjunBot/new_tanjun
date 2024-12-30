@@ -9289,8 +9289,8 @@
     },
     {
         "identifier": "commands.utility.twitch.listTwitchLiveNotifications.description",
-        "source_string": "Twitch Name: ${twitch_name}\nNachricht: ${message}",
-        "translation": "Twitch Name: ${twitch_name}\nNachricht: ${message}",
+        "source_string": "Twitch Name: ${twitch_name}\nNachricht: ${message}\nKanal: <#${channel}>",
+        "translation": "Twitch Name: ${twitch_name}\nNachricht: ${message}\nKanal: <#${channel}>",
         "context": "commands -> utility -> twitch -> listTwitchLiveNotifications -> description",
         "labels": "de.json",
         "max_length": null
@@ -16841,8 +16841,8 @@
     },
     {
         "identifier": "utility.claimboosterrole.name",
-        "source_string": "boosterrolle_einfordern",
-        "translation": "boosterrolle_einfordern",
+        "source_string": "einfordern",
+        "translation": "einfordern",
         "context": "name for the claim booster role command. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -16905,8 +16905,8 @@
     },
     {
         "identifier": "utility.deleteboosterrole.name",
-        "source_string": "boosterrolle_entfernen",
-        "translation": "boosterrolle_entfernen",
+        "source_string": "entfernen",
+        "translation": "entfernen",
         "context": "utility -> deleteboosterrole -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -16921,8 +16921,8 @@
     },
     {
         "identifier": "utility.setupboosterrole.name",
-        "source_string": "boosterrolle_einrichten",
-        "translation": "boosterrolle_einrichten",
+        "source_string": "einrichten",
+        "translation": "einrichten",
         "context": "utility -> setupboosterrole -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -16969,8 +16969,8 @@
     },
     {
         "identifier": "utility.claimboosterchannel.name",
-        "source_string": "boosterkanal_einfordern",
-        "translation": "boosterkanal_einfordern",
+        "source_string": "einfordern",
+        "translation": "einfordern",
         "context": "utility -> claimboosterchannel -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17001,8 +17001,8 @@
     },
     {
         "identifier": "utility.deleteboosterchannel.name",
-        "source_string": "boosterkanal_entfernen",
-        "translation": "boosterkanal_entfernen",
+        "source_string": "entfernen",
+        "translation": "entfernen",
         "context": "utility -> deleteboosterchannel -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17017,8 +17017,8 @@
     },
     {
         "identifier": "utility.setupboosterchannel.name",
-        "source_string": "boosterkanal_einrichten",
-        "translation": "boosterkanal_einrichten",
+        "source_string": "einrichten",
+        "translation": "einrichten",
         "context": "utility -> setupboosterchannel -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17049,8 +17049,8 @@
     },
     {
         "identifier": "utility.boosterchannelinfo.name",
-        "source_string": "boosterkanal_info",
-        "translation": "boosterkanal_info",
+        "source_string": "info",
+        "translation": "info",
         "context": "utility -> boosterchannelinfo -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17065,8 +17065,8 @@
     },
     {
         "identifier": "utility.scheduledmessage.name",
-        "source_string": "geplante_nachricht",
-        "translation": "geplante_nachricht",
+        "source_string": "planen",
+        "translation": "planen",
         "context": "utility -> scheduledmessage -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17145,8 +17145,8 @@
     },
     {
         "identifier": "utility.removescheduled.name",
-        "source_string": "geplante_nachricht_entfernen",
-        "translation": "geplante_nachricht_entfernen",
+        "source_string": "entfernen",
+        "translation": "entfernen",
         "context": "utility -> removescheduled -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17177,8 +17177,8 @@
     },
     {
         "identifier": "utility.listscheduled.name",
-        "source_string": "geplante_nachrichten",
-        "translation": "geplante_nachrichten",
+        "source_string": "auflisten",
+        "translation": "auflisten",
         "context": "utility -> listscheduled -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17225,8 +17225,8 @@
     },
     {
         "identifier": "utility.schedulemessage.name",
-        "source_string": "geplante_nachricht",
-        "translation": "geplante_nachricht",
+        "source_string": "planen",
+        "translation": "planen",
         "context": "utility -> schedulemessage -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -29657,8 +29657,8 @@
     },
     {
         "identifier": "utility.boosterroleinfo.name",
-        "source_string": "boosterrollen_informationen",
-        "translation": "boosterrollen_informationen",
+        "source_string": "informationen",
+        "translation": "informationen",
         "context": "The name of the utility boosterroleinfo command. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
@@ -29841,8 +29841,8 @@
     },
     {
         "identifier": "utility.deleteboosterch.name",
-        "source_string": "boosterkanal_loeschen",
-        "translation": "boosterkanal_loeschen",
+        "source_string": "löschen",
+        "translation": "löschen",
         "context": "The name from the deleteboosterchannel command. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
@@ -30654,5 +30654,157 @@
         "context": "The name of the emoji param used in some commands. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.missingPermission.title",
+        "source_string": "Fehlende Berechtigungen",
+        "translation": "Fehlende Berechtigungen",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.missingPermission.description",
+        "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Du benötigst die `emojis_verwalten` berechtigung.",
+        "translation": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Du benötigst die `emojis_verwalten` berechtigung.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.missingPermissionBot.title",
+        "source_string": "Mir fehlen berechtigungen",
+        "translation": "Mir fehlen berechtigungen",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.missingPermissionBot.description",
+        "source_string": "Ich benötige die `emojis verwalten` Berechtigung, um Emojis auf diesen Server hinzuzufügen.",
+        "translation": "Ich benötige die `emojis verwalten` Berechtigung, um Emojis auf diesen Server hinzuzufügen.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.noEmojis.title",
+        "source_string": "Keine Emojis gefunden",
+        "translation": "Keine Emojis gefunden",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.noEmojis.description",
+        "source_string": "Ich konnte keine Emojis finden. Bitte gebe einen oder mehrere Emojis an.",
+        "translation": "Ich konnte keine Emojis finden. Bitte gebe einen oder mehrere Emojis an.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.proRequired.title",
+        "source_string": "Tanjun Pro erforderlich",
+        "translation": "Tanjun Pro erforderlich",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.proRequired.description",
+        "source_string": "Du benötigst Tanjun Pro um mehrere Emojis auf einmal zu kopieren. Ohne Tanjun Pro kannst du immer nur einen Emoji kopieren.",
+        "translation": "Du benötigst Tanjun Pro um mehrere Emojis auf einmal zu kopieren. Ohne Tanjun Pro kannst du immer nur einen Emoji kopieren.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.reason",
+        "source_string": "Emoji von anderen Server kopiert",
+        "translation": "Emoji von anderen Server kopiert",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.limitReached.title",
+        "source_string": "Emoji limit erreicht",
+        "translation": "Emoji limit erreicht",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.limitReached.description",
+        "source_string": "Das Emoji Limit wurde auf diesen Server erreicht. Deshalb konnten die Emojis leider nicht kopiert werden.",
+        "translation": "Das Emoji Limit wurde auf diesen Server erreicht. Deshalb konnten die Emojis leider nicht kopiert werden.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.success.title",
+        "source_string": "Emoji erfolgreich kopiert",
+        "translation": "Emoji erfolgreich kopiert",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.success.description",
+        "source_string": "Das Emoji ${emoji} wurde erfolgreich kopiert und kann jetzt hier verwendet werden",
+        "translation": "Das Emoji ${emoji} wurde erfolgreich kopiert und kann jetzt hier verwendet werden",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.success.multiple.description",
+        "source_string": "Die Emojis ${emojis} Wurden kopiert.",
+        "translation": "Die Emojis ${emojis} Wurden kopiert.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.partialSuccess.description",
+        "source_string": "Allerdings hat der Platz leider nicht für alle ausgereicht. Insgesammt wurden ${failed_count} Emojis nicht kopiert.\r\nDiese Emojis konnten nicht kopiert werden: ${faiuled_emojis}",
+        "translation": "Allerdings hat der Platz leider nicht für alle ausgereicht. Insgesammt wurden ${failed_count} Emojis nicht kopiert.\r\nDiese Emojis konnten nicht kopiert werden: ${faiuled_emojis}",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.partialSuccess.title",
+        "source_string": "Emojis wurden teilweise kopiert",
+        "translation": "Emojis wurden teilweise kopiert",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.success.multiple.title",
+        "source_string": "Emojis wurden erfolgreich kopiert",
+        "translation": "Emojis wurden erfolgreich kopiert",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.title",
+        "source_string": "Ein Fehler ist aufgetreten",
+        "translation": "Ein Fehler ist aufgetreten",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.description",
+        "source_string": "beim Kopieren der Emojis ist ein Fehler aufgetreten. Bitte versuche es in ein paar Minuten erneut.",
+        "translation": "beim Kopieren der Emojis ist ein Fehler aufgetreten. Bitte versuche es in ein paar Minuten erneut.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
