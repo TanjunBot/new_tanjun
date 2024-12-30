@@ -17297,8 +17297,8 @@
     },
     {
         "identifier": "utility.schedulemessage.params.repeat.description",
-        "source_string": "Wie oft die Nachricht wiederholt werden soll (optional)",
-        "translation": "Wie oft die Nachricht wiederholt werden soll (optional)",
+        "source_string": "In welchem Zeitabstand die Nachricht wiederholt werden soll (z.B. 10s, 5h) (optional)",
+        "translation": "In welchem Zeitabstand die Nachricht wiederholt werden soll (z.B. 10s, 5h) (optional)",
         "context": "utility -> schedulemessage -> params -> repeat -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -19417,8 +19417,8 @@
     },
     {
         "identifier": "games.connect4.params.size.description",
-        "source_string": "Die Größe des Connect4-Feldes",
-        "translation": "Die Größe des Connect4-Feldes",
+        "source_string": "Die Größe des 4-Gewinnt-Feldes",
+        "translation": "Die Größe des 4-Gewinnt-Feldes",
         "context": "games -> connect4 -> params -> size -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21105,8 +21105,8 @@
     },
     {
         "identifier": "level.boosts.addrole.params.additive.description",
-        "source_string": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll",
-        "translation": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll",
+        "source_string": "Ob der Boost additiv oder multiplikativ sein soll",
+        "translation": "Ob der Boost additiv oder multiplikativ sein soll",
         "context": "level -> boosts -> addrole -> params -> additive -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21169,8 +21169,8 @@
     },
     {
         "identifier": "level.boosts.addchannel.params.additive.description",
-        "source_string": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll",
-        "translation": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll",
+        "source_string": "Ob der Boost additiv oder multiplikativ sein soll",
+        "translation": "Ob der Boost additiv oder multiplikativ sein soll",
         "context": "level -> boosts -> addchannel -> params -> additive -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21233,8 +21233,8 @@
     },
     {
         "identifier": "level.boosts.adduser.params.additive.description",
-        "source_string": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll",
-        "translation": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll",
+        "source_string": "Ob der Boost additiv oder multiplikativ sein soll",
+        "translation": "Ob der Boost additiv oder multiplikativ sein soll",
         "context": "level -> boosts -> adduser -> params -> additive -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -30803,6 +30803,46 @@
         "identifier": "commands.admin.copyEmoji.error.description",
         "source_string": "beim Kopieren der Emojis ist ein Fehler aufgetreten. Bitte versuche es in ein paar Minuten erneut.",
         "translation": "beim Kopieren der Emojis ist ein Fehler aufgetreten. Bitte versuche es in ein paar Minuten erneut.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "repeat_interval",
+        "source_string": "wiederholungsintervall",
+        "translation": "wiederholungsintervall",
+        "context": "The repeat_intervall param used in some commands. Only lowecase characters and no spaces allowed.",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "repeat_amount",
+        "source_string": "wiederholungs_anzahl",
+        "translation": "wiederholungs_anzahl",
+        "context": "Only lowecase characters and no spaces allowed.",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility_schedulemessage.params.repeatamount.description",
+        "source_string": "Wie oft die Nachricht wiederholt werden soll (optional, 0 = unendlich, Standard = 1)",
+        "translation": "Wie oft die Nachricht wiederholt werden soll (optional, 0 = unendlich, Standard = 1)",
+        "context": null,
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "commands.games.connect4.error.no_plus.title",
+        "source_string": "Kein Tanjun Plus",
+        "translation": "Kein Tanjun Plus",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.games.connect4.error.no_plus.description",
+        "source_string": "Du benötigst Tanjun Plus um 4-Gewinnt mit anderen Spielfeldgrößen zu spielen.",
+        "translation": "Du benötigst Tanjun Plus um 4-Gewinnt mit anderen Spielfeldgrößen zu spielen.",
         "context": null,
         "labels": "unassigned",
         "max_length": null
