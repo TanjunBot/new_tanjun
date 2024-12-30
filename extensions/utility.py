@@ -807,6 +807,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             send_in=sendin,
             channel=channel,
             repeat=repeat_interval,
+            repeat_amount=repeat_amount,
             attachments=attachments or [],
         )
 
