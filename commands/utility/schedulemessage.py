@@ -7,7 +7,7 @@ from api import (
     get_user_scheduled_messages_in_timeframe,
     get_ready_scheduled_messages,
     remove_scheduled_message,
-    update_scheduled_message_repeat_interval,
+    update_scheduled_message_repeat_amount,
 )
 from typing import List
 
@@ -18,6 +18,7 @@ async def schedule_message(
     send_in: str,
     channel: discord.TextChannel = None,
     repeat: str = None,
+    repeat_amount: int = None,
     attachments: List[discord.Attachment] = None,
 ):
     # Parse send_in time
@@ -157,6 +158,7 @@ async def schedule_message(
         content=content,
         send_time=send_time,
         repeat_interval=utility.relativeTimeToSeconds(repeat) if repeat else None,
+        repeat_amount=repeat_amount,
     )
 
     embed = utility.tanjunEmbed(
@@ -186,6 +188,7 @@ async def send_scheduled_messages(client):
             user_id = int(msg[3])
             content = msg[4]
             repeat_interval = msg[6]
+            repeat_amount = msg[7]
 
             # Get the target channel or user
             if channel_id:
@@ -209,16 +212,16 @@ async def send_scheduled_messages(client):
             embed = utility.tanjunEmbed(description=content)
             await target.send(embed=embed)
 
-            if repeat_interval and repeat_interval != 0:
-                repeat_interval -= 1
-                if repeat_interval == 0:
+            if repeat_amount and repeat_amount != 0:
+                repeat_amount -= 1
+                if repeat_amount == 0:
                     await remove_scheduled_message(message_id)
                 else:
-                    await update_scheduled_message_repeat_interval(
-                        message_id, repeat_interval
+                    await update_scheduled_message_repeat_amount(
+                        message_id, repeat_amount
                     )
 
-            if not repeat_interval:
+            if not repeat_interval or not repeat_amount:
                 await remove_scheduled_message(message_id)
 
         except Exception:

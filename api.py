@@ -543,6 +543,7 @@ async def create_tables():
         `content` VARCHAR(1024) NOT NULL,
         `sendTime` DATETIME NOT NULL,
         `repeatInterval` MEDIUMINT UNSIGNED,
+        `repeatAmount` MEDIUMINT UNSIGNED,
         `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX `idx_sendtime` (sendTime),
         INDEX `idx_user` (userId),
@@ -2416,13 +2417,14 @@ async def add_scheduled_message(
     content: str,
     send_time: datetime,
     repeat_interval: Optional[int] = None,
+    repeat_amount: Optional[int] = None,
 ):
     query = """
     INSERT INTO scheduledMessages
-    (guildId, channelId, userId, content, sendTime, repeatInterval)
-    VALUES (%s, %s, %s, %s, %s, %s)
+    (guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
-    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval)
+    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval, repeat_amount)
     await execute_action(query, params)
 
 
@@ -2468,13 +2470,13 @@ async def update_scheduled_message_content(message_id: int, new_content: str):
     await execute_action(query, params)
 
 
-async def update_scheduled_message_repeat_interval(
-    message_id: int, new_repeat_interval: int
+async def update_scheduled_message_repeat_amount(
+    message_id: int, repeat_amount: int
 ):
     query = (
-        "UPDATE scheduledMessages SET repeatInterval = %s WHERE referenceMessageId = %s"
+        "UPDATE scheduledMessages SET repeatAmount = %s WHERE referenceMessageId = %s"
     )
-    params = (new_repeat_interval, message_id)
+    params = (repeat_amount, message_id)
     await execute_action(query, params)
 
 
