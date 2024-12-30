@@ -51,6 +51,7 @@ from commands.admin.setLocale import set_locale as setLocaleCommand
 from commands.admin.reports.unblock_reporter import (
     unblock_reporter_cmd as unblockReporterCommand,
 )
+from commands.admin.copy_emoji import copy_emoji as copyEmojiCommand
 
 
 class WarnCommands(discord.app_commands.Group):
@@ -441,7 +442,9 @@ class ReportCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_rps_unblockreporter_description"),
     )
     @app_commands.describe(
-        user=app_commands.locale_str("admin_rps_unblockreporter_params_user_description"),
+        user=app_commands.locale_str(
+            "admin_rps_unblockreporter_params_user_description"
+        ),
     )
     async def unblock_reporter(self, ctx, user: discord.Member):
         await ctx.response.defer()
@@ -747,9 +750,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await removeTimeoutCommand(
-            commandInfo=commandInfo, member=user, reason=reason
-        )
+        await removeTimeoutCommand(commandInfo=commandInfo, member=user, reason=reason)
         return
 
     @app_commands.command(
@@ -1292,6 +1293,29 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await setLocaleCommand(commandInfo=commandInfo, locale=locale)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_copyemoji_name"),
+        description=app_commands.locale_str("admin_copyemoji_description"),
+    )
+    @app_commands.describe(
+        emoji=app_commands.locale_str("admin_copyemoji_params_emoji_description"),
+    )
+    async def copy_emoji(self, ctx, emoji: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await copyEmojiCommand(commandInfo=commandInfo, emoji=emoji)
         return
 
 
