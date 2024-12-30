@@ -2468,6 +2468,16 @@ async def update_scheduled_message_content(message_id: int, new_content: str):
     await execute_action(query, params)
 
 
+async def update_scheduled_message_repeat_interval(
+    message_id: int, new_repeat_interval: int
+):
+    query = (
+        "UPDATE scheduledMessages SET repeatInterval = %s WHERE referenceMessageId = %s"
+    )
+    params = (new_repeat_interval, message_id)
+    await execute_action(query, params)
+
+
 async def get_ready_scheduled_messages():
     query = "SELECT * FROM scheduledMessages WHERE sendTime <= NOW()"
     res = await execute_query(query)

@@ -7,6 +7,7 @@ from api import (
     get_user_scheduled_messages_in_timeframe,
     get_ready_scheduled_messages,
     remove_scheduled_message,
+    update_scheduled_message_repeat_interval,
 )
 from typing import List
 
@@ -207,6 +208,15 @@ async def send_scheduled_messages(client):
             # Send the message
             embed = utility.tanjunEmbed(description=content)
             await target.send(embed=embed)
+
+            if repeat_interval and repeat_interval != 0:
+                repeat_interval -= 1
+                if repeat_interval == 0:
+                    await remove_scheduled_message(message_id)
+                else:
+                    await update_scheduled_message_repeat_interval(
+                        message_id, repeat_interval
+                    )
 
             if not repeat_interval:
                 await remove_scheduled_message(message_id)

@@ -767,7 +767,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         content: app_commands.Range[str, 1, 1024],
         sendin: app_commands.Range[str, 1, 100],
         channel: discord.TextChannel = None,
-        repeat: app_commands.Range[str, 1, 100] = None,
+        repeat: app_commands.Range[int, 0, 1000] = None,
         # attachment1: discord.Attachment = None,
         # attachment2: discord.Attachment = None,
         # attachment3: discord.Attachment = None,
