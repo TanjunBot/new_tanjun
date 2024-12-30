@@ -3073,42 +3073,42 @@ class LogsCog(commands.Cog):
                     )
                 )
 
-        embedsChanged = False
-        if len(before.embeds) == len(after.embeds):  # Only compare if lengths match
-            for i in range(len(before.embeds)):
-                # Compare only the relevant fields instead of the entire dict
-                before_dict = before.embeds[i].to_dict()
-                after_dict = after.embeds[i].to_dict()
+        # embedsChanged = False
+        # if len(before.embeds) == len(after.embeds):  # Only compare if lengths match
+        #     for i in range(len(before.embeds)):
+        #         # Compare only the relevant fields instead of the entire dict
+        #         before_dict = before.embeds[i].to_dict()
+        #         after_dict = after.embeds[i].to_dict()
 
-                # Compare only fields that matter for content changes
-                relevant_fields = [
-                    "title",
-                    "description",
-                    "fields",
-                    "image",
-                    "thumbnail",
-                    "author",
-                    "footer",
-                ]
-                for field in relevant_fields:
-                    if before_dict.get(field) != after_dict.get(field):
-                        embedsChanged = True
-                        break
+        #         # Compare only fields that matter for content changes
+        #         relevant_fields = [
+        #             "title",
+        #             "description",
+        #             "fields",
+        #             "image",
+        #             "thumbnail",
+        #             "author",
+        #             "footer",
+        #         ]
+        #         for field in relevant_fields:
+        #             if before_dict.get(field) != after_dict.get(field):
+        #                 embedsChanged = True
+        #                 break
 
-                if embedsChanged:
-                    break
-        else:
-            embedsChanged = True  # Different number of embeds means they changed
+        #         if embedsChanged:
+        #             break
+        # else:
+        #     embedsChanged = True  # Different number of embeds means they changed
 
-        if embedsChanged:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale,
-                    "logs.messageEdit.embeds",
-                    before=before.embeds,
-                    after=after.embeds,
-                )
-            )
+        # if embedsChanged:
+        #     description_parts.append(
+        #         tanjunLocalizer.localize(
+        #             locale,
+        #             "logs.messageEdit.embeds",
+        #             before=before.embeds,
+        #             after=after.embeds,
+        #         )
+        #     )
 
         if len(description_parts) == 1:
             return
@@ -3129,13 +3129,13 @@ class LogsCog(commands.Cog):
             embeds[str(after.guild.id)] = []
         embeds[str(after.guild.id)].append(embed)
 
-        if embedsChanged:
-            for i in range(len(before.embeds)):
-                beforeEmbed = before.embeds[i]
-                afterEmbed = after.embeds[i]
-                if beforeEmbed.to_dict() != afterEmbed.to_dict():
-                    embeds[str(after.guild.id)].append(beforeEmbed)
-                    embeds[str(after.guild.id)].append(afterEmbed)
+        # if embedsChanged:
+        #     for i in range(len(before.embeds)):
+        #         beforeEmbed = before.embeds[i]
+        #         afterEmbed = after.embeds[i]
+        #         if beforeEmbed.to_dict() != afterEmbed.to_dict():
+        #             embeds[str(after.guild.id)].append(beforeEmbed)
+        #             embeds[str(after.guild.id)].append(afterEmbed)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
