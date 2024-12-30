@@ -2,7 +2,7 @@
     {
         "identifier": "commands.help.select.placeholder",
         "source_string": "Befehls-Kategorie",
-        "translation": "Befehls-Kategorie",
+        "translation": "Command category",
         "context": "Placeholder for the Select where you can select the Command Group that you want to get help with",
         "labels": "de.json",
         "max_length": 100
@@ -10,7 +10,7 @@
     {
         "identifier": "commands.help.select.title",
         "source_string": "Hilfe",
-        "translation": "Hilfe",
+        "translation": "Help",
         "context": "Title for the Embed of the Help command",
         "labels": "de.json, embed_title",
         "max_length": 256
@@ -42,7 +42,7 @@
     {
         "identifier": "commands.help.not_authorized.title",
         "source_string": "Nicht autorisiert",
-        "translation": "Nicht autorisiert",
+        "translation": "Not authorized",
         "context": "Title of the Embed when someone tries to interact with the view of someone else",
         "labels": "de.json, embed_title",
         "max_length": 256
@@ -16514,7 +16514,7 @@
     {
         "identifier": "utility.help.name",
         "source_string": "hilfe",
-        "translation": "hilfe",
+        "translation": "help",
         "context": "utility -> help -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -28674,7 +28674,7 @@
     {
         "identifier": "help",
         "source_string": "hilfe",
-        "translation": "hilfe",
+        "translation": "help",
         "context": " -> help",
         "labels": "de.json",
         "max_length": 32
