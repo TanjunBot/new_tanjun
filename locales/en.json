@@ -30622,5 +30622,37 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "admin.copyemoji.name",
+        "source_string": "emoji_kopieren",
+        "translation": "emoji_copy",
+        "context": "Name of the copy emoji command. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "admin.copyemoji.description",
+        "source_string": "Kopiert einen Emoji auf deinen Server",
+        "translation": "Copies an emoji to your server",
+        "context": null,
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "admin.copyemoji.params.emoji.description",
+        "source_string": "Der Emoji den du kopieren möchtest",
+        "translation": "The emoji you want to copy",
+        "context": null,
+        "labels": "command_description, unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "emoji",
+        "source_string": "emoji",
+        "translation": "emoji",
+        "context": "The name of the emoji param used in some commands. Only lowercase characters and no spaces allowed",
+        "labels": "command_name, unassigned",
+        "max_length": 32
     }
 ]
