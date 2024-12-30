@@ -446,7 +446,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
     @app_commands.describe(
         tag=app_commands.locale_str("utility_bs_club_params_tag_description"),
     )
-    async def club(self, ctx, tag: str = None):
+    async def club(self, ctx, tag: str):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
