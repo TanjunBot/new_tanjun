@@ -30,7 +30,7 @@ async def getAllBrawlers():
 async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
     if not playerTag:
         playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
-    if playerTag.startswith("<@"):
+    if playerTag and playerTag.startswith("<@"):
         playerTagUserID = playerTag.split("<@")[1].split(">")[0]
         playerTag = await get_brawlstars_linked_account(playerTagUserID)
         if not playerTag:
