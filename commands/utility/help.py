@@ -52,7 +52,7 @@ async def help(commandInfo, ctx):
                         for cmd in group.commands:
                             # Check if the command is a subcommand group
                             if isinstance(cmd, app_commands.Group):
-                                command_text += f"### /{group.name} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))}\n"
+                                command_text += f"### /{tanjunLocalizer.localize(locale, str(group.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))}\n"
                                 try:
                                     cmd_desc = tanjunLocalizer.localize(
                                         locale,
@@ -70,7 +70,7 @@ async def help(commandInfo, ctx):
 
                                 # Process subcommands within the subcommand group
                                 for subcmd in cmd.commands:
-                                    command_text += f"### /{group.name} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(subcmd.name).replace('_', '.'))}\n"
+                                    command_text += f"### /{tanjunLocalizer.localize(locale, str(group.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(subcmd.name).replace('_', '.'))}\n"
                                     try:
                                         subcmd_desc = tanjunLocalizer.localize(
                                             locale,
@@ -119,7 +119,7 @@ async def help(commandInfo, ctx):
                                         total_length = len(texts[current_index])
                             else:
                                 # Original code for regular commands
-                                command_text += f"### /{group.name} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))}\n"
+                                command_text += f"### /{tanjunLocalizer.localize(locale, str(group.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))}\n"
                                 try:
                                     cmd_desc = tanjunLocalizer.localize(
                                         locale,
