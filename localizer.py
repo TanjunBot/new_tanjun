@@ -5,7 +5,6 @@ from utility import missingLocalization
 reported_locales = []
 
 
-
 class Localizer:
     def __init__(self):
         self.translations = {}
