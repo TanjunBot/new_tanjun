@@ -2,6 +2,7 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 import random
+from utility import checkIfhasPlus
 
 
 class Connect4:
@@ -431,6 +432,18 @@ async def connect4(
     rows: int = 6,
     columns: int = 7,
 ):
+    if rows != 6 and columns != 7 and not checkIfhasPlus(commandInfo.guild.id):
+        await commandInfo.reply(
+            embed=utility.tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    commandInfo.locale, "commands.games.connect4.error.no_plus.title"
+                ),
+                description=tanjunLocalizer.localize(
+                    commandInfo.locale, "commands.games.connect4.error.no_plus.description"
+                ),
+            )
+        )
+        return
     # Add some reasonable limits to prevent massive boards
     rows = min(max(4, rows), 12)  # Minimum 4, Maximum 12
     columns = min(max(4, columns), 12)  # Minimum 4, Maximum 12
