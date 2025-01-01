@@ -44,8 +44,7 @@ class WarningView(View):
             )
             prev_button.callback = self.prev_page
             self.add_item(prev_button)
-
-        for i, (warning_id, _, _, expires_at) in enumerate(
+        for i, (warning_id, _, _, expires_at, _) in enumerate(
             self.warnings[start:end], start=start + 1
         ):
             button = Button(
@@ -139,7 +138,7 @@ def create_warnings_embed(commandInfo, member, warnings, page):
         ),
     )
 
-    for i, (_, reason, created_at, expires_at) in enumerate(
+    for i, (_, reason, created_at, expires_at, created_by) in enumerate(
         current_warnings, start=start + 1
     ):
         expired = expires_at is not None and datetime.now() > expires_at
@@ -169,18 +168,20 @@ def create_warnings_embed(commandInfo, member, warnings, page):
                 ),
                 date=f"<t:{int(created_at.timestamp())}:D>",
                 expiration=expiration_str,
+                created_by=created_by,
             ),
             inline=False,
         )
 
-    embed.set_footer(
-        text=tanjunLocalizer.localize(
-            commandInfo.locale,
-            "commands.admin.viewwarns.pageFooter",
-            current=page + 1,
-            total=math.ceil(len(warnings) / WARNINGS_PER_PAGE),
+    if len(warnings) > WARNINGS_PER_PAGE > 1:
+        embed.set_footer(
+            text=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.admin.viewwarns.pageFooter",
+                current=page + 1,
+                total=math.ceil(len(warnings) / WARNINGS_PER_PAGE),
+            )
         )
-    )
 
     return embed
 

@@ -23,15 +23,13 @@ async def warn_config(commandInfo: utility.commandInfo):
                 discord.ui.TextInput(
                     label=tanjunLocalizer.localize(
                         commandInfo.locale,
-                        "commands.admin.warnconfig.modal.warn_expiration.label",
+                        "commands.admin.warnconfig.modal.warnexpiration.label",
                     ),
                     placeholder=tanjunLocalizer.localize(
                         commandInfo.locale,
-                        "commands.admin.warnconfig.modal.warn_expiration.placeholder",
+                        "commands.admin.warnconfig.modal.warnexpiration.placeholder",
                     ),
-                    default=str(
-                        config.get("expiration_days", "")
-                    ),  # Provide current setting or empty string if not set
+                    default=str(config.get("expiration_days", "") or "2") if config else "2",
                     required=False,
                 )
             )
@@ -45,7 +43,7 @@ async def warn_config(commandInfo: utility.commandInfo):
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.timeout_threshold.placeholder",
                     ),
-                    default=str(config.get("timeout_threshold", "") or "2"),
+                    default=str(config.get("timeout_threshold", "") or "2") if config else "2",
                     required=False,
                 )
             )
@@ -59,7 +57,7 @@ async def warn_config(commandInfo: utility.commandInfo):
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.timeout_duration.placeholder",
                     ),
-                    default=str(config.get("timeout_duration", "") or "3600"),
+                    default=str(config.get("timeout_duration", "") or "60") if config else "60",
                     required=False,
                 )
             )
@@ -73,7 +71,7 @@ async def warn_config(commandInfo: utility.commandInfo):
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.kick_threshold.placeholder",
                     ),
-                    default=str(config.get("kick_threshold", "") or "5"),
+                    default=str(config.get("kick_threshold", "") or "5") if config else "5",
                     required=False,
                 )
             )
@@ -87,7 +85,7 @@ async def warn_config(commandInfo: utility.commandInfo):
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.ban_threshold.placeholder",
                     ),
-                    default=str(config.get("ban_threshold", "") or "10"),
+                    default=str(config.get("ban_threshold", "") or "10") if config else "10",
                     required=False,
                 )
             )

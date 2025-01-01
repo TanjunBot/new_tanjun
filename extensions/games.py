@@ -422,7 +422,7 @@ class gameCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        gameCmds = gameCommands(name="games", description="Game Commands")
+        gameCmds = gameCommands(name=app_commands.locale_str("games_name"), description=app_commands.locale_str("games_description"))
         self.bot.tree.add_command(gameCmds)
 
 

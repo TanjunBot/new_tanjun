@@ -145,7 +145,7 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member):
                 "commands.utility.report.new_report.description",
                 reason=reason,
                 reporter=commandInfo.user.mention,
-                user=user,
+                user=user.mention,
             ),
         ),
         view=view,

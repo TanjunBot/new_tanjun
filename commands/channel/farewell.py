@@ -12,6 +12,7 @@ from utility import commandInfo, draw_text_with_outline
 import io
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from utility import checkIfHasPro
 
 executor = ThreadPoolExecutor()
 
@@ -68,6 +69,20 @@ async def setFarewellChannel(
         await commandInfo.reply(embed=embed)
         return
 
+    if image_background and not checkIfHasPro(commandInfo.user):
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.admin.channel.farewell.missingPro.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "commands.admin.channel.farewell.missingPro.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+
     imgUrl = None
 
     if image_background is not None:
@@ -77,7 +92,7 @@ async def setFarewellChannel(
             )
         )["data"]["url"]
     else:
-        imgUrl = "https://i.ibb.co/G5G0mVr/leave-background.png"
+        imgUrl = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"
 
     await set_leave_channel(commandInfo.guild.id, channel.id, message, imgUrl)
 

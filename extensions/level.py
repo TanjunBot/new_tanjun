@@ -74,7 +74,7 @@ class BlacklistCommands(discord.app_commands.Group):
             "level_blacklist_addc_params_reason_description"
         ),
     )
-    async def add_channel(self, ctx, channel: discord.TextChannel, reason: str = None):
+    async def add_channel(self, ctx, channel: discord.TextChannel, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -123,7 +123,7 @@ class BlacklistCommands(discord.app_commands.Group):
             "level_blacklist_addr_params_reason_description"
         ),
     )
-    async def add_role(self, ctx, role: discord.Role, reason: str = None):
+    async def add_role(self, ctx, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -170,7 +170,7 @@ class BlacklistCommands(discord.app_commands.Group):
             "level_blacklist_addu_params_reason_description"
         ),
     )
-    async def add_user(self, ctx, user: discord.Member, reason: str = None):
+    async def add_user(self, ctx, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -240,7 +240,7 @@ class LevelBoostCommands(discord.app_commands.Group):
         ),
     )
     async def add_role_boost(
-        self, ctx, role: discord.Role, boost: float, additive: bool
+        self, ctx, role: discord.Role, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -272,7 +272,7 @@ class LevelBoostCommands(discord.app_commands.Group):
         ),
     )
     async def add_channel_boost(
-        self, ctx, channel: discord.TextChannel, boost: float, additive: bool
+        self, ctx, channel: discord.TextChannel, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -300,7 +300,7 @@ class LevelBoostCommands(discord.app_commands.Group):
         ),
     )
     async def add_user_boost(
-        self, ctx, user: discord.Member, boost: float, additive: bool
+        self, ctx, user: discord.Member, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -660,9 +660,8 @@ class LevelConfigCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         role=app_commands.locale_str("level_removelevelrole_params_role_description"),
-        level=app_commands.locale_str("level_removelevelrole_params_level_description"),
     )
-    async def removelevelrole(self, ctx, role: discord.Role, level: int):
+    async def removelevelrole(self, ctx, role: discord.Role):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -676,7 +675,7 @@ class LevelConfigCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await remove_level_role_command(commandInfo, role, level)
+        await remove_level_role_command(commandInfo, role)
 
     @app_commands.command(
         name=app_commands.locale_str("level_showlevelroles_name"),
@@ -864,7 +863,7 @@ class levelCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        levelCmds = levelCommands(name="levelcommands", description="Level Commands")
+        levelCmds = levelCommands(name=app_commands.locale_str("levelcommands_name"), description=app_commands.locale_str("levelcommands_description"))
         levelConfigCmds = LevelConfigCommands(
             name=app_commands.locale_str("level_config_name"),
             description=app_commands.locale_str("level_config_description"),

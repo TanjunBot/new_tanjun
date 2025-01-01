@@ -127,7 +127,7 @@ async def remove_claimed_booster_roles_that_are_expired(client: discord.Client):
             await remove_claimed_booster_role(user.id, guild_id)
             await role.delete(
                 reason=tanjunLocalizer.localize(
-                    guild.locale if hasattr(guild, "locale") else "de",
+                    guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US",
                     "commands.utility.claimboosterrole.expired.reason",
                 )
             )

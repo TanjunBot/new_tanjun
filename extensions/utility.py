@@ -120,7 +120,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
         ),
     )
     async def claimboosterrole(
-        self, ctx, name: str, color: str = None, icon: discord.Attachment = None
+        self, ctx, name: app_commands.Range[str, 1, 100], color: app_commands.Range[str, 6, 7] = None, icon: discord.Attachment = None
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -220,7 +220,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
             "utility_claimboosterchannel_params_name_description"
         ),
     )
-    async def claimboosterchannel(self, ctx, name: str):
+    async def claimboosterchannel(self, ctx, name: app_commands.Range[str, 1, 100]):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -446,7 +446,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
     @app_commands.describe(
         tag=app_commands.locale_str("utility_bs_club_params_tag_description"),
     )
-    async def club(self, ctx, tag: str = None):
+    async def club(self, ctx, tag: str):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -487,6 +487,9 @@ class BrawlStarsCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("utility_bs_link_name"),
         description=app_commands.locale_str("utility_bs_link_description"),
+    )
+    @app_commands.describe(
+        tag=app_commands.locale_str("utility_bs_link_params_tag_description"),
     )
     async def link(self, ctx, tag: str):
         await ctx.response.defer()
@@ -531,12 +534,23 @@ class TwitchCommands(discord.app_commands.Group):
         name=app_commands.locale_str("utility_twitch_add_name"),
         description=app_commands.locale_str("utility_twitch_add_description"),
     )
+    @app_commands.describe(
+        twitchname=app_commands.locale_str(
+            "utility_twitch_add_params_twitchname_description"
+        ),
+        channel=app_commands.locale_str(
+            "utility_twitch_add_params_channel_description"
+        ),
+        notificationmessage=app_commands.locale_str(
+            "utility_twitch_add_params_notificationmessage_description"
+        ),
+    )
     async def add(
         self,
         ctx,
-        twitch_name: str,
+        twitchname: str,
         channel: discord.TextChannel,
-        notification_message: str = None,
+        notificationmessage: app_commands.Range[str, 0, 1024] = None,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -553,9 +567,9 @@ class TwitchCommands(discord.app_commands.Group):
 
         await addTwitchLiveNotificationCommand(
             commandInfo=commandInfo,
-            twitch_name=twitch_name,
+            twitch_name=twitchname,
             channel=channel,
-            notification_message=notification_message,
+            notification_message=notificationmessage,
         )
         return
 
@@ -712,7 +726,7 @@ class utilityCommands(discord.app_commands.Group):
         user=app_commands.locale_str("utility_report_params_user_description"),
         reason=app_commands.locale_str("utility_report_params_reason_description"),
     )
-    async def report(self, ctx, user: discord.Member, reason: str):
+    async def report(self, ctx, user: discord.Member, reason: app_commands.Range[str, 12, 1024]):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -743,17 +757,21 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         channel=app_commands.locale_str(
             "utility_schedulemessage_params_channel_description"
         ),
-        repeat=app_commands.locale_str(
+        repeat_interval=app_commands.locale_str(
             "utility_schedulemessage_params_repeat_description"
+        ),
+        repeat_amount=app_commands.locale_str(
+            "utility_schedulemessage_params_repeatamount_description"
         ),
     )
     async def schedulemessage(
         self,
         ctx,
-        content: str,
-        sendin: str,
+        content: app_commands.Range[str, 1, 1024],
+        sendin: app_commands.Range[str, 1, 100],
         channel: discord.TextChannel = None,
-        repeat: str = None,
+        repeat_interval: app_commands.Range[str, 0, 15] = None,
+        repeat_amount: app_commands.Range[int, 0, 1000] = None,
         # attachment1: discord.Attachment = None,
         # attachment2: discord.Attachment = None,
         # attachment3: discord.Attachment = None,
@@ -788,7 +806,8 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             content=content,
             send_in=sendin,
             channel=channel,
-            repeat=repeat,
+            repeat=repeat_interval,
+            repeat_amount=repeat_amount,
             attachments=attachments or [],
         )
 
@@ -866,7 +885,10 @@ class utilityCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        utilityCmds = utilityCommands(name="utilitycmd", description="Utility Commands")
+        utilityCmds = utilityCommands(
+            name=app_commands.locale_str("utilitycmd_name"),
+            description=app_commands.locale_str("utilitycmd_description"),
+        )
         messageTrackingCmds = MessageTrackingCommands(
             name=app_commands.locale_str("utility_messagetracking_name"),
             description=app_commands.locale_str("utility_messagetracking_description"),

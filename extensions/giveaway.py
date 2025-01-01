@@ -175,7 +175,7 @@ class GiveawayCommands(discord.app_commands.Group):
     async def start(
         self,
         ctx: discord.Interaction,
-        title: str,
+        title: app_commands.Range[str, 0, 128],
         channel: discord.TextChannel = None,
     ):
         commandInfo = utility.commandInfo(
@@ -210,7 +210,7 @@ class GiveawayCommands(discord.app_commands.Group):
     async def end(
         self,
         ctx: discord.Interaction,
-        giveawayid: int,
+        giveawayid: app_commands.Range[int, 1, 4294967295],
     ):
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -240,7 +240,7 @@ class GiveawayCommands(discord.app_commands.Group):
     async def reroll(
         self,
         ctx: discord.Interaction,
-        giveawayid: int,
+        giveawayid: app_commands.Range[int, 1, 4294967295],
     ):
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -270,7 +270,7 @@ class GiveawayCommands(discord.app_commands.Group):
     async def edit(
         self,
         ctx: discord.Interaction,
-        giveawayid: int,
+        giveawayid: app_commands.Range[int, 1, 4294967295],
     ):
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -298,10 +298,10 @@ class GiveawayCog(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         giveaway_commands = GiveawayCommands(
-            name="giveaway", description="Giveaway Commands"
+            name=app_commands.locale_str("giveaway_name"), description=app_commands.locale_str("giveaway_description")
         )
         blacklistCmds = BlacklistCommands(
-            name="blacklist", description="Blacklist Commands"
+            name=app_commands.locale_str("giveaway_blacklist_name"), description=app_commands.locale_str("giveaway_blacklist_description")
         )
         giveaway_commands.add_command(blacklistCmds)
         self.bot.tree.add_command(giveaway_commands)

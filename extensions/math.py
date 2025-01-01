@@ -77,7 +77,10 @@ async def num2wordLocaleAutocomplete(
     ]
 
     return [
-        app_commands.Choice(name=locale, value=locale)
+        app_commands.Choice(
+            name=app_commands.locale_str("commands.math.num2word.locales." + locale),
+            value=locale,
+        )
         for locale in filtered_locales[:25]
     ]
 
@@ -90,7 +93,7 @@ class mathCommands(discord.app_commands.Group):
     @app_commands.describe(
         expression=app_commands.locale_str("math_calc_params_expression_description"),
     )
-    async def calc(self, ctx, expression: str):
+    async def calc(self, ctx, expression: app_commands.Range[str, 1, 128]):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -113,7 +116,7 @@ class mathCommands(discord.app_commands.Group):
     @app_commands.describe(
         equation=app_commands.locale_str("math_calculator_params_equation_description"),
     )
-    async def calculator(self, ctx, equation: str = ""):
+    async def calculator(self, ctx, equation: app_commands.Range[str, 1, 128] = ""):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -166,7 +169,9 @@ class mathCommands(discord.app_commands.Group):
         max=app_commands.locale_str("math_randomnumber_params_max_description"),
         amount=app_commands.locale_str("math_randomnumber_params_amount_description"),
     )
-    async def random_number(self, ctx, min: int, max: int, amount: int = 1):
+    async def random_number(
+        self, ctx, min: int, max: int, amount: app_commands.Range[int, 1, 10] = 1
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -191,7 +196,9 @@ class mathCommands(discord.app_commands.Group):
         xmin=app_commands.locale_str("math_plotfunction_params_xmin_description"),
         xmax=app_commands.locale_str("math_plotfunction_params_xmax_description"),
     )
-    async def plot_function(self, ctx, func: str, xmin: float = None, xmax: float = None):
+    async def plot_function(
+        self, ctx, func: str, xmin: float = None, xmax: float = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -236,108 +243,13 @@ class mathCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def calc(self, ctx, expression: str):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.send,
-            client=ctx.bot,
-        )
-
-        await calcCommand(commandInfo=commandInfo, expression=expression)
-
-    @commands.command()
-    async def calculator(self, ctx, *, equation: str = ""):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.send,
-            client=ctx.bot,
-        )
-        await calculator_command(commandInfo, equation)
-
-    @commands.command()
-    async def num2word(self, ctx, number: int, locale: str = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.send,
-            client=ctx.bot,
-        )
-
-        if locale is None:
-            locale = ctx.locale
-
-        await num2word_command(commandInfo, number, locale)
-
-    @commands.command(name="randomnumber", aliases=["randnum"])
-    async def random_number(self, ctx, min: int, max: int, amount: int = 1):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.send,
-            client=ctx.bot,
-        )
-
-        await random_number_command(commandInfo, min, max, amount)
-
-    @commands.command(name="plotfunction", aliases=["plot"])
-    async def plot_function(self, ctx, func: str, x_min: float, x_max: float):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.send,
-            client=ctx.bot,
-        )
-
-        await plot_function_command(commandInfo, func, x_min, x_max)
-
     @commands.Cog.listener()
     async def on_ready(self):
-        mathcmds = mathCommands(name="math", description="Math is fun!")
-        self.bot.tree.add_command(mathcmds)
-
-    @commands.command(name="faculty", aliases=["fac"])
-    async def faculty(self, ctx, number: int):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.send,
-            client=ctx.bot,
+        mathcmds = mathCommands(
+            name=app_commands.locale_str("math_name"),
+            description=app_commands.locale_str("math_description"),
         )
-
-        await faculty_command(commandInfo, number)
+        self.bot.tree.add_command(mathcmds)
 
 
 async def setup(bot):

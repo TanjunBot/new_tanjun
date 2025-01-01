@@ -1,16 +1,21 @@
 # Security Policy
 
+> [!WARNING]
+> Note that this repository is still very new and the new version of Tanjun is still in progress!
+
 ## Supported Versions
 
-| Version       | Supported    |
-| ------------- | ------------ |
-| 0.1.x - 0.6.x | :x:          |
-| 0.7.x         | :warning:¹   |
-| 0.8.x         | ✅²         |
-| 0.9.x         | ✅          |
-
-> ¹Support for this version will be dropped on 04/01/2025.
-²Support for this version will be dropped on 18/01/2025.
+| Version | Supported          |
+| ------- | ------------------ |
+| 0.1.x   | :x:                |
+| 0.2.x   | :x:                |
+| 0.3.x   | :x:                |
+| 0.4.x   | :x:                |
+| 0.5.x   | :x: |
+| 0.6.x   | :x: |
+| 0.7.x   | :x: |
+| 0.8.x   | :x: |
+| 0.9.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 

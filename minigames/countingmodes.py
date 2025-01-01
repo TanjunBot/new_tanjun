@@ -13,6 +13,7 @@ import discord
 from localizer import tanjunLocalizer
 import random
 from utility import tanjunEmbed
+from math import sqrt
 
 modeMap = {
     1: "normal",
@@ -22,11 +23,13 @@ modeMap = {
     5: "even",
     6: "odd",
     7: "fibonacci",
-    8: "square",
-    9: "cube",
+    8: "double",
+    9: "triple",
     10: "houndreds",
     11: "binary",
     12: "romean",
+    13: "square",
+    14: "cube",
 }
 
 primes = [
@@ -82,7 +85,6 @@ primes = [
 fibonacci = [
     -1,
     0,
-    1,
     1,
     2,
     3,
@@ -201,7 +203,14 @@ def get_correct_next_number(mode: int, number: int):
     if mode == 6:
         return number + 2
     if mode == 7:
-        return fibonacci[fibonacci.index(number) + 1] if number != 1 else 2
+        if number == -1:
+            return 0
+        if number == 0:
+            return 1
+        if number == -15:  # First 1 was stored as -15
+            return 1      # Return 1 again for the second 1
+        idx = fibonacci.index(number)
+        return int(fibonacci[idx + 1])
     if mode == 8:
         return number * 2
     if mode == 9:
@@ -212,6 +221,16 @@ def get_correct_next_number(mode: int, number: int):
         return int(str(bin(int(bin(number)[2:], 2) + 1))[2:])
     if mode == 12:
         return number_to_romeal(number + 1) if number != 0 else "I"
+    if mode == 13:
+        if number == 0:
+            return 1
+        next_num = int(sqrt(number)) + 1
+        return next_num * next_num
+    if mode == 14:
+        if number == 0:
+            return 1
+        next_num = int(number ** (1 / 3)) + 1
+        return next_num**3
 
 
 def get_goal(mode: int):
@@ -223,10 +242,10 @@ def get_goal(mode: int):
         return random.randint(-100, -20)
     if mode == 3:
         # nosec: B311
-        return random.randint(0, 80)
+        return random.randint(5, 80)
     if mode == 4:
         # nosec: B311
-        return primes[random.randint(0, len(primes) - 1)]
+        return primes[random.randint(5, len(primes) - 1)]
     if mode == 5:
         # nosec: B311
         number = random.randint(20, 100)
@@ -237,13 +256,13 @@ def get_goal(mode: int):
         return number if number % 2 != 0 else number + 1
     if mode == 7:
         # nosec: B311
-        return fibonacci[random.randint(0, len(fibonacci) - 1)]
+        return fibonacci[random.randint(5, len(fibonacci) - 1)]
     if mode == 8:
         # nosec: B311
-        return 2 ** random.randint(1, 20)
+        return 2 ** random.randint(5, 20)
     if mode == 9:
         # nosec: B311
-        return 3 ** random.randint(1, 10)
+        return 3 ** random.randint(5, 10)
     if mode == 10:
         # nosec: B311
         return random.randint(20, 100) * 100
@@ -253,6 +272,10 @@ def get_goal(mode: int):
     if mode == 12:
         # nosec: B311
         return number_to_romeal(random.randint(20, 100))
+    if mode == 13:
+        return random.randint(20, 100) ** 2
+    if mode == 14:
+        return random.randint(20, 100) ** 3
 
 
 def get_first_number(mode: int):
@@ -261,7 +284,7 @@ def get_first_number(mode: int):
     if mode == 2:
         return 0
     if mode == 3:
-        return 100
+        return 101
     if mode == 4:
         return 0
     if mode == 5:
@@ -279,6 +302,10 @@ def get_first_number(mode: int):
     if mode == 11:
         return 0
     if mode == 12:
+        return 0
+    if mode == 13:
+        return 0
+    if mode == 14:
         return 0
 
 
@@ -290,7 +317,11 @@ async def counting(message: discord.Message):
 
     mode = await get_counting_mode_mode(message.channel.id)
 
-    locale = message.guild.locale if hasattr(message.guild, "locale") else "de"
+    locale = (
+        message.guild.preferred_locale
+        if hasattr(message.guild, "preferred_locale")
+        else "en_US"
+    )
 
     if not progress and progress != 0:
         return
@@ -321,7 +352,7 @@ async def counting(message: discord.Message):
     if not content:
         await message.add_reaction("💀")
         # nosec: B311
-        newMode = random.randint(1, 12)
+        newMode = random.randint(1, len(modeMap))
         goal = get_goal(newMode)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -361,7 +392,7 @@ async def counting(message: discord.Message):
     except ValueError:
         await message.add_reaction("💀")
         # nosec: B311
-        newMode = random.randint(1, 12)
+        newMode = random.randint(1, len(modeMap))
         goal = get_goal(newMode)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -399,7 +430,7 @@ async def counting(message: discord.Message):
     if number != correctNumber:
         await message.add_reaction("💀")
         # nosec: B311
-        newMode = random.randint(1, 12)
+        newMode = random.randint(1, len(modeMap))
         goal = get_goal(newMode)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -439,7 +470,7 @@ async def counting(message: discord.Message):
     if last_counter_id == str(message.author.id):
         await message.add_reaction("💀")
         # nosec: B311
-        newMode = random.randint(1, 12)
+        newMode = random.randint(1, len(modeMap))
         goal = get_goal(newMode)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -482,7 +513,7 @@ async def counting(message: discord.Message):
     if number == goal:
         await message.add_reaction("🎉")
         # nosec: B311
-        newMode = random.randint(1, 12)
+        newMode = random.randint(1, len(modeMap))
         new_goal = get_goal(newMode)
         if mode == 12:
             new_goal = romeal_to_number(new_goal)
@@ -524,7 +555,10 @@ async def counting(message: discord.Message):
 
     await set_counting_mode_progress(
         channel_id=message.channel.id,
-        progress=correctNumber,
+        progress=(
+            -15 if (mode == 7 and number == 1 and progress == 0)
+            else correctNumber
+        ),
         mode=mode,
         counter_id=message.author.id,
         guild_id=message.guild.id,
@@ -536,7 +570,7 @@ async def counting(message: discord.Message):
         await message.channel.send(correctNumber)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
-            progress=romeal_to_number(correctNumber),
+            progress=(romeal_to_number(correctNumber) if mode == 12 else correctNumber),
             mode=mode,
             counter_id="me",
             guild_id=message.guild.id,

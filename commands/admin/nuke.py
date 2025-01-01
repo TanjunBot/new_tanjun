@@ -145,7 +145,11 @@ async def nuke_channel(
         return
 
     try:
-        new_channel = await channel.clone(reason="Channel nuked")
+        new_channel = await channel.clone(
+            reason=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.admin.nuke.nukeReason"
+            )
+        )
         await channel.delete()
         await new_channel.send(
             tanjunLocalizer.localize(

@@ -42,7 +42,9 @@ async def addLevelXp(message: discord.Message):
     new_xp = current_xp + xp_to_add
     new_level = get_level_for_xp(new_xp, scaling, custom_formula)
 
-    await update_user_xp(guild_id, str(message.author.id), xp_to_add, respect_cooldown=True)
+    await update_user_xp(
+        guild_id, str(message.author.id), xp_to_add, respect_cooldown=True
+    )
     if new_level > current_level:
         await handle_level_up(message, new_level)
 
@@ -115,10 +117,15 @@ async def calculate_xp(message: discord.Message, guild_id: str) -> int:
 
 async def handle_level_up(message: discord.Message, new_level: int):
     guild_id = str(message.guild.id)
-    if await get_levelup_message_status(guild_id) and message.author.id not in notifiedUsers:
+    if (
+        await get_levelup_message_status(guild_id)
+        and message.author.id not in notifiedUsers
+    ):
         channel = await determine_levelup_channel(message, guild_id)
         await channel.send(
-            await format_level_up_message(guild_id, message.author.mention, new_level, message.guild)
+            await format_level_up_message(
+                guild_id, message.author.mention, new_level, message.guild
+            )
         )
         notifiedUsers.append(message.author.id)
 
@@ -147,8 +154,8 @@ async def format_level_up_message(
     level_up_message = await get_levelup_message(guild_id)
     if not level_up_message:
         level_up_message = tanjunLocalizer.localize(
-            guild.locale if hasattr(guild, "locale") else "en_US",
-            "commands.level.defaultLevelUpMessage"
+            guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US",
+            "commands.level.defaultlevelupmessage",
         )
     return level_up_message.replace("{user}", user_mention).replace(
         "{level}", str(new_level)
@@ -157,15 +164,29 @@ async def format_level_up_message(
 
 async def update_user_roles(message: discord.Message, new_level: int, guild_id: str):
     level_roles = await get_level_roles(guild_id)
-    roles_to_add = [
-        role_id for role_id in level_roles
-    ]
-    for role_id in roles_to_add:
-        role = message.guild.get_role(int(role_id))
-        if role and role not in message.author.roles:
-            try:
-                await message.author.add_roles(
-                    role, reason=f"Reached level {new_level}"
-                )
-            except discord.Forbidden:
-                pass
+    for level, role_id in level_roles:
+        if level <= new_level:
+            role = message.guild.get_role(int(role_id))
+            if role and role not in message.author.roles:
+                try:
+                    await message.author.add_roles(
+                        role,
+                        reason=tanjunLocalizer.localize(
+                            (
+                                message.guild.preferred_locale
+                                if hasattr(message.guild, "preferred_locale")
+                                else "en_US"
+                            ),
+                            "commands.level.updateuserroles.reason",
+                            level=level,
+                        ),
+                    )
+                except discord.Forbidden:
+                    pass
+        elif level > new_level:
+            role = message.guild.get_role(int(role_id))
+            if role and role in message.author.roles:
+                try:
+                    await message.author.remove_roles(role)
+                except discord.Forbidden:
+                    pass

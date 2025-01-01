@@ -47,6 +47,11 @@ from commands.admin.joinToCreate.jointocreatechannel import (
 from commands.admin.joinToCreate.removejointocreatechannel import (
     removejointocreatechannel as removeJoinToCreateChannelCommand,
 )
+from commands.admin.setLocale import set_locale as setLocaleCommand
+from commands.admin.reports.unblock_reporter import (
+    unblock_reporter_cmd as unblockReporterCommand,
+)
+from commands.admin.copy_emoji import copy_emoji as copyEmojiCommand
 
 
 class WarnCommands(discord.app_commands.Group):
@@ -55,10 +60,15 @@ class WarnCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_warn_add_description"),
     )
     @app_commands.describe(
-        member=app_commands.locale_str("admin_warn_add_params_member_description"),
+        user=app_commands.locale_str("admin_warn_add_params_member_description"),
         reason=app_commands.locale_str("admin_warn_add_params_reason_description"),
     )
-    async def add(self, ctx, member: discord.Member, reason: str = None):
+    async def add(
+        self,
+        ctx,
+        user: discord.Member,
+        reason: app_commands.Range[str, 0, 100] = None,
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -72,7 +82,7 @@ class WarnCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
+        await warnUserCommand(commandInfo=commandInfo, member=user, reason=reason)
         return
 
     @app_commands.command(
@@ -80,10 +90,10 @@ class WarnCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_warn_view_description"),
     )
     @app_commands.describe(
-        member=app_commands.locale_str("admin_warn_view_params_member_description"),
+        user=app_commands.locale_str("admin_warn_view_params_member_description"),
     )
-    async def view(self, ctx, member: discord.Member):
-        await ctx.response.defer()
+    async def view(self, ctx, user: discord.Member):
+        await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
             channel=ctx.channel,
@@ -96,7 +106,7 @@ class WarnCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await viewWarningsCommand(commandInfo=commandInfo, member=member)
+        await viewWarningsCommand(commandInfo=commandInfo, member=user)
         return
 
     @app_commands.command(
@@ -197,13 +207,13 @@ class RoleCommands(discord.app_commands.Group):
     async def createrole(
         self,
         ctx,
-        name: str,
-        color: str = None,
+        name: app_commands.Range[str, 1, 100],
+        color: app_commands.Range[str, 6, 7] = None,
         display_icon: discord.Attachment = None,
         hoist: bool = False,
         mentionable: bool = False,
-        reason: str = None,
-        display_emoji: str = None,
+        reason: app_commands.Range[str, 0, 100] = None,
+        display_emoji: app_commands.Range[str, 0, 1] = None,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -237,7 +247,9 @@ class RoleCommands(discord.app_commands.Group):
         role=app_commands.locale_str("admin_deleterole_params_role_description"),
         reason=app_commands.locale_str("admin_deleterole_params_reason_description"),
     )
-    async def deleterole(self, ctx, role: discord.Role, reason: str = None):
+    async def deleterole(
+        self, ctx, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -425,6 +437,32 @@ class ReportCommands(discord.app_commands.Group):
         await showReportsCommand(commandInfo=commandInfo, user=user)
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_rps_unblockreporter_name"),
+        description=app_commands.locale_str("admin_rps_unblockreporter_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str(
+            "admin_rps_unblockreporter_params_user_description"
+        ),
+    )
+    async def unblock_reporter(self, ctx, user: discord.Member):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await unblockReporterCommand(commandInfo=commandInfo, user=user)
+        return
+
 
 class TriggerMessagesCommands(discord.app_commands.Group):
     @app_commands.command(
@@ -461,15 +499,21 @@ class TriggerMessagesCommands(discord.app_commands.Group):
     )
     @app_commands.choices(
         casesensitive=[
-            app_commands.Choice(name="Case Sensitive", value="t"),
-            app_commands.Choice(name="Case Insensitive", value="f"),
+            app_commands.Choice(
+                name=app_commands.locale_str("admin_tm_add_params_casesensitive_true"),
+                value="t",
+            ),
+            app_commands.Choice(
+                name=app_commands.locale_str("admin_tm_add_params_casesensitive_false"),
+                value="f",
+            ),
         ]
     )
     async def add(
         self,
         ctx,
-        trigger: str,
-        response: str,
+        trigger: app_commands.Range[str, 1, 128],
+        response: app_commands.Range[str, 1, 1024],
         casesensitive: app_commands.Choice[str] = None,
     ):
         await ctx.response.defer()
@@ -557,7 +601,9 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_kick_params_user_description"),
         reason=app_commands.locale_str("admin_kick_params_reason_description"),
     )
-    async def kick(self, ctx, user: discord.Member, reason: str = None):
+    async def kick(
+        self, ctx, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -589,8 +635,8 @@ class administrationCommands(discord.app_commands.Group):
         self,
         ctx,
         user: discord.Member,
-        reason: str = None,
-        delete_message_days: int = 0,
+        reason: app_commands.Range[str, 0, 100] = None,
+        delete_message_days: app_commands.Range[int, 0, 7] = 0,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -621,7 +667,12 @@ class administrationCommands(discord.app_commands.Group):
         username=app_commands.locale_str("admin_unban_params_username_description"),
         reason=app_commands.locale_str("admin_unban_params_reason_description"),
     )
-    async def unban(self, ctx, username: str, reason: str = None):
+    async def unban(
+        self,
+        ctx,
+        username: app_commands.Range[str, 1, 100],
+        reason: app_commands.Range[str, 0, 100] = None,
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -643,12 +694,16 @@ class administrationCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_timeout_description"),
     )
     @app_commands.describe(
-        member=app_commands.locale_str("admin_timeout_params_member_description"),
+        user=app_commands.locale_str("admin_timeout_params_member_description"),
         duration=app_commands.locale_str("admin_timeout_params_duration_description"),
         reason=app_commands.locale_str("admin_timeout_params_reason_description"),
     )
     async def timeout(
-        self, ctx, member: discord.Member, duration: int, reason: str = None
+        self,
+        ctx,
+        user: discord.Member,
+        duration: app_commands.Range[int, 1, 40320],
+        reason: app_commands.Range[str, 0, 100] = None,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -664,7 +719,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await timeoutCommand(
-            commandInfo=commandInfo, member=member, duration=duration, reason=reason
+            commandInfo=commandInfo, member=user, duration=duration, reason=reason
         )
         return
 
@@ -673,10 +728,15 @@ class administrationCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_removetimeout_description"),
     )
     @app_commands.describe(
-        member=app_commands.locale_str("admin_removetimeout_params_member_description"),
+        user=app_commands.locale_str("admin_removetimeout_params_member_description"),
         reason=app_commands.locale_str("admin_removetimeout_params_reason_description"),
     )
-    async def removetimeout(self, ctx, member: discord.Member, reason: str = None):
+    async def removetimeout(
+        self,
+        ctx,
+        user: discord.Member,
+        reason: app_commands.Range[str, 0, 100] = None,
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -690,9 +750,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await removeTimeoutCommand(
-            commandInfo=commandInfo, member=member, reason=reason
-        )
+        await removeTimeoutCommand(commandInfo=commandInfo, member=user, reason=reason)
         return
 
     @app_commands.command(
@@ -759,7 +817,7 @@ class administrationCommands(discord.app_commands.Group):
     async def purge(
         self,
         ctx,
-        limit: int,
+        limit: app_commands.Range[int, 1, 1000],
         channel: discord.TextChannel = None,
         setting: app_commands.Choice[str] = "all",
     ):
@@ -789,10 +847,15 @@ class administrationCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_nickname_description"),
     )
     @app_commands.describe(
-        member=app_commands.locale_str("admin_nickname_params_member_description"),
+        user=app_commands.locale_str("admin_nickname_params_member_description"),
         nickname=app_commands.locale_str("admin_nickname_params_nickname_description"),
     )
-    async def nickname(self, ctx, member: discord.Member, nickname: str = None):
+    async def nickname(
+        self,
+        ctx,
+        user: discord.Member,
+        nickname: app_commands.Range[str, 0, 100] = None,
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -807,7 +870,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await changeNicknameCommand(
-            commandInfo=commandInfo, member=member, nickname=nickname
+            commandInfo=commandInfo, member=user, nickname=nickname
         )
         return
 
@@ -819,7 +882,12 @@ class administrationCommands(discord.app_commands.Group):
         seconds=app_commands.locale_str("admin_slowmode_params_seconds_description"),
         channel=app_commands.locale_str("admin_slowmode_params_channel_description"),
     )
-    async def slowmode(self, ctx, seconds: int, channel: discord.TextChannel = None):
+    async def slowmode(
+        self,
+        ctx,
+        seconds: app_commands.Range[int, 1, 21600],
+        channel: discord.TextChannel = None,
+    ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -921,7 +989,12 @@ class administrationCommands(discord.app_commands.Group):
         channel=app_commands.locale_str("admin_say_params_channel_description"),
         message=app_commands.locale_str("admin_say_params_message_description"),
     )
-    async def say(self, ctx, message: str, channel: discord.TextChannel = None):
+    async def say(
+        self,
+        ctx,
+        message: app_commands.Range[str, 1, 2000],
+        channel: discord.TextChannel = None,
+    ):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -1072,12 +1145,12 @@ class administrationCommands(discord.app_commands.Group):
     async def create_ticket(
         self,
         ctx,
-        name: str,
-        description: str,
+        name: app_commands.Range[str, 1, 128],
+        description: app_commands.Range[str, 1, 1024],
         channel: discord.TextChannel = None,
         pingrole: discord.Role = None,
         summarychannel: discord.TextChannel = None,
-        introduction: str = None,
+        introduction: app_commands.Range[str, 0, 1024] = None,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -1092,6 +1165,9 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
+        if not channel:
+            channel = ctx.channel
+
         await createTicketCommand(
             commandInfo=commandInfo,
             channel=channel,
@@ -1103,529 +1179,180 @@ class administrationCommands(discord.app_commands.Group):
         )
         return
 
+    @app_commands.command(
+        name=app_commands.locale_str("admin_setlocale_name"),
+        description=app_commands.locale_str("admin_setlocale_description"),
+    )
+    @app_commands.describe(
+        locale=app_commands.locale_str("admin_setlocale_params_locale_description"),
+    )
+    @app_commands.choices(
+        locale=[
+            app_commands.Choice(
+                value="bg",
+                name=app_commands.locale_str("games_hangman_params_language_bg"),
+            ),
+            app_commands.Choice(
+                value="cs",
+                name=app_commands.locale_str("games_hangman_params_language_cs"),
+            ),
+            app_commands.Choice(
+                value="da",
+                name=app_commands.locale_str("games_hangman_params_language_da"),
+            ),
+            app_commands.Choice(
+                value="de",
+                name=app_commands.locale_str("games_hangman_params_language_de"),
+            ),
+            app_commands.Choice(
+                value="el",
+                name=app_commands.locale_str("games_hangman_params_language_el"),
+            ),
+            app_commands.Choice(
+                value="en",
+                name=app_commands.locale_str("games_hangman_params_language_en"),
+            ),
+            app_commands.Choice(
+                value="es",
+                name=app_commands.locale_str("games_hangman_params_language_es"),
+            ),
+            app_commands.Choice(
+                value="fi",
+                name=app_commands.locale_str("games_hangman_params_language_fi"),
+            ),
+            app_commands.Choice(
+                value="fr",
+                name=app_commands.locale_str("games_hangman_params_language_fr"),
+            ),
+            app_commands.Choice(
+                value="hi",
+                name=app_commands.locale_str("games_hangman_params_language_hi"),
+            ),
+            app_commands.Choice(
+                value="hu",
+                name=app_commands.locale_str("games_hangman_params_language_hu"),
+            ),
+            app_commands.Choice(
+                value="id",
+                name=app_commands.locale_str("games_hangman_params_language_id"),
+            ),
+            app_commands.Choice(
+                value="it",
+                name=app_commands.locale_str("games_hangman_params_language_it"),
+            ),
+            app_commands.Choice(
+                value="ja",
+                name=app_commands.locale_str("games_hangman_params_language_ja"),
+            ),
+            app_commands.Choice(
+                value="ko",
+                name=app_commands.locale_str("games_hangman_params_language_ko"),
+            ),
+            app_commands.Choice(
+                value="lt",
+                name=app_commands.locale_str("games_hangman_params_language_lt"),
+            ),
+            app_commands.Choice(
+                value="nb",
+                name=app_commands.locale_str("games_hangman_params_language_nb"),
+            ),
+            app_commands.Choice(
+                value="nl",
+                name=app_commands.locale_str("games_hangman_params_language_nl"),
+            ),
+            app_commands.Choice(
+                value="pl",
+                name=app_commands.locale_str("games_hangman_params_language_pl"),
+            ),
+            app_commands.Choice(
+                value="pt",
+                name=app_commands.locale_str("games_hangman_params_language_pt"),
+            ),
+            app_commands.Choice(
+                value="ru",
+                name=app_commands.locale_str("games_hangman_params_language_ru"),
+            ),
+            app_commands.Choice(
+                value="zh",
+                name=app_commands.locale_str("games_hangman_params_language_zh"),
+            ),
+        ]
+    )
+    async def set_locale(self, ctx, locale: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        await setLocaleCommand(commandInfo=commandInfo, locale=locale)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_copyemoji_name"),
+        description=app_commands.locale_str("admin_copyemoji_description"),
+    )
+    @app_commands.describe(
+        emoji=app_commands.locale_str("admin_copyemoji_params_emoji_description"),
+    )
+    async def copy_emoji(self, ctx, emoji: str):
+        await ctx.response.defer()
+        commandInfo = utility.commandInfo(
+            user=ctx.user,
+            channel=ctx.channel,
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await copyEmojiCommand(commandInfo=commandInfo, emoji=emoji)
+        return
+
 
 class adminCog(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def addrole(self, ctx, **args) -> None:
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        target: discord.Member = ctx.message.mentions
-
-        if len(target) == 0:
-            await ctx.reply(
-                tanjunLocalizer.localize(
-                    locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
-                    ),
-                    key="commands.admin.addrole.noUser",
-                )
-            )
-            return
-
-        role: discord.Role = ctx.message.role_mentions
-        if len(role) == 0:
-            await ctx.reply(
-                tanjunLocalizer.localize(
-                    locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
-                    ),
-                    key="commands.admin.addrole.noRole",
-                )
-            )
-            return
-        for t in target:
-            for r in role:
-                await addroleCommand(commandInfo=commandInfo, target=t, role=r)
-        return
-
-    @commands.command()
-    async def removerole(self, ctx) -> None:
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        target = ctx.message.mentions
-        if len(target) == 0:
-            await ctx.reply(
-                tanjunLocalizer.localize(
-                    locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
-                    ),
-                    key="commands.admin.removerole.noUser",
-                )
-            )
-            return
-
-        role = ctx.message.role_mentions
-        if len(role) == 0:
-            await ctx.reply(
-                tanjunLocalizer.localize(
-                    locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
-                    ),
-                    key="commands.admin.removerole.noRole",
-                )
-            )
-            return
-
-        for t in target:
-            for r in role:
-                await removeroleCommand(commandInfo=commandInfo, target=t, role=r)
-
-        return
-
-    @commands.command()
-    async def createrole(
-        self,
-        ctx,
-        name: str,
-        color: str = None,
-        hoist: bool = False,
-        mentionable: bool = False,
-        emoji: str = None,
-    ):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        if not name:
-            await ctx.reply(
-                tanjunLocalizer.localize(
-                    locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
-                    ),
-                    key="commands.admin.createrole.noName",
-                )
-            )
-            return
-
-        display_icon = None
-        if ctx.message.attachments:
-            display_icon = await ctx.message.attachments[0].read()
-        elif emoji:
-            display_icon = emoji
-
-        await createroleCommand(
-            commandInfo=commandInfo,
-            name=name,
-            color=color,
-            hoist=hoist,
-            mentionable=mentionable,
-            display_icon=display_icon,
-        )
-        return
-
-    @commands.command()
-    async def deleterole(self, ctx) -> None:
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        role = ctx.message.role_mentions
-        if len(role) == 0:
-            await ctx.reply(
-                tanjunLocalizer.localize(
-                    locale=(
-                        ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US"
-                    ),
-                    key="commands.admin.deleterole.noRole",
-                )
-            )
-            return
-
-        for r in role:
-            await deleteroleCommand(commandInfo=commandInfo, role=r)
-
-        return
-
-    @commands.command()
-    async def kick(self, ctx, member: discord.Member, *, reason: str = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await kickCommand(commandInfo=commandInfo, target=member, reason=reason)
-        return
-
-    @commands.command()
-    async def ban(
-        self,
-        ctx,
-        member: discord.Member,
-        delete_message_days: int = 0,
-        *,
-        reason: str = None
-    ):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await banCommand(
-            commandInfo=commandInfo,
-            target=member,
-            reason=reason,
-            delete_message_days=delete_message_days,
-        )
-        return
-
-    @commands.command()
-    async def unban(self, ctx, username: str, *, reason: str = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await unbanCommand(commandInfo=commandInfo, username=username, reason=reason)
-        return
-
-    @commands.command()
-    async def timeout(
-        self, ctx, member: discord.Member, duration: int, *, reason: str = None
-    ):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await timeoutCommand(
-            commandInfo=commandInfo, member=member, duration=duration, reason=reason
-        )
-        return
-
-    @commands.command()
-    async def untimeout(self, ctx, member: discord.Member, *, reason: str = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await removeTimeoutCommand(
-            commandInfo=commandInfo, member=member, reason=reason
-        )
-        return
-
-    @commands.command()
-    async def purge(self, ctx, amount: int, channel: discord.TextChannel = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await purgeCommand(
-            commandInfo=commandInfo, amount=amount, channel=channel, setting="all"
-        )
-        return
-
-    @commands.command()
-    async def nickname(self, ctx, member: discord.Member, *, nickname: str = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await changeNicknameCommand(
-            commandInfo=commandInfo, member=member, nickname=nickname
-        )
-        return
-
-    @commands.command()
-    async def slowmode(self, ctx, seconds: int, channel: discord.TextChannel = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await setSlowmodeCommand(
-            commandInfo=commandInfo, seconds=seconds, channel=channel
-        )
-        return
-
-    @commands.command()
-    async def lock(self, ctx, channel: discord.TextChannel = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await lockChannelCommand(commandInfo=commandInfo, channel=channel)
-        return
-
-    @commands.command()
-    async def unlock(self, ctx, channel: discord.TextChannel = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await unlockChannelCommand(commandInfo=commandInfo, channel=channel)
-        return
-
-    @commands.command()
-    async def warn(self, ctx, member: discord.Member, *, reason: str = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await warnUserCommand(commandInfo=commandInfo, member=member, reason=reason)
-        return
-
-    @commands.command()
-    async def viewwarns(self, ctx, member: discord.Member):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await viewWarningsCommand(commandInfo=commandInfo, member=member)
-        return
-
-    @commands.command()
-    async def nuke(self, ctx, channel: discord.TextChannel = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        if not channel:
-            channel = ctx.channel
-
-        await nukeChannelCommand(commandInfo=commandInfo, channel=channel)
-        return
-
-    @commands.command()
-    async def say(self, ctx, channel: discord.TextChannel, *, message: str):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await sayCommand(commandInfo=commandInfo, channel=channel, message=message)
-        return
-
-    @commands.command()
-    async def embed(self, ctx, channel: discord.TextChannel, *, title: str):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        if channel is None:
-            channel = ctx.channel
-
-        if not title:
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.admin.embed.missingTitle.title",
-                ),
-                description=tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.admin.embed.missingTitle.description",
-                ),
-            )
-            await ctx.reply(embed=embed)
-            return
-
-        await createEmbedCommand(commandInfo=commandInfo, channel=channel, title=title)
-        return
-
-    @commands.command()
-    async def createemoji(self, ctx, name: str, image_url: str, *roles: discord.Role):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await createEmojiCommand(
-            commandInfo=commandInfo, name=name, image_url=image_url, roles=list(roles)
-        )
-
-    @commands.command()
-    async def claimboosterrole(self, ctx, role: discord.Role = None):
-        commandInfo = utility.commandInfo(
-            user=ctx.author,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.guild.locale if hasattr(ctx.guild, "locale") else "en_US",
-            message=ctx.message,
-            permissions=ctx.author.guild_permissions,
-            reply=ctx.reply,
-            client=ctx.bot,
-        )
-
-        await CreateBoosterRoleCommand(commandInfo=commandInfo, role=role)
-
     @commands.Cog.listener()
     async def on_ready(self):
         admincmds = administrationCommands(
-            name="admin", description="Administrate the Server"
+            name=app_commands.locale_str("admin_name"),
+            description=app_commands.locale_str("admin_description"),
         )
-        warncmds = WarnCommands(name="warn", description="Manage Warns")
+        warncmds = WarnCommands(
+            name=app_commands.locale_str("admin_warn_name"),
+            description=app_commands.locale_str("admin_warn_description"),
+        )
         admincmds.add_command(warncmds)
-        rolecmds = RoleCommands(name="role", description="Manage Roles")
+        rolecmds = RoleCommands(
+            name=app_commands.locale_str("admin_role_name"),
+            description=app_commands.locale_str("admin_role_description"),
+        )
         admincmds.add_command(rolecmds)
-        reportcmds = ReportCommands(name="report", description="Manage Reports")
+        reportcmds = ReportCommands(
+            name=app_commands.locale_str("admin_report_name"),
+            description=app_commands.locale_str("admin_report_description"),
+        )
         admincmds.add_command(reportcmds)
         trigger_messages_cmds = TriggerMessagesCommands(
-            name="triggermessages", description="Manage Trigger Messages"
+            name=app_commands.locale_str("admin_triggermessages_name"),
+            description=app_commands.locale_str("admin_triggermessages_description"),
         )
         admincmds.add_command(trigger_messages_cmds)
         join_to_create_cmds = JoinToCreateCommands(
-            name="jointocreate", description="Manage Join-to-Create Channels"
+            name=app_commands.locale_str("admin_jointocreate_name"),
+            description=app_commands.locale_str("admin_jointocreate_description"),
         )
         admincmds.add_command(join_to_create_cmds)
         self.bot.tree.add_command(admincmds)

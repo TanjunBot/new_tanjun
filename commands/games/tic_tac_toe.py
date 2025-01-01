@@ -568,18 +568,13 @@ class TicTacToe:
                     await self.update_board(interaction)
                     return
 
-                print("made move")
-
                 if self.player2 == "tanjun" or self.player2.bot:
-                    print("minimaxing")
                     self.current_player = self.player2
                     _, best_move = self.minimax(
                         self.current_player, self.bot_difficulty * 2, self.board, True
                     )
-                    print("minimaxed")
                     self.board[best_move // 3][best_move % 3] = self.player2_move
                     self.current_player = self.player1
-                    print("updated board")
 
                 await self.update_board(interaction)
 

@@ -195,8 +195,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
             or given_up
             else WordleView(commandInfo)
         )
-        await interaction.followup.edit_message(
-            message_id=interaction.message.id,
+        await interaction.response.edit_message(
             embed=embed,
             attachments=[discord.File(img_byte_arr, filename="wordle.png")],
             view=view,
@@ -241,7 +240,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
                             "commands.games.wordle.error.invalidInput",
                         ),
                     )
-                    await interaction.followup.send(embed=embed, ephemeral=True)
+                    await interaction.response.send_message(embed=embed, ephemeral=True)
                     return
 
                 guesses.append(guess)
@@ -257,20 +256,24 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
                         "commands.games.wordle.error.invalidInput",
                     ),
                 )
-                await interaction.followup.send(embed=embed, ephemeral=True)
+                await interaction.response.send_message(embed=embed, ephemeral=True)
 
     class WordleView(discord.ui.View):
         def __init__(self, commandInfo: utility.commandInfo):
             super().__init__(timeout=3600)
             self.commandInfo = commandInfo
 
-        @discord.ui.button(label="Guess", style=discord.ButtonStyle.green)
+        @discord.ui.button(
+            label=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.wordle.buttons.guess"
+            ),
+            style=discord.ButtonStyle.green,
+        )
         async def guess_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
-            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.followup.send(
+                await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.wordle.notYourGame"
                     ),
@@ -279,15 +282,18 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
                 return
             modal = WordleInputModal(self.commandInfo, guesses)
             await interaction.response.send_modal(modal)
-            self.stop()
 
-        @discord.ui.button(label="Give up", style=discord.ButtonStyle.red)
+        @discord.ui.button(
+            label=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.games.wordle.buttons.giveUp"
+            ),
+            style=discord.ButtonStyle.red,
+        )
         async def give_up_button_callback(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
-            await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
-                await interaction.followup.send(
+                await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale, "commands.games.wordle.notYourGame"
                     ),
@@ -302,7 +308,6 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
             guesses.append("NOTHING")
             guesses.append("NOTHING")
             await update_wordle_game(interaction, given_up=True)
-            self.stop()
 
     view = WordleView(commandInfo)
     embed = utility.tanjunEmbed(

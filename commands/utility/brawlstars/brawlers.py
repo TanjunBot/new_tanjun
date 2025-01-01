@@ -29,6 +29,22 @@ async def getPlayerInfo(playerTag: str):
 async def brawlers(commandInfo: commandInfo, playerTag: str = None):
     if not playerTag:
         playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
+    if playerTag and playerTag.startswith("<@"):
+        playerTagUserID = playerTag.split("<@")[1].split(">")[0]
+        playerTag = await get_brawlstars_linked_account(playerTagUserID)
+        if not playerTag:
+            return await commandInfo.reply(
+                embed=tanjunEmbed(
+                    title=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.brawlstars.battlelog.error.userNotLinked.title",
+                    ),
+                    description=tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.utility.brawlstars.battlelog.error.userNotLinked.description",
+                    ),
+                )
+            )
     if playerTag and not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
     if not playerTag:
@@ -54,9 +70,10 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
         )
 
     playerName = playerInfo["name"]
+    total_brawlers = len(playerInfo["brawlers"])
 
-    pages = []
-    for brawler in playerInfo["brawlers"]:
+    async def generate_page(page_number: int) -> discord.Embed:
+        brawler = playerInfo["brawlers"][page_number]
         id = brawler["id"]
         name = parseName(brawler["name"])
         power = brawler["power"]
@@ -146,7 +163,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             description += "\n"
             description += "\n"
 
-        if commandInfo.user.id == 1295625022454370346:
+        if commandInfo.user.id == 1295625022454370346 and commandInfo.guild.id == 947219439764521060:
             description += "\n"
             description += f"raw: \n```json\n{json.dumps(brawler, indent=4)}\n```"
 
@@ -154,8 +171,8 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.brawlstars.brawlers.title",
-                current_page=len(pages) + 1,
-                total_pages=len(playerInfo["brawlers"]),
+                current_page=page_number + 1,
+                total_pages=total_brawlers,
                 name=playerName,
                 tag=playerTag,
             ),
@@ -164,12 +181,11 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
         embed.set_thumbnail(
             url=f"https://cdn.brawlify.com/brawlers/borderless/{id}.png"
         )
-        pages.append(embed)
+        return embed
 
     class BrawlersPaginator(discord.ui.View):
-        def __init__(self, pages: list[tanjunEmbed], current_page=0):
+        def __init__(self, current_page=0):
             super().__init__(timeout=3600)
-            self.pages = pages
             self.current_page = current_page
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
@@ -185,13 +201,14 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
                     ephemeral=True,
                 )
                 return
+
             if self.current_page == 0:
-                self.current_page = len(self.pages) - 1
+                self.current_page = total_brawlers - 1
             else:
                 self.current_page -= 1
-            await interaction.response.edit_message(
-                view=self, embed=pages[self.current_page]
-            )
+
+            new_page = await generate_page(self.current_page)
+            await interaction.response.edit_message(view=self, embed=new_page)
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
         async def next(
@@ -206,13 +223,14 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
                     ephemeral=True,
                 )
                 return
-            if self.current_page == len(self.pages) - 1:
+
+            if self.current_page == total_brawlers - 1:
                 self.current_page = 0
             else:
                 self.current_page += 1
-            await interaction.response.edit_message(
-                view=self, embed=pages[self.current_page]
-            )
+
+            new_page = await generate_page(self.current_page)
+            await interaction.response.edit_message(view=self, embed=new_page)
 
         @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
         async def search(
@@ -264,8 +282,8 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
                         bestSimilarity = similarity
                         desiredPage = i
 
-                view = BrawlersPaginator(pages, desiredPage)
-                page = pages[desiredPage]
+                view = BrawlersPaginator(desiredPage)
+                page = await generate_page(desiredPage)
                 await interaction.response.edit_message(view=view, embed=page)
 
             except ValueError:
@@ -294,11 +312,12 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    if len(pages) > 1:
-        view = BrawlersPaginator(pages)
-        await commandInfo.reply(embed=pages[0], view=view)
+    if total_brawlers > 1:
+        first_page = await generate_page(0)
+        view = BrawlersPaginator()
+        await commandInfo.reply(embed=first_page, view=view)
     else:
-
+        first_page = await generate_page(0)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -306,6 +325,6 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
                 playerName=playerName,
                 tag=playerTag,
             ),
-            description=pages[0].description,
+            description=first_page.description,
         )
         await commandInfo.reply(embed=embed)

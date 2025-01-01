@@ -35,10 +35,8 @@ async def add_level_role_command(
         await commandInfo.reply(embed=embed)
         return
 
-    existing_roles = [
-        role[1] for role in await get_level_roles(str(commandInfo.guild.id))
-    ]
-    if str(role.id) in existing_roles:
+    level_roles = await get_level_roles(str(commandInfo.guild.id))
+    if role.id in [role_id for level, role_id in level_roles]:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -47,7 +45,6 @@ async def add_level_role_command(
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.addlevelrole.error.role_exists.description",
-                level=level,
                 role=role.mention,
             ),
         )

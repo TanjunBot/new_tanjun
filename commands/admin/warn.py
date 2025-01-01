@@ -2,7 +2,7 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 from api import add_warning, get_warnings, get_warn_config
-from datetime import timedelta
+from datetime import datetime, timezone, timedelta
 
 
 async def warn_user(
@@ -35,8 +35,14 @@ async def warn_user(
     guild_id = commandInfo.guild.id
     user_id = member.id
 
-    await add_warning(guild_id, user_id, reason)
-    warn_count, warn_reasons = await get_warnings(guild_id, user_id)
+    warn_config = await get_warn_config(guild_id)
+
+    expireDate = datetime.now(timezone.utc) + timedelta(
+        days=warn_config["expiration_days"]
+    )
+
+    await add_warning(guild_id, user_id, reason, expireDate, commandInfo.user.id)
+    warn_count = len(await get_warnings(guild_id, user_id))
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -59,7 +65,6 @@ async def warn_user(
     await commandInfo.reply(embed=embed)
 
     # Check for escalated actions based on warn count
-    warn_config = await get_warn_config(guild_id)
     if warn_config:
         if warn_count >= warn_config["ban_threshold"]:
             # Ban the user

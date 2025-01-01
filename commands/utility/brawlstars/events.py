@@ -32,8 +32,8 @@ async def events(commandInfo: commandInfo):
             )
         )
 
-    pages = []
-    for event in eventRotation:
+    async def generate_page(page_num: int) -> discord.Embed:
+        event = eventRotation[page_num]
         startTime = event["startTime"]
         startTimestamp = date_time_to_timestamp(isoTimeToDate(startTime))
         endTime = event["endTime"]
@@ -58,21 +58,20 @@ async def events(commandInfo: commandInfo):
             mode=modeLocale,
         )
 
-        embed = tanjunEmbed(
+        return tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.brawlstars.events.title",
-                current_page=len(pages) + 1,
+                current_page=page_num + 1,
                 total_pages=len(eventRotation),
             ),
             description=description,
         )
-        pages.append(embed)
 
     class BrawlersPaginator(discord.ui.View):
-        def __init__(self, pages: list[tanjunEmbed], current_page=0):
+        def __init__(self, total_pages: int, current_page=0):
             super().__init__(timeout=3600)
-            self.pages = pages
+            self.total_pages = total_pages
             self.current_page = current_page
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
@@ -89,11 +88,11 @@ async def events(commandInfo: commandInfo):
                 )
                 return
             if self.current_page == 0:
-                self.current_page = len(self.pages) - 1
+                self.current_page = self.total_pages - 1
             else:
                 self.current_page -= 1
             await interaction.response.edit_message(
-                view=self, embed=pages[self.current_page]
+                view=self, embed=await generate_page(self.current_page)
             )
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
@@ -109,24 +108,23 @@ async def events(commandInfo: commandInfo):
                     ephemeral=True,
                 )
                 return
-            if self.current_page == len(self.pages) - 1:
+            if self.current_page == self.total_pages - 1:
                 self.current_page = 0
             else:
                 self.current_page += 1
             await interaction.response.edit_message(
-                view=self, embed=pages[self.current_page]
+                view=self, embed=await generate_page(self.current_page)
             )
 
-    if len(pages) > 1:
-        view = BrawlersPaginator(pages)
-        await commandInfo.reply(embed=pages[0], view=view)
+    if len(eventRotation) > 1:
+        view = BrawlersPaginator(len(eventRotation))
+        await commandInfo.reply(embed=await generate_page(0), view=view)
     else:
-
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.brawlstars.events.titleNoPages",
             ),
-            description=pages[0].description,
+            description=(await generate_page(0)).description,
         )
         await commandInfo.reply(embed=embed)

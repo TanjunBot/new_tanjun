@@ -4,6 +4,12 @@ from typing import List, Dict, Optional
 import utility
 from localizer import tanjunLocalizer
 
+ADDEMOJI = "math_add:1254372629456883793"
+SUBSTRACTEMOJI = "math_substract:1254372627766837248"
+MULTIPLYEMOJI = "math_multiply:1254372798319558768"
+DIVIDEEMOJI = "math_divide:1254373636224323644"
+BACKSPACEEMOJI = "math_backspace:1254371946695757854"
+
 
 class CalculatorButton(ui.Button):
     def __init__(
@@ -41,11 +47,26 @@ class CalculatorView(ui.View):
         self.current_page = 0
         self.create_buttons()
         self.nsp = utility.NumericStringParser()
-        self.ADDEMOJI = "math_add:1254372629456883793"
-        self.SUBSTRACTEMOJI = "math_substract:1254372627766837248"
-        self.MULTIPLYEMOJI = "math_multiply:1254372798319558768"
-        self.DIVIDEEMOJI = "math_divide:1254373636224323644"
-        self.BACKSPACEEMOJI = "math_backspace:1254371946695757854"
+
+    def set_message(self, message: discord.Message):
+        self.message = message
+
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        if self.message:
+            await self.message.edit(view=self)
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user != self.command_info.user:
+            await interaction.response.send_message(
+                tanjunLocalizer.localize(
+                    self.command_info.locale, "commands.math.calculator.unauthorizedUser"
+                ),
+                ephemeral=True,
+            )
+            return False
+        return True
 
     def create_buttons(self):
         self.clear_items()
@@ -59,7 +80,7 @@ class CalculatorView(ui.View):
                     discord.ButtonStyle.danger,
                     "backspace",
                     0,
-                    self.BACKSPACEEMOJI,
+                    BACKSPACEEMOJI,
                 ),
                 ("AC", discord.ButtonStyle.danger, "clear", 0, None),
                 ("4", discord.ButtonStyle.secondary, "4", 1, None),
@@ -70,14 +91,14 @@ class CalculatorView(ui.View):
                     discord.ButtonStyle.primary,
                     "multiply",
                     1,
-                    self.MULTIPLYEMOJI,
+                    MULTIPLYEMOJI,
                 ),
                 (
                     "",
                     discord.ButtonStyle.primary,
                     "divide",
                     1,
-                    self.DIVIDEEMOJI,
+                    DIVIDEEMOJI,
                 ),
                 ("1", discord.ButtonStyle.secondary, "1", 2, None),
                 ("2", discord.ButtonStyle.secondary, "2", 2, None),
@@ -87,14 +108,14 @@ class CalculatorView(ui.View):
                     discord.ButtonStyle.primary,
                     "add",
                     2,
-                    self.ADDEMOJI,
+                    ADDEMOJI,
                 ),
                 (
                     "",
                     discord.ButtonStyle.primary,
                     "subtract",
                     2,
-                    self.SUBSTRACTEMOJI,
+                    SUBSTRACTEMOJI,
                 ),
                 ("0", discord.ButtonStyle.secondary, "0", 3, None),
                 (".", discord.ButtonStyle.secondary, "decimal", 3, None),
@@ -117,7 +138,7 @@ class CalculatorView(ui.View):
                     discord.ButtonStyle.danger,
                     "backspace",
                     0,
-                    self.BACKSPACEEMOJI,
+                    BACKSPACEEMOJI,
                 ),
                 ("AC", discord.ButtonStyle.danger, "clear", 0, None),
                 ("x²", discord.ButtonStyle.secondary, "square", 1, None),
@@ -128,14 +149,14 @@ class CalculatorView(ui.View):
                     discord.ButtonStyle.primary,
                     "multiply",
                     1,
-                    self.MULTIPLYEMOJI,
+                    MULTIPLYEMOJI,
                 ),
                 (
                     "",
                     discord.ButtonStyle.primary,
                     "divide",
                     1,
-                    self.DIVIDEEMOJI,
+                    DIVIDEEMOJI,
                 ),
                 ("asin", discord.ButtonStyle.secondary, "asin", 2, None),
                 ("acos", discord.ButtonStyle.secondary, "acos", 2, None),
@@ -145,14 +166,14 @@ class CalculatorView(ui.View):
                     discord.ButtonStyle.primary,
                     "add",
                     2,
-                    self.ADDEMOJI,
+                    ADDEMOJI,
                 ),
                 (
                     "",
                     discord.ButtonStyle.primary,
                     "subtract",
                     2,
-                    self.SUBSTRACTEMOJI,
+                    SUBSTRACTEMOJI,
                 ),
                 ("X", discord.ButtonStyle.secondary, "x", 3, None),
                 ("Y", discord.ButtonStyle.secondary, "y", 3, None),
@@ -175,7 +196,7 @@ class CalculatorView(ui.View):
                     discord.ButtonStyle.danger,
                     "backspace",
                     0,
-                    self.BACKSPACEEMOJI,
+                    BACKSPACEEMOJI,
                 ),
                 ("AC", discord.ButtonStyle.danger, "clear", 0, None),
                 ("⌊", discord.ButtonStyle.secondary, "left_floor", 1, None),
@@ -186,14 +207,14 @@ class CalculatorView(ui.View):
                     discord.ButtonStyle.primary,
                     "multiply",
                     1,
-                    self.MULTIPLYEMOJI,
+                    MULTIPLYEMOJI,
                 ),
                 (
                     "",
                     discord.ButtonStyle.primary,
                     "divide",
                     1,
-                    self.DIVIDEEMOJI,
+                    DIVIDEEMOJI,
                 ),
                 ("⌈", discord.ButtonStyle.secondary, "left_ceil", 2, None),
                 ("⌉", discord.ButtonStyle.secondary, "right_ceil", 2, None),
@@ -203,14 +224,14 @@ class CalculatorView(ui.View):
                     discord.ButtonStyle.primary,
                     "add",
                     2,
-                    self.ADDEMOJI,
+                    ADDEMOJI,
                 ),
                 (
                     "",
                     discord.ButtonStyle.primary,
                     "subtract",
                     2,
-                    self.SUBSTRACTEMOJI,
+                    SUBSTRACTEMOJI,
                 ),
                 ("⠀", discord.ButtonStyle.secondary, "empty3", 3, None),
                 ("⠀", discord.ButtonStyle.secondary, "empty4", 3, None),
@@ -451,11 +472,6 @@ class CalculatorView(ui.View):
             )
         await interaction.response.edit_message(embed=embed, view=self)
 
-    async def on_timeout(self):
-        for button in self.children:
-            button.disabled = True
-        await self.message.edit(view=self)
-
 
 async def calculator_command(
     command_info: utility.commandInfo, initial_equation: str = ""
@@ -473,4 +489,5 @@ async def calculator_command(
         value=f"```\n{initial_equation or '0'}\n```",
         inline=False,
     )
-    await command_info.reply(embed=embed, view=view)
+    message = await command_info.reply(embed=embed, view=view)
+    view.set_message(message)

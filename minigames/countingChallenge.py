@@ -17,7 +17,7 @@ async def counting(message: discord.Message):
 
     progress = await get_counting_challenge_progress(message.channel.id)
 
-    locale = message.guild.locale if hasattr(message.guild, "locale") else "en_US"
+    locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
 
     if not progress and progress != 0:
         return

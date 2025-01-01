@@ -44,7 +44,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
             self.current_page = page
             self.notifications = notifications
 
-        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
+        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)
         async def previous_page(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
@@ -99,7 +99,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
             self.current_page -= 1
             await self.update_message(interaction)
 
-        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
+        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)
         async def next_page(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
@@ -150,7 +150,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
                 await interaction.response.edit_message(embed=embed, view=view)
             else:
                 await interaction.response.edit_message(
-                    embed=embed, view=discord.ui.View()
+                    embed=embed, view=view
                 )
 
     view = TwitchLiveNotification(0, notifications)
@@ -171,7 +171,6 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
             commandInfo.locale,
             "commands.utility.twitch.listTwitchLiveNotifications.titleNoPages",
         )
-        view = discord.ui.View()
     embed = tanjunEmbed(
         title=title,
         description=tanjunLocalizer.localize(
