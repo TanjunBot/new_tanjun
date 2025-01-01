@@ -95,5 +95,4 @@ async def on_ready():
     await initTwitch()
     print("Bot is running!")
 
-
 bot.run(config.token)

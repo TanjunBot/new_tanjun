@@ -5,6 +5,7 @@ import random
 from utility import checkIfhasPlus
 
 
+
 class Connect4:
     def __init__(
         self,

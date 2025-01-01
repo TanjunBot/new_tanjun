@@ -8,6 +8,7 @@ import datetime
 from commands.giveaway.utility import sendGiveaway, generateGiveawayEmbed
 
 
+
 class GiveawayBuilderButton(ui.Button):
     def __init__(self, label, custom_id, style, row=None):
         super().__init__(label=label, custom_id=custom_id, style=style, row=row)
@@ -1547,7 +1548,9 @@ class GiveawayBuilder(ui.View):
     async def preview(
         self, interaction: discord.Interaction, button: GiveawayBuilderButton
     ):
-        embed = await generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)
+        embed = await utility.generateGiveawayEmbed(
+            self.giveaway_data, self.commandInfo.locale
+        )
         await interaction.response.send_message(
             content=tanjunLocalizer.localize(
                 self.commandInfo.locale, "commands.giveaway.builder.preview"
@@ -1610,7 +1613,8 @@ class GiveawayBuilder(ui.View):
         )
 
         if start_time < datetime.datetime.now():
-            await sendGiveaway(giveawayId, self.commandInfo.client)
+            await utility.sendGiveaway(giveawayId, self.commandInfo.client)
+
 
 
 async def start_giveaway(

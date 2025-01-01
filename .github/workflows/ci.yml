@@ -1,8 +1,8 @@
 name: Tanjun CI
 on:
   push:
-    branches:
-      - '**'
+    branches-ignore:
+      - l10n*
 
 jobs:
   build:
