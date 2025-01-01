@@ -30808,7 +30808,7 @@
         "max_length": null
     },
     {
-        "identifier": "repeat_interval",
+        "identifier": "repeatinterval",
         "source_string": "wiederholungsintervall",
         "translation": "wiederholungsintervall",
         "context": "The repeat_intervall param used in some commands. Only lowecase characters and no spaces allowed.",
@@ -30816,7 +30816,7 @@
         "max_length": 32
     },
     {
-        "identifier": "repeat_amount",
+        "identifier": "repeatamount",
         "source_string": "wiederholungs_anzahl",
         "translation": "wiederholungs_anzahl",
         "context": "Only lowecase characters and no spaces allowed.",
@@ -30824,7 +30824,7 @@
         "max_length": 32
     },
     {
-        "identifier": "utility_schedulemessage.params.repeatamount.description",
+        "identifier": "utility.schedulemessage.params.repeatamount.description",
         "source_string": "Wie oft die Nachricht wiederholt werden soll (optional, 0 = unendlich, Standard = 1)",
         "translation": "Wie oft die Nachricht wiederholt werden soll (optional, 0 = unendlich, Standard = 1)",
         "context": null,
