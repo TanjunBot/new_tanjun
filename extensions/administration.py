@@ -351,6 +351,104 @@ Das Tanjun-Team
 @entcheneric, @arion2000 und @.pegi
                     """
 
+        sebdedOwners = []
+        for guild in self.bot.guilds:
+            owner = guild.owner
+            if not owner:
+                continue
+            if owner.id in sebdedOwners:
+                continue
+            sebdedOwners.append(owner.id)
+
+            try:
+                await owner.send(
+                    embed=tanjunEmbed(
+                        title="Tanjun Update",
+                        description=message,
+                    )
+                )
+            except Exception:
+                pass
+
+    @commands.command()
+    async def sendDemoIsNoMoreToAllAdmins(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        try:
+            await ctx.channel.send(
+                "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!"
+            )
+            confirmation_message = await self.bot.wait_for(
+                "message", check=check, timeout=30.0
+            )
+        except asyncio.TimeoutError:
+            await ctx.channel.send("Timeout! Abgebrochen!")
+            return
+
+        if confirmation_message.content.lower() != "y":
+            await ctx.channel.send("Abgebrochen!")
+            return
+
+        try:
+            await ctx.channel.send(
+                "Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)"
+            )
+            confirmation_message = await self.bot.wait_for(
+                "message", check=check, timeout=30.0
+            )
+        except asyncio.TimeoutError:
+            await ctx.channel.send("Timeout! Abgebrochen!")
+            return
+
+        if confirmation_message.content.lower() != "y":
+            await ctx.channel.send("Abgebrochen!")
+            return
+
+        try:
+            await ctx.channel.send("sag wallah.")
+            confirmation_message = await self.bot.wait_for(
+                "message", check=check, timeout=30.0
+            )
+        except asyncio.TimeoutError:
+            await ctx.channel.send("Timeout! Abgebrochen!")
+            return
+
+        if confirmation_message.content.lower() != "wallah":
+            await ctx.channel.send("Abgebrochen!")
+            return
+
+        try:
+            await ctx.channel.send("Gebe das geheime geheim passwort ein.")
+            confirmation_message = await self.bot.wait_for(
+                "message", check=check, timeout=30.0
+            )
+        except asyncio.TimeoutError:
+            await ctx.channel.send("Timeout! Abgebrochen!")
+            return
+
+        if confirmation_message.content.lower() != "passwort":
+            await ctx.channel.send("Falsches Passwort!")
+            return
+
+        message = """
+<:info:1323229608379682826>Du erhältst diese Nachricht, weil dir ein Server gehört, auf dem <@1255607578722046015> verwendet wird. Keine Sorge – du wirst keine nervige Werbung per DM erhalten. Dies ist eine einmalige Nachricht, die wir aufgrund einer wichtigen Ankündigung an alle Serveradministratoren schreiben.
+
+Kurze rede langer sinn, Tanjun 1.0 ist fertig. Der Demo Bot wird nicht mehr weiter gepflegt. Du kannst ihn also ohne bedenken von deinem Server entfernen. Wenn du Tanjun 1.0 nutzen möchstes, kannst du ihn mit [diesem Link](https://discord.com/oauth2/authorize?client_id=885984139315122206) https://discord.com/oauth2/authorize?client_id=885984139315122206 einladen.
+Der Demo Tanjun Bot wird in Zukunft unter umständen noch zum testen verwendet, allerdings wird er nicht immer 24/7 online sein, wodurch er keine alternative zu Tanjun darstellt.
+
+Alle Daten, die über den Demo Tanjun Bot gespeichert wurden, sind im Tanjun 1.0 nicht verfügbar. Das Level System und andere Einstellungen sind also wieder auf 0. Wenn du möchstest, dass ich beispielsweise das Level System wiederherstelle, schreibe mir (@entcheneric) bitte eine DM.
+
+Vielen Dank, dass du geholfen hast Tanjun 1.0 fertig zu stellen und zu testen.
+
+Liebe Grüße,
+Das Tanjun-Team
+@entcheneric, @arion2000 und @.pegi
+                    """
+
         for guild in self.bot.guilds:
             owner = guild.owner
             if not owner:

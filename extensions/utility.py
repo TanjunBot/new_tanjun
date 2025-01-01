@@ -757,10 +757,10 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         channel=app_commands.locale_str(
             "utility_schedulemessage_params_channel_description"
         ),
-        repeat_interval=app_commands.locale_str(
+        repeatinterval=app_commands.locale_str(
             "utility_schedulemessage_params_repeat_description"
         ),
-        repeat_amount=app_commands.locale_str(
+        repeatamount=app_commands.locale_str(
             "utility_schedulemessage_params_repeatamount_description"
         ),
     )
@@ -770,8 +770,8 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         content: app_commands.Range[str, 1, 1024],
         sendin: app_commands.Range[str, 1, 100],
         channel: discord.TextChannel = None,
-        repeat_interval: app_commands.Range[str, 0, 15] = None,
-        repeat_amount: app_commands.Range[int, 0, 1000] = None,
+        repeatinterval: app_commands.Range[str, 0, 15] = None,
+        repeatamount: app_commands.Range[int, 0, 1000] = None,
         # attachment1: discord.Attachment = None,
         # attachment2: discord.Attachment = None,
         # attachment3: discord.Attachment = None,
@@ -806,8 +806,8 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             content=content,
             send_in=sendin,
             channel=channel,
-            repeat=repeat_interval,
-            repeat_amount=repeat_amount,
+            repeat=repeatinterval,
+            repeat_amount=repeatamount,
             attachments=attachments or [],
         )
 

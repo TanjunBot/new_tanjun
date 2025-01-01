@@ -6,7 +6,13 @@ import config
 from translator import TanjunTranslator
 import api
 import asyncmy
-from config import database_ip, database_password, database_user, database_schema
+from config import (
+    database_ip,
+    database_password,
+    database_user,
+    database_schema,
+    prefix,
+)
 from commands.utility.twitch.twitchApi import initTwitch
 
 
@@ -41,7 +47,7 @@ intents.invites = True
 intents.presences = False
 
 bot = commands.AutoShardedBot(
-    "t.", intents=intents, application_id=config.applicationId
+    prefix, intents=intents, application_id=config.applicationId
 )
 
 
@@ -94,5 +100,6 @@ async def on_ready():
     await api.create_tables()
     await initTwitch()
     print("Bot is running!")
+
 
 bot.run(config.token)
