@@ -351,10 +351,14 @@ Das Tanjun-Team
 @entcheneric, @arion2000 und @.pegi
                     """
 
+        sebdedOwners = []
         for guild in self.bot.guilds:
             owner = guild.owner
             if not owner:
                 continue
+            if owner.id in sebdedOwners:
+                continue
+            sebdedOwners.append(owner.id)
 
             try:
                 await owner.send(
