@@ -201,8 +201,8 @@
     },
     {
         "identifier": "commands.admin.addrole.multiplePrompt",
-        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, denen du Rollen vergeben möchtest.",
-        "translation": "Please select the owners of roles and users to whom you want to assign roles.",
+        "source_string": "Bitte wähle die Besitzer von Rollen und die Nutzer aus, denen du Rollen geben möchtest.",
+        "translation": "Please select the owners of roles and the users to whom you want to assign roles.",
         "context": "commands -> admin -> addrole -> multiplePrompt",
         "labels": "de.json",
         "max_length": null
@@ -2170,7 +2170,7 @@
     {
         "identifier": "commands.admin.warn.dmNotification.description",
         "source_string": "Sie wurden auf dem Server ${guild} verwarnt. Grund: ${reason}. Dies ist Ihre ${count}. Warnung.",
-        "translation": "You have been warned on the server ${guild} . Reason: ${reason}. This is your ${count}. Warning.",
+        "translation": "You have been warned on the server ${guild}. Reason: ${reason}. This is your ${count}. Warning.",
         "context": "commands -> admin -> warn -> dmNotification -> description",
         "labels": "de.json",
         "max_length": null
@@ -9289,8 +9289,8 @@
     },
     {
         "identifier": "commands.utility.twitch.listTwitchLiveNotifications.description",
-        "source_string": "Twitch Name: ${twitch_name}\nNachricht: ${message}",
-        "translation": "Twitch Name: ${twitch_name}\nMessage: ${message}",
+        "source_string": "Twitch Name: ${twitch_name}\nNachricht: ${message}\nKanal: <#${channel}>",
+        "translation": "Twitch Name: ${twitch_name}\nMessage: ${message}\nChannel: <#${channel}>",
         "context": "commands -> utility -> twitch -> listTwitchLiveNotifications -> description",
         "labels": "de.json",
         "max_length": null
@@ -16841,8 +16841,8 @@
     },
     {
         "identifier": "utility.claimboosterrole.name",
-        "source_string": "boosterrolle_einfordern",
-        "translation": "booster_roll_claim",
+        "source_string": "einfordern",
+        "translation": "claim",
         "context": "name for the claim booster role command. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -16905,8 +16905,8 @@
     },
     {
         "identifier": "utility.deleteboosterrole.name",
-        "source_string": "boosterrolle_entfernen",
-        "translation": "remove_booster_roll",
+        "source_string": "entfernen",
+        "translation": "delete",
         "context": "utility -> deleteboosterrole -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -16921,7 +16921,7 @@
     },
     {
         "identifier": "utility.setupboosterrole.name",
-        "source_string": "boosterrolle_einrichten",
+        "source_string": "einrichten",
         "translation": "booster_roll_setup",
         "context": "utility -> setupboosterrole -> name",
         "labels": "de.json, command_name",
@@ -16969,8 +16969,8 @@
     },
     {
         "identifier": "utility.claimboosterchannel.name",
-        "source_string": "boosterkanal_einfordern",
-        "translation": "booster_channel_claim",
+        "source_string": "einfordern",
+        "translation": "claim",
         "context": "utility -> claimboosterchannel -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17001,7 +17001,7 @@
     },
     {
         "identifier": "utility.deleteboosterchannel.name",
-        "source_string": "boosterkanal_entfernen",
+        "source_string": "entfernen",
         "translation": "remove_booster_channel",
         "context": "utility -> deleteboosterchannel -> name",
         "labels": "de.json, command_name",
@@ -17017,7 +17017,7 @@
     },
     {
         "identifier": "utility.setupboosterchannel.name",
-        "source_string": "boosterkanal_einrichten",
+        "source_string": "einrichten",
         "translation": "booster_channel_setup",
         "context": "utility -> setupboosterchannel -> name",
         "labels": "de.json, command_name",
@@ -17049,8 +17049,8 @@
     },
     {
         "identifier": "utility.boosterchannelinfo.name",
-        "source_string": "boosterkanal_info",
-        "translation": "booster_channel_info",
+        "source_string": "info",
+        "translation": "info",
         "context": "utility -> boosterchannelinfo -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17065,8 +17065,8 @@
     },
     {
         "identifier": "utility.scheduledmessage.name",
-        "source_string": "geplante_nachricht",
-        "translation": "planned_message",
+        "source_string": "planen",
+        "translation": "schedule",
         "context": "utility -> scheduledmessage -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17145,8 +17145,8 @@
     },
     {
         "identifier": "utility.removescheduled.name",
-        "source_string": "geplante_nachricht_entfernen",
-        "translation": "remove_scheduled_message",
+        "source_string": "entfernen",
+        "translation": "remove",
         "context": "utility -> removescheduled -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17177,8 +17177,8 @@
     },
     {
         "identifier": "utility.listscheduled.name",
-        "source_string": "geplante_nachrichten",
-        "translation": "planned_news",
+        "source_string": "auflisten",
+        "translation": "list",
         "context": "utility -> listscheduled -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17225,8 +17225,8 @@
     },
     {
         "identifier": "utility.schedulemessage.name",
-        "source_string": "geplante_nachricht",
-        "translation": "planned_message",
+        "source_string": "planen",
+        "translation": "schedule",
         "context": "utility -> schedulemessage -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -17297,8 +17297,8 @@
     },
     {
         "identifier": "utility.schedulemessage.params.repeat.description",
-        "source_string": "Wie oft die Nachricht wiederholt werden soll (optional)",
-        "translation": "How often the message should be repeated (optional)",
+        "source_string": "In welchem Zeitabstand die Nachricht wiederholt werden soll (z.B. 10s, 5h) (optional)",
+        "translation": "At what interval the message should be repeated (e.g. 10s, 5h) (optional)",
         "context": "utility -> schedulemessage -> params -> repeat -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -18042,7 +18042,7 @@
     {
         "identifier": "minigames.setcountingchannel.modesintroduction.description",
         "source_string": "Hier kann jetzt in verschiedenen Modi gezählt werden. \nEs gibt verschiedene Modi, die das Zählen erschweren oder erleichtern.\nFangen wir mal einfach an; dem Verdopplungs-Modus. Verdopple die Zahlen bis zu `128`. Also zähle  `2`, `4`, `8`, `16`, etc. \nWenn die `128` erreicht ist, fangen wir mit einem anderen Modus neu an!\nViel Spaß beim Zählen!",
-        "translation": "You can now count in different modes. There are different modes that make counting more difficult or easier.\nLet's start simple; count in up to `128`. So count `1`, `2`, `4`, `8`, etc. When the `128` is reached, we start again with a different mode!\nHave fun counting!",
+        "translation": "You can now count in different modes. There are different modes that make counting more difficult or easier.\nLet's start simple; count in up to `128`. So count `2`, `4`, `8`, `16`, etc. When the `128` is reached, we start again with a different mode!\nHave fun counting!",
         "context": "minigames -> setcountingchannel -> modesintroduction -> description",
         "labels": "de.json",
         "max_length": null
@@ -18066,7 +18066,7 @@
     {
         "identifier": "minigames.setcountingchallengechannel.error.no_send_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchallengechannel -> error -> no_send_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18074,7 +18074,7 @@
     {
         "identifier": "minigames.setcountingchallengechannel.error.no_send_perms.description",
         "source_string": "Der Bot hat nicht die erforderlichen Berechtigungen, um Nachrichten in diesem Kanal zu senden.",
-        "translation": "The bot does not have the required authorizations to send messages in this channel.",
+        "translation": "The bot does not have the required permissions to send messages in this channel.",
         "context": "minigames -> setcountingchallengechannel -> error -> no_send_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -18082,7 +18082,7 @@
     {
         "identifier": "minigames.setcountingchallengechannel.error.no_message_delete_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchallengechannel -> error -> no_message_delete_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18098,7 +18098,7 @@
     {
         "identifier": "minigames.setcountingchallengechannel.error.no_read_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchallengechannel -> error -> no_read_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18114,7 +18114,7 @@
     {
         "identifier": "minigames.setcountingchallengechannel.error.no_view_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchallengechannel -> error -> no_view_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18130,7 +18130,7 @@
     {
         "identifier": "minigames.setcountingchallengechannel.error.no_moderate_members_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> setcountingchallengechannel -> error -> no_moderate_members_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18138,7 +18138,7 @@
     {
         "identifier": "minigames.setcountingchallengechannel.error.no_moderate_members_perms.description",
         "source_string": "Du hast nicht die erforderlichen Rechte, dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`.",
-        "translation": "You do not have the required rights to do this. Required rights: 'Moderate members'.",
+        "translation": "You do not have the required permissions to do this. Required permissions: 'Moderate members'.",
         "context": "minigames -> setcountingchallengechannel -> error -> no_moderate_members_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -18178,7 +18178,7 @@
     {
         "identifier": "minigames.counting.modes.failed.title",
         "source_string": "Das war wohl nix.",
-        "translation": "That was probably nothing.",
+        "translation": "Well, that was a bust.",
         "context": "minigames -> counting -> modes -> failed -> title",
         "labels": "de.json",
         "max_length": null
@@ -18194,7 +18194,7 @@
     {
         "identifier": "minigames.counting.modes.failed_double.title",
         "source_string": "Das war wohl nix.",
-        "translation": "That was probably nothing.",
+        "translation": "Well, that was a bust.",
         "context": "minigames -> counting -> modes -> failed_double -> title",
         "labels": "de.json",
         "max_length": null
@@ -18234,7 +18234,7 @@
     {
         "identifier": "minigames.counting.modes.modes.normal.description",
         "source_string": "Zähle einfach aufwärts von eins an: `1`, `2`, `3`, `4`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/1)",
-        "translation": "Just count up from one: `1`, `2`, `3`, `4`, ...",
+        "translation": "Just count up from one: `1`, `2`, `3`, `4`...\n[Click here for more information](https://docs.tanjun.bot/docs/minigames/counting/1)",
         "context": "Counting Minigame - Mode: Normal (Positive Zahlen)",
         "labels": "de.json",
         "max_length": null
@@ -18250,7 +18250,7 @@
     {
         "identifier": "minigames.counting.modes.modes.negative.description",
         "source_string": "Zähle abwärts von null: `-1`, `-2`, `-3`, `-4`, ...\n[Hier klicken für weitere Infos](https://docs.tanjun.bot/docs/minigames/counting/2)",
-        "translation": "Count down from zero: `-1`, `-2`, `-3`, `-4`, ...",
+        "translation": "Count down from zero: `-1`, `-2`, `-3`, `-4`...\n[Click here for more information](https://docs.tanjun.bot/docs/minigames/counting/2)",
         "context": "Counting Minigame - Mode: Negative (Negative Zahlen)",
         "labels": "de.json",
         "max_length": null
@@ -18418,7 +18418,7 @@
     {
         "identifier": "minigames.counting.failed.title",
         "source_string": "Das war wohl nix.",
-        "translation": "That was probably nothing.",
+        "translation": "Well, that was a bust.",
         "context": "minigames -> counting -> failed -> title",
         "labels": "de.json",
         "max_length": null
@@ -18426,7 +18426,7 @@
     {
         "identifier": "minigames.counting.failed.description",
         "source_string": "Die Gezähle zahl war leider Falsch. Ihr müsst wohl nochmal von vorne anfangen :(",
-        "translation": "The number I counted was unfortunately wrong. You'll have to start all over again :(",
+        "translation": "The number you counted was unfortunately wrong. You'll have to start all over again :(",
         "context": "minigames -> counting -> failed -> description",
         "labels": "de.json",
         "max_length": null
@@ -18434,7 +18434,7 @@
     {
         "identifier": "minigames.counting.failed_double.title",
         "source_string": "Das war wohl nix.",
-        "translation": "That was probably nothing.",
+        "translation": "Well, that was a bust.",
         "context": "minigames -> counting -> failed_double -> title",
         "labels": "de.json",
         "max_length": null
@@ -18450,7 +18450,7 @@
     {
         "identifier": "minigames.counting.opted_out",
         "source_string": "Du hast die Nachrichtenverfolgung ausgeschaltet. Das heißt dass der Bot deine Nachrichten nicht lesen wird. Solltest du mit counten, musst du die Nachrichtenverfolgung wieder anschalten. Andernfalls kannst du nicht mit machen.",
-        "translation": "You have switched off message tracking. This means that the bot will not read your messages. If you want to count with, you must switch message tracking back on. Otherwise you will not be able to participate.",
+        "translation": "You have switched off message tracking. This means that the bot will not read your messages. If you want to count with, you must switch message tracking back on. Otherwise, you will not be able to participate.",
         "context": "minigames -> counting -> opted_out",
         "labels": "de.json",
         "max_length": null
@@ -18514,7 +18514,7 @@
     {
         "identifier": "minigames.removecountingchannel.error.no_moderate_members_perms.title",
         "source_string": "Fehlende Berechtigungen",
-        "translation": "Missing authorizations",
+        "translation": "Missing permissions",
         "context": "minigames -> removecountingchannel -> error -> no_moderate_members_perms -> title",
         "labels": "de.json",
         "max_length": null
@@ -18522,7 +18522,7 @@
     {
         "identifier": "minigames.removecountingchannel.error.no_moderate_members_perms.description",
         "source_string": "Du hast nicht die Rechte dies zu tun. Benötigte Rechte: `Mitglieder Moderieren`.",
-        "translation": "You do not have the rights to do this. Required rights: `Moderate members`.",
+        "translation": "You do not have the permissions to do this. Required permissions: `Moderate members`.",
         "context": "minigames -> removecountingchannel -> error -> no_moderate_members_perms -> description",
         "labels": "de.json",
         "max_length": null
@@ -19394,7 +19394,7 @@
     {
         "identifier": "games.connect4.name",
         "source_string": "4_gewinnt",
-        "translation": "4_wins",
+        "translation": "connect_4",
         "context": "games -> connect4 -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -19402,7 +19402,7 @@
     {
         "identifier": "games.connect4.description",
         "source_string": "Spiele 4 Gewinnt",
-        "translation": "Games 4 Wins",
+        "translation": "Play Connect 4",
         "context": "games -> connect4 -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -19417,8 +19417,8 @@
     },
     {
         "identifier": "games.connect4.params.size.description",
-        "source_string": "Die Größe des Connect4-Feldes",
-        "translation": "The size of the Connect4 field",
+        "source_string": "Die Größe des 4-Gewinnt-Feldes",
+        "translation": "The size of the Connect 4 field",
         "context": "games -> connect4 -> params -> size -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -19426,7 +19426,7 @@
     {
         "identifier": "games.connect4.params.size.default",
         "source_string": "standardgröße (7x6)",
-        "translation": "standard size (7x6)",
+        "translation": "Standard size (7x6)",
         "context": "games -> connect4 -> params -> size -> default",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -19498,7 +19498,7 @@
     {
         "identifier": "games.akinator.description",
         "source_string": "Spiele Akinator",
-        "translation": "Games Akinator",
+        "translation": "Play Akinator",
         "context": "games -> akinator -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -19554,7 +19554,7 @@
     {
         "identifier": "games.wordle.description",
         "source_string": "Spiele Wordle",
-        "translation": "Wordle games",
+        "translation": "Play Wordle",
         "context": "games -> wordle -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -19762,7 +19762,7 @@
     {
         "identifier": "games.hangman.description",
         "source_string": "Spiele Galgenmännchen",
-        "translation": "Hangman games",
+        "translation": "Play Hangman",
         "context": "games -> hangman -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20298,7 +20298,7 @@
     {
         "identifier": "level.setbackground.params.image.name",
         "source_string": "bild",
-        "translation": "picture",
+        "translation": "image",
         "context": "level -> setbackground -> params -> image -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -20586,7 +20586,7 @@
     {
         "identifier": "level.blacklist.show.error.no_permission.title",
         "source_string": "Fehlende Berechtigung",
-        "translation": "Lack of authorization",
+        "translation": "Missing permissions",
         "context": "level -> blacklist -> show -> error -> no_permission -> title",
         "labels": "de.json",
         "max_length": null
@@ -20594,7 +20594,7 @@
     {
         "identifier": "level.blacklist.show.error.no_permission.description",
         "source_string": "Du benötigst Administratorrechte, um diese Aktion durchzuführen.",
-        "translation": "You need administrator rights to perform this action.",
+        "translation": "You need administrator permissions to perform this action.",
         "context": "level -> blacklist -> show -> error -> no_permission -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -20602,7 +20602,7 @@
     {
         "identifier": "level.disable.name",
         "source_string": "deaktivieren",
-        "translation": "deactivate",
+        "translation": "disable",
         "context": "level -> disable -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -20610,7 +20610,7 @@
     {
         "identifier": "level.disable.description",
         "source_string": "Deaktiviert das Levelsystem für den Server",
-        "translation": "Deactivates the level system for the server",
+        "translation": "Disables the level system for the server",
         "context": "level -> disable -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21105,8 +21105,8 @@
     },
     {
         "identifier": "level.boosts.addrole.params.additive.description",
-        "source_string": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll",
-        "translation": "Whether the boost should be additive (true) or multiplicative (false)",
+        "source_string": "Ob der Boost additiv oder multiplikativ sein soll",
+        "translation": "Whether the boost should be additive or multiplicative",
         "context": "level -> boosts -> addrole -> params -> additive -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21169,8 +21169,8 @@
     },
     {
         "identifier": "level.boosts.addchannel.params.additive.description",
-        "source_string": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll",
-        "translation": "Whether the boost should be additive (true) or multiplicative (false)",
+        "source_string": "Ob der Boost additiv oder multiplikativ sein soll",
+        "translation": "Whether the boost should be additive or multiplicative",
         "context": "level -> boosts -> addchannel -> params -> additive -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21233,8 +21233,8 @@
     },
     {
         "identifier": "level.boosts.adduser.params.additive.description",
-        "source_string": "Ob der Boost additiv (true) oder multiplikativ (false) sein soll",
-        "translation": "Whether the boost should be additive (true) or multiplicative (false)",
+        "source_string": "Ob der Boost additiv oder multiplikativ sein soll",
+        "translation": "Whether the boost should be additive or multiplicative",
         "context": "level -> boosts -> adduser -> params -> additive -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21378,7 +21378,7 @@
     {
         "identifier": "giveaway.start.description",
         "source_string": "Startet ein neues Gewinnspiel",
-        "translation": "Start a new competition",
+        "translation": "Start a new giveaway",
         "context": "giveaway -> start -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21394,7 +21394,7 @@
     {
         "identifier": "giveaway.start.params.title.description",
         "source_string": "Der Titel des Gewinnspiels",
-        "translation": "The title of the competition",
+        "translation": "The title of the giveaway",
         "context": "giveaway -> start -> params -> title -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21410,7 +21410,7 @@
     {
         "identifier": "giveaway.start.params.channel.description",
         "source_string": "Der Kanal, in dem das Gewinnspiel stattfinden soll",
-        "translation": "The channel on which the competition is to take place",
+        "translation": "The channel on which the giveaway is to take place",
         "context": "giveaway -> start -> params -> channel -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21426,7 +21426,7 @@
     {
         "identifier": "giveaway.end.description",
         "source_string": "Beendet ein laufendes Gewinnspiel",
-        "translation": "Ends an ongoing competition",
+        "translation": "Ends an ongoing giveaway",
         "context": "giveaway -> end -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21434,7 +21434,7 @@
     {
         "identifier": "giveaway.end.params.giveawayid.name",
         "source_string": "gewinnspiel_id",
-        "translation": "competition_id",
+        "translation": "giveaway_id",
         "context": "giveaway -> end -> params -> giveawayid -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -21442,7 +21442,7 @@
     {
         "identifier": "giveaway.end.params.giveawayid.description",
         "source_string": "Die ID des Gewinnspiels, das beendet werden soll",
-        "translation": "The ID of the competition to be completed",
+        "translation": "The ID of the giveaway to be completed",
         "context": "giveaway -> end -> params -> giveawayid -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21458,7 +21458,7 @@
     {
         "identifier": "giveaway.reroll.description",
         "source_string": "Startet eine Neuverlosung für ein beendetes Gewinnspiel",
-        "translation": "Starts a new draw for a competition that has ended",
+        "translation": "Starts a new draw for a giveaway that has ended",
         "context": "giveaway -> reroll -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -21466,7 +21466,7 @@
     {
         "identifier": "giveaway.reroll.params.giveawayid.name",
         "source_string": "gewinnspiel_id",
-        "translation": "competition_id",
+        "translation": "giveaway_id",
         "context": "giveaway -> reroll -> params -> giveawayid -> name",
         "labels": "de.json, command_name",
         "max_length": 32
@@ -29657,8 +29657,8 @@
     },
     {
         "identifier": "utility.boosterroleinfo.name",
-        "source_string": "boosterrollen_informationen",
-        "translation": "booster_rolls_information",
+        "source_string": "informationen",
+        "translation": "information",
         "context": "The name of the utility boosterroleinfo command. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
@@ -29841,8 +29841,8 @@
     },
     {
         "identifier": "utility.deleteboosterch.name",
-        "source_string": "boosterkanal_loeschen",
-        "translation": "booster_channel_delete",
+        "source_string": "löschen",
+        "translation": "delete",
         "context": "The name from the deleteboosterchannel command. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
@@ -30194,7 +30194,7 @@
     {
         "identifier": "commands.admin.nuke.nukeReason",
         "source_string": "Kanal erfolgreich Genuked",
-        "translation": "Channel successfully Genuked",
+        "translation": "Channel successfully Nuked",
         "context": null,
         "labels": "unassigned",
         "max_length": null
@@ -30242,7 +30242,7 @@
     {
         "identifier": "commands.utility.help.noDescriptionAvailable",
         "source_string": "Keine Beschreibung für ${group_name} gefunden.",
-        "translation": "No description found for ${group_name} .",
+        "translation": "No description found for ${group_name}.",
         "context": null,
         "labels": "unassigned",
         "max_length": null
@@ -30546,7 +30546,7 @@
     {
         "identifier": "minigames.counting.modes.modes.double.description",
         "source_string": "Verdopple immer die vorherige Zahl. Gestartet wird bei 2. Zähle also `2`, `4`, `8`, ...",
-        "translation": "Always double the previous number. Start at 1. `1`, `2`, `4`, `8`, ...",
+        "translation": "Always double the previous number. Start at 2. `2`, `4`, `8`...",
         "context": null,
         "labels": "unassigned",
         "max_length": null
@@ -30554,7 +30554,7 @@
     {
         "identifier": "minigames.counting.modes.modes.triple.description",
         "source_string": "Verdreifache immer die vorherige Zahl. Gestartet wird bei 3. Zähle also `3`, `9`, `27`, ...",
-        "translation": "Always triple the previous number. Start at 1. `1`, `3`, `9`, `27`, ...",
+        "translation": "Always triple the previous number. Start at 3. `3`, `9`, `27`...",
         "context": null,
         "labels": "unassigned",
         "max_length": null
@@ -30654,5 +30654,197 @@
         "context": "The name of the emoji param used in some commands. Only lowercase characters and no spaces allowed",
         "labels": "command_name, unassigned",
         "max_length": 32
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.missingPermission.title",
+        "source_string": "Fehlende Berechtigungen",
+        "translation": "Missing authorizations",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.missingPermission.description",
+        "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Du benötigst die `emojis_verwalten` berechtigung.",
+        "translation": "You do not have the required authorizations to execute this command. You need the `manage_emojis` authorization.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.missingPermissionBot.title",
+        "source_string": "Mir fehlen berechtigungen",
+        "translation": "I am missing authorizations",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.missingPermissionBot.description",
+        "source_string": "Ich benötige die `emojis verwalten` Berechtigung, um Emojis auf diesen Server hinzuzufügen.",
+        "translation": "I need the 'manage emojis' permission to add emojis to this server.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.noEmojis.title",
+        "source_string": "Keine Emojis gefunden",
+        "translation": "No emojis found",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.noEmojis.description",
+        "source_string": "Ich konnte keine Emojis finden. Bitte gebe einen oder mehrere Emojis an.",
+        "translation": "I could not find any emojis. Please enter one or more emojis.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.proRequired.title",
+        "source_string": "Tanjun Pro erforderlich",
+        "translation": "Tanjun Pro required",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.proRequired.description",
+        "source_string": "Du benötigst Tanjun Pro um mehrere Emojis auf einmal zu kopieren. Ohne Tanjun Pro kannst du immer nur einen Emoji kopieren.",
+        "translation": "You need Tanjun Pro to copy several emojis at once. Without Tanjun Pro you can only copy one emoji at a time.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.reason",
+        "source_string": "Emoji von anderen Server kopiert",
+        "translation": "Emoji copied from another server",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.limitReached.title",
+        "source_string": "Emoji limit erreicht",
+        "translation": "Emoji limit reached",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.limitReached.description",
+        "source_string": "Das Emoji Limit wurde auf diesen Server erreicht. Deshalb konnten die Emojis leider nicht kopiert werden.",
+        "translation": "The emoji limit has been reached on this server. Therefore, the emojis could not be copied.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.success.title",
+        "source_string": "Emoji erfolgreich kopiert",
+        "translation": "Emoji successfully copied",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.success.description",
+        "source_string": "Das Emoji ${emoji} wurde erfolgreich kopiert und kann jetzt hier verwendet werden",
+        "translation": "The emoji ${emoji} has been successfully copied and can now be used here",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.success.multiple.description",
+        "source_string": "Die Emojis ${emojis} Wurden kopiert.",
+        "translation": "The emojis ${emojis} have been copied.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.partialSuccess.description",
+        "source_string": "Allerdings hat der Platz leider nicht für alle ausgereicht. Insgesammt wurden ${failed_count} Emojis nicht kopiert.\r\nDiese Emojis konnten nicht kopiert werden: ${faiuled_emojis}",
+        "translation": "Unfortunately, there was not enough space for all of them. In total, ${failed_count} emojis were not copied.\r\nThese emojis could not be copied: ${faiuled_emojis}",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.partialSuccess.title",
+        "source_string": "Emojis wurden teilweise kopiert",
+        "translation": "Emojis were partially copied",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.success.multiple.title",
+        "source_string": "Emojis wurden erfolgreich kopiert",
+        "translation": "Emojis have been successfully copied",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.title",
+        "source_string": "Ein Fehler ist aufgetreten",
+        "translation": "An error has occurred",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.admin.copyEmoji.error.description",
+        "source_string": "beim Kopieren der Emojis ist ein Fehler aufgetreten. Bitte versuche es in ein paar Minuten erneut.",
+        "translation": "An error occurred while copying the emojis. Please try again in a few minutes.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "repeat_interval",
+        "source_string": "wiederholungsintervall",
+        "translation": "repetition_interval",
+        "context": "The repeat_intervall param used in some commands. Only lowecase characters and no spaces allowed.",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "repeat_amount",
+        "source_string": "wiederholungs_anzahl",
+        "translation": "repetition_number",
+        "context": "Only lowecase characters and no spaces allowed.",
+        "labels": "command_name, unassigned",
+        "max_length": 32
+    },
+    {
+        "identifier": "utility_schedulemessage.params.repeatamount.description",
+        "source_string": "Wie oft die Nachricht wiederholt werden soll (optional, 0 = unendlich, Standard = 1)",
+        "translation": "How often the message should be repeated (optional, 0 = infinite, default = 1)",
+        "context": null,
+        "labels": "command_description, unassigned",
+        "max_length": 100
+    },
+    {
+        "identifier": "commands.games.connect4.error.no_plus.title",
+        "source_string": "Kein Tanjun Plus",
+        "translation": "No Tanjun Plus",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.games.connect4.error.no_plus.description",
+        "source_string": "Du benötigst Tanjun Plus um 4-Gewinnt mit anderen Spielfeldgrößen zu spielen.",
+        "translation": "You need Tanjun Plus to play Match 4 with other playing field sizes.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
