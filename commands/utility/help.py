@@ -36,7 +36,7 @@ async def help(commandInfo, ctx):
                     if isinstance(group, app_commands.Group):
                         try:
                             group_desc = tanjunLocalizer.localize(
-                                locale, f"{str(group.description)}"
+                                locale, str(group.description).replace('_', '.')
                             )
                             command_text += f"{group_desc}\n\n"
                         except Exception:
@@ -221,8 +221,14 @@ async def help(commandInfo, ctx):
                         if " " not in cmd.parent.qualified_name:
                             options.append(
                                 discord.SelectOption(
-                                    label=cmd.parent.qualified_name,
-                                    description=cmd.parent.description,
+                                    label=tanjunLocalizer.localize(
+                                        commandInfo.locale,
+                                        str(cmd.parent.name).replace('_', '.')
+                                    ),
+                                    description=tanjunLocalizer.localize(
+                                        commandInfo.locale,
+                                        str(cmd.parent.description).replace('_', '.')
+                                    ),
                                     value=cmd.parent.qualified_name,
                                 )
                             )
