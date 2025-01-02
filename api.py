@@ -39,10 +39,10 @@ async def execute_query(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            print(f"Executing query: {query}\nparams: {params}")
+            # print(f"Executing query: {query}\nparams: {params}")
             await cursor.execute(query, params)
             result = await cursor.fetchall()
-            print(f"Result: {result}")
+            # print(f"Result: {result}")
             return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
@@ -67,10 +67,10 @@ async def execute_action(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            print(f"Executing action: {query}\nparams: {params}")
+            # print(f"Executing action: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
-            print(f"Action executed successfully. Rows affected: {cursor.rowcount}")
+            # print(f"Action executed successfully. Rows affected: {cursor.rowcount}")
             return cursor.rowcount
     except Exception as e:
         print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
@@ -87,13 +87,13 @@ async def execute_insert_and_get_id(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            print(f"Executing insert: {query}\nparams: {params}")
+            # print(f"Executing insert: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
-            print("Insert executed successfully. Committing changes.")
+            # print("Insert executed successfully. Committing changes.")
             await cursor.execute("SELECT LAST_INSERT_ID()")
             last_id = await cursor.fetchone()
-            print(f"Last inserted ID: {last_id}")
+            # print(f"Last inserted ID: {last_id}")
             return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
@@ -2676,7 +2676,7 @@ async def create_ticket_message(
         description,
         summary_channel_id,
     )
-    return await execute_action(query, params)
+    return await execute_insert_and_get_id(query, params)
 
 
 async def delete_ticket_message(guild_id: str, ticket_message_id: str):
@@ -2706,7 +2706,7 @@ async def open_ticket(
 ):
     query = "INSERT INTO tickets (guildId, openerId, ticketMessageId, channelId) VALUES (%s, %s, %s, %s)"
     params = (guild_id, opener_id, ticket_message_id, channel_id)
-    return await execute_action(query, params)
+    await execute_action(query, params)
 
 
 async def close_ticket(guild_id: str, ticket_id: str):

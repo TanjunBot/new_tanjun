@@ -69,6 +69,7 @@ async def openTicket(interaction: discord.Interaction):
 
 async def open_ticket_2(interaction: discord.Interaction):
     ticket_id = interaction.data["custom_id"].split(";")[1]
+    print("ticket_id", ticket_id)
     ticket = await get_ticket_messages_by_id(ticket_id)
 
     if not ticket:
@@ -138,13 +139,6 @@ async def open_ticket_2(interaction: discord.Interaction):
         ),
     )
 
-    await open_ticket(
-        guild_id=interaction.guild.id,
-        opened_by=interaction.user.id,
-        ticket_message_id=ticket_id,
-        channel_id=thread.id,
-    )
-
     await thread.send(embed=embed, view=view)
 
     await interaction.followup.send(
@@ -153,4 +147,11 @@ async def open_ticket_2(interaction: discord.Interaction):
             "commands.admin.open_ticket.success.ticketCreated",
         ),
         ephemeral=True,
+    )
+
+    await open_ticket(
+        guild_id=interaction.guild.id,
+        opener_id=interaction.user.id,
+        ticket_message_id=ticket_id,
+        channel_id=thread.id,
     )
