@@ -44,8 +44,28 @@ class EmbedColors:
     red = 0xFF0000
 
 
+class logEmbeds:
+    def __init__(self):
+        self.embeds = {}
+
+    def add_embed(self, guildId: int, embed: discord.Embed):
+        if guildId not in self.embeds:
+            self.embeds[guildId] = []
+        self.embeds[guildId].append(embed)
+
+    def get_embeds(self, guildId: int):
+        return self.embeds.get(guildId, [])
+
+    def get_all_embeds(self):
+        return self.embeds
+
+
+logEmbeds = logEmbeds()
+
+
 async def sendLogEmbeds(bot):
-    global embeds
+    global logEmbeds
+    embeds = logEmbeds.get_all_embeds()
     print("embeds: ", embeds)
     for guildId, ems in embeds.items():
         try:
@@ -564,9 +584,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleCreate.title"),
             description=description,
         )
-        if not str(rule.guild.id) in embeds:
-            embeds[str(rule.guild.id)] = []
-        embeds[str(rule.guild.id)].append(embed)
+        if not str(rule.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(rule.guild.id), [])
+        logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_automod_rule_update(self, rule: discord.AutoModRule):
@@ -778,9 +798,9 @@ class LogsCog(commands.Cog):
         embed.set_footer(
             text=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.footer")
         )
-        if not str(rule.guild.id) in embeds:
-            embeds[str(rule.guild.id)] = []
-        embeds[str(rule.guild.id)].append(embed)
+        if not str(rule.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(rule.guild.id), [])
+        logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_automod_rule_delete(self, rule: discord.AutoModRule):
@@ -989,9 +1009,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        if not str(rule.guild.id) in embeds:
-            embeds[str(rule.guild.id)] = []
-        embeds[str(rule.guild.id)].append(embed)
+        if not str(rule.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(rule.guild.id), [])
+        logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_automod_action(self, execution: discord.AutoModAction):
@@ -1090,9 +1110,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        if not str(execution.guild.id) in embeds:
-            embeds[str(execution.guild.id)] = []
-        embeds[str(execution.guild.id)].append(embed)
+        if not str(execution.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(execution.guild.id), [])
+        logEmbeds.add_embed(str(execution.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel):
@@ -1216,9 +1236,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelDelete.title"),
             description=description,
         )
-        if not str(channel.guild.id) in embeds:
-            embeds[str(channel.guild.id)] = []
-        embeds[str(channel.guild.id)].append(embed)
+        if not str(channel.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(channel.guild.id), [])
+        logEmbeds.add_embed(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: discord.abc.GuildChannel):
@@ -1323,9 +1343,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelCreate.title"),
             description=description,
         )
-        if not str(channel.guild.id) in embeds:
-            embeds[str(channel.guild.id)] = []
-        embeds[str(channel.guild.id)].append(embed)
+        if not str(channel.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(channel.guild.id), [])
+        logEmbeds.add_embed(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_channel_update(
@@ -1663,9 +1683,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        if not str(after.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(after.guild.id), [])
+        logEmbeds.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_update(self, before: discord.Guild, after: discord.Guild):
@@ -2255,9 +2275,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildUpdate.title"),
             description=description,
         )
-        if not str(after.id) in embeds:
-            embeds[str(after.id)] = []
-        embeds[str(after.id)].append(embed)
+        if not str(after.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(after.id), [])
+        logEmbeds.add_embed(str(after.id), embed)
 
     @commands.Cog.listener()
     async def on_invite_create(self, invite: discord.Invite):
@@ -2372,9 +2392,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteCreate.title"),
             description=description,
         )
-        if not str(invite.guild.id) in embeds:
-            embeds[str(invite.guild.id)] = []
-        embeds[str(invite.guild.id)].append(embed)
+        if not str(invite.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(invite.guild.id), [])
+        logEmbeds.add_embed(str(invite.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_invite_delete(self, invite: discord.Invite):
@@ -2484,9 +2504,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteDelete.title"),
             description=description,
         )
-        if not str(invite.guild.id) in embeds:
-            embeds[str(invite.guild.id)] = []
-        embeds[str(invite.guild.id)].append(embed)
+        if not str(invite.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(invite.guild.id), [])
+        logEmbeds.add_embed(str(invite.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -2524,8 +2544,8 @@ class LogsCog(commands.Cog):
             description=description,
         )
         if not str(member.guild.id) in embeds:
-            embeds[str(member.guild.id)] = []
-        embeds[str(member.guild.id)].append(embed)
+            logEmbeds.add_embed(str(member.guild.id), [])
+        logEmbeds.add_embed(str(member.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
@@ -2569,9 +2589,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
-        if not str(member.guild.id) in embeds:
-            embeds[str(member.guild.id)] = []
-        embeds[str(member.guild.id)].append(embed)
+        if not str(member.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(member.guild.id), [])
+        logEmbeds.add_embed(str(member.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
@@ -2753,9 +2773,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        if not str(after.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(after.guild.id), [])
+        logEmbeds.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_user_update(self, before: discord.User, after: discord.User):
@@ -2889,9 +2909,9 @@ class LogsCog(commands.Cog):
                 title=tanjunLocalizer.localize(locale, "logs.userUpdate.title"),
                 description=description,
             )
-            if not str(guild.id) in embeds:
-                embeds[str(guild.id)] = []
-            embeds[str(guild.id)].append(embed)
+            if not str(guild.id) in logEmbeds.get_all_embeds():
+                logEmbeds.add_embed(str(guild.id), [])
+            logEmbeds.add_embed(str(guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_ban(self, user: discord.Member):
@@ -2937,9 +2957,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberBan.title"),
             description=description,
         )
-        if not str(user.guild.id) in embeds:
-            embeds[str(user.guild.id)] = []
-        embeds[str(user.guild.id)].append(embed)
+        if not str(user.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(user.guild.id), [])
+        logEmbeds.add_embed(str(user.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
@@ -2980,9 +3000,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUnban.title"),
             description=description,
         )
-        if not str(guild.id) in embeds:
-            embeds[str(guild.id)] = []
-        embeds[str(guild.id)].append(embed)
+        if not str(guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(guild.id), [])
+        logEmbeds.add_embed(str(guild.id), embed)
 
     @commands.Cog.listener()
     async def on_presence_update(self, before: discord.Member, after: discord.Member):
@@ -3032,9 +3052,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.presenceUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        if not str(after.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(after.guild.id), [])
+        logEmbeds.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
@@ -3200,9 +3220,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageEdit.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        if not str(after.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(after.guild.id), [])
+        logEmbeds.add_embed(str(after.guild.id), embed)
 
         # if embedsChanged:
         #     for i in range(len(before.embeds)):
@@ -3326,14 +3346,13 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageDelete.title"),
             description=description,
         )
-        global embeds
-        if not str(message.guild.id) in embeds:
-            embeds[str(message.guild.id)] = []
-        embeds[str(message.guild.id)].append(embed)
+        if not str(message.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(message.guild.id), [])
+        logEmbeds.add_embed(str(message.guild.id), embed)
         print("added delete embed to embeds.")
         for emb in message.embeds:
-            embeds[str(message.guild.id)].append(emb)
-        print("embeds now: ", embeds)
+            logEmbeds.add_embed(str(message.guild.id), emb)
+        print("embeds now: ", logEmbeds.get_all_embeds())
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
