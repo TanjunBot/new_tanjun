@@ -87,6 +87,7 @@ class LoopCog(commands.Cog):
 
     @tasks.loop(seconds=10)
     async def sendLogEmbeds(self):
+        print("Sending log embeds")
         try:
             await sendLogEmbeds(self.bot)
         except Exception:
