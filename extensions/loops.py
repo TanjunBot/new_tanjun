@@ -175,7 +175,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
             channel = self.bot.get_channel(923337160600477777)
             await channel.send(message)
         except Exception:
-            pass
+            raise
 
     @commands.Cog.listener()
     async def on_ready(self):
