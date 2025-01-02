@@ -47,16 +47,19 @@ class EmbedColors:
 async def sendLogEmbeds(bot):
     global embeds
     for guildId, ems in embeds.items():
-        destination = await get_log_channel(guildId)
-        if destination is None:
-            continue
-        destinationChannel = bot.get_channel(int(destination))
-        if destinationChannel is None:
-            continue
-        for i in range(0, len(ems), 10):
-            chunk = ems[i: i + 10]
-            await destinationChannel.send(embeds=chunk)
-        embeds[guildId] = []
+        try:
+            destination = await get_log_channel(guildId)
+            if destination is None:
+                continue
+            destinationChannel = bot.get_channel(int(destination))
+            if destinationChannel is None:
+                continue
+            for i in range(0, len(ems), 10):
+                chunk = ems[i: i + 10]
+                await destinationChannel.send(embeds=chunk)
+            embeds[guildId] = []
+        except Exception as e:
+            print("Error sending log embeds: ", e)
 
     embeds = {}
 
@@ -364,7 +367,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
-        locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
+        locale = (
+            rule.guild.preferred_locale
+            if hasattr(rule.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         # Basic info
@@ -564,7 +571,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
-        locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
+        locale = (
+            rule.guild.preferred_locale
+            if hasattr(rule.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         updater = None
@@ -774,7 +785,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
-        locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
+        locale = (
+            rule.guild.preferred_locale
+            if hasattr(rule.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         updater = None
@@ -983,7 +998,11 @@ class LogsCog(commands.Cog):
         ):
             return
 
-        locale = execution.guild.preferred_locale if hasattr(execution.guild, "preferred_locale") else "en_US"
+        locale = (
+            execution.guild.preferred_locale
+            if hasattr(execution.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -1078,7 +1097,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
             return
 
-        locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
+        locale = (
+            channel.guild.preferred_locale
+            if hasattr(channel.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         deleter = None
@@ -1200,7 +1223,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
             return
 
-        locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
+        locale = (
+            channel.guild.preferred_locale
+            if hasattr(channel.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
         creator = None
         async for entry in channel.guild.audit_logs(
@@ -1305,7 +1332,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(after.guild.id, str(after.id)):
             return
 
-        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         updater = None
@@ -2236,7 +2267,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in invite.inviter.roles:
                 return
 
-        locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"
+        locale = (
+            invite.guild.preferred_locale
+            if hasattr(invite.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         neverLocale = tanjunLocalizer.localize(
@@ -2349,7 +2384,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in invite.inviter.roles:
                 return
 
-        locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"
+        locale = (
+            invite.guild.preferred_locale
+            if hasattr(invite.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         neverLocale = tanjunLocalizer.localize(
@@ -2457,7 +2496,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in member.roles:
                 return
 
-        locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
+        locale = (
+            member.guild.preferred_locale
+            if hasattr(member.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2492,7 +2535,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in member.roles:
                 return
 
-        locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
+        locale = (
+            member.guild.preferred_locale
+            if hasattr(member.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2534,7 +2581,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in after.roles:
                 return
 
-        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2719,7 +2770,11 @@ class LogsCog(commands.Cog):
                 if blacklistedRole in user.roles:
                     continue
 
-            locale = guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
+            locale = (
+                guild.preferred_locale
+                if hasattr(guild, "preferred_locale")
+                else "en_US"
+            )
             description_parts = []
 
             description_parts.append(
@@ -2846,7 +2901,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in user.roles:
                 return
 
-        locale = user.guild.preferred_locale if hasattr(user.guild, "preferred_locale") else "en_US"
+        locale = (
+            user.guild.preferred_locale
+            if hasattr(user.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2885,7 +2944,9 @@ class LogsCog(commands.Cog):
         if await is_log_user_blacklisted(guild.id, str(user.id)):
             return
 
-        locale = guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
+        locale = (
+            guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2931,7 +2992,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in after.roles:
                 return
 
-        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2982,7 +3047,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in after.author.roles:
                 return
 
-        locale = after.guild.preferred_locale if hasattr(after, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3139,7 +3208,13 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
+        print(
+            "message delete called on Server",
+            message.guild.name,
+            "Checking if log is enabled...",
+        )
         logEnable = message.guild and (await get_log_enable(message.guild.id))[19]
+        print("logEnable Result: ", logEnable)
         if not logEnable:
             return
 
@@ -3154,7 +3229,13 @@ class LogsCog(commands.Cog):
             if blacklistedRole in message.author.roles:
                 return
 
-        locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
+        print("so far so good.")
+
+        locale = (
+            message.guild.preferred_locale
+            if hasattr(message.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3242,7 +3323,7 @@ class LogsCog(commands.Cog):
         if not str(message.guild.id) in embeds:
             embeds[str(message.guild.id)] = []
         embeds[str(message.guild.id)].append(embed)
-
+        print("added delete embed to embeds.")
         for emb in message.embeds:
             embeds[str(message.guild.id)].append(emb)
 
@@ -3265,7 +3346,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in user.roles:
                 return
 
-        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
+        locale = (
+            reaction.guild.preferred_locale
+            if hasattr(reaction.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3309,7 +3394,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in user.roles:
                 return
 
-        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
+        locale = (
+            reaction.guild.preferred_locale
+            if hasattr(reaction.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3340,7 +3429,11 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        locale = role.guild.preferred_locale if hasattr(role.guild, "preferred_locale") else "en_US"
+        locale = (
+            role.guild.preferred_locale
+            if hasattr(role.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3441,7 +3534,11 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        locale = role.guild.preferred_locale if hasattr(role.guild, "preferred_locale") else "en_US"
+        locale = (
+            role.guild.preferred_locale
+            if hasattr(role.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3543,7 +3640,11 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         # Check for changes in role attributes
