@@ -46,6 +46,7 @@ class EmbedColors:
 
 async def sendLogEmbeds(bot):
     global embeds
+    print("embeds: ", embeds)
     for guildId, ems in embeds.items():
         try:
             print("Sending log embeds for guild", guildId)
