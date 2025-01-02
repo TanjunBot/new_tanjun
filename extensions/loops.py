@@ -21,7 +21,7 @@ from commands.utility.claimBoosterChannel import (
 )
 from commands.utility.schedulemessage import send_scheduled_messages
 import asyncio
-from datetime import datetime
+from datetime import time
 from api import check_pool_initialized, get_all_twitch_notification_uuids
 from commands.utility.twitch.twitchApi import getTwitchApi, notify_twitch_online
 
@@ -146,116 +146,8 @@ class LoopCog(commands.Cog):
         except Exception:
             pass
 
-    @tasks.loop(time=datetime.time(hour=2))
+    @tasks.loop(time=[time(hour=2), time(hour=8), time(hour=14), time(hour=20)])
     async def sendPokemonWerbung(self):
-        try:
-            message = """
-👋 Heyo! 👋
-Wir sind ein netter, aktiver und nicer Community-Server, der mit Pokémonfans bereichert ist! Man muss hier aber nicht unbedingt Pokémon gespielt haben oder gar kennen. Inzwischen haben wir uns zu einem relativ "normalen" Community-Server entwickelt, denn wir reden auch über viele andere Themen! Über alle, die uns eben einfallen! <:P_crazy_evoli:905008625892855820>
-**Schau doch mal bei uns vorbei und mach dir selbst ein Bild! Wir würden uns freuen, wenn du joinst :D**
-
-__Wir haben zum Beispiel:__
-<:P_Meowwwwwwww:892120072666120192> | Nette & aktive Community
-🎭 | Selfroles
-🌹 | Keine @-everyone oder @-here Pings
-📨 | Werbemöglichkeiten
-📑 | Guter Support
-<:P_SUPERFUNNYBREAD:867370461931372544> | Fun-Botbefehle
-<:P_heart_boost:861209379998924800> | Viele Vorteile für Booster, Sponsoren & Co.
-<:P_Pikaluv:847828564006010930> | Pokédexeinträge, Umfragen und mehr!
-♥️ | Jede Menge Events & ähnliches Zeugs
-🎁 | Giveaways :D
-🌟 | Specialchats
-<:P_bisasam_euh:870375183444230194> | Und vieles mehr!
-
-Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut gern mal bei uns vorbei!
-
-**➡️ Klick hier zum Joinen! ⬅️**
-<https://discord.gg/D3UVPKseD8>
-            """
-            channel = self.bot.get_channel(923337160600477777)
-            embed = discord.Embed(
-                description=message, color=0xCB33F5, title="🐾Pokémon🐾"
-            )
-            message = await channel.send(embed=embed)
-            await message.publish()
-        except Exception:
-            raise
-
-    @tasks.loop(time=datetime.time(hour=8))
-    async def sendPokemonWerbung2(self):
-        try:
-            message = """
-👋 Heyo! 👋
-Wir sind ein netter, aktiver und nicer Community-Server, der mit Pokémonfans bereichert ist! Man muss hier aber nicht unbedingt Pokémon gespielt haben oder gar kennen. Inzwischen haben wir uns zu einem relativ "normalen" Community-Server entwickelt, denn wir reden auch über viele andere Themen! Über alle, die uns eben einfallen! <:P_crazy_evoli:905008625892855820>
-**Schau doch mal bei uns vorbei und mach dir selbst ein Bild! Wir würden uns freuen, wenn du joinst :D**
-
-__Wir haben zum Beispiel:__
-<:P_Meowwwwwwww:892120072666120192> | Nette & aktive Community
-🎭 | Selfroles
-🌹 | Keine @-everyone oder @-here Pings
-📨 | Werbemöglichkeiten
-📑 | Guter Support
-<:P_SUPERFUNNYBREAD:867370461931372544> | Fun-Botbefehle
-<:P_heart_boost:861209379998924800> | Viele Vorteile für Booster, Sponsoren & Co.
-<:P_Pikaluv:847828564006010930> | Pokédexeinträge, Umfragen und mehr!
-♥️ | Jede Menge Events & ähnliches Zeugs
-🎁 | Giveaways :D
-🌟 | Specialchats
-<:P_bisasam_euh:870375183444230194> | Und vieles mehr!
-
-Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut gern mal bei uns vorbei!
-
-**➡️ Klick hier zum Joinen! ⬅️**
-<https://discord.gg/D3UVPKseD8>
-            """
-            channel = self.bot.get_channel(923337160600477777)
-            embed = discord.Embed(
-                description=message, color=0xCB33F5, title="🐾Pokémon🐾"
-            )
-            message = await channel.send(embed=embed)
-            await message.publish()
-        except Exception:
-            raise
-
-    @tasks.loop(time=datetime.time(hour=14))
-    async def sendPokemonWerbung3(self):
-        try:
-            message = """
-👋 Heyo! 👋
-Wir sind ein netter, aktiver und nicer Community-Server, der mit Pokémonfans bereichert ist! Man muss hier aber nicht unbedingt Pokémon gespielt haben oder gar kennen. Inzwischen haben wir uns zu einem relativ "normalen" Community-Server entwickelt, denn wir reden auch über viele andere Themen! Über alle, die uns eben einfallen! <:P_crazy_evoli:905008625892855820>
-**Schau doch mal bei uns vorbei und mach dir selbst ein Bild! Wir würden uns freuen, wenn du joinst :D**
-
-__Wir haben zum Beispiel:__
-<:P_Meowwwwwwww:892120072666120192> | Nette & aktive Community
-🎭 | Selfroles
-🌹 | Keine @-everyone oder @-here Pings
-📨 | Werbemöglichkeiten
-📑 | Guter Support
-<:P_SUPERFUNNYBREAD:867370461931372544> | Fun-Botbefehle
-<:P_heart_boost:861209379998924800> | Viele Vorteile für Booster, Sponsoren & Co.
-<:P_Pikaluv:847828564006010930> | Pokédexeinträge, Umfragen und mehr!
-♥️ | Jede Menge Events & ähnliches Zeugs
-🎁 | Giveaways :D
-🌟 | Specialchats
-<:P_bisasam_euh:870375183444230194> | Und vieles mehr!
-
-Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut gern mal bei uns vorbei!
-
-**➡️ Klick hier zum Joinen! ⬅️**
-<https://discord.gg/D3UVPKseD8>
-            """
-            channel = self.bot.get_channel(923337160600477777)
-            embed = discord.Embed(
-                description=message, color=0xCB33F5, title="🐾Pokémon🐾"
-            )
-            message = await channel.send(embed=embed)
-            await message.publish()
-        except Exception:
-            raise
-
-    @tasks.loop(time=datetime.time(hour=20))
-    async def sendPokemonWerbung4(self):
         try:
             message = """
 👋 Heyo! 👋
@@ -308,9 +200,6 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
         self.removeExpiredClaimedBoosterChannels.start()
         self.sendScheduledMessages.start()
         self.sendPokemonWerbung.start()
-        self.sendPokemonWerbung2.start()
-        self.sendPokemonWerbung3.start()
-        self.sendPokemonWerbung4.start()
 
 
 async def setup(bot):
