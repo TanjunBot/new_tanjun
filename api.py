@@ -43,7 +43,7 @@ async def execute_query(query, params=None):
             result = await cursor.fetchall()
             return result
     except Exception as e:
-        print(f"An error occurred during query execution: {e}")
+        print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
 
 
 async def execute_action(query, params=None):
@@ -69,7 +69,7 @@ async def execute_action(query, params=None):
             await connection.commit()
             return cursor.rowcount
     except Exception as e:
-        print(f"An error occurred during action execution: {e}")
+        print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
 
 
 async def execute_insert_and_get_id(query, params=None):
@@ -89,7 +89,7 @@ async def execute_insert_and_get_id(query, params=None):
             last_id = await cursor.fetchone()
             return last_id[0] if last_id else None
     except Exception as e:
-        print(f"An error occurred during insert: {e}")
+        print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
 
 
 async def create_tables():
@@ -1553,12 +1553,9 @@ async def add_giveaway(
     INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount)
     VALUES (%s, %s, %s)
     """
-    try:
-        for channel_id, amount in channel_requirements.items():
-            params = (giveawayId, channel_id, amount)
-            await execute_action(query, params)
-    except Exception as e:
-        print(f"An error occurred while adding channel requirements: {e}")
+    for channel_id, amount in channel_requirements.items():
+        params = (giveawayId, channel_id, amount)
+        await execute_action(query, params)
     query = """
     INSERT INTO giveawayRoleRequirement (roleId, giveawayId)
     VALUES (%s, %s)
@@ -2552,12 +2549,8 @@ async def get_reports(guild_id: str, user_id: str = None):
         query += " AND userId = %s"
         params.append(user_id)
 
-    try:
-        result = await execute_query(query, tuple(params))
-        return result
-    except Exception as e:
-        print(f"An error occurred during query execution: {e}")
-        return []
+    result = await execute_query(query, tuple(params))
+    return result if result else []
 
 
 async def get_reports_by_reporter(guild_id: str, reporter_id: str):
