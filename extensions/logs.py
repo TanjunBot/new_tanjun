@@ -53,9 +53,6 @@ class logEmbeds:
             self.embeds[guildId] = []
         self.embeds[guildId].append(embed)
 
-    def get_embeds(self, guildId: int):
-        return self.embeds.get(guildId, [])
-
     def get_all_embeds(self):
         return self.embeds
 
@@ -584,8 +581,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleCreate.title"),
             description=description,
         )
-        if not str(rule.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(rule.guild.id), [])
         logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
@@ -798,8 +793,6 @@ class LogsCog(commands.Cog):
         embed.set_footer(
             text=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.footer")
         )
-        if not str(rule.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(rule.guild.id), [])
         logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
@@ -1009,8 +1002,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        if not str(rule.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(rule.guild.id), [])
         logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
@@ -1110,8 +1101,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        if not str(execution.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(execution.guild.id), [])
         logEmbeds.add_embed(str(execution.guild.id), embed)
 
     @commands.Cog.listener()
@@ -1236,8 +1225,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelDelete.title"),
             description=description,
         )
-        if not str(channel.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(channel.guild.id), [])
         logEmbeds.add_embed(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
@@ -1343,8 +1330,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelCreate.title"),
             description=description,
         )
-        if not str(channel.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(channel.guild.id), [])
         logEmbeds.add_embed(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
@@ -1683,8 +1668,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(after.guild.id), [])
         logEmbeds.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
@@ -2275,8 +2258,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildUpdate.title"),
             description=description,
         )
-        if not str(after.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(after.id), [])
         logEmbeds.add_embed(str(after.id), embed)
 
     @commands.Cog.listener()
@@ -2504,8 +2485,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteDelete.title"),
             description=description,
         )
-        if not str(invite.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(invite.guild.id), [])
         logEmbeds.add_embed(str(invite.guild.id), embed)
 
     @commands.Cog.listener()
@@ -2543,8 +2522,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
-        if not str(member.guild.id) in embeds:
-            logEmbeds.add_embed(str(member.guild.id), [])
         logEmbeds.add_embed(str(member.guild.id), embed)
 
     @commands.Cog.listener()
@@ -2589,8 +2566,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
-        if not str(member.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(member.guild.id), [])
         logEmbeds.add_embed(str(member.guild.id), embed)
 
     @commands.Cog.listener()
@@ -2773,8 +2748,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(after.guild.id), [])
         logEmbeds.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
@@ -2909,8 +2882,6 @@ class LogsCog(commands.Cog):
                 title=tanjunLocalizer.localize(locale, "logs.userUpdate.title"),
                 description=description,
             )
-            if not str(guild.id) in logEmbeds.get_all_embeds():
-                logEmbeds.add_embed(str(guild.id), [])
             logEmbeds.add_embed(str(guild.id), embed)
 
     @commands.Cog.listener()
@@ -2957,8 +2928,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberBan.title"),
             description=description,
         )
-        if not str(user.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(user.guild.id), [])
         logEmbeds.add_embed(str(user.guild.id), embed)
 
     @commands.Cog.listener()
@@ -3000,8 +2969,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUnban.title"),
             description=description,
         )
-        if not str(guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(guild.id), [])
         logEmbeds.add_embed(str(guild.id), embed)
 
     @commands.Cog.listener()
@@ -3052,8 +3019,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.presenceUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(after.guild.id), [])
         logEmbeds.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
@@ -3220,8 +3185,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageEdit.title"),
             description=description,
         )
-        if not str(after.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(after.guild.id), [])
         logEmbeds.add_embed(str(after.guild.id), embed)
 
         # if embedsChanged:
@@ -3346,8 +3309,6 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageDelete.title"),
             description=description,
         )
-        if not str(message.guild.id) in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(message.guild.id), [])
         logEmbeds.add_embed(str(message.guild.id), embed)
         print("added delete embed to embeds.")
         for emb in message.embeds:
