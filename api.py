@@ -1222,18 +1222,6 @@ async def get_level_role(guild_id: str, role_id: str) -> int:
     return result[0][0] if result else None
 
 
-# redefinition of unused 'add_level_role' from line 1119 Flake8(F811)
-'''
-async def add_level_role(guild_id: str, role_id: str, level: int):
-    query = """
-    INSERT INTO levelRole (guild_id, role_id, level)
-    VALUES (%s, %s, %s)
-    """
-    params = (guild_id, role_id, level)
-    await execute_action(query, params)
-'''
-
-
 async def remove_level_role(guild_id: str, role_id: str):
     query = """
     DELETE FROM levelRole
@@ -1241,16 +1229,6 @@ async def remove_level_role(guild_id: str, role_id: str):
     """
     params = (guild_id, role_id)
     await execute_action(query, params)
-
-
-# redefinition of unused 'get_level_roles' from line 1129Flake8(F811)
-"""
-async def get_level_roles(guild_id: str, level: int) -> List[str]:
-    query = "SELECT role_id FROM levelRole WHERE guild_id = %s AND level <= %s"
-    params = (guild_id, level)
-    result = await execute_query(query, params)
-    return [row[0] for row in result]
-"""
 
 
 async def get_all_level_roles(guild_id: str) -> Dict[int, List[str]]:
@@ -2879,13 +2857,13 @@ async def add_dynamicslowmode(
 ):
     query = "INSERT INTO dynamicslowmode (guildId, channelId, messages, per, resetafter) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, channel_id, messages, per, resetafter)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def remove_dynamicslowmode(guild_id: str, channel_id: str):
     query = "DELETE FROM dynamicslowmode WHERE guildId = %s AND channelId = %s"
     params = (guild_id, channel_id)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def get_dynamicslowmode(channel_id: str):
@@ -2900,7 +2878,7 @@ async def add_dynamicslowmode_message(
 ):
     query = "INSERT INTO dynamicslowmode_messages (channelId, messageId, sendTime) VALUES (%s, %s, %s)"
     params = (channel_id, message_id, send_time)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def clear_old_dynamicslowmode_messages(channel_id: str, send_time: datetime):
@@ -2909,7 +2887,7 @@ async def clear_old_dynamicslowmode_messages(channel_id: str, send_time: datetim
         "DELETE FROM dynamicslowmode_messages WHERE channelId = %s AND sendTime < %s"
     )
     params = (channel_id, send_time)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def get_dynamicslowmode_messages(channel_id: str):
@@ -2921,13 +2899,13 @@ async def get_dynamicslowmode_messages(channel_id: str):
 async def cash_slowmode_delay(channel_id: str, slowmode_delay: int):
     query = "UPDATE dynamicslowmode SET cashedSlowmode = %s WHERE channelId = %s"
     params = (slowmode_delay, channel_id)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def remove_cashed_slowmode_delay(channel_id: str):
     query = "UPDATE dynamicslowmode SET cashedSlowmode = NULL WHERE channelId = %s"
     params = (channel_id,)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def get_twitch_online_notification(channel_id: str):
