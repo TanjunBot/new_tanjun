@@ -70,7 +70,7 @@ async def sendLogEmbeds(bot):
     for guildId, ems in embeds.items():
         try:
             print("Sending log embeds for guild", guildId)
-            destination = await get_log_channel(guildId)
+            destination = await get_log_channel(str(guildId))
             print("Destination: ", destination)
             if destination is None:
                 continue

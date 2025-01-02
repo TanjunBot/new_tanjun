@@ -2331,6 +2331,8 @@ async def is_log_user_blacklisted(guild_id: str, user_id: str):
 async def get_log_channel(guild_id: str):
     query = "SELECT channelId FROM logChannel WHERE guildId = %s"
     params = (guild_id,)
+    print("query: ", query)
+    print("params: ", params)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
