@@ -2238,7 +2238,7 @@ async def get_claimed_booster_role(user_id: str = None, guild_id: str = None):
 async def set_log_channel(guild_id: str, channel_id: str):
     query = "INSERT INTO logChannel (guildId, channelId) VALUES (%s, %s)"
     params = (guild_id, channel_id)
-    if not await get_log_enable(guild_id):
+    if len(await get_log_enable(guild_id)) == 35:
         query = "REPLACE INTO logEnables (guildId) VALUES (%s)"
         params = guild_id
     await execute_action(query, params)
