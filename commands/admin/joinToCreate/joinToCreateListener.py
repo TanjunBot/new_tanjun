@@ -7,15 +7,20 @@ joinToCreateChannels = []
 
 
 async def memberJoin(voiceState: discord.VoiceState, member: discord.Member):
+    print("memberJoin")
     if not voiceState.channel:
         return
 
     masterChannel = await get_join_to_create_channel(voiceState.channel.id)
 
+    print("masterChannel", masterChannel)
+
     if not masterChannel:
         return
 
     newChannel = await voiceState.channel.clone(name=f"{member.name}")
+
+    print("newChannel", newChannel)
 
     overwrites = {
         member: discord.PermissionOverwrite(view_channel=True, manage_channels=True)
