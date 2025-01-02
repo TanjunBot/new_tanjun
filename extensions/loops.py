@@ -21,9 +21,10 @@ from commands.utility.claimBoosterChannel import (
 )
 from commands.utility.schedulemessage import send_scheduled_messages
 import asyncio
-
+from datetime import datetime
 from api import check_pool_initialized, get_all_twitch_notification_uuids
 from commands.utility.twitch.twitchApi import getTwitchApi, notify_twitch_online
+
 
 embeds = {}
 
@@ -145,7 +146,7 @@ class LoopCog(commands.Cog):
         except Exception:
             pass
 
-    @tasks.loop(time=discord.utils.utc_dt.time(hour=2))
+    @tasks.loop(time=datetime.time(hour=2))
     async def sendPokemonWerbung(self):
         try:
             message = """
@@ -181,7 +182,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
         except Exception:
             raise
 
-    @tasks.loop(time=discord.utils.utc_dt.time(hour=8))
+    @tasks.loop(time=datetime.time(hour=8))
     async def sendPokemonWerbung2(self):
         try:
             message = """
@@ -217,7 +218,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
         except Exception:
             raise
 
-    @tasks.loop(time=discord.utils.utc_dt.time(hour=14))
+    @tasks.loop(time=datetime.time(hour=14))
     async def sendPokemonWerbung3(self):
         try:
             message = """
@@ -253,7 +254,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
         except Exception:
             raise
 
-    @tasks.loop(time=discord.utils.utc_dt.time(hour=20))
+    @tasks.loop(time=datetime.time(hour=20))
     async def sendPokemonWerbung4(self):
         try:
             message = """
