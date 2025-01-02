@@ -48,16 +48,21 @@ async def sendLogEmbeds(bot):
     global embeds
     for guildId, ems in embeds.items():
         try:
+            print("Sending log embeds for guild", guildId)
             destination = await get_log_channel(guildId)
+            print("Destination: ", destination)
             if destination is None:
                 continue
             destinationChannel = bot.get_channel(int(destination))
+            print("Destination Channel: ", destinationChannel)
             if destinationChannel is None:
                 continue
             for i in range(0, len(ems), 10):
                 chunk = ems[i: i + 10]
+                print("Sending chunk of embeds to destination channel")
                 await destinationChannel.send(embeds=chunk)
             embeds[guildId] = []
+            print("Successfully sent log embeds for guild", guildId)
         except Exception as e:
             print("Error sending log embeds: ", e)
 
