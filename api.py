@@ -2758,9 +2758,9 @@ async def get_ticket_by_channel_id(guild_id: str, channel_id: str):
     return result[0] if result else None
 
 
-async def get_join_to_create_channel(guild_id: str):
-    query = "SELECT * FROM joinToCreateChannel WHERE guildId = %s"
-    params = (guild_id,)
+async def get_join_to_create_channel(channel_id: str):
+    query = "SELECT * FROM joinToCreateChannel WHERE channelId = %s"
+    params = (channel_id,)
     return await execute_query(query, params)
 
 
