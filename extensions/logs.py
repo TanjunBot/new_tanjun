@@ -3326,6 +3326,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageDelete.title"),
             description=description,
         )
+        global embeds
         if not str(message.guild.id) in embeds:
             embeds[str(message.guild.id)] = []
         embeds[str(message.guild.id)].append(embed)
