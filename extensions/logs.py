@@ -3333,6 +3333,7 @@ class LogsCog(commands.Cog):
         print("added delete embed to embeds.")
         for emb in message.embeds:
             embeds[str(message.guild.id)].append(emb)
+        print("embeds now: ", embeds)
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
