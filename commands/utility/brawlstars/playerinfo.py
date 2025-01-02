@@ -87,8 +87,8 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
         "commands.utility.brawlstars.playerinfo.description.expLevel",
         expLevel=playerInfo["expLevel"],
     )
-    description += "\n"
     if "club" in playerInfo and "tag" in playerInfo["club"]:
+        description += "\n"
         description += tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.brawlstars.playerinfo.description.club",
