@@ -56,6 +56,9 @@ class logEmbeds:
     def get_all_embeds(self):
         return self.embeds
 
+    def clearEmbeds(self):
+        self.embeds = {}
+
 
 logEmbeds = logEmbeds()
 
@@ -63,28 +66,20 @@ logEmbeds = logEmbeds()
 async def sendLogEmbeds(bot):
     global logEmbeds
     embeds = logEmbeds.get_all_embeds()
-    print("embeds: ", embeds)
     for guildId, ems in embeds.items():
         try:
-            print("Sending log embeds for guild", guildId)
             destination = await get_log_channel(str(guildId))
-            print("Destination: ", destination)
             if destination is None:
                 continue
             destinationChannel = bot.get_channel(int(destination))
-            print("Destination Channel: ", destinationChannel)
             if destinationChannel is None:
                 continue
             for i in range(0, len(ems), 10):
                 chunk = ems[i: i + 10]
-                print("Sending chunk of embeds to destination channel")
                 await destinationChannel.send(embeds=chunk)
-            embeds[guildId] = []
-            print("Successfully sent log embeds for guild", guildId)
-        except Exception as e:
-            print("Error sending log embeds: ", e)
-
-    embeds = {}
+        except Exception:
+            pass
+    logEmbeds.clearEmbeds()
 
 
 class ChannelBlacklistCommands(discord.app_commands.Group):
@@ -3197,13 +3192,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
-        print(
-            "message delete called on Server",
-            message.guild.name,
-            "Checking if log is enabled...",
-        )
         logEnable = message.guild and (await get_log_enable(message.guild.id))[19]
-        print("logEnable Result: ", logEnable)
         if not logEnable:
             return
 
@@ -3217,8 +3206,6 @@ class LogsCog(commands.Cog):
         for blacklistedRole in blacklistedRoles:
             if blacklistedRole in message.author.roles:
                 return
-
-        print("so far so good.")
 
         locale = (
             message.guild.preferred_locale
@@ -3310,10 +3297,8 @@ class LogsCog(commands.Cog):
             description=description,
         )
         logEmbeds.add_embed(str(message.guild.id), embed)
-        print("added delete embed to embeds.")
         for emb in message.embeds:
             logEmbeds.add_embed(str(message.guild.id), emb)
-        print("embeds now: ", logEmbeds.get_all_embeds())
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
@@ -3359,9 +3344,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionAdd.title"),
             description=description,
         )
-        if not str(reaction.guild.id) in embeds:
-            embeds[str(reaction.guild.id)] = []
-        embeds[str(reaction.guild.id)].append(embed)
+        logEmbeds.add_embed(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
@@ -3407,9 +3390,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionRemove.title"),
             description=description,
         )
-        if not str(reaction.guild.id) in embeds:
-            embeds[str(reaction.guild.id)] = []
-        embeds[str(reaction.guild.id)].append(embed)
+        logEmbeds.add_embed(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_create(self, role: discord.Role):
@@ -3512,9 +3493,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleCreate.title"),
             description=description,
         )
-        if not str(role.guild.id) in embeds:
-            embeds[str(role.guild.id)] = []
-        embeds[str(role.guild.id)].append(embed)
+        logEmbeds.add_embed(str(role.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role: discord.Role):
@@ -3618,9 +3597,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleDelete.title"),
             description=description,
         )
-        if not str(role.guild.id) in embeds:
-            embeds[str(role.guild.id)] = []
-        embeds[str(role.guild.id)].append(embed)
+        logEmbeds.add_embed(str(role.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_update(self, before: discord.Role, after: discord.Role):
@@ -3787,17 +3764,14 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        logEmbeds.add_embed(str(after.guild.id), embed)
 
     @tasks.loop(seconds=10)
     async def sendLogEmbeds(self):
-        print("Sending log embeds")
         try:
             await sendLogEmbeds(self.bot)
         except Exception:
-            raise
+            pass
 
     @commands.Cog.listener()
     async def on_ready(self):
