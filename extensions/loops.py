@@ -90,7 +90,7 @@ class LoopCog(commands.Cog):
         try:
             await sendLogEmbeds(self.bot)
         except Exception:
-            pass
+            raise
 
     @tasks.loop(seconds=10)
     async def removeExpiredClaimedBoosterRoles(self):
