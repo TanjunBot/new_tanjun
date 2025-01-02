@@ -72,7 +72,7 @@ async def open_ticket_2(interaction: discord.Interaction):
     ticket = await get_ticket_messages_by_id(ticket_id)
 
     if not ticket:
-        await interaction.reply(
+        await interaction.response.send_message(
             tanjunLocalizer.localize(
                 interaction.locale,
                 "commands.admin.open_ticket.error.ticketNotFound",
@@ -87,7 +87,7 @@ async def open_ticket_2(interaction: discord.Interaction):
     channel = interaction.channel
 
     if not channel.permissions_for(interaction.guild.me).create_private_threads:
-        await interaction.reply(
+        await interaction.response.send_message(
             tanjunLocalizer.localize(
                 interaction.locale,
                 "commands.admin.open_ticket.error.channelMissingPermission",
