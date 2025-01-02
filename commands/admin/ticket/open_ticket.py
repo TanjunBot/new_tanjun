@@ -52,7 +52,7 @@ async def openTicket(interaction: discord.Interaction):
                 item.disabled = True
             await self.message.edit(view=self)
 
-    if not await check_if_opted_out(interaction.user.id):
+    if await check_if_opted_out(interaction.user.id):
         view = optedOutView()
         await interaction.followup.send(
             tanjunLocalizer.localize(
