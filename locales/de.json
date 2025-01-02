@@ -3809,8 +3809,8 @@
     },
     {
         "identifier": "commands.admin.jointocreatechannel.success.description",
-        "source_string": "Der Kanal wurde erfolgreich festgelegt. Kanäle werden jetzt erstellt, wenn ein Mitglied den Server betritt.",
-        "translation": "Der Kanal wurde erfolgreich festgelegt. Kanäle werden jetzt erstellt, wenn ein Mitglied den Server betritt.",
+        "source_string": "Der Kanal wurde erfolgreich festgelegt. Kanäle werden jetzt erstellt, wenn ein Mitglied den Kanal betritt.",
+        "translation": "Der Kanal wurde erfolgreich festgelegt. Kanäle werden jetzt erstellt, wenn ein Mitglied den Kanal betritt.",
         "context": "commands -> admin -> jointocreatechannel -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -26081,8 +26081,8 @@
     },
     {
         "identifier": "channel.ds.add.params.per.description",
-        "source_string": "Wie viele Nachrichten pro Sekunde gesendet werden dürfen",
-        "translation": "Wie viele Nachrichten pro Sekunde gesendet werden dürfen",
+        "source_string": "1 Sekunde Slow-Modus pro ... Nachrichten in den letzten n Sekunden",
+        "translation": "1 Sekunde Slow-Modus pro ... Nachrichten in den letzten n Sekunden",
         "context": "channel -> ds -> add -> params -> per -> description",
         "labels": "de.json, command_description",
         "max_length": 100
@@ -30843,6 +30843,14 @@
         "identifier": "commands.games.connect4.error.no_plus.description",
         "source_string": "Du benötigst Tanjun Plus um 4-Gewinnt mit anderen Spielfeldgrößen zu spielen.",
         "translation": "Du benötigst Tanjun Plus um 4-Gewinnt mit anderen Spielfeldgrößen zu spielen.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "logs.permissions.add_reactions",
+        "source_string": "Reaktionen hinzufügen",
+        "translation": "Reaktionen hinzufügen",
         "context": null,
         "labels": "unassigned",
         "max_length": null
