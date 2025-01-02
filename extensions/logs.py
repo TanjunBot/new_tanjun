@@ -2,7 +2,7 @@
 # from typing import List
 # import os
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands
 import utility
 from api import (
@@ -3830,6 +3830,14 @@ class LogsCog(commands.Cog):
             embeds[str(after.guild.id)] = []
         embeds[str(after.guild.id)].append(embed)
 
+    @tasks.loop(seconds=10)
+    async def sendLogEmbeds(self):
+        print("Sending log embeds")
+        try:
+            await sendLogEmbeds(self.bot)
+        except Exception:
+            raise
+
     @commands.Cog.listener()
     async def on_ready(self):
         logcmds = LogsCommands(
@@ -3852,6 +3860,8 @@ class LogsCog(commands.Cog):
         logcmds.add_command(userBlacklist)
         logcmds.add_command(roleBlacklist)
         self.bot.tree.add_command(logcmds)
+
+        self.sendLogEmbeds.start()
 
 
 async def setup(bot):

@@ -13,7 +13,6 @@ from loops.level import addXpToVoiceUsers
 from ai.refillToken import refillAiToken
 from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
-from extensions.logs import sendLogEmbeds
 from commands.utility.claimBoosterRole import remove_claimed_booster_roles_that_are_expired
 from commands.utility.claimBoosterChannel import remove_claimed_booster_channels_that_are_expired
 from commands.utility.schedulemessage import send_scheduled_messages
@@ -86,14 +85,6 @@ class LoopCog(commands.Cog):
             pass
 
     @tasks.loop(seconds=10)
-    async def sendLogEmbeds(self):
-        print("Sending log embeds")
-        try:
-            await sendLogEmbeds(self.bot)
-        except Exception:
-            raise
-
-    @tasks.loop(seconds=10)
     async def removeExpiredClaimedBoosterRoles(self):
         try:
             await remove_claimed_booster_roles_that_are_expired(self.bot)
@@ -164,7 +155,6 @@ class LoopCog(commands.Cog):
         self.refillAiTokenLoop.start()
         self.pingServerLoop.start()
         self.backupDatabaseLoop.start()
-        self.sendLogEmbeds.start()
         self.removeExpiredClaimedBoosterRoles.start()
         self.removeExpiredClaimedBoosterChannels.start()
         self.sendScheduledMessages.start()
