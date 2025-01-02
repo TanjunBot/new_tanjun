@@ -1,7 +1,7 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from api import get_ticket_messages_by_id, check_if_opted_out
+from api import get_ticket_messages_by_id, check_if_opted_out, open_ticket
 
 
 async def openTicket(interaction: discord.Interaction):
@@ -136,6 +136,13 @@ async def open_ticket_2(interaction: discord.Interaction):
             interaction.locale,
             "commands.admin.open_ticket.success.ticketCreated",
         ),
+    )
+
+    await open_ticket(
+        guild_id=interaction.guild.id,
+        opened_by=interaction.user.id,
+        ticket_message_id=ticket_id,
+        channel_id=thread.id,
     )
 
     await thread.send(embed=embed, view=view)
