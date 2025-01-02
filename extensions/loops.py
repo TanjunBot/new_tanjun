@@ -194,6 +194,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
         self.removeExpiredClaimedBoosterRoles.start()
         self.removeExpiredClaimedBoosterChannels.start()
         self.sendScheduledMessages.start()
+        self.sendPokemonWerbung.start()
 
 
 async def setup(bot):
