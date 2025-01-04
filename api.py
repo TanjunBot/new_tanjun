@@ -2923,15 +2923,17 @@ async def set_twitch_online_notification(
     twitch_name: str,
     notification_message: str,
 ):
+    print("adding twitch online notification")
     query = "INSERT INTO twitchOnlineNotification (guildId, channelId, twitchUuid, twitchName, notificationMessage) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, channel_id, twitch_uuid, twitch_name, notification_message)
-    await execute_query(query, params)
+    await execute_action(query, params)
+    print("added twitch online notification")
 
 
 async def remove_twitch_online_notification(id: str):
     query = "DELETE FROM twitchOnlineNotification WHERE id = %s"
     params = (id,)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def get_twitch_online_notification_by_twitch_uuid(twitch_uuid: str):
