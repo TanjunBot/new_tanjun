@@ -9,6 +9,7 @@ async def help(commandInfo, ctx):
     class HelpSelect(discord.ui.Select):
 
         options = []
+        cash = set()
 
         def __init__(self, client, options):
             self.client = client
@@ -21,12 +22,29 @@ async def help(commandInfo, ctx):
                 options=options,
             )
 
+        @classmethod
+        def get_locale(self, key, locale, **kwargs):
+            key = key.replace("_", ".")
+            # Check if the key itself is in the cache
+            if key in self.cash:
+                return key
+
+            # If not found, get the localized version
+            localized = tanjunLocalizer.localize(locale, key, **kwargs)
+            self.cash.add(localized)
+            return localized
+
         async def callback(self, interaction):
             texts = [""]
             current_index = 0
             total_length = 0
             locale = interaction.locale
-            char_limit = 3500
+            char_limit = 750
+
+            group_name_locale = self.get_locale(
+                str(self.values[0]).replace("_", "."),
+                locale,
+            )
 
             for group in interaction.client.tree.walk_commands():
                 if group.name == self.values[0]:
@@ -35,52 +53,57 @@ async def help(commandInfo, ctx):
                     # Handle command group
                     if isinstance(group, app_commands.Group):
                         try:
-                            group_desc = tanjunLocalizer.localize(
-                                locale, str(group.description).replace('_', '.')
+                            group_desc = self.get_locale(
+                                group.description,
+                                locale,
                             )
                             command_text += f"{group_desc}\n\n"
                         except Exception:
-                            command_text += (
-                                tanjunLocalizer.localize(
-                                    commandInfo.locale,
-                                    "commands.utility.help.noDescriptionAvailable",
-                                    group_name=group.name,
-                                )
+                            command_text += self.get_locale(
+                                "commands.utility.help.noDescriptionAvailable",
+                                commandInfo.locale,
+                                group_name=group.name,
                             )
 
                         # Process each subcommand
                         for cmd in group.commands:
+                            cmd_name_locale = self.get_locale(
+                                cmd.name,
+                                locale,
+                            )
                             # Check if the command is a subcommand group
                             if isinstance(cmd, app_commands.Group):
-                                command_text += f"### /{tanjunLocalizer.localize(locale, str(group.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))}\n"
+                                command_text += (
+                                    f"### /{group_name_locale} {cmd_name_locale}\n"
+                                )
                                 try:
-                                    cmd_desc = tanjunLocalizer.localize(
+                                    cmd_desc = self.get_locale(
+                                        cmd.description,
                                         locale,
-                                        f"{str(cmd.description).replace('_', '.')}",
                                     )
                                     command_text += f"{cmd_desc}\n\n"
                                 except Exception:
-                                    command_text += (
-                                        tanjunLocalizer.localize(
-                                            commandInfo.locale,
-                                            "commands.utility.help.noDescriptionAvailable",
-                                            group_name=cmd.name,
-                                        )
+                                    command_text += tanjunLocalizer.localize(
+                                        commandInfo.locale,
+                                        "commands.utility.help.noDescriptionAvailable",
+                                        group_name=cmd.name,
                                     )
 
-                                # Process subcommands within the subcommand group
                                 for subcmd in cmd.commands:
-                                    command_text += f"### /{tanjunLocalizer.localize(locale, str(group.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(subcmd.name).replace('_', '.'))}\n"
+                                    subcmd_name_locale = self.get_locale(
+                                        subcmd.name,
+                                        locale,
+                                    )
+                                    command_text += f"### /{group_name_locale} {cmd_name_locale} {subcmd_name_locale}\n"
                                     try:
-                                        subcmd_desc = tanjunLocalizer.localize(
+                                        subcmd_desc = self.get_locale(
+                                            subcmd.description,
                                             locale,
-                                            f"{str(subcmd.description).replace('_', '.')}",
                                         )
                                         command_text += f"{subcmd_desc}\n\n"
                                     except Exception:
                                         command_text += "\n"
 
-                                    # Process parameters for subcommands
                                     if (
                                         hasattr(subcmd, "parameters")
                                         and subcmd.parameters
@@ -91,13 +114,13 @@ async def help(commandInfo, ctx):
                                         )
                                         for param in subcmd.parameters:
                                             try:
-                                                param_name = tanjunLocalizer.localize(
+                                                param_name = self.get_locale(
+                                                    param.name,
                                                     locale,
-                                                    f"{param.name.replace('_', '.')}",
                                                 )
-                                                param_desc = tanjunLocalizer.localize(
+                                                param_desc = self.get_locale(
+                                                    param.description,
                                                     locale,
-                                                    f"{param.description.replace('_', '.')}",
                                                 )
                                                 command_text += f"- **{param_name}**: {param_desc}\n"
                                             except Exception:
@@ -118,12 +141,11 @@ async def help(commandInfo, ctx):
                                         command_text = ""
                                         total_length = len(texts[current_index])
                             else:
-                                # Original code for regular commands
-                                command_text += f"### /{tanjunLocalizer.localize(locale, str(group.name).replace('_', '.'))} {tanjunLocalizer.localize(locale, str(cmd.name).replace('_', '.'))}\n"
+                                command_text += f"### /{self.get_locale(str(group.name).replace('_', '.'), locale)} {self.get_locale(str(cmd.name).replace('_', '.'), locale)}\n"
                                 try:
-                                    cmd_desc = tanjunLocalizer.localize(
+                                    cmd_desc = self.get_locale(
+                                        cmd.description,
                                         locale,
-                                        f"{str(cmd.description).replace('_', '.')}",
                                     )
                                     command_text += f"{cmd_desc}\n\n"
                                 except Exception:
@@ -138,13 +160,13 @@ async def help(commandInfo, ctx):
                                     command_text += "**Parameters:**\n"
                                     for param in cmd.parameters:
                                         try:
-                                            param_name = tanjunLocalizer.localize(
+                                            param_name = self.get_locale(
+                                                param.name,
                                                 locale,
-                                                f"{param.name.replace('_', '.')}",
                                             )
-                                            param_desc = tanjunLocalizer.localize(
+                                            param_desc = self.get_locale(
+                                                param.description,
                                                 locale,
-                                                f"{param.description.replace('_', '.')}",
                                             )
                                             command_text += (
                                                 f"- **{param_name}**: {param_desc}\n"
@@ -184,7 +206,7 @@ async def help(commandInfo, ctx):
                             title=tanjunLocalizer.localize(
                                 commandInfo.locale,
                                 "commands.utility.help.title",
-                                group_name=self.values[0],
+                                group_name=group_name_locale,
                                 page=i,
                                 total_pages=len(texts),
                             ),
@@ -196,7 +218,7 @@ async def help(commandInfo, ctx):
                             title=tanjunLocalizer.localize(
                                 commandInfo.locale,
                                 "commands.utility.help.titleNoPages",
-                                group_name=self.values[0],
+                                group_name=group_name_locale,
                             ),
                             description=text,
                             color=0xCB33F5,
@@ -223,11 +245,11 @@ async def help(commandInfo, ctx):
                                 discord.SelectOption(
                                     label=tanjunLocalizer.localize(
                                         commandInfo.locale,
-                                        str(cmd.parent.name).replace('_', '.')
+                                        str(cmd.parent.name).replace("_", "."),
                                     ),
                                     description=tanjunLocalizer.localize(
                                         commandInfo.locale,
-                                        str(cmd.parent.description).replace('_', '.')
+                                        str(cmd.parent.description).replace("_", "."),
                                     ),
                                     value=cmd.parent.qualified_name,
                                 )
