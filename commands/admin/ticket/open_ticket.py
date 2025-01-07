@@ -1,7 +1,7 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from api import get_ticket_messages_by_id, check_if_opted_out
+from api import get_ticket_messages_by_id, check_if_opted_out, open_ticket
 
 
 async def openTicket(interaction: discord.Interaction):
@@ -69,6 +69,7 @@ async def openTicket(interaction: discord.Interaction):
 
 async def open_ticket_2(interaction: discord.Interaction):
     ticket_id = interaction.data["custom_id"].split(";")[1]
+    print("ticket_id", ticket_id)
     ticket = await get_ticket_messages_by_id(ticket_id)
 
     if not ticket:
@@ -146,4 +147,11 @@ async def open_ticket_2(interaction: discord.Interaction):
             "commands.admin.open_ticket.success.ticketCreated",
         ),
         ephemeral=True,
+    )
+
+    await open_ticket(
+        guild_id=interaction.guild.id,
+        opener_id=interaction.user.id,
+        ticket_message_id=ticket_id,
+        channel_id=thread.id,
     )

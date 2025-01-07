@@ -192,6 +192,7 @@ async def generate_summary_html(
             max-height: 80vh;
             display: flex;
             flex-direction: column;
+            min-height: 78.2367256453vh;
         }
 
         .search-bar {

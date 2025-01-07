@@ -2,7 +2,7 @@
 # from typing import List
 # import os
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands
 import utility
 from api import (
@@ -44,21 +44,42 @@ class EmbedColors:
     red = 0xFF0000
 
 
-async def sendLogEmbeds(bot):
-    global embeds
-    for guildId, ems in embeds.items():
-        destination = await get_log_channel(guildId)
-        if destination is None:
-            continue
-        destinationChannel = bot.get_channel(int(destination))
-        if destinationChannel is None:
-            continue
-        for i in range(0, len(ems), 10):
-            chunk = ems[i: i + 10]
-            await destinationChannel.send(embeds=chunk)
-        embeds[guildId] = []
+class logEmbeds:
+    def __init__(self):
+        self.embeds = {}
 
-    embeds = {}
+    def add_embed(self, guildId: int, embed: discord.Embed):
+        if guildId not in self.embeds:
+            self.embeds[guildId] = []
+        self.embeds[guildId].append(embed)
+
+    def get_all_embeds(self):
+        return self.embeds
+
+    def clearEmbeds(self):
+        self.embeds = {}
+
+
+logEmbeds = logEmbeds()
+
+
+async def sendLogEmbeds(bot):
+    global logEmbeds
+    embeds = logEmbeds.get_all_embeds()
+    for guildId, ems in embeds.items():
+        try:
+            destination = await get_log_channel(str(guildId))
+            if destination is None:
+                continue
+            destinationChannel = bot.get_channel(int(destination))
+            if destinationChannel is None:
+                continue
+            for i in range(0, len(ems), 10):
+                chunk = ems[i: i + 10]
+                await destinationChannel.send(embeds=chunk)
+        except Exception:
+            pass
+    logEmbeds.clearEmbeds()
 
 
 class ChannelBlacklistCommands(discord.app_commands.Group):
@@ -364,7 +385,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
-        locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
+        locale = (
+            rule.guild.preferred_locale
+            if hasattr(rule.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         # Basic info
@@ -551,9 +576,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleCreate.title"),
             description=description,
         )
-        if not str(rule.guild.id) in embeds:
-            embeds[str(rule.guild.id)] = []
-        embeds[str(rule.guild.id)].append(embed)
+        logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_automod_rule_update(self, rule: discord.AutoModRule):
@@ -564,7 +587,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
-        locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
+        locale = (
+            rule.guild.preferred_locale
+            if hasattr(rule.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         updater = None
@@ -761,9 +788,7 @@ class LogsCog(commands.Cog):
         embed.set_footer(
             text=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.footer")
         )
-        if not str(rule.guild.id) in embeds:
-            embeds[str(rule.guild.id)] = []
-        embeds[str(rule.guild.id)].append(embed)
+        logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_automod_rule_delete(self, rule: discord.AutoModRule):
@@ -774,7 +799,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
-        locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
+        locale = (
+            rule.guild.preferred_locale
+            if hasattr(rule.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         updater = None
@@ -968,9 +997,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        if not str(rule.guild.id) in embeds:
-            embeds[str(rule.guild.id)] = []
-        embeds[str(rule.guild.id)].append(embed)
+        logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_automod_action(self, execution: discord.AutoModAction):
@@ -983,7 +1010,11 @@ class LogsCog(commands.Cog):
         ):
             return
 
-        locale = execution.guild.preferred_locale if hasattr(execution.guild, "preferred_locale") else "en_US"
+        locale = (
+            execution.guild.preferred_locale
+            if hasattr(execution.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -1065,9 +1096,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        if not str(execution.guild.id) in embeds:
-            embeds[str(execution.guild.id)] = []
-        embeds[str(execution.guild.id)].append(embed)
+        logEmbeds.add_embed(str(execution.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel):
@@ -1078,7 +1107,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
             return
 
-        locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
+        locale = (
+            channel.guild.preferred_locale
+            if hasattr(channel.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         deleter = None
@@ -1187,9 +1220,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelDelete.title"),
             description=description,
         )
-        if not str(channel.guild.id) in embeds:
-            embeds[str(channel.guild.id)] = []
-        embeds[str(channel.guild.id)].append(embed)
+        logEmbeds.add_embed(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: discord.abc.GuildChannel):
@@ -1200,7 +1231,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
             return
 
-        locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
+        locale = (
+            channel.guild.preferred_locale
+            if hasattr(channel.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
         creator = None
         async for entry in channel.guild.audit_logs(
@@ -1290,9 +1325,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelCreate.title"),
             description=description,
         )
-        if not str(channel.guild.id) in embeds:
-            embeds[str(channel.guild.id)] = []
-        embeds[str(channel.guild.id)].append(embed)
+        logEmbeds.add_embed(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_channel_update(
@@ -1305,7 +1338,11 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(after.guild.id, str(after.id)):
             return
 
-        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         updater = None
@@ -1626,9 +1663,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        logEmbeds.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_update(self, before: discord.Guild, after: discord.Guild):
@@ -2218,9 +2253,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildUpdate.title"),
             description=description,
         )
-        if not str(after.id) in embeds:
-            embeds[str(after.id)] = []
-        embeds[str(after.id)].append(embed)
+        logEmbeds.add_embed(str(after.id), embed)
 
     @commands.Cog.listener()
     async def on_invite_create(self, invite: discord.Invite):
@@ -2236,7 +2269,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in invite.inviter.roles:
                 return
 
-        locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"
+        locale = (
+            invite.guild.preferred_locale
+            if hasattr(invite.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         neverLocale = tanjunLocalizer.localize(
@@ -2331,9 +2368,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteCreate.title"),
             description=description,
         )
-        if not str(invite.guild.id) in embeds:
-            embeds[str(invite.guild.id)] = []
-        embeds[str(invite.guild.id)].append(embed)
+        if not str(invite.guild.id) in logEmbeds.get_all_embeds():
+            logEmbeds.add_embed(str(invite.guild.id), [])
+        logEmbeds.add_embed(str(invite.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_invite_delete(self, invite: discord.Invite):
@@ -2349,7 +2386,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in invite.inviter.roles:
                 return
 
-        locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"
+        locale = (
+            invite.guild.preferred_locale
+            if hasattr(invite.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         neverLocale = tanjunLocalizer.localize(
@@ -2439,9 +2480,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteDelete.title"),
             description=description,
         )
-        if not str(invite.guild.id) in embeds:
-            embeds[str(invite.guild.id)] = []
-        embeds[str(invite.guild.id)].append(embed)
+        logEmbeds.add_embed(str(invite.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -2457,7 +2496,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in member.roles:
                 return
 
-        locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
+        locale = (
+            member.guild.preferred_locale
+            if hasattr(member.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2474,9 +2517,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
-        if not str(member.guild.id) in embeds:
-            embeds[str(member.guild.id)] = []
-        embeds[str(member.guild.id)].append(embed)
+        logEmbeds.add_embed(str(member.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
@@ -2492,7 +2533,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in member.roles:
                 return
 
-        locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
+        locale = (
+            member.guild.preferred_locale
+            if hasattr(member.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2516,9 +2561,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
-        if not str(member.guild.id) in embeds:
-            embeds[str(member.guild.id)] = []
-        embeds[str(member.guild.id)].append(embed)
+        logEmbeds.add_embed(str(member.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
@@ -2534,7 +2577,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in after.roles:
                 return
 
-        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2696,9 +2743,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        logEmbeds.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_user_update(self, before: discord.User, after: discord.User):
@@ -2719,7 +2764,11 @@ class LogsCog(commands.Cog):
                 if blacklistedRole in user.roles:
                     continue
 
-            locale = guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
+            locale = (
+                guild.preferred_locale
+                if hasattr(guild, "preferred_locale")
+                else "en_US"
+            )
             description_parts = []
 
             description_parts.append(
@@ -2828,9 +2877,7 @@ class LogsCog(commands.Cog):
                 title=tanjunLocalizer.localize(locale, "logs.userUpdate.title"),
                 description=description,
             )
-            if not str(guild.id) in embeds:
-                embeds[str(guild.id)] = []
-            embeds[str(guild.id)].append(embed)
+            logEmbeds.add_embed(str(guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_ban(self, user: discord.Member):
@@ -2846,7 +2893,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in user.roles:
                 return
 
-        locale = user.guild.preferred_locale if hasattr(user.guild, "preferred_locale") else "en_US"
+        locale = (
+            user.guild.preferred_locale
+            if hasattr(user.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2872,9 +2923,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberBan.title"),
             description=description,
         )
-        if not str(user.guild.id) in embeds:
-            embeds[str(user.guild.id)] = []
-        embeds[str(user.guild.id)].append(embed)
+        logEmbeds.add_embed(str(user.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
@@ -2885,7 +2934,9 @@ class LogsCog(commands.Cog):
         if await is_log_user_blacklisted(guild.id, str(user.id)):
             return
 
-        locale = guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
+        locale = (
+            guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2913,9 +2964,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUnban.title"),
             description=description,
         )
-        if not str(guild.id) in embeds:
-            embeds[str(guild.id)] = []
-        embeds[str(guild.id)].append(embed)
+        logEmbeds.add_embed(str(guild.id), embed)
 
     @commands.Cog.listener()
     async def on_presence_update(self, before: discord.Member, after: discord.Member):
@@ -2931,7 +2980,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in after.roles:
                 return
 
-        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -2961,9 +3014,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.presenceUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        logEmbeds.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
@@ -2982,7 +3033,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in after.author.roles:
                 return
 
-        locale = after.guild.preferred_locale if hasattr(after, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3125,9 +3180,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageEdit.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        logEmbeds.add_embed(str(after.guild.id), embed)
 
         # if embedsChanged:
         #     for i in range(len(before.embeds)):
@@ -3154,7 +3207,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in message.author.roles:
                 return
 
-        locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
+        locale = (
+            message.guild.preferred_locale
+            if hasattr(message.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3239,12 +3296,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageDelete.title"),
             description=description,
         )
-        if not str(message.guild.id) in embeds:
-            embeds[str(message.guild.id)] = []
-        embeds[str(message.guild.id)].append(embed)
-
+        logEmbeds.add_embed(str(message.guild.id), embed)
         for emb in message.embeds:
-            embeds[str(message.guild.id)].append(emb)
+            logEmbeds.add_embed(str(message.guild.id), emb)
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
@@ -3265,7 +3319,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in user.roles:
                 return
 
-        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
+        locale = (
+            reaction.guild.preferred_locale
+            if hasattr(reaction.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3286,9 +3344,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionAdd.title"),
             description=description,
         )
-        if not str(reaction.guild.id) in embeds:
-            embeds[str(reaction.guild.id)] = []
-        embeds[str(reaction.guild.id)].append(embed)
+        logEmbeds.add_embed(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
@@ -3309,7 +3365,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in user.roles:
                 return
 
-        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
+        locale = (
+            reaction.guild.preferred_locale
+            if hasattr(reaction.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3330,9 +3390,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionRemove.title"),
             description=description,
         )
-        if not str(reaction.guild.id) in embeds:
-            embeds[str(reaction.guild.id)] = []
-        embeds[str(reaction.guild.id)].append(embed)
+        logEmbeds.add_embed(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_create(self, role: discord.Role):
@@ -3340,7 +3398,11 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        locale = role.guild.preferred_locale if hasattr(role.guild, "preferred_locale") else "en_US"
+        locale = (
+            role.guild.preferred_locale
+            if hasattr(role.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3431,9 +3493,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleCreate.title"),
             description=description,
         )
-        if not str(role.guild.id) in embeds:
-            embeds[str(role.guild.id)] = []
-        embeds[str(role.guild.id)].append(embed)
+        logEmbeds.add_embed(str(role.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role: discord.Role):
@@ -3441,7 +3501,11 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        locale = role.guild.preferred_locale if hasattr(role.guild, "preferred_locale") else "en_US"
+        locale = (
+            role.guild.preferred_locale
+            if hasattr(role.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         description_parts.append(
@@ -3533,9 +3597,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleDelete.title"),
             description=description,
         )
-        if not str(role.guild.id) in embeds:
-            embeds[str(role.guild.id)] = []
-        embeds[str(role.guild.id)].append(embed)
+        logEmbeds.add_embed(str(role.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_update(self, before: discord.Role, after: discord.Role):
@@ -3543,7 +3605,11 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
+        locale = (
+            after.guild.preferred_locale
+            if hasattr(after.guild, "preferred_locale")
+            else "en_US"
+        )
         description_parts = []
 
         # Check for changes in role attributes
@@ -3698,9 +3764,14 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.title"),
             description=description,
         )
-        if not str(after.guild.id) in embeds:
-            embeds[str(after.guild.id)] = []
-        embeds[str(after.guild.id)].append(embed)
+        logEmbeds.add_embed(str(after.guild.id), embed)
+
+    @tasks.loop(seconds=10)
+    async def sendLogEmbeds(self):
+        try:
+            await sendLogEmbeds(self.bot)
+        except Exception:
+            pass
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -3724,6 +3795,8 @@ class LogsCog(commands.Cog):
         logcmds.add_command(userBlacklist)
         logcmds.add_command(roleBlacklist)
         self.bot.tree.add_command(logcmds)
+
+        self.sendLogEmbeds.start()
 
 
 async def setup(bot):

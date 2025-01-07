@@ -39,10 +39,8 @@ async def execute_query(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            print(f"Executing query: {query}\nparams: {params}")
             await cursor.execute(query, params)
             result = await cursor.fetchall()
-            print(f"Result: {result}")
             return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
@@ -67,10 +65,8 @@ async def execute_action(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            print(f"Executing action: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
-            print(f"Action executed successfully. Rows affected: {cursor.rowcount}")
             return cursor.rowcount
     except Exception as e:
         print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
@@ -87,13 +83,10 @@ async def execute_insert_and_get_id(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            print(f"Executing insert: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
-            print("Insert executed successfully. Committing changes.")
             await cursor.execute("SELECT LAST_INSERT_ID()")
             last_id = await cursor.fetchone()
-            print(f"Last inserted ID: {last_id}")
             return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
@@ -2238,7 +2231,7 @@ async def get_claimed_booster_role(user_id: str = None, guild_id: str = None):
 async def set_log_channel(guild_id: str, channel_id: str):
     query = "INSERT INTO logChannel (guildId, channelId) VALUES (%s, %s)"
     params = (guild_id, channel_id)
-    if not await get_log_enable(guild_id):
+    if len(await get_log_enable(guild_id)) == 35:
         query = "REPLACE INTO logEnables (guildId) VALUES (%s)"
         params = guild_id
     await execute_action(query, params)
@@ -2331,6 +2324,8 @@ async def is_log_user_blacklisted(guild_id: str, user_id: str):
 async def get_log_channel(guild_id: str):
     query = "SELECT channelId FROM logChannel WHERE guildId = %s"
     params = (guild_id,)
+    print("query: ", query)
+    print("params: ", params)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
@@ -2676,7 +2671,7 @@ async def create_ticket_message(
         description,
         summary_channel_id,
     )
-    return await execute_action(query, params)
+    return await execute_insert_and_get_id(query, params)
 
 
 async def delete_ticket_message(guild_id: str, ticket_message_id: str):
@@ -2706,7 +2701,7 @@ async def open_ticket(
 ):
     query = "INSERT INTO tickets (guildId, openerId, ticketMessageId, channelId) VALUES (%s, %s, %s, %s)"
     params = (guild_id, opener_id, ticket_message_id, channel_id)
-    return await execute_action(query, params)
+    await execute_action(query, params)
 
 
 async def close_ticket(guild_id: str, ticket_id: str):
@@ -2921,15 +2916,17 @@ async def set_twitch_online_notification(
     twitch_name: str,
     notification_message: str,
 ):
+    print("adding twitch online notification")
     query = "INSERT INTO twitchOnlineNotification (guildId, channelId, twitchUuid, twitchName, notificationMessage) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, channel_id, twitch_uuid, twitch_name, notification_message)
-    await execute_query(query, params)
+    await execute_action(query, params)
+    print("added twitch online notification")
 
 
 async def remove_twitch_online_notification(id: str):
     query = "DELETE FROM twitchOnlineNotification WHERE id = %s"
     params = (id,)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def get_twitch_online_notification_by_twitch_uuid(twitch_uuid: str):

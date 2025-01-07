@@ -104,7 +104,7 @@ async def autopublish_remove(commandInfo: commandInfo, channel: discord.TextChan
 
 
 async def publish_message(message: discord.Message):
-    if message.channel and message.channel.type == discord.TextChannel and message.channel.is_news():
+    if message.channel and hasattr(message.channel, "is_news") and message.channel.is_news():
         if await checkIfChannelIsAutopublish(message.channel.id):
             try:
                 await message.publish()
