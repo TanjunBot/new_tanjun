@@ -30854,5 +30854,21 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "logs.guildChannelUpdate.permissionOverwriteNew",
+        "source_string": "Neue Berechtigungs-überschreibungen",
+        "translation": "New authorization overrides",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.feedback.modal.timeout.title",
+        "source_string": "Timeouted",
+        "translation": "Timeouted",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
