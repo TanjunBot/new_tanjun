@@ -1,8 +1,5 @@
 # Security Policy
 
-> [!WARNING]
-> Note that this repository is still very new and the new version of Tanjun is still in progress!
-
 ## Supported Versions
 
 | Version | Supported          |
