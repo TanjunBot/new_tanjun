@@ -39,10 +39,8 @@ async def execute_query(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            # print(f"Executing query: {query}\nparams: {params}")
             await cursor.execute(query, params)
             result = await cursor.fetchall()
-            # print(f"Result: {result}")
             return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
@@ -67,10 +65,8 @@ async def execute_action(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            # print(f"Executing action: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
-            # print(f"Action executed successfully. Rows affected: {cursor.rowcount}")
             return cursor.rowcount
     except Exception as e:
         print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
@@ -87,13 +83,10 @@ async def execute_insert_and_get_id(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            # print(f"Executing insert: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
-            # print("Insert executed successfully. Committing changes.")
             await cursor.execute("SELECT LAST_INSERT_ID()")
             last_id = await cursor.fetchone()
-            # print(f"Last inserted ID: {last_id}")
             return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
