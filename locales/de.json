@@ -30846,29 +30846,5 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
-    },
-    {
-        "identifier": "logs.permissions.add_reactions",
-        "source_string": "Reaktionen hinzufügen",
-        "translation": "Reaktionen hinzufügen",
-        "context": null,
-        "labels": "unassigned",
-        "max_length": null
-    },
-    {
-        "identifier": "logs.guildChannelUpdate.permissionOverwriteNew",
-        "source_string": "Neue Berechtigungs-überschreibungen",
-        "translation": "Neue Berechtigungs-überschreibungen",
-        "context": null,
-        "labels": "unassigned",
-        "max_length": null
-    },
-    {
-        "identifier": "commands.utility.feedback.modal.timeout.title",
-        "source_string": "Timeouted",
-        "translation": "Timeouted",
-        "context": null,
-        "labels": "unassigned",
-        "max_length": null
     }
 ]

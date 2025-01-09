@@ -84,6 +84,7 @@ async def close_ticket(interaction: discord.Interaction):
             description=tanjunLocalizer.localize(
                 interaction.locale,
                 "commands.admin.close_ticket.success.ticketClosedDescription",
+                name=interaction.channel.name,
             ),
         )
 
@@ -109,6 +110,7 @@ async def close_ticket(interaction: discord.Interaction):
                 interaction.locale,
                 "commands.admin.close_ticket.success.ticketClosed",
                 user=interaction.user.mention,
+                name=interaction.channel.name,
             ),
             embed=embed,
             view=view,
@@ -121,6 +123,7 @@ async def close_ticket(interaction: discord.Interaction):
                 interaction.locale,
                 "commands.admin.close_ticket.success.ticketClosed",
                 user=interaction.user.mention,
+                name=interaction.channel.name,
             ),
         )
 
