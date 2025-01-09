@@ -3753,8 +3753,8 @@
     },
     {
         "identifier": "commands.admin.close_ticket.success.ticketClosedDescription",
-        "source_string": "Das Ticket wurde erfolgreich geschlossen. Du kannst das Ticket über den Button in der Nachricht sehen.",
-        "translation": "The ticket has been successfully closed. You can view the ticket via the button in the message.",
+        "source_string": "Das Ticket ${name} wurde erfolgreich von ${user} geschlossen. Du kannst das Ticket über den Button in der Nachricht sehen.",
+        "translation": "The ticket ${name} has been successfully closed by ${user}. You can view the ticket via the button in the message.",
         "context": "commands -> admin -> close_ticket -> success -> ticketClosedDescription",
         "labels": "de.json",
         "max_length": null
@@ -26025,7 +26025,7 @@
     },
     {
         "identifier": "channel.ds.add.name",
-        "source_string": "dynamischer_slowmode_hinzufügen",
+        "source_string": "hinzufügen",
         "translation": "dynamic_slowmode_add",
         "context": "channel -> ds -> add -> name",
         "labels": "de.json, command_name, command_description",
@@ -26105,7 +26105,7 @@
     },
     {
         "identifier": "channel.ds.remove.name",
-        "source_string": "dynamischer_slowmode_entfernen",
+        "source_string": "entfernen",
         "translation": "remove_dynamic_slowmode",
         "context": "channel -> ds -> remove -> name",
         "labels": "de.json, command_name, command_description",
@@ -30843,6 +30843,38 @@
         "identifier": "commands.games.connect4.error.no_plus.description",
         "source_string": "Du benötigst Tanjun Plus um 4-Gewinnt mit anderen Spielfeldgrößen zu spielen.",
         "translation": "You need Tanjun Plus to play Match 4 with other playing field sizes.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "logs.permissions.add_reactions",
+        "source_string": "Reaktionen hinzufügen",
+        "translation": "Add reactions",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "logs.guildChannelUpdate.permissionOverwriteNew",
+        "source_string": "Neue Berechtigungs-überschreibungen",
+        "translation": "New authorization overrides",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.utility.feedback.modal.timeout.title",
+        "source_string": "Timeouted",
+        "translation": "Timeouted",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "channel.description",
+        "source_string": "Kanal Befehle",
+        "translation": "Channel commands",
         "context": null,
         "labels": "unassigned",
         "max_length": null
