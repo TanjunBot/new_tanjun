@@ -4,7 +4,7 @@
 # from discord import app_commands
 # from localizer import tanjunLocalizer
 from discord.ext import commands, tasks
-
+import discord
 from loops.giveaway import sendReadyGiveaways
 from loops.giveaway import checkVoiceUsers
 from loops.giveaway import endGiveaways
@@ -13,14 +13,18 @@ from loops.level import addXpToVoiceUsers
 from ai.refillToken import refillAiToken
 from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
-from extensions.logs import sendLogEmbeds
-from commands.utility.claimBoosterRole import remove_claimed_booster_roles_that_are_expired
-from commands.utility.claimBoosterChannel import remove_claimed_booster_channels_that_are_expired
+from commands.utility.claimBoosterRole import (
+    remove_claimed_booster_roles_that_are_expired,
+)
+from commands.utility.claimBoosterChannel import (
+    remove_claimed_booster_channels_that_are_expired,
+)
 from commands.utility.schedulemessage import send_scheduled_messages
 import asyncio
-
+from datetime import time
 from api import check_pool_initialized, get_all_twitch_notification_uuids
 from commands.utility.twitch.twitchApi import getTwitchApi, notify_twitch_online
+
 
 embeds = {}
 
@@ -86,13 +90,6 @@ class LoopCog(commands.Cog):
             pass
 
     @tasks.loop(seconds=10)
-    async def sendLogEmbeds(self):
-        try:
-            await sendLogEmbeds(self.bot)
-        except Exception:
-            pass
-
-    @tasks.loop(seconds=10)
     async def removeExpiredClaimedBoosterRoles(self):
         try:
             await remove_claimed_booster_roles_that_are_expired(self.bot)
@@ -149,6 +146,42 @@ class LoopCog(commands.Cog):
         except Exception:
             pass
 
+    @tasks.loop(time=[time(hour=2), time(hour=8), time(hour=14), time(hour=20)])
+    async def sendPokemonWerbung(self):
+        try:
+            message = """
+👋 Heyo! 👋
+Wir sind ein netter, aktiver und nicer Community-Server, der mit Pokémonfans bereichert ist! Man muss hier aber nicht unbedingt Pokémon gespielt haben oder gar kennen. Inzwischen haben wir uns zu einem relativ "normalen" Community-Server entwickelt, denn wir reden auch über viele andere Themen! Über alle, die uns eben einfallen! <:P_crazy_evoli:905008625892855820>
+**Schau doch mal bei uns vorbei und mach dir selbst ein Bild! Wir würden uns freuen, wenn du joinst :D**
+
+__Wir haben zum Beispiel:__
+<:P_Meowwwwwwww:892120072666120192> | Nette & aktive Community
+🎭 | Selfroles
+🌹 | Keine @-everyone oder @-here Pings
+📨 | Werbemöglichkeiten
+📑 | Guter Support
+<:P_SUPERFUNNYBREAD:867370461931372544> | Fun-Botbefehle
+<:P_heart_boost:861209379998924800> | Viele Vorteile für Booster, Sponsoren & Co.
+<:P_Pikaluv:847828564006010930> | Pokédexeinträge, Umfragen und mehr!
+♥️ | Jede Menge Events & ähnliches Zeugs
+🎁 | Giveaways :D
+🌟 | Specialchats
+<:P_bisasam_euh:870375183444230194> | Und vieles mehr!
+
+Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut gern mal bei uns vorbei!
+
+**➡️ Klick hier zum Joinen! ⬅️**
+<https://discord.gg/D3UVPKseD8>
+            """
+            channel = self.bot.get_channel(923337160600477777)
+            embed = discord.Embed(
+                description=message, color=0xCB33F5, title="🐾Pokémon🐾"
+            )
+            message = await channel.send(embed=embed)
+            await message.publish()
+        except Exception:
+            raise
+
     @commands.Cog.listener()
     async def on_ready(self):
         while not check_pool_initialized():
@@ -163,10 +196,10 @@ class LoopCog(commands.Cog):
         self.refillAiTokenLoop.start()
         self.pingServerLoop.start()
         self.backupDatabaseLoop.start()
-        self.sendLogEmbeds.start()
         self.removeExpiredClaimedBoosterRoles.start()
         self.removeExpiredClaimedBoosterChannels.start()
         self.sendScheduledMessages.start()
+        self.sendPokemonWerbung.start()
 
 
 async def setup(bot):

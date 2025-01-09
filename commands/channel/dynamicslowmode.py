@@ -207,10 +207,6 @@ async def dynamicslowmodeMessage(message: discord.Message):
 
     await clear_old_dynamicslowmode_messages(message.channel.id, minTime)
 
-    avgMessages = messages / (
-        dynamicSlowmodeChannel[4]
-        / (dynamicSlowmodeChannel[3] if dynamicSlowmodeChannel[3] != 0 else 1)
-    )
     reasonLocale = tanjunLocalizer.localize(
         (
             message.guild.preferred_locale
@@ -218,7 +214,7 @@ async def dynamicslowmodeMessage(message: discord.Message):
             else "en-US"
         ),
         "commands.channel.dynamicslowmode.reason",
-        messages=avgMessages,
+        messages=messages,
         per=dynamicSlowmodeChannel[3],
     )
     resetReasonLocale = tanjunLocalizer.localize(
@@ -229,7 +225,7 @@ async def dynamicslowmodeMessage(message: discord.Message):
         ),
         "commands.channel.dynamicslowmode.resetReason",
     )
-    newSlowmode = int(avgMessages / dynamicSlowmodeChannel[3])
+    newSlowmode = int(messages / dynamicSlowmodeChannel[3])
     if (
         newSlowmode != message.channel.slowmode_delay
         and newSlowmode > cashed_slowmode_delay

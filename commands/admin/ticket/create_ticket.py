@@ -42,13 +42,13 @@ async def create_ticket(
         return
 
     ticket_id = await create_ticket_message(
-        commandInfo.guild.id,
-        channel.id,
-        name,
-        description,
-        ping_role.id if ping_role else None,
-        summary_channel.id if summary_channel else None,
-        introduction,
+        guild_id=commandInfo.guild.id,
+        channel_id=channel.id,
+        name=name,
+        description=description,
+        ping_role=ping_role.id if ping_role else None,
+        summary_channel_id=summary_channel.id if summary_channel else None,
+        introduction=introduction,
     )
 
     view = discord.ui.View()

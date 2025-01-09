@@ -1,7 +1,7 @@
 import discord
 import utility
 from localizer import tanjunLocalizer
-from api import get_ticket_messages_by_id, check_if_opted_out
+from api import get_ticket_messages_by_id, check_if_opted_out, open_ticket
 
 
 async def openTicket(interaction: discord.Interaction):
@@ -52,7 +52,7 @@ async def openTicket(interaction: discord.Interaction):
                 item.disabled = True
             await self.message.edit(view=self)
 
-    if not await check_if_opted_out(interaction.user.id):
+    if await check_if_opted_out(interaction.user.id):
         view = optedOutView()
         await interaction.followup.send(
             tanjunLocalizer.localize(
@@ -69,10 +69,11 @@ async def openTicket(interaction: discord.Interaction):
 
 async def open_ticket_2(interaction: discord.Interaction):
     ticket_id = interaction.data["custom_id"].split(";")[1]
+    print("ticket_id", ticket_id)
     ticket = await get_ticket_messages_by_id(ticket_id)
 
     if not ticket:
-        await interaction.reply(
+        await interaction.response.send_message(
             tanjunLocalizer.localize(
                 interaction.locale,
                 "commands.admin.open_ticket.error.ticketNotFound",
@@ -87,7 +88,7 @@ async def open_ticket_2(interaction: discord.Interaction):
     channel = interaction.channel
 
     if not channel.permissions_for(interaction.guild.me).create_private_threads:
-        await interaction.reply(
+        await interaction.response.send_message(
             tanjunLocalizer.localize(
                 interaction.locale,
                 "commands.admin.open_ticket.error.channelMissingPermission",
@@ -146,4 +147,11 @@ async def open_ticket_2(interaction: discord.Interaction):
             "commands.admin.open_ticket.success.ticketCreated",
         ),
         ephemeral=True,
+    )
+
+    await open_ticket(
+        guild_id=interaction.guild.id,
+        opener_id=interaction.user.id,
+        ticket_message_id=ticket_id,
+        channel_id=thread.id,
     )

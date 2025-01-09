@@ -39,11 +39,13 @@ async def execute_query(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
+            # print(f"Executing query: {query}\nparams: {params}")
             await cursor.execute(query, params)
             result = await cursor.fetchall()
+            # print(f"Result: {result}")
             return result
     except Exception as e:
-        print(f"An error occurred during query execution: {e}")
+        print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
 
 
 async def execute_action(query, params=None):
@@ -65,11 +67,13 @@ async def execute_action(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
+            # print(f"Executing action: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
+            # print(f"Action executed successfully. Rows affected: {cursor.rowcount}")
             return cursor.rowcount
     except Exception as e:
-        print(f"An error occurred during action execution: {e}")
+        print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
 
 
 async def execute_insert_and_get_id(query, params=None):
@@ -83,13 +87,16 @@ async def execute_insert_and_get_id(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
+            # print(f"Executing insert: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
+            # print("Insert executed successfully. Committing changes.")
             await cursor.execute("SELECT LAST_INSERT_ID()")
             last_id = await cursor.fetchone()
+            # print(f"Last inserted ID: {last_id}")
             return last_id[0] if last_id else None
     except Exception as e:
-        print(f"An error occurred during insert: {e}")
+        print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
 
 
 async def create_tables():
@@ -1215,18 +1222,6 @@ async def get_level_role(guild_id: str, role_id: str) -> int:
     return result[0][0] if result else None
 
 
-# redefinition of unused 'add_level_role' from line 1119 Flake8(F811)
-'''
-async def add_level_role(guild_id: str, role_id: str, level: int):
-    query = """
-    INSERT INTO levelRole (guild_id, role_id, level)
-    VALUES (%s, %s, %s)
-    """
-    params = (guild_id, role_id, level)
-    await execute_action(query, params)
-'''
-
-
 async def remove_level_role(guild_id: str, role_id: str):
     query = """
     DELETE FROM levelRole
@@ -1234,16 +1229,6 @@ async def remove_level_role(guild_id: str, role_id: str):
     """
     params = (guild_id, role_id)
     await execute_action(query, params)
-
-
-# redefinition of unused 'get_level_roles' from line 1129Flake8(F811)
-"""
-async def get_level_roles(guild_id: str, level: int) -> List[str]:
-    query = "SELECT role_id FROM levelRole WHERE guild_id = %s AND level <= %s"
-    params = (guild_id, level)
-    result = await execute_query(query, params)
-    return [row[0] for row in result]
-"""
 
 
 async def get_all_level_roles(guild_id: str) -> Dict[int, List[str]]:
@@ -1553,12 +1538,9 @@ async def add_giveaway(
     INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount)
     VALUES (%s, %s, %s)
     """
-    try:
-        for channel_id, amount in channel_requirements.items():
-            params = (giveawayId, channel_id, amount)
-            await execute_action(query, params)
-    except Exception as e:
-        print(f"An error occurred while adding channel requirements: {e}")
+    for channel_id, amount in channel_requirements.items():
+        params = (giveawayId, channel_id, amount)
+        await execute_action(query, params)
     query = """
     INSERT INTO giveawayRoleRequirement (roleId, giveawayId)
     VALUES (%s, %s)
@@ -2256,7 +2238,7 @@ async def get_claimed_booster_role(user_id: str = None, guild_id: str = None):
 async def set_log_channel(guild_id: str, channel_id: str):
     query = "INSERT INTO logChannel (guildId, channelId) VALUES (%s, %s)"
     params = (guild_id, channel_id)
-    if not await get_log_enable(guild_id):
+    if len(await get_log_enable(guild_id)) == 35:
         query = "REPLACE INTO logEnables (guildId) VALUES (%s)"
         params = guild_id
     await execute_action(query, params)
@@ -2349,6 +2331,8 @@ async def is_log_user_blacklisted(guild_id: str, user_id: str):
 async def get_log_channel(guild_id: str):
     query = "SELECT channelId FROM logChannel WHERE guildId = %s"
     params = (guild_id,)
+    print("query: ", query)
+    print("params: ", params)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
@@ -2552,12 +2536,8 @@ async def get_reports(guild_id: str, user_id: str = None):
         query += " AND userId = %s"
         params.append(user_id)
 
-    try:
-        result = await execute_query(query, tuple(params))
-        return result
-    except Exception as e:
-        print(f"An error occurred during query execution: {e}")
-        return []
+    result = await execute_query(query, tuple(params))
+    return result if result else []
 
 
 async def get_reports_by_reporter(guild_id: str, reporter_id: str):
@@ -2698,7 +2678,7 @@ async def create_ticket_message(
         description,
         summary_channel_id,
     )
-    return await execute_action(query, params)
+    return await execute_insert_and_get_id(query, params)
 
 
 async def delete_ticket_message(guild_id: str, ticket_message_id: str):
@@ -2728,7 +2708,7 @@ async def open_ticket(
 ):
     query = "INSERT INTO tickets (guildId, openerId, ticketMessageId, channelId) VALUES (%s, %s, %s, %s)"
     params = (guild_id, opener_id, ticket_message_id, channel_id)
-    return await execute_action(query, params)
+    await execute_action(query, params)
 
 
 async def close_ticket(guild_id: str, ticket_id: str):
@@ -2780,9 +2760,9 @@ async def get_ticket_by_channel_id(guild_id: str, channel_id: str):
     return result[0] if result else None
 
 
-async def get_join_to_create_channel(guild_id: str):
-    query = "SELECT * FROM joinToCreateChannel WHERE guildId = %s"
-    params = (guild_id,)
+async def get_join_to_create_channel(channel_id: str):
+    query = "SELECT * FROM joinToCreateChannel WHERE channelId = %s"
+    params = (channel_id,)
     return await execute_query(query, params)
 
 
@@ -2879,13 +2859,13 @@ async def add_dynamicslowmode(
 ):
     query = "INSERT INTO dynamicslowmode (guildId, channelId, messages, per, resetafter) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, channel_id, messages, per, resetafter)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def remove_dynamicslowmode(guild_id: str, channel_id: str):
     query = "DELETE FROM dynamicslowmode WHERE guildId = %s AND channelId = %s"
     params = (guild_id, channel_id)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def get_dynamicslowmode(channel_id: str):
@@ -2900,7 +2880,7 @@ async def add_dynamicslowmode_message(
 ):
     query = "INSERT INTO dynamicslowmode_messages (channelId, messageId, sendTime) VALUES (%s, %s, %s)"
     params = (channel_id, message_id, send_time)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def clear_old_dynamicslowmode_messages(channel_id: str, send_time: datetime):
@@ -2909,7 +2889,7 @@ async def clear_old_dynamicslowmode_messages(channel_id: str, send_time: datetim
         "DELETE FROM dynamicslowmode_messages WHERE channelId = %s AND sendTime < %s"
     )
     params = (channel_id, send_time)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def get_dynamicslowmode_messages(channel_id: str):
@@ -2921,13 +2901,13 @@ async def get_dynamicslowmode_messages(channel_id: str):
 async def cash_slowmode_delay(channel_id: str, slowmode_delay: int):
     query = "UPDATE dynamicslowmode SET cashedSlowmode = %s WHERE channelId = %s"
     params = (slowmode_delay, channel_id)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def remove_cashed_slowmode_delay(channel_id: str):
     query = "UPDATE dynamicslowmode SET cashedSlowmode = NULL WHERE channelId = %s"
     params = (channel_id,)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def get_twitch_online_notification(channel_id: str):
@@ -2943,15 +2923,17 @@ async def set_twitch_online_notification(
     twitch_name: str,
     notification_message: str,
 ):
+    print("adding twitch online notification")
     query = "INSERT INTO twitchOnlineNotification (guildId, channelId, twitchUuid, twitchName, notificationMessage) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, channel_id, twitch_uuid, twitch_name, notification_message)
-    await execute_query(query, params)
+    await execute_action(query, params)
+    print("added twitch online notification")
 
 
 async def remove_twitch_online_notification(id: str):
     query = "DELETE FROM twitchOnlineNotification WHERE id = %s"
     params = (id,)
-    await execute_query(query, params)
+    await execute_action(query, params)
 
 
 async def get_twitch_online_notification_by_twitch_uuid(twitch_uuid: str):

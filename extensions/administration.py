@@ -464,6 +464,48 @@ Das Tanjun-Team
             except Exception:
                 pass
 
+    @commands.command()
+    async def me(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+
+        me = ctx.guild.me
+        await ctx.send(f"{me.name} {me.id} {me.mention}")
+
+    @commands.command()
+    async def permissionTest(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+
+        permissionResult = (
+            not ctx.channel.permissions_for(ctx.guild.me).manage_messages
+            or not ctx.channel.permissions_for(ctx.guild.me).read_message_history
+            or not ctx.channel.permissions_for(ctx.guild.me).manage_channels
+        )
+        await ctx.send(f"{permissionResult}")
+
+    @commands.command()
+    async def permissionTest2(self, ctx):
+        if ctx.author.id not in config.adminIds:
+            return
+
+        permissionResult = ctx.channel.permissions_for(ctx.guild.me).manage_messages
+        await ctx.send(f"{permissionResult}")
+
+    @commands.command()
+    async def listPermissions(self, ctx, channel: discord.TextChannel = None):
+        if ctx.author.id not in config.adminIds:
+            return
+
+        if not channel:
+            channel = ctx.channel
+
+        permissionResult = channel.permissions_for(ctx.guild.me)
+        permissionText = ""
+        for permission in permissionResult:
+            permissionText += f"{permission}\n"
+        await ctx.send(f"{permissionText}")
+
 
 async def setup(bot):
     await bot.add_cog(administrationCog(bot))
