@@ -30846,13 +30846,5 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
-    },
-    {
-        "identifier": "logs.permissions.add_reactions",
-        "source_string": "Reaktionen hinzufügen",
-        "translation": "Add reactions",
-        "context": null,
-        "labels": "unassigned",
-        "max_length": null
     }
 ]
