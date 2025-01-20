@@ -30889,8 +30889,8 @@
     },
     {
         "identifier": "commands.giveaway.giveawayEmbed.footer",
-        "source_string": "Gewinnspiel ID: ${{giveaway_id}}",
-        "translation": "Gewinnspiel ID: ${{giveaway_id}}",
+        "source_string": "Gewinnspiel ID: ${giveaway_id}",
+        "translation": "Gewinnspiel ID: ${giveaway_id}",
         "context": null,
         "labels": "unassigned",
         "max_length": null
