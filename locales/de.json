@@ -30878,5 +30878,21 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "logs.guildChannelCreate.types.news",
+        "source_string": "News Kanal",
+        "translation": "News Kanal",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.giveaway.giveawayEmbed.footer",
+        "source_string": "Gewinnspiel ID: ${{giveaway_id}}",
+        "translation": "Gewinnspiel ID: ${{giveaway_id}}",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
