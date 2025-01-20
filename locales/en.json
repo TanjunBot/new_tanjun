@@ -30894,5 +30894,21 @@
         "context": null,
         "labels": "unassigned",
         "max_length": null
+    },
+    {
+        "identifier": "commands.giveaway.end_giveaway_command.success.title",
+        "source_string": "Gewinnspiel beendet",
+        "translation": "Competition ended",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.giveaway.end_giveaway_command.success.description",
+        "source_string": "Das Gewinnspiel wurde erfolgreich beendet.",
+        "translation": "The competition has been successfully completed.",
+        "context": null,
+        "labels": "unassigned",
+        "max_length": null
     }
 ]
