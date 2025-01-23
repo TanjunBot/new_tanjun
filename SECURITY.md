@@ -4,18 +4,8 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.x   | :x:                |
-| 0.2.x   | :x:                |
-| 0.3.x   | :x:                |
-| 0.4.x   | :x:                |
-| 0.5.x   | :x:                |
-| 0.6.x   | :x:                |
-| 0.7.x   | :x:                |
-| 0.8.x   | :x:                |
-| 0.9.x   | :warning:¹         |
+| 0.x.x   | :x:                |
 | 1.0.x   | :white_check_mark: |
-
-¹Support for this version will end on 23/01/2025.
 
 ## Reporting a Vulnerability
 
