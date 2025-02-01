@@ -9137,7 +9137,7 @@
     },
     {
         "identifier": "commands.utility.brawlstars.unlink.success.title",
-        "source_string": "Verlinkung erfolgreich entfernt",
+        "source_string": "Verknüpfung erfolgreich entfernt",
         "translation": "Link successfully removed",
         "context": "commands -> utility -> brawlstars -> unlink -> success -> title",
         "labels": "de.json",
@@ -17497,7 +17497,7 @@
     },
     {
         "identifier": "utility.bs.unlink.name",
-        "source_string": "verlinkung_entfernen",
+        "source_string": "verknüpfung_aufheben",
         "translation": "unlink",
         "context": "utility -> bs -> unlink -> name. Only lowercase characters and no spaces allowed",
         "labels": "de.json, command_name",
