@@ -9145,7 +9145,7 @@
     },
     {
         "identifier": "commands.utility.brawlstars.unlink.success.description",
-        "source_string": "Die Verlinkung von deinem Brawl Stars Account wurde erfolgreich entfernt.",
+        "source_string": "Die Verknüpfung deines Brawlstars Account wurde erfolgreich aufgehoben.",
         "translation": "The link from your Brawl Stars account has been successfully removed.",
         "context": "commands -> utility -> brawlstars -> unlink -> success -> description",
         "labels": "de.json",
@@ -17067,7 +17067,7 @@
         "identifier": "utility.scheduledmessage.name",
         "source_string": "planen",
         "translation": "schedule",
-        "context": "utility -> scheduledmessage -> name",
+        "context": "utility -> scheduledmessage -> name (the category name)",
         "labels": "de.json, command_name",
         "max_length": 32
     },
@@ -17225,8 +17225,8 @@
     },
     {
         "identifier": "utility.schedulemessage.name",
-        "source_string": "planen",
-        "translation": "schedule",
+        "source_string": "neu",
+        "translation": "neu",
         "context": "utility -> schedulemessage -> name",
         "labels": "de.json, command_name",
         "max_length": 32
