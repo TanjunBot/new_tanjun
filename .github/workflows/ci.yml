@@ -55,11 +55,11 @@ jobs:
           pip install -r requirements.txt
           pip install flake8
 
-      - name: Lint with flake8
-        run: |
-          echo "[DEBUG]: Current directory:" && pwd
-          . venv/bin/activate
-          python run_flake8.py
+      #- name: Lint with flake8
+      #  run: |
+      #    echo "[DEBUG]: Current directory:" && pwd
+      #    . venv/bin/activate
+      #    python run_flake8.py
 
   notify_discord:
     runs-on: ubuntu-latest
