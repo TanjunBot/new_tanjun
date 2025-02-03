@@ -2,7 +2,7 @@ import sys
 import subprocess
 
 # Increase the recursion limit
-sys.setrecursionlimit(20000)  # You can set this to a higher value if needed
+sys.setrecursionlimit(1000)  # You can set this to a higher value if needed
 
 # Run Flake8 with the specified arguments
 subprocess.run([
