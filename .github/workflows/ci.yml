@@ -57,7 +57,7 @@ jobs:
 
       - name: Lint with flake8
         run: |
-          python run_flake8.py --exclude=Python-3.12.8 .
+          python run_flake8.py
 
   notify_discord:
     runs-on: ubuntu-latest
