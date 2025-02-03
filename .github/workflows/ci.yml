@@ -16,7 +16,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev liblzma-dev python3-venv python3-pip
-      - name: Download and Install Python 3.12.0
+      - name: Download and Install Python 3.12.8
         run: |
           curl -O https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz
           tar xvf Python-3.12.8.tgz
