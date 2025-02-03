@@ -57,6 +57,7 @@ jobs:
 
       - name: Lint with flake8
         run: |
+          echo "[DEBUG]: Current directory:" && pwd
           . venv/bin/activate
           python run_flake8.py
 
