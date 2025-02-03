@@ -12,7 +12,6 @@ subprocess.run([
     '--select=E9,F63,F7,F82',
     '--show-source',
     '--statistics',
-    '--exclude=Python-3.12.8'
 ])
 
 subprocess.run([
@@ -23,5 +22,4 @@ subprocess.run([
     '--max-complexity=20',
     '--max-line-length=127',
     '--statistics',
-    '--exclude=Python-3.12.8'
 ])
