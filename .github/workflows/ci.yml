@@ -12,30 +12,49 @@ jobs:
         uses: actions/checkout@main
         with:
           ref: ${{ github.sha }}
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev liblzma-dev python3-venv python3-pip
-      - name: Download and Install Python 3.12.8
+
+      - name: Cache Python Build
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.local/python-build-cache
+            /usr/local/lib/python3.12
+          key: python-${{ matrix.python-version }}-build-${{ runner.os }}
+
+      - name: Check and Install Python 3.12.8
         run: |
-          curl -O https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz
-          tar xvf Python-3.12.8.tgz
-          cd Python-3.12.8
-          ./configure --enable-optimizations
-          make -j$(nproc)
-          sudo make altinstall
-          cd ..
-          rm Python-3.12.8.tgz
-          rm -rf Python-3.12.8
+          if ! command -v python3.12 &>/dev/null || [ "$(python3.12 --version 2>&1 | awk '{print $2}')" != "3.12.8" ]; then
+            echo "Python 3.12.8 not found. Installing..."
+            mkdir -p ~/.local/python-build-cache
+            curl -O https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz
+            tar xvf Python-3.12.8.tgz
+            cd Python-3.12.8
+            ./configure --enable-optimizations
+            make -j$(nproc)
+            sudo make altinstall
+            cd ..
+            sudo rm Python-3.12.8.tgz
+            sudo rm -rf Python-3.12.8
+          else
+            echo "Python 3.12.8 already installed."
+          fi
+
       - name: Create and activate virtual environment
         run: |
           python3.12 -m venv venv
           . venv/bin/activate
+
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install flake8
+
       - name: Lint with flake8
         run: |
           python run_flake8.py
