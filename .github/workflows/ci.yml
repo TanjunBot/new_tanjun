@@ -18,12 +18,15 @@ jobs:
           sudo apt-get install -y build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev liblzma-dev python3-venv python3-pip
       - name: Download and Install Python 3.12.0
         run: |
-          curl -O https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz
-          tar xvf Python-3.12.0.tgz
-          cd Python-3.12.0
+          curl -O https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz
+          tar xvf Python-3.12.8.tgz
+          cd Python-3.12.8
           ./configure --enable-optimizations
           make -j$(nproc)
           sudo make altinstall
+          cd ..
+          rm Python-3.12.8.tgz
+          rm -rf Python-3.12.8
       - name: Create and activate virtual environment
         run: |
           python3.12 -m venv venv
