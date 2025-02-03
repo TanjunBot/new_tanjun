@@ -8,19 +8,22 @@ jobs:
   build:
     runs-on: 'ubuntu-latest'
     container:
-      image: "python:3.12"
+      image: "ubuntu:23.10"
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
         with:
           ref: ${{ github.sha }}
-      - name: Set up Python
-        uses: actions/setup-python@main
-        with:
-          python-version: "3.12"
+      - name: Install Python 3.12
+        run: |
+          apt-get update && apt-get install -y software-properties-common
+          add-apt-repository ppa:deadsnakes/ppa
+          apt-get update && apt-get install -y python3.12 python3.12-venv python3.12-dev
+          python3.12 -m venv venv
+          . venv/bin/activate
       - name: Install dependencies
         run: |
-          /usr/local/bin/python3 -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install -r requirements.txt
           pip install flake8
       - name: Lint with flake8
@@ -43,7 +46,6 @@ jobs:
           GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
           COMMIT_HASH=$(git log -1 --pretty=format:'%H')
           COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
-
           echo "title=${COMMIT_TITLE}" >> $GITHUB_ENV
           echo "author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
           echo "author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
@@ -70,7 +72,6 @@ jobs:
             echo "::error::DISCORD_WEBHOOK_URL is not set."
             exit 1
           fi
-
           for i in {1..5}; do
             response=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'Content-Type: application/json' -d '{
               "content": null,
@@ -93,7 +94,6 @@ jobs:
               "username": "${{ env.username }}",
               "attachments": []
             }' $DISCORD_WEBHOOK_URL)
-
             if [ $response -eq 204 ]; then
               echo "Discord notification sent successfully."
               break
