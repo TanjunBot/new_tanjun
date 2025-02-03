@@ -38,8 +38,6 @@ jobs:
             make -j$(nproc)
             sudo make altinstall
             cd ..
-            sudo rm Python-3.12.8.tgz
-            sudo rm -rf Python-3.12.8
           else
             echo "Python 3.12.8 already installed."
           fi
