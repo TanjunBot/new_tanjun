@@ -20,7 +20,7 @@ cryptography==44.0.0
 cycler==0.12.1
 decorator==5.1.1
 defusedxml==0.7.1
-Deprecated==1.2.15
+Deprecated==1.2.18
 discord.py==2.4.0
 distro==1.9.0
 docopt==0.6.2
