@@ -57,6 +57,7 @@ jobs:
 
       - name: Lint with flake8
         run: |
+          . venv/bin/activate
           python run_flake8.py
 
   notify_discord:
