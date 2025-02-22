@@ -6,21 +6,25 @@
       "matchManagers": ["pip_requirements", "pip_setup", "pipenv", "poetry"],
       "groupName": "python-dependencies",
       "automerge": true,
-      "automergeType": "branch"
+      "automergeType": "branch",
+      "labels": ["dependencies"]
     },
     {
       "matchPackageNames": ["discord.py", "openai", "mysql-connector-python"],
       "groupName": "critical-python-dependencies",
       "automerge": false,
-      "schedule": ["before 6am on Monday"]
+      "schedule": ["before 6am on Monday"],
+      "labels": ["dependencies"]
     },
     {
       "matchUpdateTypes": ["major", "patch"],
-      "separateMajorMinor": true
+      "separateMajorMinor": true,
+      "labels": ["dependencies"]
     },
     {
       "matchDepTypes": ["dependencies"],
-      "stabilityDays": 3
+      "stabilityDays": 3,
+      "labels": ["dependencies"]
     }
   ],
   "labels": ["dependencies"],
