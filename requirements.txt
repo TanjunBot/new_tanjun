@@ -64,7 +64,7 @@ prompt_toolkit==3.0.50
 propcache==0.3.0
 pure_eval==0.2.3
 pycparser==2.22
-==2.10.6
+pydantic==2.10.6
 pydantic_core==2.27.2
 PyGithub==2.6.1
 Pygments==2.19.1
