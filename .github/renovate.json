@@ -17,8 +17,11 @@
       "labels": ["dependencies"]
     },
     {
-      "matchUpdateTypes": ["major", "patch"],
-      "separateMajorMinor": true,
+      "matchUpdateTypes": ["major"],
+      "labels": ["dependencies"]
+    },
+    {
+      "matchUpdateTypes": ["patch"],
       "labels": ["dependencies"]
     },
     {
