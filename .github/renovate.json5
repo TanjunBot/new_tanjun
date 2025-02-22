@@ -1,41 +1,80 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
-  "packageRules": [
-    {
-      "matchManagers": ["pip_requirements", "pip_setup", "pipenv", "poetry"],
-      "groupName": "python-dependencies",
-      "automerge": true,
-      "automergeType": "branch",
-      "labels": ["dependencies"]
-    },
-    {
-      "matchPackageNames": ["discord.py", "openai", "mysql-connector-python"],
-      "groupName": "critical-python-dependencies",
-      "automerge": false,
-      "schedule": ["before 6am on Monday"],
-      "labels": ["dependencies"]
-    },
-    {
-      "matchUpdateTypes": ["major"],
-      "labels": ["dependencies"]
-    },
-    {
-      "matchUpdateTypes": ["patch"],
-      "labels": ["dependencies"]
-    },
-    {
-      "matchDepTypes": ["dependencies"],
-      "stabilityDays": 3,
-      "labels": ["dependencies"]
-    }
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
   ],
-  "labels": ["dependencies"],
-  "commitMessagePrefix": "chore(deps): ",
-  "prHourlyLimit": 5,
-  "prConcurrentLimit": 10,
-  "enabledManagers": ["pip_requirements", "pip_setup", "pipenv", "poetry"],
-  "pip_requirements": {
-    "fileMatch": ["requirements.txt", "requirements/.*\.txt"]
-  }
+  packageRules: [
+    {
+      matchManagers: [
+        'pip_requirements',
+        'pip_setup',
+        'pipenv',
+        'poetry',
+      ],
+      groupName: 'python-dependencies',
+      automerge: true,
+      automergeType: 'branch',
+      labels: [
+        'dependencies',
+      ],
+    },
+    {
+      matchPackageNames: [
+        'discord.py',
+        'openai',
+        'mysql-connector-python',
+      ],
+      groupName: 'critical-python-dependencies',
+      automerge: false,
+      schedule: [
+        'before 6am on Monday',
+      ],
+      labels: [
+        'dependencies',
+      ],
+    },
+    {
+      matchUpdateTypes: [
+        'major',
+      ],
+      labels: [
+        'dependencies',
+      ],
+    },
+    {
+      matchUpdateTypes: [
+        'patch',
+      ],
+      labels: [
+        'dependencies',
+      ],
+    },
+    {
+      matchDepTypes: [
+        'dependencies',
+      ],
+      minimumReleaseAge: '3 days',
+      labels: [
+        'dependencies',
+      ],
+    },
+  ],
+  labels: [
+    'dependencies',
+  ],
+  commitMessagePrefix: 'chore(deps): ',
+  prHourlyLimit: 5,
+  prConcurrentLimit: 10,
+  enabledManagers: [
+    'pip_requirements',
+    'pip_setup',
+    'pipenv',
+    'poetry',
+  ],
+  pip_requirements: {
+    fileMatch: [
+      'requirements.txt',
+      'requirements/.*.txt',
+    ],
+  },
 }
