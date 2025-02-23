@@ -3,7 +3,7 @@
   extends: [
     'config:recommended',
   ],
-  pruneStaleBranches: true
+  pruneStaleBranches: true,
   packageRules: [
     {
       matchManagers: [
