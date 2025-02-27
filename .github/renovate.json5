@@ -24,6 +24,7 @@
         'discord.py',
         'openai',
         'mysql-connector-python',
+        '/pydantic/',
       ],
       groupName: 'critical-python-dependencies',
       automerge: false,
