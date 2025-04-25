@@ -377,8 +377,8 @@
     },
     {
         "identifier": "commands.admin.removerole.multiplePrompt",
-        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, von denen du Rollen entziehen möchtest.",
-        "translation": "Bitte wähle die Besitzer von Rollen und Nutzer aus, von denen du Rollen entziehen möchtest.",
+        "source_string": "Bitte wähle die Besitzer von Rollen und die Nutzer aus, denen du Rollen entziehen möchtest.",
+        "translation": "Bitte wähle die Besitzer von Rollen und die Nutzer aus, denen du Rollen entziehen möchtest.",
         "context": "commands -> admin -> removerole -> multiplePrompt",
         "labels": "de.json",
         "max_length": null
@@ -30865,8 +30865,8 @@
     },
     {
         "identifier": "commands.utility.feedback.modal.timeout.title",
-        "source_string": "Timeouted",
-        "translation": "Timeouted",
+        "source_string": "Timeout",
+        "translation": "Timeout",
         "context": null,
         "labels": "unassigned",
         "max_length": null
