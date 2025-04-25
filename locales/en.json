@@ -377,8 +377,8 @@
     },
     {
         "identifier": "commands.admin.removerole.multiplePrompt",
-        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, von denen du Rollen entziehen möchtest.",
-        "translation": "Please select the owners of roles and users from whom you want to unassign roles.",
+        "source_string": "Bitte wähle die Besitzer von Rollen und die Nutzer aus, denen du Rollen entziehen möchtest.",
+        "translation": "Please select the owners of roles and the users from whom you want to unassign roles.",
         "context": "commands -> admin -> removerole -> multiplePrompt",
         "labels": "de.json",
         "max_length": null
@@ -658,7 +658,7 @@
     {
         "identifier": "commands.admin.moverole.missingPermission.title",
         "source_string": "Fehlende Berechtigung",
-        "translation": "Missing authorization",
+        "translation": "Missing permission",
         "context": "commands -> admin -> moverole -> missingPermission -> title",
         "labels": "de.json",
         "max_length": null
@@ -17226,7 +17226,7 @@
     {
         "identifier": "utility.schedulemessage.name",
         "source_string": "neu",
-        "translation": "neu",
+        "translation": "new",
         "context": "utility -> schedulemessage -> name",
         "labels": "command_name, de.json",
         "max_length": 32
@@ -30865,8 +30865,8 @@
     },
     {
         "identifier": "commands.utility.feedback.modal.timeout.title",
-        "source_string": "Timeouted",
-        "translation": "Timeouted",
+        "source_string": "Timeout",
+        "translation": "Timeout",
         "context": null,
         "labels": "unassigned",
         "max_length": null
