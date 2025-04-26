@@ -674,7 +674,7 @@
     {
         "identifier": "commands.admin.moverole.missingPermissionBot.title",
         "source_string": "Bot hat fehlende Berechtigung",
-        "translation": "Bot has missing authorization",
+        "translation": "Bot has missing permission",
         "context": "commands -> admin -> moverole -> missingPermissionBot -> title",
         "labels": "de.json",
         "max_length": null
@@ -682,7 +682,7 @@
     {
         "identifier": "commands.admin.moverole.missingPermissionBot.description",
         "source_string": "Der Bot hat nicht die erforderlichen Berechtigungen, um Rollen zu verschieben.",
-        "translation": "The bot does not have the necessary authorizations to move roles.",
+        "translation": "The bot does not have the required permissions to move roles.",
         "context": "commands -> admin -> moverole -> missingPermissionBot -> description",
         "labels": "de.json",
         "max_length": null
@@ -706,7 +706,7 @@
     {
         "identifier": "commands.admin.moverole.success.title",
         "source_string": "Rolle verschoben",
-        "translation": "Role postponed",
+        "translation": "Role moved",
         "context": "commands -> admin -> moverole -> success -> title",
         "labels": "de.json",
         "max_length": null
@@ -714,7 +714,7 @@
     {
         "identifier": "commands.admin.moverole.success.description",
         "source_string": "Die Rolle ${role} wurde erfolgreich ${position} die Rolle ${target_role} verschoben.",
-        "translation": "The role ${role} was successfully ${position} moved to ${target_role}.",
+        "translation": "The ${role} role was successfully moved ${position} the ${target_role} role.",
         "context": "commands -> admin -> moverole -> success -> description",
         "labels": "de.json",
         "max_length": null
@@ -3178,7 +3178,7 @@
     {
         "identifier": "commands.admin.reports.show_reports.noReports.description",
         "source_string": "Es sind keine Reports vorhanden.",
-        "translation": "There are no reports available.",
+        "translation": "There are no reports currently.",
         "context": "commands -> admin -> reports -> show_reports -> noReports -> description",
         "labels": "de.json",
         "max_length": null
@@ -6298,7 +6298,7 @@
     {
         "identifier": "commands.fun.pat.title",
         "source_string": "<a:pat:1096036467601575998>${user} streichelt ${member}<a:pat:1096036467601575998>",
-        "translation": "<a:pat:1096036467601575998>${user} caresses ${member}<a:pat:1096036467601575998>",
+        "translation": "<a:pat:1096036467601575998>${user} pats ${member}<a:pat:1096036467601575998>",
         "context": "commands -> fun -> pat -> title",
         "labels": "de.json",
         "max_length": null
