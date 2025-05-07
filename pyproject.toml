@@ -14,6 +14,7 @@ license = {file = "LICENSE.txt"}
 
 authors = [
     {name = "EntchenEric", email = "eseidel2004@gmail.com"},
+    {name = "Arion2000", email = "github@arion2000.xyz"}
 ]
 
 dependencies = [
