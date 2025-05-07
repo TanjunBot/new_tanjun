@@ -7,6 +7,10 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    permissions:
+      contents: read
+      issues: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
@@ -16,30 +20,45 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev liblzma-dev python3-venv python3-pip
+          # Added xmlstarlet for XML parsing and jq for JSON processing
+          sudo apt-get install -y build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev \
+                                 libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
+                                 libncursesw5-dev xz-utils tk-dev liblzma-dev python3-venv \
+                                 python3-pip xmlstarlet jq
 
-      - name: Cache Python Build
+      - name: Cache Python Build Source
         uses: actions/cache@v3
         with:
           path: |
-            ~/.local/python-build-cache
-            /usr/local/lib/python3.12
-          key: python-${{ matrix.python-version }}-build-${{ runner.os }}
+            ~/.local/python-build-cache # Caching downloaded/extracted Python source
+          key: python-3.12.8-build-source-${{ runner.os }}
 
       - name: Check and Install Python 3.12.8
         run: |
           if ! command -v python3.12 &>/dev/null || [ "$(python3.12 --version 2>&1 | awk '{print $2}')" != "3.12.8" ]; then
-            echo "Python 3.12.8 not found. Installing..."
-            mkdir -p ~/.local/python-build-cache
-            curl -O https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz
-            tar xvf Python-3.12.8.tgz
+            echo "Python 3.12.8 not found or version mismatch. Installing..."
+            mkdir -p ~/.local/python-build-cache # Ensure cache directory exists
+            cd ~/.local/python-build-cache # Work in the cache directory
+            if [ ! -f Python-3.12.8.tgz ]; then
+              curl -O https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz
+            fi
+            if [ ! -d Python-3.12.8 ]; then
+              tar xvf Python-3.12.8.tgz
+            fi
             cd Python-3.12.8
-            ./configure --enable-optimizations
-            make -j$(nproc)
-            sudo make altinstall
-            cd ..
+            # Optimization: Check if already configured/built to speed up reruns if source is cached
+            if [ ! -f "Makefile" ]; then
+              ./configure --enable-optimizations
+            fi
+            if ! command -v python3.12 &>/dev/null || [ "$(python3.12 --version 2>&1 | awk '{print $2}')" != "3.12.8" ]; then
+              make -j$(nproc)
+              sudo make altinstall
+            else
+              echo "Python 3.12.8 seems to be installed correctly by make altinstall target."
+            fi
+            cd ../.. # Back to original directory
           else
-            echo "Python 3.12.8 already installed."
+            echo "Python 3.12.8 already installed and version matches."
           fi
 
       - name: Create and activate virtual environment
@@ -53,33 +72,132 @@ jobs:
           . venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install flake8
+          pip install flake8 pytest # Assuming pytest is used for testing
 
-      #- name: Lint with flake8
-      #  run: |
-      #    echo "[DEBUG]: Current directory:" && pwd
-      #    . venv/bin/activate
-      #    python run_flake8.py
+      # - name: Lint with flake8
+      #   run: |
+      #     . venv/bin/activate
+      #     python run_flake8.py
+
+      - name: Run tests
+        id: run_tests
+        run: |
+          . venv/bin/activate
+          # Replace with your actual test command.
+          # Ensure it generates JUnit XML output to 'test-results.xml'.
+          # Example with pytest:
+          pytest --junitxml=test-results.xml || true
+          # '|| true' allows the workflow to continue even if tests fail,
+          # so the next step can process the failures.
+
+      - name: Process Test Failures and Manage GitHub Issue
+        if: steps.run_tests.outcome == 'failure'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_NAME: ${{ github.repository }}
+          ISSUE_TITLE: "Automated Test Failures"
+          ISSUE_LABEL: "bug,failed-tests" 
+          TEST_RESULTS_FILE: "test-results.xml"
+        run: |
+          echo "Test run failed. Processing failures..."
+
+          if [ ! -f "$TEST_RESULTS_FILE" ]; then
+            echo "::error::Test results file '$TEST_RESULTS_FILE' not found."
+            exit 1
+          fi
+
+          # Extract failed test cases using xmlstarlet
+          # This extracts 'classname.name' for each failed testcase
+          FAILED_TESTS=$(xmlstarlet sel -t -m "//testcase[failure]" -v "concat(@classname, '.', @name)" -n "$TEST_RESULTS_FILE" 2>/dev/null)
+
+          if [ -z "$FAILED_TESTS" ]; then
+            echo "No failed tests found in $TEST_RESULTS_FILE, but test step indicated failure. Check test runner output."
+            # Optionally, still create/update a generic issue, or investigate why test step failed without specific test failures in XML
+            exit 0 # Or handle as an error
+          fi
+
+          echo "Failed tests identified:"
+          echo "$FAILED_TESTS"
+
+          ISSUE_BODY_HEADER="The following automated tests are currently failing:"
+          CHECKLIST_ITEMS=""
+          while IFS= read -r test_name; do
+            CHECKLIST_ITEMS="${CHECKLIST_ITEMS}- [ ] ${test_name}\n"
+          done <<< "$FAILED_TESTS"
+
+          CURRENT_DATETIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          ISSUE_BODY="${ISSUE_BODY_HEADER}\n\n${CHECKLIST_ITEMS}\n---\nLast updated: ${CURRENT_DATETIME} by GitHub Action (${{ github.run_id }})"
+
+          echo "Generated Issue Body:"
+          echo "$ISSUE_BODY"
+
+          # Check for existing issue
+          EXISTING_ISSUE_URL=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                                   -H "Accept: application/vnd.github.v3+json" \
+                                   "https://api.github.com/repos/$REPO_NAME/issues?labels=$ISSUE_LABEL&state=open&creator=app/github-actions" | \
+                                   jq -r --arg title "$ISSUE_TITLE" '.[] | select(.title == $title) | .url' | head -n 1)
+          
+          # If no issue by creator, try searching more broadly (less precise)
+          if [ -z "$EXISTING_ISSUE_URL" ]; then
+             EXISTING_ISSUE_URL=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                                   -H "Accept: application/vnd.github.v3+json" \
+                                   "https://api.github.com/repos/$REPO_NAME/issues?labels=$ISSUE_LABEL&state=open" | \
+                                   jq -r --arg title "$ISSUE_TITLE" '.[] | select(.title == $title) | .url' | head -n 1)
+          fi
+
+
+          if [ -n "$EXISTING_ISSUE_URL" ]; then
+            echo "Existing issue found: $EXISTING_ISSUE_URL"
+            # Fetch existing body to compare (optional, could just update)
+            # For simplicity, we'll just update the body directly here.
+            # A more complex script could compare and only update if changed.
+            
+            # Update existing issue
+            curl -s -X PATCH -H "Authorization: token $GITHUB_TOKEN" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 "$EXISTING_ISSUE_URL" \
+                 -d "$(jq -n --arg body "$ISSUE_BODY" '{body: $body}')"
+            echo "Updated existing issue."
+          else
+            echo "No existing issue found. Creating a new one."
+            # Create new issue
+            CREATE_PAYLOAD=$(jq -n --arg title "$ISSUE_TITLE" --arg body "$ISSUE_BODY" --arglabels "$ISSUE_LABEL" '{title: $title, body: $body, labels: ($arglabels | split(","))}')
+            echo "Create payload: $CREATE_PAYLOAD"
+            curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 "https://api.github.com/repos/$REPO_NAME/issues" \
+                 -d "$CREATE_PAYLOAD"
+            echo "Created new issue."
+          fi
 
   notify_discord:
     runs-on: ubuntu-latest
     needs: build
-    if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/Development') || startsWith(github.ref, 'refs/heads/development') || startsWith(github.ref, 'refs/heads/dev') || startsWith(github.ref, 'refs/heads/ver/')
+    if: (startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/Development') || startsWith(github.ref, 'refs/heads/development') || startsWith(github.ref, 'refs/heads/dev') || startsWith(github.ref, 'refs/heads/ver/'))
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
       - name: Extract event information
         id: event_info
         run: |
-          COMMIT_TITLE=$(git log --format=%s -1)
-          GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
-          GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
-          GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${GITHUB_ACTOR}"
-          COMMIT_HASH=$(git log -1 --pretty=format:'%H')
-          COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI')
-          echo "title=${COMMIT_TITLE}" >> $GITHUB_ENV
-          echo "author_name=${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
-          echo "author_url=https://github.com/${GITHUB_ACTOR}" >> $GITHUB_ENV
+          # Ensure git commands run in the checked-out repo
+          # If shallow clone, git log -1 might be enough. If full history needed, ensure fetch-depth: 0
+          COMMIT_TITLE=$(git log --format=%s -1 HEAD)
+          GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an' HEAD)
+          # GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae' HEAD) # Email not used in payload
+          GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${{ github.actor }}" # Use github.actor for consistent avatar
+          COMMIT_HASH=$(git log -1 --pretty=format:'%H' HEAD)
+          COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI' HEAD) # ISO 8601 strict
+
+          echo "title<<EOF" >> $GITHUB_ENV
+          echo "${COMMIT_TITLE}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+          echo "author_name<<EOF" >> $GITHUB_ENV
+          echo "${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+          echo "author_url=https://github.com/${{ github.actor }}" >> $GITHUB_ENV # Use github.actor for author URL
           echo "author_profileicon=${GITHUB_AUTHOR_PROFILE_ICON}" >> $GITHUB_ENV
           echo "timestamp=${COMMIT_TIMESTAMP}" >> $GITHUB_ENV
           echo "footer_text=${COMMIT_HASH}" >> $GITHUB_ENV
@@ -88,8 +206,11 @@ jobs:
       - name: Check commit message
         id: check_commit_message
         run: |
+          # Ensure title is properly escaped if it contains special characters for JSON later
+          # However, the current usage passes it as an env var and then substitutes in JSON string,
+          # which can be risky. Better to construct JSON carefully.
           if [[ "${{ env.title }}" == *"[ignore changelog]"* ]]; then
-            echo "::error::Commit message includes '[ignore changelog]'. Skipping Discord notification."
+            echo "::warning::Commit message includes '[ignore changelog]'. Skipping Discord notification."
             echo "skip_discord_notification=true" >> $GITHUB_ENV
           else
             echo "skip_discord_notification=false" >> $GITHUB_ENV
@@ -103,37 +224,57 @@ jobs:
             echo "::error::DISCORD_WEBHOOK_URL is not set."
             exit 1
           fi
+
+          # Prepare JSON payload more safely using jq
+          JSON_PAYLOAD=$(jq -n --arg title "$title" \
+                               --arg color "$color" \
+                               --arg author_name "$author_name" \
+                               --arg author_url "$author_url" \
+                               --arg author_icon "$author_profileicon" \
+                               --arg footer_text "$footer_text" \
+                               --arg timestamp "$timestamp" \
+                               --arg username "$username" \
+          '{
+            "content": null,
+            "embeds": [
+              {
+                "title": $title,
+                "description": null,
+                "color": ($color | tonumber),
+                "author": {
+                  "name": $author_name,
+                  "url": $author_url,
+                  "icon_url": $author_icon
+                },
+                "footer": {
+                  "text": $footer_text
+                },
+                "timestamp": $timestamp
+              }
+            ],
+            "username": $username,
+            "attachments": []
+          }')
+
+          echo "Discord Payload:"
+          echo "$JSON_PAYLOAD"
+
           for i in {1..5}; do
-            response=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'Content-Type: application/json' -d '{
-              "content": null,
-              "embeds": [
-                {
-                  "title": "${{ env.title }}",
-                  "description": null,
-                  "color": ${{ env.color }},
-                  "author": {
-                    "name": "${{ env.author_name }}",
-                    "url": "${{ env.author_url }}",
-                    "icon_url": "${{ env.author_profileicon }}"
-                  },
-                  "footer": {
-                    "text": "${{ env.footer_text }}"
-                  },
-                  "timestamp": "${{ env.timestamp }}"
-                }
-              ],
-              "username": "${{ env.username }}",
-              "attachments": []
-            }' $DISCORD_WEBHOOK_URL)
-            if [ $response -eq 204 ]; then
-              echo "Discord notification sent successfully."
+            response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+              -H 'Content-Type: application/json' \
+              -d "$JSON_PAYLOAD" \
+              "$DISCORD_WEBHOOK_URL")
+            if [ "$response" -eq 204 ] || [ "$response" -eq 200 ] || [ "$response" -eq 201 ]; then # Accept 200/201 as well
+              echo "Discord notification sent successfully (HTTP $response)."
               break
             else
-              echo "Failed to send Discord notification. Attempt $i of 5."
+              echo "::warning::Failed to send Discord notification (HTTP $response). Attempt $i of 5."
               sleep 10
             fi
           done
-          if [ $response -ne 204 ]; then
-            echo "::error::Failed to send Discord notification after 5 attempts."
+          if ! ( [ "$response" -eq 204 ] || [ "$response" -eq 200 ] || [ "$response" -eq 201 ] ); then
+            echo "::error::Failed to send Discord notification after 5 attempts (Last HTTP: $response)."
+            # Optionally, output the payload again on final failure for debugging
+            # echo "Failed Payload: $JSON_PAYLOAD"
             exit 1
           fi
