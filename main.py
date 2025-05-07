@@ -1,19 +1,21 @@
+import asyncio
+import os
+
+import asyncmy
 import discord
 from discord.ext import commands
-import os
-import asyncio
-import config
-from translator import TanjunTranslator
+
 import api
-import asyncmy
+import config
+from commands.utility.twitch.twitchApi import initTwitch
 from config import (
     database_ip,
     database_password,
-    database_user,
     database_schema,
+    database_user,
     prefix,
 )
-from commands.utility.twitch.twitchApi import initTwitch
+from translator import TanjunTranslator
 
 
 async def loadextension(bot, extensionname):
@@ -46,9 +48,7 @@ intents.auto_moderation_execution = True
 intents.invites = True
 intents.presences = False
 
-bot = commands.AutoShardedBot(
-    prefix, intents=intents, application_id=config.applicationId
-)
+bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)
 
 
 async def main():
@@ -91,9 +91,7 @@ if __name__ == "__main__":
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(
-        activity=discord.Game(name=config.activity.format(version=config.version))
-    )
+    await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
     pool = await create_pool()
     print(pool)
     api.set_pool(pool)

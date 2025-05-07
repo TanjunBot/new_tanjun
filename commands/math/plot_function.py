@@ -1,15 +1,17 @@
-import discord
+import asyncio
 import io
+import re
+from collections.abc import Callable
+
+import discord
 import matplotlib.pyplot as plt
 import numpy as np
+import sympy as sp
 from scipy import optimize
+from sympy import Symbol, diff, parse_expr
+
 import utility
 from localizer import tanjunLocalizer
-import re
-import asyncio
-from typing import List, Tuple, Callable
-from sympy import Symbol, diff, parse_expr
-import sympy as sp
 
 
 async def plot_function_command(
@@ -18,12 +20,11 @@ async def plot_function_command(
     x_min: float = None,
     x_max: float = None,
 ):
-
     class FunctionPlotter:
         def __init__(self, commandInfo: utility.commandInfo, author_id: int):
             self.commandInfo = commandInfo
             self.author_id = author_id
-            self.functions: List[Tuple[str, Callable]] = []
+            self.functions: list[tuple[str, Callable]] = []
             self.x_min = -10
             self.x_max = 10
             self.y_min = -10
@@ -57,13 +58,13 @@ async def plot_function_command(
             func_str = func_str.replace("sqrt", "np.sqrt")
 
             # Check if the function is just a constant (only contains numbers and operators)
-            if all(c.isdigit() or c in '+-*/.() ' for c in func_str):
+            if all(c.isdigit() or c in "+-*/.() " for c in func_str):
                 constant = eval(func_str)
                 return lambda x: np.full_like(x, constant) if isinstance(x, np.ndarray) else constant
 
             return lambda x: eval(func_str, {"x": x, "np": np})
 
-        async def find_zeros(self, func: Callable) -> List[float]:
+        async def find_zeros(self, func: Callable) -> list[float]:
             x = np.linspace(self.x_min, self.x_max, 1000)
             y = func(x)
             zero_crossings = np.where(np.diff(np.sign(y)))[0]
@@ -73,20 +74,16 @@ async def plot_function_command(
                 zeros.append(zero)
             return zeros
 
-        async def find_extrema(self, func: Callable) -> List[Tuple[float, float]]:
+        async def find_extrema(self, func: Callable) -> list[tuple[float, float]]:
             x = np.linspace(self.x_min, self.x_max, 1000)
             y = func(x)
             extrema = []
             for i in range(1, len(x) - 1):
-                if (y[i - 1] < y[i] and y[i] > y[i + 1]) or (
-                    y[i - 1] > y[i] and y[i] < y[i + 1]
-                ):
+                if (y[i - 1] < y[i] and y[i] > y[i + 1]) or (y[i - 1] > y[i] and y[i] < y[i + 1]):
                     extrema.append((x[i], y[i]))
             return extrema
 
-        async def find_inflection_points(
-            self, func: Callable
-        ) -> List[Tuple[float, float]]:
+        async def find_inflection_points(self, func: Callable) -> list[tuple[float, float]]:
             def second_derivative(x):
                 h = 1e-5
                 return (func(x + h) - 2 * func(x) + func(x - h)) / (h**2)
@@ -99,7 +96,7 @@ async def plot_function_command(
                     inflection_points.append((x[i], func(x[i])))
             return inflection_points
 
-        async def find_intersection_points(self) -> List[Tuple[float, float]]:
+        async def find_intersection_points(self) -> list[tuple[float, float]]:
             if len(self.functions) < 2:
                 return []
 
@@ -111,9 +108,7 @@ async def plot_function_command(
             zero_crossings = np.where(np.diff(np.sign(y)))[0]
             intersections = []
             for i in zero_crossings:
-                intersection = await asyncio.to_thread(
-                    optimize.brentq, diff_func, x[i], x[i + 1]
-                )
+                intersection = await asyncio.to_thread(optimize.brentq, diff_func, x[i], x[i + 1])
                 intersections.append((intersection, self.functions[0][1](intersection)))
             return intersections
 
@@ -268,9 +263,7 @@ async def plot_function_command(
             custom_id="zoom_in",
             row=0,
         )
-        async def zoom_in(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def zoom_in(self, interaction: discord.Interaction, button: discord.ui.Button):
             await self.handle_zoom(interaction, 1 / 1.5)
 
         @discord.ui.button(
@@ -279,9 +272,7 @@ async def plot_function_command(
             custom_id="move_up",
             row=0,
         )
-        async def move_up(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def move_up(self, interaction: discord.Interaction, button: discord.ui.Button):
             shift = (self.plotter.y_max - self.plotter.y_min) * 0.1
             self.plotter.y_min += shift
             self.plotter.y_max += shift
@@ -293,9 +284,7 @@ async def plot_function_command(
             custom_id="zoom_out",
             row=0,
         )
-        async def zoom_out(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def zoom_out(self, interaction: discord.Interaction, button: discord.ui.Button):
             await self.handle_zoom(interaction, 1.5)
 
         @discord.ui.button(
@@ -305,12 +294,8 @@ async def plot_function_command(
             row=0,
             disabled=True,
         )
-        async def empty(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
-            await interaction.response.send_message(
-                "this should not be clickable??", ephemeral=True
-            )
+        async def empty(self, interaction: discord.Interaction, button: discord.ui.Button):
+            await interaction.response.send_message("this should not be clickable??", ephemeral=True)
 
         @discord.ui.button(
             emoji="<:math_add:1254372629456883793>",
@@ -318,9 +303,7 @@ async def plot_function_command(
             custom_id="add_function",
             row=0,
         )
-        async def add_function(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def add_function(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.send_modal(AddFunctionModal(self))
 
         @discord.ui.button(
@@ -329,9 +312,7 @@ async def plot_function_command(
             custom_id="move_left",
             row=1,
         )
-        async def move_left(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def move_left(self, interaction: discord.Interaction, button: discord.ui.Button):
             shift = (self.plotter.x_max - self.plotter.x_min) * 0.1
             self.plotter.x_min -= shift
             self.plotter.x_max -= shift
@@ -343,9 +324,7 @@ async def plot_function_command(
             custom_id="move_down",
             row=1,
         )
-        async def move_down(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def move_down(self, interaction: discord.Interaction, button: discord.ui.Button):
             shift = (self.plotter.y_max - self.plotter.y_min) * 0.1
             self.plotter.y_min -= shift
             self.plotter.y_max -= shift
@@ -357,20 +336,14 @@ async def plot_function_command(
             custom_id="move_right",
             row=1,
         )
-        async def move_right(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def move_right(self, interaction: discord.Interaction, button: discord.ui.Button):
             shift = (self.plotter.x_max - self.plotter.x_min) * 0.1
             self.plotter.x_min += shift
             self.plotter.x_max += shift
             await self.update_plot(interaction)
 
-        @discord.ui.button(
-            label="∫", style=discord.ButtonStyle.secondary, custom_id="integrate", row=1
-        )
-        async def integrate(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        @discord.ui.button(label="∫", style=discord.ButtonStyle.secondary, custom_id="integrate", row=1)
+        async def integrate(self, interaction: discord.Interaction, button: discord.ui.Button):
             view = discord.ui.View()
             view.add_item(IntegrateSelect(self.plotter, self))
             await interaction.response.edit_message(
@@ -381,12 +354,8 @@ async def plot_function_command(
                 ),
             )
 
-        @discord.ui.button(
-            label="d/dx", style=discord.ButtonStyle.secondary, custom_id="derive", row=1
-        )
-        async def derive(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        @discord.ui.button(label="d/dx", style=discord.ButtonStyle.secondary, custom_id="derive", row=1)
+        async def derive(self, interaction: discord.Interaction, button: discord.ui.Button):
             view = discord.ui.View()
             view.add_item(derativeSelect(self.plotter, self))
             await interaction.response.edit_message(
@@ -407,9 +376,7 @@ async def plot_function_command(
             custom_id="rename_plot",
             row=2,
         )
-        async def rename_plot(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def rename_plot(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.send_modal(ChangeTitleModal(self))
 
         @discord.ui.button(
@@ -422,9 +389,7 @@ async def plot_function_command(
             custom_id="change_x_label",
             row=2,
         )
-        async def change_x_label(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def change_x_label(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.send_modal(ChangeXLabelModal(self))
 
         @discord.ui.button(
@@ -437,9 +402,7 @@ async def plot_function_command(
             custom_id="change_y_label",
             row=2,
         )
-        async def change_y_label(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def change_y_label(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.send_modal(ChangeYLabelModal(self))
 
         @discord.ui.button(
@@ -452,9 +415,7 @@ async def plot_function_command(
             custom_id="change_style",
             row=2,
         )
-        async def change_style(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def change_style(self, interaction: discord.Interaction, button: discord.ui.Button):
             view = discord.ui.View()
             view.add_item(StyleSelect(self.plotter, self))
             await interaction.response.edit_message(
@@ -475,13 +436,9 @@ async def plot_function_command(
             custom_id="rename_function",
             row=2,
         )
-        async def rename_function(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def rename_function(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not self.plotter.functions:
-                await interaction.response.send_message(
-                    "There are no functions to rename.", ephemeral=True
-                )
+                await interaction.response.send_message("There are no functions to rename.", ephemeral=True)
                 return
 
             view = discord.ui.View()
@@ -503,13 +460,9 @@ async def plot_function_command(
 
             for child in self.children:
                 child.disabled = True
-            await interaction.message.edit(
-                view=self
-            )  # Update the view to disable buttons
+            await interaction.message.edit(view=self)  # Update the view to disable buttons
 
-            await interaction.edit_original_response(
-                embed=embed, attachments=[file], view=self
-            )
+            await interaction.edit_original_response(embed=embed, attachments=[file], view=self)
 
             for child in self.children:
                 child.disabled = False
@@ -529,9 +482,7 @@ async def plot_function_command(
 
         def update_options(self):
             options = [
-                discord.SelectOption(
-                    label=f"{name}(x)", value=str(i), description=f"{func_str}"
-                )
+                discord.SelectOption(label=f"{name}(x)", value=str(i), description=f"{func_str}")
                 for i, (func_str, func, name) in enumerate(self.plotter.functions)
             ]
             super().__init__(
@@ -571,9 +522,7 @@ async def plot_function_command(
 
         def update_options(self):
             options = [
-                discord.SelectOption(
-                    label=f"{name}(x)", value=str(i), description=f"{func_str}"
-                )
+                discord.SelectOption(label=f"{name}(x)", value=str(i), description=f"{func_str}")
                 for i, (func_str, func, name) in enumerate(self.plotter.functions)
             ]
             super().__init__(
@@ -593,13 +542,9 @@ async def plot_function_command(
                 await self.plotterView.update_plot(interaction)
                 self.update_options()
             except ValueError as e:
-                await interaction.response.send_message(
-                    f"Error: {str(e)}", ephemeral=True
-                )
+                await interaction.response.send_message(f"Error: {str(e)}", ephemeral=True)
             except Exception as e:
-                await interaction.response.send_message(
-                    f"An unexpected error occurred: {str(e)}", ephemeral=True
-                )
+                await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
 
     class ChangeTitleModal(
         discord.ui.Modal,
@@ -690,10 +635,7 @@ async def plot_function_command(
             # Use only available styles
             self.styles = plt.style.available
 
-            options = [
-                discord.SelectOption(label=style, value=style)
-                for style in self.styles[0:25]
-            ]
+            options = [discord.SelectOption(label=style, value=style) for style in self.styles[0:25]]
             super().__init__(
                 placeholder=tanjunLocalizer.localize(
                     locale=commandInfo.locale,
@@ -714,9 +656,7 @@ async def plot_function_command(
             self.plotterView = plotterView
 
             options = [
-                discord.SelectOption(
-                    label=f"{name}(x)", value=str(i), description=f"{func_str[:100]}"
-                )
+                discord.SelectOption(label=f"{name}(x)", value=str(i), description=f"{func_str[:100]}")
                 for i, (func_str, func, name) in enumerate(self.plotter.functions)
             ]
             super().__init__(
@@ -729,9 +669,7 @@ async def plot_function_command(
 
         async def callback(self, interaction: discord.Interaction):
             function_index = int(self.values[0])
-            await interaction.response.send_modal(
-                RenameFunctionModal(self.plotter, self.plotterView, function_index)
-            )
+            await interaction.response.send_modal(RenameFunctionModal(self.plotter, self.plotterView, function_index))
 
     class RenameFunctionModal(
         discord.ui.Modal,

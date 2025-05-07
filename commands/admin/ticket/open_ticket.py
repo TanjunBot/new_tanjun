@@ -1,7 +1,8 @@
 import discord
+
 import utility
+from api import check_if_opted_out, get_ticket_messages_by_id, open_ticket
 from localizer import tanjunLocalizer
-from api import get_ticket_messages_by_id, check_if_opted_out, open_ticket
 
 
 async def openTicket(interaction: discord.Interaction):
@@ -18,26 +19,18 @@ async def openTicket(interaction: discord.Interaction):
             super().__init__()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                interaction.locale, "commands.admin.open_ticket.optedOutWarning.confirm"
-            ),
+            label=tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.confirm"),
             custom_id=interaction.data["custom_id"] + ";optedOutConfirm",
         )
-        async def optedOutConfirm(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button):
             await open_ticket_2(interaction)
             return
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                interaction.locale, "commands.admin.open_ticket.optedOutWarning.decline"
-            ),
+            label=tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.decline"),
             custom_id="optedOutDecline",
         )
-        async def optedOutDecline(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
                     interaction.locale,
@@ -98,11 +91,7 @@ async def open_ticket_2(interaction: discord.Interaction):
         return
 
     ticket_created_locale = tanjunLocalizer.localize(
-        (
-            interaction.guild.preferred_locale
-            if interaction.guild.preferred_locale
-            else interaction.locale
-        ),
+        (interaction.guild.preferred_locale if interaction.guild.preferred_locale else interaction.locale),
         "commands.admin.open_ticket.success.ticketCreated",
         user=interaction.user,
     )

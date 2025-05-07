@@ -1,13 +1,14 @@
-from config import brawlstarsToken
 import aiohttp
+import discord
+
+from config import brawlstarsToken
+from localizer import tanjunLocalizer
 from utility import (
     commandInfo,
-    tanjunEmbed,
-    isoTimeToDate,
     date_time_to_timestamp,
+    isoTimeToDate,
+    tanjunEmbed,
 )
-import discord
-from localizer import tanjunLocalizer
 
 
 async def getEventRotation():
@@ -75,9 +76,7 @@ async def events(commandInfo: commandInfo):
             self.current_page = current_page
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -91,14 +90,10 @@ async def events(commandInfo: commandInfo):
                 self.current_page = self.total_pages - 1
             else:
                 self.current_page -= 1
-            await interaction.response.edit_message(
-                view=self, embed=await generate_page(self.current_page)
-            )
+            await interaction.response.edit_message(view=self, embed=await generate_page(self.current_page))
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -112,9 +107,7 @@ async def events(commandInfo: commandInfo):
                 self.current_page = 0
             else:
                 self.current_page += 1
-            await interaction.response.edit_message(
-                view=self, embed=await generate_page(self.current_page)
-            )
+            await interaction.response.edit_message(view=self, embed=await generate_page(self.current_page))
 
     if len(eventRotation) > 1:
         view = BrawlersPaginator(len(eventRotation))

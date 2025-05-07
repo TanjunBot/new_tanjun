@@ -1,17 +1,18 @@
+import math
+import random
+
 from api import (
-    update_user_xp_from_voice,
     check_if_opted_out,
-    get_level_system_status,
-    # get_blacklist,
-    get_xp_scaling,
+    get_channel_boost,
     get_custom_formula,
+    get_level_system_status,
     get_user_boost,
     get_user_roles_boosts,
-    get_channel_boost,
+    # get_blacklist,
+    get_xp_scaling,
+    update_user_xp_from_voice,
 )
 from minigames.addLevelXp import is_blacklisted  # , fetch_xp_details
-import random
-import math
 
 voiceUsers = []
 
@@ -46,9 +47,7 @@ async def calculate_xp(user) -> int:
     user_boost = await get_user_boost(user.guild.id, str(user.id))
     if not user_boost:
         user_boost = []
-    role_boosts = await get_user_roles_boosts(
-        user.guild.id, [str(role.id) for role in user.roles]
-    )
+    role_boosts = await get_user_roles_boosts(user.guild.id, [str(role.id) for role in user.roles])
     if not role_boosts:
         role_boosts = []
     channel_boost = await get_channel_boost(user.guild.id, str(user.id))
@@ -56,9 +55,7 @@ async def calculate_xp(user) -> int:
         channel_boost = []
 
     total_additive_boost = sum(boost[0] - 1 for boost in role_boosts if boost[1])
-    total_multiplicative_boost = math.prod(
-        boost[0] for boost in role_boosts if not boost[1]
-    )
+    total_multiplicative_boost = math.prod(boost[0] for boost in role_boosts if not boost[1])
 
     if user_boost:
         if user_boost[1]:  # if additive
@@ -92,12 +89,7 @@ async def addXpToVoiceUsers(client):
             return
 
         scaling, custom_formula, xp_to_add = await fetch_xp_details(user)
-        await update_user_xp_from_voice(
-            user.guild.id,
-            user.id,
-            xp_to_add,
-            True
-        )
+        await update_user_xp_from_voice(user.guild.id, user.id, xp_to_add, True)
 
 
 async def handleVoiceChange(user, before, after):

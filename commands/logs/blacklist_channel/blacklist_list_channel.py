@@ -1,10 +1,15 @@
+import discord
+
+import utility
 from api import (
     add_log_blacklist_channel as add_log_blacklist_channel_api,
-    remove_log_blacklist_channel as remove_log_blacklist_channel_api,
+)
+from api import (
     get_log_blacklist_channel as get_log_blacklist_channels_api,
 )
-import utility
-import discord
+from api import (
+    remove_log_blacklist_channel as remove_log_blacklist_channel_api,
+)
 from localizer import tanjunLocalizer
 
 
@@ -34,9 +39,7 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
             self.selectedIndex = 0
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
-        async def remove_channel(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button):
             channel_id = self.channels[self.selectedIndex][0]
             await remove_log_blacklist_channel_api(self.guild.id, channel_id)
             self.channels = tuple(x for x in self.channels if x[0] != channel_id)
@@ -48,9 +51,7 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button):
             self.selectedIndex = (self.selectedIndex + 1) % len(self.channels)
             await self.update_view(interaction)
 
@@ -72,15 +73,10 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
                 if self.selectedIndex >= len(self.channels):
                     self.selectedIndex = len(self.channels) - 1
                 description = "\n".join(
-                    [
-                        f"{'➤' if i == self.selectedIndex else ''} <#{channel[0]}>"
-                        for i, channel in enumerate(self.channels)
-                    ]
+                    [f"{'➤' if i == self.selectedIndex else ''} <#{channel[0]}>" for i, channel in enumerate(self.channels)]
                 )
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    self.locale, "commands.logs.blacklistListChannel.title"
-                ),
+                title=tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListChannel.title"),
                 description=description,
             )
             await interaction.response.edit_message(embed=embed, view=self)
@@ -102,16 +98,9 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
             "commands.logs.blacklistListChannel.noBlacklistedChannels",
         )
     else:
-        description = "\n".join(
-            [
-                f"{'➤' if i == 0 else ''} <#{channel[0]}>"
-                for i, channel in enumerate(blacklisted_channels)
-            ]
-        )
+        description = "\n".join([f"{'➤' if i == 0 else ''} <#{channel[0]}>" for i, channel in enumerate(blacklisted_channels)])
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.logs.blacklistListChannel.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListChannel.title"),
         description=description,
     )
     await commandInfo.reply(embed=embed, view=view)

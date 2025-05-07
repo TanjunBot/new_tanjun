@@ -1,21 +1,19 @@
+import aiohttp
 import discord
+
 import utility
 from localizer import tanjunLocalizer
-import aiohttp
-from typing import List
 
 
 async def create_emoji(
     commandInfo: utility.commandInfo,
     name: str,
     image_url: str,
-    roles: List[discord.Role] = None,
+    roles: list[discord.Role] = None,
 ):
     if not commandInfo.user.guild_permissions.manage_emojis:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.createEmoji.missingPermission.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createEmoji.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createEmoji.missingPermission.description",
@@ -37,22 +35,16 @@ async def create_emoji(
                     return
                 image_data = await resp.read()
 
-        emoji = await commandInfo.guild.create_custom_emoji(
-            name=name, image=image_data, roles=roles
-        )
+        emoji = await commandInfo.guild.create_custom_emoji(name=name, image=image_data, roles=roles)
 
         roles_mention = (
             ", ".join([role.mention for role in roles])
             if roles
-            else tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.createEmoji.allRoles"
-            )
+            else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createEmoji.allRoles")
         )
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.createEmoji.success.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createEmoji.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createEmoji.success.description",
@@ -64,8 +56,4 @@ async def create_emoji(
         await commandInfo.reply(embed=embed)
 
     except discord.HTTPException as e:
-        await commandInfo.reply(
-            tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.createEmoji.error", error=str(e)
-            )
-        )
+        await commandInfo.reply(tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createEmoji.error", error=str(e)))

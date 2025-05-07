@@ -1,8 +1,10 @@
-import utility
-import discord
-from localizer import tanjunLocalizer
 import random
+
+import discord
+
+import utility
 from commands.games.hangman_words.words import words
+from localizer import tanjunLocalizer
 
 # flake8: noqa: E501 # No trailing whitespace (formatting for the hangman steps)
 hangmanSteps = [
@@ -173,9 +175,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                     guesses=len(guesses),
                     guessed_letters=guessed_letters if len(guessed_letters) > 0 else "",
                     hanged_man=hanged_man,
-                    used_letters=", ".join(
-                        [f"{letter}" for letter in [x for x in guesses if len(x) == 1]]
-                    ),
+                    used_letters=", ".join([f"{letter}" for letter in [x for x in guesses if len(x) == 1]]),
                 ),
             )
         elif wrong_letters(guesses, word) >= 11:
@@ -190,9 +190,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                     word=word,
                     hanged_man=hanged_man,
                     guessed_letters=guessed_letters,
-                    used_letters=", ".join(
-                        [f"{letter}" for letter in [x for x in guesses if len(x) == 1]]
-                    ),
+                    used_letters=", ".join([f"{letter}" for letter in [x for x in guesses if len(x) == 1]]),
                 ),
             )
         elif len(guesses) > 0 and guesses[-1] == word:
@@ -207,9 +205,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                     hanged_man=hanged_man,
                     guessed_letters=guessed_letters if len(guessed_letters) > 0 else "",
                     guesses=len(guesses),
-                    used_letters=", ".join(
-                        [f"{letter}" for letter in [x for x in guesses if len(x) == 1]]
-                    ),
+                    used_letters=", ".join([f"{letter}" for letter in [x for x in guesses if len(x) == 1]]),
                 ),
             )
         elif wrong_guess:
@@ -224,9 +220,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                     guesses=len(guesses),
                     hanged_man=hanged_man,
                     guessed_letters=guessed_letters,
-                    used_letters=", ".join(
-                        [f"{letter}" for letter in [x for x in guesses if len(x) == 1]]
-                    ),
+                    used_letters=", ".join([f"{letter}" for letter in [x for x in guesses if len(x) == 1]]),
                 ),
             )
         else:
@@ -241,36 +235,24 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                     guesses=len(guesses),
                     hanged_man=hanged_man,
                     guessed_letters=guessed_letters if len(guessed_letters) > 0 else "",
-                    used_letters=", ".join(
-                        [f"{letter}" for letter in [x for x in guesses if len(x) == 1]]
-                    ),
+                    used_letters=", ".join([f"{letter}" for letter in [x for x in guesses if len(x) == 1]]),
                 ),
             )
         view = (
             None
-            if wrong_letters(guesses, word) > 11
-            or (len(guesses) > 0 and guesses[-1] == word)
-            or given_up
+            if wrong_letters(guesses, word) > 11 or (len(guesses) > 0 and guesses[-1] == word) or given_up
             else WordleView(commandInfo)
         )
-        await interaction.response.edit_message(
-            embed=embed, view=view
-        )
+        await interaction.response.edit_message(embed=embed, view=view)
 
     class HangmanInputModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.commandInfo, config):
-            super().__init__(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.games.hangman.modal.title"
-                )
-            )
+            super().__init__(title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.modal.title"))
             self.commandInfo = commandInfo
 
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.games.hangman.modal.input.label"
-                    ),
+                    label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.modal.input.label"),
                     placeholder=tanjunLocalizer.localize(
                         commandInfo.locale,
                         "commands.games.hangman.modal.input.placeholder",
@@ -295,9 +277,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
                 await update_hangman_game(interaction)
             except ValueError:
                 embed = utility.tanjunEmbed(
-                    title=tanjunLocalizer.localize(
-                        self.commandInfo.locale, "commands.games.hangman.error.title"
-                    ),
+                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.games.hangman.error.title"),
                     description=tanjunLocalizer.localize(
                         self.commandInfo.locale,
                         "commands.games.hangman.error.invalidInput",
@@ -311,19 +291,13 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             self.commandInfo = commandInfo
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.games.hangman.buttons.guess"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
-        async def guess_button_callback(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.games.hangman.notYourGame"
-                    ),
+                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -331,19 +305,13 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             await interaction.response.send_modal(modal)
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.games.hangman.buttons.giveUp"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.buttons.giveUp"),
             style=discord.ButtonStyle.red,
         )
-        async def give_up_button_callback(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.games.hangman.notYourGame"
-                    ),
+                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -364,9 +332,7 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             guesses=len(guesses),
             hanged_man=hanged_man,
             guessed_letters=guessed_letters,
-            used_letters=", ".join(
-                [f"{letter}" for letter in [x for x in guesses if len(x) == 1]]
-            ),
+            used_letters=", ".join([f"{letter}" for letter in [x for x in guesses if len(x) == 1]]),
         ),
     )
     await commandInfo.reply(view=view, embed=embed)

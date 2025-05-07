@@ -1,21 +1,16 @@
 import discord
+
 import utility
+from api import get_warn_config, set_warn_config
 from localizer import tanjunLocalizer
-from api import set_warn_config, get_warn_config
 
 
 async def warn_config(commandInfo: utility.commandInfo):
-    config = await get_warn_config(
-        commandInfo.guild.id
-    )  # Retrieve current configuration settings
+    config = await get_warn_config(commandInfo.guild.id)  # Retrieve current configuration settings
 
     class WarnConfigModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.commandInfo, config):
-            super().__init__(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.admin.warnconfig.modal.title"
-                )
-            )
+            super().__init__(title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.title"))
             self.commandInfo = commandInfo
 
             # Provide default values from the current configuration
@@ -122,9 +117,7 @@ async def warn_config(commandInfo: utility.commandInfo):
 
             except ValueError:
                 embed = utility.tanjunEmbed(
-                    title=tanjunLocalizer.localize(
-                        self.commandInfo.locale, "commands.admin.warnconfig.error.title"
-                    ),
+                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.warnconfig.error.title"),
                     description=tanjunLocalizer.localize(
                         self.commandInfo.locale,
                         "commands.admin.warnconfig.error.invalidInput",
@@ -134,9 +127,7 @@ async def warn_config(commandInfo: utility.commandInfo):
 
     if not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.warnconfig.missingPermission.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.warnconfig.missingPermission.description",

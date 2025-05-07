@@ -1,6 +1,7 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
 import discord
+
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def avatarDecoration(commandInfo: commandInfo, user: discord.Member):

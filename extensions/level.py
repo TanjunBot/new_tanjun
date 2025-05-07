@@ -1,64 +1,64 @@
 # Unused imports:
 # from localizer import tanjunLocalizer
-import discord
-from discord.ext import commands
-from discord import app_commands
-import utility
-from utility import LEVEL_SCALINGS  # , tanjunEmbed
-from typing import Optional  # , List
 
-from commands.level.disable_level_system import (
-    disable_level_system as disableLevelSystemCommand,
-)
-from commands.level.enable_level_system import (
-    enable_level_system as enableLevelSystemCommand,
-)
+import discord
+from discord import app_commands
+from discord.ext import commands
+
+import utility
+from commands.level.add_level_role import add_level_role_command
 from commands.level.change_levelup_message import (
     change_levelup_message as changeLevelupMessageCommand,
+)
+from commands.level.change_xp_scaling import change_xp_scaling_command, show_xp_scalings
+from commands.level.disable_level_system import (
+    disable_level_system as disableLevelSystemCommand,
 )
 from commands.level.disable_levelup_message import (
     disable_levelup_message as disableLevelupMessageCommand,
 )
+from commands.level.enable_level_system import (
+    enable_level_system as enableLevelSystemCommand,
+)
 from commands.level.enable_levelup_message import (
     enable_levelup_message as enableLevelupMessageCommand,
 )
-from commands.level.set_levelup_channel import (
-    set_levelup_channel_command as setLevelupChannelCommand,
-)
-from commands.level.change_xp_scaling import change_xp_scaling_command, show_xp_scalings
-from commands.level.add_level_role import add_level_role_command
-from commands.level.remove_level_role import remove_level_role_command
-from commands.level.show_level_roles import show_level_roles_command
-from commands.level.level_boosts import (
-    add_role_boost_command,
-    add_channel_boost_command,
-    add_user_boost_command,
-    remove_role_boost_command,
-    remove_channel_boost_command,
-    remove_user_boost_command,
-    show_boosts_command,
-    calculate_user_channel_boost_command,
-)
+from commands.level.give_xp import give_xp_command
+from commands.level.leaderboard import leaderboard
 from commands.level.level_blacklist import (
     add_channel_to_blacklist_command,
-    remove_channel_from_blacklist_command,
     add_role_to_blacklist_command,
-    remove_role_from_blacklist_command,
     add_user_to_blacklist_command,
+    remove_channel_from_blacklist_command,
+    remove_role_from_blacklist_command,
     remove_user_from_blacklist_command,
     show_blacklist_command,
 )
-from commands.level.level_rankcard import (
-    show_rankcard_command,
-    set_background_command,
+from commands.level.level_boosts import (
+    add_channel_boost_command,
+    add_role_boost_command,
+    add_user_boost_command,
+    calculate_user_channel_boost_command,
+    remove_channel_boost_command,
+    remove_role_boost_command,
+    remove_user_boost_command,
+    show_boosts_command,
 )
-from commands.level.give_xp import give_xp_command
-from commands.level.take_xp import take_xp_command
+from commands.level.level_rankcard import (
+    set_background_command,
+    show_rankcard_command,
+)
 from commands.level.level_set_xp_cooldown import (
     set_text_cooldown_command,
     set_voice_cooldown_command,
 )
-from commands.level.leaderboard import leaderboard
+from commands.level.remove_level_role import remove_level_role_command
+from commands.level.set_levelup_channel import (
+    set_levelup_channel_command as setLevelupChannelCommand,
+)
+from commands.level.show_level_roles import show_level_roles_command
+from commands.level.take_xp import take_xp_command
+from utility import LEVEL_SCALINGS  # , tanjunEmbed
 
 
 class BlacklistCommands(discord.app_commands.Group):
@@ -67,12 +67,8 @@ class BlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_blacklist_addc_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "level_blacklist_addc_params_channel_description"
-        ),
-        reason=app_commands.locale_str(
-            "level_blacklist_addc_params_reason_description"
-        ),
+        channel=app_commands.locale_str("level_blacklist_addc_params_channel_description"),
+        reason=app_commands.locale_str("level_blacklist_addc_params_reason_description"),
     )
     async def add_channel(self, ctx, channel: discord.TextChannel, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
@@ -94,9 +90,7 @@ class BlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_blacklist_removec_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "level_blacklist_removec_params_channel_description"
-        ),
+        channel=app_commands.locale_str("level_blacklist_removec_params_channel_description"),
     )
     async def remove_channel(self, ctx, channel: discord.TextChannel):
         await ctx.response.defer()
@@ -119,9 +113,7 @@ class BlacklistCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         role=app_commands.locale_str("level_blacklist_addr_params_role_description"),
-        reason=app_commands.locale_str(
-            "level_blacklist_addr_params_reason_description"
-        ),
+        reason=app_commands.locale_str("level_blacklist_addr_params_reason_description"),
     )
     async def add_role(self, ctx, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
@@ -166,9 +158,7 @@ class BlacklistCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         user=app_commands.locale_str("level_blacklist_addu_params_user_description"),
-        reason=app_commands.locale_str(
-            "level_blacklist_addu_params_reason_description"
-        ),
+        reason=app_commands.locale_str("level_blacklist_addu_params_reason_description"),
     )
     async def add_user(self, ctx, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
@@ -235,13 +225,9 @@ class LevelBoostCommands(discord.app_commands.Group):
     @app_commands.describe(
         role=app_commands.locale_str("level_boosts_addrole_params_role_description"),
         boost=app_commands.locale_str("level_boosts_addrole_params_boost_description"),
-        additive=app_commands.locale_str(
-            "level_boosts_addrole_params_additive_description"
-        ),
+        additive=app_commands.locale_str("level_boosts_addrole_params_additive_description"),
     )
-    async def add_role_boost(
-        self, ctx, role: discord.Role, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
-    ):
+    async def add_role_boost(self, ctx, role: discord.Role, boost: app_commands.Range[float, 0.1, 10.0], additive: bool):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -261,15 +247,9 @@ class LevelBoostCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_boosts_addchannel_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "level_boosts_addchannel_params_channel_description"
-        ),
-        boost=app_commands.locale_str(
-            "level_boosts_addchannel_params_boost_description"
-        ),
-        additive=app_commands.locale_str(
-            "level_boosts_addchannel_params_additive_description"
-        ),
+        channel=app_commands.locale_str("level_boosts_addchannel_params_channel_description"),
+        boost=app_commands.locale_str("level_boosts_addchannel_params_boost_description"),
+        additive=app_commands.locale_str("level_boosts_addchannel_params_additive_description"),
     )
     async def add_channel_boost(
         self, ctx, channel: discord.TextChannel, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
@@ -295,13 +275,9 @@ class LevelBoostCommands(discord.app_commands.Group):
     @app_commands.describe(
         user=app_commands.locale_str("level_boosts_adduser_params_user_description"),
         boost=app_commands.locale_str("level_boosts_adduser_params_boost_description"),
-        additive=app_commands.locale_str(
-            "level_boosts_adduser_params_additive_description"
-        ),
+        additive=app_commands.locale_str("level_boosts_adduser_params_additive_description"),
     )
-    async def add_user_boost(
-        self, ctx, user: discord.Member, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
-    ):
+    async def add_user_boost(self, ctx, user: discord.Member, boost: app_commands.Range[float, 0.1, 10.0], additive: bool):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -343,9 +319,7 @@ class LevelBoostCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_boosts_removechannel_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "level_boosts_removechannel_params_channel_description"
-        ),
+        channel=app_commands.locale_str("level_boosts_removechannel_params_channel_description"),
     )
     async def remove_channel_boost(self, ctx, channel: discord.TextChannel):
         await ctx.response.defer()
@@ -409,13 +383,9 @@ class LevelBoostCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         user=app_commands.locale_str("level_boosts_calculate_params_user_description"),
-        channel=app_commands.locale_str(
-            "level_boosts_calculate_params_channel_description"
-        ),
+        channel=app_commands.locale_str("level_boosts_calculate_params_channel_description"),
     )
-    async def calculate_user_channel_boost(
-        self, ctx, user: discord.Member, channel: discord.TextChannel
-    ):
+    async def calculate_user_channel_boost(self, ctx, user: discord.Member, channel: discord.TextChannel):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -477,13 +447,9 @@ class LevelConfigCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_changelevelupmessage_description"),
     )
     @app_commands.describe(
-        newmessage=app_commands.locale_str(
-            "level_changelevelupmessage_params_newmessage_description"
-        ),
+        newmessage=app_commands.locale_str("level_changelevelupmessage_params_newmessage_description"),
     )
-    async def changelevelupmessage(
-        self, ctx, newmessage: app_commands.Range[str, 1, 255]
-    ):
+    async def changelevelupmessage(self, ctx, newmessage: app_commands.Range[str, 1, 255]):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -544,13 +510,9 @@ class LevelConfigCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_setlevelupchannel_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "level_setlevelupchannel_params_channel_description"
-        ),
+        channel=app_commands.locale_str("level_setlevelupchannel_params_channel_description"),
     )
-    async def setlevelupchannel(
-        self, ctx, channel: Optional[discord.TextChannel] = None
-    ):
+    async def setlevelupchannel(self, ctx, channel: discord.TextChannel | None = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -571,22 +533,13 @@ class LevelConfigCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_changexpscaling_description"),
     )
     @app_commands.describe(
-        scaling=app_commands.locale_str(
-            "level_changexpscaling_params_scaling_description"
-        ),
-        customformula=app_commands.locale_str(
-            "level_changexpscaling_params_customformula_description"
-        ),
+        scaling=app_commands.locale_str("level_changexpscaling_params_scaling_description"),
+        customformula=app_commands.locale_str("level_changexpscaling_params_customformula_description"),
     )
     @app_commands.choices(
-        scaling=[
-            app_commands.Choice(name=key, value=key)
-            for key in list(LEVEL_SCALINGS.keys()) + ["custom"]
-        ]
+        scaling=[app_commands.Choice(name=key, value=key) for key in list(LEVEL_SCALINGS.keys()) + ["custom"]]
     )
-    async def changexpscaling(
-        self, ctx, scaling: str, customformula: Optional[str] = None
-    ):
+    async def changexpscaling(self, ctx, scaling: str, customformula: str | None = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -607,12 +560,8 @@ class LevelConfigCommands(discord.app_commands.Group):
         description=app_commands.locale_str("level_showxpscalings_description"),
     )
     @app_commands.describe(
-        startlevel=app_commands.locale_str(
-            "level_showxpscalings_params_startlevel_description"
-        ),
-        endlevel=app_commands.locale_str(
-            "level_showxpscalings_params_endlevel_description"
-        ),
+        startlevel=app_commands.locale_str("level_showxpscalings_params_startlevel_description"),
+        endlevel=app_commands.locale_str("level_showxpscalings_params_endlevel_description"),
     )
     async def showxpscalings(self, ctx, startlevel: int = 1, endlevel: int = 5):
         await ctx.response.defer()
@@ -857,13 +806,15 @@ class levelCommands(discord.app_commands.Group):
 
 
 class levelCog(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self):
-        levelCmds = levelCommands(name=app_commands.locale_str("levelcommands_name"), description=app_commands.locale_str("levelcommands_description"))
+        levelCmds = levelCommands(
+            name=app_commands.locale_str("levelcommands_name"),
+            description=app_commands.locale_str("levelcommands_description"),
+        )
         levelConfigCmds = LevelConfigCommands(
             name=app_commands.locale_str("level_config_name"),
             description=app_commands.locale_str("level_config_description"),

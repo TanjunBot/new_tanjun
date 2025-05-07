@@ -1,10 +1,12 @@
-import discord
-from discord.ui import View, Button
-import utility
-from localizer import tanjunLocalizer
-from api import get_detailed_warnings, remove_warning
 import math
 from datetime import datetime
+
+import discord
+from discord.ui import Button, View
+
+import utility
+from api import get_detailed_warnings, remove_warning
+from localizer import tanjunLocalizer
 
 WARNINGS_PER_PAGE = 5
 
@@ -22,9 +24,7 @@ class WarningView(View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.admin.viewwarns.unauthorizedUser"
-                ),
+                tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.viewwarns.unauthorizedUser"),
                 ephemeral=True,
             )
             return False
@@ -37,16 +37,12 @@ class WarningView(View):
 
         if self.page > 0:
             prev_button = Button(
-                label=tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.admin.viewwarns.prevButton"
-                ),
+                label=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.viewwarns.prevButton"),
                 style=discord.ButtonStyle.primary,
             )
             prev_button.callback = self.prev_page
             self.add_item(prev_button)
-        for i, (warning_id, _, _, expires_at, _) in enumerate(
-            self.warnings[start:end], start=start + 1
-        ):
+        for i, (warning_id, _, _, expires_at, _) in enumerate(self.warnings[start:end], start=start + 1):
             button = Button(
                 label=tanjunLocalizer.localize(
                     self.commandInfo.locale,
@@ -62,9 +58,7 @@ class WarningView(View):
 
         if (self.page + 1) * WARNINGS_PER_PAGE < len(self.warnings):
             next_button = Button(
-                label=tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.admin.viewwarns.nextButton"
-                ),
+                label=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.viewwarns.nextButton"),
                 style=discord.ButtonStyle.primary,
             )
             next_button.callback = self.next_page
@@ -77,9 +71,7 @@ class WarningView(View):
 
         if not self.warnings:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.admin.viewwarns.noWarnings.title"
-                ),
+                title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.viewwarns.noWarnings.title"),
                 description=tanjunLocalizer.localize(
                     self.commandInfo.locale,
                     "commands.admin.viewwarns.noWarnings.description",
@@ -89,31 +81,21 @@ class WarningView(View):
             await interaction.response.edit_message(embed=embed, view=None)
             return
 
-        self.page = min(
-            self.page, math.ceil(len(self.warnings) / WARNINGS_PER_PAGE) - 1
-        )
-        embed = create_warnings_embed(
-            self.commandInfo, self.member, self.warnings, self.page
-        )
+        self.page = min(self.page, math.ceil(len(self.warnings) / WARNINGS_PER_PAGE) - 1)
+        embed = create_warnings_embed(self.commandInfo, self.member, self.warnings, self.page)
         self.update_buttons()
 
         await interaction.response.edit_message(embed=embed, view=self)
 
     async def prev_page(self, interaction: discord.Interaction):
         self.page = max(0, self.page - 1)
-        embed = create_warnings_embed(
-            self.commandInfo, self.member, self.warnings, self.page
-        )
+        embed = create_warnings_embed(self.commandInfo, self.member, self.warnings, self.page)
         self.update_buttons()
         await interaction.response.edit_message(embed=embed, view=self)
 
     async def next_page(self, interaction: discord.Interaction):
-        self.page = min(
-            math.ceil(len(self.warnings) / WARNINGS_PER_PAGE) - 1, self.page + 1
-        )
-        embed = create_warnings_embed(
-            self.commandInfo, self.member, self.warnings, self.page
-        )
+        self.page = min(math.ceil(len(self.warnings) / WARNINGS_PER_PAGE) - 1, self.page + 1)
+        embed = create_warnings_embed(self.commandInfo, self.member, self.warnings, self.page)
         self.update_buttons()
         await interaction.response.edit_message(embed=embed, view=self)
 
@@ -128,9 +110,7 @@ def create_warnings_embed(commandInfo, member, warnings, page):
     current_warnings = warnings[start:end]
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.viewwarns.title", user=member.name
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.title", user=member.name),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.viewwarns.description",
@@ -138,9 +118,7 @@ def create_warnings_embed(commandInfo, member, warnings, page):
         ),
     )
 
-    for i, (_, reason, created_at, expires_at, created_by) in enumerate(
-        current_warnings, start=start + 1
-    ):
+    for i, (_, reason, created_at, expires_at, created_by) in enumerate(current_warnings, start=start + 1):
         expired = expires_at is not None and datetime.now() > expires_at
         expiration_str = (
             f"<t:{int(expires_at.timestamp())}:D>"
@@ -153,18 +131,12 @@ def create_warnings_embed(commandInfo, member, warnings, page):
         expiration_str = f"~~{expiration_str}~~" if expired else expiration_str
 
         embed.add_field(
-            name=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.viewwarns.warningEntry", number=i
-            ),
+            name=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.warningEntry", number=i),
             value=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.viewwarns.warningDetails",
                 reason=(
-                    reason
-                    if reason
-                    else tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.admin.viewwarns.noReason"
-                    )
+                    reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.noReason")
                 ),
                 date=f"<t:{int(created_at.timestamp())}:D>",
                 expiration=expiration_str,
@@ -189,9 +161,7 @@ def create_warnings_embed(commandInfo, member, warnings, page):
 async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member):
     if not commandInfo.user.guild_permissions.kick_members:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.viewwarns.missingPermission.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.viewwarns.missingPermission.description",
@@ -207,9 +177,7 @@ async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member
 
     if not warnings:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.viewwarns.noWarnings.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.noWarnings.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.viewwarns.noWarnings.description",

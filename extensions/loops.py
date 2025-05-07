@@ -3,28 +3,27 @@
 # import utility
 # from discord import app_commands
 # from localizer import tanjunLocalizer
-from discord.ext import commands, tasks
+import asyncio
+from datetime import time
+
 import discord
-from loops.giveaway import sendReadyGiveaways
-from loops.giveaway import checkVoiceUsers
-from loops.giveaway import endGiveaways
-from minigames.addLevelXp import clearNotifiedUsers
-from loops.level import addXpToVoiceUsers
+from discord.ext import commands, tasks
+
 from ai.refillToken import refillAiToken
-from loops.alivemonitor import ping_server
-from loops.create_database_backup import create_database_backup
-from commands.utility.claimBoosterRole import (
-    remove_claimed_booster_roles_that_are_expired,
-)
+from api import check_pool_initialized, get_all_twitch_notification_uuids
 from commands.utility.claimBoosterChannel import (
     remove_claimed_booster_channels_that_are_expired,
 )
+from commands.utility.claimBoosterRole import (
+    remove_claimed_booster_roles_that_are_expired,
+)
 from commands.utility.schedulemessage import send_scheduled_messages
-import asyncio
-from datetime import time
-from api import check_pool_initialized, get_all_twitch_notification_uuids
 from commands.utility.twitch.twitchApi import getTwitchApi, notify_twitch_online
-
+from loops.alivemonitor import ping_server
+from loops.create_database_backup import create_database_backup
+from loops.giveaway import checkVoiceUsers, endGiveaways, sendReadyGiveaways
+from loops.level import addXpToVoiceUsers
+from minigames.addLevelXp import clearNotifiedUsers
 
 embeds = {}
 
@@ -174,9 +173,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
 <https://discord.gg/D3UVPKseD8>
             """
             channel = self.bot.get_channel(923337160600477777)
-            embed = discord.Embed(
-                description=message, color=0xCB33F5, title="🐾Pokémon🐾"
-            )
+            embed = discord.Embed(description=message, color=0xCB33F5, title="🐾Pokémon🐾")
             message = await channel.send(embed=embed)
             await message.publish()
         except Exception:

@@ -1,6 +1,7 @@
 import aiohttp
-from config import twitchSecret, twitchId
+
 from api import get_twitch_online_notification_by_twitch_uuid
+from config import twitchId, twitchSecret
 from localizer import tanjunLocalizer
 from utility import tanjunEmbed
 
@@ -49,9 +50,7 @@ class TwitchAPI:
         url = f"{self.base_url}/users"
         params = {"login": login_name}
 
-        async with self.session.get(
-            url, headers=self.headers, params=params
-        ) as response:
+        async with self.session.get(url, headers=self.headers, params=params) as response:
             data = await response.json()
             if data["data"]:
                 return data["data"][0]
@@ -64,9 +63,7 @@ class TwitchAPI:
         url = f"{self.base_url}/streams"
         params = {"user_id": user_ids}
 
-        async with self.session.get(
-            url, headers=self.headers, params=params
-        ) as response:
+        async with self.session.get(url, headers=self.headers, params=params) as response:
             data = await response.json()
             return data.get("data", [])
 
@@ -77,9 +74,7 @@ class TwitchAPI:
         streams = await self.get_streams(user_ids)
         # Initialize status for all tracked streamers
         for uuid in user_ids:
-            self.stream_status[uuid] = any(
-                stream["user_id"] == uuid for stream in streams
-            )
+            self.stream_status[uuid] = any(stream["user_id"] == uuid for stream in streams)
         self.initial_check_done = True
 
 
@@ -115,12 +110,8 @@ async def notify_twitch_online(client, uuid, data: dict):
     channel = guild.get_channel(int(channelId))
     if not channel:
         return
-    embed = tanjunEmbed(
-        description=f"[{data['title']}](https://www.twitch.tv/{data['user_name']})"
-    )
-    embed.set_image(
-        url=data["thumbnail_url"].replace("{width}", "1920").replace("{height}", "1080")
-    )
+    embed = tanjunEmbed(description=f"[{data['title']}](https://www.twitch.tv/{data['user_name']})")
+    embed.set_image(url=data["thumbnail_url"].replace("{width}", "1920").replace("{height}", "1080"))
     await channel.send(message, embed=embed)
     return
 
@@ -141,7 +132,7 @@ async def subscribe_to_twitch_online_notification(twitch_uuid: str):
 
 def parse_twitch_notification_message(message: str, locale: str, twitch_name: str):
     if not message:
-        return tanjunLocalizer.localize(
-            locale, "commands.utility.twitch.defaultNotificationMessage"
-        ).replace("{name}", twitch_name)
+        return tanjunLocalizer.localize(locale, "commands.utility.twitch.defaultNotificationMessage").replace(
+            "{name}", twitch_name
+        )
     return message.replace("{name}", twitch_name)

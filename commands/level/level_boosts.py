@@ -1,29 +1,26 @@
 # noqa: E501
 
-from utility import commandInfo, tanjunEmbed, checkIfHasPro
-from localizer import tanjunLocalizer
-from api import (
-    add_role_boost,
-    add_channel_boost,
-    add_user_boost,
-    remove_role_boost,
-    remove_channel_boost,
-    remove_user_boost,
-    get_all_boosts,
-    get_user_boost,
-    get_user_roles_boosts,
-    get_channel_boost,
-)
 import discord
 
+from api import (
+    add_channel_boost,
+    add_role_boost,
+    add_user_boost,
+    get_all_boosts,
+    get_channel_boost,
+    get_user_boost,
+    get_user_roles_boosts,
+    remove_channel_boost,
+    remove_role_boost,
+    remove_user_boost,
+)
+from localizer import tanjunLocalizer
+from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
-async def calculate_user_channel_boost_command(
-    commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel
-):
+
+async def calculate_user_channel_boost_command(commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel):
     user_boost = await get_user_boost(str(commandInfo.guild.id), str(user.id))
-    role_boosts = await get_user_roles_boosts(
-        str(commandInfo.guild.id), [str(role.id) for role in user.roles]
-    )
+    role_boosts = await get_user_roles_boosts(str(commandInfo.guild.id), [str(role.id) for role in user.roles])
     channel_boost = await get_channel_boost(str(commandInfo.guild.id), str(channel.id))
 
     total_additive_boost = 0
@@ -50,9 +47,7 @@ async def calculate_user_channel_boost_command(
     total_boost = (1 + total_additive_boost) * total_multiplicative_boost
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.calculate_user_channel.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.calculate_user_channel.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.boosts.calculate_user_channel.description",
@@ -64,117 +59,81 @@ async def calculate_user_channel_boost_command(
     await commandInfo.reply(embed=embed)
 
 
-async def add_role_boost_command(
-    commandInfo: commandInfo, role: discord.Role, boost: float, additive: bool
-):
+async def add_role_boost_command(commandInfo: commandInfo, role: discord.Role, boost: float, additive: bool):
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.error.no_pro.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.error.no_pro.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     await add_role_boost(str(commandInfo.guild.id), str(role.id), boost, additive)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.add_role.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.add_role.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.boosts.add_role.success.description",
             role=role.mention,
             boost=boost,
             type=(
-                tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.level.boosts.additive"
-                )
+                tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.additive")
                 if additive
-                else tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.level.boosts.multiplicative"
-                )
+                else tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.multiplicative")
             ),
         ),
     )
     await commandInfo.reply(embed=embed)
 
 
-async def add_channel_boost_command(
-    commandInfo: commandInfo, channel: discord.TextChannel, boost: float, additive: bool
-):
+async def add_channel_boost_command(commandInfo: commandInfo, channel: discord.TextChannel, boost: float, additive: bool):
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.error.no_pro.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.error.no_pro.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     await add_channel_boost(str(commandInfo.guild.id), str(channel.id), boost, additive)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.add_channel.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.add_channel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.boosts.add_channel.success.description",
             channel=channel.mention,
             boost=boost,
             type=(
-                tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.level.boosts.additive"
-                )
+                tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.additive")
                 if additive
-                else tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.level.boosts.multiplicative"
-                )
+                else tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.multiplicative")
             ),
         ),
     )
     await commandInfo.reply(embed=embed)
 
 
-async def add_user_boost_command(
-    commandInfo: commandInfo, user: discord.Member, boost: float, additive: bool
-):
+async def add_user_boost_command(commandInfo: commandInfo, user: discord.Member, boost: float, additive: bool):
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.error.no_pro.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.error.no_pro.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.error.no_pro.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     await add_user_boost(str(commandInfo.guild.id), str(user.id), boost, additive)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.add_user.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.add_user.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.boosts.add_user.success.description",
             user=user.mention,
             boost=boost,
             type=(
-                tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.level.boosts.additive"
-                )
+                tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.additive")
                 if additive
-                else tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.level.boosts.multiplicative"
-                )
+                else tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.multiplicative")
             ),
         ),
     )
@@ -184,9 +143,7 @@ async def add_user_boost_command(
 async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role):
     await remove_role_boost(str(commandInfo.guild.id), str(role.id))
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.remove_role.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.remove_role.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.boosts.remove_role.success.description",
@@ -196,14 +153,10 @@ async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role
     await commandInfo.reply(embed=embed)
 
 
-async def remove_channel_boost_command(
-    commandInfo: commandInfo, channel: discord.TextChannel
-):
+async def remove_channel_boost_command(commandInfo: commandInfo, channel: discord.TextChannel):
     await remove_channel_boost(str(commandInfo.guild.id), str(channel.id))
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.remove_channel.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.remove_channel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.boosts.remove_channel.success.description",
@@ -216,9 +169,7 @@ async def remove_channel_boost_command(
 async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Member):
     await remove_user_boost(str(commandInfo.guild.id), str(user.id))
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.remove_user.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.remove_user.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.boosts.remove_user.success.description",
@@ -232,12 +183,8 @@ async def show_boosts_command(commandInfo: commandInfo):
     boosts = await get_all_boosts(str(commandInfo.guild.id))
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.show.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.show.description"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.show.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.show.description"),
     )
 
     if boosts["roles"]:
@@ -248,9 +195,7 @@ async def show_boosts_command(commandInfo: commandInfo):
             ]
         )
         embed.add_field(
-            name=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.show.roles"
-            ),
+            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.show.roles"),
             value=role_boosts,
             inline=False,
         )
@@ -263,9 +208,7 @@ async def show_boosts_command(commandInfo: commandInfo):
             ]
         )
         embed.add_field(
-            name=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.show.channels"
-            ),
+            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.show.channels"),
             value=channel_boosts,
             inline=False,
         )
@@ -278,16 +221,12 @@ async def show_boosts_command(commandInfo: commandInfo):
             ]
         )
         embed.add_field(
-            name=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.boosts.show.users"
-            ),
+            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.show.users"),
             value=user_boosts,
             inline=False,
         )
 
     if not (boosts["roles"] or boosts["channels"] or boosts["users"]):
-        embed.description = tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.boosts.show.no_boosts"
-        )
+        embed.description = tanjunLocalizer.localize(commandInfo.locale, "commands.level.boosts.show.no_boosts")
 
     await commandInfo.reply(embed=embed)

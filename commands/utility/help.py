@@ -1,22 +1,19 @@
 import discord
 from discord import app_commands
+
 import utility
 from localizer import tanjunLocalizer
 
 
 async def help(commandInfo, ctx):
-
     class HelpSelect(discord.ui.Select):
-
         options = []
         cash = set()
 
         def __init__(self, client, options):
             self.client = client
             super().__init__(
-                placeholder=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.help.select.placeholder"
-                ),
+                placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.help.select.placeholder"),
                 max_values=1,
                 min_values=1,
                 options=options,
@@ -73,9 +70,7 @@ async def help(commandInfo, ctx):
                             )
                             # Check if the command is a subcommand group
                             if isinstance(cmd, app_commands.Group):
-                                command_text += (
-                                    f"### /{group_name_locale} {cmd_name_locale}\n"
-                                )
+                                command_text += f"### /{group_name_locale} {cmd_name_locale}\n"
                                 try:
                                     cmd_desc = self.get_locale(
                                         cmd.description,
@@ -104,10 +99,7 @@ async def help(commandInfo, ctx):
                                     except Exception:
                                         command_text += "\n"
 
-                                    if (
-                                        hasattr(subcmd, "parameters")
-                                        and subcmd.parameters
-                                    ):
+                                    if hasattr(subcmd, "parameters") and subcmd.parameters:
                                         command_text += tanjunLocalizer.localize(
                                             commandInfo.locale,
                                             "commands.utility.help.parameters",
@@ -131,10 +123,7 @@ async def help(commandInfo, ctx):
                                                 )
                                         command_text += "\n"
 
-                                    if (
-                                        len(texts[current_index] + command_text)
-                                        > char_limit
-                                    ):
+                                    if len(texts[current_index] + command_text) > char_limit:
                                         current_index += 1
                                         texts.append("")
                                         texts[current_index] += command_text
@@ -168,9 +157,7 @@ async def help(commandInfo, ctx):
                                                 param.description,
                                                 locale,
                                             )
-                                            command_text += (
-                                                f"- **{param_name}**: {param_desc}\n"
-                                            )
+                                            command_text += f"- **{param_name}**: {param_desc}\n"
                                         except Exception:
                                             command_text += tanjunLocalizer.localize(
                                                 commandInfo.locale,
@@ -179,10 +166,7 @@ async def help(commandInfo, ctx):
                                             )
                                     command_text += "\n"
 
-                                if (
-                                    len(texts[current_index] + command_text)
-                                    > char_limit
-                                ):
+                                if len(texts[current_index] + command_text) > char_limit:
                                     current_index += 1
                                     texts.append("")
                                     total_length = len(texts[current_index])
@@ -225,11 +209,7 @@ async def help(commandInfo, ctx):
                         )
                     embeds.append(embed)
 
-            view = (
-                PaginatedHelpView(self.client, embeds)
-                if len(embeds) > 1
-                else HelpView(self.client)
-            )
+            view = PaginatedHelpView(self.client, embeds) if len(embeds) > 1 else HelpView(self.client)
             await interaction.response.edit_message(embeds=[embeds[0]], view=view)
 
         @classmethod
@@ -257,9 +237,7 @@ async def help(commandInfo, ctx):
             if not options:
                 options.append(
                     discord.SelectOption(
-                        label=tanjunLocalizer.localize(
-                            commandInfo.locale, "commands.utility.help.noCommands.label"
-                        ),
+                        label=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.help.noCommands.label"),
                         description=tanjunLocalizer.localize(
                             commandInfo.locale,
                             "commands.utility.help.noCommands.description",
@@ -280,32 +258,20 @@ async def help(commandInfo, ctx):
             self.add_item(HelpSelect(client, options))
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.help.buttons.previous"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.help.buttons.previous"),
             style=discord.ButtonStyle.gray,
         )
-        async def previous_button(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button):
             self.current_page = (self.current_page - 1) % len(self.embeds)
-            await interaction.response.edit_message(
-                embeds=[self.embeds[self.current_page]]
-            )
+            await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.help.buttons.next"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.help.buttons.next"),
             style=discord.ButtonStyle.gray,
         )
-        async def next_button(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button):
             self.current_page = (self.current_page + 1) % len(self.embeds)
-            await interaction.response.edit_message(
-                embeds=[self.embeds[self.current_page]]
-            )
+            await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
     class HelpView(discord.ui.View):
         def __init__(self, client, timeout=3600):
@@ -314,11 +280,7 @@ async def help(commandInfo, ctx):
             self.add_item(HelpSelect(client, options))
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.help.select.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.help.select.description"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.help.select.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.help.select.description"),
     )
     await commandInfo.reply(embed=embed, view=HelpView(commandInfo.client))

@@ -1,8 +1,10 @@
-import utility
-from localizer import tanjunLocalizer
-from api import remove_scheduled_message as remove_message, get_scheduled_messages
 import discord
-from discord.ui import View, Select
+from discord.ui import Select, View
+
+import utility
+from api import get_scheduled_messages
+from api import remove_scheduled_message as remove_message
+from localizer import tanjunLocalizer
 
 
 class MessageSelectView(View):
@@ -12,9 +14,7 @@ class MessageSelectView(View):
 
         # Create select menu with messages
         select = Select(
-            placeholder=tanjunLocalizer.localize(
-                locale, "commands.utility.removescheduled.select.placeholder"
-            ),
+            placeholder=tanjunLocalizer.localize(locale, "commands.utility.removescheduled.select.placeholder"),
             options=[
                 discord.SelectOption(
                     label=f"ID: {msg[0]} - {msg[4][:50]}...",  # Truncate long messages
@@ -22,9 +22,7 @@ class MessageSelectView(View):
                     value=str(msg[0]),
                 )
                 for msg in messages
-            ][
-                :25
-            ],  # Discord limit of 25 options
+            ][:25],  # Discord limit of 25 options
         )
 
         @select.callback
@@ -43,9 +41,7 @@ class MessageSelectView(View):
             await remove_message(message_id)
 
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    self.locale, "commands.utility.removescheduled.success.title"
-                ),
+                title=tanjunLocalizer.localize(self.locale, "commands.utility.removescheduled.success.title"),
                 description=tanjunLocalizer.localize(
                     self.locale,
                     "commands.utility.removescheduled.success.description",
@@ -59,9 +55,7 @@ class MessageSelectView(View):
 
     async def on_timeout(self):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                self.locale, "commands.utility.removescheduled.error.timeout.title"
-            ),
+            title=tanjunLocalizer.localize(self.locale, "commands.utility.removescheduled.error.timeout.title"),
             description=tanjunLocalizer.localize(
                 self.locale,
                 "commands.utility.removescheduled.error.timeout.description",
@@ -71,9 +65,7 @@ class MessageSelectView(View):
             await self.message.edit(embed=embed, view=None)
 
 
-async def remove_scheduled_message(
-    commandInfo: utility.commandInfo, message_id: int = None
-):
+async def remove_scheduled_message(commandInfo: utility.commandInfo, message_id: int = None):
     # Get all scheduled messages for the user
     messages = await get_scheduled_messages(commandInfo.user.id)
 
@@ -94,9 +86,7 @@ async def remove_scheduled_message(
     # If no message_id provided, show selection menu
     if not message_id:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.removescheduled.select.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.removescheduled.select.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.removescheduled.select.description",
@@ -134,9 +124,7 @@ async def remove_scheduled_message(
 
     # Send confirmation message
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.removescheduled.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.removescheduled.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.removescheduled.success.description",

@@ -1,11 +1,12 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
-from api import (
-    set_level_system_status,
-    get_level_system_status,
-    delete_level_system_data,
-)
 import discord
+
+from api import (
+    delete_level_system_data,
+    get_level_system_status,
+    set_level_system_status,
+)
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def disable_level_system(commandInfo: commandInfo):
@@ -16,26 +17,18 @@ async def disable_level_system(commandInfo: commandInfo):
             self.value = None
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.disablelevelsystem.confirm"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.level.disablelevelsystem.confirm"),
             style=discord.ButtonStyle.danger,
         )
-        async def confirm(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
             self.value = True
             self.stop()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.disablelevelsystem.cancel"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.level.disablelevelsystem.cancel"),
             style=discord.ButtonStyle.secondary,
         )
-        async def cancel(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
             self.value = False
             self.stop()
 
@@ -70,9 +63,7 @@ async def disable_level_system(commandInfo: commandInfo):
         return
 
     confirmation_embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.disablelevelsystem.confirmation.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.disablelevelsystem.confirmation.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.disablelevelsystem.confirmation.description",
@@ -91,9 +82,7 @@ async def disable_level_system(commandInfo: commandInfo):
         await set_level_system_status(str(commandInfo.guild.id), False)
 
         success_embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.disablelevelsystem.success.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.disablelevelsystem.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.disablelevelsystem.success.description",
@@ -102,9 +91,7 @@ async def disable_level_system(commandInfo: commandInfo):
         await message.edit(embed=success_embed, view=None)
     else:
         cancel_embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.disablelevelsystem.cancel.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.disablelevelsystem.cancel.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.disablelevelsystem.cancel.description",

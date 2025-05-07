@@ -1,8 +1,10 @@
-import discord
-import utility
-from localizer import tanjunLocalizer
-from api import get_ticket_by_id, get_ticket_messages_by_id
 import datetime
+
+import discord
+
+import utility
+from api import get_ticket_by_id, get_ticket_messages_by_id
+from localizer import tanjunLocalizer
 
 
 async def close_ticket(interaction: discord.Interaction):
@@ -70,9 +72,7 @@ async def close_ticket(interaction: discord.Interaction):
         )
         await interaction.channel.send(embed=embed)
     else:
-        html_content = await generate_summary_html(
-            interaction.channel, ticket_opener_user, ticket_open_time
-        )
+        html_content = await generate_summary_html(interaction.channel, ticket_opener_user, ticket_open_time)
 
         url = await utility.upload_to_tanjun_logs(html_content)
 
@@ -98,9 +98,7 @@ async def close_ticket(interaction: discord.Interaction):
         )
         view.add_item(btn1)
         btn2 = discord.ui.Button(
-            label=tanjunLocalizer.localize(
-                interaction.locale, "commands.admin.close_ticket.success.viewThread"
-            ),
+            label=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.viewThread"),
             url=f"https://discord.com/channels/{interaction.guild.id}/{ticket_channel.id}",
         )
         view.add_item(btn2)
@@ -133,9 +131,7 @@ async def generate_summary_html(
     ticket_opener_user: discord.Member,
     ticket_open_time: datetime.datetime,
 ):
-    locale = (
-        str(channel.guild.preferred_locale) if channel.guild.preferred_locale else "en"
-    )
+    locale = str(channel.guild.preferred_locale) if channel.guild.preferred_locale else "en"
     html = """
 <!DOCTYPE html>
 <html lang="en">
@@ -1045,7 +1041,9 @@ async def generate_summary_html(
                     html += f'<div class="embed-field"><div class="embed-field-name">{field.name}</div><div class="embed-field-value">{field.value}</div></div>'
                 html += "</div>"
             if embed.image:
-                html += f'<div class="embed-image"><img src="{embed.image.url}" alt="Large Image" class="embed-large-image"></div>'
+                html += (
+                    f'<div class="embed-image"><img src="{embed.image.url}" alt="Large Image" class="embed-large-image"></div>'
+                )
             if embed.footer:
                 if embed.footer.icon_url:
                     html += f'<div class="embed-footer"><img src="{embed.footer.icon_url}" alt="Footer Icon" class="embed-footer-icon"><span class="embed-footer-text">{embed.footer.text}</span></div>'

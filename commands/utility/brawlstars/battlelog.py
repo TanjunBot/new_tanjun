@@ -1,9 +1,10 @@
-from config import brawlstarsToken
 import aiohttp
-from utility import commandInfo, tanjunEmbed, isoTimeToDate, date_time_to_timestamp
 import discord
-from localizer import tanjunLocalizer
+
 from api import get_brawlstars_linked_account
+from config import brawlstarsToken
+from localizer import tanjunLocalizer
+from utility import commandInfo, date_time_to_timestamp, isoTimeToDate, tanjunEmbed
 
 
 async def getBattloeLog(playerTag: str):
@@ -245,9 +246,7 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
             )
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -261,14 +260,10 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
                 self.current_page = self.total_pages - 1
             else:
                 self.current_page -= 1
-            await interaction.response.edit_message(
-                view=self, embed=self.generate_page(self.current_page)
-            )
+            await interaction.response.edit_message(view=self, embed=self.generate_page(self.current_page))
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -282,9 +277,7 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
                 self.current_page = 0
             else:
                 self.current_page += 1
-            await interaction.response.edit_message(
-                view=self, embed=self.generate_page(self.current_page)
-            )
+            await interaction.response.edit_message(view=self, embed=self.generate_page(self.current_page))
 
     if len(battleLog["items"]) > 1:
         view = BattleLogPaginator(battleLog, commandInfo, playerTag, playerName)
@@ -297,6 +290,8 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
                 playerName=playerName,
                 tag=playerTag,
             ),
-            description="" if not battleLog["items"] else BattleLogPaginator(battleLog, commandInfo, playerTag, playerName).generate_page(0).description
+            description=""
+            if not battleLog["items"]
+            else BattleLogPaginator(battleLog, commandInfo, playerTag, playerName).generate_page(0).description,
         )
         await commandInfo.reply(embed=embed)

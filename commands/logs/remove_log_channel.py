@@ -1,8 +1,10 @@
+import utility
 from api import (
-    remove_log_channel as remove_log_channel_api,
     get_log_channel as get_log_channel_api,
 )
-import utility
+from api import (
+    remove_log_channel as remove_log_channel_api,
+)
 from localizer import tanjunLocalizer
 
 
@@ -25,12 +27,8 @@ async def remove_log_channel(commandInfo: utility.commandInfo):
 
     if not logChannel:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.logs.removeLogChannel.notSet.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.logs.removeLogChannel.notSet.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.removeLogChannel.notSet.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.removeLogChannel.notSet.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -38,11 +36,7 @@ async def remove_log_channel(commandInfo: utility.commandInfo):
     await remove_log_channel_api(commandInfo.guild.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.logs.removeLogChannel.success.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.logs.removeLogChannel.success.description"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.removeLogChannel.success.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.removeLogChannel.success.description"),
     )
     await commandInfo.reply(embed=embed)

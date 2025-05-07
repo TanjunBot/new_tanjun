@@ -1,18 +1,19 @@
+import asyncio
+import io
+from concurrent.futures import ThreadPoolExecutor
+
+import aiohttp
 import discord
+from PIL import Image, ImageDraw, ImageFont, ImageSequence
+
 import utility
-from localizer import tanjunLocalizer
 from api import (
     get_leave_channel,
-    set_leave_channel,
     remove_leave_channel,
+    set_leave_channel,
 )
-import aiohttp
-from PIL import Image, ImageDraw, ImageFont, ImageSequence
-from utility import commandInfo, draw_text_with_outline
-import io
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
-from utility import checkIfHasPro
+from localizer import tanjunLocalizer
+from utility import checkIfHasPro, commandInfo, draw_text_with_outline
 
 executor = ThreadPoolExecutor()
 
@@ -86,20 +87,16 @@ async def setFarewellChannel(
     imgUrl = None
 
     if image_background is not None:
-        imgUrl = (
-            await utility.upload_image_to_imgbb(
-                image_background, image_background.filename.split(".")[-1]
-            )
-        )["data"]["url"]
+        imgUrl = (await utility.upload_image_to_imgbb(image_background, image_background.filename.split(".")[-1]))["data"][
+            "url"
+        ]
     else:
         imgUrl = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"
 
     await set_leave_channel(commandInfo.guild.id, channel.id, message, imgUrl)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.channel.farewell.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.channel.farewell.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.channel.farewell.success.description",
@@ -126,12 +123,8 @@ async def removeFarewellChannel():
 
     if not await get_leave_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.channel.farewell.notSet.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.channel.farewell.notSet.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.channel.farewell.notSet.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.channel.farewell.notSet.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -139,9 +132,7 @@ async def removeFarewellChannel():
     await remove_leave_channel(commandInfo.guild.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.channel.farewell.deleteSuccess.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.channel.farewell.deleteSuccess.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.channel.farewell.deleteSuccess.description",
@@ -174,11 +165,7 @@ def process_image(background_frames, avatar_frames, user):
     background_frames = background_frames[:num_frames]
     avatar_frames = avatar_frames[:num_frames]
     member_number_locale = tanjunLocalizer.localize(
-        (
-            user.guild.preferred_locale
-            if hasattr(user.guild, "preferred_locale")
-            else "en"
-        ),
+        (user.guild.preferred_locale if hasattr(user.guild, "preferred_locale") else "en"),
         "commands.admin.channel.farewell.memberNumber",
         member_count=user.guild.member_count,
     )
@@ -284,11 +271,7 @@ async def farewellUser(member: discord.Member):
 
     if not description:
         description = tanjunLocalizer.localize(
-            (
-                member.guild.preferred_locale
-                if hasattr(member.guild, "preferred_locale")
-                else "en"
-            ),
+            (member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en"),
             "commands.admin.channel.farewell.success.description",
         )
 

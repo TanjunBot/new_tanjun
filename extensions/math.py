@@ -1,23 +1,23 @@
 # Unused imports:
 # from localizer import tanjunLocalizer
-import discord
-from discord.ext import commands
-from discord import app_commands
-import utility
-from typing import List  # , Optional
 
+import discord
+from discord import app_commands
+from discord.ext import commands
+
+import utility
 from commands.math.calc import calc as calcCommand
 from commands.math.calculator import calculator_command
-from commands.math.num2word import num2word as num2word_command
-from commands.math.randomnumber import random_number_command
-from commands.math.plot_function import plot_function_command
 from commands.math.faculty import faculty_command
+from commands.math.num2word import num2word as num2word_command
+from commands.math.plot_function import plot_function_command
+from commands.math.randomnumber import random_number_command
 
 
 async def num2wordLocaleAutocomplete(
     interaction: discord.Interaction,
     current: str,
-) -> List[app_commands.Choice[str]]:
+) -> list[app_commands.Choice[str]]:
     locales = [
         "en",
         "am",
@@ -72,9 +72,7 @@ async def num2wordLocaleAutocomplete(
         "nl",
         "uk",
     ]
-    filtered_locales = [
-        locale for locale in locales if current.lower() in locale.lower()
-    ]
+    filtered_locales = [locale for locale in locales if current.lower() in locale.lower()]
 
     return [
         app_commands.Choice(
@@ -169,9 +167,7 @@ class mathCommands(discord.app_commands.Group):
         max=app_commands.locale_str("math_randomnumber_params_max_description"),
         amount=app_commands.locale_str("math_randomnumber_params_amount_description"),
     )
-    async def random_number(
-        self, ctx, min: int, max: int, amount: app_commands.Range[int, 1, 10] = 1
-    ):
+    async def random_number(self, ctx, min: int, max: int, amount: app_commands.Range[int, 1, 10] = 1):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -196,9 +192,7 @@ class mathCommands(discord.app_commands.Group):
         xmin=app_commands.locale_str("math_plotfunction_params_xmin_description"),
         xmax=app_commands.locale_str("math_plotfunction_params_xmax_description"),
     )
-    async def plot_function(
-        self, ctx, func: str, xmin: float = None, xmax: float = None
-    ):
+    async def plot_function(self, ctx, func: str, xmin: float = None, xmax: float = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -239,7 +233,6 @@ class mathCommands(discord.app_commands.Group):
 
 
 class mathCog(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 

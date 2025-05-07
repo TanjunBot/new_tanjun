@@ -1,4 +1,5 @@
 import discord
+
 import utility
 from localizer import tanjunLocalizer
 
@@ -10,9 +11,7 @@ async def removerole(
 ):
     if not commandInfo.user.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.removerole.missingPermission.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.removerole.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.removerole.missingPermission.description",
@@ -44,9 +43,7 @@ async def removerole(
             self.selected_users = []
             self.add_item(
                 discord.ui.RoleSelect(
-                    placeholder=tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.admin.removerole.selectRoles"
-                    ),
+                    placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.removerole.selectRoles"),
                     min_values=1,
                     max_values=25,
                     custom_id="role_select",
@@ -54,9 +51,7 @@ async def removerole(
             )
             self.add_item(
                 discord.ui.UserSelect(
-                    placeholder=tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.admin.removerole.selectUsers"
-                    ),
+                    placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.removerole.selectUsers"),
                     min_values=1,
                     max_values=25,
                     custom_id="user_select",
@@ -64,14 +59,10 @@ async def removerole(
             )
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.removerole.confirm"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.removerole.confirm"),
             style=discord.ButtonStyle.green,
         )
-        async def confirm(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not self.selected_roles or not self.selected_users:
                 await interaction.response.send_message(
                     content=tanjunLocalizer.localize(
@@ -105,14 +96,10 @@ async def removerole(
             self.stop()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.removerole.cancel"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.removerole.cancel"),
             style=discord.ButtonStyle.red,
         )
-        async def cancel(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.edit_message(
                 tanjunLocalizer.localize(
                     self.commandInfo.locale,
@@ -129,24 +116,16 @@ async def removerole(
             item: discord.ui.Item,
         ):
             await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.admin.removerole.error"
-                ),
+                tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.removerole.error"),
                 ephemeral=True,
             )
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             if interaction.data["component_type"] == 6:  # RoleSelect
-                self.selected_roles = [
-                    interaction.guild.get_role(int(r))
-                    for r in interaction.data["values"]
-                ]
+                self.selected_roles = [interaction.guild.get_role(int(r)) for r in interaction.data["values"]]
                 await interaction.response.defer()
             elif interaction.data["component_type"] == 5:  # UserSelect
-                self.selected_users = [
-                    await interaction.guild.fetch_member(int(u))
-                    for u in interaction.data["values"]
-                ]
+                self.selected_users = [await interaction.guild.fetch_member(int(u)) for u in interaction.data["values"]]
                 await interaction.response.defer()
             return True
 
@@ -168,9 +147,7 @@ async def removerole(
 
         if commandInfo.user.top_role <= role:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.admin.removerole.roleTooHigh.title"
-                ),
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.removerole.roleTooHigh.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.removerole.roleTooHigh.description",
@@ -181,9 +158,7 @@ async def removerole(
 
         if commandInfo.guild.me.top_role <= role:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.admin.removerole.roleTooHighBot.title"
-                ),
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.removerole.roleTooHighBot.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.removerole.roleTooHighBot.description",
@@ -194,9 +169,7 @@ async def removerole(
 
         await user.remove_roles(role)
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.removerole.success.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.removerole.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.removerole.success.description",
@@ -209,9 +182,7 @@ async def removerole(
         # Multiple users or roles
         view = RoleManagementView(commandInfo, action="remove")
         await commandInfo.reply(
-            tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.removerole.multiplePrompt"
-            ),
+            tanjunLocalizer.localize(commandInfo.locale, "commands.admin.removerole.multiplePrompt"),
             view=view,
             ephemeral=True,
         )

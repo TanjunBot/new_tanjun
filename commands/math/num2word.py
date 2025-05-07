@@ -1,4 +1,5 @@
 import num2words
+
 import utility
 from localizer import tanjunLocalizer
 
@@ -67,9 +68,7 @@ async def num2word(commandInfo: utility.commandInfo, number: int, locale: str):
 
     word = num2words.num2words(number, lang=locale)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.math.num2word.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.math.num2word.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.math.num2word.description",

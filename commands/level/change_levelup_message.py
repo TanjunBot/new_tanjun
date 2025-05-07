@@ -1,6 +1,6 @@
-from utility import commandInfo, tanjunEmbed, checkIfHasPro
-from localizer import tanjunLocalizer
 from api import set_levelup_message
+from localizer import tanjunLocalizer
+from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
 async def change_levelup_message(commandInfo: commandInfo, new_message: str):
@@ -49,9 +49,7 @@ async def change_levelup_message(commandInfo: commandInfo, new_message: str):
     await set_levelup_message(str(commandInfo.guild.id), new_message)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.changelevelupmessage.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.changelevelupmessage.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.changelevelupmessage.success.description",

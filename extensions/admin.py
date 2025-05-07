@@ -1,57 +1,56 @@
 import discord
-from discord.ext import commands
 from discord import app_commands
-import utility
-from localizer import tanjunLocalizer
+from discord.ext import commands
 
+import utility
 from commands.admin.addrole import addrole as addroleCommand
-from commands.admin.removerole import removerole as removeroleCommand
+from commands.admin.ban import ban as banCommand
+from commands.admin.boosterrole import create_booster_role as CreateBoosterRoleCommand
+from commands.admin.copy_emoji import copy_emoji as copyEmojiCommand
+from commands.admin.copyrole import copyrole as copyRoleCommand
+from commands.admin.createemoji import create_emoji as createEmojiCommand
 from commands.admin.createrole import createrole as createroleCommand
 from commands.admin.deleterole import deleterole as deleteroleCommand
-from commands.admin.kick import kick as kickCommand
-from commands.admin.ban import ban as banCommand
-from commands.admin.unban import unban as unbanCommand
-from commands.admin.timeout import timeout as timeoutCommand
-from commands.admin.removetimeout import remove_timeout as removeTimeoutCommand
-from commands.admin.purge import purge as purgeCommand
-from commands.admin.nickname import change_nickname as changeNicknameCommand
-from commands.admin.slowmode import set_slowmode as setSlowmodeCommand
-from commands.admin.lock import lock_channel as lockChannelCommand
-from commands.admin.unlock import unlock_channel as unlockChannelCommand
-from commands.admin.nuke import nuke_channel as nukeChannelCommand
-from commands.admin.say import say as sayCommand
 from commands.admin.embedcreator import create_embed as createEmbedCommand
-from commands.admin.createemoji import create_emoji as createEmojiCommand
-from commands.admin.warn import warn_user as warnUserCommand
-from commands.admin.viewwarns import view_warnings as viewWarningsCommand
-from commands.admin.warnconfig import warn_config as warnConfigCommand
-from commands.admin.moverole import moverole as moveroleCommand
-from commands.admin.boosterrole import create_booster_role as CreateBoosterRoleCommand
-from commands.admin.copyrole import copyrole as copyRoleCommand
-from commands.admin.reports.set_channel import set_channel as setReportChannelCommand
-from commands.admin.reports.remove_channel import (
-    remove_channel as removeReportChannelCommand,
-)
-from commands.admin.reports.show_reports import show_reports as showReportsCommand
-from commands.admin.trigger_messages.configure import (
-    configure_trigger_messages as configureTriggerMessagesCommand,
-)
-from commands.admin.trigger_messages.add import (
-    add_trigger_message as addTriggerMessageCommand,
-)
-
-from commands.admin.ticket.create_ticket import create_ticket as createTicketCommand
 from commands.admin.joinToCreate.jointocreatechannel import (
     jointocreatechannel as jointoCreateChannelCommand,
 )
 from commands.admin.joinToCreate.removejointocreatechannel import (
     removejointocreatechannel as removeJoinToCreateChannelCommand,
 )
-from commands.admin.setLocale import set_locale as setLocaleCommand
+from commands.admin.kick import kick as kickCommand
+from commands.admin.lock import lock_channel as lockChannelCommand
+from commands.admin.moverole import moverole as moveroleCommand
+from commands.admin.nickname import change_nickname as changeNicknameCommand
+from commands.admin.nuke import nuke_channel as nukeChannelCommand
+from commands.admin.purge import purge as purgeCommand
+from commands.admin.removerole import removerole as removeroleCommand
+from commands.admin.removetimeout import remove_timeout as removeTimeoutCommand
+from commands.admin.reports.remove_channel import (
+    remove_channel as removeReportChannelCommand,
+)
+from commands.admin.reports.set_channel import set_channel as setReportChannelCommand
+from commands.admin.reports.show_reports import show_reports as showReportsCommand
 from commands.admin.reports.unblock_reporter import (
     unblock_reporter_cmd as unblockReporterCommand,
 )
-from commands.admin.copy_emoji import copy_emoji as copyEmojiCommand
+from commands.admin.say import say as sayCommand
+from commands.admin.setLocale import set_locale as setLocaleCommand
+from commands.admin.slowmode import set_slowmode as setSlowmodeCommand
+from commands.admin.ticket.create_ticket import create_ticket as createTicketCommand
+from commands.admin.timeout import timeout as timeoutCommand
+from commands.admin.trigger_messages.add import (
+    add_trigger_message as addTriggerMessageCommand,
+)
+from commands.admin.trigger_messages.configure import (
+    configure_trigger_messages as configureTriggerMessagesCommand,
+)
+from commands.admin.unban import unban as unbanCommand
+from commands.admin.unlock import unlock_channel as unlockChannelCommand
+from commands.admin.viewwarns import view_warnings as viewWarningsCommand
+from commands.admin.warn import warn_user as warnUserCommand
+from commands.admin.warnconfig import warn_config as warnConfigCommand
+from localizer import tanjunLocalizer
 
 
 class WarnCommands(discord.app_commands.Group):
@@ -139,9 +138,7 @@ class RoleCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_addrole_params_user_name"),
         role=app_commands.locale_str("admin_addrole_params_role_name"),
     )
-    async def addrole(
-        self, ctx, user: discord.Member = None, role: discord.Role = None
-    ):
+    async def addrole(self, ctx, user: discord.Member = None, role: discord.Role = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -166,9 +163,7 @@ class RoleCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_removerole_params_user_description"),
         role=app_commands.locale_str("admin_removerole_params_role_description"),
     )
-    async def removerole(
-        self, ctx, user: discord.Member = None, role: discord.Role = None
-    ):
+    async def removerole(self, ctx, user: discord.Member = None, role: discord.Role = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -192,17 +187,11 @@ class RoleCommands(discord.app_commands.Group):
     @app_commands.describe(
         name=app_commands.locale_str("admin_createrole_params_name_description"),
         color=app_commands.locale_str("admin_createrole_params_color_description"),
-        display_icon=app_commands.locale_str(
-            "admin_createrole_params_displayicon_description"
-        ),
+        display_icon=app_commands.locale_str("admin_createrole_params_displayicon_description"),
         hoist=app_commands.locale_str("admin_createrole_params_hoist_description"),
-        mentionable=app_commands.locale_str(
-            "admin_createrole_params_mentionable_description"
-        ),
+        mentionable=app_commands.locale_str("admin_createrole_params_mentionable_description"),
         reason=app_commands.locale_str("admin_createrole_params_reason_description"),
-        display_emoji=app_commands.locale_str(
-            "admin_createrole_params_displayemoji_description"
-        ),
+        display_emoji=app_commands.locale_str("admin_createrole_params_displayemoji_description"),
     )
     async def createrole(
         self,
@@ -247,9 +236,7 @@ class RoleCommands(discord.app_commands.Group):
         role=app_commands.locale_str("admin_deleterole_params_role_description"),
         reason=app_commands.locale_str("admin_deleterole_params_reason_description"),
     )
-    async def deleterole(
-        self, ctx, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None
-    ):
+    async def deleterole(self, ctx, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -272,9 +259,7 @@ class RoleCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         role=app_commands.locale_str("admin_moverole_params_role_description"),
-        target_role=app_commands.locale_str(
-            "admin_moverole_params_targetrole_description"
-        ),
+        target_role=app_commands.locale_str("admin_moverole_params_targetrole_description"),
         position=app_commands.locale_str("admin_moverole_params_position_description"),
     )
     @app_commands.choices(
@@ -322,9 +307,7 @@ class RoleCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         role=app_commands.locale_str("admin_copyrole_params_role_description"),
-        copymembers=app_commands.locale_str(
-            "admin_copyrole_params_copymembers_description"
-        ),
+        copymembers=app_commands.locale_str("admin_copyrole_params_copymembers_description"),
     )
     @app_commands.choices(
         copymembers=[
@@ -338,9 +321,7 @@ class RoleCommands(discord.app_commands.Group):
             ),
         ]
     )
-    async def copyrole(
-        self, ctx, role: discord.Role, copymembers: app_commands.Choice[str]
-    ):
+    async def copyrole(self, ctx, role: discord.Role, copymembers: app_commands.Choice[str]):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -368,9 +349,7 @@ class ReportCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_rps_setchannel_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "admin_rps_setchannel_params_channel_description"
-        ),
+        channel=app_commands.locale_str("admin_rps_setchannel_params_channel_description"),
     )
     async def set_channel(self, ctx, channel: discord.TextChannel = None):
         await ctx.response.defer()
@@ -442,9 +421,7 @@ class ReportCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_rps_unblockreporter_description"),
     )
     @app_commands.describe(
-        user=app_commands.locale_str(
-            "admin_rps_unblockreporter_params_user_description"
-        ),
+        user=app_commands.locale_str("admin_rps_unblockreporter_params_user_description"),
     )
     async def unblock_reporter(self, ctx, user: discord.Member):
         await ctx.response.defer()
@@ -493,9 +470,7 @@ class TriggerMessagesCommands(discord.app_commands.Group):
     @app_commands.describe(
         trigger=app_commands.locale_str("admin_tm_add_params_trigger_description"),
         response=app_commands.locale_str("admin_tm_add_params_response_description"),
-        casesensitive=app_commands.locale_str(
-            "admin_tm_add_params_casesensitive_description"
-        ),
+        casesensitive=app_commands.locale_str("admin_tm_add_params_casesensitive_description"),
     )
     @app_commands.choices(
         casesensitive=[
@@ -544,9 +519,7 @@ class JoinToCreateCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_jtc_setchannel_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "admin_jtc_setchannel_params_channel_description"
-        ),
+        channel=app_commands.locale_str("admin_jtc_setchannel_params_channel_description"),
     )
     async def set_channel(self, ctx, channel: discord.VoiceChannel):
         await ctx.response.defer()
@@ -570,9 +543,7 @@ class JoinToCreateCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_jtc_removechannel_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "admin_jtc_removechannel_params_channel_description"
-        ),
+        channel=app_commands.locale_str("admin_jtc_removechannel_params_channel_description"),
     )
     async def remove_channel(self, ctx, channel: discord.VoiceChannel):
         await ctx.response.defer()
@@ -601,9 +572,7 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_kick_params_user_description"),
         reason=app_commands.locale_str("admin_kick_params_reason_description"),
     )
-    async def kick(
-        self, ctx, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None
-    ):
+    async def kick(self, ctx, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None):
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -627,9 +596,7 @@ class administrationCommands(discord.app_commands.Group):
     @app_commands.describe(
         user=app_commands.locale_str("admin_ban_params_user_description"),
         reason=app_commands.locale_str("admin_ban_params_reason_description"),
-        delete_message_days=app_commands.locale_str(
-            "admin_ban_params_deletemessagedays_description"
-        ),
+        delete_message_days=app_commands.locale_str("admin_ban_params_deletemessagedays_description"),
     )
     async def ban(
         self,
@@ -718,9 +685,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await timeoutCommand(
-            commandInfo=commandInfo, member=user, duration=duration, reason=reason
-        )
+        await timeoutCommand(commandInfo=commandInfo, member=user, duration=duration, reason=reason)
         return
 
     @app_commands.command(
@@ -782,9 +747,7 @@ class administrationCommands(discord.app_commands.Group):
             ),
             app_commands.Choice(
                 value="userNotPinned",
-                name=app_commands.locale_str(
-                    "admin_purge_params_setting_userNotPinned"
-                ),
+                name=app_commands.locale_str("admin_purge_params_setting_userNotPinned"),
             ),
             app_commands.Choice(
                 value="botNotPinned",
@@ -808,9 +771,7 @@ class administrationCommands(discord.app_commands.Group):
             ),
             app_commands.Choice(
                 value="notAdminNotPinned",
-                name=app_commands.locale_str(
-                    "admin_purge_params_setting_notAdminNotPinned"
-                ),
+                name=app_commands.locale_str("admin_purge_params_setting_notAdminNotPinned"),
             ),
         ]
     )
@@ -869,9 +830,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await changeNicknameCommand(
-            commandInfo=commandInfo, member=user, nickname=nickname
-        )
+        await changeNicknameCommand(commandInfo=commandInfo, member=user, nickname=nickname)
         return
 
     @app_commands.command(
@@ -901,9 +860,7 @@ class administrationCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await setSlowmodeCommand(
-            commandInfo=commandInfo, seconds=seconds, channel=channel
-        )
+        await setSlowmodeCommand(commandInfo=commandInfo, seconds=seconds, channel=channel)
         return
 
     @app_commands.command(
@@ -1053,9 +1010,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         name=app_commands.locale_str("admin_createemoji_params_name_description"),
-        imageurl=app_commands.locale_str(
-            "admin_createemoji_params_imageUrl_description"
-        ),
+        imageurl=app_commands.locale_str("admin_createemoji_params_imageUrl_description"),
     )
     async def createemoji(self, ctx, name: str, imageurl: str):
         await ctx.response.defer()
@@ -1073,9 +1028,7 @@ class administrationCommands(discord.app_commands.Group):
 
         view = discord.ui.View()
         role_select = discord.ui.RoleSelect(
-            placeholder=tanjunLocalizer.localize(
-                ctx.locale, "commands.admin.createEmoji.roleSelectPlaceholder"
-            ),
+            placeholder=tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelectPlaceholder"),
             default_values=[ctx.guild.default_role],
             min_values=1,
             max_values=25,
@@ -1085,16 +1038,12 @@ class administrationCommands(discord.app_commands.Group):
             roles = [ctx.guild.get_role(int(r)) for r in interaction.data["values"]]
             commandInfo.message = interaction.message
             commandInfo.reply = interaction.response.send_message
-            await createEmojiCommand(
-                commandInfo=commandInfo, name=name, image_url=imageurl, roles=roles
-            )
+            await createEmojiCommand(commandInfo=commandInfo, name=name, image_url=imageurl, roles=roles)
 
         role_select.callback = role_select_callback
         view.add_item(role_select)
         await ctx.followup.send(
-            tanjunLocalizer.localize(
-                ctx.locale, "commands.admin.createEmoji.roleSelect"
-            ),
+            tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelect"),
             view=view,
         )
 
@@ -1126,21 +1075,11 @@ class administrationCommands(discord.app_commands.Group):
     )
     @app_commands.describe(
         name=app_commands.locale_str("admin_createticket_params_name_description"),
-        description=app_commands.locale_str(
-            "admin_createticket_params_description_description"
-        ),
-        channel=app_commands.locale_str(
-            "admin_createticket_params_channel_description"
-        ),
-        pingrole=app_commands.locale_str(
-            "admin_createticket_params_pingrole_description"
-        ),
-        summarychannel=app_commands.locale_str(
-            "admin_createticket_params_summarychannel_description"
-        ),
-        introduction=app_commands.locale_str(
-            "admin_createticket_params_introduction_description"
-        ),
+        description=app_commands.locale_str("admin_createticket_params_description_description"),
+        channel=app_commands.locale_str("admin_createticket_params_channel_description"),
+        pingrole=app_commands.locale_str("admin_createticket_params_pingrole_description"),
+        summarychannel=app_commands.locale_str("admin_createticket_params_summarychannel_description"),
+        introduction=app_commands.locale_str("admin_createticket_params_introduction_description"),
     )
     async def create_ticket(
         self,
@@ -1320,7 +1259,6 @@ class administrationCommands(discord.app_commands.Group):
 
 
 class adminCog(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 

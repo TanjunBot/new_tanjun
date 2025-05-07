@@ -1,7 +1,8 @@
-import utility
-from localizer import tanjunLocalizer
-from api import unblock_reporter, check_if_reporter_is_blocked
 import discord
+
+import utility
+from api import check_if_reporter_is_blocked, unblock_reporter
+from localizer import tanjunLocalizer
 
 
 async def unblock_reporter_cmd(commandInfo: utility.commandInfo, user: discord.Member):
@@ -35,9 +36,7 @@ async def unblock_reporter_cmd(commandInfo: utility.commandInfo, user: discord.M
 
     await unblock_reporter(commandInfo.guild.id, user.id)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.reports.unblock_reporter.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.unblock_reporter.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.reports.unblock_reporter.success.description",

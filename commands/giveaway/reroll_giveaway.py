@@ -1,8 +1,10 @@
-import discord
-import utility
-from localizer import tanjunLocalizer
-from api import get_giveaway, get_giveaway_participants
 import random
+
+import discord
+
+import utility
+from api import get_giveaway, get_giveaway_participants
+from localizer import tanjunLocalizer
 
 
 async def reroll_giveaway(
@@ -73,27 +75,19 @@ async def reroll_giveaway(
             self.giveawayId = giveawayId
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.giveaway.reroll_giveaway.rerollOneWinner"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.reroll_giveaway.rerollOneWinner"),
             style=discord.ButtonStyle.primary,
         )
-        async def reroll_one(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def reroll_one(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
             await perform_reroll(self.commandInfo, self.giveawayId, 1)
             self.stop()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.giveaway.reroll_giveaway.rerollAllWinners"
-            ),
+            label=tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.reroll_giveaway.rerollAllWinners"),
             style=discord.ButtonStyle.primary,
         )
-        async def reroll_all(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
             giveaway = await get_giveaway(self.giveawayId)
             await perform_reroll(self.commandInfo, self.giveawayId, giveaway[4])
@@ -129,9 +123,7 @@ async def reroll_giveaway(
         await perform_reroll(commandInfo, giveawayId, 1)
 
 
-async def perform_reroll(
-    commandInfo: utility.commandInfo, giveawayId: int, reroll_count: int
-):
+async def perform_reroll(commandInfo: utility.commandInfo, giveawayId: int, reroll_count: int):
     participants = await get_giveaway_participants(giveawayId)
 
     if not participants:

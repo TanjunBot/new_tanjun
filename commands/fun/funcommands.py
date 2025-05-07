@@ -1,6 +1,6 @@
 import discord
+
 import utility
-from typing import Optional
 from localizer import tanjunLocalizer
 
 
@@ -8,7 +8,7 @@ async def fun_command(
     commandInfo: utility.commandInfo,
     fun_type: str,
     member: discord.Member,
-    message: Optional[str],
+    message: str | None,
 ):
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(

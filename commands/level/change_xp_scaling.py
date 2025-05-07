@@ -1,15 +1,17 @@
-from utility import (
-    commandInfo,
-    tanjunEmbed,
-    checkIfHasPro,
-    LEVEL_SCALINGS,
-    get_xp_for_level,
-)
-from localizer import tanjunLocalizer
-from api import set_xp_scaling, set_custom_formula, get_custom_formula
-import discord
-from discord.ui import View, Button
 import math
+
+import discord
+from discord.ui import Button, View
+
+from api import get_custom_formula, set_custom_formula, set_xp_scaling
+from localizer import tanjunLocalizer
+from utility import (
+    LEVEL_SCALINGS,
+    checkIfHasPro,
+    commandInfo,
+    get_xp_for_level,
+    tanjunEmbed,
+)
 
 
 class PaginationView(View):
@@ -34,14 +36,10 @@ class PaginationView(View):
         self.prev_button.disabled = self.current_page == 0
         self.next_button.disabled = self.current_page == self.total_pages - 1
 
-        await interaction.response.edit_message(
-            embed=await self.generate_page(self.current_page), view=self
-        )
+        await interaction.response.edit_message(embed=await self.generate_page(self.current_page), view=self)
 
 
-async def change_xp_scaling_command(
-    commandInfo: commandInfo, scaling: str, custom_formula: str = None
-):
+async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, custom_formula: str = None):
     if custom_formula:
         custom_formula = custom_formula.replace("x", "level")
     if not commandInfo.user.guild_permissions.administrator:
@@ -107,9 +105,7 @@ async def change_xp_scaling_command(
         await set_custom_formula(str(commandInfo.guild.id), custom_formula)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.changexpscaling.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.changexpscaling.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.changexpscaling.success.description",
@@ -126,16 +122,9 @@ async def change_xp_scaling_command(
     )
 
     # Add field to show XP required for first 5 levels
-    xp_examples = "\n".join(
-        [
-            f"Level {i}: {get_xp_for_level(i, scaling, custom_formula)} XP"
-            for i in range(1, 6)
-        ]
-    )
+    xp_examples = "\n".join([f"Level {i}: {get_xp_for_level(i, scaling, custom_formula)} XP" for i in range(1, 6)])
     embed.add_field(
-        name=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.changexpscaling.xp_examples"
-        ),
+        name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.changexpscaling.xp_examples"),
         value=xp_examples,
         inline=False,
     )
@@ -143,9 +132,7 @@ async def change_xp_scaling_command(
     await commandInfo.reply(embed=embed)
 
 
-async def show_xp_scalings(
-    commandInfo: commandInfo, start_level: int = 1, end_level: int = 5
-):
+async def show_xp_scalings(commandInfo: commandInfo, start_level: int = 1, end_level: int = 5):
     if start_level > end_level:
         start_level, end_level = end_level, start_level
 
@@ -159,9 +146,7 @@ async def show_xp_scalings(
         current_end = min(current_start + levels_per_page - 1, end_level)
 
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.showxpscalings.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showxpscalings.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.showxpscalings.description",
@@ -190,9 +175,7 @@ async def show_xp_scalings(
                         commandInfo.locale,
                         "commands.level.showxpscalings.data",
                         level=i,
-                        xp=get_xp_for_level(
-                            i, scaling, custom_formula if scaling == "custom" else None
-                        ),
+                        xp=get_xp_for_level(i, scaling, custom_formula if scaling == "custom" else None),
                     )
                     for i in range(current_start, current_end + 1)
                 ]

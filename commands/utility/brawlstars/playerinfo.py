@@ -1,8 +1,9 @@
-from config import brawlstarsToken
 import aiohttp
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
+
 from api import get_brawlstars_linked_account
+from config import brawlstarsToken
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def getPlayerInfo(playerTag: str):

@@ -6,30 +6,31 @@ THE COMMANDS IN THIS FILE ARE FOR ADMINISTRATIVE PURPOSES ONLY. THEY ARE NOT TO 
 # import asyncio
 # import subprocess
 # import platform
+import asyncio
+import json
+
+import aiohttp
 import discord
 from discord.ext import commands
-from localizer import tanjunLocalizer
+
 import config
-from utility import addFeedback, tanjunEmbed, missingLocalization
 from api import feedbackBlockUser, feedbackUnblockUser
-from tests import (
-    test_ping,
-    test_database,
-    test_commands,
-)
-from extensions.logs import sendLogEmbeds
-from loops.create_database_backup import create_database_backup
 from commands.admin.joinToCreate.joinToCreateListener import (
     removeAllJoinToCreateChannels,
 )
-import aiohttp
-from commands.channel.welcome import welcomeNewUser
-
 from commands.channel.farewell import farewellUser
-import json
-import asyncio
+from commands.channel.welcome import welcomeNewUser
+from extensions.logs import sendLogEmbeds
+from localizer import tanjunLocalizer
+from loops.create_database_backup import create_database_backup
 from minigames.addLevelXp import update_user_roles
 from minigames.countingmodes import get_correct_next_number, get_first_number
+from tests import (
+    test_commands,
+    test_database,
+    test_ping,
+)
+from utility import addFeedback, missingLocalization, tanjunEmbed
 
 
 class administrationCog(commands.Cog):
@@ -81,17 +82,13 @@ class administrationCog(commands.Cog):
         except Exception as e:
             await message.edit(content=f"❌ Error in Ping test: {e}")
             return
-        await message.edit(
-            content="Starting bot tests... \nPing Test: ✅\ncurrent Test: `Database`"
-        )
+        await message.edit(content="Starting bot tests... \nPing Test: ✅\ncurrent Test: `Database`")
         try:
             await test_database(self, ctx)
         except Exception as e:
             await message.edit(content=f"❌ Error in Database test: {e}")
             return
-        await message.edit(
-            content="Starting bot tests... \nPing Test: ✅\nDatabase Test: ✅\ncurrent Test: `Commands`"
-        )
+        await message.edit(content="Starting bot tests... \nPing Test: ✅\nDatabase Test: ✅\ncurrent Test: `Commands`")
         try:
             await test_commands(self, ctx)
         except Exception as e:
@@ -118,9 +115,7 @@ class administrationCog(commands.Cog):
         await removeAllJoinToCreateChannels()
         await ctx.send("Updating...")
         async with aiohttp.ClientSession() as session:
-            async with session.get(
-                f"http://127.0.0.1:6969/restart/{self.bot.application_id}"
-            ) as response:
+            async with session.get(f"http://127.0.0.1:6969/restart/{self.bot.application_id}") as response:
                 await ctx.send(await response.text())
 
     @commands.command()
@@ -153,9 +148,7 @@ class administrationCog(commands.Cog):
     async def getBrawlers(self):
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
-            async with session.get(
-                "https://api.brawlstars.com/v1/brawlers", headers=headers
-            ) as response:
+            async with session.get("https://api.brawlstars.com/v1/brawlers", headers=headers) as response:
                 return await response.json()
 
     @commands.command()
@@ -172,9 +165,7 @@ class administrationCog(commands.Cog):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url) as response:
                         image = await response.read()
-                        emoji = await ctx.guild.create_custom_emoji(
-                            name=f"{starPower['id']}", image=image
-                        )
+                        emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)
                         await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
 
     @commands.command()
@@ -191,18 +182,14 @@ class administrationCog(commands.Cog):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url) as response:
                         image = await response.read()
-                        emoji = await ctx.guild.create_custom_emoji(
-                            name=f"{gadget['id']}", image=image
-                        )
+                        emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)
 
                         await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
 
     async def getAccData(self, id: str):
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
-            async with session.get(
-                f"https://api.brawlstars.com/v1/players/%23{id}", headers=headers
-            ) as response:
+            async with session.get(f"https://api.brawlstars.com/v1/players/%23{id}", headers=headers) as response:
                 return await response.json()
 
     @commands.command()
@@ -217,13 +204,9 @@ class administrationCog(commands.Cog):
     async def editembedmessage(self, ctx):
         if ctx.author.id not in config.adminIds:
             return
-        message = await ctx.send(
-            embed=tanjunEmbed(title="test", description="test. I will edit this soon..")
-        )
+        message = await ctx.send(embed=tanjunEmbed(title="test", description="test. I will edit this soon.."))
         await asyncio.sleep(2)
-        await message.edit(
-            embed=tanjunEmbed(title="test2", description="test2. I have edited this!")
-        )
+        await message.edit(embed=tanjunEmbed(title="test2", description="test2. I have edited this!"))
 
     @commands.command()
     async def setguildlocale(self, ctx, locale: str):
@@ -253,9 +236,7 @@ class administrationCog(commands.Cog):
         current_correct_number = get_first_number(mode)
         for i in range(numbers):
             print(f"i: {i}, current_correct_number: {current_correct_number}")
-            current_correct_number = get_correct_next_number(
-                mode, current_correct_number
-            )
+            current_correct_number = get_correct_next_number(mode, current_correct_number)
 
     @commands.command()
     async def sendUpdateTextToAllAdmins(self, ctx):
@@ -269,10 +250,8 @@ class administrationCog(commands.Cog):
             await ctx.channel.send(
                 "Willst du wirklich die Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!"
             )
-            confirmation_message = await self.bot.wait_for(
-                "message", check=check, timeout=30.0
-            )
-        except asyncio.TimeoutError:
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+        except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
 
@@ -281,13 +260,9 @@ class administrationCog(commands.Cog):
             return
 
         try:
-            await ctx.channel.send(
-                "Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)"
-            )
-            confirmation_message = await self.bot.wait_for(
-                "message", check=check, timeout=30.0
-            )
-        except asyncio.TimeoutError:
+            await ctx.channel.send("Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)")
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+        except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
 
@@ -297,10 +272,8 @@ class administrationCog(commands.Cog):
 
         try:
             await ctx.channel.send("sag wallah.")
-            confirmation_message = await self.bot.wait_for(
-                "message", check=check, timeout=30.0
-            )
-        except asyncio.TimeoutError:
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+        except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
 
@@ -310,10 +283,8 @@ class administrationCog(commands.Cog):
 
         try:
             await ctx.channel.send("Gebe das geheime geheim passwort ein.")
-            confirmation_message = await self.bot.wait_for(
-                "message", check=check, timeout=30.0
-            )
-        except asyncio.TimeoutError:
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+        except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
 
@@ -382,10 +353,8 @@ Das Tanjun-Team
             await ctx.channel.send(
                 "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!"
             )
-            confirmation_message = await self.bot.wait_for(
-                "message", check=check, timeout=30.0
-            )
-        except asyncio.TimeoutError:
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+        except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
 
@@ -394,13 +363,9 @@ Das Tanjun-Team
             return
 
         try:
-            await ctx.channel.send(
-                "Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)"
-            )
-            confirmation_message = await self.bot.wait_for(
-                "message", check=check, timeout=30.0
-            )
-        except asyncio.TimeoutError:
+            await ctx.channel.send("Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)")
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+        except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
 
@@ -410,10 +375,8 @@ Das Tanjun-Team
 
         try:
             await ctx.channel.send("sag wallah.")
-            confirmation_message = await self.bot.wait_for(
-                "message", check=check, timeout=30.0
-            )
-        except asyncio.TimeoutError:
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+        except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
 
@@ -423,10 +386,8 @@ Das Tanjun-Team
 
         try:
             await ctx.channel.send("Gebe das geheime geheim passwort ein.")
-            confirmation_message = await self.bot.wait_for(
-                "message", check=check, timeout=30.0
-            )
-        except asyncio.TimeoutError:
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+        except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
 

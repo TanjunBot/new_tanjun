@@ -1,9 +1,12 @@
+import discord
+
+import utility
 from api import (
     add_giveaway_blacklisted_user as add_blacklist_user_api,
+)
+from api import (
     check_if_user_blacklisted,
 )
-import discord
-import utility
 from localizer import tanjunLocalizer
 
 

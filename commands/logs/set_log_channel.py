@@ -1,15 +1,16 @@
+import discord
+
+import utility
 from api import (
-    set_log_channel as set_log_channel_api,
     get_log_channel as get_log_channel_api,
 )
-import utility
-import discord
+from api import (
+    set_log_channel as set_log_channel_api,
+)
 from localizer import tanjunLocalizer
 
 
-async def set_log_channel(
-    commandInfo: utility.commandInfo, channel: discord.TextChannel
-):
+async def set_log_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel):
     if not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -45,12 +46,8 @@ async def set_log_channel(
 
     if logChannel:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.logs.setLogChannel.alreadySet.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.logs.setLogChannel.alreadySet.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.setLogChannel.alreadySet.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.setLogChannel.alreadySet.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -58,9 +55,7 @@ async def set_log_channel(
     await set_log_channel_api(commandInfo.guild.id, channel.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.logs.setLogChannel.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.setLogChannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.logs.setLogChannel.success.description",

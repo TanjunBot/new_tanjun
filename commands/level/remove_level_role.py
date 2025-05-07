@@ -1,12 +1,11 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
-from api import remove_level_role, get_level_role
 import discord
 
+from api import get_level_role, remove_level_role
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
-async def remove_level_role_command(
-    commandInfo: commandInfo, role: discord.Role
-):
+
+async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role):
     if not commandInfo.user.guild_permissions.manage_roles:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -40,9 +39,7 @@ async def remove_level_role_command(
     await remove_level_role(str(commandInfo.guild.id), str(role.id))
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.removelevelrole.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.removelevelrole.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.removelevelrole.success.description",

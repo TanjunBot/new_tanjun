@@ -1,6 +1,6 @@
-from utility import commandInfo, tanjunEmbed
+from api import get_level_system_status, set_level_system_status
 from localizer import tanjunLocalizer
-from api import set_level_system_status, get_level_system_status
+from utility import commandInfo, tanjunEmbed
 
 
 async def enable_level_system(commandInfo: commandInfo):
@@ -37,11 +37,7 @@ async def enable_level_system(commandInfo: commandInfo):
     await set_level_system_status(str(commandInfo.guild.id), True)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.enablelevelsystem.success.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.enablelevelsystem.success.description"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.enablelevelsystem.success.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.enablelevelsystem.success.description"),
     )
     await commandInfo.reply(embed=embed)

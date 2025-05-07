@@ -1,6 +1,6 @@
 import utility
-from localizer import tanjunLocalizer
 from api import add_trigger_message as add_trigger_message_api
+from localizer import tanjunLocalizer
 
 
 async def add_trigger_message(
@@ -23,14 +23,10 @@ async def add_trigger_message(
         await commandInfo.reply(embed=embed)
         return
 
-    await add_trigger_message_api(
-        commandInfo.guild.id, trigger, response, caseSensitive
-    )
+    await add_trigger_message_api(commandInfo.guild.id, trigger, response, caseSensitive)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.trigger_messages.add.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.trigger_messages.add.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.trigger_messages.add.success.description",

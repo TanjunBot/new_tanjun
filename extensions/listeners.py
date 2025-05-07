@@ -6,40 +6,34 @@
 # from typing import List, Optional
 from discord.ext import commands
 
-from minigames.counting import counting
-from minigames.countingChallenge import counting as countingChallenge
-from minigames.countingmodes import counting as countingModes
-from minigames.wordchain import wordchain
-from minigames.addLevelXp import addLevelXp
-
-from commands.giveaway.utility import add_giveaway_participant, addMessageToGiveaway
-from loops.level import handleVoiceChange as handleLevelVoiceChange
-from loops.giveaway import handleVoiceChange
-
-from config import adminIds
-
+from api import remove_scheduled_message, update_scheduled_message_content
+from commands.admin.joinToCreate.joinToCreateListener import memberJoin, memberLeave
+from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
+from commands.admin.ticket.open_ticket import openTicket as openTicketListener
+from commands.admin.trigger_messages.send import send_trigger_message
 from commands.ai.add_custom_situation_button_handler import (
     approve_custom_situation,
     deny_custom_situation,
 )
-
-from commands.utility.autopublish import publish_message
-from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
-from commands.utility.report import report_btn_click
-from api import update_scheduled_message_content, remove_scheduled_message
-from commands.admin.trigger_messages.send import send_trigger_message
-
-from commands.admin.ticket.open_ticket import openTicket as openTicketListener
-from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
-from commands.admin.joinToCreate.joinToCreateListener import memberLeave, memberJoin
+from commands.channel.dynamicslowmode import dynamicslowmodeMessage
+from commands.channel.farewell import farewellUser
 from commands.channel.media import mediaChannelMessage
 from commands.channel.welcome import welcomeNewUser
-from commands.channel.farewell import farewellUser
-from commands.channel.dynamicslowmode import dynamicslowmodeMessage
+from commands.giveaway.utility import add_giveaway_participant, addMessageToGiveaway
+from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
+from commands.utility.autopublish import publish_message
+from commands.utility.report import report_btn_click
+from config import adminIds
+from loops.giveaway import handleVoiceChange
+from loops.level import handleVoiceChange as handleLevelVoiceChange
+from minigames.addLevelXp import addLevelXp
+from minigames.counting import counting
+from minigames.countingChallenge import counting as countingChallenge
+from minigames.countingmodes import counting as countingModes
+from minigames.wordchain import wordchain
 
 
 class ListenerCog(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
@@ -69,18 +63,12 @@ class ListenerCog(commands.Cog):
                     client=self.bot,
                 )
                 if embed:
-                    await interaction.response.send_message(
-                        embed=embed, ephemeral=True
-                    )
-            elif interaction.data["custom_id"].startswith(
-                "ai_add_custom_situation_approve"
-            ):
+                    await interaction.response.send_message(embed=embed, ephemeral=True)
+            elif interaction.data["custom_id"].startswith("ai_add_custom_situation_approve"):
                 if interaction.user.id not in adminIds:
                     return
                 await approve_custom_situation(interaction)
-            elif interaction.data["custom_id"].startswith(
-                "ai_add_custom_situation_deny"
-            ):
+            elif interaction.data["custom_id"].startswith("ai_add_custom_situation_deny"):
                 if interaction.user.id not in adminIds:
                     return
                 await deny_custom_situation(interaction)
@@ -106,9 +94,7 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
         if after.reference:
-            await update_scheduled_message_content(
-                after.reference.message_id, after.content
-            )
+            await update_scheduled_message_content(after.reference.message_id, after.content)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):

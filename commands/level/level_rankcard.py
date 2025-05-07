@@ -1,13 +1,14 @@
-import discord
-from utility import commandInfo, tanjunEmbed, checkIfhasPlus, draw_text_with_outline
-from localizer import tanjunLocalizer
-from api import get_user_level_info, set_custom_background
-from PIL import Image, ImageDraw, ImageFont, ImageSequence
-import io
 import asyncio
-import aiohttp
+import io
 from concurrent.futures import ThreadPoolExecutor
-from utility import upload_image_to_imgbb
+
+import aiohttp
+import discord
+from PIL import Image, ImageDraw, ImageFont, ImageSequence
+
+from api import get_user_level_info, set_custom_background
+from localizer import tanjunLocalizer
+from utility import checkIfhasPlus, commandInfo, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
 
 executor = ThreadPoolExecutor()
 
@@ -17,9 +18,7 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
 
     if not user_info:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.rank.error.no_data.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.rank.error.no_data.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.rank.error.no_data.description",
@@ -33,9 +32,7 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
 
     file = discord.File(rankcard_image, filename="rankcard.gif")
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.rank.success.title", user=user.name
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.rank.success.title", user=user.name),
     )
     embed.set_image(url="attachment://rankcard.gif")
 
@@ -45,9 +42,7 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
 async def set_background_command(commandInfo: commandInfo, image: discord.Attachment):
     if not checkIfhasPlus(commandInfo.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.setbackground.error.no_plus.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setbackground.error.no_plus.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.setbackground.error.no_plus.description",
@@ -70,9 +65,7 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
         await commandInfo.reply(embed=embed)
         return
 
-    uploaded_image = await upload_image_to_imgbb(
-        await image.read(), image.content_type.split("/")[1]
-    )
+    uploaded_image = await upload_image_to_imgbb(await image.read(), image.content_type.split("/")[1])
 
     await set_custom_background(
         str(commandInfo.guild.id),
@@ -81,12 +74,8 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
     )
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.setbackground.success.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.setbackground.success.description"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setbackground.success.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setbackground.success.description"),
     )
     embed.set_image(url=uploaded_image["data"]["url"])
 
@@ -140,18 +129,14 @@ def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
             fill=outline,
             width=width,
         )
-        draw.arc(
-            [x2 - 2 * radius, y2 - 2 * radius, x2, y2], 0, 90, fill=outline, width=width
-        )
+        draw.arc([x2 - 2 * radius, y2 - 2 * radius, x2, y2], 0, 90, fill=outline, width=width)
         draw.line([x1 + radius, y1, x2 - radius, y1], fill=outline, width=width)
         draw.line([x1 + radius, y2, x2 - radius, y2], fill=outline, width=width)
         draw.line([x1, y1 + radius, x1, y2 - radius], fill=outline, width=width)
         draw.line([x2, y1 + radius, x2, y2 - radius], fill=outline, width=width)
 
 
-def process_image(
-    background_frames, avatar_frames, avatar_decoration_frames, user, user_info, commandInfo
-):
+def process_image(background_frames, avatar_frames, avatar_decoration_frames, user, user_info, commandInfo):
     DECORATION_SIZE_MULTIPLIER = 1.2
 
     num_frames = max(
@@ -183,9 +168,7 @@ def process_image(
         decoration_size = int(200 * DECORATION_SIZE_MULTIPLIER)
         offset = int((decoration_size - 200) / 2)
         for i in range(len(avatar_decoration_frames)):
-            avatar_decoration_frames[i] = avatar_decoration_frames[i].resize(
-                (decoration_size, decoration_size)
-            )
+            avatar_decoration_frames[i] = avatar_decoration_frames[i].resize((decoration_size, decoration_size))
 
     mask = Image.new("L", (200, 200), 0)
     mask_draw = ImageDraw.Draw(mask)
@@ -220,9 +203,7 @@ def process_image(
         draw_text_with_outline(
             draw,
             (250, 105),
-            tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.rank.data.level", level=user_info["level"]
-            ),
+            tanjunLocalizer.localize(commandInfo.locale, "commands.level.rank.data.level", level=user_info["level"]),
             info_font,
             (255, 255, 255, 255),
             (0, 0, 0, 255),
@@ -276,9 +257,9 @@ def process_image(
         if avatar_decoration_frames:
             decoration = avatar_decoration_frames[frame_index]
             # Resize the decoration and ensure RGBA mode
-            decoration = decoration.resize((decoration_size, decoration_size)).convert('RGBA')
+            decoration = decoration.resize((decoration_size, decoration_size)).convert("RGBA")
             # Create a new transparent image for the decoration
-            decoration_layer = Image.new('RGBA', frame.size, (0, 0, 0, 0))
+            decoration_layer = Image.new("RGBA", frame.size, (0, 0, 0, 0))
             # Paste the decoration onto the transparent layer
             decoration_layer.paste(decoration, (25 - offset, 50 - offset), decoration)
             # Composite the decoration layer with the frame
@@ -303,9 +284,7 @@ def process_image(
 async def generate_rankcard(user: discord.Member, user_info: dict, commandInfo: commandInfo) -> io.BytesIO:
     # Load background image or frames
     if user_info["customBackground"]:
-        background_frames, _ = await get_image_or_gif_frames(
-            user_info["customBackground"]
-        )
+        background_frames, _ = await get_image_or_gif_frames(user_info["customBackground"])
     else:
         background_frames = [Image.open("assets/rankCard.png").convert("RGBA")]
 
@@ -313,13 +292,9 @@ async def generate_rankcard(user: discord.Member, user_info: dict, commandInfo: 
     avatar_url = str(user.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
     avatar_decoration_frames = None
-    avatar_decoration_url = (
-        str(user.avatar_decoration.url) if user.avatar_decoration else None
-    )
+    avatar_decoration_url = str(user.avatar_decoration.url) if user.avatar_decoration else None
     if avatar_decoration_url:
-        avatar_decoration_frames, _ = await get_image_or_gif_frames(
-            avatar_decoration_url
-        )
+        avatar_decoration_frames, _ = await get_image_or_gif_frames(avatar_decoration_url)
 
     # Process image in executor
     loop = asyncio.get_event_loop()

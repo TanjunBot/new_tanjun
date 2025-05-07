@@ -1,0 +1,40 @@
+name: Ruff Lint & Format
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint_and_format:
+    runs-on: ubuntu-latest 
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff Linter
+        run: ruff check . --fix --exit-zero
+
+      - name: Run Ruff Formatter
+        run: ruff format .
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: autoformat and lint Python code with Ruff"
+          branch: ${{ github.head_ref }}
+          commit_options: '--no-verify'
