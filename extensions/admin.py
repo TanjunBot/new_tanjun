@@ -604,7 +604,7 @@ class administrationCommands(discord.app_commands.Group):
     async def kick(
         self, ctx, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None
     ):
-        await ctx.response.defer()
+        await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
             channel=ctx.channel,
