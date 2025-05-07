@@ -173,7 +173,7 @@ starPowerEmojiMap = {
 }
 
 
-def getStarPowerEmoji(id: int):
+def getStarPowerEmoji(id: int) -> str:
     try:
         emoji = starPowerEmojiMap[id]
     except KeyError:
@@ -350,7 +350,7 @@ gadgetEmojiMap = {
 }
 
 
-def getGadgetEmoji(gadget: int):
+def getGadgetEmoji(gadget: int) -> str:
     try:
         emoji = gadgetEmojiMap[gadget]
     except KeyError:
@@ -381,7 +381,7 @@ gearEmojiMap = {
 }
 
 
-def getGearEmoji(gear: int):
+def getGearEmoji(gear: int) -> str:
     try:
         emoji = gearEmojiMap[gear]
     except KeyError:
@@ -444,7 +444,7 @@ levelEmojiMap = {
 }
 
 
-def getLevelEmoji(level: int):
+def getLevelEmoji(level: int) -> str:
     if level > 50:
         return levelEmojiMap[51]
     try:
@@ -453,7 +453,7 @@ def getLevelEmoji(level: int):
         return ""
 
 
-def parseName(name: str):
+def parseName(name: str) -> str:
     name = name.replace("-", " ")
     name = name.title()
     name.replace("'S", "'s")
