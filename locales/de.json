@@ -25,18 +25,18 @@
     },
     {
         "identifier": "commands.help.timeout.title",
-        "source_string": "Timeout",
-        "translation": "Timeout",
+        "source_string": "Abgelaufen",
+        "translation": "Abgelaufen",
         "context": "The Title of the Embed when the Select is Timed out",
         "labels": "de.json, embed_title",
         "max_length": 256
     },
     {
         "identifier": "commands.help.timeout.description",
-        "source_string": "Der Help Befehl ist Getimeouted. Du kannst nicht länger mit ihm interagieren",
-        "translation": "Der Help Befehl ist Getimeouted. Du kannst nicht länger mit ihm interagieren",
+        "source_string": "Dieses Embed ist abgelaufen. Du kannst nicht länger mit ihm interagieren. Führe ggf. den Help-Command erneut aus.",
+        "translation": "Dieses Embed ist abgelaufen. Du kannst nicht länger mit ihm interagieren. Führe ggf. den Help-Command erneut aus.",
         "context": "The Description of the Embed when the view is timed out",
-        "labels": "de.json, embed_description",
+        "labels": "de.json",
         "max_length": 4096
     },
     {
@@ -377,8 +377,8 @@
     },
     {
         "identifier": "commands.admin.removerole.multiplePrompt",
-        "source_string": "Bitte wähle die Besitzer von Rollen und Nutzer aus, von denen du Rollen entziehen möchtest.",
-        "translation": "Bitte wähle die Besitzer von Rollen und Nutzer aus, von denen du Rollen entziehen möchtest.",
+        "source_string": "Bitte wähle die Besitzer von Rollen und die Nutzer aus, denen du Rollen entziehen möchtest.",
+        "translation": "Bitte wähle die Besitzer von Rollen und die Nutzer aus, denen du Rollen entziehen möchtest.",
         "context": "commands -> admin -> removerole -> multiplePrompt",
         "labels": "de.json",
         "max_length": null
@@ -6265,8 +6265,8 @@
     },
     {
         "identifier": "commands.fun.boop.title",
-        "source_string": "<:boop:1096037035611009064>${user} stupst ${member} an <:boop:1096037035611009064>",
-        "translation": "<:boop:1096037035611009064>${user} stupst ${member} an <:boop:1096037035611009064>",
+        "source_string": "<:boop:1096037035611009064>${user} stupst ${member} <:boop:1096037035611009064>",
+        "translation": "<:boop:1096037035611009064>${user} stupst ${member} <:boop:1096037035611009064>",
         "context": "commands -> fun -> boop -> title",
         "labels": "de.json",
         "max_length": null
@@ -15809,8 +15809,8 @@
     },
     {
         "identifier": "fun.hug.params.message.description",
-        "source_string": "Schreibe eine Nachricht für dein Mitglied",
-        "translation": "Schreibe eine Nachricht für dein Mitglied",
+        "source_string": "Füge eine Nachricht hinzu",
+        "translation": "Füge eine Nachricht hinzu",
         "context": "fun -> hug -> params -> message -> description",
         "labels": "command_description, de.json",
         "max_length": 100
@@ -15857,8 +15857,8 @@
     },
     {
         "identifier": "fun.kiss.params.message.description",
-        "source_string": "Schreibe eine Nachricht für dein Mitglied",
-        "translation": "Schreibe eine Nachricht für dein Mitglied",
+        "source_string": "Füge eine Nachricht hinzu",
+        "translation": "Füge eine Nachricht hinzu",
         "context": "fun -> kiss -> params -> message -> description",
         "labels": "command_description, de.json",
         "max_length": 100
@@ -15905,8 +15905,8 @@
     },
     {
         "identifier": "fun.boop.params.message.description",
-        "source_string": "Schreibe eine Nachricht für dein Mitglied",
-        "translation": "Schreibe eine Nachricht für dein Mitglied",
+        "source_string": "Füge eine Nachricht hinzu",
+        "translation": "Füge eine Nachricht hinzu",
         "context": "fun -> boop -> params -> message -> description",
         "labels": "command_description, de.json",
         "max_length": 100
@@ -15953,8 +15953,8 @@
     },
     {
         "identifier": "fun.wave.params.message.description",
-        "source_string": "Schreibe eine Nachricht für dein Mitglied",
-        "translation": "Schreibe eine Nachricht für dein Mitglied",
+        "source_string": "Füge eine Nachricht hinzu",
+        "translation": "Füge eine Nachricht hinzu",
         "context": "fun -> wave -> params -> message -> description",
         "labels": "command_description, de.json",
         "max_length": 100
@@ -16001,8 +16001,8 @@
     },
     {
         "identifier": "fun.laugh.params.message.description",
-        "source_string": "Schreibe eine Nachricht für dein Mitglied",
-        "translation": "Schreibe eine Nachricht für dein Mitglied",
+        "source_string": "Füge eine Nachricht hinzu",
+        "translation": "Füge eine Nachricht hinzu",
         "context": "fun -> laugh -> params -> message -> description",
         "labels": "command_description, de.json",
         "max_length": 100
@@ -16049,8 +16049,8 @@
     },
     {
         "identifier": "fun.pat.params.message.description",
-        "source_string": "Schreibe eine Nachricht für dein Mitglied",
-        "translation": "Schreibe eine Nachricht für dein Mitglied",
+        "source_string": "Füge eine Nachricht hinzu",
+        "translation": "Füge eine Nachricht hinzu",
         "context": "fun -> pat -> params -> message -> description",
         "labels": "command_description, de.json",
         "max_length": 100
@@ -16097,8 +16097,8 @@
     },
     {
         "identifier": "fun.poke.params.message.description",
-        "source_string": "Schreibe eine Nachricht für dein Mitglied",
-        "translation": "Schreibe eine Nachricht für dein Mitglied",
+        "source_string": "Füge eine Nachricht hinzu",
+        "translation": "Füge eine Nachricht hinzu",
         "context": "fun -> poke -> params -> message -> description",
         "labels": "command_description, de.json",
         "max_length": 100
@@ -16145,8 +16145,8 @@
     },
     {
         "identifier": "fun.slap.params.message.description",
-        "source_string": "Schreibe eine Nachricht für dein Mitglied",
-        "translation": "Schreibe eine Nachricht für dein Mitglied",
+        "source_string": "Füge eine Nachricht hinzu",
+        "translation": "Füge eine Nachricht hinzu",
         "context": "fun -> slap -> params -> message -> description",
         "labels": "command_description, de.json",
         "max_length": 100
@@ -16193,8 +16193,8 @@
     },
     {
         "identifier": "fun.tickle.params.message.description",
-        "source_string": "Schreibe eine Nachricht für dein Mitglied",
-        "translation": "Schreibe eine Nachricht für dein Mitglied",
+        "source_string": "Füge eine Nachricht hinzu",
+        "translation": "Füge eine Nachricht hinzu",
         "context": "fun -> tickle -> params -> message -> description",
         "labels": "command_description, de.json",
         "max_length": 100
@@ -30865,8 +30865,8 @@
     },
     {
         "identifier": "commands.utility.feedback.modal.timeout.title",
-        "source_string": "Timeouted",
-        "translation": "Timeouted",
+        "source_string": "Abgelaufen",
+        "translation": "Abgelaufen",
         "context": null,
         "labels": "unassigned",
         "max_length": null
