@@ -11,6 +11,9 @@ on:
 jobs:
   type-check:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write 
+      contents: read
     strategy:
       matrix:
         python-version: ['3.12']
