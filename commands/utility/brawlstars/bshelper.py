@@ -350,7 +350,7 @@ gadgetEmojiMap = {
 }
 
 
-def getGadgetEmoji(gadget: str):
+def getGadgetEmoji(gadget: int):
     try:
         emoji = gadgetEmojiMap[gadget]
     except KeyError:
@@ -381,7 +381,7 @@ gearEmojiMap = {
 }
 
 
-def getGearEmoji(gear: str):
+def getGearEmoji(gear: int):
     try:
         emoji = gearEmojiMap[gear]
     except KeyError:
