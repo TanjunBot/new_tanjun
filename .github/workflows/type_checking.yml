@@ -1,4 +1,4 @@
-name: Python Type Checking
+name: Python Type Checking with Issue Management
 
 on:
   push:
@@ -32,5 +32,162 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Mypy
+        id: mypy_check
         run: |
-          mypy .
+          mkdir -p mypy_reports
+          mypy . --explicit-package-bases --soft-error-limit -1 --show-error-codes --no-error-summary 2>&1 | tee mypy_reports/mypy_issues.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Count Mypy Issues
+        id: mypy_count
+        if: always()
+        run: |
+          REPORT_FILE="mypy_reports/mypy_issues.txt"
+          ISSUE_COUNT=0
+          if [ -f "$REPORT_FILE" ]; then
+            ISSUE_COUNT=$(grep -c . "$REPORT_FILE" || true)
+          fi
+          echo "issue_count=${ISSUE_COUNT}" >> $GITHUB_OUTPUT
+          echo "Mypy raw exit code from previous step: ${{ steps.mypy_check.outputs.exit_code }}"
+          echo "Counted ${ISSUE_COUNT} Mypy issue lines from report file."
+
+      - name: Upload Mypy report artifact
+        if: steps.mypy_check.outputs.exit_code != '0' && steps.mypy_count.outputs.issue_count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mypy-report-${{ github.run_id }}-${{ github.sha }}
+          path: mypy_reports/mypy_issues.txt
+
+      - name: Manage Mypy GitHub Issue
+        if: always()
+        env:
+          MYPY_RAW_EXIT_CODE: ${{ steps.mypy_check.outputs.exit_code }}
+          MYPY_ISSUES_COUNT_FROM_FILE: ${{ steps.mypy_count.outputs.issue_count }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ env.GH_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const reportPath = 'mypy_reports/mypy_issues.txt';
+            let reportContent = '';
+            try {
+              reportContent = fs.readFileSync(reportPath, 'utf8');
+            } catch (error) {
+              console.warn(`Could not read Mypy report file at ${reportPath}: ${error.message}`);
+            }
+
+            const lines = reportContent.split('\n').filter(line => line.trim() !== '');
+            // Use the values passed via env from step outputs
+            const errorCount = parseInt(process.env.MYPY_ISSUES_COUNT_FROM_FILE || '0');
+            const mypyExitCode = parseInt(process.env.MYPY_RAW_EXIT_CODE || '0');
+
+            const branchName = process.env.GITHUB_REF_NAME;
+            const commitSha = process.env.GITHUB_SHA.slice(0,7);
+            const workflowRunURL = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+            
+            const issueLabels = ['bug', 'mypy', 'typing-errors', 'automated-report'];
+            const issueTitlePrefix = `Mypy Typing Errors - Branch: ${branchName}`;
+            const artifactName = `mypy-report-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_SHA}`;
+
+            async function findExistingIssue() {
+              const { data: issues } = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: issueLabels.join(','),
+                state: 'open',
+              });
+              for (const issue of issues) {
+                if (issue.title.startsWith(issueTitlePrefix)) {
+                  return issue;
+                }
+              }
+              return null;
+            }
+
+            if (mypyExitCode !== 0 && errorCount > 0) {
+              console.log(`Mypy found ${errorCount} error(s)/note(s).`);
+
+              const maxLinesInIssue = 75;
+              const isTruncated = lines.length > maxLinesInIssue;
+              const issueBodyLines = lines.slice(0, maxLinesInIssue).map(line => {
+                let cleanedLine = line.trim()
+                                    .replace(/&/g, '&amp;')
+                                    .replace(/</g, '&lt;')
+                                    .replace(/>/g, '&gt;')
+                                    .replace(/\*/g, '\\*')
+                                    .replace(/_/g, '\\_')
+                                    .replace(/`/g, '\\`')
+                                    .replace(/\[/g, '\\[')
+                                    .replace(/\]/g, '\\]');
+                return `- [ ] ${cleanedLine}`;
+              });
+
+              let newBody = `Mypy found **${errorCount}** type error(s)/note(s) for commit \`${commitSha}\` on branch \`${branchName}\`.\n`;
+              newBody += `(Workflow Run: ${workflowRunURL})\n\n`;
+              newBody += `**Checklist (displaying first ${isTruncated ? maxLinesInIssue : lines.length} of ${errorCount} items):**\n`;
+              newBody += issueBodyLines.join('\n') + '\n\n';
+              if (isTruncated || errorCount > 0) {
+                newBody += `The full list of ${errorCount} error(s)/note(s) is available in the artifact \`${artifactName}\` attached to this workflow run.\n`;
+              }
+
+              const MAX_ISSUE_BODY_LENGTH = 60000;
+              if (newBody.length > MAX_ISSUE_BODY_LENGTH) {
+                const truncationMessage = `\n\n**Note:** Issue body was truncated due to length. Please refer to the artifact.`;
+                const cutPoint = MAX_ISSUE_BODY_LENGTH - truncationMessage.length;
+                newBody = newBody.substring(0, cutPoint > 0 ? cutPoint : MAX_ISSUE_BODY_LENGTH - 500) + truncationMessage;
+              }
+              
+              const newTitle = `${issueTitlePrefix} (${errorCount} issues)`;
+              const existingIssue = await findExistingIssue();
+
+              if (existingIssue) {
+                console.log(`Found existing Mypy issue #${existingIssue.number}. Updating it.`);
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existingIssue.number,
+                  title: newTitle,
+                  body: newBody,
+                  state: 'open'
+                });
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existingIssue.number,
+                  body: `Mypy report updated for commit \`${commitSha}\`. ${errorCount} error(s)/note(s) found. See workflow: ${workflowRunURL}`,
+                });
+              } else {
+                console.log("No existing Mypy issue found for this branch. Creating a new one.");
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: newTitle,
+                  body: newBody,
+                  labels: issueLabels,
+                });
+              }
+            } else if (mypyExitCode === 0 && errorCount === 0) {
+              console.log("Mypy ran successfully and found no errors.");
+              const existingIssue = await findExistingIssue();
+              if (existingIssue) {
+                console.log(`Found existing Mypy issue #${existingIssue.number}. Closing it as errors are resolved.`);
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existingIssue.number,
+                  state: 'closed',
+                });
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existingIssue.number,
+                  body: `All Mypy errors appear to be resolved as of commit \`${commitSha}\`. Closing this issue. Workflow: ${workflowRunURL}`,
+                });
+              } else {
+                console.log("No Mypy errors and no existing open Mypy issue to close for this branch.");
+              }
+            } else {
+              console.warn(`Mypy check resulted in an ambiguous state. Exit code: ${mypyExitCode}, Error count from file: ${errorCount}. No issue action will be taken.`);
+            }
