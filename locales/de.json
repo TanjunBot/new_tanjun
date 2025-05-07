@@ -16761,9 +16761,9 @@
     },
     {
         "identifier": "utility.autopublish.name",
-        "source_string": "autopublish",
-        "translation": "autopublish",
-        "context": "utility -> autopublish -> name",
+        "source_string": "add",
+        "translation": "add",
+        "context": "Name of the /utility autobublish add command",
         "labels": "command_name, de.json",
         "max_length": 32
     },
