@@ -421,7 +421,7 @@ class ReportCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_rps_showreports_params_user_description"),
     )
     async def show_reports(self, ctx, user: discord.Member = None):
-        await ctx.response.defer()
+        await ctx.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=ctx.user,
             channel=ctx.channel,
