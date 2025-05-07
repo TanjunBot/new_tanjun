@@ -1,6 +1,7 @@
 import sys
 from unittest.mock import MagicMock
 
+
 def patch_config_module():
     mock_config_module_instance = MagicMock()
 
@@ -45,9 +46,9 @@ def patch_config_module():
         "brawlstarsToken": mock_config_module_instance.brawlstarsToken,
         "twitchSecret": mock_config_module_instance.twitchSecret,
         "twitchId": mock_config_module_instance.twitchId,
-        "prefix": mock_config_module_instance.prefix
+        "prefix": mock_config_module_instance.prefix,
     }
     mock_config_module_instance.config = mock_env_dict
 
-    sys.modules['config'] = mock_config_module_instance
+    sys.modules["config"] = mock_config_module_instance
     return mock_config_module_instance
