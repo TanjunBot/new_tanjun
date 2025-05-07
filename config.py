@@ -7,7 +7,7 @@ config = dotenv_values(".env")
 version = "1.0.5"
 token = config["token"]
 applicationId = config["applicationId"]
-adminIds = [int(id) for id in (config["adminIds"].split(",") if config != None  else "")]
+adminIds = [int(id) for id in (config["adminIds"].split(",") if config != None else "")]
 activity = "Tanjun {version}"
 database_ip = config["database_ip"]
 database_password = config["database_password"]
