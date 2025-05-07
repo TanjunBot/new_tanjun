@@ -1,32 +1,25 @@
 import discord
+
 import utility
+from api import clear_channel_overwrites, save_channel_overwrites
 from localizer import tanjunLocalizer
-from api import save_channel_overwrites, clear_channel_overwrites
 
 
-async def lock_channel(
-    commandInfo: utility.commandInfo, channel: discord.TextChannel = None
-):
+async def lock_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel = None):
     if channel is None:
         channel = commandInfo.channel
 
     if not commandInfo.user.guild_permissions.manage_channels:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.lock.missingPermission.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.lock.missingPermission.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.missingPermission.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.missingPermission.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if not channel.permissions_for(commandInfo.guild.me).manage_channels:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.lock.missingPermissionBot.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.lock.missingPermissionBot.description",
@@ -42,9 +35,7 @@ async def lock_channel(
         # Save current overwrites and update them
         for role, overwrites in channel.overwrites.items():
             if isinstance(role, discord.Role):
-                overwrite_dict = {
-                    k: v for k, v in overwrites._values.items() if v is not None
-                }
+                overwrite_dict = {k: v for k, v in overwrites._values.items() if v is not None}
                 await save_channel_overwrites(channel.id, role.id, overwrite_dict)
 
                 # Remove send_messages permission
@@ -54,14 +45,10 @@ async def lock_channel(
         # Update default role permissions
         default_permissions = channel.overwrites_for(channel.guild.default_role)
         default_permissions.send_messages = False
-        await channel.set_permissions(
-            channel.guild.default_role, overwrite=default_permissions
-        )
+        await channel.set_permissions(channel.guild.default_role, overwrite=default_permissions)
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.lock.success.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.lock.success.description",
@@ -80,21 +67,13 @@ async def lock_channel(
 
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.lock.forbidden.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.lock.forbidden.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.forbidden.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.forbidden.description"),
         )
         await commandInfo.reply(embed=embed)
     except discord.HTTPException:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.lock.error.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.lock.error.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.error.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.error.description"),
         )
         await commandInfo.reply(embed=embed)

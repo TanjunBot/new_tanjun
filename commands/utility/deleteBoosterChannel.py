@@ -1,7 +1,7 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
-from api import get_booster_channel, delete_booster_channel
 import utility
+from api import delete_booster_channel, get_booster_channel
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def deleteBoosterChannel(commandInfo: commandInfo):
@@ -37,9 +37,7 @@ async def deleteBoosterChannel(commandInfo: commandInfo):
     await delete_booster_channel(commandInfo.guild.id)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.deleteboosterchannel.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.deleteboosterchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.deleteboosterchannel.success.description",

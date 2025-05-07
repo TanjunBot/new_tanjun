@@ -1,13 +1,11 @@
-from api import get_wordchain_word, clear_wordchain
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
 import discord
 
+from api import clear_wordchain, get_wordchain_word
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
-async def removewordchainchannel(
-    commandInfo: commandInfo, channel: discord.TextChannel
-):
 
+async def removewordchainchannel(commandInfo: commandInfo, channel: discord.TextChannel):
     if not commandInfo.user.guild_permissions.moderate_members:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -41,9 +39,7 @@ async def removewordchainchannel(
     await clear_wordchain(channel.id)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "minigames.removewordchainchannel.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.removewordchainchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.removewordchainchannel.success.description",
@@ -54,9 +50,7 @@ async def removewordchainchannel(
 
     # Send a message to the channel informing users it's no longer a counting channel
     info_embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "minigames.removewordchainchannel.channel_message.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.removewordchainchannel.channel_message.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.removewordchainchannel.channel_message.description",

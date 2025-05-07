@@ -1,9 +1,12 @@
+import discord
+
+import utility
 from api import (
-    remove_log_role_blacklist as remove_log_blacklist_role_api,
     is_log_role_blacklisted as is_log_role_blacklisted_api,
 )
-import utility
-import discord
+from api import (
+    remove_log_role_blacklist as remove_log_blacklist_role_api,
+)
 from localizer import tanjunLocalizer
 
 
@@ -38,9 +41,7 @@ async def blacklist_remove_role(commandInfo: utility.commandInfo, role: discord.
     else:
         await remove_log_blacklist_role_api(commandInfo.guild.id, role.id)
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.logs.blacklistRemoveRole.success.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistRemoveRole.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.logs.blacklistRemoveRole.success.description",

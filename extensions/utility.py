@@ -1,64 +1,64 @@
 # Unused imports:
 # from typing import List, Optional
 import discord
-from discord.ext import commands
 from discord import app_commands
-import utility
-from localizer import tanjunLocalizer
+from discord.ext import commands
 
-from commands.utility.messagetrackingoptout import optOut as optOutCommand
-from commands.utility.messagetrackingoptin import optIn as optInCommand
+import utility
+from commands.utility.afk import afk as afkCommand
 from commands.utility.autopublish import autopublish as autopublishCommand
 from commands.utility.autopublish import autopublish_remove as autopublishRemoveCommand
 from commands.utility.avatar import avatar as avatarCommand
-from commands.utility.banner import banner as bannerCommand
-from commands.utility.feedback import feedback as feedbackCommand
 from commands.utility.avatarDecoration import (
     avatarDecoration as avatarDecorationCommand,
 )
-from commands.utility.afk import afk as afkCommand
-from commands.utility.claimBoosterRole import (
-    claimBoosterRole as claimboosterroleCommand,
+from commands.utility.banner import banner as bannerCommand
+from commands.utility.brawlstars.battlelog import battlelog as battlelogCommand
+from commands.utility.brawlstars.brawlers import brawlers as brawlstarsBrawlersCommand
+from commands.utility.brawlstars.club import club as brawlstarsClubCommand
+from commands.utility.brawlstars.events import events as brawlstarsEventsCommand
+from commands.utility.brawlstars.link import link as brawlstarsLinkCommand
+from commands.utility.brawlstars.playerinfo import (
+    playerInfo as brawlstarsPlayerInfoCommand,
 )
-from commands.utility.deleteBoosterRole import (
-    deleteBoosterRole as deleteboosterroleCommand,
-)
-from commands.utility.setupBoosterRole import (
-    setupBoosterRole as setupboosterroleCommand,
-)
+from commands.utility.brawlstars.unlink import unlink as brawlstarsUnlinkCommand
 from commands.utility.claimBoosterChannel import (
     claimBoosterChannel as claimboosterchannelCommand,
+)
+from commands.utility.claimBoosterRole import (
+    claimBoosterRole as claimboosterroleCommand,
 )
 from commands.utility.deleteBoosterChannel import (
     deleteBoosterChannel as deleteboosterchannelCommand,
 )
-from commands.utility.setupBoosterChannel import (
-    setupBoosterChannel as setupboosterchannelCommand,
+from commands.utility.deleteBoosterRole import (
+    deleteBoosterRole as deleteboosterroleCommand,
 )
-from commands.utility.schedulemessage import schedule_message as scheduleMessageCommand
+from commands.utility.feedback import feedback as feedbackCommand
+from commands.utility.help import help as helpCommand
 from commands.utility.listscheduled import (
     list_scheduled_messages as listScheduledCommand,
 )
+from commands.utility.messagetrackingoptin import optIn as optInCommand
+from commands.utility.messagetrackingoptout import optOut as optOutCommand
 from commands.utility.removescheduled import (
     remove_scheduled_message as removeScheduledCommand,
 )
 from commands.utility.report import report as reportCommand
-from commands.utility.help import help as helpCommand
-from commands.utility.brawlstars.battlelog import battlelog as battlelogCommand
-from commands.utility.brawlstars.playerinfo import (
-    playerInfo as brawlstarsPlayerInfoCommand,
+from commands.utility.schedulemessage import schedule_message as scheduleMessageCommand
+from commands.utility.setupBoosterChannel import (
+    setupBoosterChannel as setupboosterchannelCommand,
 )
-from commands.utility.brawlstars.brawlers import brawlers as brawlstarsBrawlersCommand
-from commands.utility.brawlstars.club import club as brawlstarsClubCommand
-from commands.utility.brawlstars.events import events as brawlstarsEventsCommand
+from commands.utility.setupBoosterRole import (
+    setupBoosterRole as setupboosterroleCommand,
+)
 from commands.utility.twitch.addTwitchLiveNotification import (
     addTwitchLiveNotification as addTwitchLiveNotificationCommand,
 )
 from commands.utility.twitch.seeTwitchLiveNotifications import (
     seeTwitchLiveNotifications as seeTwitchLiveNotificationsCommand,
 )
-from commands.utility.brawlstars.link import link as brawlstarsLinkCommand
-from commands.utility.brawlstars.unlink import unlink as brawlstarsUnlinkCommand
+from localizer import tanjunLocalizer
 
 
 class MessageTrackingCommands(discord.app_commands.Group):
@@ -109,18 +109,16 @@ class BoosterRoleCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_claimboosterrole_description"),
     )
     @app_commands.describe(
-        name=app_commands.locale_str(
-            "utility_claimboosterrole_params_name_description"
-        ),
-        color=app_commands.locale_str(
-            "utility_claimboosterrole_params_color_description"
-        ),
-        icon=app_commands.locale_str(
-            "utility_claimboosterrole_params_icon_description"
-        ),
+        name=app_commands.locale_str("utility_claimboosterrole_params_name_description"),
+        color=app_commands.locale_str("utility_claimboosterrole_params_color_description"),
+        icon=app_commands.locale_str("utility_claimboosterrole_params_icon_description"),
     )
     async def claimboosterrole(
-        self, ctx, name: app_commands.Range[str, 1, 100], color: app_commands.Range[str, 6, 7] = None, icon: discord.Attachment = None
+        self,
+        ctx,
+        name: app_commands.Range[str, 1, 100],
+        color: app_commands.Range[str, 6, 7] = None,
+        icon: discord.Attachment = None,
     ):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
@@ -134,9 +132,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
-        await claimboosterroleCommand(
-            commandInfo=commandInfo, name=name, color=color, icon=icon
-        )
+        await claimboosterroleCommand(commandInfo=commandInfo, name=name, color=color, icon=icon)
 
     @app_commands.command(
         name=app_commands.locale_str("utility_deleteboosterrole_name"),
@@ -162,9 +158,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_setupboosterrole_description"),
     )
     @app_commands.describe(
-        role=app_commands.locale_str(
-            "utility_setupboosterrole_params_role_description"
-        ),
+        role=app_commands.locale_str("utility_setupboosterrole_params_role_description"),
     )
     async def setupboosterrole(self, ctx, role: discord.Role):
         await ctx.response.defer()
@@ -200,12 +194,8 @@ class BoosterRoleCommands(discord.app_commands.Group):
         )
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.boosterroleinfo.info.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.boosterroleinfo.info.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterroleinfo.info.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterroleinfo.info.description"),
         )
         await commandInfo.reply(embed=embed)
 
@@ -216,9 +206,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_claimboosterchannel_description"),
     )
     @app_commands.describe(
-        name=app_commands.locale_str(
-            "utility_claimboosterchannel_params_name_description"
-        ),
+        name=app_commands.locale_str("utility_claimboosterchannel_params_name_description"),
     )
     async def claimboosterchannel(self, ctx, name: app_commands.Range[str, 1, 100]):
         await ctx.response.defer()
@@ -259,9 +247,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_setupboosterchannel_description"),
     )
     @app_commands.describe(
-        category=app_commands.locale_str(
-            "utility_setupboosterchannel_params_category_description"
-        ),
+        category=app_commands.locale_str("utility_setupboosterchannel_params_category_description"),
     )
     async def setupboosterchannel(self, ctx, category: discord.CategoryChannel):
         await ctx.response.defer()
@@ -297,9 +283,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
         )
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.boosterchannelinfo.info.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterchannelinfo.info.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.boosterchannelinfo.info.description",
@@ -314,9 +298,7 @@ class AutoPublishCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_autopublish_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "utility_autopublish_params_channel_description"
-        ),
+        channel=app_commands.locale_str("utility_autopublish_params_channel_description"),
     )
     async def autopublish(self, ctx, channel: discord.TextChannel = None):
         await ctx.response.defer()
@@ -342,9 +324,7 @@ class AutoPublishCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_autopublish_remove_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "utility_autopublish_remove_params_channel_description"
-        ),
+        channel=app_commands.locale_str("utility_autopublish_remove_params_channel_description"),
     )
     async def autopublish_remove(self, ctx, channel: discord.TextChannel = None):
         await ctx.response.defer()
@@ -535,15 +515,9 @@ class TwitchCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_twitch_add_description"),
     )
     @app_commands.describe(
-        twitchname=app_commands.locale_str(
-            "utility_twitch_add_params_twitchname_description"
-        ),
-        channel=app_commands.locale_str(
-            "utility_twitch_add_params_channel_description"
-        ),
-        notificationmessage=app_commands.locale_str(
-            "utility_twitch_add_params_notificationmessage_description"
-        ),
+        twitchname=app_commands.locale_str("utility_twitch_add_params_twitchname_description"),
+        channel=app_commands.locale_str("utility_twitch_add_params_channel_description"),
+        notificationmessage=app_commands.locale_str("utility_twitch_add_params_notificationmessage_description"),
     )
     async def add(
         self,
@@ -653,9 +627,7 @@ class utilityCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_avatardecoration_description"),
     )
     @app_commands.describe(
-        user=app_commands.locale_str(
-            "utility_avatardecoration_params_user_description"
-        ),
+        user=app_commands.locale_str("utility_avatardecoration_params_user_description"),
     )
     async def avatardecoration(self, ctx, user: discord.Member = None):
         await ctx.response.defer()
@@ -748,21 +720,11 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_schedulemessage_description"),
     )
     @app_commands.describe(
-        content=app_commands.locale_str(
-            "utility_schedulemessage_params_content_description"
-        ),
-        sendin=app_commands.locale_str(
-            "utility_schedulemessage_params_sendin_description"
-        ),
-        channel=app_commands.locale_str(
-            "utility_schedulemessage_params_channel_description"
-        ),
-        repeatinterval=app_commands.locale_str(
-            "utility_schedulemessage_params_repeat_description"
-        ),
-        repeatamount=app_commands.locale_str(
-            "utility_schedulemessage_params_repeatamount_description"
-        ),
+        content=app_commands.locale_str("utility_schedulemessage_params_content_description"),
+        sendin=app_commands.locale_str("utility_schedulemessage_params_sendin_description"),
+        channel=app_commands.locale_str("utility_schedulemessage_params_channel_description"),
+        repeatinterval=app_commands.locale_str("utility_schedulemessage_params_repeat_description"),
+        repeatamount=app_commands.locale_str("utility_schedulemessage_params_repeatamount_description"),
     )
     async def schedulemessage(
         self,
@@ -796,9 +758,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        attachments = (
-            []
-        )  # [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
+        attachments = []  # [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
         #                          attachment6, attachment7, attachment8, attachment9, attachment10] if a is not None]
 
         await scheduleMessageCommand(
@@ -836,9 +796,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_removescheduled_description"),
     )
     @app_commands.describe(
-        messageid=app_commands.locale_str(
-            "utility_removescheduled_params_messageid_description"
-        ),
+        messageid=app_commands.locale_str("utility_removescheduled_params_messageid_description"),
     )
     async def removescheduled(self, ctx, messageid: int):
         await ctx.response.defer()
@@ -858,7 +816,6 @@ class ScheduledMessageCommands(discord.app_commands.Group):
 
 
 class utilityCog(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 

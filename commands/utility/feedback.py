@@ -1,8 +1,9 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
 import discord
 from discord import ui
+
 from api import feedbackIsBlocked
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 class feedbackModal(ui.Modal):
@@ -59,9 +60,7 @@ class feedbackModal(ui.Modal):
 
     async def on_timeout(self):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                self.commandInfo.locale, "commands.utility.feedback.modal.timeout.title"
-            ),
+            title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.utility.feedback.modal.timeout.title"),
             description=tanjunLocalizer.localize(
                 self.commandInfo.locale,
                 "commands.utility.feedback.modal.timeout.description",
@@ -98,23 +97,15 @@ class feedbackModal(ui.Modal):
 async def feedback(commandInfo: commandInfo, ctx):
     if await feedbackIsBlocked(commandInfo.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.feedback.blocked.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.feedback.blocked.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.feedback.blocked.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.feedback.blocked.description"),
         )
         await commandInfo.reply(embed=embed)
         return
     modal = feedbackModal(
         commandInfo=commandInfo,
-        title=tanjunLocalizer.localize(
-            ctx.locale, "commands.utility.feedback.modal.title"
-        ),
-        description=tanjunLocalizer.localize(
-            ctx.locale, "commands.utility.feedback.modal.description"
-        ),
+        title=tanjunLocalizer.localize(ctx.locale, "commands.utility.feedback.modal.title"),
+        description=tanjunLocalizer.localize(ctx.locale, "commands.utility.feedback.modal.description"),
     )
 
     await ctx.response.send_modal(modal)

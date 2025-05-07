@@ -1,17 +1,13 @@
 import discord
+
 import utility
 from localizer import tanjunLocalizer
 
 
-async def copyrole(
-    commandInfo: utility.commandInfo, role: discord.Role, copy_members: bool = False
-):
-
+async def copyrole(commandInfo: utility.commandInfo, role: discord.Role, copy_members: bool = False):
     if not commandInfo.user.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.copyrole.missingPermission.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.copyrole.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.copyrole.missingPermission.description",
@@ -21,13 +17,9 @@ async def copyrole(
         await commandInfo.reply(embed=embed)
         return
 
-    if not commandInfo.guild.get_member(
-        commandInfo.client.user.id
-    ).guild_permissions.manage_roles:
+    if not commandInfo.guild.get_member(commandInfo.client.user.id).guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.copyrole.missingPermissionBot.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.copyrole.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.copyrole.missingPermissionBot.description",
@@ -37,9 +29,7 @@ async def copyrole(
         await commandInfo.reply(embed=embed)
         return
 
-    reasonLocale = tanjunLocalizer.localize(
-        commandInfo.locale, "commands.admin.copyrole.reason", name=role.name
-    )
+    reasonLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.admin.copyrole.reason", name=role.name)
 
     newRole = await commandInfo.guild.create_role(
         name=role.name,
@@ -56,9 +46,7 @@ async def copyrole(
             await member.add_roles(newRole)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.copyrole.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.copyrole.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.copyrole.success.description",

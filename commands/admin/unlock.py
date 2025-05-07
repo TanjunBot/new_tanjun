@@ -1,20 +1,17 @@
 import discord
+
 import utility
+from api import clear_channel_overwrites, get_channel_overwrites
 from localizer import tanjunLocalizer
-from api import get_channel_overwrites, clear_channel_overwrites
 
 
-async def unlock_channel(
-    commandInfo: utility.commandInfo, channel: discord.TextChannel = None
-):
+async def unlock_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel = None):
     if channel is None:
         channel = commandInfo.channel
 
     if not commandInfo.user.guild_permissions.manage_channels:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.unlock.missingPermission.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.unlock.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.unlock.missingPermission.description",
@@ -25,9 +22,7 @@ async def unlock_channel(
 
     if not channel.permissions_for(commandInfo.guild.me).manage_channels:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.unlock.missingPermissionBot.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.unlock.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.unlock.missingPermissionBot.description",
@@ -42,9 +37,7 @@ async def unlock_channel(
 
         if not saved_overwrites:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.admin.unlock.notLocked.title"
-                ),
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.unlock.notLocked.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.unlock.notLocked.description",
@@ -58,17 +51,13 @@ async def unlock_channel(
         for role_id, overwrites in saved_overwrites.items():
             role = channel.guild.get_role(int(role_id))
             if role:
-                await channel.set_permissions(
-                    role, overwrite=discord.PermissionOverwrite(**overwrites)
-                )
+                await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(**overwrites))
 
         # Clear saved overwrites
         await clear_channel_overwrites(channel.id)
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.unlock.success.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.unlock.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.unlock.success.description",
@@ -87,21 +76,13 @@ async def unlock_channel(
 
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.unlock.forbidden.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.unlock.forbidden.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.unlock.forbidden.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.unlock.forbidden.description"),
         )
         await commandInfo.reply(embed=embed)
     except discord.HTTPException:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.unlock.error.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.unlock.error.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.unlock.error.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.unlock.error.description"),
         )
         await commandInfo.reply(embed=embed)

@@ -1,6 +1,6 @@
-from utility import commandInfo, tanjunEmbed
+from api import get_levelup_message_status, set_levelup_message_status
 from localizer import tanjunLocalizer
-from api import set_levelup_message_status, get_levelup_message_status
+from utility import commandInfo, tanjunEmbed
 
 
 async def enable_levelup_message(commandInfo: commandInfo):
@@ -36,9 +36,7 @@ async def enable_levelup_message(commandInfo: commandInfo):
     await set_levelup_message_status(str(commandInfo.guild.id), True)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.enablelevelupmessage.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.enablelevelupmessage.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.enablelevelupmessage.success.description",

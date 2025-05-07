@@ -1,28 +1,32 @@
 # noqa: E501
-from utility import tanjunEmbed, relativeTimeStrToDate
-from localizer import tanjunLocalizer
+import random
+
+import discord
+
 from api import (
-    get_giveaway,
-    get_giveaway_channel_requirements,
-    get_giveaway_role_requirements,
-    get_giveaway_participants,
-    get_new_messages,
-    get_voice_time,
-    get_new_messages_channel,
-    get_blacklisted_roles,
-    check_if_user_blacklisted,
-    check_if_opted_out,
-    check_if_giveaway_participant,
-    add_giveaway_participant as add_giveaway_participant_api,
-    remove_giveaway_participant,
-    set_giveaway_message_id,
-    set_giveaway_started,
     add_giveaway_new_message_channel_if_needed,
     add_giveaway_new_message_if_needed,
+    check_if_giveaway_participant,
+    check_if_opted_out,
+    check_if_user_blacklisted,
+    get_blacklisted_roles,
+    get_giveaway,
+    get_giveaway_channel_requirements,
+    get_giveaway_participants,
+    get_giveaway_role_requirements,
+    get_new_messages,
+    get_new_messages_channel,
+    get_voice_time,
+    remove_giveaway_participant,
     set_giveaway_ended,
+    set_giveaway_message_id,
+    set_giveaway_started,
 )
-import discord
-import random
+from api import (
+    add_giveaway_participant as add_giveaway_participant_api,
+)
+from localizer import tanjunLocalizer
+from utility import relativeTimeStrToDate, tanjunEmbed
 
 
 async def generateGiveawayEmbed(giveawayInformation, locale):
@@ -49,9 +53,7 @@ async def generateGiveawayEmbed(giveawayInformation, locale):
             tanjunLocalizer.localize(
                 locale,
                 "commands.giveaway.giveawayEmbed.role_requirement",
-                roles=", ".join(
-                    f"<@&{role}>" for role in giveawayInformation["role_requirement"]
-                ),
+                roles=", ".join(f"<@&{role}>" for role in giveawayInformation["role_requirement"]),
             )
         )
     if giveawayInformation["voice_requirement"]:
@@ -64,10 +66,7 @@ async def generateGiveawayEmbed(giveawayInformation, locale):
         )
 
     if giveawayInformation["channel_requirements"]:
-        channels_desc = ", ".join(
-            f"<#{k}>: {v}"
-            for k, v in giveawayInformation["channel_requirements"].items()
-        )
+        channels_desc = ", ".join(f"<#{k}>: {v}" for k, v in giveawayInformation["channel_requirements"].items())
         requirements_parts.append(
             tanjunLocalizer.localize(
                 locale,
@@ -79,9 +78,7 @@ async def generateGiveawayEmbed(giveawayInformation, locale):
     requirements_text = (
         "\n".join(requirements_parts)
         if requirements_parts
-        else tanjunLocalizer.localize(
-            locale, "commands.giveaway.giveawayEmbed.no_requirements"
-        )
+        else tanjunLocalizer.localize(locale, "commands.giveaway.giveawayEmbed.no_requirements")
     )
 
     description = ""
@@ -183,9 +180,7 @@ async def sendGiveaway(giveawayid, client):
 
     btn = discord.ui.Button(
         style=discord.ButtonStyle.primary,
-        label=tanjunLocalizer.localize(
-            locale, "commands.giveaway.giveawayEmbed.button_text"
-        )
+        label=tanjunLocalizer.localize(locale, "commands.giveaway.giveawayEmbed.button_text")
         + "("
         + str(len(participants if participants else []))
         + ")",
@@ -280,9 +275,7 @@ async def add_giveaway_participant(giveawayid, userid, client):
         )
 
         giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
-        giveawaymessage = await giveawayChannel.fetch_message(
-            int(giveawayInformation[19])
-        )
+        giveawaymessage = await giveawayChannel.fetch_message(int(giveawayInformation[19]))
 
         view = discord.ui.View()
 
@@ -294,10 +287,7 @@ async def add_giveaway_participant(giveawayid, userid, client):
                 "commands.giveaway.giveawayEmbed.button_text",
             )
             + "("
-            + str(
-                len(participants if participants else [])
-                - (1 if userid in (participants if participants else []) else 0)
-            )
+            + str(len(participants if participants else []) - (1 if userid in (participants if participants else []) else 0))
             + ")",
             custom_id="giveaway_enter; " + str(giveawayid),
         )
@@ -451,10 +441,7 @@ async def add_giveaway_participant(giveawayid, userid, client):
         if not member:
             return
 
-        if not any(
-            role.id in [int(roleid) for roleid in role_requirements]
-            for role in member.roles
-        ):
+        if not any(role.id in [int(roleid) for roleid in role_requirements] for role in member.roles):
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US",
@@ -543,9 +530,7 @@ async def addMessageToGiveaway(message: discord.Message):
 
     await add_giveaway_new_message_if_needed(message.author.id, message.guild.id)
 
-    await add_giveaway_new_message_channel_if_needed(
-        message.author.id, message.guild.id, message.channel.id
-    )
+    await add_giveaway_new_message_channel_if_needed(message.author.id, message.guild.id, message.channel.id)
 
 
 async def endGiveaway(giveaway_id, client):
@@ -585,9 +570,7 @@ async def endGiveaway(giveaway_id, client):
         if not giveawayChannel:
             return
         try:
-            giveawaymessage = await giveawayChannel.fetch_message(
-                int(giveawayInformation[19])
-            )
+            giveawaymessage = await giveawayChannel.fetch_message(int(giveawayInformation[19]))
         except Exception:
             return
         if not giveawaymessage:
@@ -597,9 +580,7 @@ async def endGiveaway(giveaway_id, client):
 
         btn = discord.ui.Button(
             style=discord.ButtonStyle.primary,
-            label=tanjunLocalizer.localize(
-                locale, "commands.giveaway.endedGiveaway.button_text", participants=0
-            ),
+            label=tanjunLocalizer.localize(locale, "commands.giveaway.endedGiveaway.button_text", participants=0),
             disabled=True,
         )
         view.add_item(btn)
@@ -655,9 +636,7 @@ async def endGiveaway(giveaway_id, client):
     if not giveawayChannel:
         return
     try:
-        giveawaymessage = await giveawayChannel.fetch_message(
-            int(giveawayInformation[19])
-        )
+        giveawaymessage = await giveawayChannel.fetch_message(int(giveawayInformation[19]))
     except Exception:
         return
     if not giveawaymessage:
@@ -680,7 +659,6 @@ async def endGiveaway(giveaway_id, client):
     await giveawaymessage.reply(embed=embed)
 
     for winner in winners:
-
         member = guild.get_member(winner)
 
         if not member:

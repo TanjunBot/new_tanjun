@@ -1,15 +1,15 @@
 import discord
-from discord.ext import commands
 from discord import app_commands
-import utility
+from discord.ext import commands
 
-from commands.games.tic_tac_toe import tic_tac_toe
-from commands.games.connect4 import connect4
+import utility
 from commands.games.akinator import akinator
-from commands.games.wordle import wordle
-from commands.games.hangman import hangman
+from commands.games.connect4 import connect4
 from commands.games.flag_quiz import flag_quiz
+from commands.games.hangman import hangman
 from commands.games.rps import rps
+from commands.games.tic_tac_toe import tic_tac_toe
+from commands.games.wordle import wordle
 
 
 class gameCommands(discord.app_commands.Group):
@@ -78,9 +78,7 @@ class gameCommands(discord.app_commands.Group):
             ),
         ]
     )
-    async def connect4_cmd(
-        self, ctx, user: discord.Member = None, size: app_commands.Choice[str] = "7,6"
-    ):
+    async def connect4_cmd(self, ctx, user: discord.Member = None, size: app_commands.Choice[str] = "7,6"):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -93,7 +91,7 @@ class gameCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
-        size = size.value.split(",") if size != "7,6" else "7,6".split(",")
+        size = size.value.split(",") if size != "7,6" else ["7", "6"]
         await connect4(commandInfo, ctx.user, user, int(size[0]), int(size[1]))
 
     @app_commands.command(
@@ -133,9 +131,7 @@ class gameCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        await akinator(
-            commandInfo, theme.value if theme != "characters" else "characters"
-        )
+        await akinator(commandInfo, theme.value if theme != "characters" else "characters")
 
     @app_commands.command(
         name=app_commands.locale_str("games_wordle_name"),
@@ -416,13 +412,14 @@ class gameCommands(discord.app_commands.Group):
 
 
 class gameCog(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self):
-        gameCmds = gameCommands(name=app_commands.locale_str("games_name"), description=app_commands.locale_str("games_description"))
+        gameCmds = gameCommands(
+            name=app_commands.locale_str("games_name"), description=app_commands.locale_str("games_description")
+        )
         self.bot.tree.add_command(gameCmds)
 
 

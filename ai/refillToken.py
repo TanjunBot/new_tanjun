@@ -1,6 +1,8 @@
-from api import resetToken
-from discord import Client
 from datetime import datetime
+
+from discord import Client
+
+from api import resetToken
 
 
 async def refillAiToken(client: Client):

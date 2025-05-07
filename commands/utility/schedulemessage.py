@@ -1,15 +1,16 @@
-import discord
-import utility
-from localizer import tanjunLocalizer
 from datetime import datetime, timedelta
+
+import discord
+
+import utility
 from api import (
     add_scheduled_message,
-    get_user_scheduled_messages_in_timeframe,
     get_ready_scheduled_messages,
+    get_user_scheduled_messages_in_timeframe,
     remove_scheduled_message,
     update_scheduled_message_repeat_amount,
 )
-from typing import List
+from localizer import tanjunLocalizer
 
 
 async def schedule_message(
@@ -19,16 +20,14 @@ async def schedule_message(
     channel: discord.TextChannel = None,
     repeat: str = None,
     repeat_amount: int = None,
-    attachments: List[discord.Attachment] = None,
+    attachments: list[discord.Attachment] = None,
 ):
     # Parse send_in time
     try:
         send_time = utility.relativeTimeStrToDate(send_in)
     except ValueError:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.schedulemessage.invalidTime.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.schedulemessage.invalidTime.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.schedulemessage.invalidTime.description",
@@ -40,9 +39,7 @@ async def schedule_message(
     # Check if time is in the future
     if send_time <= datetime.now():
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.schedulemessage.pastTime.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.schedulemessage.pastTime.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.schedulemessage.pastTime.description",
@@ -162,9 +159,7 @@ async def schedule_message(
     )
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.schedulemessage.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.schedulemessage.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.schedulemessage.success.description",
@@ -217,9 +212,7 @@ async def send_scheduled_messages(client):
                 if repeat_amount == 0:
                     await remove_scheduled_message(message_id)
                 else:
-                    await update_scheduled_message_repeat_amount(
-                        message_id, repeat_amount
-                    )
+                    await update_scheduled_message_repeat_amount(message_id, repeat_amount)
 
             if not repeat_interval or not repeat_amount:
                 await remove_scheduled_message(message_id)

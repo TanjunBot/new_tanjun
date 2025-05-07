@@ -1,18 +1,17 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
+import discord
+
+import utility
 from api import (
+    add_claimed_booster_role,
     get_booster_role,
     get_claimed_booster_role,
     remove_claimed_booster_role,
-    add_claimed_booster_role,
 )
-import utility
-import discord
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
-async def claimBoosterRole(
-    commandInfo: commandInfo, name: str, color: discord.Color, icon: discord.Attachment
-):
+async def claimBoosterRole(commandInfo: commandInfo, name: str, color: discord.Color, icon: discord.Attachment):
     booster_role = await get_booster_role(commandInfo.guild.id)
     if not booster_role:
         embed = tanjunEmbed(
@@ -30,9 +29,7 @@ async def claimBoosterRole(
 
     if not commandInfo.user.premium_since:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.claimboosterrole.nobooster.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterrole.nobooster.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.claimboosterrole.nobooster.description",
@@ -88,9 +85,7 @@ async def claimBoosterRole(
         await commandInfo.reply(embed=embed)
         return
 
-    reason = tanjunLocalizer.localize(
-        commandInfo.locale, "commands.utility.claimboosterrole.success.reason"
-    )
+    reason = tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterrole.success.reason")
     newRole = await commandInfo.guild.create_role(
         name=name,
         color=int(color, 16) if color else role.color,
@@ -101,17 +96,11 @@ async def claimBoosterRole(
         reason=reason,
     )
     await newRole.edit(position=role.position + 1)
-    await add_claimed_booster_role(
-        commandInfo.user.id, newRole.id, commandInfo.guild.id
-    )
+    await add_claimed_booster_role(commandInfo.user.id, newRole.id, commandInfo.guild.id)
     await commandInfo.user.add_roles(newRole)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.claimboosterrole.success.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.claimboosterrole.success.description"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterrole.success.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterrole.success.description"),
     )
     await commandInfo.reply(embed=embed)
 

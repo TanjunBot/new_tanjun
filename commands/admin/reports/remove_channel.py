@@ -1,6 +1,6 @@
 import utility
+from api import get_report_channel, remove_report_channel
 from localizer import tanjunLocalizer
-from api import remove_report_channel, get_report_channel
 
 
 async def remove_channel(commandInfo: utility.commandInfo):
@@ -10,8 +10,7 @@ async def remove_channel(commandInfo: utility.commandInfo):
                 commandInfo.locale, "commands.admin.reports.remove_channel.missingPermission.title"
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.reports.remove_channel.missingPermission.description"
+                commandInfo.locale, "commands.admin.reports.remove_channel.missingPermission.description"
             ),
         )
         await commandInfo.reply(embed=embed)
@@ -20,7 +19,9 @@ async def remove_channel(commandInfo: utility.commandInfo):
     if not await get_report_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.remove_channel.noChannel.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.remove_channel.noChannel.description"),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale, "commands.admin.reports.remove_channel.noChannel.description"
+            ),
         )
         await commandInfo.reply(embed=embed)
         return

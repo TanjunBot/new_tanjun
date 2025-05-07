@@ -2,10 +2,10 @@
 # from localizer import tanjunLocalizer
 # from typing import List, Optional
 import discord
-from discord.ext import commands
 from discord import app_commands
-import utility
+from discord.ext import commands
 
+import utility
 from commands.fun.funcommands import fun_command
 
 
@@ -19,7 +19,7 @@ class funCommands(discord.app_commands.Group):
         message=app_commands.locale_str("fun_hug_params_message_description"),
     )
     async def hug(self, ctx, user: discord.Member, message: app_commands.Range[str, 0, 2000] = None):
-        fun_type = 'hug'
+        fun_type = "hug"
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -44,7 +44,7 @@ class funCommands(discord.app_commands.Group):
         message=app_commands.locale_str("fun_kiss_params_message_description"),
     )
     async def kiss(self, ctx, user: discord.Member, message: app_commands.Range[str, 0, 2000] = None):
-        fun_type = 'kiss'
+        fun_type = "kiss"
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -69,7 +69,7 @@ class funCommands(discord.app_commands.Group):
         message=app_commands.locale_str("fun_boop_params_message_description"),
     )
     async def boop(self, ctx, user: discord.Member, message: app_commands.Range[str, 0, 2000] = None):
-        fun_type = 'boop'
+        fun_type = "boop"
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -94,7 +94,7 @@ class funCommands(discord.app_commands.Group):
         message=app_commands.locale_str("fun_wave_params_message_description"),
     )
     async def wave(self, ctx, user: discord.Member, message: app_commands.Range[str, 0, 2000] = None):
-        fun_type = 'wave'
+        fun_type = "wave"
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -119,7 +119,7 @@ class funCommands(discord.app_commands.Group):
         message=app_commands.locale_str("fun_slap_params_message_description"),
     )
     async def slap(self, ctx, user: discord.Member, message: app_commands.Range[str, 0, 2000] = None):
-        fun_type = 'slap'
+        fun_type = "slap"
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -144,7 +144,7 @@ class funCommands(discord.app_commands.Group):
         message=app_commands.locale_str("fun_laugh_params_message_description"),
     )
     async def laugh(self, ctx, user: discord.Member, message: app_commands.Range[str, 0, 2000] = None):
-        fun_type = 'laugh'
+        fun_type = "laugh"
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -169,7 +169,7 @@ class funCommands(discord.app_commands.Group):
         message=app_commands.locale_str("fun_tickle_params_message_description"),
     )
     async def tickle(self, ctx, user: discord.Member, message: app_commands.Range[str, 0, 2000] = None):
-        fun_type = 'tickle'
+        fun_type = "tickle"
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -194,7 +194,7 @@ class funCommands(discord.app_commands.Group):
         message=app_commands.locale_str("fun_pat_params_message_description"),
     )
     async def pat(self, ctx, user: discord.Member, message: app_commands.Range[str, 0, 2000] = None):
-        fun_type = 'pat'
+        fun_type = "pat"
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -219,7 +219,7 @@ class funCommands(discord.app_commands.Group):
         message=app_commands.locale_str("fun_poke_params_message_description"),
     )
     async def poke(self, ctx, user: discord.Member, message: app_commands.Range[str, 0, 2000] = None):
-        fun_type = 'poke'
+        fun_type = "poke"
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -237,13 +237,14 @@ class funCommands(discord.app_commands.Group):
 
 
 class funCog(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self):
-        utilityCmds = funCommands(name=app_commands.locale_str("funcmd_name"), description=app_commands.locale_str("funcmd_description"))
+        utilityCmds = funCommands(
+            name=app_commands.locale_str("funcmd_name"), description=app_commands.locale_str("funcmd_description")
+        )
         self.bot.tree.add_command(utilityCmds)
 
 

@@ -1,39 +1,38 @@
 # Unused imports:
 # from typing import List
 # import os
+import difflib
+
 import discord
-from discord.ext import commands, tasks
 from discord import app_commands
+from discord.ext import commands, tasks
+
 import utility
 from api import (
-    get_log_enable,
     get_log_channel,
+    get_log_enable,
+    get_log_role_blacklist,
     is_log_channel_blacklisted,
     is_log_user_blacklisted,
-    get_log_role_blacklist,
 )
-from localizer import tanjunLocalizer
-import difflib
-from utility import upload_to_tanjun_logs, upload_image_to_imgbb
-
-from commands.logs.set_log_channel import set_log_channel
-from commands.logs.remove_log_channel import remove_log_channel
-from commands.logs.configure_logs import configure_logs
-
 from commands.logs.blacklist_channel.blacklist_channel import blacklist_channel
-from commands.logs.blacklist_channel.blacklist_remove_channel import (
-    blacklist_remove_channel,
-)
 from commands.logs.blacklist_channel.blacklist_list_channel import (
     blacklist_list_channel,
 )
-
-from commands.logs.blacklist_user.blacklist_user import blacklist_user
-from commands.logs.blacklist_user.blacklist_remove_user import blacklist_remove_user
-from commands.logs.blacklist_role.blacklist_role import blacklist_role
-from commands.logs.blacklist_role.blacklist_remove_role import blacklist_remove_role
-from commands.logs.blacklist_user.blacklist_list_user import blacklist_list_user
+from commands.logs.blacklist_channel.blacklist_remove_channel import (
+    blacklist_remove_channel,
+)
 from commands.logs.blacklist_role.blacklist_list_role import blacklist_list_role
+from commands.logs.blacklist_role.blacklist_remove_role import blacklist_remove_role
+from commands.logs.blacklist_role.blacklist_role import blacklist_role
+from commands.logs.blacklist_user.blacklist_list_user import blacklist_list_user
+from commands.logs.blacklist_user.blacklist_remove_user import blacklist_remove_user
+from commands.logs.blacklist_user.blacklist_user import blacklist_user
+from commands.logs.configure_logs import configure_logs
+from commands.logs.remove_log_channel import remove_log_channel
+from commands.logs.set_log_channel import set_log_channel
+from localizer import tanjunLocalizer
+from utility import upload_image_to_imgbb, upload_to_tanjun_logs
 
 embeds = {}
 
@@ -75,7 +74,7 @@ async def sendLogEmbeds(bot):
             if destinationChannel is None:
                 continue
             for i in range(0, len(ems), 10):
-                chunk = ems[i: i + 10]
+                chunk = ems[i : i + 10]
                 await destinationChannel.send(embeds=chunk)
         except Exception:
             pass
@@ -87,14 +86,8 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_blacklistc_add_name"),
         description=app_commands.locale_str("logs_blacklistc_add_description"),
     )
-    @app_commands.describe(
-        channel=app_commands.locale_str(
-            "logs_blacklistc_add_params_channel_description"
-        )
-    )
-    async def add_blacklist_channel_cmd(
-        self, ctx: discord.Interaction, channel: discord.TextChannel = None
-    ):
+    @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_add_params_channel_description"))
+    async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -117,14 +110,8 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_blacklistc_remove_name"),
         description=app_commands.locale_str("logs_blacklistc_remove_description"),
     )
-    @app_commands.describe(
-        channel=app_commands.locale_str(
-            "logs_blacklistc_remove_params_channel_description"
-        )
-    )
-    async def remove_blacklist_channel_cmd(
-        self, ctx: discord.Interaction, channel: discord.TextChannel = None
-    ):
+    @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_remove_params_channel_description"))
+    async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -169,12 +156,8 @@ class UserBlacklistCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_blacklistu_add_name"),
         description=app_commands.locale_str("logs_blacklistu_add_description"),
     )
-    @app_commands.describe(
-        user=app_commands.locale_str("logs_blacklistu_add_params_user_description")
-    )
-    async def add_blacklist_user_cmd(
-        self, ctx: discord.Interaction, user: discord.Member
-    ):
+    @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_add_params_user_description"))
+    async def add_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -193,12 +176,8 @@ class UserBlacklistCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_blacklistu_remove_name"),
         description=app_commands.locale_str("logs_blacklistu_remove_description"),
     )
-    @app_commands.describe(
-        user=app_commands.locale_str("logs_blacklistu_remove_params_user_description")
-    )
-    async def remove_blacklist_user_cmd(
-        self, ctx: discord.Interaction, user: discord.Member
-    ):
+    @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_remove_params_user_description"))
+    async def remove_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -238,12 +217,8 @@ class RoleBlacklistCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_blacklistr_add_name"),
         description=app_commands.locale_str("logs_blacklistr_add_description"),
     )
-    @app_commands.describe(
-        role=app_commands.locale_str("logs_blacklistr_add_params_role_description")
-    )
-    async def add_blacklist_role_cmd(
-        self, ctx: discord.Interaction, role: discord.Role
-    ):
+    @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_add_params_role_description"))
+    async def add_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -262,12 +237,8 @@ class RoleBlacklistCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_blacklistr_remove_name"),
         description=app_commands.locale_str("logs_blacklistr_remove_description"),
     )
-    @app_commands.describe(
-        role=app_commands.locale_str("logs_blacklistr_remove_params_role_description")
-    )
-    async def remove_blacklist_role_cmd(
-        self, ctx: discord.Interaction, role: discord.Role
-    ):
+    @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_remove_params_role_description"))
+    async def remove_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -307,12 +278,8 @@ class LogsCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_set_name"),
         description=app_commands.locale_str("logs_set_description"),
     )
-    @app_commands.describe(
-        channel=app_commands.locale_str("logs_set_params_channel_description")
-    )
-    async def set_log_channel_cmd(
-        self, ctx: discord.Interaction, channel: discord.TextChannel = None
-    ):
+    @app_commands.describe(channel=app_commands.locale_str("logs_set_params_channel_description"))
+    async def set_log_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None):
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -385,11 +352,7 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
-        locale = (
-            rule.guild.preferred_locale
-            if hasattr(rule.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         # Basic info
@@ -407,33 +370,21 @@ class LogsCog(commands.Cog):
                 enabled=("✅" if rule.enabled else "❌"),
             )
         )
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.automodRuleCreate.name", name=rule.name
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.name", name=rule.name))
 
         # Trigger information
-        description_parts.append(
-            tanjunLocalizer.localize(locale, "logs.automodRuleCreate.trigger")
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.trigger"))
         description_parts.append(
             tanjunLocalizer.localize(
                 locale,
                 "logs.automodRuleCreate.triggerType",
-                triggerType=str(
-                    tanjunLocalizer.localize(
-                        locale, "logs.automodRuleCreate." + str(rule.trigger.type)
-                    )
-                ),
+                triggerType=str(tanjunLocalizer.localize(locale, "logs.automodRuleCreate." + str(rule.trigger.type))),
             )
         )
 
         # Keyword filters
         if rule.trigger.keyword_filter:
-            filters = "\n".join(
-                f"- {keyword}" for keyword in rule.trigger.keyword_filter
-            )
+            filters = "\n".join(f"- {keyword}" for keyword in rule.trigger.keyword_filter)
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -459,9 +410,7 @@ class LogsCog(commands.Cog):
                 locale,
                 "logs.automodRuleCreate.presets",
                 profanityFilter="✅" if rule.trigger.presets.profanity else "❌",
-                sexualContentFilter=(
-                    "✅" if rule.trigger.presets.sexual_content else "❌"
-                ),
+                sexualContentFilter=("✅" if rule.trigger.presets.sexual_content else "❌"),
                 slurFilter="✅" if rule.trigger.presets.slurs else "❌",
             )
         )
@@ -469,11 +418,7 @@ class LogsCog(commands.Cog):
         # Allow list
         if rule.trigger.allow_list:
             allows = "\n".join(f"- {allow}" for allow in rule.trigger.allow_list)
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.automodRuleCreate.allow_list", allow_list=allows
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.allow_list", allow_list=allows))
 
         # Mention limits
         if rule.trigger.mention_limit:
@@ -486,11 +431,7 @@ class LogsCog(commands.Cog):
             )
 
         if rule.trigger.mention_raid_protection:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.automodRuleCreate.mentionSpamProtection"
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.mentionSpamProtection"))
 
         # Exemptions
         if rule.exempt_roles:
@@ -504,9 +445,7 @@ class LogsCog(commands.Cog):
             )
 
         if rule.exempt_channels:
-            channels = "\n".join(
-                f"- {excluded.mention}" for excluded in rule.exempt_channels
-            )
+            channels = "\n".join(f"- {excluded.mention}" for excluded in rule.exempt_channels)
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -517,17 +456,11 @@ class LogsCog(commands.Cog):
 
         # Actions
         if len(rule.actions) > 0:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.automodRuleCreate.actions")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.actions"))
 
             for r in rule.actions:
                 if r.type == discord.AutoModRuleActionType.block_message:
-                    description_parts.append(
-                        tanjunLocalizer.localize(
-                            locale, "logs.automodRuleCreate.block_message"
-                        )
-                    )
+                    description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.block_message"))
 
                 elif r.type == discord.AutoModRuleActionType.send_alert_message:
                     description_parts.append(
@@ -546,8 +479,7 @@ class LogsCog(commands.Cog):
                             duration=str(
                                 tanjunLocalizer.localize(
                                     locale,
-                                    "logs.automodRuleCreate.timeout_duration."
-                                    + str(r.duration),
+                                    "logs.automodRuleCreate.timeout_duration." + str(r.duration),
                                 )
                             ),
                         )
@@ -561,8 +493,7 @@ class LogsCog(commands.Cog):
                             duration=str(
                                 tanjunLocalizer.localize(
                                     locale,
-                                    "logs.automodRuleCreate.timeout_duration."
-                                    + str(r.duration),
+                                    "logs.automodRuleCreate.timeout_duration." + str(r.duration),
                                 )
                             ),
                         )
@@ -587,28 +518,18 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
-        locale = (
-            rule.guild.preferred_locale
-            if hasattr(rule.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         updater = None
 
-        async for entry in rule.guild.audit_logs(
-            action=discord.AuditLogAction.automod_rule_update
-        ):
+        async for entry in rule.guild.audit_logs(action=discord.AuditLogAction.automod_rule_update):
             updater = entry.user.mention
             break
 
         # Basic info
         if updater:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.automodRuleUpdate.updated_by", updater=updater
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.updated_by", updater=updater))
         description_parts.append(
             tanjunLocalizer.localize(
                 locale,
@@ -616,33 +537,21 @@ class LogsCog(commands.Cog):
                 enabled=("✅" if rule.enabled else "❌"),
             )
         )
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.automodRuleCreate.name", name=rule.name
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.name", name=rule.name))
 
         # Trigger information
-        description_parts.append(
-            tanjunLocalizer.localize(locale, "logs.automodRuleCreate.trigger")
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.trigger"))
         description_parts.append(
             tanjunLocalizer.localize(
                 locale,
                 "logs.automodRuleCreate.triggerType",
-                triggerType=str(
-                    tanjunLocalizer.localize(
-                        locale, "logs.automodRuleCreate." + str(rule.trigger.type)
-                    )
-                ),
+                triggerType=str(tanjunLocalizer.localize(locale, "logs.automodRuleCreate." + str(rule.trigger.type))),
             )
         )
 
         # Keyword filters
         if rule.trigger.keyword_filter:
-            filters = "\n".join(
-                f"- {keyword}" for keyword in rule.trigger.keyword_filter
-            )
+            filters = "\n".join(f"- {keyword}" for keyword in rule.trigger.keyword_filter)
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -668,9 +577,7 @@ class LogsCog(commands.Cog):
                 locale,
                 "logs.automodRuleCreate.presets",
                 profanityFilter="✅" if rule.trigger.presets.profanity else "❌",
-                sexualContentFilter=(
-                    "✅" if rule.trigger.presets.sexual_content else "❌"
-                ),
+                sexualContentFilter=("✅" if rule.trigger.presets.sexual_content else "❌"),
                 slurFilter="✅" if rule.trigger.presets.slurs else "❌",
             )
         )
@@ -678,11 +585,7 @@ class LogsCog(commands.Cog):
         # Allow list
         if rule.trigger.allow_list:
             allows = "\n".join(f"- {allow}" for allow in rule.trigger.allow_list)
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.automodRuleCreate.allow_list", allow_list=allows
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.allow_list", allow_list=allows))
 
         # Mention limits
         if rule.trigger.mention_limit:
@@ -695,11 +598,7 @@ class LogsCog(commands.Cog):
             )
 
         if rule.trigger.mention_raid_protection:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.automodRuleCreate.mentionSpamProtection"
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.mentionSpamProtection"))
 
         # Exemptions
         if rule.exempt_roles:
@@ -713,9 +612,7 @@ class LogsCog(commands.Cog):
             )
 
         if rule.exempt_channels:
-            channels = "\n".join(
-                f"- {excluded.mention}" for excluded in rule.exempt_channels
-            )
+            channels = "\n".join(f"- {excluded.mention}" for excluded in rule.exempt_channels)
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -726,17 +623,11 @@ class LogsCog(commands.Cog):
 
         # Actions
         if len(rule.actions) > 0:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.automodRuleCreate.actions")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.actions"))
 
             for r in rule.actions:
                 if r.type == discord.AutoModRuleActionType.block_message:
-                    description_parts.append(
-                        tanjunLocalizer.localize(
-                            locale, "logs.automodRuleCreate.block_message"
-                        )
-                    )
+                    description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.block_message"))
 
                 elif r.type == discord.AutoModRuleActionType.send_alert_message:
                     description_parts.append(
@@ -755,8 +646,7 @@ class LogsCog(commands.Cog):
                             duration=str(
                                 tanjunLocalizer.localize(
                                     locale,
-                                    "logs.automodRuleCreate.timeout_duration."
-                                    + str(r.duration),
+                                    "logs.automodRuleCreate.timeout_duration." + str(r.duration),
                                 )
                             ),
                         )
@@ -770,8 +660,7 @@ class LogsCog(commands.Cog):
                             duration=str(
                                 tanjunLocalizer.localize(
                                     locale,
-                                    "logs.automodRuleCreate.timeout_duration."
-                                    + str(r.duration),
+                                    "logs.automodRuleCreate.timeout_duration." + str(r.duration),
                                 )
                             ),
                         )
@@ -785,9 +674,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.title"),
             description=description,
         )
-        embed.set_footer(
-            text=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.footer")
-        )
+        embed.set_footer(text=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.footer"))
         logEmbeds.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
@@ -799,28 +686,18 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
-        locale = (
-            rule.guild.preferred_locale
-            if hasattr(rule.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         updater = None
 
-        async for entry in rule.guild.audit_logs(
-            action=discord.AuditLogAction.automod_rule_delete
-        ):
+        async for entry in rule.guild.audit_logs(action=discord.AuditLogAction.automod_rule_delete):
             updater = entry.user.mention
             break
 
         # Basic info
         if updater:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.automodRuleDelete.deleted_by", updater=updater
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleDelete.deleted_by", updater=updater))
         description_parts.append(
             tanjunLocalizer.localize(
                 locale,
@@ -828,33 +705,21 @@ class LogsCog(commands.Cog):
                 enabled=("✅" if rule.enabled else "❌"),
             )
         )
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.automodRuleCreate.name", name=rule.name
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.name", name=rule.name))
 
         # Trigger information
-        description_parts.append(
-            tanjunLocalizer.localize(locale, "logs.automodRuleCreate.trigger")
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.trigger"))
         description_parts.append(
             tanjunLocalizer.localize(
                 locale,
                 "logs.automodRuleCreate.triggerType",
-                triggerType=str(
-                    tanjunLocalizer.localize(
-                        locale, "logs.automodRuleCreate." + str(rule.trigger.type)
-                    )
-                ),
+                triggerType=str(tanjunLocalizer.localize(locale, "logs.automodRuleCreate." + str(rule.trigger.type))),
             )
         )
 
         # Keyword filters
         if rule.trigger.keyword_filter:
-            filters = "\n".join(
-                f"- {keyword}" for keyword in rule.trigger.keyword_filter
-            )
+            filters = "\n".join(f"- {keyword}" for keyword in rule.trigger.keyword_filter)
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -880,9 +745,7 @@ class LogsCog(commands.Cog):
                 locale,
                 "logs.automodRuleCreate.presets",
                 profanityFilter="✅" if rule.trigger.presets.profanity else "❌",
-                sexualContentFilter=(
-                    "✅" if rule.trigger.presets.sexual_content else "❌"
-                ),
+                sexualContentFilter=("✅" if rule.trigger.presets.sexual_content else "❌"),
                 slurFilter="✅" if rule.trigger.presets.slurs else "❌",
             )
         )
@@ -890,11 +753,7 @@ class LogsCog(commands.Cog):
         # Allow list
         if rule.trigger.allow_list:
             allows = "\n".join(f"- {allow}" for allow in rule.trigger.allow_list)
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.automodRuleCreate.allow_list", allow_list=allows
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.allow_list", allow_list=allows))
 
         # Mention limits
         if rule.trigger.mention_limit:
@@ -907,11 +766,7 @@ class LogsCog(commands.Cog):
             )
 
         if rule.trigger.mention_raid_protection:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.automodRuleCreate.mentionSpamProtection"
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.mentionSpamProtection"))
 
         # Exemptions
         if rule.exempt_roles:
@@ -925,9 +780,7 @@ class LogsCog(commands.Cog):
             )
 
         if rule.exempt_channels:
-            channels = "\n".join(
-                f"- {excluded.mention}" for excluded in rule.exempt_channels
-            )
+            channels = "\n".join(f"- {excluded.mention}" for excluded in rule.exempt_channels)
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -938,17 +791,11 @@ class LogsCog(commands.Cog):
 
         # Actions
         if len(rule.actions) > 0:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.automodRuleCreate.actions")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.actions"))
 
             for r in rule.actions:
                 if r.type == discord.AutoModRuleActionType.block_message:
-                    description_parts.append(
-                        tanjunLocalizer.localize(
-                            locale, "logs.automodRuleCreate.block_message"
-                        )
-                    )
+                    description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.block_message"))
 
                 elif r.type == discord.AutoModRuleActionType.send_alert_message:
                     description_parts.append(
@@ -967,8 +814,7 @@ class LogsCog(commands.Cog):
                             duration=str(
                                 tanjunLocalizer.localize(
                                     locale,
-                                    "logs.automodRuleCreate.timeout_duration."
-                                    + str(r.duration),
+                                    "logs.automodRuleCreate.timeout_duration." + str(r.duration),
                                 )
                             ),
                         )
@@ -982,8 +828,7 @@ class LogsCog(commands.Cog):
                             duration=str(
                                 tanjunLocalizer.localize(
                                     locale,
-                                    "logs.automodRuleCreate.timeout_duration."
-                                    + str(r.duration),
+                                    "logs.automodRuleCreate.timeout_duration." + str(r.duration),
                                 )
                             ),
                         )
@@ -1005,16 +850,10 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        if await is_log_channel_blacklisted(
-            execution.guild.id, str(execution.channel.id)
-        ):
+        if await is_log_channel_blacklisted(execution.guild.id, str(execution.channel.id)):
             return
 
-        locale = (
-            execution.guild.preferred_locale
-            if hasattr(execution.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = execution.guild.preferred_locale if hasattr(execution.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         description_parts.append(
@@ -1026,14 +865,10 @@ class LogsCog(commands.Cog):
             )
         )
         # Actions
-        description_parts.append(
-            tanjunLocalizer.localize(locale, "logs.automodAction.action")
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.automodAction.action"))
 
         if execution.action.type == discord.AutoModRuleActionType.block_message:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.automodRuleCreate.block_message")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.automodRuleCreate.block_message"))
 
         elif execution.action.type == discord.AutoModRuleActionType.send_alert_message:
             description_parts.append(
@@ -1052,17 +887,13 @@ class LogsCog(commands.Cog):
                     duration=str(
                         tanjunLocalizer.localize(
                             locale,
-                            "logs.automodRuleCreate.timeout_duration."
-                            + str(execution.action.duration),
+                            "logs.automodRuleCreate.timeout_duration." + str(execution.action.duration),
                         )
                     ),
                 )
             )
 
-        elif (
-            execution.action.type
-            == discord.AutoModRuleActionType.block_member_interactions
-        ):
+        elif execution.action.type == discord.AutoModRuleActionType.block_member_interactions:
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -1070,8 +901,7 @@ class LogsCog(commands.Cog):
                     duration=str(
                         tanjunLocalizer.localize(
                             locale,
-                            "logs.automodRuleCreate.timeout_duration."
-                            + str(execution.action.duration),
+                            "logs.automodRuleCreate.timeout_duration." + str(execution.action.duration),
                         )
                     ),
                 )
@@ -1107,41 +937,23 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
             return
 
-        locale = (
-            channel.guild.preferred_locale
-            if hasattr(channel.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         deleter = None
-        async for entry in channel.guild.audit_logs(
-            action=discord.AuditLogAction.channel_delete
-        ):
+        async for entry in channel.guild.audit_logs(action=discord.AuditLogAction.channel_delete):
             deleter = entry.user.mention
             break
 
         if deleter:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildChannelDelete.deleted_by", deleter=deleter
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelDelete.deleted_by", deleter=deleter))
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.guildChannelDelete.name", channel=channel.name
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelDelete.name", channel=channel.name))
         description_parts.append(
             tanjunLocalizer.localize(
                 locale,
                 "logs.guildChannelDelete.type",
-                type=str(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildChannelDelete.types." + str(channel.type)
-                    )
-                ),
+                type=str(tanjunLocalizer.localize(locale, "logs.guildChannelDelete.types." + str(channel.type))),
             )
         )
         description_parts.append(
@@ -1161,33 +973,21 @@ class LogsCog(commands.Cog):
             )
 
         if channel.topic:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildChannelDelete.topic", topic=channel.topic
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelDelete.topic", topic=channel.topic))
 
         if len(channel.overwrites.keys()) > 0:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildChannelDelete.permissionOverwrites"
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelDelete.permissionOverwrites"))
             for target, overwrite in channel.overwrites.items():
                 allowed = []
                 denied = []
                 for perm, value in overwrite:
-                    localPerm = tanjunLocalizer.localize(
-                        locale, "logs.permissions." + perm
-                    )
+                    localPerm = tanjunLocalizer.localize(locale, "logs.permissions." + perm)
                     if value is True:
                         allowed.append(f"`{localPerm}`")
                     elif value is False:
                         denied.append(f"`{localPerm}`")
 
-                target_str = (
-                    target.mention if hasattr(target, "mention") else target.name
-                )
+                target_str = target.mention if hasattr(target, "mention") else target.name
                 description_parts.append(
                     tanjunLocalizer.localize(
                         locale,
@@ -1231,40 +1031,22 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
             return
 
-        locale = (
-            channel.guild.preferred_locale
-            if hasattr(channel.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
         description_parts = []
         creator = None
-        async for entry in channel.guild.audit_logs(
-            action=discord.AuditLogAction.channel_create
-        ):
+        async for entry in channel.guild.audit_logs(action=discord.AuditLogAction.channel_create):
             creator = entry.user.mention
             break
 
         if creator:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildChannelCreate.created_by", creator=creator
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.created_by", creator=creator))
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.guildChannelCreate.name", name=channel.name
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.name", name=channel.name))
         description_parts.append(
             tanjunLocalizer.localize(
                 locale,
                 "logs.guildChannelCreate.type",
-                type=str(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildChannelCreate.types." + str(channel.type)
-                    )
-                ),
+                type=str(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.types." + str(channel.type))),
             )
         )
         description_parts.append(
@@ -1284,33 +1066,21 @@ class LogsCog(commands.Cog):
             )
 
         if channel.topic:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildChannelCreate.topic", topic=channel.topic
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.topic", topic=channel.topic))
 
         if len(channel.overwrites.keys()) > 0:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildChannelCreate.permissionOverwrites"
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.permissionOverwrites"))
             for target, overwrite in channel.overwrites.items():
                 allowed = []
                 denied = []
                 for perm, value in overwrite:
-                    localPerm = tanjunLocalizer.localize(
-                        locale, "logs.permissions." + perm
-                    )
+                    localPerm = tanjunLocalizer.localize(locale, "logs.permissions." + perm)
                     if value is True:
                         allowed.append(f"`{localPerm}`")
                     elif value is False:
                         denied.append(f"`{localPerm}`")
 
-                target_str = (
-                    target.mention if hasattr(target, "mention") else target.name
-                )
+                target_str = target.mention if hasattr(target, "mention") else target.name
                 description_parts.append(f"### {target_str}")
                 if allowed:
                     description_parts.append("✅ " + ", ".join(allowed))
@@ -1328,9 +1098,7 @@ class LogsCog(commands.Cog):
         logEmbeds.add_embed(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_guild_channel_update(
-        self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel
-    ):
+    async def on_guild_channel_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel):
         logEnable = after.guild and (await get_log_enable(after.guild.id))[7]
         if not logEnable:
             return
@@ -1338,32 +1106,18 @@ class LogsCog(commands.Cog):
         if await is_log_channel_blacklisted(after.guild.id, str(after.id)):
             return
 
-        locale = (
-            after.guild.preferred_locale
-            if hasattr(after.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         updater = None
-        async for entry in after.guild.audit_logs(
-            action=discord.AuditLogAction.channel_update
-        ):
+        async for entry in after.guild.audit_logs(action=discord.AuditLogAction.channel_update):
             updater = entry.user.mention
             break
 
         if updater:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildChannelUpdate.updated_by", updater=updater
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.updated_by", updater=updater))
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.guildChannelUpdate.mention", mention=before.mention
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.mention", mention=before.mention))
 
         if before.name != after.name:
             description_parts.append(
@@ -1380,16 +1134,8 @@ class LogsCog(commands.Cog):
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildChannelUpdate.type",
-                    before=str(
-                        tanjunLocalizer.localize(
-                            locale, "logs.guildChannelUpdate.types." + str(before.type)
-                        )
-                    ),
-                    after=str(
-                        tanjunLocalizer.localize(
-                            locale, "logs.guildChannelUpdate.types." + str(after.type)
-                        )
-                    ),
+                    before=str(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.types." + str(before.type))),
+                    after=str(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.types." + str(after.type))),
                 )
             )
 
@@ -1417,9 +1163,7 @@ class LogsCog(commands.Cog):
             # Track removed targets
             for target in before.overwrites:
                 if target not in after.overwrites:
-                    target_str = (
-                        target.mention if hasattr(target, "mention") else target.name
-                    )
+                    target_str = target.mention if hasattr(target, "mention") else target.name
                     description_parts.append(
                         tanjunLocalizer.localize(
                             locale,
@@ -1431,9 +1175,7 @@ class LogsCog(commands.Cog):
             # Track added/modified targets
             for target, new_overwrite in after.overwrites.items():
                 old_overwrite = before.overwrites.get(target, None)
-                target_str = (
-                    target.mention if hasattr(target, "mention") else target.name
-                )
+                target_str = target.mention if hasattr(target, "mention") else target.name
 
                 if old_overwrite is None:
                     # New target - show all permissions
@@ -1441,9 +1183,7 @@ class LogsCog(commands.Cog):
                     denied = []
                     neutral = []
                     for perm, value in new_overwrite:
-                        localPerm = tanjunLocalizer.localize(
-                            locale, "logs.permissions." + perm
-                        )
+                        localPerm = tanjunLocalizer.localize(locale, "logs.permissions." + perm)
                         if value is True:
                             allowed.append(f"`{localPerm}`")
                         elif value is False:
@@ -1494,9 +1234,7 @@ class LogsCog(commands.Cog):
                     for perm, new_value in new_overwrite:
                         old_value = dict(old_overwrite)[perm]
                         if new_value != old_value:
-                            localPerm = tanjunLocalizer.localize(
-                                locale, "logs.permissions." + perm
-                            )
+                            localPerm = tanjunLocalizer.localize(locale, "logs.permissions." + perm)
                             if new_value is True:
                                 added_allow.append(f"`{localPerm}`")
                             elif new_value is False:
@@ -1579,8 +1317,7 @@ class LogsCog(commands.Cog):
 
         if (
             hasattr(after, "default_auto_archive_duration")
-            and after.default_auto_archive_duration
-            != before.default_auto_archive_duration
+            and after.default_auto_archive_duration != before.default_auto_archive_duration
         ):
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -1593,8 +1330,7 @@ class LogsCog(commands.Cog):
 
         if (
             hasattr(after, "default_thread_auto_archive_duration")
-            and after.default_thread_auto_archive_duration
-            != before.default_thread_auto_archive_duration
+            and after.default_thread_auto_archive_duration != before.default_thread_auto_archive_duration
         ):
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -1611,38 +1347,19 @@ class LogsCog(commands.Cog):
                     locale,
                     "logs.guildChannelUpdate.nsfw",
                     before=(
-                        str(
-                            tanjunLocalizer.localize(
-                                locale, "logs.guildChannelUpdate.yes"
-                            )
-                        )
+                        str(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.yes"))
                         if before.nsfw
-                        else str(
-                            tanjunLocalizer.localize(
-                                locale, "logs.guildChannelUpdate.no"
-                            )
-                        )
+                        else str(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.no"))
                     ),
                     after=(
-                        str(
-                            tanjunLocalizer.localize(
-                                locale, "logs.guildChannelUpdate.yes"
-                            )
-                        )
+                        str(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.yes"))
                         if after.nsfw
-                        else str(
-                            tanjunLocalizer.localize(
-                                locale, "logs.guildChannelUpdate.no"
-                            )
-                        )
+                        else str(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.no"))
                     ),
                 )
             )
 
-        if (
-            hasattr(after, "slowmode_delay")
-            and after.slowmode_delay != before.slowmode_delay
-        ):
+        if hasattr(after, "slowmode_delay") and after.slowmode_delay != before.slowmode_delay:
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -1681,14 +1398,8 @@ class LogsCog(commands.Cog):
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.afkChannel",
-                    before=(
-                        before.afk_channel.mention
-                        if before.afk_channel
-                        else keinerLocale
-                    ),
-                    after=(
-                        after.afk_channel.mention if after.afk_channel else keinerLocale
-                    ),
+                    before=(before.afk_channel.mention if before.afk_channel else keinerLocale),
+                    after=(after.afk_channel.mention if after.afk_channel else keinerLocale),
                 )
             )
 
@@ -1713,26 +1424,14 @@ class LogsCog(commands.Cog):
             )
 
         if before.default_notifications != after.default_notifications:
-            allMembersLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.defaultNotificationsLocales.allMembers"
-            )
-            only_mentions = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.defaultNotificationsLocales.onlyMentions"
-            )
+            allMembersLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.defaultNotificationsLocales.allMembers")
+            only_mentions = tanjunLocalizer.localize(locale, "logs.guildUpdate.defaultNotificationsLocales.onlyMentions")
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.defaultNotifications",
-                    before=(
-                        allMembersLocale
-                        if before.default_notifications
-                        else only_mentions
-                    ),
-                    after=(
-                        allMembersLocale
-                        if after.default_notifications
-                        else only_mentions
-                    ),
+                    before=(allMembersLocale if before.default_notifications else only_mentions),
+                    after=(allMembersLocale if after.default_notifications else only_mentions),
                 )
             )
 
@@ -1747,22 +1446,16 @@ class LogsCog(commands.Cog):
             )
 
         if before.discovery_splash != after.discovery_splash:
-            urlLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.discoverySplashLocales.url"
-            )
+            urlLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.discoverySplashLocales.url")
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.discoverySplash",
                     before=(
-                        "[" + urlLocale + "](" + before.discovery_splash.url + ")"
-                        if before.discovery_splash
-                        else keinerLocale
+                        "[" + urlLocale + "](" + before.discovery_splash.url + ")" if before.discovery_splash else keinerLocale
                     ),
                     after=(
-                        "[" + urlLocale + "](" + after.discovery_splash.url + ")"
-                        if after.discovery_splash
-                        else keinerLocale
+                        "[" + urlLocale + "](" + after.discovery_splash.url + ")" if after.discovery_splash else keinerLocale
                     ),
                 )
             )
@@ -1781,19 +1474,11 @@ class LogsCog(commands.Cog):
         removed_emojis = [emoji for emoji in before.emojis if emoji not in after.emojis]
 
         if added_emojis:
-            added_list = "\n".join(
-                f"- {emoji} : {emoji.name}" for emoji in added_emojis
-            )
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildUpdate.addedEmojis", added_emojis=added_list
-                )
-            )
+            added_list = "\n".join(f"- {emoji} : {emoji.name}" for emoji in added_emojis)
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildUpdate.addedEmojis", added_emojis=added_list))
 
         if removed_emojis:
-            removed_list = "\n".join(
-                f"- {emoji} : {emoji.name}" for emoji in removed_emojis
-            )
+            removed_list = "\n".join(f"- {emoji} : {emoji.name}" for emoji in removed_emojis)
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -1803,15 +1488,9 @@ class LogsCog(commands.Cog):
             )
 
         if before.explicit_content_filter != after.explicit_content_filter:
-            disabled = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.explicitContentFilterLocales.disabled"
-            )
-            noRole = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.explicitContentFilterLocales.noRole"
-            )
-            allMembers = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.explicitContentFilterLocales.allMembers"
-            )
+            disabled = tanjunLocalizer.localize(locale, "logs.guildUpdate.explicitContentFilterLocales.disabled")
+            noRole = tanjunLocalizer.localize(locale, "logs.guildUpdate.explicitContentFilterLocales.noRole")
+            allMembers = tanjunLocalizer.localize(locale, "logs.guildUpdate.explicitContentFilterLocales.allMembers")
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -1819,30 +1498,18 @@ class LogsCog(commands.Cog):
                     before=(
                         disabled
                         if before.explicit_content_filter.disabled
-                        else (
-                            noRole
-                            if before.explicit_content_filter.no_role
-                            else allMembers
-                        )
+                        else (noRole if before.explicit_content_filter.no_role else allMembers)
                     ),
                     after=(
                         disabled
                         if after.explicit_content_filter.disabled
-                        else (
-                            noRole
-                            if after.explicit_content_filter.no_role
-                            else allMembers
-                        )
+                        else (noRole if after.explicit_content_filter.no_role else allMembers)
                     ),
                 )
             )
 
-        added_features = [
-            feature for feature in after.features if feature not in before.features
-        ]
-        removed_features = [
-            feature for feature in before.features if feature not in after.features
-        ]
+        added_features = [feature for feature in after.features if feature not in before.features]
+        removed_features = [feature for feature in before.features if feature not in after.features]
 
         if added_features:
             added_list = "\n".join(
@@ -1850,9 +1517,7 @@ class LogsCog(commands.Cog):
                 for feature in added_features
             )
             description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildUpdate.addedFeatures", added_features=added_list
-                )
+                tanjunLocalizer.localize(locale, "logs.guildUpdate.addedFeatures", added_features=added_list)
             )
 
         if removed_features:
@@ -1869,26 +1534,14 @@ class LogsCog(commands.Cog):
             )
 
         if before.icon != after.icon:
-            urlLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.iconLocales.url"
-            )
-            noIconLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.iconLocales.noIcon"
-            )
+            urlLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.iconLocales.url")
+            noIconLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.iconLocales.noIcon")
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.icon",
-                    before=(
-                        "[" + urlLocale + "](" + before.icon + ")"
-                        if before.icon
-                        else noIconLocale
-                    ),
-                    after=(
-                        "[" + urlLocale + "](" + after.icon + ")"
-                        if after.icon
-                        else noIconLocale
-                    ),
+                    before=("[" + urlLocale + "](" + before.icon + ")" if before.icon else noIconLocale),
+                    after=("[" + urlLocale + "](" + after.icon + ")" if after.icon else noIconLocale),
                 )
             )
 
@@ -1903,28 +1556,18 @@ class LogsCog(commands.Cog):
             )
 
         if before.invites_paused_until != after.invites_paused_until:
-            notPausedLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.invitesPausedUntilLocales.notPaused"
-            )
+            notPausedLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.invitesPausedUntilLocales.notPaused")
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.invitesPausedUntil",
                     before=(
-                        "<t:"
-                        + str(
-                            utility.date_time_to_timestamp(before.invites_paused_until)
-                        )
-                        + ":R>"
+                        "<t:" + str(utility.date_time_to_timestamp(before.invites_paused_until)) + ":R>"
                         if before.invites_paused_until
                         else notPausedLocale
                     ),
                     after=(
-                        "<t:"
-                        + str(
-                            utility.date_time_to_timestamp(after.invites_paused_until)
-                        )
-                        + ":R>"
+                        "<t:" + str(utility.date_time_to_timestamp(after.invites_paused_until)) + ":R>"
                         if after.invites_paused_until
                         else notPausedLocale
                     ),
@@ -1946,9 +1589,7 @@ class LogsCog(commands.Cog):
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.maxPresences",
-                    before=(
-                        before.max_presences if before.max_presences else keinerLocale
-                    ),
+                    before=(before.max_presences if before.max_presences else keinerLocale),
                     after=after.max_presences if after.max_presences else keinerLocale,
                 )
             )
@@ -1958,16 +1599,8 @@ class LogsCog(commands.Cog):
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.maxVideoChannelUsers",
-                    before=(
-                        before.max_video_channel_users
-                        if before.max_video_channel_users
-                        else keinerLocale
-                    ),
-                    after=(
-                        after.max_video_channel_users
-                        if after.max_video_channel_users
-                        else keinerLocale
-                    ),
+                    before=(before.max_video_channel_users if before.max_video_channel_users else keinerLocale),
+                    after=(after.max_video_channel_users if after.max_video_channel_users else keinerLocale),
                 )
             )
 
@@ -1982,18 +1615,10 @@ class LogsCog(commands.Cog):
             )
 
         if before.nsfw_level != after.nsfw_level:
-            defaultLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.nsfwLevelLocales.default"
-            )
-            explicitLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.nsfwLevelLocales.explicit"
-            )
-            safeLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.nsfwLevelLocales.safe"
-            )
-            ageRegisteredLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.nsfwLevelLocales.ageRegistered"
-            )
+            defaultLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.nsfwLevelLocales.default")
+            explicitLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.nsfwLevelLocales.explicit")
+            safeLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.nsfwLevelLocales.safe")
+            ageRegisteredLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.nsfwLevelLocales.ageRegistered")
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -2007,11 +1632,7 @@ class LogsCog(commands.Cog):
                             else (
                                 safeLocale
                                 if before.nsfw_level.safe
-                                else (
-                                    ageRegisteredLocale
-                                    if before.nsfw_level.age_restricted
-                                    else keinerLocale
-                                )
+                                else (ageRegisteredLocale if before.nsfw_level.age_restricted else keinerLocale)
                             )
                         )
                     ),
@@ -2024,11 +1645,7 @@ class LogsCog(commands.Cog):
                             else (
                                 safeLocale
                                 if after.nsfw_level.safe
-                                else (
-                                    ageRegisteredLocale
-                                    if after.nsfw_level.age_restricted
-                                    else keinerLocale
-                                )
+                                else (ageRegisteredLocale if after.nsfw_level.age_restricted else keinerLocale)
                             )
                         )
                     ),
@@ -2048,13 +1665,11 @@ class LogsCog(commands.Cog):
         if before.preferred_locale != after.preferred_locale:
             beforeLocale = tanjunLocalizer.localize(
                 locale,
-                "logs.guildUpdate.preferredLocaleLocales."
-                + str(before.preferred_locale),
+                "logs.guildUpdate.preferredLocaleLocales." + str(before.preferred_locale),
             )
             afterLocale = tanjunLocalizer.localize(
                 locale,
-                "logs.guildUpdate.preferredLocaleLocales."
-                + str(after.preferred_locale),
+                "logs.guildUpdate.preferredLocaleLocales." + str(after.preferred_locale),
             )
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2068,15 +1683,11 @@ class LogsCog(commands.Cog):
         if before.premium_progress_bar_enabled != after.premium_progress_bar_enabled:
             if before.premium_progress_bar_enabled:
                 description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildUpdate.premiumProgressBarEnabled.activated"
-                    )
+                    tanjunLocalizer.localize(locale, "logs.guildUpdate.premiumProgressBarEnabled.activated")
                 )
             else:
                 description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildUpdate.premiumProgressBarEnabled.deactivated"
-                    )
+                    tanjunLocalizer.localize(locale, "logs.guildUpdate.premiumProgressBarEnabled.deactivated")
                 )
 
         if before.premium_subscriber_role != after.premium_subscriber_role:
@@ -2084,16 +1695,8 @@ class LogsCog(commands.Cog):
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.premiumSubscriberRole",
-                    before=(
-                        before.premium_subscriber_role.mention
-                        if before.premium_subscriber_role
-                        else keinerLocale
-                    ),
-                    after=(
-                        after.premium_subscriber_role.mention
-                        if after.premium_subscriber_role
-                        else keinerLocale
-                    ),
+                    before=(before.premium_subscriber_role.mention if before.premium_subscriber_role else keinerLocale),
+                    after=(after.premium_subscriber_role.mention if after.premium_subscriber_role else keinerLocale),
                 )
             )
 
@@ -2122,16 +1725,8 @@ class LogsCog(commands.Cog):
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.publicUpdatesChannel",
-                    before=(
-                        before.public_updates_channel.mention
-                        if before.public_updates_channel
-                        else keinerLocale
-                    ),
-                    after=(
-                        after.public_updates_channel.mention
-                        if after.public_updates_channel
-                        else keinerLocale
-                    ),
+                    before=(before.public_updates_channel.mention if before.public_updates_channel else keinerLocale),
+                    after=(after.public_updates_channel.mention if after.public_updates_channel else keinerLocale),
                 )
             )
 
@@ -2140,16 +1735,8 @@ class LogsCog(commands.Cog):
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.rulesChannel",
-                    before=(
-                        before.rules_channel.mention
-                        if before.rules_channel
-                        else keinerLocale
-                    ),
-                    after=(
-                        after.rules_channel.mention
-                        if after.rules_channel
-                        else keinerLocale
-                    ),
+                    before=(before.rules_channel.mention if before.rules_channel else keinerLocale),
+                    after=(after.rules_channel.mention if after.rules_channel else keinerLocale),
                 )
             )
 
@@ -2158,49 +1745,23 @@ class LogsCog(commands.Cog):
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildUpdate.safetyAlertsChannel",
-                    before=(
-                        before.safety_alerts_channel.mention
-                        if before.safety_alerts_channel
-                        else keinerLocale
-                    ),
-                    after=(
-                        after.safety_alerts_channel.mention
-                        if after.safety_alerts_channel
-                        else keinerLocale
-                    ),
+                    before=(before.safety_alerts_channel.mention if before.safety_alerts_channel else keinerLocale),
+                    after=(after.safety_alerts_channel.mention if after.safety_alerts_channel else keinerLocale),
                 )
             )
 
         if before.unavailable != after.unavailable:
             if before.unavailable:
-                description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildUpdate.unavailableLocales.available"
-                    )
-                )
+                description_parts.append(tanjunLocalizer.localize(locale, "logs.guildUpdate.unavailableLocales.available"))
             else:
-                description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildUpdate.unavailableLocales.unavailable"
-                    )
-                )
+                description_parts.append(tanjunLocalizer.localize(locale, "logs.guildUpdate.unavailableLocales.unavailable"))
 
         if before.verification_level != after.verification_level:
-            noneLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.verificationLevelLocales.none"
-            )
-            lowLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.verificationLevelLocales.low"
-            )
-            mediumLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.verificationLevelLocales.medium"
-            )
-            highLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.verificationLevelLocales.high"
-            )
-            highestLocale = tanjunLocalizer.localize(
-                locale, "logs.guildUpdate.verificationLevelLocales.highest"
-            )
+            noneLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.verificationLevelLocales.none")
+            lowLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.verificationLevelLocales.low")
+            mediumLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.verificationLevelLocales.medium")
+            highLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.verificationLevelLocales.high")
+            highestLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.verificationLevelLocales.highest")
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
@@ -2214,11 +1775,7 @@ class LogsCog(commands.Cog):
                             else (
                                 mediumLocale
                                 if before.verification_level.medium
-                                else (
-                                    highLocale
-                                    if before.verification_level.high
-                                    else highestLocale
-                                )
+                                else (highLocale if before.verification_level.high else highestLocale)
                             )
                         )
                     ),
@@ -2231,11 +1788,7 @@ class LogsCog(commands.Cog):
                             else (
                                 mediumLocale
                                 if after.verification_level.medium
-                                else (
-                                    highLocale
-                                    if after.verification_level.high
-                                    else highestLocale
-                                )
+                                else (highLocale if after.verification_level.high else highestLocale)
                             )
                         )
                     ),
@@ -2269,24 +1822,14 @@ class LogsCog(commands.Cog):
             if blacklistedRole in invite.inviter.roles:
                 return
 
-        locale = (
-            invite.guild.preferred_locale
-            if hasattr(invite.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        neverLocale = tanjunLocalizer.localize(
-            locale, "logs.inviteCreate.expiresLocales.never"
-        )
-        infiniteLocale = tanjunLocalizer.localize(
-            locale, "logs.inviteCreate.maxUsesLocales.infinite"
-        )
+        neverLocale = tanjunLocalizer.localize(locale, "logs.inviteCreate.expiresLocales.never")
+        infiniteLocale = tanjunLocalizer.localize(locale, "logs.inviteCreate.maxUsesLocales.infinite")
 
         description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.inviteCreate.createdBy", created_by=invite.inviter.mention
-            )
+            tanjunLocalizer.localize(locale, "logs.inviteCreate.createdBy", created_by=invite.inviter.mention)
         )
         description_parts.append(
             tanjunLocalizer.localize(
@@ -2295,9 +1838,7 @@ class LogsCog(commands.Cog):
                 expires=(
                     neverLocale
                     if invite.expires_at is None
-                    else "<t:"
-                    + str(utility.date_time_to_timestamp(invite.expires_at))
-                    + ":R>"
+                    else "<t:" + str(utility.date_time_to_timestamp(invite.expires_at)) + ":R>"
                 ),
             )
         )
@@ -2311,9 +1852,7 @@ class LogsCog(commands.Cog):
 
         if invite.channel:
             description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.inviteCreate.channel", channel=invite.channel.mention
-                )
+                tanjunLocalizer.localize(locale, "logs.inviteCreate.channel", channel=invite.channel.mention)
             )
         if invite.scheduled_event:
             description_parts.append(
@@ -2350,15 +1889,9 @@ class LogsCog(commands.Cog):
             )
 
         if invite.temporary:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.inviteCreate.temporary")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.inviteCreate.temporary"))
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.inviteCreate.invite", invite=invite.url
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.inviteCreate.invite", invite=invite.url))
 
         # Join all parts with newlines
         description = "\n".join(description_parts)
@@ -2368,7 +1901,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteCreate.title"),
             description=description,
         )
-        if not str(invite.guild.id) in logEmbeds.get_all_embeds():
+        if str(invite.guild.id) not in logEmbeds.get_all_embeds():
             logEmbeds.add_embed(str(invite.guild.id), [])
         logEmbeds.add_embed(str(invite.guild.id), embed)
 
@@ -2386,19 +1919,11 @@ class LogsCog(commands.Cog):
             if blacklistedRole in invite.inviter.roles:
                 return
 
-        locale = (
-            invite.guild.preferred_locale
-            if hasattr(invite.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        neverLocale = tanjunLocalizer.localize(
-            locale, "logs.inviteCreate.expiresLocales.never"
-        )
-        infiniteLocale = tanjunLocalizer.localize(
-            locale, "logs.inviteCreate.maxUsesLocales.infinite"
-        )
+        neverLocale = tanjunLocalizer.localize(locale, "logs.inviteCreate.expiresLocales.never")
+        infiniteLocale = tanjunLocalizer.localize(locale, "logs.inviteCreate.maxUsesLocales.infinite")
 
         description_parts.append(
             tanjunLocalizer.localize(
@@ -2407,9 +1932,7 @@ class LogsCog(commands.Cog):
                 expires=(
                     neverLocale
                     if invite.expires_at is None
-                    else "<t:"
-                    + str(utility.date_time_to_timestamp(invite.expires_at))
-                    + ":R>"
+                    else "<t:" + str(utility.date_time_to_timestamp(invite.expires_at)) + ":R>"
                 ),
             )
         )
@@ -2423,9 +1946,7 @@ class LogsCog(commands.Cog):
 
         if invite.channel:
             description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.inviteCreate.channel", channel=invite.channel.mention
-                )
+                tanjunLocalizer.localize(locale, "logs.inviteCreate.channel", channel=invite.channel.mention)
             )
         if invite.scheduled_event:
             description_parts.append(
@@ -2462,15 +1983,9 @@ class LogsCog(commands.Cog):
             )
 
         if invite.temporary:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.inviteCreate.temporary")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.inviteCreate.temporary"))
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.inviteDelete.invite", invite=invite.url
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.inviteDelete.invite", invite=invite.url))
 
         # Join all parts with newlines
         description = "\n".join(description_parts)
@@ -2496,18 +2011,10 @@ class LogsCog(commands.Cog):
             if blacklistedRole in member.roles:
                 return
 
-        locale = (
-            member.guild.preferred_locale
-            if hasattr(member.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.memberJoin.name", joined=member.mention
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.memberJoin.name", joined=member.mention))
 
         # Join all parts with newlines
         description = "\n".join(description_parts)
@@ -2533,18 +2040,10 @@ class LogsCog(commands.Cog):
             if blacklistedRole in member.roles:
                 return
 
-        locale = (
-            member.guild.preferred_locale
-            if hasattr(member.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.memberRemove.name", left=member.mention
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.memberRemove.name", left=member.mention))
         description_parts.append(
             tanjunLocalizer.localize(
                 locale,
@@ -2577,50 +2076,30 @@ class LogsCog(commands.Cog):
             if blacklistedRole in after.roles:
                 return
 
-        locale = (
-            after.guild.preferred_locale
-            if hasattr(after.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.memberUpdate.name", member=after.mention
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUpdate.name", member=after.mention))
 
         # Check for avatar change
         if before.display_avatar != after.display_avatar:
             defaultAvatarUrl = "https://cdn.discordapp.com/embed/avatars/0.png"
-            urlLocale = tanjunLocalizer.localize(
-                locale, "logs.userUpdate.guildAvatarLocales.url"
-            )
+            urlLocale = tanjunLocalizer.localize(locale, "logs.userUpdate.guildAvatarLocales.url")
             # Upload old avatar to ImgBB
             avatar_bytes = (
                 await before.display_avatar.read() if before.display_avatar else None
             )  # Read the old avatar as bytes
-            avatar_upload_response = (
-                await utility.upload_image_to_imgbb(avatar_bytes, "png")
-                if avatar_bytes
-                else {}
-            )
-            avatar_url_before = avatar_upload_response.get("data", {}).get(
-                "url", defaultAvatarUrl
-            )
+            avatar_upload_response = await utility.upload_image_to_imgbb(avatar_bytes, "png") if avatar_bytes else {}
+            avatar_url_before = avatar_upload_response.get("data", {}).get("url", defaultAvatarUrl)
 
             # Upload new avatar to ImgBB
             new_avatar_bytes = (
                 await after.display_avatar.read() if after.display_avatar else None
             )  # Read the new avatar as bytes
             new_avatar_upload_response = (
-                await utility.upload_image_to_imgbb(new_avatar_bytes, "png")
-                if new_avatar_bytes
-                else {}
+                await utility.upload_image_to_imgbb(new_avatar_bytes, "png") if new_avatar_bytes else {}
             )
-            new_avatar_url = new_avatar_upload_response.get("data", {}).get(
-                "url", defaultAvatarUrl
-            )
+            new_avatar_url = new_avatar_upload_response.get("data", {}).get("url", defaultAvatarUrl)
 
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2633,36 +2112,18 @@ class LogsCog(commands.Cog):
 
         # Check for banner change
         if before.banner != after.banner:
-            noneLocale = tanjunLocalizer.localize(
-                locale, "logs.userUpdate.guildAvatarLocales.none"
-            )
-            urlLocale = tanjunLocalizer.localize(
-                locale, "logs.userUpdate.guildAvatarLocales.url"
-            )
+            noneLocale = tanjunLocalizer.localize(locale, "logs.userUpdate.guildAvatarLocales.none")
+            urlLocale = tanjunLocalizer.localize(locale, "logs.userUpdate.guildAvatarLocales.url")
             # Upload old banner to ImgBB
-            banner_bytes = (
-                await before.banner.read() if before.banner else None
-            )  # Read the old banner as bytes
-            banner_upload_response = (
-                await utility.upload_image_to_imgbb(banner_bytes, "png")
-                if banner_bytes
-                else {}
-            )
-            banner_url_before = banner_upload_response.get("data", {}).get(
-                "url", noneLocale
-            )
+            banner_bytes = await before.banner.read() if before.banner else None  # Read the old banner as bytes
+            banner_upload_response = await utility.upload_image_to_imgbb(banner_bytes, "png") if banner_bytes else {}
+            banner_url_before = banner_upload_response.get("data", {}).get("url", noneLocale)
 
             # Upload new banner to ImgBB
             if after.banner:
-                new_banner_bytes = (
-                    await after.banner.read()
-                )  # Read the new banner as bytes
-                new_banner_upload_response = await utility.upload_image_to_imgbb(
-                    new_banner_bytes, "png"
-                )
-                new_banner_url = new_banner_upload_response.get("data", {}).get(
-                    "url", noneLocale
-                )
+                new_banner_bytes = await after.banner.read()  # Read the new banner as bytes
+                new_banner_upload_response = await utility.upload_image_to_imgbb(new_banner_bytes, "png")
+                new_banner_url = new_banner_upload_response.get("data", {}).get("url", noneLocale)
             else:
                 new_banner_url = noneLocale
 
@@ -2688,15 +2149,11 @@ class LogsCog(commands.Cog):
 
         # Check for role changes
         added_roles = [role.mention for role in after.roles if role not in before.roles]
-        removed_roles = [
-            role.mention for role in before.roles if role not in after.roles
-        ]
+        removed_roles = [role.mention for role in before.roles if role not in after.roles]
 
         if added_roles:
             description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.memberUpdate.addedRoles", roles=", ".join(added_roles)
-                )
+                tanjunLocalizer.localize(locale, "logs.memberUpdate.addedRoles", roles=", ".join(added_roles))
             )
 
         if removed_roles:
@@ -2710,13 +2167,9 @@ class LogsCog(commands.Cog):
 
         if before.pending != after.pending:
             if before.pending:
-                description_parts.append(
-                    tanjunLocalizer.localize(locale, "logs.memberUpdate.pending")
-                )
+                description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUpdate.pending"))
             else:
-                description_parts.append(
-                    tanjunLocalizer.localize(locale, "logs.memberUpdate.pendingRemoved")
-                )
+                description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUpdate.pendingRemoved"))
 
         if before.timed_out_until != after.timed_out_until:
             if before.timed_out_until is None:
@@ -2728,9 +2181,7 @@ class LogsCog(commands.Cog):
                     )
                 )
             else:
-                description_parts.append(
-                    tanjunLocalizer.localize(locale, "logs.memberUpdate.timeoutRemoved")
-                )
+                description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUpdate.timeoutRemoved"))
 
         if len(description_parts) >= 2:
             return
@@ -2764,18 +2215,10 @@ class LogsCog(commands.Cog):
                 if blacklistedRole in user.roles:
                     continue
 
-            locale = (
-                guild.preferred_locale
-                if hasattr(guild, "preferred_locale")
-                else "en_US"
-            )
+            locale = guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
             description_parts = []
 
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.userUpdate.name", user=before.mention
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.userUpdate.name", user=before.mention))
 
             if before.avatar != after.avatar:
                 # defaultAvatarUrl = "https://cdn.discordapp.com/embed/avatars/0.png"
@@ -2819,24 +2262,12 @@ class LogsCog(commands.Cog):
                 )
 
             if before.banner != after.banner:
-                noneLocale = tanjunLocalizer.localize(
-                    locale, "logs.userUpdate.guildAvatarLocales.none"
-                )
-                urlLocale = tanjunLocalizer.localize(
-                    locale, "logs.userUpdate.guildAvatarLocales.url"
-                )
+                noneLocale = tanjunLocalizer.localize(locale, "logs.userUpdate.guildAvatarLocales.none")
+                urlLocale = tanjunLocalizer.localize(locale, "logs.userUpdate.guildAvatarLocales.url")
                 # Upload old banner to ImgBB
-                banner_bytes = (
-                    await before.banner.read() if before.banner else None
-                )  # Read the old banner as bytes
-                banner_upload_response = (
-                    await utility.upload_image_to_imgbb(banner_bytes, "png")
-                    if banner_bytes
-                    else {}
-                )
-                banner_url_before = banner_upload_response.get("data", {}).get(
-                    "url", noneLocale
-                )
+                banner_bytes = await before.banner.read() if before.banner else None  # Read the old banner as bytes
+                banner_upload_response = await utility.upload_image_to_imgbb(banner_bytes, "png") if banner_bytes else {}
+                banner_url_before = banner_upload_response.get("data", {}).get("url", noneLocale)
                 """ Unused:
                 banner_url_after = (
                     after.banner.url if after.banner else noneLocale
@@ -2845,15 +2276,9 @@ class LogsCog(commands.Cog):
 
                 # Upload new banner to ImgBB
                 if after.banner:
-                    new_banner_bytes = (
-                        await after.banner.read()
-                    )  # Read the new banner as bytes
-                    new_banner_upload_response = await utility.upload_image_to_imgbb(
-                        new_banner_bytes, "png"
-                    )
-                    new_banner_url = new_banner_upload_response.get("data", {}).get(
-                        "url", noneLocale
-                    )
+                    new_banner_bytes = await after.banner.read()  # Read the new banner as bytes
+                    new_banner_upload_response = await utility.upload_image_to_imgbb(new_banner_bytes, "png")
+                    new_banner_url = new_banner_upload_response.get("data", {}).get("url", noneLocale)
                 else:
                     new_banner_url = noneLocale
 
@@ -2893,27 +2318,17 @@ class LogsCog(commands.Cog):
             if blacklistedRole in user.roles:
                 return
 
-        locale = (
-            user.guild.preferred_locale
-            if hasattr(user.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = user.guild.preferred_locale if hasattr(user.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        description_parts.append(
-            tanjunLocalizer.localize(locale, "logs.memberBan.name", user=user.mention)
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.memberBan.name", user=user.mention))
 
         banner = None
         async for log in user.guild.audit_logs(limit=1, user=user):
             banner = log.banner
 
         if banner:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.memberBan.banned_by", banner=banner.mention
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.memberBan.banned_by", banner=banner.mention))
 
         # Join all parts with newlines
         description = "\n".join(description_parts)
@@ -2934,14 +2349,10 @@ class LogsCog(commands.Cog):
         if await is_log_user_blacklisted(guild.id, str(user.id)):
             return
 
-        locale = (
-            guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
-        )
+        locale = guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        description_parts.append(
-            tanjunLocalizer.localize(locale, "logs.memberUnban.name", user=user.mention)
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUnban.name", user=user.mention))
 
         unbanned_by = None
         async for log in guild.audit_logs(limit=1, user=user):
@@ -2980,18 +2391,10 @@ class LogsCog(commands.Cog):
             if blacklistedRole in after.roles:
                 return
 
-        locale = (
-            after.guild.preferred_locale
-            if hasattr(after.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.presenceUpdate.name", user=after.mention
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.presenceUpdate.name", user=after.mention))
 
         if before.activity != after.activity:
             description_parts.append(
@@ -3033,11 +2436,7 @@ class LogsCog(commands.Cog):
             if blacklistedRole in after.author.roles:
                 return
 
-        locale = (
-            after.guild.preferred_locale
-            if hasattr(after, "preferred_locale")
-            else "en_US"
-        )
+        locale = after.guild.preferred_locale if hasattr(after, "preferred_locale") else "en_US"
         description_parts = []
 
         description_parts.append(
@@ -3057,30 +2456,20 @@ class LogsCog(commands.Cog):
             )
             diff_summary = "\n".join(diff)
 
-            truncated_notice = tanjunLocalizer.localize(
-                locale, "logs.messageEdit.truncatedNotice"
-            )
+            truncated_notice = tanjunLocalizer.localize(locale, "logs.messageEdit.truncatedNotice")
 
             if len(diff_summary) > 1500:
                 diff_summary_url = await upload_to_tanjun_logs(
-                    tanjunLocalizer.localize(
-                        locale, "logs.messageEdit.diff", diff=diff_summary
-                    )
+                    tanjunLocalizer.localize(locale, "logs.messageEdit.diff", diff=diff_summary)
                 )
 
                 description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.messageEdit.tooLongNotice", url=diff_summary_url
-                    )
+                    tanjunLocalizer.localize(locale, "logs.messageEdit.tooLongNotice", url=diff_summary_url)
                 )
 
             else:
                 # Append the diff summary
-                description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.messageEdit.diff", diff=diff_summary
-                    )
-                )
+                description_parts.append(tanjunLocalizer.localize(locale, "logs.messageEdit.diff", diff=diff_summary))
 
         if before.attachments != after.attachments:
             added_attachments = [
@@ -3090,25 +2479,17 @@ class LogsCog(commands.Cog):
             ]
 
             removed_attachments = []
-            urlNotAvaiableLocale = tanjunLocalizer.localize(
-                locale, "logs.messageEdit.urlNotAvaiableLocale"
-            )
+            urlNotAvaiableLocale = tanjunLocalizer.localize(locale, "logs.messageEdit.urlNotAvaiableLocale")
             for attachment in before.attachments:
                 if attachment not in after.attachments:
-                    if attachment.content_type and attachment.content_type.startswith(
-                        "image/"
-                    ):
+                    if attachment.content_type and attachment.content_type.startswith("image/"):
                         attachmentBytes = await attachment.read()
-                        url = await upload_image_to_imgbb(
-                            attachmentBytes, attachment.filename.split(".")[-1]
-                        )
+                        url = await upload_image_to_imgbb(attachmentBytes, attachment.filename.split(".")[-1])
                         if url:
                             url = url["data"]["display_url"]
                     else:
                         url = None
-                    removed_attachments.append(
-                        f"[{attachment.filename}]({url if url else urlNotAvaiableLocale})"
-                    )
+                    removed_attachments.append(f"[{attachment.filename}]({url if url else urlNotAvaiableLocale})")
 
             if added_attachments:
                 description_parts.append(
@@ -3207,11 +2588,7 @@ class LogsCog(commands.Cog):
             if blacklistedRole in message.author.roles:
                 return
 
-        locale = (
-            message.guild.preferred_locale
-            if hasattr(message.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         description_parts.append(
@@ -3239,28 +2616,18 @@ class LogsCog(commands.Cog):
 
         if message.content:
             sendLog = True
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.messageDelete.content", content=message.content
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.messageDelete.content", content=message.content))
 
         if message.attachments:
             sendLog = True
             attachment_parts = []
-            urlNotAvaiableLocale = tanjunLocalizer.localize(
-                locale, "logs.messageDelete.urlNotAvaiableLocale"
-            )
+            urlNotAvaiableLocale = tanjunLocalizer.localize(locale, "logs.messageDelete.urlNotAvaiableLocale")
 
             for attachment in message.attachments:
-                if attachment.content_type and attachment.content_type.startswith(
-                    "image/"
-                ):
+                if attachment.content_type and attachment.content_type.startswith("image/"):
                     try:
                         attachmentBytes = await attachment.read()
-                        url = await upload_image_to_imgbb(
-                            attachmentBytes, attachment.filename.split(".")[-1]
-                        )
+                        url = await upload_image_to_imgbb(attachmentBytes, attachment.filename.split(".")[-1])
                         if url:
                             url = url["data"]["display_url"]
                     except Exception:
@@ -3268,22 +2635,16 @@ class LogsCog(commands.Cog):
                 else:
                     url = None
 
-                attachment_parts.append(
-                    f"[{attachment.filename}]({url if url else urlNotAvaiableLocale})"
-                )
+                attachment_parts.append(f"[{attachment.filename}]({url if url else urlNotAvaiableLocale})")
 
             attachments = "\n- ".join(attachment_parts)
             description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.messageDelete.attachments", attachments=attachments
-                )
+                tanjunLocalizer.localize(locale, "logs.messageDelete.attachments", attachments=attachments)
             )
 
         if message.embeds:
             sendLog = True
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.messageDelete.embeds")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.messageDelete.embeds"))
 
         if not sendLog:
             return
@@ -3309,9 +2670,7 @@ class LogsCog(commands.Cog):
         if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):
             return
 
-        if await is_log_channel_blacklisted(
-            reaction.guild.id, str(reaction.message.channel.id)
-        ):
+        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
             return
 
         blacklistedRoles = await get_log_role_blacklist(reaction.guild.id)
@@ -3319,11 +2678,7 @@ class LogsCog(commands.Cog):
             if blacklistedRole in user.roles:
                 return
 
-        locale = (
-            reaction.guild.preferred_locale
-            if hasattr(reaction.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         description_parts.append(
@@ -3355,9 +2710,7 @@ class LogsCog(commands.Cog):
         if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):
             return
 
-        if await is_log_channel_blacklisted(
-            reaction.guild.id, str(reaction.message.channel.id)
-        ):
+        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
             return
 
         blacklistedRoles = await get_log_role_blacklist(reaction.guild.id)
@@ -3365,11 +2718,7 @@ class LogsCog(commands.Cog):
             if blacklistedRole in user.roles:
                 return
 
-        locale = (
-            reaction.guild.preferred_locale
-            if hasattr(reaction.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         description_parts.append(
@@ -3398,18 +2747,10 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        locale = (
-            role.guild.preferred_locale
-            if hasattr(role.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = role.guild.preferred_locale if hasattr(role.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.guildRoleCreate.name", role=role.mention
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.name", role=role.mention))
 
         created_by = None
         async for log in role.guild.audit_logs(limit=1, user=role.guild.owner):
@@ -3424,17 +2765,11 @@ class LogsCog(commands.Cog):
             )
 
         if role.color:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildRoleCreate.color", color=role.color
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.color", color=role.color))
 
         if role.display_icon:
             if isinstance(role.display_icon, discord.Asset):
-                urlLocale = tanjunLocalizer.localize(
-                    locale, "logs.userUpdate.guildAvatarLocales.url"
-                )
+                urlLocale = tanjunLocalizer.localize(locale, "logs.userUpdate.guildAvatarLocales.url")
                 description_parts.append(
                     tanjunLocalizer.localize(
                         locale,
@@ -3452,30 +2787,19 @@ class LogsCog(commands.Cog):
                 )
 
         if role.hoist:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.guildRoleCreate.hoist")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.hoist"))
 
         if role.managed:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.guildRoleCreate.managed")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.managed"))
 
         if role.mentionable:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.guildRoleCreate.mentionable")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.mentionable"))
 
         if role.permissions:
-            permissions_list = [
-                perm for perm, value in role.permissions if value
-            ]  # Get only the permissions that are True
+            permissions_list = [perm for perm, value in role.permissions if value]  # Get only the permissions that are True
             if permissions_list:
                 formatted_permissions = ", ".join(
-                    [
-                        f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`"
-                        for perm in permissions_list
-                    ]
+                    [f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`" for perm in permissions_list]
                 )
                 description_parts.append(
                     tanjunLocalizer.localize(
@@ -3501,18 +2825,10 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        locale = (
-            role.guild.preferred_locale
-            if hasattr(role.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = role.guild.preferred_locale if hasattr(role.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        description_parts.append(
-            tanjunLocalizer.localize(
-                locale, "logs.guildRoleDelete.name", role=role.name
-            )
-        )
+        description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleDelete.name", role=role.name))
 
         deleted_by = None
         async for log in role.guild.audit_logs(limit=1, user=role.guild.owner):
@@ -3527,17 +2843,11 @@ class LogsCog(commands.Cog):
             )
 
         if role.color:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildRoleCreate.color", color=role.color
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.color", color=role.color))
 
         if role.display_icon:
             if isinstance(role.display_icon, discord.Asset):
-                urlLocale = tanjunLocalizer.localize(
-                    locale, "logs.userUpdate.guildAvatarLocales.url"
-                )
+                urlLocale = tanjunLocalizer.localize(locale, "logs.userUpdate.guildAvatarLocales.url")
                 description_parts.append(
                     tanjunLocalizer.localize(
                         locale,
@@ -3555,31 +2865,20 @@ class LogsCog(commands.Cog):
                 )
 
         if role.hoist:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.guildRoleCreate.hoist")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.hoist"))
 
         if role.managed:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.guildRoleCreate.managed")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.managed"))
 
         if role.mentionable:
-            description_parts.append(
-                tanjunLocalizer.localize(locale, "logs.guildRoleCreate.mentionable")
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.mentionable"))
 
         # Format permissions nicely
         if role.permissions:
-            permissions_list = [
-                perm for perm, value in role.permissions if value
-            ]  # Get only the permissions that are True
+            permissions_list = [perm for perm, value in role.permissions if value]  # Get only the permissions that are True
             if permissions_list:
                 formatted_permissions = ", ".join(
-                    [
-                        f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`"
-                        for perm in permissions_list
-                    ]
+                    [f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`" for perm in permissions_list]
                 )
                 description_parts.append(
                     tanjunLocalizer.localize(
@@ -3605,20 +2904,12 @@ class LogsCog(commands.Cog):
         if not logEnable:
             return
 
-        locale = (
-            after.guild.preferred_locale
-            if hasattr(after.guild, "preferred_locale")
-            else "en_US"
-        )
+        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         # Check for changes in role attributes
         if before.name != after.name:
-            description_parts.append(
-                tanjunLocalizer.localize(
-                    locale, "logs.guildRoleUpdate.name", role=after.name
-                )
-            )
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.name", role=after.name))
 
         updated_by = None
         async for log in after.guild.audit_logs(limit=1, user=after.guild.owner):
@@ -3644,24 +2935,16 @@ class LogsCog(commands.Cog):
 
         if before.hoist != after.hoist:
             if after.hoist:
-                description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildRoleUpdate.hoistNow", role=after.name
-                    )
-                )
+                description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.hoistNow", role=after.name))
             else:
                 description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildRoleUpdate.hoistNoLonger", role=after.name
-                    )
+                    tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.hoistNoLonger", role=after.name)
                 )
 
         if before.mentionable != after.mentionable:
             if after.mentionable:
                 description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildRoleUpdate.mentionableNow", role=after.name
-                    )
+                    tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.mentionableNow", role=after.name)
                 )
             else:
                 description_parts.append(
@@ -3674,16 +2957,10 @@ class LogsCog(commands.Cog):
 
         if before.managed != after.managed:
             if after.managed:
-                description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildRoleUpdate.managedNow", role=after.name
-                    )
-                )
+                description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.managedNow", role=after.name))
             else:
                 description_parts.append(
-                    tanjunLocalizer.localize(
-                        locale, "logs.guildRoleUpdate.managedNoLonger", role=after.name
-                    )
+                    tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.managedNoLonger", role=after.name)
                 )
 
         before_perms = {perm for perm, value in before.permissions if value}
@@ -3694,10 +2971,7 @@ class LogsCog(commands.Cog):
 
         if added_perms:
             added_perms_list = ", ".join(
-                [
-                    f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`"
-                    for perm in added_perms
-                ]
+                [f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`" for perm in added_perms]
             )
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -3709,10 +2983,7 @@ class LogsCog(commands.Cog):
 
         if removed_perms:
             removed_perms_list = ", ".join(
-                [
-                    f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`"
-                    for perm in removed_perms
-                ]
+                [f"`{tanjunLocalizer.localize(locale, f'logs.permissions.{perm}')}`" for perm in removed_perms]
             )
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -3723,23 +2994,13 @@ class LogsCog(commands.Cog):
             )
 
         if before.display_icon != after.display_icon:
-            urlLocale = tanjunLocalizer.localize(
-                locale, "logs.userUpdate.guildAvatarLocales.url"
-            )
+            urlLocale = tanjunLocalizer.localize(locale, "logs.userUpdate.guildAvatarLocales.url")
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildRoleUpdate.displayIcon",
-                    before=(
-                        f"[{urlLocale}]({before.display_icon.url})"
-                        if before.display_icon
-                        else "None"
-                    ),
-                    after=(
-                        f"[{urlLocale}]({after.display_icon.url})"
-                        if after.display_icon
-                        else "None"
-                    ),
+                    before=(f"[{urlLocale}]({before.display_icon.url})" if before.display_icon else "None"),
+                    after=(f"[{urlLocale}]({after.display_icon.url})" if after.display_icon else "None"),
                 )
             )
 

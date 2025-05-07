@@ -1,6 +1,6 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
 from api import set_text_cooldown, set_voice_cooldown
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def set_text_cooldown_command(commandInfo: commandInfo, cooldown: int):
@@ -35,9 +35,7 @@ async def set_text_cooldown_command(commandInfo: commandInfo, cooldown: int):
     await set_text_cooldown(str(commandInfo.guild.id), cooldown)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.settextcooldown.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.settextcooldown.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.settextcooldown.success.description",
@@ -79,9 +77,7 @@ async def set_voice_cooldown_command(commandInfo: commandInfo, cooldown: int):
     await set_voice_cooldown(str(commandInfo.guild.id), cooldown)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.setvoicecooldown.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setvoicecooldown.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.setvoicecooldown.success.description",

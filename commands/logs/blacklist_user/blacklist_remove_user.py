@@ -1,9 +1,12 @@
+import discord
+
+import utility
 from api import (
-    remove_log_user_blacklist as remove_log_blacklist_user_api,
     is_log_user_blacklisted as is_log_user_blacklisted_api,
 )
-import utility
-import discord
+from api import (
+    remove_log_user_blacklist as remove_log_blacklist_user_api,
+)
 from localizer import tanjunLocalizer
 
 
@@ -38,9 +41,7 @@ async def blacklist_remove_user(commandInfo: utility.commandInfo, user: discord.
     else:
         await remove_log_blacklist_user_api(commandInfo.guild.id, user.id)
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.logs.blacklistRemoveUser.success.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistRemoveUser.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.logs.blacklistRemoveUser.success.description",

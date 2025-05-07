@@ -1,33 +1,25 @@
+from datetime import UTC, datetime, timedelta
+
 import discord
+
 import utility
+from api import add_warning, get_warn_config, get_warnings
 from localizer import tanjunLocalizer
-from api import add_warning, get_warnings, get_warn_config
-from datetime import datetime, timezone, timedelta
 
 
-async def warn_user(
-    commandInfo: utility.commandInfo, member: discord.Member, reason: str = None
-):
+async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, reason: str = None):
     if not commandInfo.user.guild_permissions.kick_members:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.warn.missingPermission.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.warn.missingPermission.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.missingPermission.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.missingPermission.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if member.top_role >= commandInfo.user.top_role:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.warn.targetTooHigh.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.warn.targetTooHigh.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.targetTooHigh.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.targetTooHigh.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -37,27 +29,19 @@ async def warn_user(
 
     warn_config = await get_warn_config(guild_id)
 
-    expireDate = datetime.now(timezone.utc) + timedelta(
-        days=warn_config["expiration_days"]
-    )
+    expireDate = datetime.now(UTC) + timedelta(days=warn_config["expiration_days"])
 
     await add_warning(guild_id, user_id, reason, expireDate, commandInfo.user.id)
     warn_count = len(await get_warnings(guild_id, user_id))
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.warn.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.warn.success.description",
             user=member.name,
             reason=(
-                reason
-                if reason
-                else tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.admin.warn.noReasonProvided"
-                )
+                reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.noReasonProvided")
             ),
             count=warn_count,
         ),
@@ -82,19 +66,13 @@ async def warn_user(
     # DM the warned user
     try:
         dm_embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.warn.dmNotification.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.dmNotification.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.warn.dmNotification.description",
                 guild=commandInfo.guild.name,
                 reason=(
-                    reason
-                    if reason
-                    else tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.admin.warn.noReasonProvided"
-                    )
+                    reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.noReasonProvided")
                 ),
                 count=warn_count,
             ),

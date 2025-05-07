@@ -1,8 +1,9 @@
-import utility
-from localizer import tanjunLocalizer
-from api import get_scheduled_messages
 import discord
-from discord.ui import View, Button
+from discord.ui import Button, View
+
+import utility
+from api import get_scheduled_messages
+from localizer import tanjunLocalizer
 
 MESSAGES_PER_PAGE = 1
 MAX_CONTENT_LENGTH = 1000  # Maximum length for message content preview
@@ -10,7 +11,6 @@ MAX_EMBED_LENGTH = 6000  # Discord's maximum embed length
 
 
 async def list_scheduled_messages(commandInfo: utility.commandInfo):
-
     class PaginationView(View):
         def __init__(self, messages, locale, page=0):
             super().__init__(timeout=300)  # 5 minute timeout
@@ -20,9 +20,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
             self.locale = locale
 
             # Previous page button
-            prev_button = Button(
-                emoji="⬅️", style=discord.ButtonStyle.gray, disabled=page == 0
-            )
+            prev_button = Button(emoji="⬅️", style=discord.ButtonStyle.gray, disabled=page == 0)
             prev_button.callback = self.previous_page
             self.add_item(prev_button)
 
@@ -56,13 +54,9 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
 
         def get_embed(self):
             start_idx = self.page * MESSAGES_PER_PAGE
-            page_messages = self.messages[start_idx: start_idx + MESSAGES_PER_PAGE]
+            page_messages = self.messages[start_idx : start_idx + MESSAGES_PER_PAGE]
 
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    self.locale, "commands.utility.listscheduled.title"
-                )
-            )
+            embed = utility.tanjunEmbed(title=tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.title"))
 
             current_length = len(embed.title)
 
@@ -71,9 +65,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
                 content = self.truncate_content(msg[4])
 
                 # Calculate field lengths
-                field_name = tanjunLocalizer.localize(
-                    self.locale, "commands.utility.listscheduled.message_id", id=msg[0]
-                )
+                field_name = tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.message_id", id=msg[0])
 
                 field_value = tanjunLocalizer.localize(
                     self.locale,
@@ -83,14 +75,9 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
                     channel=(
                         "<#" + str(msg[2]) + ">"
                         if msg[2]
-                        else tanjunLocalizer.localize(
-                            self.locale, "commands.utility.listscheduled.direct_message"
-                        )
+                        else tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.direct_message")
                     ),
-                    repeat=msg[6]
-                    or tanjunLocalizer.localize(
-                        self.locale, "commands.utility.listscheduled.no_repeat"
-                    ),
+                    repeat=msg[6] or tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.no_repeat"),
                 )
 
                 # Check if adding this field would exceed the limit
@@ -173,9 +160,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
 
     if not messages:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.listscheduled.no_messages.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.listscheduled.no_messages.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.listscheduled.no_messages.description",

@@ -1,23 +1,26 @@
-import subprocess
 import platform
+import subprocess
+
+from discord import Client, File, TextChannel
+
 from config import database_password, database_user  # , database_ip
-from discord import Client, TextChannel, File
 
 
 def dump_database_schema(user, password, output_file):
-    if platform.system() != 'Linux':
+    if platform.system() != "Linux":
         return
 
     dump_command = [
-        'mysqldump',
-        '-u', user,
-        f'--password={password}',
-        '--all-databases',
-        '--ignore-database=shlink',
+        "mysqldump",
+        "-u",
+        user,
+        f"--password={password}",
+        "--all-databases",
+        "--ignore-database=shlink",
     ]
 
     try:
-        with open(output_file, 'w') as file:
+        with open(output_file, "w") as file:
             subprocess.run(dump_command, stdout=file, check=True)
         print(f"Schema dumped to {output_file} successfully.")
     except subprocess.CalledProcessError as e:
@@ -27,9 +30,9 @@ def dump_database_schema(user, password, output_file):
 
 
 async def create_database_backup(client: Client):
-    dump_database_schema(database_user, database_password, 'backup.sql')
+    dump_database_schema(database_user, database_password, "backup.sql")
 
     channel: TextChannel = client.get_channel(1259573137108893766)
 
     if channel is not None:
-        await channel.send(file=File('backup.sql'))
+        await channel.send(file=File("backup.sql"))

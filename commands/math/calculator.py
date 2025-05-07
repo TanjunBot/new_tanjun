@@ -1,6 +1,6 @@
 import discord
 from discord import ui
-from typing import List, Dict, Optional
+
 import utility
 from localizer import tanjunLocalizer
 
@@ -18,7 +18,7 @@ class CalculatorButton(ui.Button):
         style: discord.ButtonStyle,
         custom_id: str,
         row: int,
-        emoji: Optional[str] = None,
+        emoji: str | None = None,
         disabled: bool = False,
     ):
         super().__init__(
@@ -42,8 +42,8 @@ class CalculatorView(ui.View):
         self.display_equation = initial_equation
         self.equation = initial_equation
         self.result = ""
-        self.history: List[str] = []
-        self.variables: Dict[str, float] = {}
+        self.history: list[str] = []
+        self.variables: dict[str, float] = {}
         self.current_page = 0
         self.create_buttons()
         self.nsp = utility.NumericStringParser()
@@ -60,9 +60,7 @@ class CalculatorView(ui.View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user != self.command_info.user:
             await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.command_info.locale, "commands.math.calculator.unauthorizedUser"
-                ),
+                tanjunLocalizer.localize(self.command_info.locale, "commands.math.calculator.unauthorizedUser"),
                 ephemeral=True,
             )
             return False
@@ -327,11 +325,7 @@ class CalculatorView(ui.View):
                 self.equation = self.equation[:-1]
 
         elif button_id in ("prev_page", "next_page"):
-            self.current_page = (
-                (self.current_page + 1) % 3
-                if button_id == "next_page"
-                else (self.current_page - 1) % 3
-            )
+            self.current_page = (self.current_page + 1) % 3 if button_id == "next_page" else (self.current_page - 1) % 3
             self.create_buttons()
         elif button_id == "assign":
             parts = self.equation.split(":=")
@@ -425,16 +419,12 @@ class CalculatorView(ui.View):
                 self.display_equation += (
                     button_id
                     if button_id not in ("multiply", "divide", "add", "subtract")
-                    else {"multiply": "*", "divide": "/", "add": "+", "subtract": "-"}[
-                        button_id
-                    ]
+                    else {"multiply": "*", "divide": "/", "add": "+", "subtract": "-"}[button_id]
                 )
                 self.equation += (
                     button_id
                     if button_id not in ("multiply", "divide", "add", "subtract")
-                    else {"multiply": "*", "divide": "/", "add": "+", "subtract": "-"}[
-                        button_id
-                    ]
+                    else {"multiply": "*", "divide": "/", "add": "+", "subtract": "-"}[button_id]
                 )
             self.result = ""
 
@@ -442,50 +432,36 @@ class CalculatorView(ui.View):
 
     async def update_message(self, interaction: discord.Interaction):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                self.command_info.locale, "commands.math.calculator.title"
-            ),
+            title=tanjunLocalizer.localize(self.command_info.locale, "commands.math.calculator.title"),
         )
         embed.add_field(
-            name=tanjunLocalizer.localize(
-                self.command_info.locale, "commands.math.calculator.equation"
-            ),
+            name=tanjunLocalizer.localize(self.command_info.locale, "commands.math.calculator.equation"),
             value=f"```\n{self.display_equation or '0'}\n```",
             inline=False,
         )
         if self.result:
             embed.add_field(
-                name=tanjunLocalizer.localize(
-                    self.command_info.locale, "commands.math.calculator.result"
-                ),
+                name=tanjunLocalizer.localize(self.command_info.locale, "commands.math.calculator.result"),
                 value=f"```\n{self.result}\n```",
                 inline=False,
             )
         if self.history:
             history_text = "\n".join(self.history[-5:])
             embed.add_field(
-                name=tanjunLocalizer.localize(
-                    self.command_info.locale, "commands.math.calculator.history"
-                ),
+                name=tanjunLocalizer.localize(self.command_info.locale, "commands.math.calculator.history"),
                 value=f"```\n{history_text}\n```",
                 inline=False,
             )
         await interaction.response.edit_message(embed=embed, view=self)
 
 
-async def calculator_command(
-    command_info: utility.commandInfo, initial_equation: str = ""
-):
+async def calculator_command(command_info: utility.commandInfo, initial_equation: str = ""):
     view = CalculatorView(command_info, initial_equation)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            command_info.locale, "commands.math.calculator.title"
-        ),
+        title=tanjunLocalizer.localize(command_info.locale, "commands.math.calculator.title"),
     )
     embed.add_field(
-        name=tanjunLocalizer.localize(
-            command_info.locale, "commands.math.calculator.equation"
-        ),
+        name=tanjunLocalizer.localize(command_info.locale, "commands.math.calculator.equation"),
         value=f"```\n{initial_equation or '0'}\n```",
         inline=False,
     )

@@ -1,16 +1,13 @@
 import discord
+
 import utility
 from localizer import tanjunLocalizer
 
 
-async def change_nickname(
-    commandInfo: utility.commandInfo, member: discord.Member, nickname: str = None
-):
+async def change_nickname(commandInfo: utility.commandInfo, member: discord.Member, nickname: str = None):
     if not commandInfo.user.guild_permissions.manage_nicknames:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.nickname.missingPermission.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.nickname.missingPermission.description",
@@ -21,9 +18,7 @@ async def change_nickname(
 
     if not commandInfo.guild.me.guild_permissions.manage_nicknames:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.nickname.missingPermissionBot.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.nickname.missingPermissionBot.description",
@@ -32,17 +27,10 @@ async def change_nickname(
         await commandInfo.reply(embed=embed)
         return
 
-    if (
-        member.top_role >= commandInfo.user.top_role
-        and commandInfo.user != commandInfo.guild.owner
-    ):
+    if member.top_role >= commandInfo.user.top_role and commandInfo.user != commandInfo.guild.owner:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.nickname.targetTooHigh.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.nickname.targetTooHigh.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.targetTooHigh.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.targetTooHigh.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -52,9 +40,7 @@ async def change_nickname(
         await member.edit(nick=nickname)
         if nickname:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.admin.nickname.changed.title"
-                ),
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.changed.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.nickname.changed.description",
@@ -65,9 +51,7 @@ async def change_nickname(
             )
         else:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.admin.nickname.removed.title"
-                ),
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.removed.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.nickname.removed.description",
@@ -78,21 +62,13 @@ async def change_nickname(
         await commandInfo.reply(embed=embed)
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.nickname.forbidden.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.nickname.forbidden.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.forbidden.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.forbidden.description"),
         )
         await commandInfo.reply(embed=embed)
     except discord.HTTPException:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.nickname.error.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.admin.nickname.error.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.error.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nickname.error.description"),
         )
         await commandInfo.reply(embed=embed)

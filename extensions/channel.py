@@ -1,26 +1,36 @@
 # Unused imports:
 # from localizer import tanjunLocalizer
 import discord
-from discord.ext import commands
 from discord import app_commands
-import utility
+from discord.ext import commands
 
-from commands.channel.welcome import (
-    setWelcomeChannel as setWelcomeChannelCommand,
-    removeWelcomeChannel as removeWelcomeChannelCommand,
-)
-from commands.channel.farewell import (
-    setFarewellChannel as setFarewellChannelCommand,
-    removeFarewellChannel as removeFarewellChannelCommand,
+import utility
+from commands.channel.dynamicslowmode import (
+    addDynamicslowmode as addDynamicslowmodeCommand,
 )
 from commands.channel.dynamicslowmode import (
     getDynamicslowmodeChannels as getDynamicslowmodeChannelsCommand,
+)
+from commands.channel.dynamicslowmode import (
     removeDynamicslowmode as removeDynamicslowmodeCommand,
-    addDynamicslowmode as addDynamicslowmodeCommand,
+)
+from commands.channel.farewell import (
+    removeFarewellChannel as removeFarewellChannelCommand,
+)
+from commands.channel.farewell import (
+    setFarewellChannel as setFarewellChannelCommand,
 )
 from commands.channel.media import (
     addMediaChannel as addMediaChannelCommand,
+)
+from commands.channel.media import (
     removeMediaChannel as removeMediaChannelCommand,
+)
+from commands.channel.welcome import (
+    removeWelcomeChannel as removeWelcomeChannelCommand,
+)
+from commands.channel.welcome import (
+    setWelcomeChannel as setWelcomeChannelCommand,
 )
 
 
@@ -90,15 +100,9 @@ class FarewellCommands(discord.app_commands.Group):
         description=app_commands.locale_str("channel_farewell_set_ch_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "channel_farewell_set_ch_params_channel_description"
-        ),
-        message=app_commands.locale_str(
-            "channel_farewell_set_ch_params_message_description"
-        ),
-        background=app_commands.locale_str(
-            "channel_farewell_set_ch_params_image_description"
-        ),
+        channel=app_commands.locale_str("channel_farewell_set_ch_params_channel_description"),
+        message=app_commands.locale_str("channel_farewell_set_ch_params_message_description"),
+        background=app_commands.locale_str("channel_farewell_set_ch_params_image_description"),
     )
     async def set_farewell_channel(
         self,
@@ -151,9 +155,7 @@ class MediaCommands(discord.app_commands.Group):
         description=app_commands.locale_str("channel_media_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "channel_media_params_channel_description"
-        ),
+        channel=app_commands.locale_str("channel_media_params_channel_description"),
     )
     async def media_add_cmd(self, ctx, channel: discord.TextChannel):
         await ctx.response.defer()
@@ -177,9 +179,7 @@ class MediaCommands(discord.app_commands.Group):
         description=app_commands.locale_str("channel_mediaremove_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "channel_mediaremove_params_channel_description"
-        ),
+        channel=app_commands.locale_str("channel_mediaremove_params_channel_description"),
     )
     async def media_remove_cmd(self, ctx, channel: discord.TextChannel):
         await ctx.response.defer()
@@ -208,9 +208,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         channel=app_commands.locale_str("channel_ds_add_params_channel_description"),
         messages=app_commands.locale_str("channel_ds_add_params_messages_description"),
         per=app_commands.locale_str("channel_ds_add_params_per_description"),
-        resetafter=app_commands.locale_str(
-            "channel_ds_add_params_resetafter_description"
-        ),
+        resetafter=app_commands.locale_str("channel_ds_add_params_resetafter_description"),
     )
     async def add_dynamicslowmode(
         self,
@@ -247,9 +245,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         description=app_commands.locale_str("channel_ds_remove_description"),
     )
     @app_commands.describe(
-        channel=app_commands.locale_str(
-            "channel_ds_remove_params_channel_description"
-        ),
+        channel=app_commands.locale_str("channel_ds_remove_params_channel_description"),
     )
     async def remove_dynamicslowmode(self, ctx, channel: discord.TextChannel):
         await ctx.response.defer()

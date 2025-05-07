@@ -1,11 +1,12 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
-from api import set_twitch_online_notification
 import discord
+
+from api import set_twitch_online_notification
 from commands.utility.twitch.twitchApi import (
     get_uuid_by_twitch_name,
     subscribe_to_twitch_online_notification,
 )
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def addTwitchLiveNotification(
@@ -60,9 +61,7 @@ async def addTwitchLiveNotification(
         await commandInfo.reply(embed=embed)
         return
 
-    await set_twitch_online_notification(
-        commandInfo.guild.id, channel.id, uuid, twitch_name, notification_message
-    )
+    await set_twitch_online_notification(commandInfo.guild.id, channel.id, uuid, twitch_name, notification_message)
 
     await subscribe_to_twitch_online_notification(uuid)
 

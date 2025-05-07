@@ -1,6 +1,3 @@
-import asyncio
-
-
 async def test_commands(self, ctx):
     commands = self.bot.commands
 
@@ -22,7 +19,7 @@ async def test_commands(self, ctx):
 
         try:
             # Wait for the message sent by the command
-            message = await self.bot.wait_for('message', check=check, timeout=5)
+            message = await self.bot.wait_for("message", check=check, timeout=5)
             await message.delete()
-        except asyncio.TimeoutError:
+        except TimeoutError:
             pass  # No message was sent within the timeout period

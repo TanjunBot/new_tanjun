@@ -2,68 +2,65 @@
 # import cmath
 # import base64
 # import json
-from __future__ import division
-import discord
-from typing import (
-    Any,
-    Dict,
-    List,
-    Mapping,
-    Optional,
-    Protocol,
-    # TYPE_CHECKING,
-    TypeVar,
-    Union,
-)
+import ast
 import datetime
-from pyparsing import (
-    Literal,
-    CaselessLiteral,
-    Word,
-    Optional as Opt,
-    Combine,
-    # Group,
-    ZeroOrMore,
-    Forward,
-    nums,
-    alphas,
-    # oneOf,
-)
+import gzip
 import math
 import operator
-from config import (
-    tenorAPIKey,
-    tenorCKey,
-    GithubAuthToken,
-    bytebin_url,
-    bytebin_password,
-    bytebin_username,
-)
-import aiohttp
+import operator as op
+import os
 import random
 import re
-from github import Github
-import ast
-import operator as op
 import tempfile
-import os
-from config import ImgBBApiKey
-import gzip
-from typing_extensions import Self
+from collections.abc import Mapping
 from difflib import SequenceMatcher
+from typing import (
+    Any,
+    Protocol,
+    Self,
+    # TYPE_CHECKING,
+    TypeVar,
+)
+
+import aiohttp
+import discord
+from github import Github
+from pyparsing import (
+    CaselessLiteral,
+    Combine,
+    Forward,
+    Literal,
+    Word,
+    # Group,
+    ZeroOrMore,
+    alphas,
+    # oneOf,
+    nums,
+)
+from pyparsing import (
+    Optional as Opt,
+)
+
+from config import (
+    GithubAuthToken,
+    ImgBBApiKey,
+    bytebin_password,
+    bytebin_url,
+    bytebin_username,
+    tenorAPIKey,
+    tenorCKey,
+)
 
 
 class EmbedProxy:
-    def __init__(self, layer: Dict[str, Any]):
+    def __init__(self, layer: dict[str, Any]):
         self.__dict__.update(layer)
 
     def __len__(self) -> int:
         return len(self.__dict__)
 
     def __repr__(self) -> str:
-        inner = ", ".join(
-            (f"{k}={v!r}" for k, v in self.__dict__.items() if not k.startswith("_"))
-        )
+        inner = ", ".join((f"{k}={v!r}" for k, v in self.__dict__.items() if not k.startswith("_")))
         return f"EmbedProxy({inner})"
 
     def __getattr__(self, attr: str) -> None:
@@ -77,39 +74,39 @@ T = TypeVar("T")
 
 
 class _EmbedFooterProxy(Protocol):
-    text: Optional[str]
-    icon_url: Optional[str]
+    text: str | None
+    icon_url: str | None
 
 
 class _EmbedFieldProxy(Protocol):
-    name: Optional[str]
-    value: Optional[str]
+    name: str | None
+    value: str | None
     inline: bool
 
 
 class _EmbedMediaProxy(Protocol):
-    url: Optional[str]
-    proxy_url: Optional[str]
-    height: Optional[int]
-    width: Optional[int]
+    url: str | None
+    proxy_url: str | None
+    height: int | None
+    width: int | None
 
 
 class _EmbedVideoProxy(Protocol):
-    url: Optional[str]
-    height: Optional[int]
-    width: Optional[int]
+    url: str | None
+    height: int | None
+    width: int | None
 
 
 class _EmbedProviderProxy(Protocol):
-    name: Optional[str]
-    url: Optional[str]
+    name: str | None
+    url: str | None
 
 
 class _EmbedAuthorProxy(Protocol):
-    name: Optional[str]
-    url: Optional[str]
-    icon_url: Optional[str]
-    proxy_icon_url: Optional[str]
+    name: str | None
+    url: str | None
+    icon_url: str | None
+    proxy_icon_url: str | None
 
 
 class tanjunEmbed:
@@ -186,20 +183,19 @@ class tanjunEmbed:
     def __init__(
         self,
         *,
-        colour: Optional[Union[int, discord.Colour]] = 0xCB33F5,
-        color: Optional[Union[int, discord.Colour]] = 0xCB33F5,
-        title: Optional[Any] = None,
+        colour: int | discord.Colour | None = 0xCB33F5,
+        color: int | discord.Colour | None = 0xCB33F5,
+        title: Any | None = None,
         type="rich",
-        url: Optional[Any] = None,
-        description: Optional[Any] = None,
-        timestamp: Optional[datetime.datetime] = None,
+        url: Any | None = None,
+        description: Any | None = None,
+        timestamp: datetime.datetime | None = None,
     ):
-
         self.colour = colour if colour is not None else color
-        self.title: Optional[str] = title
+        self.title: str | None = title
         self.type = type
-        self.url: Optional[str] = url
-        self.description: Optional[str] = description
+        self.url: str | None = url
+        self.description: str | None = description
 
         if self.title is not None:
             self.title = str(self.title)
@@ -335,11 +331,11 @@ class tanjunEmbed:
         )
 
     @property
-    def colour(self) -> Optional[discord.Colour]:
+    def colour(self) -> discord.Colour | None:
         return getattr(self, "_colour", None)
 
     @colour.setter
-    def colour(self, value: Optional[Union[int, discord.Colour]]) -> None:
+    def colour(self, value: int | discord.Colour | None) -> None:
         if value is None:
             self._colour = None
         elif isinstance(value, discord.Colour):
@@ -347,18 +343,16 @@ class tanjunEmbed:
         elif isinstance(value, int):
             self._colour = discord.Colour(value=value)
         else:
-            raise TypeError(
-                f"Expected discord.Colour, int, or None but received {value.__class__.__name__} instead."
-            )
+            raise TypeError(f"Expected discord.Colour, int, or None but received {value.__class__.__name__} instead.")
 
     color = colour
 
     @property
-    def timestamp(self) -> Optional[datetime.datetime]:
+    def timestamp(self) -> datetime.datetime | None:
         return getattr(self, "_timestamp", None)
 
     @timestamp.setter
-    def timestamp(self, value: Optional[datetime.datetime]) -> None:
+    def timestamp(self, value: datetime.datetime | None) -> None:
         if isinstance(value, datetime.datetime):
             if value.tzinfo is None:
                 value = value.astimezone()
@@ -366,9 +360,7 @@ class tanjunEmbed:
         elif value is None:
             self._timestamp = None
         else:
-            raise TypeError(
-                f"Expected datetime.datetime or None received {value.__class__.__name__} instead"
-            )
+            raise TypeError(f"Expected datetime.datetime or None received {value.__class__.__name__} instead")
 
     @property
     def footer(self) -> _EmbedFooterProxy:
@@ -381,9 +373,7 @@ class tanjunEmbed:
         # Lying to the type checker for better developer UX.
         return EmbedProxy(getattr(self, "_footer", {}))  # type: ignore
 
-    def set_footer(
-        self, *, text: Optional[Any] = None, icon_url: Optional[Any] = None
-    ) -> Self:
+    def set_footer(self, *, text: Any | None = None, icon_url: Any | None = None) -> Self:
         """Sets the footer for the embed content.
 
         This function returns the class instance to allow for fluent-style
@@ -438,7 +428,7 @@ class tanjunEmbed:
         # Lying to the type checker for better developer UX.
         return EmbedProxy(getattr(self, "_image", {}))  # type: ignore
 
-    def set_image(self, *, url: Optional[Any]) -> Self:
+    def set_image(self, *, url: Any | None) -> Self:
         """Sets the image for the embed content.
 
         This function returns the class instance to allow for fluent-style
@@ -479,7 +469,7 @@ class tanjunEmbed:
         # Lying to the type checker for better developer UX.
         return EmbedProxy(getattr(self, "_thumbnail", {}))  # type: ignore
 
-    def set_thumbnail(self, *, url: Optional[Any]) -> Self:
+    def set_thumbnail(self, *, url: Any | None) -> Self:
         """Sets the thumbnail for the embed content.
 
         This function returns the class instance to allow for fluent-style
@@ -544,9 +534,7 @@ class tanjunEmbed:
         # Lying to the type checker for better developer UX.
         return EmbedProxy(getattr(self, "_author", {}))  # type: ignore
 
-    def set_author(
-        self, *, name: Any, url: Optional[Any] = None, icon_url: Optional[Any] = None
-    ) -> Self:
+    def set_author(self, *, name: Any, url: Any | None = None, icon_url: Any | None = None) -> Self:
         """Sets the author for the embed content.
 
         This function returns the class instance to allow for fluent-style
@@ -591,7 +579,7 @@ class tanjunEmbed:
         return self
 
     @property
-    def fields(self) -> List[_EmbedFieldProxy]:
+    def fields(self) -> list[_EmbedFieldProxy]:
         """List[``EmbedProxy``]: Returns a :class:`list` of ``EmbedProxy`` denoting the field contents.
 
         See :meth:`add_field` for possible values you can access.
@@ -630,9 +618,7 @@ class tanjunEmbed:
 
         return self
 
-    def insert_field_at(
-        self, index: int, *, name: Any, value: Any, inline: bool = True
-    ) -> Self:
+    def insert_field_at(self, index: int, *, name: Any, value: Any, inline: bool = True) -> Self:
         """Inserts a field before a specified index to the embed.
 
         This function returns the class instance to allow for fluent-style
@@ -710,9 +696,7 @@ class tanjunEmbed:
 
         return self
 
-    def set_field_at(
-        self, index: int, *, name: Any, value: Any, inline: bool = True
-    ) -> Self:
+    def set_field_at(self, index: int, *, name: Any, value: Any, inline: bool = True) -> Self:
         """Modifies a field to the embed object.
 
         The index must point to a valid pre-existing field. Can only be up to 25 fields.
@@ -776,13 +760,9 @@ class tanjunEmbed:
         else:
             if timestamp:
                 if timestamp.tzinfo:
-                    result["timestamp"] = timestamp.astimezone(
-                        tz=datetime.timezone.utc
-                    ).isoformat()
+                    result["timestamp"] = timestamp.astimezone(tz=datetime.UTC).isoformat()
                 else:
-                    result["timestamp"] = timestamp.replace(
-                        tzinfo=datetime.timezone.utc
-                    ).isoformat()
+                    result["timestamp"] = timestamp.replace(tzinfo=datetime.UTC).isoformat()
 
         # add in the non raw attribute ones
         if self.type:
@@ -828,7 +808,7 @@ def cmp(a, b):
     return (a > b) - (a < b)
 
 
-class NumericStringParser(object):
+class NumericStringParser:
     """
     Most of this code comes from the fourFn.py pyparsing example
 
@@ -844,11 +824,7 @@ class NumericStringParser(object):
     def __init__(self):
         point = Literal(".")
         e = CaselessLiteral("E")
-        fnumber = Combine(
-            Word("+-" + nums, nums)
-            + Opt(point + Opt(Word(nums)))
-            + Opt(e + Word("+-" + nums, nums))
-        )
+        fnumber = Combine(Word("+-" + nums, nums) + Opt(point + Opt(Word(nums))) + Opt(e + Word("+-" + nums, nums)))
         ident = Word(alphas, alphas + nums + "_$")
 
         plus, minus, mult, div = map(Literal, "+-*/")
@@ -858,9 +834,9 @@ class NumericStringParser(object):
         expop = Literal("^")
 
         expr = Forward()
-        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(
-            self.pushFirst
-        ) | (lpar + expr.suppress() + rpar).setParseAction(self.pushUMinus)
+        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(self.pushFirst) | (
+            lpar + expr.suppress() + rpar
+        ).setParseAction(self.pushUMinus)
 
         factor = Forward()
         factor << atom + ZeroOrMore((expop + factor).setParseAction(self.pushFirst))
@@ -958,9 +934,7 @@ async def getGif(query: str, amount: int = 1, limit: int = 10):
         # nosec: B311
         random.shuffle(r["results"])
 
-        return [
-            r["results"][i]["media_formats"]["mediumgif"]["url"] for i in range(amount)
-        ]
+        return [r["results"][i]["media_formats"]["mediumgif"]["url"] for i in range(amount)]
 
 
 def get_highest_exponent(polynomial):
@@ -1093,9 +1067,7 @@ def eval_(node, variables):
     if isinstance(node, ast.Num):
         return node.n
     elif isinstance(node, ast.BinOp):
-        return operators[type(node.op)](
-            eval_(node.left, variables), eval_(node.right, variables)
-        )
+        return operators[type(node.op)](eval_(node.left, variables), eval_(node.right, variables))
     elif isinstance(node, ast.UnaryOp):
         return operators[type(node.op)](eval_(node.operand, variables))
     elif isinstance(node, ast.Call):
@@ -1322,9 +1294,7 @@ def date_time_to_timestamp(date: datetime.datetime) -> int:
 
 async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict:
     # Create a temporary file with the appropriate file extension
-    with tempfile.NamedTemporaryFile(
-        delete=False, suffix="." + file_extension, mode="wb"
-    ) as temp_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix="." + file_extension, mode="wb") as temp_file:
         temp_file.write(image_bytes)
         temp_file_path = temp_file.name
 
@@ -1336,9 +1306,7 @@ async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict
             form_data.add_field("image", image_file)
             form_data.add_field("name", "tbg")
 
-            async with session.post(
-                "https://api.imgbb.com/1/upload", data=form_data
-            ) as response:
+            async with session.post("https://api.imgbb.com/1/upload", data=form_data) as response:
                 response_data = await response.json()
 
     # Optionally, delete the temporary file if you want to clean up
@@ -1357,9 +1325,7 @@ async def upload_to_tanjun_logs(content: str) -> str:
         auth = aiohttp.BasicAuth(username, password)
         headers = {"Content-Type": "text/html", "Content-Encoding": "gzip"}
 
-        async with session.post(
-            url + "/post", data=compressed_content, headers=headers, auth=auth
-        ) as response:
+        async with session.post(url + "/post", data=compressed_content, headers=headers, auth=auth) as response:
             if response.status == 201:
                 response_data = await response.json()
                 if "key" in response_data:
@@ -1368,9 +1334,7 @@ async def upload_to_tanjun_logs(content: str) -> str:
                     print("Unexpected response format:", response_data)
                     return None
             else:
-                print(
-                    f"Request failed with status {response.status}: {await response.text()}"
-                )
+                print(f"Request failed with status {response.status}: {await response.text()}")
                 return None
 
 
@@ -1402,4 +1366,4 @@ def similar(a, b):
 
 
 def addThousandsSeparator(number: int) -> str:
-    return "{:,}".format(number).replace(",", " ")
+    return f"{number:,}".replace(",", " ")

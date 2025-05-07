@@ -1,7 +1,9 @@
-from api import get_counting_progress, get_last_counter_id, check_if_opted_out, increase_counting_progress
-import discord
-from localizer import tanjunLocalizer
 import random
+
+import discord
+
+from api import check_if_opted_out, get_counting_progress, get_last_counter_id, increase_counting_progress
+from localizer import tanjunLocalizer
 
 
 async def counting(message: discord.Message):

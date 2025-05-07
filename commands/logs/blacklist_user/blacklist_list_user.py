@@ -1,10 +1,15 @@
+import discord
+
+import utility
 from api import (
-    get_log_user_blacklist as get_log_blacklist_users_api,
-    remove_log_user_blacklist as remove_log_blacklist_user_api,
     add_log_user_blacklist as add_log_blacklist_user_api,
 )
-import utility
-import discord
+from api import (
+    get_log_user_blacklist as get_log_blacklist_users_api,
+)
+from api import (
+    remove_log_user_blacklist as remove_log_blacklist_user_api,
+)
 from localizer import tanjunLocalizer
 
 
@@ -34,9 +39,7 @@ async def blacklist_list_user(commandInfo: utility.commandInfo):
             self.selectedIndex = 0
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
-        async def remove_user(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def remove_user(self, interaction: discord.Interaction, button: discord.ui.Button):
             user_id = self.users[self.selectedIndex][0]
             await remove_log_blacklist_user_api(self.guild.id, user_id)
             self.users = tuple(x for x in self.users if x[0] != user_id)
@@ -48,9 +51,7 @@ async def blacklist_list_user(commandInfo: utility.commandInfo):
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button):
             self.selectedIndex = (self.selectedIndex + 1) % len(self.users)
             await self.update_view(interaction)
 
@@ -64,22 +65,15 @@ async def blacklist_list_user(commandInfo: utility.commandInfo):
 
         async def update_view(self, interaction: discord.Interaction):
             if not self.users or len(self.users) == 0:
-                description = tanjunLocalizer.localize(
-                    self.locale, "commands.logs.blacklistListUser.noBlacklistedUsers"
-                )
+                description = tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListUser.noBlacklistedUsers")
             else:
                 if self.selectedIndex >= len(self.users):
                     self.selectedIndex = len(self.users) - 1
                 description = "\n".join(
-                    [
-                        f"{'➤' if i == self.selectedIndex else ''} <@{user[0]}>"
-                        for i, user in enumerate(self.users)
-                    ]
+                    [f"{'➤' if i == self.selectedIndex else ''} <@{user[0]}>" for i, user in enumerate(self.users)]
                 )
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    self.locale, "commands.logs.blacklistListUser.title"
-                ),
+                title=tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListUser.title"),
                 description=description,
             )
             await interaction.response.edit_message(embed=embed, view=self)
@@ -95,20 +89,11 @@ async def blacklist_list_user(commandInfo: utility.commandInfo):
         )
     )
     if not blacklisted_users or len(blacklisted_users) == 0:
-        description = tanjunLocalizer.localize(
-            commandInfo.locale, "commands.logs.blacklistListUser.noBlacklistedUsers"
-        )
+        description = tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListUser.noBlacklistedUsers")
     else:
-        description = "\n".join(
-            [
-                f"{'➤' if i == 0 else ''} <@{user[0]}>"
-                for i, user in enumerate(blacklisted_users)
-            ]
-        )
+        description = "\n".join([f"{'➤' if i == 0 else ''} <@{user[0]}>" for i, user in enumerate(blacklisted_users)])
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.logs.blacklistListUser.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListUser.title"),
         description=description,
     )
     await commandInfo.reply(embed=embed, view=view)

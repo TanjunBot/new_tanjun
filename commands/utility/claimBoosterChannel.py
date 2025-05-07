@@ -1,12 +1,13 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
+import discord
+
 from api import (
+    claim_booster_channel,
     get_booster_channel,
     get_claimed_booster_channel,
     remove_claimed_booster_channel,
-    claim_booster_channel,
 )
-import discord
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def claimBoosterChannel(commandInfo: commandInfo, name: str):
@@ -69,25 +70,17 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str):
         await commandInfo.reply(embed=embed)
         return
 
-    reason = tanjunLocalizer.localize(
-        commandInfo.locale, "commands.utility.claimboosterchannel.success.reason"
-    )
+    reason = tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterchannel.success.reason")
     overwrites = {
         commandInfo.guild.default_role: discord.PermissionOverwrite(connect=False),
-        commandInfo.user: discord.PermissionOverwrite(
-            manage_channels=True, connect=True, speak=True
-        ),
+        commandInfo.user: discord.PermissionOverwrite(manage_channels=True, connect=True, speak=True),
     }
     newChannel = await commandInfo.guild.create_voice_channel(
         name=name, reason=reason, category=channel, overwrites=overwrites
     )
-    await claim_booster_channel(
-        commandInfo.user.id, newChannel.id, commandInfo.guild.id
-    )
+    await claim_booster_channel(commandInfo.user.id, newChannel.id, commandInfo.guild.id)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.claimboosterchannel.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.claimboosterchannel.success.description",

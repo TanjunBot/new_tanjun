@@ -1,10 +1,11 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
-from api import get_twitch_notification_by_guild_id, remove_twitch_online_notification
 import discord
+
+from api import get_twitch_notification_by_guild_id, remove_twitch_online_notification
 from commands.utility.twitch.twitchApi import (
     parse_twitch_notification_message,
 )
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def seeTwitchLiveNotifications(commandInfo: commandInfo):
@@ -45,9 +46,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
             self.notifications = notifications
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)
-        async def previous_page(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def previous_page(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -63,9 +62,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
             await self.update_message(interaction)
 
         @discord.ui.button(label="🗑️", style=discord.ButtonStyle.danger)
-        async def delete_notification(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def delete_notification(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -76,12 +73,8 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
                 )
                 return
             global notifications
-            await remove_twitch_online_notification(
-                self.notifications[self.current_page][0]
-            )
-            self.notifications = await get_twitch_notification_by_guild_id(
-                commandInfo.guild.id
-            )
+            await remove_twitch_online_notification(self.notifications[self.current_page][0])
+            self.notifications = await get_twitch_notification_by_guild_id(commandInfo.guild.id)
             if not self.notifications:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
@@ -100,9 +93,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
             await self.update_message(interaction)
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)
-        async def next_page(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def next_page(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -149,9 +140,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
                 view = TwitchLiveNotification(self.current_page, self.notifications)
                 await interaction.response.edit_message(embed=embed, view=view)
             else:
-                await interaction.response.edit_message(
-                    embed=embed, view=view
-                )
+                await interaction.response.edit_message(embed=embed, view=view)
 
     view = TwitchLiveNotification(0, notifications)
     notification = parse_twitch_notification_message(

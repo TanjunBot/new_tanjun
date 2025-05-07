@@ -1,8 +1,9 @@
-from config import brawlstarsToken
 import aiohttp
-from utility import commandInfo, tanjunEmbed, similar, addThousandsSeparator
 import discord
+
+from config import brawlstarsToken
 from localizer import tanjunLocalizer
+from utility import addThousandsSeparator, commandInfo, similar, tanjunEmbed
 
 
 async def getClubInfo(clubTag: str):
@@ -35,9 +36,7 @@ async def club(commandInfo: commandInfo, clubTag: str):
     trophies = clubInfo["trophies"]
     members = clubInfo["members"]
     role_order = {"president": 4, "vicePresident": 3, "senior": 2, "member": 1}
-    members = sorted(
-        members, key=lambda x: (role_order[x["role"]], x["trophies"]), reverse=True
-    )
+    members = sorted(members, key=lambda x: (role_order[x["role"]], x["trophies"]), reverse=True)
 
     baseDescription = ""
     baseDescription += tanjunLocalizer.localize(
@@ -81,9 +80,7 @@ async def club(commandInfo: commandInfo, clubTag: str):
             self.current_page = current_page
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -97,14 +94,10 @@ async def club(commandInfo: commandInfo, clubTag: str):
                 self.current_page = len(self.pages) - 1
             else:
                 self.current_page -= 1
-            await interaction.response.edit_message(
-                view=self, embed=pages[self.current_page]
-            )
+            await interaction.response.edit_message(view=self, embed=pages[self.current_page])
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -118,14 +111,10 @@ async def club(commandInfo: commandInfo, clubTag: str):
                 self.current_page = 0
             else:
                 self.current_page += 1
-            await interaction.response.edit_message(
-                view=self, embed=pages[self.current_page]
-            )
+            await interaction.response.edit_message(view=self, embed=pages[self.current_page])
 
         @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
-        async def search(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def search(self, interaction: discord.Interaction, button: discord.ui.Button):
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -140,9 +129,7 @@ async def club(commandInfo: commandInfo, clubTag: str):
     class SearchModal(discord.ui.Modal):
         def __init__(self, commandInfo: commandInfo):
             super().__init__(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.utility.brawlstars.club.search.title"
-                )
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.brawlstars.club.search.title")
             )
             self.commandInfo = commandInfo
             self.add_item(
@@ -209,7 +196,6 @@ async def club(commandInfo: commandInfo, clubTag: str):
         view = ClubPaginator(pages)
         await commandInfo.reply(embed=pages[0], view=view)
     else:
-
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

@@ -1,6 +1,6 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
 from api import get_brawlstars_linked_account, remove_brawlstars_linked_account
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def unlink(commandInfo: commandInfo):

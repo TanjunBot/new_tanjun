@@ -1,8 +1,9 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
-from api import get_booster_role, add_booster_role
-import utility
 import discord
+
+import utility
+from api import add_booster_role, get_booster_role
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def setupBoosterRole(commandInfo: commandInfo, role: discord.Role):
@@ -38,11 +39,7 @@ async def setupBoosterRole(commandInfo: commandInfo, role: discord.Role):
     await add_booster_role(commandInfo.guild.id, role.id)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.setupboosterrole.success.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.setupboosterrole.success.description"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.setupboosterrole.success.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.setupboosterrole.success.description"),
     )
     await commandInfo.reply(embed=embed)

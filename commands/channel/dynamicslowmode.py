@@ -1,18 +1,20 @@
-import discord
-import utility
-from localizer import tanjunLocalizer
-from api import (
-    get_dynamicslowmode_channels,
-    add_dynamicslowmode,
-    remove_dynamicslowmode,
-    get_dynamicslowmode,
-    add_dynamicslowmode_message,
-    clear_old_dynamicslowmode_messages,
-    get_dynamicslowmode_messages,
-    cash_slowmode_delay,
-    remove_cashed_slowmode_delay,
-)
 from datetime import timedelta
+
+import discord
+
+import utility
+from api import (
+    add_dynamicslowmode,
+    add_dynamicslowmode_message,
+    cash_slowmode_delay,
+    clear_old_dynamicslowmode_messages,
+    get_dynamicslowmode,
+    get_dynamicslowmode_channels,
+    get_dynamicslowmode_messages,
+    remove_cashed_slowmode_delay,
+    remove_dynamicslowmode,
+)
+from localizer import tanjunLocalizer
 
 
 async def addDynamicslowmode(
@@ -68,13 +70,9 @@ async def addDynamicslowmode(
         await commandInfo.reply(embed=embed)
         return
 
-    await add_dynamicslowmode(
-        commandInfo.guild.id, channel.id, messages, per, resetafter
-    )
+    await add_dynamicslowmode(commandInfo.guild.id, channel.id, messages, per, resetafter)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.channel.dynamicslowmode.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.channel.dynamicslowmode.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.channel.dynamicslowmode.success.description",
@@ -83,9 +81,7 @@ async def addDynamicslowmode(
     await commandInfo.reply(embed=embed)
 
 
-async def removeDynamicslowmode(
-    commandInfo: utility.commandInfo, channel: discord.TextChannel
-):
+async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: discord.TextChannel):
     if not commandInfo.user.guild_permissions.manage_channels:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -171,9 +167,7 @@ async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
         )
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.channel.dynamicslowmode.channels.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.channel.dynamicslowmode.channels.title"),
         description=description,
     )
     await commandInfo.reply(embed=embed)
@@ -208,34 +202,18 @@ async def dynamicslowmodeMessage(message: discord.Message):
     await clear_old_dynamicslowmode_messages(message.channel.id, minTime)
 
     reasonLocale = tanjunLocalizer.localize(
-        (
-            message.guild.preferred_locale
-            if hasattr(message.guild, "preferred_locale")
-            else "en-US"
-        ),
+        (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),
         "commands.channel.dynamicslowmode.reason",
         messages=messages,
         per=dynamicSlowmodeChannel[3],
     )
     resetReasonLocale = tanjunLocalizer.localize(
-        (
-            message.guild.preferred_locale
-            if hasattr(message.guild, "preferred_locale")
-            else "en-US"
-        ),
+        (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),
         "commands.channel.dynamicslowmode.resetReason",
     )
     newSlowmode = int(messages / dynamicSlowmodeChannel[3])
-    if (
-        newSlowmode != message.channel.slowmode_delay
-        and newSlowmode > cashed_slowmode_delay
-    ):
+    if newSlowmode != message.channel.slowmode_delay and newSlowmode > cashed_slowmode_delay:
         await message.channel.edit(slowmode_delay=newSlowmode, reason=reasonLocale)
-    elif (
-        newSlowmode < cashed_slowmode_delay
-        and message.channel.slowmode_delay != cashed_slowmode_delay
-    ):
-        await message.channel.edit(
-            slowmode_delay=cashed_slowmode_delay, reason=resetReasonLocale
-        )
+    elif newSlowmode < cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:
+        await message.channel.edit(slowmode_delay=cashed_slowmode_delay, reason=resetReasonLocale)
         await remove_cashed_slowmode_delay(message.channel.id)

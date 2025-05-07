@@ -1,10 +1,10 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
 import discord
+
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def banner(commandInfo: commandInfo, user: discord.Member):
-
     user = await commandInfo.client.fetch_user(user.id)
 
     embed = tanjunEmbed(

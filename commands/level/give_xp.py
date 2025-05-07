@@ -1,15 +1,14 @@
-from utility import commandInfo, tanjunEmbed, get_level_for_xp
-from localizer import tanjunLocalizer
-from api import get_user_xp, update_user_xp, get_xp_scaling, get_custom_formula
 import discord
+
+from api import get_custom_formula, get_user_xp, get_xp_scaling, update_user_xp
+from localizer import tanjunLocalizer
+from utility import commandInfo, get_level_for_xp, tanjunEmbed
 
 
 async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount: int):
     if not commandInfo.user.guild_permissions.manage_guild:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.givexp.error.no_permission.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.givexp.error.no_permission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.givexp.error.no_permission.description",
@@ -20,9 +19,7 @@ async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount
 
     if amount <= 0:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.givexp.error.invalid_amount.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.givexp.error.invalid_amount.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.givexp.error.invalid_amount.description",
@@ -43,9 +40,7 @@ async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount
     await update_user_xp(str(commandInfo.guild.id), str(user.id), new_xp)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.givexp.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.givexp.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.givexp.success.description",

@@ -1,11 +1,11 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
-from api import addAutoPublish, checkIfChannelIsAutopublish, removeAutoPublish
 import discord
+
+from api import addAutoPublish, checkIfChannelIsAutopublish, removeAutoPublish
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel):
-
     if not commandInfo.user.guild_permissions.manage_guild:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -51,9 +51,7 @@ async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel):
 
     await addAutoPublish(channel.id)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.autopublish.success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.autopublish.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.autopublish.success.description",
@@ -79,9 +77,7 @@ async def autopublish_remove(commandInfo: commandInfo, channel: discord.TextChan
 
     if not await checkIfChannelIsAutopublish(channel.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.autopublish.error.is_not.title"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.autopublish.error.is_not.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.autopublish.error.is_not.description",
@@ -92,9 +88,7 @@ async def autopublish_remove(commandInfo: commandInfo, channel: discord.TextChan
 
     await removeAutoPublish(channel.id)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.utility.autopublish.remove_success.title"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.autopublish.remove_success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.autopublish.remove_success.description",

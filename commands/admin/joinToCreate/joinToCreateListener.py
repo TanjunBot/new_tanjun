@@ -1,7 +1,8 @@
 import discord
+
 import utility
-from localizer import tanjunLocalizer
 from api import get_join_to_create_channel
+from localizer import tanjunLocalizer
 
 joinToCreateChannels = []
 
@@ -22,9 +23,7 @@ async def memberJoin(voiceState: discord.VoiceState, member: discord.Member):
 
     print("newChannel", newChannel)
 
-    overwrites = {
-        member: discord.PermissionOverwrite(view_channel=True, manage_channels=True)
-    }
+    overwrites = {member: discord.PermissionOverwrite(view_channel=True, manage_channels=True)}
 
     await newChannel.edit(overwrites=overwrites)
 
@@ -32,10 +31,19 @@ async def memberJoin(voiceState: discord.VoiceState, member: discord.Member):
 
     joinToCreateChannels.append(newChannel)
 
-    await newChannel.send(embed=utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en", "commands.admin.joinToCreateListener.success.title"),
-        description=tanjunLocalizer.localize(member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en", "commands.admin.joinToCreateListener.success.description")
-    ), content=member.mention)
+    await newChannel.send(
+        embed=utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en",
+                "commands.admin.joinToCreateListener.success.title",
+            ),
+            description=tanjunLocalizer.localize(
+                member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en",
+                "commands.admin.joinToCreateListener.success.description",
+            ),
+        ),
+        content=member.mention,
+    )
 
 
 async def memberLeave(beforeVoice: discord.VoiceState):
@@ -52,9 +60,17 @@ async def memberLeave(beforeVoice: discord.VoiceState):
 async def removeAllJoinToCreateChannels():
     for channel in joinToCreateChannels:
         for member in channel.members:
-            await member.send(embed=utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en", "commands.admin.joinToCreateListener.channelDeleted.title"),
-                description=tanjunLocalizer.localize(member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en", "commands.admin.joinToCreateListener.channelDeleted.description")
-            ))
+            await member.send(
+                embed=utility.tanjunEmbed(
+                    title=tanjunLocalizer.localize(
+                        member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en",
+                        "commands.admin.joinToCreateListener.channelDeleted.title",
+                    ),
+                    description=tanjunLocalizer.localize(
+                        member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en",
+                        "commands.admin.joinToCreateListener.channelDeleted.description",
+                    ),
+                )
+            )
         await channel.delete()
     joinToCreateChannels.clear()

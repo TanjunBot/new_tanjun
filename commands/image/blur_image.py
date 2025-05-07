@@ -1,9 +1,11 @@
-import utility
-from localizer import tanjunLocalizer
-import discord
-from PIL import Image, ImageFilter
 import io
 from io import BytesIO
+
+import discord
+from PIL import Image, ImageFilter
+
+import utility
+from localizer import tanjunLocalizer
 
 
 async def blur_image(
@@ -15,9 +17,7 @@ async def blur_image(
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.image.blur.typenotsupported.title"
-                ),
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.image.blur.typenotsupported.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.image.blur.typenotsupported.description",
@@ -28,12 +28,8 @@ async def blur_image(
 
     if image.size > 8 * 1024 * 1024:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.image.blur.filesize.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.image.blur.filesize.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.image.blur.filesize.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.image.blur.filesize.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -49,14 +45,8 @@ async def blur_image(
     image.save(buffer, format="png")
     buffer.seek(0)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.image.blur.success.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.image.blur.success.description"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.image.blur.success.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.image.blur.success.description"),
     )
     embed.set_image(url="attachment://image.png")
-    await commandInfo.reply(
-        embed=embed, file=discord.File(fp=buffer, filename="image.png")
-    )
+    await commandInfo.reply(embed=embed, file=discord.File(fp=buffer, filename="image.png"))

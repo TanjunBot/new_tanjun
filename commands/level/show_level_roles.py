@@ -1,9 +1,11 @@
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
-from api import get_all_level_roles, add_level_role, remove_level_role
-import discord
-from discord.ui import View, Button, Select, Modal, TextInput
 import math
+
+import discord
+from discord.ui import Button, Modal, Select, TextInput, View
+
+from api import add_level_role, get_all_level_roles, remove_level_role
+from localizer import tanjunLocalizer
+from utility import commandInfo, tanjunEmbed
 
 
 async def show_level_roles_command(commandInfo: commandInfo):
@@ -81,9 +83,7 @@ async def show_level_roles_command(commandInfo: commandInfo):
                 self.add_item(next_button)
 
             add_button = Button(
-                label=tanjunLocalizer.localize(
-                    self.commandInfo.locale, "commands.level.showlevelroles.add_button"
-                ),
+                label=tanjunLocalizer.localize(self.commandInfo.locale, "commands.level.showlevelroles.add_button"),
                 style=discord.ButtonStyle.green,
             )
             add_button.callback = self.add_role
@@ -180,9 +180,7 @@ async def show_level_roles_command(commandInfo: commandInfo):
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             if interaction.data["component_type"] == 3:  # RoleSelect
                 self.selected_role = interaction.data["values"][0]
-                await interaction.response.send_modal(
-                    AddRoleLevelModal(self.commandInfo, self.selected_role)
-                )
+                await interaction.response.send_modal(AddRoleLevelModal(self.commandInfo, self.selected_role))
             elif interaction.data["custom_id"] == "cancel_button":
                 await interaction.response.edit_message(
                     content=tanjunLocalizer.localize(
@@ -323,9 +321,7 @@ async def show_level_roles_command(commandInfo: commandInfo):
             await interaction.response.edit_message(view=self)
 
         async def next_page(self, interaction: discord.Interaction):
-            max_pages = math.ceil(
-                sum(len(roles) for roles in self.level_roles.values()) / 25
-            )
+            max_pages = math.ceil(sum(len(roles) for roles in self.level_roles.values()) / 25)
             self.current_page = min(max_pages - 1, self.current_page + 1)
             self.update_options()
             await interaction.response.edit_message(view=self)
@@ -375,30 +371,20 @@ async def show_level_roles_command(commandInfo: commandInfo):
 
     if not level_roles:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.showlevelroles.no_roles.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.showlevelroles.no_roles.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.no_roles.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.no_roles.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.showlevelroles.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.level.showlevelroles.description"
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.description"),
     )
 
     for level, roles in level_roles.items():
         embed.add_field(
-            name=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.level.showlevelroles.level", level=level
-            ),
+            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.level", level=level),
             value=", ".join([f"<@&{role}>" for role in roles]),
             inline=False,
         )

@@ -1,8 +1,9 @@
-import utility
-from localizer import tanjunLocalizer
-from api import getToken, getTokenOverview, useToken, includeToToken
-from config import openAiKey
 from openai import AsyncOpenAI
+
+import utility
+from api import getToken, getTokenOverview, includeToToken, useToken
+from config import openAiKey
+from localizer import tanjunLocalizer
 
 client = AsyncOpenAI(api_key=openAiKey)
 
@@ -17,7 +18,6 @@ async def ask_gpt(
     frequency_penalty: float = 0,
     presence_penalty: float = 0,
 ):
-
     token = await getToken(commandInfo.user.id)
 
     if not token:
@@ -26,12 +26,8 @@ async def ask_gpt(
 
     if token < 20:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.ai.ask.notoken.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.ai.ask.notoken.description"
-            ),
+            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.notoken.title"),
+            description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.notoken.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -68,9 +64,7 @@ async def ask_gpt(
     tokenOverview = await getTokenOverview(commandInfo.user.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.ai.ask.success.title", name=name
-        ),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.success.title", name=name),
         description=response.choices[0].message.content,
     )
 

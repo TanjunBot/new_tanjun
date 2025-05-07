@@ -1,7 +1,9 @@
-import discord
 import random
-from localizer import tanjunLocalizer
+
+import discord
+
 import utility
+from localizer import tanjunLocalizer
 
 
 async def rps(commandInfo: utility.commandInfo, user: discord.Member):
@@ -11,12 +13,8 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
     player2_choice = None
 
     rockLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.rock")
-    paperLocale = tanjunLocalizer.localize(
-        commandInfo.locale, "commands.games.rps.paper"
-    )
-    scissorsLocale = tanjunLocalizer.localize(
-        commandInfo.locale, "commands.games.rps.scissors"
-    )
+    paperLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.paper")
+    scissorsLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.scissors")
 
     if player2 == "tanjun" or user.bot:
         player2_choice = random.choice([rockLocale, paperLocale, scissorsLocale])
@@ -24,9 +22,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
     async def check_winner(interaction: discord.Interaction):
         if player1_choice == player2_choice:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.games.rps.draw"
-                ),
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.draw"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.games.rps.drawDescription",
@@ -44,9 +40,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
             or (player1_choice == scissorsLocale and player2_choice == paperLocale)
         ):
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.games.rps.win"
-                ),
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.win"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.games.rps.winDescription",
@@ -60,9 +54,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
 
         else:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.games.rps.lose"
-                ),
+                title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.lose"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.games.rps.loseDescription",
@@ -79,28 +71,19 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
             super().__init__()
             self.is_player1 = is_player1
 
-        @discord.ui.button(
-            label=rockLocale, style=discord.ButtonStyle.primary, custom_id="rock"
-        )
-        async def rock(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        @discord.ui.button(label=rockLocale, style=discord.ButtonStyle.primary, custom_id="rock")
+        async def rock(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
-            if self.is_player1 and interaction.user.id != player1.id:
+            if (
+                self.is_player1
+                and interaction.user.id != player1.id
+                or not self.is_player1
+                and interaction.user.id != player2.id
+            ):
                 await interaction.followup.send(
-                    tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.games.rps.notYourGame"
-                    ),
-                    ephemeral=True,
-                )
-                return
-            elif not self.is_player1 and interaction.user.id != player2.id:
-                await interaction.followup.send(
-                    tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.games.rps.notYourGame"
-                    ),
+                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -112,9 +95,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 else:
                     view = RPSView(commandInfo, False)
                     embed = utility.tanjunEmbed(
-                        title=tanjunLocalizer.localize(
-                            commandInfo.locale, "commands.games.rps.title"
-                        ),
+                        title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.title"),
                         description=tanjunLocalizer.localize(
                             commandInfo.locale,
                             "commands.games.rps.description",
@@ -128,28 +109,19 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 player2_choice = rockLocale
                 await check_winner(interaction)
 
-        @discord.ui.button(
-            label=paperLocale, style=discord.ButtonStyle.primary, custom_id="paper"
-        )
-        async def paper(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        @discord.ui.button(label=paperLocale, style=discord.ButtonStyle.primary, custom_id="paper")
+        async def paper(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
-            if self.is_player1 and interaction.user.id != player1.id:
+            if (
+                self.is_player1
+                and interaction.user.id != player1.id
+                or not self.is_player1
+                and interaction.user.id != player2.id
+            ):
                 await interaction.followup.send(
-                    tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.games.rps.notYourGame"
-                    ),
-                    ephemeral=True,
-                )
-                return
-            elif not self.is_player1 and interaction.user.id != player2.id:
-                await interaction.followup.send(
-                    tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.games.rps.notYourGame"
-                    ),
+                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -161,9 +133,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 else:
                     view = RPSView(commandInfo, False)
                     embed = utility.tanjunEmbed(
-                        title=tanjunLocalizer.localize(
-                            commandInfo.locale, "commands.games.rps.title"
-                        ),
+                        title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.title"),
                         description=tanjunLocalizer.localize(
                             commandInfo.locale,
                             "commands.games.rps.description",
@@ -182,25 +152,18 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
             style=discord.ButtonStyle.primary,
             custom_id="scissors",
         )
-        async def scissors(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def scissors(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
-            if self.is_player1 and interaction.user.id != player1.id:
+            if (
+                self.is_player1
+                and interaction.user.id != player1.id
+                or not self.is_player1
+                and interaction.user.id != player2.id
+            ):
                 await interaction.followup.send(
-                    tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.games.rps.notYourGame"
-                    ),
-                    ephemeral=True,
-                )
-                return
-            elif not self.is_player1 and interaction.user.id != player2.id:
-                await interaction.followup.send(
-                    tanjunLocalizer.localize(
-                        commandInfo.locale, "commands.games.rps.notYourGame"
-                    ),
+                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -212,9 +175,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 else:
                     view = RPSView(commandInfo, False)
                     embed = utility.tanjunEmbed(
-                        title=tanjunLocalizer.localize(
-                            commandInfo.locale, "commands.games.rps.title"
-                        ),
+                        title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.title"),
                         description=tanjunLocalizer.localize(
                             commandInfo.locale,
                             "commands.games.rps.description",
