@@ -11,7 +11,7 @@
 
 We value the security of our Discord Bot and appreciate responsible disclosure of any vulnerabilities. To report a security issue, please follow these steps:
 
-1. **Create an Issue**: Use the [Issues tab](https://github.com/TanjunBot/new-tanjun/issues/new?assignees=&labels=security%2Fvulnerability&projects=&template=security.yml) on our GitHub repository. Make sure to select the **Security Vulnerability Report** template.
+1. **Create an Issue**: Use the [Issues tab](https://github.com/TanjunBot/new_tanjun/issues/new?assignees=&labels=security%2Fvulnerability&projects=&template=security.yml) on our GitHub repository. Make sure to select the **Security Vulnerability Report** template.
 
 2. **Describe the Vulnerability**: Provide a clear and detailed description of the security vulnerability. Include:
    - Steps to reproduce the vulnerability (if known).

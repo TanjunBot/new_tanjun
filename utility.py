@@ -975,7 +975,7 @@ def checkIfhasPlus(userid: int):
 
 def missingLocalization(locale: str):
     g = Github(GithubAuthToken)
-    repo = g.get_repo("TanjunBot/new-Tanjun")
+    repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("missing localization")
     repo.create_issue(
         title="Missing localization",
@@ -986,7 +986,7 @@ def missingLocalization(locale: str):
 
 def addFeedback(content, author):
     g = Github(GithubAuthToken)
-    repo = g.get_repo("TanjunBot/new-Tanjun")
+    repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("Feedback")
     repo.create_issue(
         title="Feedback",

@@ -120,8 +120,8 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://docs.tanjun.bot/"
-"Repository" = "https://github.com/TanjunBot/new-tanjun"
-"Bug Tracker" = "https://github.com/TanjunBot/new-tanjun/issues"
+"Repository" = "https://github.com/TanjunBot/new_tanjun"
+"Bug Tracker" = "https://github.com/TanjunBot/new_tanjun/issues"
 
 [tool.ruff]
 target-version = "py312"
