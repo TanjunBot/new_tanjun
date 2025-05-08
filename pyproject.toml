@@ -157,5 +157,18 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 
 [tool.ruff.lint.flake8-annotations]
-mypy-init-only = true
-suppress-star-arg-any = true
+# To allow *args: Any and **kwargs: Any without forcing more specific types (disables ANN002, ANN003 for Any):
+allow-star-arg-any = true
+
+# To suppress errors for functions that don't return a value (e.g. __init__)
+# not having a '-> None' annotation (disables ANN201, ANN202, ANN204, ANN205 in such cases).
+suppress-none-returning = true
+
+# Note: The 'mypy-init-only' option from older versions of flake8-annotations
+# (which allowed omitting annotations in __init__ if it only called super())
+# does not have a direct equivalent in Ruff's flake8-annotations settings.
+#
+# To ignore a specific rule like ANN205 (Missing return type annotation for __init__ if not None)
+# project-wide, you would add it to the main 'ignore' list under '[tool.ruff.lint]', for example:
+# (in [tool.ruff.lint] section)
+# ignore = ["ANN205"]
