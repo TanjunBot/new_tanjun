@@ -7,6 +7,8 @@ from discord import Entitlement
 from config import database_ip, database_password, database_schema, database_user
 from utility import get_level_for_xp, get_xp_for_level
 
+from typing import Any, Dict, List, Tuple
+
 pool = None
 
 
