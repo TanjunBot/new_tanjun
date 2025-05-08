@@ -1,13 +1,12 @@
 import json
 from datetime import datetime
+from typing import Any
 
 import asyncmy
 from discord import Entitlement
 
 from config import database_ip, database_password, database_schema, database_user
 from utility import get_level_for_xp, get_xp_for_level
-
-from typing import Any, Dict, List, Tuple
 
 pool = None
 
@@ -21,7 +20,7 @@ def check_pool_initialized() -> bool:
     return pool is not None
 
 
-async def execute_query(query: str, params: Sequence[Any] | Dict[str, Any] | None = None) -> List[Tuple[Any, ...]] | None:
+async def execute_query(query: str, params: Sequence[Any] | dict[str, Any] | None = None) -> list[tuple[Any, ...]] | None:
     if not pool:
         print(
             "Tried to execute action without pool. Pool is not yet initialized.Returning...\nquery: ",
@@ -666,7 +665,7 @@ async def add_warning(
     await execute_action(query, params)
 
 
-async def get_warnings(guild_id: str | int, user_id: str | int = None) -> List[Tuple[Any, ...]] | None:
+async def get_warnings(guild_id: str | int, user_id: str | int = None) -> list[tuple[Any, ...]] | None:
     if user_id:
         query = "SELECT * FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id, user_id)
@@ -679,7 +678,7 @@ async def get_warnings(guild_id: str | int, user_id: str | int = None) -> List[T
         return result
 
 
-async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> List[Tuple[Any, ...]] | None:
+async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> list[tuple[Any, ...]] | None:
     query = (
         "SELECT id, reason, created_at, expires_at, created_by "
         "FROM warnings WHERE guild_id = %s AND user_id = %s "
@@ -727,7 +726,7 @@ async def set_warn_config(
     await execute_action(query, params)
 
 
-async def get_warn_config(guild_id: str | int) -> List[Tuple[Any, ...]] | None:
+async def get_warn_config(guild_id: str | int) -> list[tuple[Any, ...]] | None:
     query = "SELECT * FROM warn_config WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
@@ -757,7 +756,7 @@ async def save_channel_overwrites(channel_id: str | int, role_id: str | int, ove
     await execute_action(query, params)
 
 
-async def get_channel_overwrites(channel_id: str | int) -> List[Tuple[Any, ...]] | None:
+async def get_channel_overwrites(channel_id: str | int) -> list[tuple[Any, ...]] | None:
     query = "SELECT role_id, overwrites FROM channel_overwrites WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
