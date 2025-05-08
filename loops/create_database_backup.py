@@ -3,11 +3,12 @@ import subprocess
 
 from discord import Client, File, TextChannel
 
-from config import database_password, database_user  # , database_ip
+from config import database_password, database_user 
 
 
-def dump_database_schema(user, password, output_file):
+def dump_database_schema(user: str, password: str, output_file: str) -> None:
     if platform.system() != "Linux":
+        print("Tried to create Database backup on a non Linux system. This is not supported. Abording..")
         return
 
     dump_command = [
@@ -29,7 +30,7 @@ def dump_database_schema(user, password, output_file):
         print("mysqldump command not found. Make sure MySQL is installed and mysqldump is in your PATH.")
 
 
-async def create_database_backup(client: Client):
+async def create_database_backup(client: Client) -> None:
     dump_database_schema(database_user, database_password, "backup.sql")
 
     channel: TextChannel = client.get_channel(1259573137108893766)

@@ -10,7 +10,7 @@ class Localizer:
     def __init__(self):
         self.translations = {}
 
-    def load_translations(self, locale):
+    def load_translations(self, locale: str) -> Any:
         """Load the translations from a JSON file based on the specified locale."""
         try:
             with open(f"locales/{locale}.json", encoding="utf-8") as file:
@@ -22,7 +22,7 @@ class Localizer:
             print(f"Error decoding JSON from the translation file for locale '{locale}'.")
             return {}
 
-    def get_translation(self, translations, key):
+    def get_translation(self, translations: list[str], key: str) -> str:
         """Retrieve a nested translation using dot notation for nested keys."""
         translation = next(
             (translation for translation in translations if translation["identifier"].lower() == key.lower()),
@@ -31,7 +31,7 @@ class Localizer:
 
         return translation
 
-    def localize(self, locale, key, **args):
+    def localize(self, locale: str, key: str, **args) -> str:
         """Retrieve the localized text for the specified locale and format it with any arguments provided."""
         if locale in ["en", "en-US", "en-GB"]:
             locale = "en"
@@ -48,7 +48,7 @@ class Localizer:
         template = Template(template_string)
         return template.safe_substitute(args)
 
-    def test_localize(self, locale, key, **args):
+    def test_localize(self, locale: str, key: str, **args) -> str:
         translations = self.load_translations(locale)
         template_string = self.get_translation(translations, key)
         if template_string is None:
