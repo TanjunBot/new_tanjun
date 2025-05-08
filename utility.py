@@ -443,7 +443,7 @@ class tanjunEmbed:
 
         if url is None:
             try:
-                del self._image
+                del self._image  # type: ignore
             except AttributeError:
                 pass
         else:
@@ -487,7 +487,7 @@ class tanjunEmbed:
 
         if url is None:
             try:
-                del self._thumbnail
+                del self._thumbnail  # type: ignore
             except AttributeError:
                 pass
         else:
@@ -612,7 +612,7 @@ class tanjunEmbed:
         }
 
         try:
-            self._fields.append(field)
+            self._fields.append(field)  # type: ignore
         except AttributeError:
             self._fields = [field]
 
@@ -790,7 +790,7 @@ class commandInfo:
         locale: str,
         message: discord.Message,
         permissions: discord.Permissions,
-        reply,
+        reply: collections.abc.Coroutine,
         client: discord.Client,
     ):
         self.user = user
@@ -804,7 +804,7 @@ class commandInfo:
         self.client = client
 
 
-def cmp(a, b):
+def cmp(a: int, b: int) -> int:
     return (a > b) - (a < b)
 
 
@@ -814,7 +814,7 @@ class NumericStringParser:
 
     """
 
-    def pushFirst(self, strg, loc, toks):
+    def pushFirst(self, strg, loc, toks) -> None:
         self.exprStack.append(toks[0])
 
     def pushUMinus(self, strg, loc, toks):
@@ -915,10 +915,10 @@ class NumericStringParser:
         return val
 
 
-async def getGif(query: str, amount: int = 1, limit: int = 10):
+async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
     async with aiohttp.ClientSession() as session:
 
-        async def fetch(url):
+        async def fetch(url: str) -> str:
             async with session.get(url) as response:
                 if response.status != 200:
                     return None
@@ -937,14 +937,11 @@ async def getGif(query: str, amount: int = 1, limit: int = 10):
         return [r["results"][i]["media_formats"]["mediumgif"]["url"] for i in range(amount)]
 
 
-def get_highest_exponent(polynomial):
-    # Remove spaces
+def get_highest_exponent(polynomial: str) -> int:
     polynomial = polynomial.replace(" ", "")
 
-    # Regular expression to match terms
     term_pattern = re.compile(r"([+-]?\d*)(x(\^(\d+))?)?")
 
-    # Find all matches
     terms = term_pattern.findall(polynomial)
 
     highest_exponent = 0
@@ -952,28 +949,28 @@ def get_highest_exponent(polynomial):
     for term in terms:
         coefficient, variable, _, exponent = term
 
-        if variable:  # term contains 'x'
-            if exponent:  # term contains 'x^n'
+        if variable:
+            if exponent:
                 highest_exponent = max(highest_exponent, int(exponent))
-            else:  # term is 'x' which is x^1
+            else:
                 highest_exponent = max(highest_exponent, 1)
 
     return highest_exponent
 
 
-def checkIfHasPro(guildid: int):
+def checkIfHasPro(guildid: int) -> bool:
     if guildid == 0:
         return False
     return True
 
 
-def checkIfhasPlus(userid: int):
+def checkIfhasPlus(userid: int) -> bool:
     if userid == 0:
         return False
     return True
 
 
-def missingLocalization(locale: str):
+def missingLocalization(locale: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("missing localization")
@@ -984,7 +981,7 @@ def missingLocalization(locale: str):
     )
 
 
-def addFeedback(content, author):
+def addFeedback(content: str, author: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("Feedback")
@@ -1002,7 +999,6 @@ LEVEL_SCALINGS = {
     "extreme": lambda level: 100 * (level**2.5),
 }
 
-# Define allowed operators
 operators = {
     ast.Add: op.add,
     ast.Sub: op.sub,
@@ -1015,16 +1011,15 @@ operators = {
 }
 
 
-# Add helper functions for all operations
-def sqrt_n(x, n=2):
+def sqrt_n(x: float, n: float = 2) -> float:
     return x ** (1 / n)
 
 
-def log_n(x, base=math.e):
+def log_n(x: float, base: float = math.e) -> float:
     return math.log(x, base)
 
 
-def eval_expr(expr, variables=None):
+def eval_expr(expr: str, variables=None) -> float:
     if variables is None:
         variables = {}
 
@@ -1238,8 +1233,7 @@ class MockInteraction(discord.Interaction):
             state=bot._connection,
         )
 
-    # Override the original_response method to store the message
-    async def original_response(self):
+    async def original_response(self) -> str:
         return self.response.message
 
 

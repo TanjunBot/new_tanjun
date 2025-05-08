@@ -1,7 +1,3 @@
-# Unused imports:
-# import aiomysql
-# import asyncmy
-# from config import database_ip, database_password, database_user, database_schema
 import json
 from datetime import datetime
 
@@ -14,16 +10,16 @@ from utility import get_level_for_xp, get_xp_for_level
 pool = None
 
 
-def set_pool(p):
+def set_pool(p: any) -> None:
     global pool
     pool = p
 
 
-def check_pool_initialized():
+def check_pool_initialized() -> bool:
     return pool is not None
 
 
-async def execute_query(query, params=None):
+async def execute_query(query: str, params: Sequence[Any] | Dict[str, Any] | None = None) -> List[Tuple[Any, ...]] | None:
     if not pool:
         print(
             "Tried to execute action without pool. Pool is not yet initialized.Returning...\nquery: ",
@@ -39,16 +35,14 @@ async def execute_query(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            # print(f"Executing query: {query}\nparams: {params}")
             await cursor.execute(query, params)
             result = await cursor.fetchall()
-            # print(f"Result: {result}")
             return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
 
 
-async def execute_action(query, params=None):
+async def execute_action(query, params=None) -> None:
     if not pool:
         print(
             ("Tried to execute action without pool. Pool is not yet initialized. Returning...\nquery: "),
@@ -63,16 +57,15 @@ async def execute_action(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            # print(f"Executing action: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
-            # print(f"Action executed successfully. Rows affected: {cursor.rowcount}")
             return cursor.rowcount
+
     except Exception as e:
         print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
 
 
-async def execute_insert_and_get_id(query, params=None):
+async def execute_insert_and_get_id(query, params=None) -> int | None:
     if not pool:
         return
     try:
@@ -83,19 +76,16 @@ async def execute_insert_and_get_id(query, params=None):
             db=database_schema,
         )
         async with connection.cursor() as cursor:
-            # print(f"Executing insert: {query}\nparams: {params}")
             await cursor.execute(query, params)
             await connection.commit()
-            # print("Insert executed successfully. Committing changes.")
             await cursor.execute("SELECT LAST_INSERT_ID()")
             last_id = await cursor.fetchone()
-            # print(f"Last inserted ID: {last_id}")
             return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
 
 
-async def create_tables():
+async def create_tables() -> None:
     tables = {}
     tables["warnings"] = (
         "CREATE TABLE IF NOT EXISTS `warnings` ("
@@ -666,18 +656,15 @@ async def create_tables():
         await execute_action(table_query)
 
 
-async def test_db(self, ctx):
-    query = "SELECT 1"
-    await execute_query(query)
-
-
-async def add_warning(guild_id, user_id, reason, expiration_date, created_by):
+async def add_warning(
+    guild_id: str | int, user_id: str | int, reason: str, expiration_date: datetime.datetime, created_by: str | int
+) -> None:
     query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at, created_by) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, user_id, reason, expiration_date, created_by)
     await execute_action(query, params)
 
 
-async def get_warnings(guild_id, user_id=None):
+async def get_warnings(guild_id: str | int, user_id: str | int = None) -> List[Tuple[Any, ...]] | None:
     if user_id:
         query = "SELECT * FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id, user_id)
@@ -690,7 +677,7 @@ async def get_warnings(guild_id, user_id=None):
         return result
 
 
-async def get_detailed_warnings(guild_id, user_id):
+async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> List[Tuple[Any, ...]] | None:
     query = (
         "SELECT id, reason, created_at, expires_at, created_by "
         "FROM warnings WHERE guild_id = %s AND user_id = %s "
@@ -701,20 +688,20 @@ async def get_detailed_warnings(guild_id, user_id):
     return [(row[0], row[1], row[2], row[3], row[4]) for row in result]
 
 
-async def remove_warning(warning_id):
+async def remove_warning(warning_id: int) -> None:
     query = "DELETE FROM warnings WHERE id = %s"
     params = (warning_id,)
     await execute_action(query, params)
 
 
 async def set_warn_config(
-    guild_id,
-    expiration_days,
-    timeout_threshold,
-    timeout_duration,
-    kick_threshold,
-    ban_threshold,
-):
+    guild_id: str | int,
+    expiration_days: int,
+    timeout_threshold: int,
+    timeout_duration: int,
+    kick_threshold: int,
+    ban_threshold: int,
+) -> None:
     query = (
         "INSERT INTO warn_config (guild_id, expiration_days, "
         "timeout_threshold, timeout_duration, "
@@ -738,7 +725,7 @@ async def set_warn_config(
     await execute_action(query, params)
 
 
-async def get_warn_config(guild_id):
+async def get_warn_config(guild_id: str | int) -> List[Tuple[Any, ...]] | None:
     query = "SELECT * FROM warn_config WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
@@ -762,90 +749,90 @@ async def get_warn_config(guild_id):
         return None
 
 
-async def save_channel_overwrites(channel_id, role_id, overwrites):
+async def save_channel_overwrites(channel_id: str | int, role_id: str | int, overwrites: str) -> None:
     query = "INSERT INTO channel_overwrites (channel_id, role_id, overwrites) VALUES (%s, %s, %s)"
     params = (channel_id, role_id, json.dumps(overwrites))
     await execute_action(query, params)
 
 
-async def get_channel_overwrites(channel_id):
+async def get_channel_overwrites(channel_id: str | int) -> List[Tuple[Any, ...]] | None:
     query = "SELECT role_id, overwrites FROM channel_overwrites WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return {row[0]: json.loads(row[1]) for row in result}
 
 
-async def clear_channel_overwrites(channel_id):
+async def clear_channel_overwrites(channel_id: str | int) -> None:
     query = "DELETE FROM channel_overwrites WHERE channel_id = %s"
     params = (channel_id,)
     await execute_action(query, params)
 
 
-async def check_if_opted_out(user_id):
+async def check_if_opted_out(user_id: str | int) -> bool:
     query = "SELECT * FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     result = await execute_query(query, params)
     return result and len(result) > 0
 
 
-async def opt_out(user_id):
+async def opt_out(user_id: str | int) -> None:
     query = "INSERT INTO message_tracking_opt_out (user_id) VALUES (%s)"
     params = (user_id,)
     await execute_action(query, params)
 
 
-async def opt_in(user_id):
+async def opt_in(user_id: str | int) -> None:
     query = "DELETE FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     await execute_action(query, params)
 
 
-async def set_counting_progress(channel_id, progress, guild_id):
+async def set_counting_progress(channel_id: str | int, progress: int, guild_id: str | int) -> None:
     query = "INSERT INTO counting (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
     params = (channel_id, progress, guild_id, progress)
     await execute_action(query, params)
 
 
-async def get_counting_channel_amount(guild_id):
+async def get_counting_channel_amount(guild_id: str | int) -> int:
     query = "SELECT COUNT(progress) FROM counting WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return len(result) if result else 0
 
 
-async def get_counting_progress(channel_id):
+async def get_counting_progress(channel_id: str | int) -> str:
     query = "SELECT progress FROM counting WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def increase_counting_progress(channel_id, last_counter_id):
+async def increase_counting_progress(channel_id: str | int, last_counter_id: str | int) -> None:
     query = "UPDATE counting SET progress = progress + 1, last_counter_id = %s WHERE channel_id = %s"
     params = (last_counter_id, channel_id)
     await execute_action(query, params)
 
 
-async def get_last_counter_id(channel_id):
+async def get_last_counter_id(channel_id: str | int) -> str:
     query = "SELECT last_counter_id FROM counting WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def clear_counting(channel_id):
+async def clear_counting(channel_id: str | int) -> None:
     query = "DELETE FROM counting WHERE channel_id = %s"
     params = (channel_id,)
     await execute_action(query, params)
 
 
-async def set_counting_challenge_progress(channel_id, progress):
+async def set_counting_challenge_progress(channel_id: str | int, progress: int) -> None:
     query = "INSERT INTO counting_challenge (channel_id, progress) VALUES (%s, %s) ON DUPLICATE KEY UPDATE progress = %s"
     params = (channel_id, progress, progress)
     await execute_action(query, params)
 
 
-async def get_counting_challenge_progress(channel_id):
+async def get_counting_challenge_progress(channel_id: str | int) -> str:
     query = "SELECT progress FROM counting_challenge WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
