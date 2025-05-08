@@ -3,7 +3,7 @@ import subprocess
 
 from discord import Client, File, TextChannel
 
-from config import database_password, database_user 
+from config import database_password, database_user
 
 
 def dump_database_schema(user: str, password: str, output_file: str) -> None:

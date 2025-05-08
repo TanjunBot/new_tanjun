@@ -443,7 +443,7 @@ class tanjunEmbed:
 
         if url is None:
             try:
-                del self._image # type: ignore
+                del self._image  # type: ignore
             except AttributeError:
                 pass
         else:
@@ -487,7 +487,7 @@ class tanjunEmbed:
 
         if url is None:
             try:
-                del self._thumbnail # type: ignore
+                del self._thumbnail  # type: ignore
             except AttributeError:
                 pass
         else:
@@ -612,7 +612,7 @@ class tanjunEmbed:
         }
 
         try:
-            self._fields.append(field) # type: ignore
+            self._fields.append(field)  # type: ignore
         except AttributeError:
             self._fields = [field]
 
@@ -1011,11 +1011,11 @@ operators = {
 }
 
 
-def sqrt_n(x: float, n: float=2) -> float:
+def sqrt_n(x: float, n: float = 2) -> float:
     return x ** (1 / n)
 
 
-def log_n(x: float, base: float=math.e) -> float:
+def log_n(x: float, base: float = math.e) -> float:
     return math.log(x, base)
 
 
