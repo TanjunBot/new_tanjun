@@ -899,7 +899,9 @@ async def get_counting_mode_mode(channel_id: str | int) -> str:
     return result[0][0] if result else None
 
 
-async def set_counting_mode_progress(channel_id: str | int, progress: int, guild_id: str | int, mode: int, goal: int, counter_id: str | int) -> None:
+async def set_counting_mode_progress(
+    channel_id: str | int, progress: int, guild_id: str | int, mode: int, goal: int, counter_id: str | int
+) -> None:
     query = "INSERT INTO counting_modes (channel_id, progress, guild_id, mode, goal, last_counter_id) VALUES (%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s, last_counter_id = %s"
     params = (
         channel_id,
