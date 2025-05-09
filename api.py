@@ -1162,7 +1162,7 @@ async def remove_user_boost(guild_id: str | int, user_id: str | int) -> None:
     await execute_action(query, params)
 
 
-async def get_all_boosts(guild_id: str | int) -> Dict[str, Optional[List[Tuple[Any, ...]]]]:
+async def get_all_boosts(guild_id: str | int) -> Dict[str, List[Tuple[Any, ...]]] | None:
     role_query = "SELECT role_id, boost, additive FROM roleXpBoost WHERE guild_id = %s"
     channel_query = "SELECT channel_id, boost, additive FROM channelXpBoost WHERE guild_id = %s"
     user_query = "SELECT user_id, boost, additive FROM userXpBoost WHERE guild_id = %s"
