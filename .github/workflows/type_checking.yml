@@ -31,7 +31,7 @@ jobs:
       - name: Install Mypy and dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install mypy
+          pip install mypy==1.1.0
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Mypy
