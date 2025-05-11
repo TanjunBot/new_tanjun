@@ -30,36 +30,37 @@ jobs:
 
       - name: Install Mypy and specific type-checking dependencies
         run: |
-            python -m pip install --upgrade pip
-            echo "Installing pinned versions of Mypy, mypy-extensions, and typing-extensions..."
-            pip install mypy==1.15.0 mypy-extensions==1.1.0 typing-extensions==4.13.2
-            
-            echo "Installing other dependencies from requirements.txt if it exists..."
-            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python -m pip install --upgrade pip
+          echo "Installing pinned versions of Mypy, mypy-extensions, and typing-extensions..."
+          pip install mypy==1.15.0 mypy-extensions==1.1.0 typing-extensions==4.13.2
+          
+          echo "Installing other dependencies from requirements.txt if it exists..."
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
   
-            - name: Pre-Mypy Debug Diagnostics
-            run: |
-              echo "--- Current Directory ---"
-              pwd
-              echo "--- Directory Listing (root) ---"
-              ls -la
-              echo "--- Python & Pip Info ---"
-              which python
-              python --version
-              which pip
-              pip --version
-              echo "--- Mypy Info ---"
-              which mypy
-              mypy --version
-              echo "--- Relevant Environment Variables ---"
-              echo "PYTHONPATH: '${PYTHONPATH}'"
-              echo "MYPYPATH: '${MYPYPATH}'"
-              echo "MYPY_CONFIG_FILE: '${MYPY_CONFIG_FILE}'"
-              echo "--- Checking for Mypy Config Files ---"
-              find . -maxdepth 3 -name "mypy.ini" -o -name ".mypy.ini" -o -name "pyproject.toml" -o -name "setup.cfg" -print -exec cat {} \; || echo "No standard Mypy config files found in top 3 levels."
-              echo "--- Final Pip Freeze ---"
-              pip freeze > final_workflow_pip_freeze.txt
-              cat final_workflow_pip_freeze.txt
+      # Correctly unindented step
+      - name: Pre-Mypy Debug Diagnostics
+        run: |
+          echo "--- Current Directory ---"
+          pwd
+          echo "--- Directory Listing (root) ---"
+          ls -la
+          echo "--- Python & Pip Info ---"
+          which python
+          python --version
+          which pip
+          pip --version
+          echo "--- Mypy Info ---"
+          which mypy
+          mypy --version
+          echo "--- Relevant Environment Variables ---"
+          echo "PYTHONPATH: '${PYTHONPATH}'"
+          echo "MYPYPATH: '${MYPYPATH}'"
+          echo "MYPY_CONFIG_FILE: '${MYPY_CONFIG_FILE}'"
+          echo "--- Checking for Mypy Config Files ---"
+          find . -maxdepth 3 -name "mypy.ini" -o -name ".mypy.ini" -o -name "pyproject.toml" -o -name "setup.cfg" -print -exec cat {} \; || echo "No standard Mypy config files found in top 3 levels."
+          echo "--- Final Pip Freeze ---"
+          pip freeze > final_workflow_pip_freeze.txt
+          cat final_workflow_pip_freeze.txt
 
       - name: Upload Final Workflow Pip Freeze
         if: always()
@@ -90,6 +91,7 @@ jobs:
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
         continue-on-error: true
         
+      # ... (rest of your workflow for counting issues, uploading artifacts, and managing GitHub issues) ...
       - name: Count Mypy Issues
         id: mypy_count
         if: always()
@@ -105,7 +107,8 @@ jobs:
           echo "Counted ${ISSUE_COUNT} Mypy issue lines from report file."
 
       - name: Upload Mypy report artifact
-        if: steps.mypy_check.outputs.exit_code != '0' && steps.mypy_count.outputs.issue_count != '0'
+        # Ensure this condition correctly reflects when you want to upload
+        if: steps.mypy_check.outputs.exit_code != '0' || steps.mypy_count.outputs.issue_count != '0' 
         uses: actions/upload-artifact@v4
         with:
           name: mypy-report-${{ github.run_id }}-${{ github.sha }}
@@ -274,6 +277,20 @@ jobs:
                 console.log("No Mypy errors and no existing open Mypy issue to close.");
               }
             } else {
-              console.warn(`Mypy check resulted in an ambiguous state or Mypy passed but still reported issues (or vice versa). Exit code: ${mypyExitCode}, Error lines in report: ${errorCount}. No issue action will be taken for this state, but please check workflow logs and artifacts.`);
-              // You could potentially create a specific "ambiguous run" issue here if desired.
+              // This condition means mypyExitCode is 0 but errorCount > 0 OR mypyExitCode != 0 but errorCount is 0
+              if (mypyExitCode === 0 && errorCount > 0) {
+                console.warn(`Mypy exited successfully (code 0), but the report file contained ${errorCount} lines. This might indicate notes or warnings that don't cause Mypy to fail but are still captured. Treating as if errors were found for issue management.`);
+                // You could choose to proceed as if errors were found, or handle this state differently.
+                // For now, let's assume if the report has lines, we create/update an issue.
+                // To strictly follow exit code, this block would be different.
+                // The original script logic effectively treats non-zero exit code AND non-zero error count as the primary error condition.
+                // Let's refine this:
+                console.warn(`Mypy exited with code ${mypyExitCode} and reported ${errorCount} error lines. The script's main error handling path (create/update issue) expects both mypyExitCode != 0 AND errorCount > 0. This is an ambiguous state. No GitHub issue action will be taken for this specific combination unless logic is adjusted.`);
+
+              } else if (mypyExitCode !== 0 && errorCount === 0 && reportContent.trim() === '') {
+                 console.warn(`Mypy exited with a non-zero code (${mypyExitCode}), but the Mypy report file was empty or contained no actual error lines. This could be an internal Mypy error or a configuration problem not producing standard output. Check workflow logs for Mypy's stderr directly if possible. No GitHub issue action based on error content will be taken.`);
+              }
+              else {
+                console.warn(`Mypy check resulted in an ambiguous state. Exit code: ${mypyExitCode}, Error lines in report: ${errorCount}. No standard issue action will be taken for this state, but please check workflow logs and artifacts.`);
+              }
             }
