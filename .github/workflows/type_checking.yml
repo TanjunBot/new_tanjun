@@ -37,12 +37,43 @@ jobs:
             echo "Installing other dependencies from requirements.txt if it exists..."
             if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
   
-  
+            - name: Pre-Mypy Debug Diagnostics
+            run: |
+              echo "--- Current Directory ---"
+              pwd
+              echo "--- Directory Listing (root) ---"
+              ls -la
+              echo "--- Python & Pip Info ---"
+              which python
+              python --version
+              which pip
+              pip --version
+              echo "--- Mypy Info ---"
+              which mypy
+              mypy --version
+              echo "--- Relevant Environment Variables ---"
+              echo "PYTHONPATH: '${PYTHONPATH}'"
+              echo "MYPYPATH: '${MYPYPATH}'"
+              echo "MYPY_CONFIG_FILE: '${MYPY_CONFIG_FILE}'"
+              echo "--- Checking for Mypy Config Files ---"
+              find . -maxdepth 3 -name "mypy.ini" -o -name ".mypy.ini" -o -name "pyproject.toml" -o -name "setup.cfg" -print -exec cat {} \; || echo "No standard Mypy config files found in top 3 levels."
+              echo "--- Final Pip Freeze ---"
+              pip freeze > final_workflow_pip_freeze.txt
+              cat final_workflow_pip_freeze.txt
 
+      - name: Upload Final Workflow Pip Freeze
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-workflow-pip-freeze-${{ github.run_id }}
+          path: final_workflow_pip_freeze.txt
+          
       - name: Run Mypy
         id: mypy_check
         run: |
           mkdir -p mypy_reports
+          # For extreme debugging, try disabling the cache explicitly in GHA
+          # mypy --cache-dir /dev/null . \
           mypy . \
             --explicit-package-bases \
             --soft-error-limit -1 \
@@ -58,7 +89,7 @@ jobs:
             2>&1 | tee mypy_reports/mypy_issues.txt
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
         continue-on-error: true
-
+        
       - name: Count Mypy Issues
         id: mypy_count
         if: always()
