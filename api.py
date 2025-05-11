@@ -1,9 +1,9 @@
 import json
+from collections.abc import Sequence
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union, cast
+from typing import Any, cast
 
-import asyncmy # type: ignore[import-untyped]
-from discord import Entitlement
+import asyncmy  # type: ignore[import-untyped]
 
 from config import database_ip, database_password, database_schema, database_user
 from utility import get_level_for_xp, get_xp_for_level
@@ -20,7 +20,7 @@ def check_pool_initialized() -> bool:
     return pool is not None
 
 
-async def execute_query(query: str, params: Optional[Union[Sequence[Any], Dict[str, Any]]] = None) -> Optional[List[Tuple[Any, ...]]]:
+async def execute_query(query: str, params: Sequence[Any] | dict[str, Any] | None = None) -> list[tuple[Any, ...]] | None:
     if not pool:
         print(
             "Tried to execute action without pool. Pool is not yet initialized.Returning...\nquery: ",
@@ -37,14 +37,14 @@ async def execute_query(query: str, params: Optional[Union[Sequence[Any], Dict[s
         )
         async with connection.cursor() as cursor:
             await cursor.execute(query, params)
-            result: List[Tuple[Any, ...]] = await cursor.fetchall()
+            result: list[tuple[Any, ...]] = await cursor.fetchall()
             return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
         return None
 
 
-async def execute_action(query: str, params: Optional[Union[Sequence[Any], Dict[str, Any]]] = None) -> Optional[int]:
+async def execute_action(query: str, params: Sequence[Any] | dict[str, Any] | None = None) -> int | None:
     if not pool:
         print(
             ("Tried to execute action without pool. Pool is not yet initialized. Returning...\nquery: "),
@@ -69,7 +69,7 @@ async def execute_action(query: str, params: Optional[Union[Sequence[Any], Dict[
         return None
 
 
-async def execute_insert_and_get_id(query: str, params: Optional[Union[Sequence[Any], Dict[str, Any]]] = None) -> Optional[int]:
+async def execute_insert_and_get_id(query: str, params: Sequence[Any] | dict[str, Any] | None = None) -> int | None:
     if not pool:
         return None
     try:
@@ -662,14 +662,14 @@ async def create_tables() -> None:
 
 
 async def add_warning(
-    guild_id: Union[str, int], user_id: Union[str, int], reason: str, expiration_date: datetime, created_by: Union[str, int]
+    guild_id: str | int, user_id: str | int, reason: str, expiration_date: datetime, created_by: str | int
 ) -> None:
     query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at, created_by) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, user_id, reason, expiration_date, created_by)
     await execute_action(query, params)
 
 
-async def get_warnings(guild_id: Union[str, int], user_id: Optional[Union[str, int]] = None) -> Optional[List[Tuple[Any, ...]]]:
+async def get_warnings(guild_id: str | int, user_id: str | int | None = None) -> list[tuple[Any, ...]] | None:
     if user_id:
         query = "SELECT * FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id, user_id)
@@ -682,7 +682,7 @@ async def get_warnings(guild_id: Union[str, int], user_id: Optional[Union[str, i
         return result
 
 
-async def get_detailed_warnings(guild_id: Union[str, int], user_id: Union[str, int]) -> Optional[List[Tuple[Any, ...]]]:
+async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> list[tuple[Any, ...]] | None:
     query = (
         "SELECT id, reason, created_at, expires_at, created_by "
         "FROM warnings WHERE guild_id = %s AND user_id = %s "
@@ -702,7 +702,7 @@ async def remove_warning(warning_id: int) -> None:
 
 
 async def set_warn_config(
-    guild_id: Union[str, int],
+    guild_id: str | int,
     expiration_days: int,
     timeout_threshold: int,
     timeout_duration: int,
@@ -732,7 +732,7 @@ async def set_warn_config(
     await execute_action(query, params)
 
 
-async def get_warn_config(guild_id: Union[str, int]) -> Optional[Dict[str, int]]:
+async def get_warn_config(guild_id: str | int) -> dict[str, int] | None:
     query = "SELECT * FROM warn_config WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
@@ -756,13 +756,13 @@ async def get_warn_config(guild_id: Union[str, int]) -> Optional[Dict[str, int]]
         return None
 
 
-async def save_channel_overwrites(channel_id: Union[str, int], role_id: Union[str, int], overwrites: str) -> None:
+async def save_channel_overwrites(channel_id: str | int, role_id: str | int, overwrites: str) -> None:
     query = "INSERT INTO channel_overwrites (channel_id, role_id, overwrites) VALUES (%s, %s, %s)"
     params = (channel_id, role_id, json.dumps(overwrites))
     await execute_action(query, params)
 
 
-async def get_channel_overwrites(channel_id: Union[str, int]) -> Optional[Dict[str, Any]]:
+async def get_channel_overwrites(channel_id: str | int) -> dict[str, Any] | None:
     query = "SELECT role_id, overwrites FROM channel_overwrites WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
@@ -771,136 +771,136 @@ async def get_channel_overwrites(channel_id: Union[str, int]) -> Optional[Dict[s
     return None
 
 
-async def clear_channel_overwrites(channel_id: Union[str, int]) -> None:
+async def clear_channel_overwrites(channel_id: str | int) -> None:
     query = "DELETE FROM channel_overwrites WHERE channel_id = %s"
     params = (channel_id,)
     await execute_action(query, params)
 
 
-async def check_if_opted_out(user_id: Union[str, int]) -> bool:
+async def check_if_opted_out(user_id: str | int) -> bool:
     query = "SELECT * FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     result = await execute_query(query, params)
     return result is not None and len(result) > 0
 
 
-async def opt_out(user_id: Union[str, int]) -> None:
+async def opt_out(user_id: str | int) -> None:
     query = "INSERT INTO message_tracking_opt_out (user_id) VALUES (%s)"
     params = (user_id,)
     await execute_action(query, params)
 
 
-async def opt_in(user_id: Union[str, int]) -> None:
+async def opt_in(user_id: str | int) -> None:
     query = "DELETE FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     await execute_action(query, params)
 
 
-async def set_counting_progress(channel_id: Union[str, int], progress: int, guild_id: Union[str, int]) -> None:
+async def set_counting_progress(channel_id: str | int, progress: int, guild_id: str | int) -> None:
     query = "INSERT INTO counting (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
     params = (channel_id, progress, guild_id, progress)
     await execute_action(query, params)
 
 
-async def get_counting_channel_amount(guild_id: Union[str, int]) -> int:
+async def get_counting_channel_amount(guild_id: str | int) -> int:
     query = "SELECT COUNT(progress) FROM counting WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return len(result) if result else 0
 
 
-async def get_counting_progress(channel_id: Union[str, int]) -> Optional[str]:
+async def get_counting_progress(channel_id: str | int) -> str | None:
     query = "SELECT progress FROM counting WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def increase_counting_progress(channel_id: Union[str, int], last_counter_id: Union[str, int]) -> None:
+async def increase_counting_progress(channel_id: str | int, last_counter_id: str | int) -> None:
     query = "UPDATE counting SET progress = progress + 1, last_counter_id = %s WHERE channel_id = %s"
     params = (last_counter_id, channel_id)
     await execute_action(query, params)
 
 
-async def get_last_counter_id(channel_id: Union[str, int]) -> Optional[str]:
+async def get_last_counter_id(channel_id: str | int) -> str | None:
     query = "SELECT last_counter_id FROM counting WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def clear_counting(channel_id: Union[str, int]) -> None:
+async def clear_counting(channel_id: str | int) -> None:
     query = "DELETE FROM counting WHERE channel_id = %s"
     params = (channel_id,)
     await execute_action(query, params)
 
 
-async def set_counting_challenge_progress(channel_id: Union[str, int], progress: int) -> None:
+async def set_counting_challenge_progress(channel_id: str | int, progress: int) -> None:
     query = "INSERT INTO counting_challenge (channel_id, progress) VALUES (%s, %s) ON DUPLICATE KEY UPDATE progress = %s"
     params = (channel_id, progress, progress)
     await execute_action(query, params)
 
 
-async def get_counting_challenge_progress(channel_id: Union[str, int]) -> Optional[str]:
+async def get_counting_challenge_progress(channel_id: str | int) -> str | None:
     query = "SELECT progress FROM counting_challenge WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def increase_counting_challenge_progress(channel_id: Union[str, int], last_counter_id: Union[str, int]) -> None:
+async def increase_counting_challenge_progress(channel_id: str | int, last_counter_id: str | int) -> None:
     query = "UPDATE counting_challenge SET progress = progress + 1, last_counter_id = %s WHERE channel_id = %s"
     params = (last_counter_id, channel_id)
     await execute_action(query, params)
 
 
-async def get_last_challenge_counter_id(channel_id: Union[str, int]) -> Optional[str]:
+async def get_last_challenge_counter_id(channel_id: str | int) -> str | None:
     query = "SELECT last_counter_id FROM counting_challenge WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def clear_counting_challenge(channel_id: Union[str, int]) -> None:
+async def clear_counting_challenge(channel_id: str | int) -> None:
     query = "DELETE FROM counting_challenge WHERE channel_id = %s"
     params = (channel_id,)
     await execute_action(query, params)
 
 
-async def get_counting_challenge_channel_amount(guild_id: Union[str, int]) -> int:
+async def get_counting_challenge_channel_amount(guild_id: str | int) -> int:
     query = "SELECT COUNT(progress) FROM counting_challenge WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return len(result) if result else 0
 
 
-async def set_counting_mode(channel_id: Union[str, int], progress: int, mode: int, guild_id: Union[str, int]) -> None:
+async def set_counting_mode(channel_id: str | int, progress: int, mode: int, guild_id: str | int) -> None:
     query = "INSERT INTO counting_modes (channel_id, progress, mode, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress), mode = VALUES(mode)"
     params = (channel_id, progress, mode, guild_id)
     await execute_action(query, params)
 
 
-async def get_counting_mode_progress(channel_id: Union[str, int]) -> Optional[str]:
+async def get_counting_mode_progress(channel_id: str | int) -> str | None:
     query = "SELECT progress FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def get_last_mode_counter_id(channel_id: Union[str, int]) -> Optional[str]:
+async def get_last_mode_counter_id(channel_id: str | int) -> str | None:
     query = "SELECT last_counter_id FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def clear_counting_mode(channel_id: Union[str, int]) -> None:
+async def clear_counting_mode(channel_id: str | int) -> None:
     query = "DELETE FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     await execute_action(query, params)
 
 
-async def get_counting_mode_mode(channel_id: Union[str, int]) -> Optional[str]:
+async def get_counting_mode_mode(channel_id: str | int) -> str | None:
     query = "SELECT mode FROM counting_modes WHERE channel_id s= %s"
     params = (channel_id,)
     result = await execute_query(query, params)
@@ -908,12 +908,7 @@ async def get_counting_mode_mode(channel_id: Union[str, int]) -> Optional[str]:
 
 
 async def set_counting_mode_progress(
-    channel_id: Union[str, int], 
-    progress: int, 
-    guild_id: Union[str, int], 
-    mode: int, 
-    goal: int, 
-    counter_id: Union[str, int]
+    channel_id: str | int, progress: int, guild_id: str | int, mode: int, goal: int, counter_id: str | int
 ) -> None:
     query = "INSERT INTO counting_modes (channel_id, progress, guild_id, mode, goal, last_counter_id) VALUES (%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s, last_counter_id = %s"
     params = (
@@ -929,40 +924,40 @@ async def set_counting_mode_progress(
     await execute_action(query, params)
 
 
-async def get_count_mode_goal(channel_id: Union[str, int]) -> Optional[str]:
+async def get_count_mode_goal(channel_id: str | int) -> str | None:
     query = "SELECT goal FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def get_wordchain_word(channel_id: Union[str, int]) -> Optional[str]:
+async def get_wordchain_word(channel_id: str | int) -> str | None:
     query = "SELECT word FROM wordchain WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def set_wordchain_word(channel_id: Union[str, int], word: str, guild_id: Union[str, int], worder_id: Union[str, int]) -> None:
+async def set_wordchain_word(channel_id: str | int, word: str, guild_id: str | int, worder_id: str | int) -> None:
     query = "INSERT INTO wordchain (channel_id, word, last_user_id, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE word = %s, last_user_id = %s"
     params = (channel_id, word, worder_id, guild_id, word, worder_id)
     await execute_action(query, params)
 
 
-async def get_wordchain_last_user_id(channel_id: Union[str, int]) -> Optional[str]:
+async def get_wordchain_last_user_id(channel_id: str | int) -> str | None:
     query = "SELECT last_user_id FROM wordchain WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def clear_wordchain(channel_id: Union[str, int]) -> None:
+async def clear_wordchain(channel_id: str | int) -> None:
     query = "DELETE FROM wordchain WHERE channel_id = %s"
     params = (channel_id,)
     await execute_action(query, params)
 
 
-async def set_level_system_status(guild_id: Union[str, int], active: bool) -> None:
+async def set_level_system_status(guild_id: str | int, active: bool) -> None:
     query = """
     INSERT INTO levelConfig (guild_id, active)
     VALUES (%s, %s)
@@ -972,14 +967,14 @@ async def set_level_system_status(guild_id: Union[str, int], active: bool) -> No
     await execute_action(query, params)
 
 
-async def get_level_system_status(guild_id: Union[str, int]) -> bool:
+async def get_level_system_status(guild_id: str | int) -> bool:
     query = "SELECT active FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else True
 
 
-async def delete_level_system_data(guild_id: Union[str, int]) -> None:
+async def delete_level_system_data(guild_id: str | int) -> None:
     tables = [
         "level",
         "blacklistedUser",
@@ -997,7 +992,7 @@ async def delete_level_system_data(guild_id: Union[str, int]) -> None:
         await execute_action(query, params)
 
 
-async def set_levelup_message_status(guild_id: Union[str, int], status: bool) -> None:
+async def set_levelup_message_status(guild_id: str | int, status: bool) -> None:
     query = """
     INSERT INTO levelConfig (guild_id, levelUpMessageActive)
     VALUES (%s, %s)
@@ -1007,14 +1002,14 @@ async def set_levelup_message_status(guild_id: Union[str, int], status: bool) ->
     await execute_action(query, params)
 
 
-async def get_levelup_message_status(guild_id: Union[str, int]) -> bool:
+async def get_levelup_message_status(guild_id: str | int) -> bool:
     query = "SELECT levelUpMessageActive FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else True  # DEFAULT to True if no record exists
 
 
-async def set_levelup_message(guild_id: Union[str, int], message: str) -> None:
+async def set_levelup_message(guild_id: str | int, message: str) -> None:
     query = """
     INSERT INTO levelConfig (guild_id, levelUpMessage)
     VALUES (%s, %s)
@@ -1024,14 +1019,14 @@ async def set_levelup_message(guild_id: Union[str, int], message: str) -> None:
     await execute_action(query, params)
 
 
-async def get_levelup_message(guild_id: Union[str, int]) -> Optional[str]:
+async def get_levelup_message(guild_id: str | int) -> str | None:
     query = "SELECT levelUpMessage FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def set_levelup_channel(guild_id: Union[str, int], channel_id: Optional[Union[str, int]]) -> None:
+async def set_levelup_channel(guild_id: str | int, channel_id: str | int | None) -> None:
     query = """
     INSERT INTO levelConfig (guild_id, levelUpChannelId)
     VALUES (%s, %s)
@@ -1041,14 +1036,14 @@ async def set_levelup_channel(guild_id: Union[str, int], channel_id: Optional[Un
     await execute_action(query, params)
 
 
-async def get_levelup_channel(guild_id: Union[str, int]) -> Optional[str]:
+async def get_levelup_channel(guild_id: str | int) -> str | None:
     query = "SELECT levelUpChannelId FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def set_xp_scaling(guild_id: Union[str, int], scaling: str) -> None:
+async def set_xp_scaling(guild_id: str | int, scaling: str) -> None:
     query = """
     INSERT INTO levelConfig (guild_id, difficulty)
     VALUES (%s, %s)
@@ -1058,14 +1053,14 @@ async def set_xp_scaling(guild_id: Union[str, int], scaling: str) -> None:
     await execute_action(query, params)
 
 
-async def get_xp_scaling(guild_id: Union[str, int]) -> str:
+async def get_xp_scaling(guild_id: str | int) -> str:
     query = "SELECT difficulty FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else "medium"
 
 
-async def set_custom_formula(guild_id: Union[str, int], formula: str) -> None:
+async def set_custom_formula(guild_id: str | int, formula: str) -> None:
     query = """
     INSERT INTO levelConfig (guild_id, customFormula)
     VALUES (%s, %s)
@@ -1075,14 +1070,14 @@ async def set_custom_formula(guild_id: Union[str, int], formula: str) -> None:
     await execute_action(query, params)
 
 
-async def get_custom_formula(guild_id: Union[str, int]) -> Optional[str]:
+async def get_custom_formula(guild_id: str | int) -> str | None:
     query = "SELECT customFormula FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def add_level_role(guild_id: Union[str, int], role_id: Union[str, int], level: int) -> None:
+async def add_level_role(guild_id: str | int, role_id: str | int, level: int) -> None:
     query = """
     INSERT INTO levelRole (guild_id, role_id, level)
     VALUES (%s, %s, %s)
@@ -1092,21 +1087,21 @@ async def add_level_role(guild_id: Union[str, int], role_id: Union[str, int], le
     await execute_action(query, params)
 
 
-async def get_level_roles(guild_id: Union[str, int]) -> List[Tuple[Any, ...]]:
+async def get_level_roles(guild_id: str | int) -> list[tuple[Any, ...]]:
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result if result else []
 
 
-async def get_level_role(guild_id: Union[str, int], role_id: Union[str, int]) -> Optional[int]:
+async def get_level_role(guild_id: str | int, role_id: str | int) -> int | None:
     query = "SELECT level FROM levelRole WHERE guild_id = %s AND role_id = %s"
     params = (guild_id, role_id)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 
 
-async def remove_level_role(guild_id: Union[str, int], role_id: Union[str, int]) -> None:
+async def remove_level_role(guild_id: str | int, role_id: str | int) -> None:
     query = """
     DELETE FROM levelRole
     WHERE guild_id = %s AND role_id = %s
@@ -1115,11 +1110,11 @@ async def remove_level_role(guild_id: Union[str, int], role_id: Union[str, int])
     await execute_action(query, params)
 
 
-async def get_all_level_roles(guild_id: Union[str, int]) -> Dict[int, List[str]]:
+async def get_all_level_roles(guild_id: str | int) -> dict[int, list[str]]:
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s ORDER BY level"
     params = (guild_id,)
     result = await execute_query(query, params)
-    level_roles: Dict[int, List[str]] = {}
+    level_roles: dict[int, list[str]] = {}
     if result:
         for level, role_id in result:
             if level not in level_roles:
@@ -1128,7 +1123,7 @@ async def get_all_level_roles(guild_id: Union[str, int]) -> Dict[int, List[str]]
     return level_roles
 
 
-async def add_role_boost(guild_id: Union[str, int], role_id: Union[str, int], boost: float, additive: bool) -> None:
+async def add_role_boost(guild_id: str | int, role_id: str | int, boost: float, additive: bool) -> None:
     query = """
     INSERT INTO roleXpBoost (guild_id, role_id, boost, additive)
     VALUES (%s, %s, %s, %s)
@@ -1138,7 +1133,7 @@ async def add_role_boost(guild_id: Union[str, int], role_id: Union[str, int], bo
     await execute_action(query, params)
 
 
-async def add_channel_boost(guild_id: Union[str, int], channel_id: Union[str, int], boost: float, additive: bool) -> None:
+async def add_channel_boost(guild_id: str | int, channel_id: str | int, boost: float, additive: bool) -> None:
     query = """
     INSERT INTO channelXpBoost (guild_id, channel_id, boost, additive)
     VALUES (%s, %s, %s, %s)
@@ -1148,7 +1143,7 @@ async def add_channel_boost(guild_id: Union[str, int], channel_id: Union[str, in
     await execute_action(query, params)
 
 
-async def add_user_boost(guild_id: Union[str, int], user_id: Union[str, int], boost: float, additive: bool) -> None:
+async def add_user_boost(guild_id: str | int, user_id: str | int, boost: float, additive: bool) -> None:
     query = """
     INSERT INTO userXpBoost (guild_id, user_id, boost, additive)
     VALUES (%s, %s, %s, %s)
@@ -1158,25 +1153,25 @@ async def add_user_boost(guild_id: Union[str, int], user_id: Union[str, int], bo
     await execute_action(query, params)
 
 
-async def remove_role_boost(guild_id: Union[str, int], role_id: Union[str, int]) -> None:
+async def remove_role_boost(guild_id: str | int, role_id: str | int) -> None:
     query = "DELETE FROM roleXpBoost WHERE guild_id = %s AND role_id = %s"
     params = (guild_id, role_id)
     await execute_action(query, params)
 
 
-async def remove_channel_boost(guild_id: Union[str, int], channel_id: Union[str, int]) -> None:
+async def remove_channel_boost(guild_id: str | int, channel_id: str | int) -> None:
     query = "DELETE FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
     params = (guild_id, channel_id)
     await execute_action(query, params)
 
 
-async def remove_user_boost(guild_id: Union[str, int], user_id: Union[str, int]) -> None:
+async def remove_user_boost(guild_id: str | int, user_id: str | int) -> None:
     query = "DELETE FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
     params = (guild_id, user_id)
     await execute_action(query, params)
 
 
-async def get_all_boosts(guild_id: Union[str, int]) -> Dict[str, List[Tuple[Any, ...]]]:
+async def get_all_boosts(guild_id: str | int) -> dict[str, list[tuple[Any, ...]]]:
     role_query = "SELECT role_id, boost, additive FROM roleXpBoost WHERE guild_id = %s"
     channel_query = "SELECT channel_id, boost, additive FROM channelXpBoost WHERE guild_id = %s"
     user_query = "SELECT user_id, boost, additive FROM userXpBoost WHERE guild_id = %s"
@@ -1188,14 +1183,14 @@ async def get_all_boosts(guild_id: Union[str, int]) -> Dict[str, List[Tuple[Any,
     return {"roles": roles or [], "channels": channels or [], "users": users or []}
 
 
-async def get_user_boost(guild_id: Union[str, int], user_id: Union[str, int]) -> Optional[Tuple[Any, ...]]:
+async def get_user_boost(guild_id: str | int, user_id: str | int) -> tuple[Any, ...] | None:
     query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
     params = (guild_id, user_id)
     result = await execute_query(query, params)
     return result[0] if result else None
 
 
-async def get_user_roles_boosts(guild_id: Union[str, int], role_ids: List[str]) -> List[Tuple[Any, ...]]:
+async def get_user_roles_boosts(guild_id: str | int, role_ids: list[str]) -> list[tuple[Any, ...]]:
     if not role_ids:
         return []
     query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
@@ -1204,14 +1199,14 @@ async def get_user_roles_boosts(guild_id: Union[str, int], role_ids: List[str]) 
     return result if result else []
 
 
-async def get_channel_boost(guild_id: Union[str, int], channel_id: Union[str, int]) -> Optional[Tuple[Any, ...]]:
+async def get_channel_boost(guild_id: str | int, channel_id: str | int) -> tuple[Any, ...] | None:
     query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
     params = (guild_id, channel_id)
     result = await execute_query(query, params)
     return result[0] if result else None
 
 
-async def add_channel_to_blacklist(guild_id: Union[str, int], channel_id: Union[str, int], reason: Optional[str] = None) -> None:
+async def add_channel_to_blacklist(guild_id: str | int, channel_id: str | int, reason: str | None = None) -> None:
     query = """
     INSERT INTO blacklistedChannel (guild_id, channel_id, reason)
     VALUES (%s, %s, %s)
@@ -1221,13 +1216,13 @@ async def add_channel_to_blacklist(guild_id: Union[str, int], channel_id: Union[
     await execute_action(query, params)
 
 
-async def remove_channel_from_blacklist(guild_id: Union[str, int], channel_id: Union[str, int]) -> None:
+async def remove_channel_from_blacklist(guild_id: str | int, channel_id: str | int) -> None:
     query = "DELETE FROM blacklistedChannel WHERE guild_id = %s AND channel_id = %s"
     params = (guild_id, channel_id)
     await execute_action(query, params)
 
 
-async def add_role_to_blacklist(guild_id: Union[str, int], role_id: Union[str, int], reason: Optional[str] = None) -> None:
+async def add_role_to_blacklist(guild_id: str | int, role_id: str | int, reason: str | None = None) -> None:
     query = """
     INSERT INTO blacklistedRole (guild_id, role_id, reason)
     VALUES (%s, %s, %s)
@@ -1237,13 +1232,13 @@ async def add_role_to_blacklist(guild_id: Union[str, int], role_id: Union[str, i
     await execute_action(query, params)
 
 
-async def remove_role_from_blacklist(guild_id: Union[str, int], role_id: Union[str, int]) -> None:
+async def remove_role_from_blacklist(guild_id: str | int, role_id: str | int) -> None:
     query = "DELETE FROM blacklistedRole WHERE guild_id = %s AND role_id = %s"
     params = (guild_id, role_id)
     await execute_action(query, params)
 
 
-async def add_user_to_blacklist(guild_id: Union[str, int], user_id: Union[str, int], reason: Optional[str] = None) -> None:
+async def add_user_to_blacklist(guild_id: str | int, user_id: str | int, reason: str | None = None) -> None:
     query = """
     INSERT INTO blacklistedUser (guild_id, user_id, reason)
     VALUES (%s, %s, %s)
@@ -1253,13 +1248,13 @@ async def add_user_to_blacklist(guild_id: Union[str, int], user_id: Union[str, i
     await execute_action(query, params)
 
 
-async def remove_user_from_blacklist(guild_id: Union[str, int], user_id: Union[str, int]) -> None:
+async def remove_user_from_blacklist(guild_id: str | int, user_id: str | int) -> None:
     query = "DELETE FROM blacklistedUser WHERE guild_id = %s AND user_id = %s"
     params = (guild_id, user_id)
     await execute_action(query, params)
 
 
-async def get_blacklist(guild_id: Union[str, int]) -> Dict[str, List[Tuple[Any, ...]]]:
+async def get_blacklist(guild_id: str | int) -> dict[str, list[tuple[Any, ...]]]:
     channels_query = "SELECT channel_id, reason FROM blacklistedChannel WHERE guild_id = %s"
     roles_query = "SELECT role_id, reason FROM blacklistedRole WHERE guild_id = %s"
     users_query = "SELECT user_id, reason FROM blacklistedUser WHERE guild_id = %s"
@@ -1271,7 +1266,7 @@ async def get_blacklist(guild_id: Union[str, int]) -> Dict[str, List[Tuple[Any, 
     return {"channels": channels or [], "roles": roles or [], "users": users or []}
 
 
-async def get_user_level_info(guild_id: str, user_id: str) -> Optional[Dict[str, Any]]:
+async def get_user_level_info(guild_id: str, user_id: str) -> dict[str, Any] | None:
     query = """
     SELECT xp, customBackground FROM level
     WHERE guild_id = %s AND user_id = %s
@@ -1304,7 +1299,7 @@ async def set_custom_background(guild_id: str, user_id: str, background_url: str
     await execute_action(query, params)
 
 
-async def get_user_xp(guild_id: str, user_id: str) -> Optional[int]:
+async def get_user_xp(guild_id: str, user_id: str) -> int | None:
     query = "SELECT xp FROM level WHERE guild_id = %s AND user_id = %s"
     params = (guild_id, user_id)
     result = await execute_query(query, params)
@@ -1368,18 +1363,18 @@ async def add_giveaway(
     winners: int,
     with_button: bool,
     channel_id: str,
-    custom_name: Optional[str],
-    sponsor: Optional[str],
-    price: Optional[str],
-    message: Optional[str],
+    custom_name: str | None,
+    sponsor: str | None,
+    price: str | None,
+    message: str | None,
     endtime: datetime,
-    starttime: Optional[datetime],
-    new_message_requirement: Optional[int],
-    day_requirement: Optional[int],
-    channel_requirements: Dict[str, int],
-    role_requirement: List[str],
-    voice_requirement: Optional[int],
-) -> Optional[int]:
+    starttime: datetime | None,
+    new_message_requirement: int | None,
+    day_requirement: int | None,
+    channel_requirements: dict[str, int],
+    role_requirement: list[str],
+    voice_requirement: int | None,
+) -> int | None:
     query = """
     INSERT INTO giveaway (
         guildId, title, description, winners, withButton, customName, sponsor, price, message,
@@ -1432,4 +1427,3 @@ async def set_giveaway_message_id(giveaway_id: int, message_id: int) -> None:
     query = "UPDATE giveaway SET messageId = %s WHERE giveawayId = %s"
     params = (message_id, giveaway_id)
     await execute_action(query, params)
-

@@ -1,15 +1,15 @@
 # Unused imports:
 # import os
-from dotenv import dotenv_values
-from typing import List, Optional, Dict, Any
 
-config: Dict[str, Optional[str]] = dotenv_values(".env")
+from dotenv import dotenv_values
+
+config: dict[str, str | None] = dotenv_values(".env")
 
 version = "1.0.5"
 token = config["token"]
 applicationId = config["applicationId"]
-admin_ids_str: Optional[str] = config.get("adminIds")
-adminIds: List[int] = [int(id) for id in admin_ids_str.split(",")] if admin_ids_str is not None else []
+admin_ids_str: str | None = config.get("adminIds")
+adminIds: list[int] = [int(id) for id in admin_ids_str.split(",")] if admin_ids_str is not None else []
 activity = "Tanjun {version}"
 database_ip = config["database_ip"]
 database_password = config["database_password"]
