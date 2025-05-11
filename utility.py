@@ -21,10 +21,10 @@ from typing import (
     TypeVar,
 )
 
-import aiohttp  # type: ignore[import-not-found]
-import discord  # type: ignore[import-not-found]
-from github import Github  # type: ignore[import-not-found]
-from pyparsing import (  # type: ignore[import-not-found]
+import aiohttp
+import discord
+from github import Github
+from pyparsing import (
     CaselessLiteral,
     Combine,
     Forward,
@@ -167,9 +167,9 @@ class tanjunEmbed:
         self._author = {}
         self._fields = []
 
-        current_colour = colour if colour is not None else color
+        current_colour: int | discord.Colour | None = colour if colour is not None else color
         if current_colour is not None:
-            self.colour = current_colour
+            self.colour = current_colour # type: ignore[assignment]
 
         self.title = str(title) if title is not None else None
         self.type = type
@@ -283,8 +283,6 @@ class tanjunEmbed:
             self._colour = value
         elif isinstance(value, int):
             self._colour = discord.Colour(value=value)
-        else:
-            self._colour = None
 
     color = colour
 
@@ -1004,85 +1002,80 @@ class InteractionUser(Protocol):
     nick: str | None
 
 
-class MockInteraction(discord.Interaction):
+class MockInteractionResponded(Exception):
+    """Exception raised when an interaction's initial response has already been sent."""
+    def __init__(self, interaction: "MockInteraction"):
+        self.interaction = interaction
+        super().__init__('This interaction has already been responded to before')
+
+
+class MockInteraction:
     def __init__(
         self, bot: InteractionClient, guild: InteractionGuild | None, channel: InteractionChannel | None, user: InteractionUser
     ):
+        # Create a discord.Interaction compatible object but without using inheritance
+        # to avoid type compatibility issues
         mock_snowflake_id = discord.utils.time_snowflake(datetime.datetime.now(datetime.UTC))
-        mock_data: dict[str, Any] = {
-            "id": mock_snowflake_id,
-            "application_id": bot.application_id or 0,
-            "type": discord.InteractionType.application_command.value,
-            "data": {},
-            "guild_id": guild.id if guild else None,
-            "channel_id": channel.id if channel else None,
-            "token": "mock_interaction_token_xxxxxxxxxxxx",
-            "version": 1,
-        }
-        if guild and isinstance(user, discord.Member):
-            mock_data["member"] = {
-                "user": {"id": user.id, "username": user.name, "discriminator": user.discriminator, "avatar": user.avatar},
-                "nick": getattr(user, "nick", None),
-                "roles": [],
-                "joined_at": datetime.datetime.now(datetime.UTC).isoformat(),
-                "deaf": False,
-                "mute": False,
-            }
-        else:
-            mock_data["user"] = {
-                "id": user.id,
-                "username": user.name,
-                "discriminator": user.discriminator,
-                "avatar": user.avatar,
-            }
-        super().__init__(data=mock_data, state=bot._connection)
-        self._mock_guild, self._mock_channel, self._mock_user = guild, channel, user
-        self.client: InteractionClient = bot
-        self._response_issued = False
-        self.response: MockInteractionResponse = MockInteractionResponse(self)
-        self.followup = MockWebhook(state=bot._connection, application_id=self.application_id, token=self.token)
+        
+        self.id = mock_snowflake_id
+        self.application_id = bot.application_id or 0
+        self.type = discord.InteractionType.application_command
+        self.guild_id = guild.id if guild else None
+        self.channel_id = channel.id if channel else None
+        self.user = user
+        self.token = "mock_interaction_token_xxxxxxxxxxxx"
+        self.version = 1
 
+        self._mock_guild = guild
+        self._mock_channel = channel
+        self._mock_user = user
+        self.client = bot
+        self._response_issued = False
+        self.response = MockInteractionResponse(self)
+        self.followup = MockWebhook(state=bot._connection, application_id=self.application_id, token=self.token)
+        self._state = bot._connection
+        
     @property
     def guild(self) -> discord.Guild | None:
-        return self._mock_guild
+        return self._mock_guild  # type: ignore
 
     @property
     def channel(self) -> discord.abc.MessageableChannel | None:
-        return self._mock_channel
+        return self._mock_channel  # type: ignore
 
-    @property
-    def user(self) -> discord.User | discord.Member:
-        return self._mock_user
-
-    async def original_response(self) -> discord.InteractionMessage:
+    async def original_response(self) -> discord.Message:
         if hasattr(self.response, "message") and self.response.message:
             return self.response.message
         raise discord.NotFound(None, "Original response message not found or not sent.")
 
 
-class MockInteractionResponse(discord.InteractionResponse):
+class MockInteractionResponse:
     def __init__(self, interaction: MockInteraction):
-        super().__init__(interaction)
-        self.interaction: MockInteraction = interaction
+        self.interaction = interaction
         self.message: discord.Message | None = None
 
-    async def send_message(self, content: str | None = None, *, embed: tanjunEmbed | None = None, **kwargs: Any) -> None:
+    async def send_message(
+        self, 
+        content: str | None = None, 
+        *, 
+        embed: discord.Embed | tanjunEmbed | None = None, 
+        **kwargs: Any
+    ) -> None:
         if self.interaction._response_issued:
-            raise discord.InteractionResponded(self.interaction)
+            raise MockInteractionResponded(self.interaction)
+        
         message_data: dict[str, Any] = {
             "id": discord.utils.time_snowflake(datetime.datetime.now(datetime.UTC)),
-            "channel_id": self.interaction.channel.id if self.interaction.channel else 0,
-            "guild_id": self.interaction.guild.id if self.interaction.guild else None,
+            "channel_id": self.interaction.channel_id or 0,
+            "guild_id": self.interaction.guild_id or None,
             "content": content or "",
             "embeds": [embed.to_dict()] if embed else [],
             "author": {
-                "id": self.interaction.client.user.id if self.interaction.client and self.interaction.client.user else 0,
-                "username": self.interaction.client.user.name
-                if self.interaction.client and self.interaction.client.user
-                else "MockBot",
-                "discriminator": self.interaction.client.user.discriminator
-                if self.interaction.client and self.interaction.client.user
-                else "0000",
+                "id": getattr(self.interaction.client.user, "id", 0) if self.interaction.client and self.interaction.client.user else 0,
+                "username": getattr(self.interaction.client.user, "name", "MockBot") 
+                    if self.interaction.client and self.interaction.client.user else "MockBot",
+                "discriminator": getattr(self.interaction.client.user, "discriminator", "0000")
+                    if self.interaction.client and self.interaction.client.user else "0000",
                 "bot": True,
                 "avatar": None,
             },
@@ -1098,37 +1091,34 @@ class MockInteractionResponse(discord.InteractionResponse):
             "type": discord.MessageType.default.value,
             "webhook_id": None,
         }
-        if self.interaction.channel and hasattr(self.interaction, "_state"):
-            self.message = discord.Message(state=self.interaction._state, channel=self.interaction.channel, data=message_data)
+        
+        channel = self.interaction._mock_channel
+        if channel and hasattr(self.interaction, "_state"):
+            self.message = discord.Message(state=self.interaction._state, channel=channel, data=message_data)  # type: ignore
         else:
             self.message = None
         self.interaction._response_issued = True
 
-    async def delete_original_response(self) -> None:
-        if not self.interaction._response_issued or not self.message:
-            raise discord.NotFound(None, "No original response to delete.")
-        self.message = None
-
     async def defer(self, *, thinking: bool = False, ephemeral: bool = False) -> None:
         if self.interaction._response_issued:
-            raise discord.InteractionResponded(self.interaction)
+            raise MockInteractionResponded(self.interaction)
         self.interaction._response_issued = True
-
-    async def edit_message(self, **kwargs: Any) -> None:
-        if not self.interaction._response_issued or not self.message:
-            raise discord.HTTPException(None, "Cannot edit a message that has not been sent.")
-        content, embed_val = kwargs.get("content"), kwargs.get("embed")  # Renamed embed to embed_val
-        if content is not None and self.message:
-            self.message.content = content
-        if "embed" in kwargs and self.message:
-            self.message.embeds = [embed_val.to_dict()] if embed_val else []
 
 
 class MockWebhook:
     def __init__(self, state: Any, application_id: int | None, token: str):
-        self._state, self.application_id, self.token, self.id = state, application_id, token, 0
+        self._state = state
+        self.application_id = application_id
+        self.token = token
+        self.id = 0
 
-    async def send(self, content: str | None = None, *, embed: tanjunEmbed | None = None, **kwargs: Any) -> discord.Message:
+    async def send(
+        self, 
+        content: str | None = None, 
+        *, 
+        embed: discord.Embed | tanjunEmbed | None = None, 
+        **kwargs: Any
+    ) -> discord.Message:
         message_data: dict[str, Any] = {
             "id": discord.utils.time_snowflake(datetime.datetime.now(datetime.UTC)),
             "channel_id": 0,
@@ -1144,10 +1134,13 @@ class MockWebhook:
             "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
             "webhook_id": str(self.id),
         }
+        
         mock_channel = None
         if hasattr(self._state, "Client") and self._state.Client and hasattr(self._state.Client, "get_channel"):
             mock_channel = self._state.Client.get_channel(0)
-        return discord.Message(state=self._state, channel=mock_channel, data=message_data)
+        
+        # Use type ignore since we're mocking discord.Message creation
+        return discord.Message(state=self._state, channel=mock_channel, data=message_data)  # type: ignore
 
     async def edit_message(self, message_id: int, **kwargs: Any) -> discord.Message:
         raise NotImplementedError
@@ -1157,10 +1150,23 @@ class MockWebhook:
 
 
 def create_mock_interaction(bot_instance: InteractionClient) -> MockInteraction:
+    """
+    Create a mock interaction for testing purposes.
+    
+    Args:
+        bot_instance: The bot client instance
+        
+    Returns:
+        A MockInteraction instance
+    """
+    # Create mock guild and channel objects that match the protocol
     mock_guild = type("MockGuild", (), {"id": 12345, "name": "Mock Guild"})() if bot_instance else None
     mock_channel = type("MockChannel", (), {"id": 67890})() if bot_instance else None
+    
     if not bot_instance or not bot_instance.user:
         raise ValueError("Bot instance or bot user is not valid.")
+    
+    # Create a mock user that matches the protocol
     mock_user_data = {
         "id": bot_instance.user.id,
         "name": bot_instance.user.name,
@@ -1169,6 +1175,7 @@ def create_mock_interaction(bot_instance: InteractionClient) -> MockInteraction:
         "nick": getattr(bot_instance.user, "nick", None),
     }
     mock_user = type("MockUser", (), mock_user_data)()
+    
     return MockInteraction(bot_instance, mock_guild, mock_channel, mock_user)
 
 
