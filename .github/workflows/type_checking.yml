@@ -28,11 +28,16 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
 
-      - name: Install Mypy and dependencies
+      - name: Install Mypy and specific type-checking dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install mypy==1.0.0
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            python -m pip install --upgrade pip
+            echo "Installing pinned versions of Mypy, mypy-extensions, and typing-extensions..."
+            pip install mypy==1.15.0 mypy-extensions==1.1.0 typing-extensions==4.13.2
+            
+            echo "Installing other dependencies from requirements.txt if it exists..."
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  
+  
 
       - name: Run Mypy
         id: mypy_check
