@@ -16,7 +16,7 @@ from utility import commandInfo, tanjunEmbed
 async def afk(commandInfo: commandInfo, reason: str):
     if await check_if_opted_out(commandInfo.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.afk.opted_out.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.afk.opted_out.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.afk.opted_out.description",
@@ -27,7 +27,7 @@ async def afk(commandInfo: commandInfo, reason: str):
 
     if await checkIfUserIsAfk(commandInfo.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.afk.already_afk.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.afk.already_afk.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.afk.already_afk.description",
@@ -39,7 +39,7 @@ async def afk(commandInfo: commandInfo, reason: str):
     await setAfk(commandInfo.user.id, reason)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.afk.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.afk.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.afk.success.description",

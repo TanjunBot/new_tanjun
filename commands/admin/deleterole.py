@@ -5,9 +5,9 @@ from localizer import tanjunLocalizer
 
 
 async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reason: str = None):
-    if not commandInfo.user.guild_permissions.manage_roles:
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.deleterole.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.deleterole.missingPermission.description",
@@ -32,7 +32,7 @@ async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reaso
 
     if commandInfo.user.top_role.position <= role.position:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.deleterole.roleTooHigh.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.roleTooHigh.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.deleterole.roleTooHigh.description",
@@ -43,7 +43,7 @@ async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reaso
 
     if commandInfo.guild.get_member(commandInfo.client.user.id).top_role.position <= role.position:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.deleterole.roleTooHighBot.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.roleTooHighBot.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.deleterole.roleTooHighBot.description",
@@ -55,7 +55,7 @@ async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reaso
     role_name = role.name
     await role.delete(reason=reason)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.deleterole.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.deleterole.success.description",

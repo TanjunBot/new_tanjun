@@ -129,7 +129,7 @@ async def club(commandInfo: commandInfo, clubTag: str):
     class SearchModal(discord.ui.Modal):
         def __init__(self, commandInfo: commandInfo):
             super().__init__(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.brawlstars.club.search.title")
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.brawlstars.club.search.title")
             )
             self.commandInfo = commandInfo
             self.add_item(

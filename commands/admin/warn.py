@@ -8,18 +8,18 @@ from localizer import tanjunLocalizer
 
 
 async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, reason: str = None):
-    if not commandInfo.user.guild_permissions.kick_members:
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).kick_members:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.missingPermission.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.missingPermission.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.missingPermission.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.missingPermission.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if member.top_role >= commandInfo.user.top_role:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.targetTooHigh.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.targetTooHigh.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.targetTooHigh.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.targetTooHigh.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -35,13 +35,13 @@ async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, re
     warn_count = len(await get_warnings(guild_id, user_id))
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.warn.success.description",
             user=member.name,
             reason=(
-                reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.noReasonProvided")
+                reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.noReasonProvided")
             ),
             count=warn_count,
         ),
@@ -66,13 +66,13 @@ async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, re
     # DM the warned user
     try:
         dm_embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.dmNotification.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.dmNotification.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.warn.dmNotification.description",
                 guild=commandInfo.guild.name,
                 reason=(
-                    reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warn.noReasonProvided")
+                    reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.noReasonProvided")
                 ),
                 count=warn_count,
             ),

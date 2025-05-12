@@ -14,7 +14,10 @@ async def create_ticket(
     summary_channel: discord.TextChannel = None,
     introduction: str = None,
 ):
-    if not commandInfo.user.guild_permissions.moderate_members:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -53,7 +56,7 @@ async def create_ticket(
     )
 
     view = discord.ui.View()
-    label = tanjunLocalizer.localize(commandInfo.locale, "commands.admin.create_ticket.button.label")
+    label = tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.create_ticket.button.label")
     btn = discord.ui.Button(
         label=label,
         style=discord.ButtonStyle.success,
@@ -63,7 +66,7 @@ async def create_ticket(
     view.add_item(btn)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.create_ticket.embed.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.create_ticket.embed.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.create_ticket.embed.description",
@@ -77,7 +80,7 @@ async def create_ticket(
     await channel.send(embed=embed, view=view)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.create_ticket.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.create_ticket.success.description"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.create_ticket.success.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.create_ticket.success.description"),
     )
     await commandInfo.reply(embed=embed)

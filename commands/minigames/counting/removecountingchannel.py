@@ -6,7 +6,10 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def removeCountingChannel(commandInfo: commandInfo, channel: discord.TextChannel):
-    if not commandInfo.user.guild_permissions.moderate_members:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -40,7 +43,7 @@ async def removeCountingChannel(commandInfo: commandInfo, channel: discord.TextC
     await clear_counting(channel.id)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.removecountingchannel.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.removecountingchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.removecountingchannel.success.description",
@@ -51,7 +54,7 @@ async def removeCountingChannel(commandInfo: commandInfo, channel: discord.TextC
 
     # Send a message to the channel informing users it's no longer a counting channel
     info_embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.removecountingchannel.channel_message.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.removecountingchannel.channel_message.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.removecountingchannel.channel_message.description",

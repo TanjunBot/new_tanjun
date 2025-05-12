@@ -12,7 +12,7 @@ from localizer import tanjunLocalizer
 
 
 async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = None):
-    if not commandInfo.user.guild_permissions.manage_guild:
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -58,7 +58,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
             self.next.disabled = len(reports) <= 1
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.show_reports.previous.label"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.show_reports.previous.label"),
             style=discord.ButtonStyle.secondary,
             emoji="⬅️",
         )
@@ -83,7 +83,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
             await interaction.response.edit_message(view=self, embed=self.get_embed())
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.show_reports.remove.label"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.show_reports.remove.label"),
             style=discord.ButtonStyle.danger,
             emoji="🗑️",
         )
@@ -179,7 +179,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
                 await interaction.response.edit_message(view=reportsView(reports, self.page), embed=self.get_embed())
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.show_reports.next.label"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.show_reports.next.label"),
             style=discord.ButtonStyle.secondary,
             emoji="➡️",
         )

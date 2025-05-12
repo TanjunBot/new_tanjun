@@ -9,9 +9,10 @@ from api import (
 )
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
+from typing import Any
 
 
-async def claimBoosterRole(commandInfo: commandInfo, name: str, color: discord.Color, icon: discord.Attachment):
+async def claimBoosterRole(commandInfo: commandInfo, name: str, color: str, icon: discord.Attachment) -> None:
     booster_role = await get_booster_role(commandInfo.guild.id)
     if not booster_role:
         embed = tanjunEmbed(
@@ -29,7 +30,7 @@ async def claimBoosterRole(commandInfo: commandInfo, name: str, color: discord.C
 
     if not commandInfo.user.premium_since:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterrole.nobooster.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.claimboosterrole.nobooster.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.claimboosterrole.nobooster.description",
@@ -38,7 +39,7 @@ async def claimBoosterRole(commandInfo: commandInfo, name: str, color: discord.C
         await commandInfo.reply(embed=embed)
         return
 
-    claimed_booster_role = await get_claimed_booster_role(commandInfo.user.id)
+    claimed_booster_role = await get_claimed_booster_role(commandInfo.user.id, commandInfo.guild.id)
     if claimed_booster_role:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -56,7 +57,7 @@ async def claimBoosterRole(commandInfo: commandInfo, name: str, color: discord.C
     if color and color.startswith("#"):
         color = color[1:]
 
-    if not utility.check_if_str_is_hex_color(color):
+    if not utility.check_if_str_is_hex_color(str(color)):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -85,32 +86,40 @@ async def claimBoosterRole(commandInfo: commandInfo, name: str, color: discord.C
         await commandInfo.reply(embed=embed)
         return
 
-    reason = tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterrole.success.reason")
+    reason = tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.claimboosterrole.success.reason")
     newRole = await commandInfo.guild.create_role(
-        name=name,
-        color=int(color, 16) if color else role.color,
-        display_icon=icon if icon else None,
-        permissions=role.permissions,
-        hoist=role.hoist,
-        mentionable=role.mentionable,
         reason=reason,
+        name=name,
+        permissions=role.permissions,
+        colour=int(color, 16) if color else role.color,
+        hoist=role.hoist,
+        display_icon=await icon.read() if icon else "MISSING",
+        mentionable=role.mentionable,
     )
     await newRole.edit(position=role.position + 1)
     await add_claimed_booster_role(commandInfo.user.id, newRole.id, commandInfo.guild.id)
     await commandInfo.user.add_roles(newRole)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterrole.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterrole.success.description"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.claimboosterrole.success.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.claimboosterrole.success.description"),
     )
     await commandInfo.reply(embed=embed)
 
 
-async def remove_claimed_booster_roles_that_are_expired(client: discord.Client):
+async def remove_claimed_booster_roles_that_are_expired(client: discord.Client) -> None:
     claimed_booster_roles = await get_claimed_booster_role()
+    if not isinstance(claimed_booster_roles, list):
+        return
     for user, role, guild_id in claimed_booster_roles:
         guild = client.get_guild(int(guild_id))
+        if guild is None:
+            continue
         user = guild.get_member(int(user))
+        if user is None:
+            continue
         role = guild.get_role(int(role))
+        if role is None:
+            continue
         if not user.premium_since and role:
             await user.remove_roles(role)
             await remove_claimed_booster_role(user.id, guild_id)

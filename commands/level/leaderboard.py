@@ -13,12 +13,12 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
     custom_formula = await get_custom_formula(commandInfo.guild.id)
     if not leaderboard:
         await commandInfo.message.channel.send(
-            tanjunLocalizer.localize(commandInfo.locale, "commands.level.leaderboard.no_data")
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.leaderboard.no_data")
         )
         return
     if len(leaderboard) == 0:
         await commandInfo.message.channel.send(
-            tanjunLocalizer.localize(commandInfo.locale, "commands.level.leaderboard.no_data")
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.leaderboard.no_data")
         )
         return
     if page > len(leaderboard) / 10 + 1:
@@ -34,7 +34,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
                 level = utility.get_level_for_xp(xp, scaling, custom_formula)
                 xp_from_last_level = xp - utility.get_xp_for_level(level - 1, scaling, custom_formula)
                 xp_till_next_level = utility.get_xp_for_level(level, scaling, custom_formula)
-                description += f"\n{i + 1 + (page_number - 1) * 10}. <@{user}> - {tanjunLocalizer.localize(commandInfo.locale, 'commands.level.leaderboard.data', level=level, xp_from_last_level=xp_from_last_level, xp_till_next_level=xp_till_next_level)}"
+                description += f"\n{i + 1 + (page_number - 1) * 10}. <@{user}> - {tanjunLocalizer.localize(str(commandInfo.locale), 'commands.level.leaderboard.data', level=level, xp_from_last_level=xp_from_last_level, xp_till_next_level=xp_till_next_level)}"
             except Exception:
                 break
 
@@ -50,7 +50,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
             )
         else:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.leaderboard.titleNoPages"),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.leaderboard.titleNoPages"),
                 description=description,
             )
         return embed

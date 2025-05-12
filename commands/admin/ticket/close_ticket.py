@@ -22,7 +22,7 @@ async def close_ticket(interaction: discord.Interaction):
     if not ticket_message:
         await interaction.followup.send(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.error.ticketNotFound1",
             )
         )
@@ -33,7 +33,7 @@ async def close_ticket(interaction: discord.Interaction):
     if not ticket:
         await interaction.followup.send(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.error.ticketNotFound2",
             )
         )
@@ -44,7 +44,7 @@ async def close_ticket(interaction: discord.Interaction):
     if not ticket_channel.id == int(ticket[6]):
         await interaction.followup.send(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.error.ticketNotFound3",
             )
         )
@@ -62,11 +62,11 @@ async def close_ticket(interaction: discord.Interaction):
         await interaction.channel.edit(archived=True, locked=True)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
             ),
             description=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosedDescription",
             ),
         )
@@ -78,11 +78,11 @@ async def close_ticket(interaction: discord.Interaction):
 
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
             ),
             description=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosedDescription",
                 name=interaction.channel.name,
             ),
@@ -91,21 +91,21 @@ async def close_ticket(interaction: discord.Interaction):
         view = discord.ui.View()
         btn1 = discord.ui.Button(
             label=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.viewOnlineSummary",
             ),
             url=url,
         )
         view.add_item(btn1)
         btn2 = discord.ui.Button(
-            label=tanjunLocalizer.localize(interaction.locale, "commands.admin.close_ticket.success.viewThread"),
+            label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.close_ticket.success.viewThread"),
             url=f"https://discord.com/channels/{interaction.guild.id}/{ticket_channel.id}",
         )
         view.add_item(btn2)
 
         await summary_channel.send(
             content=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
                 user=interaction.user.mention,
                 name=interaction.channel.name,
@@ -118,7 +118,7 @@ async def close_ticket(interaction: discord.Interaction):
 
         await interaction.channel.send(
             content=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
                 user=interaction.user.mention,
                 name=interaction.channel.name,

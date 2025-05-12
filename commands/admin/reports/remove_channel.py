@@ -4,7 +4,7 @@ from localizer import tanjunLocalizer
 
 
 async def remove_channel(commandInfo: utility.commandInfo):
-    if not commandInfo.user.guild_permissions.manage_guild:
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.reports.remove_channel.missingPermission.title"
@@ -18,7 +18,7 @@ async def remove_channel(commandInfo: utility.commandInfo):
 
     if not await get_report_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.remove_channel.noChannel.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.remove_channel.noChannel.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.reports.remove_channel.noChannel.description"
             ),
@@ -28,7 +28,7 @@ async def remove_channel(commandInfo: utility.commandInfo):
 
     await remove_report_channel(commandInfo.guild.id)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.remove_channel.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.reports.remove_channel.success.description"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.remove_channel.success.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.remove_channel.success.description"),
     )
     await commandInfo.reply(embed=embed)

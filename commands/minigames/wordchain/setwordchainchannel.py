@@ -6,7 +6,10 @@ from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
 async def setwordchainchannel(commandInfo: commandInfo, channel: discord.TextChannel):
-    if not commandInfo.user.guild_permissions.moderate_members:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -22,7 +25,7 @@ async def setwordchainchannel(commandInfo: commandInfo, channel: discord.TextCha
 
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setwordchainchannel.error.no_pro.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.error.no_pro.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "minigames.setwordchainchannel.error.no_pro.description",
@@ -97,13 +100,13 @@ async def setwordchainchannel(commandInfo: commandInfo, channel: discord.TextCha
     )
 
     introductionEmbed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setwordchainchannel.introduction.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setwordchainchannel.introduction.description"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.introduction.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.introduction.description"),
     )
     await channel.send(embed=introductionEmbed)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setwordchainchannel.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.setwordchainchannel.success.description",

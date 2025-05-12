@@ -3,39 +3,37 @@ from discord import app_commands
 
 import utility
 from localizer import tanjunLocalizer
+from typing import Any
 
 
-async def help(commandInfo, ctx):
+async def help(commandInfo: utility.commandInfo) -> None:
     class HelpSelect(discord.ui.Select):
-        options = []
-        cash = set()
+        cash: set[str] = set()
 
-        def __init__(self, client, options):
+        def __init__(self, client: discord.ext.commands.Bot, options: list[discord.SelectOption]):
             self.client = client
             super().__init__(
-                placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.help.select.placeholder"),
+                placeholder=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.select.placeholder"),
                 max_values=1,
                 min_values=1,
                 options=options,
             )
 
         @classmethod
-        def get_locale(self, key, locale, **kwargs):
+        def get_locale(self, key: str, locale: str, **kwargs: Any) -> str:
             key = key.replace("_", ".")
-            # Check if the key itself is in the cache
             if key in self.cash:
                 return key
 
-            # If not found, get the localized version
             localized = tanjunLocalizer.localize(locale, key, **kwargs)
             self.cash.add(localized)
             return localized
 
-        async def callback(self, interaction):
+        async def callback(self, interaction: discord.Interaction) -> None:
             texts = [""]
             current_index = 0
             total_length = 0
-            locale = interaction.locale
+            locale = str(interaction.locale)
             char_limit = 750
 
             group_name_locale = self.get_locale(
@@ -43,11 +41,10 @@ async def help(commandInfo, ctx):
                 locale,
             )
 
-            for group in interaction.client.tree.walk_commands():
+            for group in self.client.tree.walk_commands():
                 if group.name == self.values[0]:
                     command_text = ""
 
-                    # Handle command group
                     if isinstance(group, app_commands.Group):
                         try:
                             group_desc = self.get_locale(
@@ -213,7 +210,7 @@ async def help(commandInfo, ctx):
             await interaction.response.edit_message(embeds=[embeds[0]], view=view)
 
         @classmethod
-        def generate_options(self, client):
+        def generate_options(self, client: discord.ext.commands.Bot) -> list[discord.SelectOption]:
             options = []
             groups = []
             for cmd in client.tree.walk_commands():
@@ -237,7 +234,7 @@ async def help(commandInfo, ctx):
             if not options:
                 options.append(
                     discord.SelectOption(
-                        label=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.help.noCommands.label"),
+                        label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.help.noCommands.label"),
                         description=tanjunLocalizer.localize(
                             commandInfo.locale,
                             "commands.utility.help.noCommands.description",
@@ -248,39 +245,45 @@ async def help(commandInfo, ctx):
             return options[:25]
 
     class PaginatedHelpView(discord.ui.View):
-        def __init__(self, client, embeds):
+        def __init__(self, client: discord.ext.commands.Bot, embeds: list[discord.Embed]):
             super().__init__(timeout=3600)
             self.embeds = embeds
             self.current_page = 0
 
-            # Add the select menu
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.help.buttons.previous"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.buttons.previous"),
             style=discord.ButtonStyle.gray,
         )
-        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             self.current_page = (self.current_page - 1) % len(self.embeds)
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.help.buttons.next"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.buttons.next"),
             style=discord.ButtonStyle.gray,
         )
-        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             self.current_page = (self.current_page + 1) % len(self.embeds)
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
     class HelpView(discord.ui.View):
-        def __init__(self, client, timeout=3600):
+        def __init__(self, client: discord.ext.commands.Bot, timeout: int=3600):
             super().__init__(timeout=timeout)
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.help.select.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.help.select.description"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.select.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.select.description"),
     )
-    await commandInfo.reply(embed=embed, view=HelpView(commandInfo.client))
+    if commandInfo.bot is None:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "errors.unexspected.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "errors.unexspected.description"),
+        )
+        await commandInfo.reply(embed = embed)
+        return
+    await commandInfo.reply(embed=embed, view=HelpView(commandInfo.bot))

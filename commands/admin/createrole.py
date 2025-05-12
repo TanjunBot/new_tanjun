@@ -13,9 +13,9 @@ async def createrole(
     mentionable: bool = False,
     display_icon: discord.Attachment | str = None,
 ):
-    if not commandInfo.user.guild_permissions.manage_roles:
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createrole.missingPermission.description",
@@ -42,7 +42,7 @@ async def createrole(
 
     if not name:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.missingName.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.missingName.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createrole.missingName.description",
@@ -54,7 +54,7 @@ async def createrole(
 
     if len(name) > 100:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.nameTooLong.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.nameTooLong.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createrole.nameTooLong.description",
@@ -87,7 +87,7 @@ async def createrole(
 
     if reason and len(reason) > 512:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.reasonTooLong.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.reasonTooLong.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createrole.reasonTooLong.description",
@@ -153,7 +153,7 @@ async def createrole(
         display_icon=display_icon,
     )
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.createrole.success.description",

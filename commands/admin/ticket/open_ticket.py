@@ -19,7 +19,7 @@ async def openTicket(interaction: discord.Interaction):
             super().__init__()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.confirm"),
+            label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.confirm"),
             custom_id=interaction.data["custom_id"] + ";optedOutConfirm",
         )
         async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -27,7 +27,7 @@ async def openTicket(interaction: discord.Interaction):
             return
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(interaction.locale, "commands.admin.open_ticket.optedOutWarning.decline"),
+            label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.decline"),
             custom_id="optedOutDecline",
         )
         async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -49,7 +49,7 @@ async def openTicket(interaction: discord.Interaction):
         view = optedOutView()
         await interaction.followup.send(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.open_ticket.optedOutWarning.description",
             ),
             view=view,
@@ -68,7 +68,7 @@ async def open_ticket_2(interaction: discord.Interaction):
     if not ticket:
         await interaction.response.send_message(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.open_ticket.error.ticketNotFound",
             ),
             ephemeral=True,
@@ -83,7 +83,7 @@ async def open_ticket_2(interaction: discord.Interaction):
     if not channel.permissions_for(interaction.guild.me).create_private_threads:
         await interaction.response.send_message(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.open_ticket.error.channelMissingPermission",
             ),
             ephemeral=True,

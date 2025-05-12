@@ -10,7 +10,7 @@ async def warn_config(commandInfo: utility.commandInfo):
 
     class WarnConfigModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.commandInfo, config):
-            super().__init__(title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.title"))
+            super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.modal.title"))
             self.commandInfo = commandInfo
 
             # Provide default values from the current configuration
@@ -125,9 +125,12 @@ async def warn_config(commandInfo: utility.commandInfo):
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.warnconfig.missingPermission.description",

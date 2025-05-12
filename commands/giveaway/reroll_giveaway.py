@@ -75,7 +75,7 @@ async def reroll_giveaway(
             self.giveawayId = giveawayId
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.reroll_giveaway.rerollOneWinner"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.reroll_giveaway.rerollOneWinner"),
             style=discord.ButtonStyle.primary,
         )
         async def reroll_one(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -84,7 +84,7 @@ async def reroll_giveaway(
             self.stop()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.reroll_giveaway.rerollAllWinners"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.reroll_giveaway.rerollAllWinners"),
             style=discord.ButtonStyle.primary,
         )
         async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button):

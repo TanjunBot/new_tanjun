@@ -194,8 +194,8 @@ class BoosterRoleCommands(discord.app_commands.Group):
         )
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterroleinfo.info.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterroleinfo.info.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.boosterroleinfo.info.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.boosterroleinfo.info.description"),
         )
         await commandInfo.reply(embed=embed)
 
@@ -283,7 +283,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
         )
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.boosterchannelinfo.info.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.boosterchannelinfo.info.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.boosterchannelinfo.info.description",
@@ -837,7 +837,7 @@ class utilityCog(commands.Cog):
             client=ctx.client,
         )
 
-        await helpCommand(commandInfo=commandInfo, ctx=ctx)
+        await helpCommand(commandInfo=commandInfo)
         return
 
     @commands.Cog.listener()

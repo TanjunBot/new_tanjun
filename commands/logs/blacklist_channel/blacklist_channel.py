@@ -11,7 +11,10 @@ from localizer import tanjunLocalizer
 
 
 async def blacklist_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel):
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -41,7 +44,7 @@ async def blacklist_channel(commandInfo: utility.commandInfo, channel: discord.T
     else:
         await add_log_blacklist_channel_api(commandInfo.guild.id, channel.id)
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistChannel.blacklisted.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.blacklistChannel.blacklisted.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.logs.blacklistChannel.blacklisted.description",

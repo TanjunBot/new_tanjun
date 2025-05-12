@@ -18,7 +18,7 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
 
     if not user_info:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.rank.error.no_data.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.error.no_data.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.rank.error.no_data.description",
@@ -32,7 +32,7 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
 
     file = discord.File(rankcard_image, filename="rankcard.gif")
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.rank.success.title", user=user.name),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.success.title", user=user.name),
     )
     embed.set_image(url="attachment://rankcard.gif")
 
@@ -42,7 +42,7 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
 async def set_background_command(commandInfo: commandInfo, image: discord.Attachment):
     if not checkIfhasPlus(commandInfo.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setbackground.error.no_plus.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.error.no_plus.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.setbackground.error.no_plus.description",
@@ -74,8 +74,8 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
     )
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setbackground.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setbackground.success.description"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.description"),
     )
     embed.set_image(url=uploaded_image["data"]["url"])
 
@@ -203,7 +203,7 @@ def process_image(background_frames, avatar_frames, avatar_decoration_frames, us
         draw_text_with_outline(
             draw,
             (250, 105),
-            tanjunLocalizer.localize(commandInfo.locale, "commands.level.rank.data.level", level=user_info["level"]),
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.data.level", level=user_info["level"]),
             info_font,
             (255, 255, 255, 255),
             (0, 0, 0, 255),

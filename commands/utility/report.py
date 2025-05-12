@@ -12,19 +12,19 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def report(commandInfo: commandInfo, reason: str, user: discord.Member):
+async def report(commandInfo: commandInfo, reason: str, user: discord.Member) -> None:
     if await check_if_reporter_is_blocked(commandInfo.guild.id, commandInfo.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.blocked.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.blocked.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.blocked.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.blocked.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    report_channel = await get_report_channel(commandInfo.guild.id)
-    if not report_channel:
+    report_channel_info = await get_report_channel(commandInfo.guild.id)
+    if not report_channel_info:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.no_report_channel.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.no_report_channel.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.report.no_report_channel.description",
@@ -33,7 +33,7 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member):
         await commandInfo.reply(embed=embed)
         return
 
-    report_channel = commandInfo.guild.get_channel(int(report_channel[0]))
+    report_channel = commandInfo.guild.get_channel(int(report_channel_info[0]))
     if not report_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -47,26 +47,29 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member):
         )
         await commandInfo.reply(embed=embed)
         return
+    
+    if isinstance(report_channel, discord.ForumChannel) or isinstance(report_channel, discord.CategoryChannel):
+        return
 
     if not report_channel.permissions_for(commandInfo.guild.me).send_messages:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.no_permission.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.no_permission.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.no_permission.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.no_permission.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if not reason:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.no_reason.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.no_reason.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.no_reason.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.no_reason.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if len(reason) < 12:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.reason_too_short.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.reason_too_short.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.report.reason_too_short.description",
@@ -84,7 +87,7 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member):
     )
 
     view = discord.ui.View()
-    guild_locale = commandInfo.guild.preferred_locale if commandInfo.guild.preferred_locale else "en_US"
+    guild_locale = str(commandInfo.guild.preferred_locale) if commandInfo.guild.preferred_locale else "en_US"
     accept_locale = tanjunLocalizer.localize(guild_locale, "commands.utility.report.accept.label")
     view.add_item(
         discord.ui.Button(
@@ -112,7 +115,7 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member):
 
     await report_channel.send(
         embed=tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.new_report.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.new_report.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.report.new_report.description",
@@ -126,20 +129,22 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member):
 
     await commandInfo.reply(
         embed=tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.report_sent.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.report.report_sent.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.report_sent.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.report_sent.description"),
         )
     )
 
 
-async def report_btn_click(interaction: discord.Interaction, custom_id: str):
+async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> None:
     report_action = custom_id.split(";")[0]
     reporter_id = custom_id.split(";")[2]
     report_id = custom_id.split(";")[1]
-    if not interaction.user.guild_permissions.manage_messages:
+    if isinstance(interaction.user, discord.User) or not interaction.channel or not interaction.guild:
+        return
+    if not interaction.channel.permissions_for(interaction.user).manage_messages:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(interaction.locale, "commands.utility.report.no_permission.title"),
-            description=tanjunLocalizer.localize(interaction.locale, "commands.utility.report.no_permission.description"),
+            title=tanjunLocalizer.localize(str(interaction.locale), "commands.utility.report.no_permission.title"),
+            description=tanjunLocalizer.localize(str(interaction.locale), "commands.utility.report.no_permission.description"),
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
         return
@@ -147,9 +152,9 @@ async def report_btn_click(interaction: discord.Interaction, custom_id: str):
     if report_action == "report_accept":
         await accept_report(interaction.guild.id, report_id)
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(interaction.locale, "commands.utility.report.report_accepted.title"),
+            title=tanjunLocalizer.localize(str(interaction.locale), "commands.utility.report.report_accepted.title"),
             description=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.utility.report.report_accepted.description",
             ),
         )
@@ -158,9 +163,9 @@ async def report_btn_click(interaction: discord.Interaction, custom_id: str):
     elif report_action == "report_reject":
         await reject_report(interaction.guild.id, report_id)
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(interaction.locale, "commands.utility.report.report_rejected.title"),
+            title=tanjunLocalizer.localize(str(interaction.locale), "commands.utility.report.report_rejected.title"),
             description=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.utility.report.report_rejected.description",
             ),
         )
@@ -169,9 +174,9 @@ async def report_btn_click(interaction: discord.Interaction, custom_id: str):
     elif report_action == "report_block_reporter":
         await block_reporter(interaction.guild.id, reporter_id)
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(interaction.locale, "commands.utility.report.reporter_blocked.title"),
+            title=tanjunLocalizer.localize(str(interaction.locale), "commands.utility.report.reporter_blocked.title"),
             description=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.utility.report.reporter_blocked.description",
             ),
         )
@@ -179,7 +184,7 @@ async def report_btn_click(interaction: discord.Interaction, custom_id: str):
 
     else:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(interaction.locale, "commands.utility.report.invalid_action.title"),
-            description=tanjunLocalizer.localize(interaction.locale, "commands.utility.report.invalid_action.description"),
+            title=tanjunLocalizer.localize(str(interaction.locale), "commands.utility.report.invalid_action.title"),
+            description=tanjunLocalizer.localize(str(interaction.locale), "commands.utility.report.invalid_action.description"),
         )
         await interaction.response.send_message(embed=embed)

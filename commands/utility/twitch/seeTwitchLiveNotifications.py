@@ -9,7 +9,10 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def seeTwitchLiveNotifications(commandInfo: commandInfo):
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

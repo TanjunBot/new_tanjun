@@ -26,8 +26,8 @@ async def ask_gpt(
 
     if token < 20:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.notoken.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.notoken.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.notoken.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.notoken.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -64,7 +64,7 @@ async def ask_gpt(
     tokenOverview = await getTokenOverview(commandInfo.user.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.ask.success.title", name=name),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.success.title", name=name),
         description=response.choices[0].message.content,
     )
 

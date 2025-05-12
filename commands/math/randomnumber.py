@@ -12,8 +12,8 @@ async def random_number_command(commandInfo: utility.commandInfo, min: int, max:
     except ValueError:
         # noqa: E501
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.math.randomnumber.error.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.math.randomnumber.error.invalid_input"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.randomnumber.error.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.randomnumber.error.invalid_input"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -21,14 +21,14 @@ async def random_number_command(commandInfo: utility.commandInfo, min: int, max:
     if max < min:
         # noqa: E501
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.math.randomnumber.error.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.math.randomnumber.error.invalid_range"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.randomnumber.error.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.randomnumber.error.invalid_range"),
         )
     elif amount < 1:
         # noqa: E501
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.math.randomnumber.error.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.math.randomnumber.error.invalid_amount"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.randomnumber.error.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.randomnumber.error.invalid_amount"),
         )
     else:
         # nosec: B311
@@ -36,7 +36,7 @@ async def random_number_command(commandInfo: utility.commandInfo, min: int, max:
         numbers_str = ", ".join(map(str, numbers))
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.math.randomnumber.success.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.randomnumber.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.math.randomnumber.success.description",
@@ -47,6 +47,6 @@ async def random_number_command(commandInfo: utility.commandInfo, min: int, max:
             ),
         )
 
-        embed.set_footer(text=tanjunLocalizer.localize(commandInfo.locale, "commands.math.randomnumber.not_truly_random"))
+        embed.set_footer(text=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.randomnumber.not_truly_random"))
 
     await commandInfo.reply(embed=embed)

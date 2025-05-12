@@ -38,7 +38,10 @@ LOG_OPTIONS = [
 
 
 async def configure_logs(commandInfo: utility.commandInfo):
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -72,7 +75,7 @@ async def configure_logs(commandInfo: utility.commandInfo):
 
     if not log_enabled:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.configureLogs.noLogEnabled.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.configureLogs.noLogEnabled.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.logs.configureLogs.noLogEnabled.description",
@@ -158,7 +161,7 @@ async def configure_logs(commandInfo: utility.commandInfo):
     view = logConfigureView(commandInfo.locale, commandInfo.guild, 0)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.configureLogs.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.configureLogs.title"),
         description=configurationEmbed,
     )
     await commandInfo.reply(embed=embed, view=view)

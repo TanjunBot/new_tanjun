@@ -4,7 +4,10 @@ from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
 async def change_levelup_message(commandInfo: commandInfo, new_message: str):
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -49,7 +52,7 @@ async def change_levelup_message(commandInfo: commandInfo, new_message: str):
     await set_levelup_message(str(commandInfo.guild.id), new_message)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.changelevelupmessage.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.changelevelupmessage.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.changelevelupmessage.success.description",

@@ -12,9 +12,12 @@ async def timeout(
     duration: int | timedelta,
     reason: str = None,
 ):
-    if not commandInfo.user.guild_permissions.moderate_members:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+    ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.timeout.missingPermission.description",
@@ -25,7 +28,7 @@ async def timeout(
 
     if not commandInfo.guild.me.guild_permissions.moderate_members:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.missingPermissionBot.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.timeout.missingPermissionBot.description",
@@ -36,8 +39,8 @@ async def timeout(
 
     if member.top_role >= commandInfo.user.top_role:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.targetTooHigh.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.targetTooHigh.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.targetTooHigh.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.targetTooHigh.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -48,7 +51,7 @@ async def timeout(
 
         if member.is_timed_out():
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.alreadyTimedOut.title"),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.alreadyTimedOut.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.timeout.alreadyTimedOut.description",
@@ -62,7 +65,7 @@ async def timeout(
         await member.timeout(until, reason=reason)
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.success.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.timeout.success.description",
@@ -71,26 +74,26 @@ async def timeout(
                 reason=(
                     reason
                     if reason
-                    else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.noReasonProvided")
+                    else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.noReasonProvided")
                 ),
             ),
         )
         await commandInfo.reply(embed=embed)
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.forbidden.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.forbidden.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.forbidden.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.forbidden.description"),
         )
         await commandInfo.reply(embed=embed)
     except discord.HTTPException:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.error.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.error.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.error.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.error.description"),
         )
         await commandInfo.reply(embed=embed)
     except TypeError:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.invalidDuration.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.timeout.invalidDuration.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.invalidDuration.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.invalidDuration.description"),
         )
         await commandInfo.reply(embed=embed)

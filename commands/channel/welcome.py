@@ -24,7 +24,10 @@ async def setWelcomeChannel(
     message: str = None,
     image_background: discord.Attachment = None,
 ):
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -96,7 +99,7 @@ async def setWelcomeChannel(
     await set_welcome_channel(commandInfo.guild.id, channel.id, message, imgUrl)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.channel.welcome.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.welcome.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.channel.welcome.success.description",
@@ -107,7 +110,10 @@ async def setWelcomeChannel(
 
 
 async def removeWelcomeChannel():
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -123,8 +129,8 @@ async def removeWelcomeChannel():
 
     if not await get_welcome_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.channel.welcome.notSet.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.channel.welcome.notSet.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.welcome.notSet.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.welcome.notSet.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -132,7 +138,7 @@ async def removeWelcomeChannel():
     await remove_welcome_channel(commandInfo.guild.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.channel.welcome.deleteSuccess.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.welcome.deleteSuccess.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.channel.welcome.deleteSuccess.description",

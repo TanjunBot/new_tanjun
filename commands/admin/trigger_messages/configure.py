@@ -15,7 +15,10 @@ from localizer import tanjunLocalizer
 async def configure_trigger_messages(
     commandInfo: utility.commandInfo,
 ):
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -278,7 +281,7 @@ async def configure_trigger_messages(
             await self.update_message(interaction)
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.trigger_messages.configure.up.label"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.trigger_messages.configure.up.label"),
             style=discord.ButtonStyle.secondary,
             emoji="⬆️",
             row=1,

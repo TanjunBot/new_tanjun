@@ -10,9 +10,9 @@ import re
 import tempfile
 from collections.abc import (
     Callable,
+    Coroutine,
     Mapping,  # For reply in commandInfo
 )
-from collections.abc import Coroutine as ABCCoroutine
 from difflib import SequenceMatcher
 from typing import (
     Any,
@@ -472,18 +472,27 @@ class tanjunEmbed(discord.Embed):
 class commandInfo:
     def __init__(
         self,
-        user: discord.abc.User,
+        user: discord.Member,
         channel: discord.abc.GuildChannel,
         guild: discord.Guild,
         command: discord.app_commands.Command[Any, ..., Any],
         locale: str,
         message: discord.Message,
         permissions: discord.Permissions,
-        reply: ABCCoroutine[Any, Any, discord.Message],
+        reply: Callable[..., Coroutine[Any, Any, discord.Message]],
         client: discord.Client,
+        bot: discord.ext.commands.Bot | None = None
     ):
-        self.user, self.channel, self.guild, self.command = user, channel, guild, command
-        self.locale, self.message, self.permissions, self.reply, self.client = locale, message, permissions, reply, client
+        self.user = user
+        self.channel = channel
+        self.guild = guild
+        self.command = command
+        self.locale = locale
+        self.message = message
+        self.permissions = permissions
+        self.reply = reply
+        self.client = client
+        self.bot = bot
 
 
 def cmp(a: int | float, b: int | float) -> int:

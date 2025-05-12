@@ -24,7 +24,10 @@ async def addDynamicslowmode(
     per: int,
     resetafter: int = 60,
 ):
-    if not commandInfo.user.guild_permissions.manage_channels:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -72,7 +75,7 @@ async def addDynamicslowmode(
 
     await add_dynamicslowmode(commandInfo.guild.id, channel.id, messages, per, resetafter)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.channel.dynamicslowmode.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.channel.dynamicslowmode.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.channel.dynamicslowmode.success.description",
@@ -82,7 +85,10 @@ async def addDynamicslowmode(
 
 
 async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: discord.TextChannel):
-    if not commandInfo.user.guild_permissions.manage_channels:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -126,7 +132,10 @@ async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: disco
 
 
 async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
-    if not commandInfo.user.guild_permissions.manage_channels:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -167,7 +176,7 @@ async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
         )
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.channel.dynamicslowmode.channels.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.channel.dynamicslowmode.channels.title"),
         description=description,
     )
     await commandInfo.reply(embed=embed)

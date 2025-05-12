@@ -15,7 +15,10 @@ async def addTwitchLiveNotification(
     channel: discord.TextChannel,
     notification_message: str = None,
 ):
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

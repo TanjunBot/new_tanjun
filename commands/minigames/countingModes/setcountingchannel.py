@@ -6,7 +6,10 @@ from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
 async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChannel):
-    if not commandInfo.user.guild_permissions.moderate_members:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -22,7 +25,7 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
 
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.error.no_pro.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingchannel.error.no_pro.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "minigames.setcountingchannel.error.no_pro.description",
@@ -99,7 +102,7 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
     )
 
     introductionEmbed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.modesintroduction.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingchannel.modesintroduction.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.setcountingchannel.modesintroduction.description",
@@ -108,7 +111,7 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
     await channel.send(embed=introductionEmbed)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingchannel.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.setcountingchannel.success.description",

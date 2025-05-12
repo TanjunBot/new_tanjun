@@ -12,9 +12,9 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
     player1_choice = None
     player2_choice = None
 
-    rockLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.rock")
-    paperLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.paper")
-    scissorsLocale = tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.scissors")
+    rockLocale = tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.rock")
+    paperLocale = tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.paper")
+    scissorsLocale = tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.scissors")
 
     if player2 == "tanjun" or user.bot:
         player2_choice = random.choice([rockLocale, paperLocale, scissorsLocale])
@@ -22,7 +22,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
     async def check_winner(interaction: discord.Interaction):
         if player1_choice == player2_choice:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.draw"),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.draw"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.games.rps.drawDescription",
@@ -40,7 +40,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
             or (player1_choice == scissorsLocale and player2_choice == paperLocale)
         ):
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.win"),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.win"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.games.rps.winDescription",
@@ -54,7 +54,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
 
         else:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.lose"),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.lose"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.games.rps.loseDescription",
@@ -83,7 +83,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 and interaction.user.id != player2.id
             ):
                 await interaction.followup.send(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.notYourGame"),
+                    tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -95,7 +95,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 else:
                     view = RPSView(commandInfo, False)
                     embed = utility.tanjunEmbed(
-                        title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.title"),
+                        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.title"),
                         description=tanjunLocalizer.localize(
                             commandInfo.locale,
                             "commands.games.rps.description",
@@ -121,7 +121,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 and interaction.user.id != player2.id
             ):
                 await interaction.followup.send(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.notYourGame"),
+                    tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -133,7 +133,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 else:
                     view = RPSView(commandInfo, False)
                     embed = utility.tanjunEmbed(
-                        title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.title"),
+                        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.title"),
                         description=tanjunLocalizer.localize(
                             commandInfo.locale,
                             "commands.games.rps.description",
@@ -163,7 +163,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 and interaction.user.id != player2.id
             ):
                 await interaction.followup.send(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.notYourGame"),
+                    tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -175,7 +175,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 else:
                     view = RPSView(commandInfo, False)
                     embed = utility.tanjunEmbed(
-                        title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.title"),
+                        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.title"),
                         description=tanjunLocalizer.localize(
                             commandInfo.locale,
                             "commands.games.rps.description",
@@ -191,7 +191,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
 
     view = RPSView(commandInfo, True)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.rps.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.games.rps.description",

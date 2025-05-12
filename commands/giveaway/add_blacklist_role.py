@@ -46,7 +46,7 @@ async def add_blacklist_role(
 
     await add_blacklist_role_api(commandInfo.guild.id, role.id)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.add_blacklist_role.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.add_blacklist_role.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.giveaway.add_blacklist_role.success.description",

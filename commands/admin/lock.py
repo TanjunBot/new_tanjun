@@ -9,17 +9,20 @@ async def lock_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
     if channel is None:
         channel = commandInfo.channel
 
-    if not commandInfo.user.guild_permissions.manage_channels:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+    ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.missingPermission.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.missingPermission.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.lock.missingPermission.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.lock.missingPermission.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if not channel.permissions_for(commandInfo.guild.me).manage_channels:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.missingPermissionBot.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.lock.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.lock.missingPermissionBot.description",
@@ -48,7 +51,7 @@ async def lock_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
         await channel.set_permissions(channel.guild.default_role, overwrite=default_permissions)
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.success.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.lock.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.lock.success.description",
@@ -67,13 +70,13 @@ async def lock_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
 
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.forbidden.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.forbidden.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.lock.forbidden.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.lock.forbidden.description"),
         )
         await commandInfo.reply(embed=embed)
     except discord.HTTPException:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.error.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.lock.error.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.lock.error.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.lock.error.description"),
         )
         await commandInfo.reply(embed=embed)

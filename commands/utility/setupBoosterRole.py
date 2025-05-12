@@ -6,8 +6,11 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def setupBoosterRole(commandInfo: commandInfo, role: discord.Role):
-    if not commandInfo.user.guild_permissions.administrator:
+async def setupBoosterRole(commandInfo: commandInfo, role: discord.Role) -> None:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -39,7 +42,7 @@ async def setupBoosterRole(commandInfo: commandInfo, role: discord.Role):
     await add_booster_role(commandInfo.guild.id, role.id)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.setupboosterrole.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.setupboosterrole.success.description"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.setupboosterrole.success.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.setupboosterrole.success.description"),
     )
     await commandInfo.reply(embed=embed)

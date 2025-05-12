@@ -70,7 +70,7 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str):
         await commandInfo.reply(embed=embed)
         return
 
-    reason = tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterchannel.success.reason")
+    reason = tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.claimboosterchannel.success.reason")
     overwrites = {
         commandInfo.guild.default_role: discord.PermissionOverwrite(connect=False),
         commandInfo.user: discord.PermissionOverwrite(manage_channels=True, connect=True, speak=True),
@@ -80,7 +80,7 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str):
     )
     await claim_booster_channel(commandInfo.user.id, newChannel.id, commandInfo.guild.id)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.claimboosterchannel.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.claimboosterchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.claimboosterchannel.success.description",

@@ -768,22 +768,22 @@ async def edit_giveaway(
     commandInfo,
     giveawayId,
 ):
-    if not commandInfo.user.guild_permissions.manage_guild:
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         await commandInfo.reply(
-            tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.editor.no_permission"),
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.editor.no_permission"),
         )
         return
 
     editor = GiveawayEditor(commandInfo, giveawayId)
     if not await editor.load_giveaway_data():
         await commandInfo.reply(
-            tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.editor.not_found"),
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.editor.not_found"),
         )
         return
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.editor.loading"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.editor.loading"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.editor.loading"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.editor.loading"),
     )
     message = await commandInfo.reply(embed=embed, view=editor)
     editor.generator_message = message

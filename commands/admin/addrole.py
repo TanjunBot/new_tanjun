@@ -9,9 +9,9 @@ async def addrole(
     user: discord.Member = None,
     role: discord.Role = None,
 ):
-    if not commandInfo.user.guild_permissions.manage_roles:
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.addrole.missingPermission.description",
@@ -22,7 +22,7 @@ async def addrole(
 
     if not commandInfo.guild.me.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.missingPermissionBot.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.addrole.missingPermissionBot.description",
@@ -64,7 +64,7 @@ async def addrole(
             )
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.confirm.label"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.confirm.label"),
             style=discord.ButtonStyle.green,
         )
         async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -110,7 +110,7 @@ async def addrole(
             self.stop()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.cancel.label"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.cancel.label"),
             style=discord.ButtonStyle.red,
         )
         async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -136,7 +136,7 @@ async def addrole(
         # Single user, single role
         if role in user.roles:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.alreadyHasRole.title"),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.alreadyHasRole.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.addrole.alreadyHasRole.description",
@@ -147,15 +147,15 @@ async def addrole(
 
         if commandInfo.user.top_role <= role:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.roleTooHigh.title"),
-                description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.roleTooHigh.description"),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.roleTooHigh.title"),
+                description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.roleTooHigh.description"),
             )
             await commandInfo.reply(embed=embed)
             return
 
         if commandInfo.guild.me.top_role <= role:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.roleTooHighBot.title"),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.roleTooHighBot.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.addrole.roleTooHighBot.description",
@@ -166,7 +166,7 @@ async def addrole(
 
         await user.add_roles(role)
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.success.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.success.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.addrole.success.description",
@@ -179,7 +179,7 @@ async def addrole(
         # Multiple users or roles
         view = RoleManagementView(commandInfo, action="add", users=user, roles=role)
         await commandInfo.reply(
-            tanjunLocalizer.localize(commandInfo.locale, "commands.admin.addrole.multiplePrompt"),
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.multiplePrompt"),
             view=view,
             ephemeral=True,
         )

@@ -22,7 +22,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
             return True
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.confirm"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.confirm"),
             style=discord.ButtonStyle.danger,
         )
         async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -33,7 +33,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
             self.stop()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.cancel"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.cancel"),
             style=discord.ButtonStyle.secondary,
         )
         async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -47,17 +47,20 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
             if self.message:
                 await self.message.edit(view=None)
 
-    if not commandInfo.user.guild_permissions.manage_channels:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+    ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.missingPermission.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.missingPermission.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.missingPermission.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.missingPermission.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if not channel.guild.me.guild_permissions.manage_channels:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.missingPermissionBot.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.nuke.missingPermissionBot.description",
@@ -70,7 +73,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
         channel = commandInfo.channel
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.confirmationTitle"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.confirmationTitle"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.nuke.confirmationDescription",
@@ -83,7 +86,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
     await view.wait()
 
     if view.value is None:
-        await commandInfo.channel.send(tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.timeoutMessage"))
+        await commandInfo.channel.send(tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.timeoutMessage"))
         return
     elif not view.value:
         return
@@ -94,21 +97,21 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
     try:
         confirmation_message = await commandInfo.client.wait_for("message", check=check, timeout=30.0)
     except TimeoutError:
-        await commandInfo.channel.send(tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.timeoutMessage"))
+        await commandInfo.channel.send(tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.timeoutMessage"))
         return
 
     if (
         confirmation_message.content.lower()
-        != tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.confirmationWord").lower()
+        != tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.confirmationWord").lower()
     ):
         await commandInfo.channel.send(
-            tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.incorrectConfirmation")
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.incorrectConfirmation")
         )
         return
 
     try:
         new_channel = await channel.clone(
-            reason=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.nukeReason")
+            reason=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.nukeReason")
         )
         await channel.delete()
         await new_channel.send(
@@ -119,6 +122,6 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
             )
         )
     except discord.Forbidden:
-        await commandInfo.channel.send(tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.forbiddenError"))
+        await commandInfo.channel.send(tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.forbiddenError"))
     except discord.HTTPException:
-        await commandInfo.channel.send(tanjunLocalizer.localize(commandInfo.locale, "commands.admin.nuke.httpError"))
+        await commandInfo.channel.send(tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.httpError"))

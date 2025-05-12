@@ -6,7 +6,10 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def setCountingProgress(commandInfo: commandInfo, channel: discord.TextChannel, progress: int):
-    if not commandInfo.user.guild_permissions.moderate_members:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -52,7 +55,7 @@ async def setCountingProgress(commandInfo: commandInfo, channel: discord.TextCha
 
     if progress > 1_000_000_000:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.error.too_high.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingprogress.error.too_high.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "minigames.setcountingprogress.error.too_high.description",
@@ -65,8 +68,8 @@ async def setCountingProgress(commandInfo: commandInfo, channel: discord.TextCha
     await set_counting_progress(channel.id, progress, commandInfo.guild.id)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.success.description").format(
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingprogress.success.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingprogress.success.description").format(
             channel=channel.mention, progress=progress
         ),
     )
@@ -74,7 +77,7 @@ async def setCountingProgress(commandInfo: commandInfo, channel: discord.TextCha
 
     # Send a message to the channel informing users about the new progress
     info_embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "minigames.setcountingprogress.channel_message.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingprogress.channel_message.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.setcountingprogress.channel_message.description",

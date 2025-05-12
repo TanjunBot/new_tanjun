@@ -4,7 +4,10 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def disable_levelup_message(commandInfo: commandInfo):
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -36,7 +39,7 @@ async def disable_levelup_message(commandInfo: commandInfo):
     await set_levelup_message_status(str(commandInfo.guild.id), False)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.disablelevelupmessage.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.disablelevelupmessage.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.disablelevelupmessage.success.description",

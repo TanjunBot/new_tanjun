@@ -110,7 +110,7 @@ def create_warnings_embed(commandInfo, member, warnings, page):
     current_warnings = warnings[start:end]
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.title", user=member.name),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.title", user=member.name),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.viewwarns.description",
@@ -131,12 +131,12 @@ def create_warnings_embed(commandInfo, member, warnings, page):
         expiration_str = f"~~{expiration_str}~~" if expired else expiration_str
 
         embed.add_field(
-            name=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.warningEntry", number=i),
+            name=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.warningEntry", number=i),
             value=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.viewwarns.warningDetails",
                 reason=(
-                    reason if reason else tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.noReason")
+                    reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.noReason")
                 ),
                 date=f"<t:{int(created_at.timestamp())}:D>",
                 expiration=expiration_str,
@@ -159,9 +159,9 @@ def create_warnings_embed(commandInfo, member, warnings, page):
 
 
 async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member):
-    if not commandInfo.user.guild_permissions.kick_members:
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).kick_members:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.viewwarns.missingPermission.description",
@@ -177,7 +177,7 @@ async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member
 
     if not warnings:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.viewwarns.noWarnings.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.noWarnings.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.viewwarns.noWarnings.description",

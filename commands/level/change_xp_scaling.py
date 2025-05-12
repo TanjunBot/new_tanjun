@@ -42,7 +42,10 @@ class PaginationView(View):
 async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, custom_formula: str = None):
     if custom_formula:
         custom_formula = custom_formula.replace("x", "level")
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -105,7 +108,7 @@ async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, cust
         await set_custom_formula(str(commandInfo.guild.id), custom_formula)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.changexpscaling.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.changexpscaling.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.level.changexpscaling.success.description",
@@ -124,7 +127,7 @@ async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, cust
     # Add field to show XP required for first 5 levels
     xp_examples = "\n".join([f"Level {i}: {get_xp_for_level(i, scaling, custom_formula)} XP" for i in range(1, 6)])
     embed.add_field(
-        name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.changexpscaling.xp_examples"),
+        name=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.changexpscaling.xp_examples"),
         value=xp_examples,
         inline=False,
     )
@@ -146,7 +149,7 @@ async def show_xp_scalings(commandInfo: commandInfo, start_level: int = 1, end_l
         current_end = min(current_start + levels_per_page - 1, end_level)
 
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showxpscalings.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.showxpscalings.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.showxpscalings.description",

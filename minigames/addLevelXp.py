@@ -133,10 +133,10 @@ def clearNotifiedUsers() -> None:
 async def determine_levelup_channel(message: discord.Message, guild_id: str) -> discord.abc.GuildChannel:
     level_up_channel_id = await get_levelup_channel(guild_id)
     channel: discord.abc.GuildChannel = (
-        message.guild.get_channel(int(level_up_channel_id))
+        message.guild.get_channel(int(level_up_channel_id))  # type: ignore[assignment]
         if message.guild != None and level_up_channel_id != None
         else message.channel
-    )  # type: ignore[assignment]
+    )
     return channel
 
 

@@ -247,12 +247,12 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
 
     class HangmanInputModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.commandInfo, config):
-            super().__init__(title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.modal.title"))
+            super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.hangman.modal.title"))
             self.commandInfo = commandInfo
 
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.modal.input.label"),
+                    label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.hangman.modal.input.label"),
                     placeholder=tanjunLocalizer.localize(
                         commandInfo.locale,
                         "commands.games.hangman.modal.input.placeholder",
@@ -291,13 +291,13 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             self.commandInfo = commandInfo
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.buttons.guess"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.hangman.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
         async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"),
+                    tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.hangman.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -305,13 +305,13 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             await interaction.response.send_modal(modal)
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.buttons.giveUp"),
+            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.hangman.buttons.giveUp"),
             style=discord.ButtonStyle.red,
         )
         async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"),
+                    tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.hangman.notYourGame"),
                     ephemeral=True,
                 )
                 return

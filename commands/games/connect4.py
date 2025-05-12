@@ -159,7 +159,7 @@ class Connect4:
         timeout: bool = False,
     ):
         self.winner = self.check_winner()
-        title = tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.title")
+        title = tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.title")
         description = tanjunLocalizer.localize(
             interaction.locale,
             "commands.games.connect4.description",
@@ -168,22 +168,22 @@ class Connect4:
         )
         if self.player2 == "tanjun":
             description += "\n" + tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.games.connect4.descriptionBotEnemy",
                 difficulty=self.bot_difficulty,
             )
         if self.winner is not None:
             winner = self.player1 if self.winner == self.player1_move else self.player2
             description += "\n" + tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.games.connect4.winner",
                 winner=winner.mention if winner != "tanjun" else "Tanjun",
             )
         elif self.is_full():
-            description += "\n" + tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.draw")
+            description += "\n" + tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.draw")
         else:
             description += "\n" + tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.games.connect4.currentTurn",
                 player=(self.current_player.mention if self.current_player != "tanjun" else "Tanjun"),
             )
@@ -265,14 +265,14 @@ class Connect4:
                     self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
                 ):
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if not interaction.user.id == self.connect4.current_player.id:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -295,14 +295,14 @@ class Connect4:
                     self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
                 ):
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if not interaction.user.id == self.connect4.current_player.id:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -322,14 +322,14 @@ class Connect4:
                     self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
                 ):
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if not interaction.user.id == self.connect4.current_player.id:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -354,8 +354,8 @@ async def connect4(
     if rows != 6 and columns != 7 and not checkIfhasPlus(commandInfo.guild.id):
         await commandInfo.reply(
             embed=utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.connect4.error.no_plus.title"),
-                description=tanjunLocalizer.localize(commandInfo.locale, "commands.games.connect4.error.no_plus.description"),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.connect4.error.no_plus.title"),
+                description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.connect4.error.no_plus.description"),
             )
         )
         return

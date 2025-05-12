@@ -14,7 +14,10 @@ from localizer import tanjunLocalizer
 
 
 async def blacklist_list_role(commandInfo: utility.commandInfo):
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -89,11 +92,11 @@ async def blacklist_list_role(commandInfo: utility.commandInfo):
         )
     )
     if not blacklisted_roles or len(blacklisted_roles) == 0:
-        description = tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListRole.noBlacklistedRoles")
+        description = tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.blacklistListRole.noBlacklistedRoles")
     else:
         description = "\n".join([f"{'➤' if i == 0 else ''} <@&{role[0]}>" for i, role in enumerate(blacklisted_roles)])
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListRole.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.blacklistListRole.title"),
         description=description,
     )
     await commandInfo.reply(embed=embed, view=view)

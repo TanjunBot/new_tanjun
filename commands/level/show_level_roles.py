@@ -9,7 +9,7 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def show_level_roles_command(commandInfo: commandInfo):
-    if not commandInfo.user.guild_permissions.manage_roles:
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -371,20 +371,20 @@ async def show_level_roles_command(commandInfo: commandInfo):
 
     if not level_roles:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.no_roles.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.no_roles.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.showlevelroles.no_roles.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.showlevelroles.no_roles.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.description"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.showlevelroles.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.showlevelroles.description"),
     )
 
     for level, roles in level_roles.items():
         embed.add_field(
-            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.level", level=level),
+            name=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.showlevelroles.level", level=level),
             value=", ".join([f"<@&{role}>" for role in roles]),
             inline=False,
         )
