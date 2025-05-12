@@ -87,11 +87,11 @@ jobs:
             --warn-unused-ignores \
             --warn-redundant-casts \
             --warn-unreachable \
+            --strict-equality \
             2>&1 | tee mypy_reports/mypy_issues.txt
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
         continue-on-error: true
         
-      # ... (rest of your workflow for counting issues, uploading artifacts, and managing GitHub issues) ...
       - name: Count Mypy Issues
         id: mypy_count
         if: always()
