@@ -2,7 +2,6 @@
 # from typing import Union
 import random
 from math import sqrt
-from typing import Union, Any, Optional, cast
 
 import discord
 
@@ -186,7 +185,7 @@ def number_to_romeal(number: int) -> str:
     return "".join(roman_numeral)
 
 
-def get_correct_next_number(mode: int, number: int) -> Union[int, str]:
+def get_correct_next_number(mode: int, number: int) -> int | str:
     if mode == 1:
         return number + 1
     if mode == 2:
@@ -228,11 +227,11 @@ def get_correct_next_number(mode: int, number: int) -> Union[int, str]:
             return 1
         next_num = int(number ** (1 / 3)) + 1
         return next_num**3
-    
+
     return 0
 
 
-def get_goal(mode: int) -> Union[int, str]:
+def get_goal(mode: int) -> int | str:
     if mode == 1:
         # nosec: B311
         return random.randint(20, 100)
@@ -275,7 +274,7 @@ def get_goal(mode: int) -> Union[int, str]:
         return random.randint(20, 100) ** 2
     if mode == 14:
         return random.randint(20, 100) ** 3
-    
+
     return 0
 
 
@@ -308,7 +307,7 @@ def get_first_number(mode: int) -> int:
         return 0
     if mode == 14:
         return 0
-    
+
     return 0
 
 
@@ -316,19 +315,19 @@ async def counting(message: discord.Message) -> None:
     if message.author.bot:
         return
 
-    if (message.guild == None):
+    if message.guild == None:
         embed: discord.Embed = tanjunEmbed(
-                title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
-                description=tanjunLocalizer.localize(
-                    "en_US",
-                    "errors.guildonly.description",
-                ),
-            )
+            title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
+            description=tanjunLocalizer.localize(
+                "en_US",
+                "errors.guildonly.description",
+            ),
+        )
         await message.channel.send(embed=embed)
         return
-    
+
     locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
-    
+
     if await check_if_opted_out(message.author.id):
         try:
             await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
@@ -338,20 +337,20 @@ async def counting(message: discord.Message) -> None:
         return
 
     progress = await get_counting_mode_progress(message.channel.id)
-    
+
     # If progress is None, return early
     if progress is None and progress != 0:
         return
-    
+
     # Ensure progress is an integer for calculations
     progress_int = 0 if progress is None else int(progress)
-    
+
     mode = await get_counting_mode_mode(message.channel.id)
-    
+
     # Default to normal mode (1) if mode is None
     mode_int = 1 if mode is None else int(mode)
-    
-    correctNumber: Union[int, str] = 0
+
+    correctNumber: int | str = 0
 
     if mode_int == 12:
         p = number_to_romeal(progress_int)
@@ -510,12 +509,12 @@ async def counting(message: discord.Message) -> None:
 
     # Get goal from database
     db_goal = await get_count_mode_goal(message.channel.id)
-    
+
     # Default to 0 if None
-    goal_value: Union[int, str] = 0
+    goal_value: int | str = 0
     if db_goal is not None:
         goal_value = db_goal
-    
+
     # Convert to int for comparison
     goal_int = int(goal_value)
 
@@ -563,7 +562,7 @@ async def counting(message: discord.Message) -> None:
         correct_number_int = romeal_to_number(correctNumber)
 
     progress_to_save = -15 if (mode_int == 7 and number_int == 1 and progress_int == 0) else correct_number_int
-    
+
     await set_counting_mode_progress(
         channel_id=message.channel.id,
         progress=int(progress_to_save),
@@ -572,20 +571,20 @@ async def counting(message: discord.Message) -> None:
         guild_id=message.guild.id,
         goal=goal_int,
     )
-    
+
     # nosec: B311
     if random.randint(1, 100) == 1:
         next_correct = get_correct_next_number(mode_int, int(correct_number_int))
         # Convert to string for sending if it's not already
         next_correct_str = str(next_correct)
         await message.channel.send(next_correct_str)
-        
+
         # Determine progress to save
         if mode_int == 12 and isinstance(next_correct, str):
             progress_val = romeal_to_number(next_correct)
         else:
             progress_val = int(next_correct)
-            
+
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=progress_val,

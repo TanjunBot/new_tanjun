@@ -29,7 +29,7 @@ async def addLevelXp(message: discord.Message) -> None:
     if message.author.bot or await check_if_opted_out(str(message.author.id)):
         return
 
-    if (message.guild == None):
+    if message.guild == None:
         return
 
     guild_id = str(message.guild.id)
@@ -78,7 +78,9 @@ async def calculate_xp(message: discord.Message, guild_id: str) -> int:
     user_boost = await get_user_boost(guild_id, str(message.author.id))
     if not user_boost:
         user_boost = None
-    role_boosts = await get_user_roles_boosts(guild_id, [str(role.id) for role in (message.author.roles if hasattr(message.author, "roles") else [])])
+    role_boosts = await get_user_roles_boosts(
+        guild_id, [str(role.id) for role in (message.author.roles if hasattr(message.author, "roles") else [])]
+    )
     if not role_boosts:
         role_boosts = []
     channel_boost = await get_channel_boost(guild_id, str(message.channel.id))
@@ -112,12 +114,12 @@ async def calculate_xp(message: discord.Message, guild_id: str) -> int:
 
 
 async def handle_level_up(message: discord.Message, new_level: int) -> None:
-    if (message.guild == None):
+    if message.guild == None:
         return
     guild_id = str(message.guild.id)
     if await get_levelup_message_status(guild_id) and message.author.id not in notifiedUsers:
         channel = await determine_levelup_channel(message, guild_id)
-        await channel.send(await format_level_up_message(guild_id, message.author.mention, new_level, message.guild)) # type: ignore[attr-defined]
+        await channel.send(await format_level_up_message(guild_id, message.author.mention, new_level, message.guild))  # type: ignore[attr-defined]
         notifiedUsers.append(message.author.id)
 
     await update_user_roles(message, new_level, guild_id)
@@ -130,8 +132,13 @@ def clearNotifiedUsers() -> None:
 
 async def determine_levelup_channel(message: discord.Message, guild_id: str) -> discord.abc.GuildChannel:
     level_up_channel_id = await get_levelup_channel(guild_id)
-    channel: discord.abc.GuildChannel = message.guild.get_channel(int(level_up_channel_id)) if message.guild != None and level_up_channel_id != None else message.channel # type: ignore[assignment]
+    channel: discord.abc.GuildChannel = (
+        message.guild.get_channel(int(level_up_channel_id))
+        if message.guild != None and level_up_channel_id != None
+        else message.channel
+    )  # type: ignore[assignment]
     return channel
+
 
 async def format_level_up_message(guild_id: str, user_mention: str, new_level: int, guild: discord.Guild) -> str:
     level_up_message = await get_levelup_message(guild_id)
@@ -144,7 +151,7 @@ async def format_level_up_message(guild_id: str, user_mention: str, new_level: i
 
 
 async def update_user_roles(message: discord.Message, new_level: int, guild_id: str) -> None:
-    if (message.guild == None or not isinstance(message.author, discord.Member)):
+    if message.guild == None or not isinstance(message.author, discord.Member):
         return
     level_roles = await get_level_roles(guild_id)
     for level, role_id in level_roles:

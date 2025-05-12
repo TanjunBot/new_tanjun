@@ -136,7 +136,7 @@ class tanjunEmbed(discord.Embed):
 
     title: str | None
     url: str | None
-    type: LiteralType['rich', 'image', 'video', 'gifv', 'article', 'link', 'poll_result']
+    type: LiteralType["rich", "image", "video", "gifv", "article", "link", "poll_result"]
     _timestamp: datetime.datetime
     _colour: discord.Colour | None
     _footer: dict[str, str]  # Stores footer data
@@ -154,7 +154,7 @@ class tanjunEmbed(discord.Embed):
         colour: int | discord.Colour | None = 0xCB33F5,  # Hex color
         color: int | discord.Colour | None = 0xCB33F5,  # Hex color
         title: Any | None = None,
-        type: LiteralType['rich', 'image', 'video', 'gifv', 'article', 'link', 'poll_result'] = 'rich',
+        type: LiteralType["rich", "image", "video", "gifv", "article", "link", "poll_result"] = "rich",
         url: Any | None = None,
         description: Any | None = None,
         timestamp: datetime.datetime | None = None,
@@ -187,7 +187,7 @@ class tanjunEmbed(discord.Embed):
         self = cls.__new__(cls)
 
         self.title = None
-        self.type = 'rich'
+        self.type = "rich"
         self.description = None
         self.url = None
         self._colour = None
@@ -201,7 +201,7 @@ class tanjunEmbed(discord.Embed):
         self._footer = {}
 
         self.title = str(data["title"]) if data.get("title") is not None else None
-        self.type = data.get("type", 'rich')
+        self.type = data.get("type", "rich")
         self.description = str(data["description"]) if data.get("description") is not None else None
         self.url = str(data["url"]) if data.get("url") is not None else None
 
@@ -252,32 +252,34 @@ class tanjunEmbed(discord.Embed):
         return total
 
     def __bool__(self) -> bool:
-        return bool(any(
-            (
-                self.title,
-                self.url,
-                self.description,
-                self.colour,
-                self.fields,
-                self.timestamp,
-                self.author,
-                self.thumbnail,
-                self.footer,
-                self.image,
-                self.provider,
-                self.video,
+        return bool(
+            any(
+                (
+                    self.title,
+                    self.url,
+                    self.description,
+                    self.colour,
+                    self.fields,
+                    self.timestamp,
+                    self.author,
+                    self.thumbnail,
+                    self.footer,
+                    self.image,
+                    self.provider,
+                    self.video,
+                )
             )
-        ))
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, tanjunEmbed):
             return NotImplemented
-        return self.to_dict() == other.to_dict() # type: ignore[no-any-return]
+        return self.to_dict() == other.to_dict()  # type: ignore[no-any-return]
 
     @property
     def colour(self) -> discord.Colour | None:
         return getattr(self, "_colour", None)
-    
+
     @colour.setter
     def colour(self, value: int | discord.Colour | None) -> None:
         if value is None:
@@ -286,34 +288,30 @@ class tanjunEmbed(discord.Embed):
             self._colour = value
         elif isinstance(value, int):
             self._colour = discord.Colour(value=value)
-    
-    @overload # type: ignore[override]
-    def color(self) -> discord.Colour | None:
-        ...
-    
+
+    @overload  # type: ignore[override]
+    def color(self) -> discord.Colour | None: ...
+
     @overload
-    def color(self, value: discord.Colour) -> None:
-        ...
-    
+    def color(self, value: discord.Colour) -> None: ...
+
     @overload
-    def color(self, value: int) -> None:
-        ...
-    
+    def color(self, value: int) -> None: ...
+
     @overload
-    def color(self, value: None) -> None:
-        ...
-    
+    def color(self, value: None) -> None: ...
+
     def color(self, value: discord.Colour | int | None = None) -> discord.Colour | None:
-        if value is None and (args := (value,)) and not hasattr(self, '_called_with_args'):
+        if value is None and (args := (value,)) and not hasattr(self, "_called_with_args"):
             return getattr(self, "_colour", None)
-        
+
         if value is None:
             self._colour = None
         elif isinstance(value, discord.Colour):
             self._colour = value
         elif isinstance(value, int):
             self._colour = discord.Colour(value=value)
-            
+
         return None
 
     @property
