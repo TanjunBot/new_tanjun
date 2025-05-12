@@ -2215,7 +2215,7 @@ class LogsCog(commands.Cog):
                 if blacklistedRole in user.roles:
                     continue
 
-            locale = guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
+            locale = str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US"
             description_parts = []
 
             description_parts.append(tanjunLocalizer.localize(locale, "logs.userUpdate.name", user=before.mention))
@@ -2349,7 +2349,7 @@ class LogsCog(commands.Cog):
         if await is_log_user_blacklisted(guild.id, str(user.id)):
             return
 
-        locale = guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"
+        locale = str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US"
         description_parts = []
 
         description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUnban.name", user=user.mention))
@@ -2588,7 +2588,7 @@ class LogsCog(commands.Cog):
             if blacklistedRole in message.author.roles:
                 return
 
-        locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
+        locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         description_parts.append(

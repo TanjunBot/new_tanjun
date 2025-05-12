@@ -19,7 +19,10 @@ from typing import (
     Protocol,
     Self,
     TypeVar,
+    cast,
+    overload,
 )
+from typing import Literal as LiteralType
 
 import aiohttp
 import discord
@@ -110,7 +113,7 @@ class _EmbedAuthorProxy(Protocol):
     proxy_icon_url: str | None
 
 
-class tanjunEmbed:
+class tanjunEmbed(discord.Embed):
     """Represents a Discord embed.
     (Docstring remains the same)
     """
@@ -133,8 +136,8 @@ class tanjunEmbed:
 
     title: str | None
     url: str | None
-    type: str
-    _timestamp: datetime.datetime | None
+    type: LiteralType['rich', 'image', 'video', 'gifv', 'article', 'link', 'poll_result']
+    _timestamp: datetime.datetime
     _colour: discord.Colour | None
     _footer: dict[str, str]  # Stores footer data
     _image: dict[str, str]  # Stores image data
@@ -151,13 +154,13 @@ class tanjunEmbed:
         colour: int | discord.Colour | None = 0xCB33F5,  # Hex color
         color: int | discord.Colour | None = 0xCB33F5,  # Hex color
         title: Any | None = None,
-        type: str = "rich",  # noqa A002, shadows built-in
+        type: LiteralType['rich', 'image', 'video', 'gifv', 'article', 'link', 'poll_result'] = 'rich',
         url: Any | None = None,
         description: Any | None = None,
         timestamp: datetime.datetime | None = None,
     ):
         # Initialize attributes that might not be set by property setters immediately
-        self._timestamp = None
+        self._timestamp = datetime.datetime.now(datetime.UTC)  # Default to current time
         self._colour = None  # This will be set by the property setter
         self._footer = {}
         self._image = {}
@@ -177,18 +180,18 @@ class tanjunEmbed:
         self.description = str(description) if description is not None else None
 
         if timestamp is not None:
-            self.timestamp: datetime.datetime = timestamp
+            self.timestamp = timestamp
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> Self:
         self = cls.__new__(cls)
 
         self.title = None
-        self.type = "rich"
+        self.type = 'rich'
         self.description = None
         self.url = None
         self._colour = None
-        self._timestamp = None
+        self._timestamp = datetime.datetime.now(datetime.UTC)  # Initialize with current time
         self._thumbnail = {}
         self._video = {}
         self._provider = {}
@@ -198,7 +201,7 @@ class tanjunEmbed:
         self._footer = {}
 
         self.title = str(data["title"]) if data.get("title") is not None else None
-        self.type = data.get("type", "rich")
+        self.type = data.get("type", 'rich')
         self.description = str(data["description"]) if data.get("description") is not None else None
         self.url = str(data["url"]) if data.get("url") is not None else None
 
@@ -249,7 +252,7 @@ class tanjunEmbed:
         return total
 
     def __bool__(self) -> bool:
-        return any(
+        return bool(any(
             (
                 self.title,
                 self.url,
@@ -264,17 +267,17 @@ class tanjunEmbed:
                 self.provider,
                 self.video,
             )
-        )
+        ))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, tanjunEmbed):
             return NotImplemented
-        return self.to_dict() == other.to_dict()
+        return self.to_dict() == other.to_dict() # type: ignore[no-any-return]
 
     @property
     def colour(self) -> discord.Colour | None:
         return getattr(self, "_colour", None)
-
+    
     @colour.setter
     def colour(self, value: int | discord.Colour | None) -> None:
         if value is None:
@@ -283,22 +286,46 @@ class tanjunEmbed:
             self._colour = value
         elif isinstance(value, int):
             self._colour = discord.Colour(value=value)
-
-    color = colour
+    
+    @overload # type: ignore[override]
+    def color(self) -> discord.Colour | None:
+        ...
+    
+    @overload
+    def color(self, value: discord.Colour) -> None:
+        ...
+    
+    @overload
+    def color(self, value: int) -> None:
+        ...
+    
+    @overload
+    def color(self, value: None) -> None:
+        ...
+    
+    def color(self, value: discord.Colour | int | None = None) -> discord.Colour | None:
+        if value is None and (args := (value,)) and not hasattr(self, '_called_with_args'):
+            return getattr(self, "_colour", None)
+        
+        if value is None:
+            self._colour = None
+        elif isinstance(value, discord.Colour):
+            self._colour = value
+        elif isinstance(value, int):
+            self._colour = discord.Colour(value=value)
+            
+        return None
 
     @property
     def timestamp(self) -> datetime.datetime | None:
         return getattr(self, "_timestamp", None)
 
     @timestamp.setter
-    def timestamp(self, value: datetime.datetime | None) -> None:
-        if isinstance(value, datetime.datetime):
-            if value.tzinfo is None:
-                self._timestamp = value.astimezone()
-            else:
-                self._timestamp = value
-        elif value is None:
-            self._timestamp = None
+    def timestamp(self, value: datetime.datetime) -> None:
+        if value.tzinfo is None:
+            self._timestamp = value.astimezone()
+        else:
+            self._timestamp = value
 
     @property
     def footer(self) -> _EmbedFooterProxy:
@@ -317,8 +344,8 @@ class tanjunEmbed:
         return self
 
     @property
-    def image(self) -> _EmbedMediaProxy:
-        return EmbedProxy(getattr(self, "_image", {}))
+    def image(self) -> discord.embeds._EmbedMediaProxy:
+        return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_image", {})))
 
     def set_image(self, *, url: Any | None) -> Self:
         if url is None:
@@ -328,8 +355,8 @@ class tanjunEmbed:
         return self
 
     @property
-    def thumbnail(self) -> _EmbedMediaProxy:
-        return EmbedProxy(getattr(self, "_thumbnail", {}))
+    def thumbnail(self) -> discord.embeds._EmbedMediaProxy:
+        return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_thumbnail", {})))
 
     def set_thumbnail(self, *, url: Any | None) -> Self:
         if url is None:
@@ -339,8 +366,8 @@ class tanjunEmbed:
         return self
 
     @property
-    def video(self) -> _EmbedVideoProxy:
-        return EmbedProxy(getattr(self, "_video", {}))
+    def video(self) -> discord.embeds._EmbedMediaProxy:
+        return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_video", {})))
 
     @property
     def provider(self) -> _EmbedProviderProxy:
@@ -409,7 +436,7 @@ class tanjunEmbed:
             raise IndexError("field index out of range")
         return self
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> Any:
         result: dict[str, Any] = {}
         for key in self.__slots__:
             if key.startswith("_") and hasattr(self, key):
@@ -427,8 +454,6 @@ class tanjunEmbed:
                 result["timestamp"] = ts.astimezone(tz=datetime.UTC).isoformat()
             else:
                 result["timestamp"] = ts.replace(tzinfo=datetime.UTC).isoformat()
-        else:
-            result.pop("timestamp", None)
         if self.type:
             result["type"] = self.type
         if self.description:
@@ -517,16 +542,23 @@ class NumericStringParser:
         }
 
     def _setup_parser(self) -> Forward:
-        point, e_literal = Literal("."), CaselessLiteral("E")
+        point = Literal(".")
+        e_literal = CaselessLiteral("E")
         fnumber = Combine(
             Word("+-" + nums, nums)
             + PyParsingOptional(point + PyParsingOptional(Word(nums)))
             + PyParsingOptional(e_literal + Word("+-" + nums, nums))
         )
         ident = Word(alphas, alphas + nums + "_$")
-        plus, minus, mult, div = map(Literal, "+-*/")
-        lpar, rpar = map(Suppress, "()")
-        addop, multop, expop = plus | minus, mult | div, Literal("^")
+        plus = Literal("+")
+        minus = Literal("-")
+        mult = Literal("*")
+        div = Literal("/")
+        lpar = Suppress("(")
+        rpar = Suppress(")")
+        addop = plus | minus
+        multop = mult | div
+        expop = Literal("^")
         expr = Forward()
         func_call = (ident + lpar + expr + rpar).setParseAction(self.push_function_call_action)
         atom = PyParsingOptional(Literal("-")).setParseAction(self.push_uminus_sign_action) + (
@@ -863,12 +895,7 @@ def get_level_for_xp(xp: int, scaling: str, custom_formula: str | None = None) -
         # If xp_for_level_1_val is 0 or negative, and xp is 0, proceed to binary search.
         # The binary search should then correctly determine the level (e.g. level 1 if xp_for_level(1) is 0)
 
-    # If xp > 0, but still less than xp for level 1, it's level 0.
-    # This check is important before binary search which assumes level >=1.
-    # This was the block that had the "unreachable" error, now removed as the logic is consolidated.
-    # xp_for_lvl_1_check = get_xp_for_level(1, scaling, custom_formula)
-    # if xp < xp_for_lvl_1_check:
-    #     return 0
+    # The initial `if xp == 0:` block seems sufficient. The unreachable code was indeed redundant.
 
     low, high, ans = 1, 200000, 0
     # Check if xp is less than what's needed for level 1 before starting binary search from level 1

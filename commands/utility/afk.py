@@ -54,7 +54,7 @@ async def checkIfAfkHasToBeRemoved(message: discord.message):
         return
     if await checkIfUserIsAfk(message.author.id):
         messages = await getAfkMessages(message.author.id)
-        locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
+        locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
         if not messages:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(locale, "commands.utility.afk.removed_no_messages.title"),
@@ -84,7 +84,7 @@ async def checkIfMentionsAreAfk(message: discord.message):
     if await check_if_opted_out(message.author.id):
         return
 
-    locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
+    locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
 
     afkUsers = []
     reasons = []

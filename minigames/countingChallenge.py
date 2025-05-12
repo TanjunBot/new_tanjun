@@ -13,13 +13,24 @@ from localizer import tanjunLocalizer
 from utility import tanjunEmbed
 
 
-async def counting(message: discord.Message):
+async def counting(message: discord.Message) -> None:
     if message.author.bot:
+        return
+    
+    if (message.guild == None):
+        embed: discord.Embed = tanjunEmbed(
+                title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
+                description=tanjunLocalizer.localize(
+                    "en_US",
+                    "errors.guildonly.description",
+                ),
+            )
+        await message.channel.send(embed=embed)
         return
 
     progress = await get_counting_challenge_progress(message.channel.id)
 
-    locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
+    locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
 
     if not progress and progress != 0:
         return
@@ -81,5 +92,5 @@ async def counting(message: discord.Message):
     await increase_counting_challenge_progress(message.channel.id, message.author.id)
     # nosec: B311
     if random.randint(1, 100) == 1:
-        await message.channel.send(progress + 2)
+        await message.channel.send(str(progress + 2))
         await increase_counting_challenge_progress(message.channel.id, "me")

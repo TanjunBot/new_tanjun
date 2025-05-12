@@ -809,7 +809,7 @@ async def get_counting_channel_amount(guild_id: str | int) -> int:
     return len(result) if result else 0
 
 
-async def get_counting_progress(channel_id: str | int) -> str | None:
+async def get_counting_progress(channel_id: str | int) -> int | None:
     query = "SELECT progress FROM counting WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
@@ -841,7 +841,7 @@ async def set_counting_challenge_progress(channel_id: str | int, progress: int) 
     await execute_action(query, params)
 
 
-async def get_counting_challenge_progress(channel_id: str | int) -> str | None:
+async def get_counting_challenge_progress(channel_id: str | int) -> int | None:
     query = "SELECT progress FROM counting_challenge WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
@@ -880,7 +880,7 @@ async def set_counting_mode(channel_id: str | int, progress: int, mode: int, gui
     await execute_action(query, params)
 
 
-async def get_counting_mode_progress(channel_id: str | int) -> str | None:
+async def get_counting_mode_progress(channel_id: str | int) -> int | None:
     query = "SELECT progress FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
@@ -900,7 +900,7 @@ async def clear_counting_mode(channel_id: str | int) -> None:
     await execute_action(query, params)
 
 
-async def get_counting_mode_mode(channel_id: str | int) -> str | None:
+async def get_counting_mode_mode(channel_id: str | int) -> int | None:
     query = "SELECT mode FROM counting_modes WHERE channel_id s= %s"
     params = (channel_id,)
     result = await execute_query(query, params)

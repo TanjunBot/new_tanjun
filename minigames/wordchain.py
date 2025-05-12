@@ -7,15 +7,26 @@ from localizer import tanjunLocalizer
 from utility import tanjunEmbed
 
 
-async def wordchain(message: discord.Message):
+async def wordchain(message: discord.Message) -> None:
     if message.author.bot:
+        return
+
+    if (message.guild == None):
+        embed: discord.Embed = tanjunEmbed(
+                title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
+                description=tanjunLocalizer.localize(
+                    "en_US",
+                    "errors.guildonly.description",
+                ),
+            )
+        await message.channel.send(embed=embed)
         return
 
     wordchain_word = await get_wordchain_word(message.channel.id)
     if wordchain_word is None:
         return
 
-    locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
+    locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
 
     if await check_if_opted_out(message.author.id):
         try:

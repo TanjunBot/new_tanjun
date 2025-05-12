@@ -2,6 +2,7 @@
 # from typing import Union
 import random
 from math import sqrt
+from typing import Union, Any, Optional, cast
 
 import discord
 
@@ -118,7 +119,7 @@ fibonacci = [
 ]
 
 
-def romeal_to_number(romeal):
+def romeal_to_number(romeal: str) -> int:
     romeal_map = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
 
     number = 0
@@ -140,7 +141,7 @@ def romeal_to_number(romeal):
             and (next_next_letter == next_next_next_letter)
             and next_next_next_letter
         ):
-            return float("nan")  # Invalid romeal number
+            return -999
 
         if letter_value < next_letter_value:
             number -= letter_value
@@ -152,7 +153,7 @@ def romeal_to_number(romeal):
     return number
 
 
-def number_to_romeal(number):
+def number_to_romeal(number: int) -> str:
     if number == 0:
         return "0"
 
@@ -185,7 +186,7 @@ def number_to_romeal(number):
     return "".join(roman_numeral)
 
 
-def get_correct_next_number(mode: int, number: int):
+def get_correct_next_number(mode: int, number: int) -> Union[int, str]:
     if mode == 1:
         return number + 1
     if mode == 2:
@@ -227,9 +228,11 @@ def get_correct_next_number(mode: int, number: int):
             return 1
         next_num = int(number ** (1 / 3)) + 1
         return next_num**3
+    
+    return 0
 
 
-def get_goal(mode: int):
+def get_goal(mode: int) -> Union[int, str]:
     if mode == 1:
         # nosec: B311
         return random.randint(20, 100)
@@ -255,10 +258,10 @@ def get_goal(mode: int):
         return fibonacci[random.randint(5, len(fibonacci) - 1)]
     if mode == 8:
         # nosec: B311
-        return 2 ** random.randint(5, 20)
+        return int(2 ** random.randint(5, 20))
     if mode == 9:
         # nosec: B311
-        return 3 ** random.randint(5, 10)
+        return int(3 ** random.randint(5, 10))
     if mode == 10:
         # nosec: B311
         return random.randint(20, 100) * 100
@@ -272,9 +275,11 @@ def get_goal(mode: int):
         return random.randint(20, 100) ** 2
     if mode == 14:
         return random.randint(20, 100) ** 3
+    
+    return 0
 
 
-def get_first_number(mode: int):
+def get_first_number(mode: int) -> int:
     if mode == 1:
         return 0
     if mode == 2:
@@ -303,27 +308,27 @@ def get_first_number(mode: int):
         return 0
     if mode == 14:
         return 0
+    
+    return 0
 
 
-async def counting(message: discord.Message):
+async def counting(message: discord.Message) -> None:
     if message.author.bot:
         return
 
-    progress = await get_counting_mode_progress(message.channel.id)
-
-    mode = await get_counting_mode_mode(message.channel.id)
-
-    locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
-
-    if not progress and progress != 0:
+    if (message.guild == None):
+        embed: discord.Embed = tanjunEmbed(
+                title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
+                description=tanjunLocalizer.localize(
+                    "en_US",
+                    "errors.guildonly.description",
+                ),
+            )
+        await message.channel.send(embed=embed)
         return
-
-    if mode == 12:
-        progress = number_to_romeal(progress)
-
-    if mode == 11:
-        progress = int(str(progress), 2)
-
+    
+    locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
+    
     if await check_if_opted_out(message.author.id):
         try:
             await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
@@ -332,12 +337,32 @@ async def counting(message: discord.Message):
         await message.delete()
         return
 
-    content = message.content
+    progress = await get_counting_mode_progress(message.channel.id)
+    
+    # If progress is None, return early
+    if progress is None and progress != 0:
+        return
+    
+    # Ensure progress is an integer for calculations
+    progress_int = 0 if progress is None else int(progress)
+    
+    mode = await get_counting_mode_mode(message.channel.id)
+    
+    # Default to normal mode (1) if mode is None
+    mode_int = 1 if mode is None else int(mode)
+    
+    correctNumber: Union[int, str] = 0
 
-    if mode == 12:
-        correctNumber = get_correct_next_number(mode, romeal_to_number(progress))
+    if mode_int == 12:
+        p = number_to_romeal(progress_int)
+        correctNumber = str(get_correct_next_number(mode_int, romeal_to_number(p)))
+    elif mode_int == 11:
+        binary_progress = int(str(progress_int), 2)
+        correctNumber = int(get_correct_next_number(mode_int, binary_progress))
     else:
-        correctNumber = get_correct_next_number(mode, progress)
+        correctNumber = int(get_correct_next_number(mode_int, progress_int))
+
+    content = message.content
 
     if not content:
         await message.add_reaction("💀")
@@ -359,14 +384,15 @@ async def counting(message: discord.Message):
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if mode == 12:
-            goal = romeal_to_number(goal)
+        goal_int = goal
+        if mode_int == 12 and isinstance(goal, str):
+            goal_int = romeal_to_number(goal)
         starter = get_first_number(newMode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
-            goal=goal,
+            goal=int(goal_int),
             counter_id="nobody",
             guild_id=message.guild.id,
         )
@@ -374,7 +400,7 @@ async def counting(message: discord.Message):
         return
 
     try:
-        number = int(content) if mode != 12 else content
+        number = int(content) if mode_int != 12 else content
     except ValueError:
         await message.add_reaction("💀")
         # nosec: B311
@@ -395,14 +421,15 @@ async def counting(message: discord.Message):
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if mode == 12:
-            goal = romeal_to_number(goal)
+        goal_int = goal
+        if mode_int == 12 and isinstance(goal, str):
+            goal_int = romeal_to_number(goal)
         starter = get_first_number(newMode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
-            goal=goal,
+            goal=int(goal_int),
             counter_id="nobody",
             guild_id=message.guild.id,
         )
@@ -429,14 +456,15 @@ async def counting(message: discord.Message):
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if newMode == 12:
-            goal = romeal_to_number(goal)
+        goal_int = goal
+        if newMode == 12 and isinstance(goal, str):
+            goal_int = romeal_to_number(goal)
         starter = get_first_number(newMode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
-            goal=goal,
+            goal=int(goal_int),
             counter_id="nobody",
             guild_id=message.guild.id,
         )
@@ -465,32 +493,44 @@ async def counting(message: discord.Message):
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if mode == 12:
-            goal = romeal_to_number(goal)
+        goal_int = goal
+        if mode_int == 12 and isinstance(goal, str):
+            goal_int = romeal_to_number(goal)
         starter = get_first_number(newMode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
-            goal=goal,
+            goal=int(goal_int),
             counter_id="nobody",
             guild_id=message.guild.id,
         )
         await message.reply(embed=embed)
         return
 
-    goal = await get_count_mode_goal(message.channel.id)
+    # Get goal from database
+    db_goal = await get_count_mode_goal(message.channel.id)
+    
+    # Default to 0 if None
+    goal_value: Union[int, str] = 0
+    if db_goal is not None:
+        goal_value = db_goal
+    
+    # Convert to int for comparison
+    goal_int = int(goal_value)
 
-    if mode == 12:
-        number = romeal_to_number(number)
+    number_int = number
+    if mode_int == 12 and isinstance(number, str):
+        number_int = romeal_to_number(number)
 
-    if number == goal:
+    if number_int == goal_int:
         await message.add_reaction("🎉")
         # nosec: B311
         newMode = random.randint(1, len(modeMap))
         new_goal = get_goal(newMode)
-        if mode == 12:
-            new_goal = romeal_to_number(new_goal)
+        new_goal_int = new_goal
+        if mode_int == 12 and isinstance(new_goal, str):
+            new_goal_int = romeal_to_number(new_goal)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.won.title"),
             description=tanjunLocalizer.localize(
@@ -501,45 +541,56 @@ async def counting(message: discord.Message):
                     locale,
                     f"minigames.counting.modes.modes.{modeMap[newMode]}.description",
                 ),
-                goal=goal,
+                goal=goal_value,
                 new_goal=new_goal,
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if mode == 12:
-            new_goal = romeal_to_number(new_goal)
         starter = get_first_number(newMode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
             mode=newMode,
-            goal=new_goal,
+            goal=int(new_goal_int),
             counter_id="nobody",
             guild_id=message.guild.id,
         )
         await message.reply(embed=embed)
         return
 
-    if mode == 12:
-        correctNumber = romeal_to_number(correctNumber)
+    correct_number_int = correctNumber
+    if mode_int == 12 and isinstance(correctNumber, str):
+        correct_number_int = romeal_to_number(correctNumber)
 
+    progress_to_save = -15 if (mode_int == 7 and number_int == 1 and progress_int == 0) else correct_number_int
+    
     await set_counting_mode_progress(
         channel_id=message.channel.id,
-        progress=(-15 if (mode == 7 and number == 1 and progress == 0) else correctNumber),
-        mode=mode,
+        progress=int(progress_to_save),
+        mode=mode_int,
         counter_id=message.author.id,
         guild_id=message.guild.id,
-        goal=goal,
+        goal=goal_int,
     )
+    
     # nosec: B311
     if random.randint(1, 100) == 1:
-        correctNumber = get_correct_next_number(mode, correctNumber)
-        await message.channel.send(correctNumber)
+        next_correct = get_correct_next_number(mode_int, int(correct_number_int))
+        # Convert to string for sending if it's not already
+        next_correct_str = str(next_correct)
+        await message.channel.send(next_correct_str)
+        
+        # Determine progress to save
+        if mode_int == 12 and isinstance(next_correct, str):
+            progress_val = romeal_to_number(next_correct)
+        else:
+            progress_val = int(next_correct)
+            
         await set_counting_mode_progress(
             channel_id=message.channel.id,
-            progress=(romeal_to_number(correctNumber) if mode == 12 else correctNumber),
-            mode=mode,
+            progress=progress_val,
+            mode=mode_int,
             counter_id="me",
             guild_id=message.guild.id,
-            goal=goal,
+            goal=goal_int,
         )
