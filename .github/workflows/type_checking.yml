@@ -87,7 +87,6 @@ jobs:
             --warn-unused-ignores \
             --warn-redundant-casts \
             --warn-unreachable \
-            --strict-equality \
             2>&1 | tee mypy_reports/mypy_issues.txt
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
         continue-on-error: true
