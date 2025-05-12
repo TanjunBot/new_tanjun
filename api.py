@@ -1427,7 +1427,7 @@ async def set_giveaway_message_id(giveaway_id: int, message_id: int) -> None:
     query = "UPDATE giveaway SET messageId = %s WHERE giveawayId = %s"
     params = (message_id, giveaway_id)
     await execute_action(query, params)
-    
+
 
 async def get_giveaway(giveaway_id: int):
     query = "SELECT * FROM giveaway WHERE giveawayId = %s"
