@@ -2045,7 +2045,7 @@ async def remove_claimed_booster_channel(user_id: int | str, guild_id: int | str
 
 
 async def get_claimed_booster_channel(
-    user_id: str | None = None, guild_id: int | str | None = None
+    user_id: int | str | None = None, guild_id: int | str| None = None
 ) -> str | list[tuple[Any, ...]] | None:
     if user_id:
         query = (

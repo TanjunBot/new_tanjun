@@ -17,7 +17,6 @@ async def banner(commandInfo: commandInfo, user: discord.User) -> None:
         )
         await commandInfo.reply(embed=embed)
         return
-
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,

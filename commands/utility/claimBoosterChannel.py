@@ -10,6 +10,7 @@ from api import (
 )
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
+from typing import Mapping
 
 
 async def claimBoosterChannel(commandInfo: commandInfo, name: str) -> None:
