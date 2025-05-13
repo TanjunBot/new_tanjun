@@ -2045,7 +2045,7 @@ async def remove_claimed_booster_channel(user_id: int | str, guild_id: int | str
 
 
 async def get_claimed_booster_channel(
-    user_id: str | None = None, guild_id: int | str| None = None
+    user_id: str | None = None, guild_id: int | str | None = None
 ) -> str | list[tuple[Any, ...]] | None:
     if user_id:
         query = (
@@ -2094,7 +2094,7 @@ async def remove_claimed_booster_role(user_id: int | str, guild_id: int | str) -
 
 
 async def get_claimed_booster_role(
-    user_id: int | str | None = None, guild_id: int | str| None = None
+    user_id: int | str | None = None, guild_id: int | str | None = None
 ) -> str | list[tuple[Any, ...]] | None:
     if user_id:
         query = (
@@ -2240,8 +2240,8 @@ async def get_log_enable(guild_id: int | str) -> tuple[Any, ...] | list[int]:
 
 
 async def add_scheduled_message(
-    guild_id: int | str| None,
-    channel_id: int | str| None,
+    guild_id: int | str | None,
+    channel_id: int | str | None,
     user_id: int | str,
     content: str,
     send_time: datetime,

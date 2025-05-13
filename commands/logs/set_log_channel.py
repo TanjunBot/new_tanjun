@@ -50,7 +50,9 @@ async def set_log_channel(commandInfo: utility.commandInfo, channel: discord.Tex
     if logChannel:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.setLogChannel.alreadySet.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.setLogChannel.alreadySet.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.logs.setLogChannel.alreadySet.description"
+            ),
         )
         await commandInfo.reply(embed=embed)
         return

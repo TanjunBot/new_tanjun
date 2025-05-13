@@ -46,7 +46,9 @@ async def ban(
                 "commands.admin.ban.success.description",
                 user=target.name,
                 reason=(
-                    reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.ban.noReasonProvided")
+                    reason
+                    if reason
+                    else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.ban.noReasonProvided")
                 ),
             ),
         )

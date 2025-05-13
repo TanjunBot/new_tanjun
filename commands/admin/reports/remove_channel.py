@@ -29,6 +29,8 @@ async def remove_channel(commandInfo: utility.commandInfo):
     await remove_report_channel(commandInfo.guild.id)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.remove_channel.success.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.remove_channel.success.description"),
+        description=tanjunLocalizer.localize(
+            str(commandInfo.locale), "commands.admin.reports.remove_channel.success.description"
+        ),
     )
     await commandInfo.reply(embed=embed)

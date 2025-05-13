@@ -1,9 +1,10 @@
+from typing import Any
+
 import discord
 from discord import app_commands
 
 import utility
 from localizer import tanjunLocalizer
-from typing import Any
 
 
 async def help(commandInfo: utility.commandInfo) -> None:
@@ -270,7 +271,7 @@ async def help(commandInfo: utility.commandInfo) -> None:
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
     class HelpView(discord.ui.View):
-        def __init__(self, client: discord.ext.commands.Bot, timeout: int=3600):
+        def __init__(self, client: discord.ext.commands.Bot, timeout: int = 3600):
             super().__init__(timeout=timeout)
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))
@@ -282,8 +283,8 @@ async def help(commandInfo: utility.commandInfo) -> None:
     if commandInfo.bot is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "errors.unexspected.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "errors.unexspected.description"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "errors.unexspected.description"),
         )
-        await commandInfo.reply(embed = embed)
+        await commandInfo.reply(embed=embed)
         return
     await commandInfo.reply(embed=embed, view=HelpView(commandInfo.bot))

@@ -19,7 +19,9 @@ async def calc(commandInfo: utility.commandInfo, expression: str):
     except Exception as e:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.calc.error.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.calc.error.description", error=str(e)),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.math.calc.error.description", error=str(e)
+            ),
         )
 
     await commandInfo.reply(embed=embed)

@@ -1,3 +1,5 @@
+from typing import Any
+
 import discord
 from discord.ui import Select, View
 
@@ -5,7 +7,6 @@ import utility
 from api import get_scheduled_messages
 from api import remove_scheduled_message as remove_message
 from localizer import tanjunLocalizer
-from typing import Any
 
 
 class MessageSelectView(View):
@@ -17,7 +18,7 @@ class MessageSelectView(View):
             placeholder=tanjunLocalizer.localize(locale, "commands.utility.removescheduled.select.placeholder"),
             options=[
                 discord.SelectOption(
-                    label=f"ID: {msg[0]} - {msg[4][:50]}...", 
+                    label=f"ID: {msg[0]} - {msg[4][:50]}...",
                     description=f"{msg[3]} | {msg[2] or 'DM'}",
                     value=str(msg[0]),
                 )

@@ -41,7 +41,9 @@ async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason:
                 "commands.admin.kick.success.description",
                 user=target.name,
                 reason=(
-                    reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.kick.noReasonProvided")
+                    reason
+                    if reason
+                    else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.kick.noReasonProvided")
                 ),
             ),
         )

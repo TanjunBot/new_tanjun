@@ -471,7 +471,9 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
                 locale=commandInfo.locale,
                 key="commands.admin.embed.missingPermission.title",
             ),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.missingPermission.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.admin.embed.missingPermission.description"
+            ),
         )
         await commandInfo.reply(embed=embed)
         return

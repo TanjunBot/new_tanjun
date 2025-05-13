@@ -8,7 +8,9 @@ from localizer import tanjunLocalizer
 async def set_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel):
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.set_channel.missingPermission.title"),
+            title=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.admin.reports.set_channel.missingPermission.title"
+            ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.reports.set_channel.missingPermission.description"
             ),
@@ -41,6 +43,8 @@ async def set_channel(commandInfo: utility.commandInfo, channel: discord.TextCha
     await set_report_channel(commandInfo.guild.id, channel.id)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.set_channel.success.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.set_channel.success.description"),
+        description=tanjunLocalizer.localize(
+            str(commandInfo.locale), "commands.admin.reports.set_channel.success.description"
+        ),
     )
     await commandInfo.reply(embed=embed)

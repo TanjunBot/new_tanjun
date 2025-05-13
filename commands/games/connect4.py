@@ -355,7 +355,9 @@ async def connect4(
         await commandInfo.reply(
             embed=utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.connect4.error.no_plus.title"),
-                description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.connect4.error.no_plus.description"),
+                description=tanjunLocalizer.localize(
+                    str(commandInfo.locale), "commands.games.connect4.error.no_plus.description"
+                ),
             )
         )
         return

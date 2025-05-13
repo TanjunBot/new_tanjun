@@ -9,7 +9,6 @@ from api import (
 )
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
-from typing import Any
 
 
 async def claimBoosterRole(commandInfo: commandInfo, name: str, color: str, icon: discord.Attachment) -> None:

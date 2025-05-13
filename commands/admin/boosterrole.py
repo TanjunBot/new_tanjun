@@ -35,7 +35,9 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
         await delete_booster_role(commandInfo.guild.id)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.roleRemoved.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.roleRemoved.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.admin.boosterRole.roleRemoved.description"
+            ),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -75,7 +77,9 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
         else:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.success.title"),
-                description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.success.description"),
+                description=tanjunLocalizer.localize(
+                    str(commandInfo.locale), "commands.admin.boosterRole.success.description"
+                ),
             )
         await commandInfo.reply(embed=embed)
     except discord.Forbidden:

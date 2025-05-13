@@ -58,7 +58,9 @@ async def copy_emoji(
     if len(matches) > 1 and not await checkIfHasPro(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.copyEmoji.error.proRequired.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.copyEmoji.error.proRequired.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.admin.copyEmoji.error.proRequired.description"
+            ),
         )
         await commandInfo.reply(embed=embed)
         return

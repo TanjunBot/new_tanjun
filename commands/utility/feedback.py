@@ -1,6 +1,5 @@
 import discord
 from discord import ui
-from discord.ext import commands
 
 from api import feedbackIsBlocked
 from localizer import tanjunLocalizer
@@ -63,8 +62,8 @@ class feedbackModal(ui.Modal):
         feedbackChannel = self.commandInfo.client.get_channel(1266385101512773773)
         if not isinstance(feedbackChannel, discord.TextChannel):
             return
-        feedbackTitle = self.children[0].value # type: ignore[attr-defined]
-        feedbackDescription = self.children[1].value # type: ignore[attr-defined]
+        feedbackTitle = self.children[0].value  # type: ignore[attr-defined]
+        feedbackDescription = self.children[1].value  # type: ignore[attr-defined]
         embed = tanjunEmbed(
             title=feedbackTitle,
             description=feedbackDescription,

@@ -37,7 +37,9 @@ async def set_levelup_channel_command(commandInfo: commandInfo, channel: discord
         await set_levelup_channel(str(commandInfo.guild.id), None)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setlevelupchannel.reset.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setlevelupchannel.reset.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.level.setlevelupchannel.reset.description"
+            ),
         )
 
     await commandInfo.reply(embed=embed)

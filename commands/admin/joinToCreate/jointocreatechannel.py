@@ -11,7 +11,9 @@ async def jointocreatechannel(commandInfo: utility.commandInfo, channel: discord
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.jointocreatechannel.missingPermission.title"),
+            title=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.admin.jointocreatechannel.missingPermission.title"
+            ),
             description=tanjunLocalizer.localize(
                 commandInfo.locale, "commands.admin.jointocreatechannel.missingPermission.description"
             ),
@@ -32,6 +34,8 @@ async def jointocreatechannel(commandInfo: utility.commandInfo, channel: discord
     await set_join_to_create_channel(commandInfo.guild.id, channel.id)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.jointocreatechannel.success.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.jointocreatechannel.success.description"),
+        description=tanjunLocalizer.localize(
+            str(commandInfo.locale), "commands.admin.jointocreatechannel.success.description"
+        ),
     )
     await commandInfo.reply(embed=embed)

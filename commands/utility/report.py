@@ -47,7 +47,7 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member) ->
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if isinstance(report_channel, discord.ForumChannel) or isinstance(report_channel, discord.CategoryChannel):
         return
 
@@ -185,6 +185,8 @@ async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> 
     else:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(interaction.locale), "commands.utility.report.invalid_action.title"),
-            description=tanjunLocalizer.localize(str(interaction.locale), "commands.utility.report.invalid_action.description"),
+            description=tanjunLocalizer.localize(
+                str(interaction.locale), "commands.utility.report.invalid_action.description"
+            ),
         )
         await interaction.response.send_message(embed=embed)

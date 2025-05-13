@@ -130,7 +130,9 @@ async def removeFarewellChannel():
     if not await get_leave_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.notSet.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.notSet.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.admin.channel.farewell.notSet.description"
+            ),
         )
         await commandInfo.reply(embed=embed)
         return

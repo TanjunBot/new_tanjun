@@ -94,6 +94,8 @@ async def timeout(
     except TypeError:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.invalidDuration.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.invalidDuration.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.admin.timeout.invalidDuration.description"
+            ),
         )
         await commandInfo.reply(embed=embed)

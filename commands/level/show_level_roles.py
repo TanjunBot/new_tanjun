@@ -372,7 +372,9 @@ async def show_level_roles_command(commandInfo: commandInfo):
     if not level_roles:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.showlevelroles.no_roles.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.showlevelroles.no_roles.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.level.showlevelroles.no_roles.description"
+            ),
         )
         await commandInfo.reply(embed=embed)
         return

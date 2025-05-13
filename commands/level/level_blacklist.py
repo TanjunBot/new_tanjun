@@ -38,7 +38,9 @@ async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: di
             commandInfo.locale,
             "commands.level.blacklist.add_channel.success.description",
             channel=channel.mention,
-            reason=(reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.no_reason")),
+            reason=(
+                reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.no_reason")
+            ),
         ),
     )
     await commandInfo.reply(embed=embed)
@@ -99,7 +101,9 @@ async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.
             commandInfo.locale,
             "commands.level.blacklist.add_role.success.description",
             role=role.mention,
-            reason=(reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.no_reason")),
+            reason=(
+                reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.no_reason")
+            ),
         ),
     )
     await commandInfo.reply(embed=embed)
@@ -174,7 +178,9 @@ async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.
             commandInfo.locale,
             "commands.level.blacklist.add_user.success.description",
             user=user.mention,
-            reason=(reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.no_reason")),
+            reason=(
+                reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.no_reason")
+            ),
         ),
     )
     await commandInfo.reply(embed=embed)

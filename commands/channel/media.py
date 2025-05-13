@@ -117,7 +117,9 @@ async def removeMediaChannel(commandInfo: utility.commandInfo, channel: discord.
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.media.deleteSuccess.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.media.deleteSuccess.description"),
+        description=tanjunLocalizer.localize(
+            str(commandInfo.locale), "commands.admin.channel.media.deleteSuccess.description"
+        ),
     )
     await commandInfo.reply(embed=embed)
 

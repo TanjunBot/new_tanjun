@@ -43,6 +43,8 @@ async def deleteBoosterRole(commandInfo: commandInfo) -> None:
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.deleteboosterrole.success.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.deleteboosterrole.success.description"),
+        description=tanjunLocalizer.localize(
+            str(commandInfo.locale), "commands.utility.deleteboosterrole.success.description"
+        ),
     )
     await commandInfo.reply(embed=embed)

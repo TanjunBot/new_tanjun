@@ -136,7 +136,9 @@ def create_warnings_embed(commandInfo, member, warnings, page):
                 commandInfo.locale,
                 "commands.admin.viewwarns.warningDetails",
                 reason=(
-                    reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.noReason")
+                    reason
+                    if reason
+                    else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.noReason")
                 ),
                 date=f"<t:{int(created_at.timestamp())}:D>",
                 expiration=expiration_str,

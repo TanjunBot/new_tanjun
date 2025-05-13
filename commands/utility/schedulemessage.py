@@ -187,7 +187,14 @@ async def send_scheduled_messages(client: discord.Client) -> None:
             repeat_interval = msg[6]
             repeat_amount = msg[7]
 
-            target: discord.VoiceChannel | discord.StageChannel | discord.ForumChannel | discord.TextChannel | discord.CategoryChannel | discord.DMChannel
+            target: (
+                discord.VoiceChannel
+                | discord.StageChannel
+                | discord.ForumChannel
+                | discord.TextChannel
+                | discord.CategoryChannel
+                | discord.DMChannel
+            )
 
             if channel_id and guild_id:
                 guild = client.get_guild(guild_id)

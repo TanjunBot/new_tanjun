@@ -148,7 +148,9 @@ async def addrole(
         if commandInfo.user.top_role <= role:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.roleTooHigh.title"),
-                description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.roleTooHigh.description"),
+                description=tanjunLocalizer.localize(
+                    str(commandInfo.locale), "commands.admin.addrole.roleTooHigh.description"
+                ),
             )
             await commandInfo.reply(embed=embed)
             return

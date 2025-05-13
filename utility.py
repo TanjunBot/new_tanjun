@@ -481,7 +481,7 @@ class commandInfo:
         permissions: discord.Permissions,
         reply: Callable[..., Coroutine[Any, Any, discord.Message]],
         client: discord.Client,
-        bot: discord.ext.commands.Bot | None = None
+        bot: discord.ext.commands.Bot | None = None,
     ):
         self.user = user
         self.channel = channel

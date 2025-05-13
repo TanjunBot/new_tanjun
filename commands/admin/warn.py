@@ -72,7 +72,9 @@ async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, re
                 "commands.admin.warn.dmNotification.description",
                 guild=commandInfo.guild.name,
                 reason=(
-                    reason if reason else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.noReasonProvided")
+                    reason
+                    if reason
+                    else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.noReasonProvided")
                 ),
                 count=warn_count,
             ),

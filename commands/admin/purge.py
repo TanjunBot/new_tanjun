@@ -19,7 +19,9 @@ async def purge(
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.purge.missingPermission.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.purge.missingPermission.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.admin.purge.missingPermission.description"
+            ),
         )
         await commandInfo.reply(embed=embed)
         return
