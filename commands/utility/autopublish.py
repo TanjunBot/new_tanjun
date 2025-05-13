@@ -19,7 +19,7 @@ async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel) ->
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if commandInfo.channel is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -33,7 +33,7 @@ async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel) ->
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -102,7 +102,7 @@ async def autopublish_remove(commandInfo: commandInfo, channel: discord.TextChan
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if commandInfo.channel is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -116,7 +116,7 @@ async def autopublish_remove(commandInfo: commandInfo, channel: discord.TextChan
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

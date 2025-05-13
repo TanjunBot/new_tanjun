@@ -25,5 +25,5 @@ async def banner(commandInfo: commandInfo, user: discord.User) -> None:
             user=user.display_name,
         ),
     )
-    embed.set_image(url=user.banner.url )
+    embed.set_image(url=user.banner.url)
     await commandInfo.reply(embed=embed)

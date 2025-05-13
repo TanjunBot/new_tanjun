@@ -25,7 +25,7 @@ async def claimBoosterRole(commandInfo: commandInfo, name: str, color: str, icon
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if commandInfo.channel is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -39,7 +39,7 @@ async def claimBoosterRole(commandInfo: commandInfo, name: str, color: str, icon
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     booster_role = await get_booster_role(commandInfo.guild.id)
     if not booster_role:
         embed = tanjunEmbed(

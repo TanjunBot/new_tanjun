@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+
 import discord
 
 from api import (
@@ -8,7 +10,6 @@ from api import (
 )
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
-from typing import Mapping
 
 
 async def claimBoosterChannel(commandInfo: commandInfo, name: str) -> None:
@@ -25,7 +26,7 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str) -> None:
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if commandInfo.channel is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -39,7 +40,7 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str) -> None:
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if commandInfo.guild == None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

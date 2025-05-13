@@ -20,11 +20,8 @@ async def setupBoosterChannel(commandInfo: commandInfo, category: discord.Catego
         )
         await commandInfo.reply(embed=embed)
         return
-    
-    if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.user.guild_permissions.administrator
-    ):
+
+    if isinstance(commandInfo.user, discord.Member) and not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

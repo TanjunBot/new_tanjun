@@ -20,7 +20,7 @@ async def deleteBoosterRole(commandInfo: commandInfo) -> None:
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if commandInfo.channel is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -34,7 +34,7 @@ async def deleteBoosterRole(commandInfo: commandInfo) -> None:
         )
         await commandInfo.reply(embed=embed)
         return
-    
+
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator

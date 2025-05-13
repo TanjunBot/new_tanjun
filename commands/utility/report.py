@@ -20,7 +20,7 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member) ->
         )
         await commandInfo.reply(embed=embed)
         return
-        
+
     if await check_if_reporter_is_blocked(commandInfo.guild.id, commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.blocked.title"),
