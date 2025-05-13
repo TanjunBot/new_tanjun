@@ -12,6 +12,34 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def claimBoosterRole(commandInfo: commandInfo, name: str, color: str, icon: discord.Attachment) -> None:
+    if commandInfo.guild is None or isinstance(commandInfo.user, discord.User):
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildOnly.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildOnly.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+    
+    if commandInfo.channel is None:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.noChannel.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.noChannel.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+    
     booster_role = await get_booster_role(commandInfo.guild.id)
     if not booster_role:
         embed = tanjunEmbed(

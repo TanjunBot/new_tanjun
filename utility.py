@@ -472,12 +472,12 @@ class tanjunEmbed(discord.Embed):
 class commandInfo:
     def __init__(
         self,
-        user: discord.Member,
-        channel: discord.abc.GuildChannel,
-        guild: discord.Guild,
-        command: discord.app_commands.Command[Any, ..., Any],
+        user: discord.Member | discord.User,
+        channel: discord.abc.GuildChannel | None,
+        guild: discord.Guild | None,
+        command: discord.app_commands.Command[Any, ..., Any] | discord.app_commands.ContextMenu | None,
         locale: str,
-        message: discord.Message,
+        message: discord.Message | None,
         permissions: discord.Permissions,
         reply: Callable[..., Coroutine[Any, Any, discord.Message]],
         client: discord.Client,

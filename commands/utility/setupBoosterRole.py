@@ -7,9 +7,23 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def setupBoosterRole(commandInfo: commandInfo, role: discord.Role) -> None:
+    if isinstance(commandInfo.user, discord.User) or commandInfo.guild is None:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildonly.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildonly.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+    
     if (
         isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        and not commandInfo.user.guild_permissions.administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

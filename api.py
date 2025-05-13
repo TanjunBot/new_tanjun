@@ -1990,7 +1990,7 @@ async def checkIfUserIsAfk(user_id: int | str) -> bool:
     return bool(result and len(result) > 0)
 
 
-async def addAfkMessage(user_id: int | str, message_id: str, channel_id: int | str) -> None:
+async def addAfkMessage(user_id: int | str, message_id: int | str, channel_id: int | str) -> None:
     query = """
     INSERT INTO afkMessages (userId, messageId, channelId)
     VALUES (%s, %s, %s)
@@ -2360,7 +2360,7 @@ async def delete_report(guild_id: int | str, report_id: str) -> None:
     await execute_action(query, params)
 
 
-async def get_reports(guild_id: int | str, user_id: str | None = None) -> list[tuple[Any, ...]]:
+async def get_reports(guild_id: int | str, user_id: int | str | None = None) -> list[tuple[Any, ...]]:
     query = """
         SELECT id, guildId, userId, reporterId, reason,
                UNIX_TIMESTAMP(createdAt) as createdAt,

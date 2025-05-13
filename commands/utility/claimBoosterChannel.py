@@ -8,9 +8,51 @@ from api import (
 )
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
+from typing import Mapping
 
 
-async def claimBoosterChannel(commandInfo: commandInfo, name: str):
+async def claimBoosterChannel(commandInfo: commandInfo, name: str) -> None:
+    if commandInfo.guild is None or isinstance(commandInfo.user, discord.User):
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildOnly.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildOnly.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+    
+    if commandInfo.channel is None:
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.noChannel.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.noChannel.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+    
+    if commandInfo.guild == None:
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildonly.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildonly.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
     booster_channel = await get_booster_channel(commandInfo.guild.id)
     if not booster_channel:
         embed = tanjunEmbed(
@@ -56,7 +98,7 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str):
         return
 
     channel = commandInfo.guild.get_channel(int(booster_channel))
-    if not channel:
+    if not channel or not isinstance(channel, discord.CategoryChannel):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -71,7 +113,7 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str):
         return
 
     reason = tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.claimboosterchannel.success.reason")
-    overwrites = {
+    overwrites: Mapping[discord.Role | discord.Member | discord.Object, discord.PermissionOverwrite] = {
         commandInfo.guild.default_role: discord.PermissionOverwrite(connect=False),
         commandInfo.user: discord.PermissionOverwrite(manage_channels=True, connect=True, speak=True),
     }
@@ -89,12 +131,20 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str):
     await commandInfo.reply(embed=embed)
 
 
-async def remove_claimed_booster_channels_that_are_expired(client: discord.Client):
+async def remove_claimed_booster_channels_that_are_expired(client: discord.Client) -> None:
     claimed_booster_channels = await get_claimed_booster_channel()
+    if claimed_booster_channels is None or isinstance(claimed_booster_channels, str):
+        return
     for user, channel, guild_id in claimed_booster_channels:
         guild = client.get_guild(int(guild_id))
+        if guild is None:
+            continue
         user = guild.get_member(int(user))
+        if user is None:
+            continue
         channel = guild.get_channel(int(channel))
+        if channel is None:
+            continue
         if not user.premium_since and channel:
             await remove_claimed_booster_channel(user.id, guild_id)
             await channel.delete(

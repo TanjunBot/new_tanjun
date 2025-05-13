@@ -13,6 +13,14 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def report(commandInfo: commandInfo, reason: str, user: discord.Member) -> None:
+    if commandInfo.guild is None:
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "errors.guildOnly.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "errors.guildOnly.description"),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+        
     if await check_if_reporter_is_blocked(commandInfo.guild.id, commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.report.blocked.title"),
@@ -83,7 +91,7 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member) ->
         user.id,
         commandInfo.user.id,
         reason,
-        commandInfo.user.guild_permissions.manage_messages,
+        commandInfo.user.guild_permissions.manage_messages if isinstance(commandInfo.user, discord.Member) else False,
     )
 
     view = discord.ui.View()

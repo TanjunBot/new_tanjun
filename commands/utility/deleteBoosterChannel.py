@@ -7,6 +7,34 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def deleteBoosterChannel(commandInfo: commandInfo) -> None:
+    if commandInfo.guild is None:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildOnly.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildOnly.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+    
+    if commandInfo.channel is None:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.noChannel.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.noChannel.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+    
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator

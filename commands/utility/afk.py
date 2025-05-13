@@ -13,7 +13,7 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def afk(commandInfo: commandInfo, reason: str):
+async def afk(commandInfo: commandInfo, reason: str) -> None:
     if await check_if_opted_out(commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.afk.opted_out.title"),
@@ -49,8 +49,8 @@ async def afk(commandInfo: commandInfo, reason: str):
     await commandInfo.reply(embed=embed)
 
 
-async def checkIfAfkHasToBeRemoved(message: discord.message):
-    if await check_if_opted_out(message.author.id):
+async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:
+    if await check_if_opted_out(message.author.id) or message.guild is None:
         return
     if await checkIfUserIsAfk(message.author.id):
         messages = await getAfkMessages(message.author.id)
@@ -80,8 +80,8 @@ async def checkIfAfkHasToBeRemoved(message: discord.message):
         await message.channel.send(embed=embed)
 
 
-async def checkIfMentionsAreAfk(message: discord.message):
-    if await check_if_opted_out(message.author.id):
+async def checkIfMentionsAreAfk(message: discord.Message) -> None:
+    if await check_if_opted_out(message.author.id) or message.guild is None:
         return
 
     locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
