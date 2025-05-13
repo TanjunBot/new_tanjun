@@ -1433,10 +1433,6 @@ async def set_giveaway_message_id(giveaway_id: int, message_id: int) -> None:
     query = "UPDATE giveaway SET messageId = %s WHERE giveawayId = %s"
     params = (message_id, giveaway_id)
     await execute_action(query, params)
-<<<<<<< HEAD
-
-=======
->>>>>>> 3ad8d5d (start fixing mypy issues in commands/utility)
 
 
 async def get_giveaway(giveaway_id: int) -> tuple[Any, ...] | None:
