@@ -3,10 +3,10 @@ import discord
 
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
-from utility import addThousandsSeparator, commandInfo, similar, tanjunEmbed
+from utility import addThousandsSeparator, commandInfo as CommandInfo, similar, tanjunEmbed
+from typing import Any
 
-
-async def getClubInfo(clubTag: str):
+async def getClubInfo(clubTag: str) -> dict[str, str | dict[str, dict[str, str]]] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with aiohttp.ClientSession() as session:
         async with session.get(
@@ -15,26 +15,111 @@ async def getClubInfo(clubTag: str):
         ) as response:
             if response.status != 200:
                 return None
-            return await response.json()
+            json_data: Any = await response.json()
+            if isinstance(json_data, dict):
+                return json_data
+            else:
+                return None
 
 
-async def club(commandInfo: commandInfo, clubTag: str):
+async def club(commandInfo: CommandInfo, clubTag: str) -> None:
     if not clubTag.startswith("#"):
         clubTag = f"#{clubTag}"
     clubInfo = await getClubInfo(clubTag)
     if not clubInfo:
-        return await commandInfo.reply(
+        await commandInfo.reply(
             tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.brawlstars.club.error.notFound",
             )
         )
+        return
 
     clubName = clubInfo["name"]
+    if not isinstance(clubName, str): 
+        await commandInfo.reply(
+            embed=tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.title",
+                ),
+                description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.description",
+                code="bsc1"
+                )
+            )
+        )
+        return
+
     clubDescription = clubInfo["description"]
+    if not isinstance(clubDescription, str): 
+        await commandInfo.reply(
+            embed=tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.title",
+                ),
+                description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.description",
+                code="bsc2"
+                )
+            )
+        )
+        return
+    
     requiredTrophies = clubInfo["requiredTrophies"]
+    if not isinstance(requiredTrophies, str): 
+        await commandInfo.reply(
+            embed=tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.title",
+                ),
+                description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.description",
+                code="bsc3"
+                )
+            )
+        )
+        return
+    
     trophies = clubInfo["trophies"]
+    if not isinstance(trophies, str): 
+        await commandInfo.reply(
+            embed=tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.title",
+                ),
+                description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.description",
+                code="bsc4"
+                )
+            )
+        )
+        return
+    
     members = clubInfo["members"]
+    if not isinstance(members, dict): 
+        await commandInfo.reply(
+            embed=tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.title",
+                ),
+                description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.unexpected.description",
+                code="bsc4"
+                )
+            )
+        )
+        return
+    
     role_order = {"president": 4, "vicePresident": 3, "senior": 2, "member": 1}
     members = sorted(members, key=lambda x: (role_order[x["role"]], x["trophies"]), reverse=True)
 
@@ -127,7 +212,7 @@ async def club(commandInfo: commandInfo, clubTag: str):
             await interaction.response.send_modal(SearchModal(commandInfo))
 
     class SearchModal(discord.ui.Modal):
-        def __init__(self, commandInfo: commandInfo):
+        def __init__(self, commandInfo: CommandInfo):
             super().__init__(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.brawlstars.club.search.title")
             )

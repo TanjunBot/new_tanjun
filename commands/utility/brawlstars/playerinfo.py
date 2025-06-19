@@ -4,38 +4,33 @@ from api import get_brawlstars_linked_account
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
+from typing import Any
+import brawlstats
+
+bs_client = brawlstats.Client(brawlstarsToken, is_async=True)
 
 
-async def getPlayerInfo(playerTag: str):
-    headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
-            f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}",
-            headers=headers,
-        ) as response:
-            if response.status != 200:
-                return None
-            return await response.json()
-
-
-async def getAllBrawlers():
+async def getAllBrawlers() -> dict[str, dict[str, str]] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://api.brawlstars.com/v1/brawlers",
             headers=headers,
         ) as response:
-            return await response.json()
+            json_data: Any = await response.json()
+            if isinstance(json_data, dict):
+                return json_data
+            else:
+                return None
 
-
-async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
+async def playerInfo(commandInfo: commandInfo, playerTag: str | None = None) -> None:
     if not playerTag:
         playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
     if playerTag and playerTag.startswith("<@"):
         playerTagUserID = playerTag.split("<@")[1].split(">")[0]
         playerTag = await get_brawlstars_linked_account(playerTagUserID)
         if not playerTag:
-            return await commandInfo.reply(
+            await commandInfo.reply(
                 embed=tanjunEmbed(
                     title=tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -47,10 +42,12 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
                     ),
                 )
             )
+            return
+        
     if playerTag and not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
     if not playerTag:
-        return await commandInfo.reply(
+        await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -62,39 +59,43 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
                 ),
             )
         )
-    playerInfo = await getPlayerInfo(playerTag)
-    if not playerInfo:
-        return await commandInfo.reply(
+        return
+    
+    player: brawlstats.Player = await bs_client.get_player(playerTag)
+    if player is None or not isinstance(player, brawlstats.Player):
+        await commandInfo.reply(
             tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.brawlstars.playerinfo.error.notFound",
             )
         )
+        return
+
     description = ""
     description += tanjunLocalizer.localize(
         commandInfo.locale,
         "commands.utility.brawlstars.playerinfo.description.trophies",
-        trophies=playerInfo["trophies"],
+        trophies=player.trophies,
     )
     description += "\n"
     description += tanjunLocalizer.localize(
         commandInfo.locale,
         "commands.utility.brawlstars.playerinfo.description.highestTrophies",
-        highestTrophies=playerInfo["highestTrophies"],
+        highestTrophies=player.highest_trophies,
     )
     description += "\n"
     description += tanjunLocalizer.localize(
         commandInfo.locale,
         "commands.utility.brawlstars.playerinfo.description.expLevel",
-        expLevel=playerInfo["expLevel"],
+        expLevel=player.exp_level,
     )
     if "club" in playerInfo and "tag" in playerInfo["club"]:
         description += "\n"
         description += tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.brawlstars.playerinfo.description.club",
-            tag=playerInfo["club"]["tag"],
-            name=playerInfo["club"]["name"],
+            tag=player.club.tag,
+            name=player.club.name,
         )
     description += "\n"
     if playerInfo["3vs3Victories"] != 0:
@@ -123,7 +124,7 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str = None):
     description += tanjunLocalizer.localize(
         commandInfo.locale,
         "commands.utility.brawlstars.playerinfo.description.brawlers",
-        brawlers=len(allBrawlers["items"]),
+        brawlers=len(allBrawlers["items"]) if allBrawlers is not None else 0,
         owned=len(playerInfo["brawlers"]),
     )
     embed = tanjunEmbed(
