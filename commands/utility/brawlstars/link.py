@@ -1,10 +1,12 @@
+from typing import Any
+
 import aiohttp
 
 from api import add_brawlstars_linked_account, get_brawlstars_linked_account
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
-from typing import Any
+
 
 async def getPlayerInfo(playerTag: str) -> dict[str, str] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}

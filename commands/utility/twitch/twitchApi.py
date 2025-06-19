@@ -1,11 +1,12 @@
+from collections.abc import Mapping
+
 import aiohttp
+import discord
 
 from api import get_twitch_online_notification_by_twitch_uuid
 from config import twitchId, twitchSecret
 from localizer import tanjunLocalizer
 from utility import tanjunEmbed
-import discord
-from typing import Mapping
 
 
 class TwitchAPI:
@@ -14,10 +15,10 @@ class TwitchAPI:
         self.client_secret = twitchSecret
         self.access_token = None
         self.session: aiohttp.ClientSession | None = None
-        self.headers: Mapping[str, str] | None= None
+        self.headers: Mapping[str, str] | None = None
         self.base_url = "https://api.twitch.tv/helix"
         self.stream_status: dict[str, bool] = {}  # Keep track of stream status
-        self.initial_check_done = False 
+        self.initial_check_done = False
 
     async def init(self) -> None:
         self.session = aiohttp.ClientSession()
@@ -28,21 +29,21 @@ class TwitchAPI:
         auth_url = "https://id.twitch.tv/oauth2/token"
         if self.session is None or self.client_id is None or self.client_secret is None:
             return
-        
+
         params: Mapping[str, str] = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,
             "grant_type": "client_credentials",
         }
 
-        async with self.session.post(url = auth_url, params = params) as response:
+        async with self.session.post(url=auth_url, params=params) as response:
             data = await response.json()
             self.access_token = data["access_token"]
 
     async def setup_headers(self) -> None:
         if self.client_id is None or self.client_secret is None:
             return
-        
+
         self.headers = {
             "Client-ID": self.client_id,
             "Authorization": f"Bearer {self.access_token}",
@@ -52,7 +53,7 @@ class TwitchAPI:
     async def get_user_by_login(self, login_name: str) -> dict[str, str] | None:
         if self.session is None:
             return None
-        
+
         url = f"{self.base_url}/users"
         params = {"login": login_name}
 

@@ -1,11 +1,12 @@
+from typing import Any
+
 import aiohttp
+import brawlstats
 
 from api import get_brawlstars_linked_account
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
-from typing import Any
-import brawlstats
 
 bs_client = brawlstats.Client(brawlstarsToken, is_async=True)
 
@@ -22,6 +23,7 @@ async def getAllBrawlers() -> dict[str, dict[str, str]] | None:
                 return json_data
             else:
                 return None
+
 
 async def playerInfo(commandInfo: commandInfo, playerTag: str | None = None) -> None:
     if not playerTag:
@@ -43,7 +45,7 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str | None = None) -> 
                 )
             )
             return
-        
+
     if playerTag and not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
     if not playerTag:
@@ -60,7 +62,7 @@ async def playerInfo(commandInfo: commandInfo, playerTag: str | None = None) -> 
             )
         )
         return
-    
+
     player: brawlstats.Player = await bs_client.get_player(playerTag)
     if player is None or not isinstance(player, brawlstats.Player):
         await commandInfo.reply(

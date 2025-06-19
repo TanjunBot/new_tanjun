@@ -1,10 +1,13 @@
+from typing import Any
+
 import aiohttp
 import discord
 
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
-from utility import addThousandsSeparator, commandInfo as CommandInfo, similar, tanjunEmbed
-from typing import Any
+from utility import addThousandsSeparator, similar, tanjunEmbed
+from utility import commandInfo as CommandInfo
+
 
 async def getClubInfo(clubTag: str) -> dict[str, str | dict[str, dict[str, str]]] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
@@ -36,90 +39,70 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
         return
 
     clubName = clubInfo["name"]
-    if not isinstance(clubName, str): 
+    if not isinstance(clubName, str):
         await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.title",
+                    commandInfo.locale,
+                    "errors.unexpected.title",
                 ),
-                description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.description",
-                code="bsc1"
-                )
+                description=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.description", code="bsc1"),
             )
         )
         return
 
     clubDescription = clubInfo["description"]
-    if not isinstance(clubDescription, str): 
+    if not isinstance(clubDescription, str):
         await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.title",
+                    commandInfo.locale,
+                    "errors.unexpected.title",
                 ),
-                description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.description",
-                code="bsc2"
-                )
+                description=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.description", code="bsc2"),
             )
         )
         return
-    
+
     requiredTrophies = clubInfo["requiredTrophies"]
-    if not isinstance(requiredTrophies, str): 
+    if not isinstance(requiredTrophies, str):
         await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.title",
+                    commandInfo.locale,
+                    "errors.unexpected.title",
                 ),
-                description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.description",
-                code="bsc3"
-                )
+                description=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.description", code="bsc3"),
             )
         )
         return
-    
+
     trophies = clubInfo["trophies"]
-    if not isinstance(trophies, str): 
+    if not isinstance(trophies, str):
         await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.title",
+                    commandInfo.locale,
+                    "errors.unexpected.title",
                 ),
-                description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.description",
-                code="bsc4"
-                )
+                description=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.description", code="bsc4"),
             )
         )
         return
-    
+
     members = clubInfo["members"]
-    if not isinstance(members, dict): 
+    if not isinstance(members, dict):
         await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.title",
+                    commandInfo.locale,
+                    "errors.unexpected.title",
                 ),
-                description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "errors.unexpected.description",
-                code="bsc4"
-                )
+                description=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.description", code="bsc4"),
             )
         )
         return
-    
+
     role_order = {"president": 4, "vicePresident": 3, "senior": 2, "member": 1}
     members = sorted(members, key=lambda x: (role_order[x["role"]], x["trophies"]), reverse=True)
 

@@ -145,7 +145,7 @@ async def schedule_message(
         start_time = send_time - timedelta(hours=1)
         end_time = send_time + timedelta(hours=1)
         existing_messages = await get_user_scheduled_messages_in_timeframe(
-            commandInfo.user.id, start_time, end_time, commandInfo.guild.id 
+            commandInfo.user.id, start_time, end_time, commandInfo.guild.id
         )
 
         if existing_messages:
