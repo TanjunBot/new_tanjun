@@ -35,7 +35,7 @@ idna==3.10
 jedi==0.19.2
 Jinja2==3.1.6
 jiter==0.10.0
-jsonschema==4.24.1
+jsonschema==4.25.0
 jsonschema-specifications==2025.4.1
 jupyter_client==8.6.3
 jupyter_core==5.8.1
