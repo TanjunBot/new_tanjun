@@ -52,7 +52,7 @@ nbclient==0.10.2
 nbconvert==7.16.6
 nbformat==5.10.4
 num2words==0.5.14
-numpy==2.3.2
+numpy==2.3.3
 openai==1.69.0
 packaging==25.0
 pandocfilters==1.5.1
@@ -63,7 +63,7 @@ platformdirs==4.4.0
 prompt_toolkit==3.0.52
 propcache==0.3.2
 pure_eval==0.2.3
-pycparser==2.22
+pycparser==2.23
 pydantic==2.11.1
 pydantic_core==2.33.0
 PyGithub==2.8.1
@@ -74,7 +74,7 @@ PyNaCl==1.5.0
 pyparsing==3.2.3
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
-pyzmq==27.0.2
+pyzmq==27.1.0
 referencing==0.36.2
 requests==2.32.5
 rpds-py==0.27.1
