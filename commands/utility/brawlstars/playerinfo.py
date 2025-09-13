@@ -8,24 +8,28 @@ from utility import commandInfo, tanjunEmbed
 
 async def getPlayerInfo(playerTag: str):
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(
             f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}",
             headers=headers,
-        ) as response:
-            if response.status != 200:
-                return None
-            return await response.json()
+        ) as response,
+    ):
+        if response.status != 200:
+            return None
+        return await response.json()
 
 
 async def getAllBrawlers():
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(
             "https://api.brawlstars.com/v1/brawlers",
             headers=headers,
-        ) as response:
-            return await response.json()
+        ) as response,
+    ):
+        return await response.json()
 
 
 async def playerInfo(commandInfo: commandInfo, playerTag: str = None):

@@ -142,12 +142,11 @@ async def removeFarewellChannel():
 
 
 async def fetch_image(url):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status != 200:
-                return None
-            image_data = io.BytesIO(await response.read())
-            return image_data
+    async with aiohttp.ClientSession() as session, session.get(url) as response:
+        if response.status != 200:
+            return None
+        image_data = io.BytesIO(await response.read())
+        return image_data
 
 
 async def get_image_or_gif_frames(url):
