@@ -8,14 +8,16 @@ from utility import addThousandsSeparator, commandInfo, similar, tanjunEmbed
 
 async def getClubInfo(clubTag: str):
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(
             f"https://api.brawlstars.com/v1/clubs/%23{clubTag[1:]}",
             headers=headers,
-        ) as response:
-            if response.status != 200:
-                return None
-            return await response.json()
+        ) as response,
+    ):
+        if response.status != 200:
+            return None
+        return await response.json()
 
 
 async def club(commandInfo: commandInfo, clubTag: str):

@@ -162,11 +162,10 @@ class administrationCog(commands.Cog):
             starPowers = brawler["starPowers"]
             for starPower in starPowers:
                 url = f"https://cdn.brawlify.com/star-powers/borderless/{starPower['id']}.png"
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(url) as response:
-                        image = await response.read()
-                        emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)
-                        await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
+                async with aiohttp.ClientSession() as session, session.get(url) as response:
+                    image = await response.read()
+                    emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)
+                    await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
 
     @commands.command()
     async def bsgadgetsemojis(self, ctx, start: int = 0):
@@ -179,12 +178,11 @@ class administrationCog(commands.Cog):
             gadgets = brawler["gadgets"]
             for gadget in gadgets:
                 url = f"https://cdn.brawlify.com/gadgets/borderless/{gadget['id']}.png"
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(url) as response:
-                        image = await response.read()
-                        emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)
+                async with aiohttp.ClientSession() as session, session.get(url) as response:
+                    image = await response.read()
+                    emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)
 
-                        await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
+                    await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
 
     async def getAccData(self, id: str):
         async with aiohttp.ClientSession() as session:

@@ -23,17 +23,16 @@ async def create_emoji(
         return
 
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(image_url) as resp:
-                if resp.status != 200:
-                    await commandInfo.reply(
-                        tanjunLocalizer.localize(
-                            commandInfo.locale,
-                            "commands.admin.createEmoji.imageDownloadError",
-                        )
+        async with aiohttp.ClientSession() as session, session.get(image_url) as resp:
+            if resp.status != 200:
+                await commandInfo.reply(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.createEmoji.imageDownloadError",
                     )
-                    return
-                image_data = await resp.read()
+                )
+                return
+            image_data = await resp.read()
 
         emoji = await commandInfo.guild.create_custom_emoji(name=name, image=image_data, roles=roles)
 

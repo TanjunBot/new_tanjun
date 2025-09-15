@@ -13,14 +13,16 @@ from utility import (
 
 async def getEventRotation():
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(
             "https://api.brawlstars.com/v1/events/rotation",
             headers=headers,
-        ) as response:
-            if response.status != 200:
-                return None
-            return await response.json()
+        ) as response,
+    ):
+        if response.status != 200:
+            return None
+        return await response.json()
 
 
 async def events(commandInfo: commandInfo):

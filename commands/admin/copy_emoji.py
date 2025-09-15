@@ -86,12 +86,11 @@ async def copy_emoji(
             emoji_url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
 
             try:
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(emoji_url) as resp:
-                        if resp.status != 200:
-                            failed_emojis.append(match.group(0))
-                            continue
-                        emoji_bytes = await resp.read()
+                async with aiohttp.ClientSession() as session, session.get(emoji_url) as resp:
+                    if resp.status != 200:
+                        failed_emojis.append(match.group(0))
+                        continue
+                    emoji_bytes = await resp.read()
 
                 # Create the emoji in the guild
                 new_emoji = await commandInfo.guild.create_custom_emoji(
