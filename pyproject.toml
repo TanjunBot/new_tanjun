@@ -20,7 +20,7 @@ authors = [
 dependencies = [
     "aiohappyeyeballs==2.6.1",
     "aiohttp==3.13.0",
-    "aiomysql==0.2.0",
+    "aiomysql==0.3.0",
     "aiosignal==1.4.0",
     "akinator-python==1.6.0",
     "annotated-types==0.7.0",
