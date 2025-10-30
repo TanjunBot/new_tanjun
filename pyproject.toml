@@ -78,7 +78,7 @@ dependencies = [
     "pandocfilters==1.5.1",
     "parso==0.8.5",
     "pickleshare==0.7.5",
-    "pillow==11.3.0",
+    "pillow==12.0.0",
     "platformdirs==4.5.0",
     "prompt_toolkit==3.0.52",
     "propcache==0.4.1",
@@ -113,7 +113,7 @@ dependencies = [
     "urllib3==2.5.0",
     "wcwidth==0.2.14",
     "webencodings==0.5.1",
-    "wrapt==1.17.3",
+    "wrapt==2.0.0",
     "yarg==0.1.10",
     "yarl==1.22.0",
 ]
