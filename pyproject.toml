@@ -73,7 +73,7 @@ dependencies = [
     "nbformat==5.10.4",
     "num2words==0.5.14",
     "numpy==2.3.4",
-    "openai==1.69.0",
+    "openai==2.8.1",
     "packaging==25.0",
     "pandocfilters==1.5.1",
     "parso==0.8.5",
