@@ -1,5 +1,4 @@
 import discord
-from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
@@ -8,7 +7,7 @@ from localizer import tanjunLocalizer
 async def ban(
     commandInfo: utility.commandInfo,
     target: discord.Member,
-    reason: Optional[str] = None,
+    reason: str | None = None,
     delete_message_days: int = 0,
 ) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).ban_members:

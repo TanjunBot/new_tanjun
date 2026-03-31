@@ -1,11 +1,10 @@
 import discord
-from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: Optional[discord.TextChannel] = None) -> None:
+async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: discord.TextChannel | None = None) -> None:
     if channel is None:
         assert commandInfo.channel is not None
         channel = commandInfo.channel  # type: ignore[assignment]

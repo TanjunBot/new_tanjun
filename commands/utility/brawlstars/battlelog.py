@@ -9,14 +9,16 @@ from utility import commandInfo, date_time_to_timestamp, isoTimeToDate, tanjunEm
 
 async def getBattloeLog(playerTag: str):
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(
             f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}/battlelog",
             headers=headers,
-        ) as response:
-            if response.status != 200:
-                return None
-            return await response.json()
+        ) as response,
+    ):
+        if response.status != 200:
+            return None
+        return await response.json()
 
 
 async def battlelog(commandInfo: commandInfo, playerTag: str = None):

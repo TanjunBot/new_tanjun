@@ -1,6 +1,5 @@
 import aiohttp
 import discord
-from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
@@ -10,7 +9,7 @@ async def create_emoji(
     commandInfo: utility.commandInfo,
     name: str,
     image_url: str,
-    roles: Optional[list[discord.Role]] = None,
+    roles: list[discord.Role] | None = None,
 ) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
@@ -27,17 +26,16 @@ async def create_emoji(
         return
 
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(image_url) as resp:
-                if resp.status != 200:
-                    await commandInfo.reply(
-                        tanjunLocalizer.localize(
-                            commandInfo.locale,
-                            "commands.admin.createEmoji.imageDownloadError",
-                        )
+        async with aiohttp.ClientSession() as session, session.get(image_url) as resp:
+            if resp.status != 200:
+                await commandInfo.reply(
+                    tanjunLocalizer.localize(
+                        commandInfo.locale,
+                        "commands.admin.createEmoji.imageDownloadError",
                     )
-                    return
-                image_data = await resp.read()
+                )
+                return
+            image_data = await resp.read()
 
         assert commandInfo.guild is not None
         emoji = await commandInfo.guild.create_custom_emoji(name=name, image=image_data, roles=roles or [])

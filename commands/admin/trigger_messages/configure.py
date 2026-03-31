@@ -198,6 +198,7 @@ async def configure_trigger_messages(
 
         async def on_channel_select(self, interaction: discord.Interaction) -> None:
             from typing import Any, cast
+
             data = cast(Any, interaction.data)
             nonlocal channels
             await add_trigger_message_channel(

@@ -61,6 +61,7 @@ async def blacklist_list_user(commandInfo: utility.commandInfo) -> None:
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             from typing import Any, cast
+
             data = cast(Any, interaction.data)
             if data["component_type"] == 5:  # UserSelect
                 userId = data["values"][0]

@@ -1,12 +1,11 @@
 import discord
-from typing import Optional
 from discord.ui import View
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def nuke_channel(commandInfo: utility.commandInfo, channel: Optional[discord.TextChannel] = None) -> None:
+async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel | None = None) -> None:
     class ConfirmView(View):
         def __init__(self, commandInfo: utility.commandInfo) -> None:
             super().__init__(timeout=60)

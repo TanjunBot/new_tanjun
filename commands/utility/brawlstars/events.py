@@ -15,18 +15,20 @@ from utility import (
 
 async def getEventRotation() -> dict[str, dict[str, str | dict[str, str]]] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(
             "https://api.brawlstars.com/v1/events/rotation",
             headers=headers,
-        ) as response:
-            if response.status != 200:
-                return None
-            json_data: Any = await response.json()
-            if isinstance(json_data, dict):
-                return json_data
-            else:
-                return None
+        ) as response,
+    ):
+        if response.status != 200:
+            return None
+        json_data: Any = await response.json()
+        if isinstance(json_data, dict):
+            return json_data
+        else:
+            return None
 
 
 async def events(commandInfo: commandInfo) -> None:

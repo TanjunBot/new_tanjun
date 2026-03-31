@@ -18,7 +18,9 @@ from localizer import tanjunLocalizer
 from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
-async def calculate_user_channel_boost_command(commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel) -> None:
+async def calculate_user_channel_boost_command(
+    commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel
+) -> None:
     assert commandInfo.guild is not None
     user_boost = await get_user_boost(str(commandInfo.guild.id), str(user.id))
     role_boosts = await get_user_roles_boosts(str(commandInfo.guild.id), [str(role.id) for role in user.roles])
@@ -88,7 +90,9 @@ async def add_role_boost_command(commandInfo: commandInfo, role: discord.Role, b
     await commandInfo.reply(embed=embed)
 
 
-async def add_channel_boost_command(commandInfo: commandInfo, channel: discord.TextChannel, boost: float, additive: bool) -> None:
+async def add_channel_boost_command(
+    commandInfo: commandInfo, channel: discord.TextChannel, boost: float, additive: bool
+) -> None:
     assert commandInfo.guild is not None
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(

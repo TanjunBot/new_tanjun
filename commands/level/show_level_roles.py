@@ -102,6 +102,7 @@ async def show_level_roles_command(commandInfo: commandInfo) -> None:
 
         async def on_select(self, interaction: discord.Interaction) -> None:
             from typing import Any, cast
+
             data = cast(Any, interaction.data)
             level, roles = data["values"][0].split("|")
             level = int(level)
@@ -182,6 +183,7 @@ async def show_level_roles_command(commandInfo: commandInfo) -> None:
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             from typing import Any, cast
+
             data = cast(Any, interaction.data)
             if data["component_type"] == 3:  # RoleSelect
                 self.selected_role = data["values"][0]
@@ -311,6 +313,7 @@ async def show_level_roles_command(commandInfo: commandInfo) -> None:
 
         async def on_select(self, interaction: discord.Interaction) -> None:
             from typing import Any, cast
+
             data = cast(Any, interaction.data)
             self.selected_roles = data["values"]
             await interaction.response.send_message(

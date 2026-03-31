@@ -45,7 +45,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
 
     ticket_channel = interaction.channel
 
-    if not hasattr(ticket_channel, 'id') or not ticket_channel.id == int(ticket[6]):
+    if not hasattr(ticket_channel, "id") or not ticket_channel.id == int(ticket[6]):
         await interaction.followup.send(
             tanjunLocalizer.localize(
                 str(interaction.locale),

@@ -503,8 +503,8 @@ class NumericStringParser:
     def __init__(self) -> None:
         self.exprStack: list[Any] = []
         self.push_first_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(pr[0])
-        self.push_uminus_sign_action: Callable[[ParseResults], None] = (
-            lambda pr: self.exprStack.append("unary -") if pr and pr[0] == "-" else None
+        self.push_uminus_sign_action: Callable[[ParseResults], None] = lambda pr: (
+            self.exprStack.append("unary -") if pr and pr[0] == "-" else None
         )
         self.push_operator_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(pr[0])
         self.push_function_call_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(pr[0])

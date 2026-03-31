@@ -1,11 +1,10 @@
 import discord
-from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def unban(commandInfo: utility.commandInfo, username: str, reason: Optional[str] = None) -> None:
+async def unban(commandInfo: utility.commandInfo, username: str, reason: str | None = None) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).ban_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.missingPermission.title"),

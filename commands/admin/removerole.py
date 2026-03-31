@@ -1,5 +1,6 @@
+from typing import Any, cast
+
 import discord
-from typing import Any, Optional, cast
 
 import utility
 from localizer import tanjunLocalizer
@@ -7,8 +8,8 @@ from localizer import tanjunLocalizer
 
 async def removerole(
     commandInfo: utility.commandInfo,
-    user: Optional[discord.Member] = None,
-    role: Optional[discord.Role] = None,
+    user: discord.Member | None = None,
+    role: discord.Role | None = None,
 ) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(

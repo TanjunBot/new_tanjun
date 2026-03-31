@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import discord
 
@@ -13,7 +13,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def show_reports(commandInfo: utility.commandInfo, user: Optional[discord.Member] = None) -> None:
+async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | None = None) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

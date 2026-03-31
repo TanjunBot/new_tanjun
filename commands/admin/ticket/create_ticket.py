@@ -1,5 +1,4 @@
 import discord
-from typing import Optional
 
 import utility
 from api import create_ticket_message
@@ -11,9 +10,9 @@ async def create_ticket(
     channel: discord.TextChannel,
     name: str,
     description: str,
-    ping_role: Optional[discord.Role] = None,
-    summary_channel: Optional[discord.TextChannel] = None,
-    introduction: Optional[str] = None,
+    ping_role: discord.Role | None = None,
+    summary_channel: discord.TextChannel | None = None,
+    introduction: str | None = None,
 ) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)

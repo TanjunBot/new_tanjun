@@ -61,6 +61,7 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo) -> None:
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             from typing import Any, cast
+
             data = cast(Any, interaction.data)
             if data["component_type"] == 8:  # ChannelSelect
                 channelId = data["values"][0]

@@ -11,18 +11,20 @@ from utility import commandInfo as CommandInfo
 
 async def getClubInfo(clubTag: str) -> dict[str, str | dict[str, dict[str, str]]] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(
             f"https://api.brawlstars.com/v1/clubs/%23{clubTag[1:]}",
             headers=headers,
-        ) as response:
-            if response.status != 200:
-                return None
-            json_data: Any = await response.json()
-            if isinstance(json_data, dict):
-                return json_data
-            else:
-                return None
+        ) as response,
+    ):
+        if response.status != 200:
+            return None
+        json_data: Any = await response.json()
+        if isinstance(json_data, dict):
+            return json_data
+        else:
+            return None
 
 
 async def club(commandInfo: CommandInfo, clubTag: str) -> None:

@@ -1,11 +1,10 @@
 import discord
-from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def change_nickname(commandInfo: utility.commandInfo, member: discord.Member, nickname: Optional[str] = None) -> None:
+async def change_nickname(commandInfo: utility.commandInfo, member: discord.Member, nickname: str | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_nicknames
@@ -32,7 +31,11 @@ async def change_nickname(commandInfo: utility.commandInfo, member: discord.Memb
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and member.top_role >= commandInfo.user.top_role and commandInfo.user != commandInfo.guild.owner:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and member.top_role >= commandInfo.user.top_role
+        and commandInfo.user != commandInfo.guild.owner
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nickname.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nickname.targetTooHigh.description"),

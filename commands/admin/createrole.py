@@ -1,5 +1,4 @@
 import discord
-from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
@@ -8,11 +7,11 @@ from localizer import tanjunLocalizer
 async def createrole(
     commandInfo: utility.commandInfo,
     name: str,
-    color: Optional[discord.Color | str] = None,
-    reason: Optional[str] = None,
+    color: discord.Color | str | None = None,
+    reason: str | None = None,
     hoist: bool = False,
     mentionable: bool = False,
-    display_icon: Optional[discord.Attachment | str] = None,
+    display_icon: discord.Attachment | str | None = None,
 ) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(

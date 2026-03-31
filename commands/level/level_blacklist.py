@@ -1,5 +1,3 @@
-from typing import Optional
-
 import discord
 
 from api import (
@@ -15,7 +13,9 @@ from localizer import tanjunLocalizer
 from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
-async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: discord.TextChannel, reason: Optional[str] = None) -> None:
+async def add_channel_to_blacklist_command(
+    commandInfo: commandInfo, channel: discord.TextChannel, reason: str | None = None
+) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -80,7 +80,7 @@ async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channe
     await commandInfo.reply(embed=embed)
 
 
-async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.Role, reason: Optional[str] = None) -> None:
+async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.Role, reason: str | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -145,7 +145,7 @@ async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: dis
     await commandInfo.reply(embed=embed)
 
 
-async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.Member, reason: Optional[str] = None) -> None:
+async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.Member, reason: str | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator

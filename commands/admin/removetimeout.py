@@ -1,11 +1,10 @@
 import discord
-from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Member, reason: Optional[str] = None) -> None:
+async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Member, reason: str | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members

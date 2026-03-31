@@ -1,5 +1,4 @@
 from datetime import UTC, datetime, timedelta
-from typing import Optional
 
 import discord
 
@@ -8,7 +7,7 @@ from api import add_warning, get_warn_config, get_warnings
 from localizer import tanjunLocalizer
 
 
-async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, reason: Optional[str] = None) -> None:
+async def warn_user(commandInfo: utility.commandInfo, member: discord.Member, reason: str | None = None) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).kick_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.missingPermission.title"),

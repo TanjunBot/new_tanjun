@@ -1,11 +1,10 @@
 import discord
-from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reason: Optional[str] = None) -> None:
+async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reason: str | None = None) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.missingPermission.title"),

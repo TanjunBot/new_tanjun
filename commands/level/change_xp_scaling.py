@@ -1,6 +1,5 @@
-from typing import Any, Optional
-
 import math
+from typing import Any
 
 import discord
 from discord.ui import Button, View
@@ -41,7 +40,7 @@ class PaginationView(View):
         await interaction.response.edit_message(embed=await self.generate_page(self.current_page), view=self)
 
 
-async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, custom_formula: Optional[str] = None) -> None:
+async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, custom_formula: str | None = None) -> None:
     if custom_formula:
         custom_formula = custom_formula.replace("x", "level")
     if (

@@ -1,12 +1,11 @@
 import discord
-from typing import Optional
 
 import utility
 from api import clear_channel_overwrites, get_channel_overwrites
 from localizer import tanjunLocalizer
 
 
-async def unlock_channel(commandInfo: utility.commandInfo, channel: Optional[discord.TextChannel] = None) -> None:
+async def unlock_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel | None = None) -> None:
     if channel is None:
         assert commandInfo.channel is not None
         channel = commandInfo.channel  # type: ignore[assignment]

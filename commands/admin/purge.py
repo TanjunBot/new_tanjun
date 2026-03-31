@@ -1,5 +1,4 @@
 import discord
-from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
@@ -8,7 +7,7 @@ from localizer import tanjunLocalizer
 async def purge(
     commandInfo: utility.commandInfo,
     amount: int,
-    channel: Optional[discord.TextChannel] = None,
+    channel: discord.TextChannel | None = None,
     setting: str = "all",
 ) -> None:
     if channel is None:

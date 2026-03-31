@@ -9,10 +9,7 @@ from localizer import tanjunLocalizer
 
 async def openTicket(interaction: discord.Interaction) -> None:
     data: Any = interaction.data
-    if (
-        data["custom_id"].split(";")[0] != "ticket_create"
-        or data["custom_id"].split(";")[-1] == "optedOutConfirm"
-    ):
+    if data["custom_id"].split(";")[0] != "ticket_create" or data["custom_id"].split(";")[-1] == "optedOutConfirm":
         return
 
     await interaction.response.defer(ephemeral=True)
@@ -85,7 +82,10 @@ async def open_ticket_2(interaction: discord.Interaction) -> None:
     assert interaction.channel is not None
     assert interaction.guild is not None
     channel = interaction.channel
-    if not isinstance(channel, discord.TextChannel) or not channel.permissions_for(interaction.guild.me).create_private_threads:
+    if (
+        not isinstance(channel, discord.TextChannel)
+        or not channel.permissions_for(interaction.guild.me).create_private_threads
+    ):
         await interaction.response.send_message(
             tanjunLocalizer.localize(
                 str(interaction.locale),
@@ -95,7 +95,9 @@ async def open_ticket_2(interaction: discord.Interaction) -> None:
         )
         return
 
-    locale_str = str(interaction.guild.preferred_locale.value if interaction.guild.preferred_locale else interaction.locale.value)
+    locale_str = str(
+        interaction.guild.preferred_locale.value if interaction.guild.preferred_locale else interaction.locale.value
+    )
     ticket_created_locale = tanjunLocalizer.localize(
         locale_str,
         "commands.admin.open_ticket.success.ticketCreated",

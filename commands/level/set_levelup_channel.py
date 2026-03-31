@@ -1,5 +1,3 @@
-from typing import Optional
-
 import discord
 
 from api import set_levelup_channel
@@ -7,7 +5,7 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def set_levelup_channel_command(commandInfo: commandInfo, channel: Optional[discord.TextChannel] = None) -> None:
+async def set_levelup_channel_command(commandInfo: commandInfo, channel: discord.TextChannel | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator

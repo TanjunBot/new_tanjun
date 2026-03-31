@@ -10,18 +10,20 @@ from utility import commandInfo, tanjunEmbed
 
 async def getPlayerInfo(playerTag: str) -> dict[str, str] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(
             f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}",
             headers=headers,
-        ) as response:
-            if response.status != 200:
-                return None
-            json_data: Any = await response.json()
-            if isinstance(json_data, dict):
-                return json_data
-            else:
-                return None
+        ) as response,
+    ):
+        if response.status != 200:
+            return None
+        json_data: Any = await response.json()
+        if isinstance(json_data, dict):
+            return json_data
+        else:
+            return None
 
 
 async def link(commandInfo: commandInfo, playerTag: str) -> None:

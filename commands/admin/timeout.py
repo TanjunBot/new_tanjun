@@ -1,5 +1,4 @@
 from datetime import timedelta
-from typing import Optional
 
 import discord
 
@@ -11,7 +10,7 @@ async def timeout(
     commandInfo: utility.commandInfo,
     member: discord.Member,
     duration: int | timedelta,
-    reason: Optional[str] = None,
+    reason: str | None = None,
 ) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
