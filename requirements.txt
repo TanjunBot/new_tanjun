@@ -53,7 +53,7 @@ nbconvert==7.17.0
 nbformat==5.10.4
 num2words==0.5.14
 numpy==2.3.4
-openai==2.21.0
+openai==2.30.0
 packaging==26.0
 pandocfilters==1.5.1
 parso==0.8.5
@@ -65,7 +65,7 @@ propcache==0.4.1
 pure_eval==0.2.3
 pycparser==3.0
 pydantic==2.12.5
-pydantic_core==2.41.5
+pydantic_core==2.45.0
 PyGithub==2.8.1
 Pygments==2.19.2
 PyJWT==2.12.0
