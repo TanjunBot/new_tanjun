@@ -1,6 +1,7 @@
 import re
 
 import aiohttp
+import discord
 
 import utility
 from localizer import tanjunLocalizer
@@ -10,7 +11,7 @@ from utility import checkIfHasPro
 async def copy_emoji(
     commandInfo: utility.commandInfo,
     emoji: str,
-):
+) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_emojis
@@ -25,6 +26,7 @@ async def copy_emoji(
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not commandInfo.guild.me.guild_permissions.manage_emojis:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

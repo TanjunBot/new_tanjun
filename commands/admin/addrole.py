@@ -1,4 +1,5 @@
 import discord
+from typing import Any, Optional, cast
 
 import utility
 from localizer import tanjunLocalizer
@@ -6,9 +7,9 @@ from localizer import tanjunLocalizer
 
 async def addrole(
     commandInfo: utility.commandInfo,
-    user: discord.Member = None,
-    role: discord.Role = None,
-):
+    user: Optional[discord.Member] = None,
+    role: Optional[discord.Role] = None,
+) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.missingPermission.title"),
@@ -20,6 +21,7 @@ async def addrole(
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not commandInfo.guild.me.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.missingPermissionBot.title"),
@@ -32,7 +34,7 @@ async def addrole(
         return
 
     class RoleManagementView(discord.ui.View):
-        def __init__(self, commandInfo, action="add", users=None, roles=None):
+        def __init__(self, commandInfo: utility.commandInfo, action: str = "add", users: Any = None, roles: Any = None) -> None:
             super().__init__(timeout=300)
             self.commandInfo = commandInfo
             self.action = action
@@ -124,11 +126,14 @@ async def addrole(
             self.stop()
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
-            if interaction.data["component_type"] == 6:  # RoleSelect
-                self.selected_roles = [interaction.guild.get_role(int(r)) for r in interaction.data["values"]]
+            data = cast(Any, interaction.data)
+            if data and data.get("component_type") == 6:  # RoleSelect
+                assert interaction.guild is not None
+                self.selected_roles = [interaction.guild.get_role(int(r)) for r in data.get("values", [])]
                 await interaction.response.defer()
-            elif interaction.data["component_type"] == 5:  # UserSelect
-                self.selected_users = [await interaction.guild.fetch_member(int(u)) for u in interaction.data["values"]]
+            elif data and data.get("component_type") == 5:  # UserSelect
+                assert interaction.guild is not None
+                self.selected_users = [await interaction.guild.fetch_member(int(u)) for u in data.get("values", [])]
                 await interaction.response.defer()
             return True
 
@@ -145,7 +150,7 @@ async def addrole(
             await commandInfo.reply(embed=embed)
             return
 
-        if commandInfo.user.top_role <= role:
+        if isinstance(commandInfo.user, discord.Member) and commandInfo.user.top_role <= role:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.roleTooHigh.title"),
                 description=tanjunLocalizer.localize(

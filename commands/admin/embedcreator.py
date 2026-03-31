@@ -7,9 +7,9 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextChannel, title: str):
+async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextChannel, title: str) -> None:
     class EmbedCreatorView(View):
-        def __init__(self, commandInfo, target_channel):
+        def __init__(self, commandInfo: utility.commandInfo, target_channel: discord.TextChannel) -> None:
             super().__init__(timeout=1800)  # 30 minutes timeout
             self.commandInfo = commandInfo
             self.embed = discord.Embed(title=title, color=0xFFFFFF)
@@ -167,7 +167,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             await self.message.edit(view=self)
 
     class FieldModal(Modal):
-        def __init__(self, view):
+        def __init__(self, view: "EmbedCreatorView") -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
                     view.commandInfo.locale,
@@ -220,7 +220,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             )
 
     class FooterModal(Modal):
-        def __init__(self, view):
+        def __init__(self, view: "EmbedCreatorView") -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
                     view.commandInfo.locale,
@@ -365,7 +365,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             )
 
     class EditFieldModal(Modal):
-        def __init__(self, view):
+        def __init__(self, view: "EmbedCreatorView") -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
                     view.commandInfo.locale,
@@ -436,7 +436,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             )
 
     class RemoveFieldModal(Modal):
-        def __init__(self, view):
+        def __init__(self, view: "EmbedCreatorView") -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
                     view.commandInfo.locale,

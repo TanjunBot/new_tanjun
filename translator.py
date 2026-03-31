@@ -11,11 +11,11 @@ from localizer import tanjunLocalizer
 
 
 class TanjunTranslator(app_commands.Translator):
-    def __init__(self):
-        self.translations = {}
+    def __init__(self) -> None:
+        self.translations: dict[str, object] = {}
         self.load_translations()
 
-    def load_translations(self):
+    def load_translations(self) -> None:
         with open("locales/de.json", encoding="utf-8") as f:
             self.translations = json.load(f)
 
@@ -28,12 +28,13 @@ class TanjunTranslator(app_commands.Translator):
         if locale.value not in ["de", "de-DE", "en", "en-US", "en-GB"]:
             return None
 
+        locale_str = locale.value if locale.value not in ["en-US", "en-GB"] else "en"
         if locale.value in ["en-US", "en-GB"]:
-            locale = "en"
+            locale_str = "en"
 
-        string = str(string).replace("_", ".")
+        key_str = str(string).replace("_", ".")
 
-        current = tanjunLocalizer.localize(locale, string)
+        current = tanjunLocalizer.localize(locale_str, key_str)
 
         if isinstance(current, str):
             return current

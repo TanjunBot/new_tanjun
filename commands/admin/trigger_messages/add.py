@@ -1,3 +1,5 @@
+import discord
+
 import utility
 from api import add_trigger_message as add_trigger_message_api
 from localizer import tanjunLocalizer
@@ -8,7 +10,7 @@ async def add_trigger_message(
     trigger: str,
     response: str,
     caseSensitive: bool = False,
-):
+) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -26,6 +28,7 @@ async def add_trigger_message(
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     await add_trigger_message_api(commandInfo.guild.id, trigger, response, caseSensitive)
 
     embed = utility.tanjunEmbed(

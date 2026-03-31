@@ -18,7 +18,8 @@ from localizer import tanjunLocalizer
 from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
-async def calculate_user_channel_boost_command(commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel):
+async def calculate_user_channel_boost_command(commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel) -> None:
+    assert commandInfo.guild is not None
     user_boost = await get_user_boost(str(commandInfo.guild.id), str(user.id))
     role_boosts = await get_user_roles_boosts(str(commandInfo.guild.id), [str(role.id) for role in user.roles])
     channel_boost = await get_channel_boost(str(commandInfo.guild.id), str(channel.id))
@@ -59,7 +60,8 @@ async def calculate_user_channel_boost_command(commandInfo: commandInfo, user: d
     await commandInfo.reply(embed=embed)
 
 
-async def add_role_boost_command(commandInfo: commandInfo, role: discord.Role, boost: float, additive: bool):
+async def add_role_boost_command(commandInfo: commandInfo, role: discord.Role, boost: float, additive: bool) -> None:
+    assert commandInfo.guild is not None
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.boosts.error.no_pro.title"),
@@ -86,7 +88,8 @@ async def add_role_boost_command(commandInfo: commandInfo, role: discord.Role, b
     await commandInfo.reply(embed=embed)
 
 
-async def add_channel_boost_command(commandInfo: commandInfo, channel: discord.TextChannel, boost: float, additive: bool):
+async def add_channel_boost_command(commandInfo: commandInfo, channel: discord.TextChannel, boost: float, additive: bool) -> None:
+    assert commandInfo.guild is not None
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.boosts.error.no_pro.title"),
@@ -113,7 +116,8 @@ async def add_channel_boost_command(commandInfo: commandInfo, channel: discord.T
     await commandInfo.reply(embed=embed)
 
 
-async def add_user_boost_command(commandInfo: commandInfo, user: discord.Member, boost: float, additive: bool):
+async def add_user_boost_command(commandInfo: commandInfo, user: discord.Member, boost: float, additive: bool) -> None:
+    assert commandInfo.guild is not None
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.boosts.error.no_pro.title"),
@@ -140,7 +144,8 @@ async def add_user_boost_command(commandInfo: commandInfo, user: discord.Member,
     await commandInfo.reply(embed=embed)
 
 
-async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role):
+async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role) -> None:
+    assert commandInfo.guild is not None
     await remove_role_boost(str(commandInfo.guild.id), str(role.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.boosts.remove_role.success.title"),
@@ -153,7 +158,8 @@ async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role
     await commandInfo.reply(embed=embed)
 
 
-async def remove_channel_boost_command(commandInfo: commandInfo, channel: discord.TextChannel):
+async def remove_channel_boost_command(commandInfo: commandInfo, channel: discord.TextChannel) -> None:
+    assert commandInfo.guild is not None
     await remove_channel_boost(str(commandInfo.guild.id), str(channel.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.boosts.remove_channel.success.title"),
@@ -166,7 +172,8 @@ async def remove_channel_boost_command(commandInfo: commandInfo, channel: discor
     await commandInfo.reply(embed=embed)
 
 
-async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Member):
+async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Member) -> None:
+    assert commandInfo.guild is not None
     await remove_user_boost(str(commandInfo.guild.id), str(user.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.boosts.remove_user.success.title"),
@@ -179,7 +186,8 @@ async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Memb
     await commandInfo.reply(embed=embed)
 
 
-async def show_boosts_command(commandInfo: commandInfo):
+async def show_boosts_command(commandInfo: commandInfo) -> None:
+    assert commandInfo.guild is not None
     boosts = await get_all_boosts(str(commandInfo.guild.id))
 
     embed = tanjunEmbed(

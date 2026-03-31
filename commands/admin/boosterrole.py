@@ -5,7 +5,7 @@ from api import add_booster_role, delete_booster_role
 from localizer import tanjunLocalizer
 
 
-async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Role):
+async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Role) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.missingPermission.title"),
@@ -17,6 +17,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not commandInfo.guild.me.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -42,7 +43,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
         await commandInfo.reply(embed=embed)
         return
 
-    if role.position >= commandInfo.user.top_role.position:
+    if isinstance(commandInfo.user, discord.Member) and role.position >= commandInfo.user.top_role.position:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.targetTooHigh.title"),
             description=tanjunLocalizer.localize(
@@ -53,7 +54,8 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
         await commandInfo.reply(embed=embed)
         return
 
-    if role.position >= commandInfo.client.user.top_role.position:
+    assert commandInfo.client.user is not None
+    if role.position >= commandInfo.guild.me.top_role.position:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.roleTooHighBot.title"),
             description=tanjunLocalizer.localize(

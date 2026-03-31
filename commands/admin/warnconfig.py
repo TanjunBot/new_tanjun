@@ -1,3 +1,5 @@
+from typing import Any
+
 import discord
 
 import utility
@@ -5,11 +7,12 @@ from api import get_warn_config, set_warn_config
 from localizer import tanjunLocalizer
 
 
-async def warn_config(commandInfo: utility.commandInfo):
+async def warn_config(commandInfo: utility.commandInfo) -> None:
+    assert commandInfo.guild is not None
     config = await get_warn_config(commandInfo.guild.id)  # Retrieve current configuration settings
 
     class WarnConfigModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo, config):
+        def __init__(self, commandInfo: utility.commandInfo, config: Any) -> None:
             super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.modal.title"))
             self.commandInfo = commandInfo
 

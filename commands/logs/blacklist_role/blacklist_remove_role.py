@@ -10,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def blacklist_remove_role(commandInfo: utility.commandInfo, role: discord.Role):
+async def blacklist_remove_role(commandInfo: utility.commandInfo, role: discord.Role) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -28,6 +28,7 @@ async def blacklist_remove_role(commandInfo: utility.commandInfo, role: discord.
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     isBlacklisted = await is_log_role_blacklisted_api(commandInfo.guild.id, role.id)
 
     if not isBlacklisted:

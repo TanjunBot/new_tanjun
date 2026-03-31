@@ -13,7 +13,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def blacklist_list_role(commandInfo: utility.commandInfo):
+async def blacklist_list_role(commandInfo: utility.commandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -31,10 +31,11 @@ async def blacklist_list_role(commandInfo: utility.commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     blacklisted_roles = await get_log_blacklist_roles_api(commandInfo.guild.id)
 
     class BlacklistView(discord.ui.View):
-        def __init__(self, roles: list, locale: str, guild: discord.Guild):
+        def __init__(self, roles: list, locale: str, guild: discord.Guild) -> None:
             super().__init__()
             self.roles = roles
             self.locale = locale
@@ -59,8 +60,10 @@ async def blacklist_list_role(commandInfo: utility.commandInfo):
             await self.update_view(interaction)
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
-            if interaction.data["component_type"] == 6:  # RoleSelect
-                roleId = interaction.data["values"][0]
+            from typing import Any, cast
+            data = cast(Any, interaction.data)
+            if data["component_type"] == 6:  # RoleSelect
+                roleId = data["values"][0]
                 await add_log_blacklist_role_api(self.guild.id, roleId)
                 self.roles += ((roleId,),)
                 await self.update_view(interaction)

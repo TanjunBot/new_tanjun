@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role):
+async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -20,6 +20,7 @@ async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     existing_role = await get_level_role(str(commandInfo.guild.id), str(role.id))
     if not existing_role:
         embed = tanjunEmbed(

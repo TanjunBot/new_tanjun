@@ -4,7 +4,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def say(commandInfo: utility.commandInfo, channel: discord.TextChannel, *, message: str):
+async def say(commandInfo: utility.commandInfo, channel: discord.TextChannel, *, message: str) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
@@ -16,6 +16,7 @@ async def say(commandInfo: utility.commandInfo, channel: discord.TextChannel, *,
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not channel.permissions_for(commandInfo.guild.me).send_messages:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.say.missingPermissionBot.title"),

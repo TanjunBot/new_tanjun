@@ -1,4 +1,5 @@
 import discord
+from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
@@ -7,9 +8,9 @@ from localizer import tanjunLocalizer
 async def ban(
     commandInfo: utility.commandInfo,
     target: discord.Member,
-    reason: str = None,
+    reason: Optional[str] = None,
     delete_message_days: int = 0,
-):
+) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).ban_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.ban.missingPermission.title"),
@@ -18,6 +19,7 @@ async def ban(
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not commandInfo.guild.me.guild_permissions.ban_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.ban.missingPermissionBot.title"),
@@ -29,7 +31,7 @@ async def ban(
         await commandInfo.reply(embed=embed)
         return
 
-    if target.top_role >= commandInfo.user.top_role:
+    if isinstance(commandInfo.user, discord.Member) and target.top_role >= commandInfo.user.top_role:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.ban.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.ban.targetTooHigh.description"),

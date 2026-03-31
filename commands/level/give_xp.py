@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, get_level_for_xp, tanjunEmbed
 
 
-async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount: int):
+async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount: int) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.givexp.error.no_permission.title"),
@@ -28,6 +28,7 @@ async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     current_xp = await get_user_xp(str(commandInfo.guild.id), str(user.id)) or 0
     new_xp = current_xp + amount
 

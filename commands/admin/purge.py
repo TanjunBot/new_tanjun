@@ -1,4 +1,5 @@
 import discord
+from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
@@ -7,11 +8,12 @@ from localizer import tanjunLocalizer
 async def purge(
     commandInfo: utility.commandInfo,
     amount: int,
-    channel: discord.TextChannel = None,
+    channel: Optional[discord.TextChannel] = None,
     setting: str = "all",
-):
+) -> None:
     if channel is None:
-        channel = commandInfo.channel
+        assert commandInfo.channel is not None
+        channel = commandInfo.channel  # type: ignore[assignment]
 
     if (
         isinstance(commandInfo.user, discord.Member)
@@ -26,6 +28,7 @@ async def purge(
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not channel.permissions_for(commandInfo.guild.me).manage_messages:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.purge.missingPermissionBot.title"),

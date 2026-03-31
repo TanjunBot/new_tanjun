@@ -10,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def blacklist_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel):
+async def blacklist_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -28,6 +28,7 @@ async def blacklist_channel(commandInfo: utility.commandInfo, channel: discord.T
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     isBlacklisted = await is_log_channel_blacklisted_api(commandInfo.guild.id, channel.id)
 
     if isBlacklisted:

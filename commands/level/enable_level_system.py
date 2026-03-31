@@ -1,9 +1,11 @@
+import discord
+
 from api import get_level_system_status, set_level_system_status
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def enable_level_system(commandInfo: commandInfo):
+async def enable_level_system(commandInfo: commandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -21,6 +23,7 @@ async def enable_level_system(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     current_status = await get_level_system_status(str(commandInfo.guild.id))
 
     if current_status:

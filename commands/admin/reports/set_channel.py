@@ -5,7 +5,7 @@ from api import get_report_channel, set_report_channel
 from localizer import tanjunLocalizer
 
 
-async def set_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel):
+async def set_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -18,6 +18,7 @@ async def set_channel(commandInfo: utility.commandInfo, channel: discord.TextCha
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not channel.permissions_for(commandInfo.guild.me).send_messages:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

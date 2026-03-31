@@ -13,7 +13,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def blacklist_list_channel(commandInfo: utility.commandInfo):
+async def blacklist_list_channel(commandInfo: utility.commandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -31,10 +31,11 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     blacklisted_channels = await get_log_blacklist_channels_api(commandInfo.guild.id)
 
     class BlacklistView(discord.ui.View):
-        def __init__(self, channels: list, locale: str, guild: discord.Guild):
+        def __init__(self, channels: list, locale: str, guild: discord.Guild) -> None:
             super().__init__()
             self.channels = channels
             self.locale = locale
@@ -59,8 +60,10 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
             await self.update_view(interaction)
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
-            if interaction.data["component_type"] == 8:  # ChannelSelect
-                channelId = interaction.data["values"][0]
+            from typing import Any, cast
+            data = cast(Any, interaction.data)
+            if data["component_type"] == 8:  # ChannelSelect
+                channelId = data["values"][0]
                 await add_log_blacklist_channel_api(self.guild.id, channelId)
                 self.channels += ((channelId,),)
                 await self.update_view(interaction)

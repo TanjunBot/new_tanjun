@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 import discord
 
@@ -7,15 +8,18 @@ from api import get_ticket_by_id, get_ticket_messages_by_id
 from localizer import tanjunLocalizer
 
 
-async def close_ticket(interaction: discord.Interaction):
-    if not interaction.data["custom_id"].startswith("ticket_close;"):
+async def close_ticket(interaction: discord.Interaction) -> None:
+    data: Any = interaction.data
+    assert interaction.guild is not None
+    assert interaction.channel is not None
+    if not data["custom_id"].startswith("ticket_close;"):
         return
 
     await interaction.response.defer()
 
     ticket_id, ticket_channel_id = (
-        interaction.data["custom_id"].split(";")[1],
-        interaction.data["custom_id"].split(";")[2],
+        data["custom_id"].split(";")[1],
+        data["custom_id"].split(";")[2],
     )
 
     ticket_message = await get_ticket_messages_by_id(ticket_id)
@@ -28,7 +32,7 @@ async def close_ticket(interaction: discord.Interaction):
         )
         return
 
-    ticket = await get_ticket_by_id(interaction.guild.id, ticket_id, ticket_channel_id)
+    ticket = await get_ticket_by_id(interaction.guild.id, ticket_id, ticket_channel_id)  # type: ignore[union-attr]
 
     if not ticket:
         await interaction.followup.send(
@@ -41,7 +45,7 @@ async def close_ticket(interaction: discord.Interaction):
 
     ticket_channel = interaction.channel
 
-    if not ticket_channel.id == int(ticket[6]):
+    if not hasattr(ticket_channel, 'id') or not ticket_channel.id == int(ticket[6]):
         await interaction.followup.send(
             tanjunLocalizer.localize(
                 str(interaction.locale),
@@ -51,7 +55,7 @@ async def close_ticket(interaction: discord.Interaction):
         return
 
     ticket_opener = ticket[1]
-    ticket_opener_user = await interaction.guild.fetch_member(ticket_opener)
+    ticket_opener_user = await interaction.guild.fetch_member(ticket_opener)  # type: ignore[union-attr]
 
     ticket_open_time = ticket[2]
 
@@ -130,7 +134,7 @@ async def generate_summary_html(
     channel: discord.abc.GuildChannel,
     ticket_opener_user: discord.Member,
     ticket_open_time: datetime.datetime,
-):
+) -> str:
     locale = str(channel.guild.preferred_locale) if channel.guild.preferred_locale else "en"
     html = """
 <!DOCTYPE html>

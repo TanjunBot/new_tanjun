@@ -1,4 +1,5 @@
 import discord
+from typing import Optional
 
 import utility
 from api import create_ticket_message
@@ -10,10 +11,10 @@ async def create_ticket(
     channel: discord.TextChannel,
     name: str,
     description: str,
-    ping_role: discord.Role = None,
-    summary_channel: discord.TextChannel = None,
-    introduction: str = None,
-):
+    ping_role: Optional[discord.Role] = None,
+    summary_channel: Optional[discord.TextChannel] = None,
+    introduction: Optional[str] = None,
+) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
@@ -31,6 +32,7 @@ async def create_ticket(
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not channel.permissions_for(commandInfo.guild.me).send_messages:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

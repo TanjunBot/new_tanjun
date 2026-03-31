@@ -37,7 +37,7 @@ LOG_OPTIONS = [
 ]
 
 
-async def configure_logs(commandInfo: utility.commandInfo):
+async def configure_logs(commandInfo: utility.commandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -55,6 +55,7 @@ async def configure_logs(commandInfo: utility.commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     log_enabled = list(await get_log_enable_api(commandInfo.guild.id))
 
     async def build_log_settings_embed(locale: str, guild: discord.Guild, selectedIndex: int):
@@ -87,7 +88,7 @@ async def configure_logs(commandInfo: utility.commandInfo):
     selectedIndex = 0
 
     class logConfigureView(discord.ui.View):
-        def __init__(self, locale: str, guild: discord.Guild, selectedIndex: int):
+        def __init__(self, locale: str, guild: discord.Guild, selectedIndex: int) -> None:
             super().__init__()
             self.locale = locale
             self.guild = guild

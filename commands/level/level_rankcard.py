@@ -13,7 +13,8 @@ from utility import checkIfhasPlus, commandInfo, draw_text_with_outline, tanjunE
 executor = ThreadPoolExecutor()
 
 
-async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
+async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member) -> None:
+    assert commandInfo.guild is not None
     user_info = await get_user_level_info(str(commandInfo.guild.id), str(user.id))
 
     if not user_info:
@@ -39,7 +40,7 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
     await commandInfo.reply(embed=embed, file=file)
 
 
-async def set_background_command(commandInfo: commandInfo, image: discord.Attachment):
+async def set_background_command(commandInfo: commandInfo, image: discord.Attachment) -> None:
     if not checkIfhasPlus(commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.error.no_plus.title"),
@@ -82,7 +83,7 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
     await commandInfo.reply(embed=embed)
 
 
-async def fetch_image(url):
+async def fetch_image(url: str) -> io.BytesIO | None:
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if response.status != 200:
@@ -91,7 +92,7 @@ async def fetch_image(url):
             return image_data
 
 
-async def get_image_or_gif_frames(url):
+async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
     image_data = await fetch_image(url)
     image = Image.open(image_data)
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]

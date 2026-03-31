@@ -1,13 +1,14 @@
 import discord
+from typing import Optional
 from discord.ui import View
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel = None):
+async def nuke_channel(commandInfo: utility.commandInfo, channel: Optional[discord.TextChannel] = None) -> None:
     class ConfirmView(View):
-        def __init__(self, commandInfo):
+        def __init__(self, commandInfo: utility.commandInfo) -> None:
             super().__init__(timeout=60)
             self.commandInfo = commandInfo
             self.value = None
@@ -91,7 +92,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
     elif not view.value:
         return
 
-    def check(m):
+    def check(m: discord.Message) -> bool:
         return m.author == commandInfo.user and m.channel == commandInfo.channel
 
     try:

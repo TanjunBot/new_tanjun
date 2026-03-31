@@ -9,7 +9,7 @@ async def moverole(
     role: discord.Role,
     target_role: discord.Role,
     position: str,
-):
+) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.missingPermission.title"),
@@ -21,6 +21,7 @@ async def moverole(
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not commandInfo.guild.me.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.missingPermissionBot.title"),
@@ -32,7 +33,7 @@ async def moverole(
         await commandInfo.reply(embed=embed)
         return
 
-    if role.position >= commandInfo.user.top_role.position:
+    if isinstance(commandInfo.user, discord.Member) and role.position >= commandInfo.user.top_role.position:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.roleTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.roleTooHigh.description"),

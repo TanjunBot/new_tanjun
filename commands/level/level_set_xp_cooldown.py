@@ -1,9 +1,11 @@
+import discord
+
 from api import set_text_cooldown, set_voice_cooldown
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def set_text_cooldown_command(commandInfo: commandInfo, cooldown: int):
+async def set_text_cooldown_command(commandInfo: commandInfo, cooldown: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -35,6 +37,7 @@ async def set_text_cooldown_command(commandInfo: commandInfo, cooldown: int):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     await set_text_cooldown(str(commandInfo.guild.id), cooldown)
 
     embed = tanjunEmbed(
@@ -48,7 +51,7 @@ async def set_text_cooldown_command(commandInfo: commandInfo, cooldown: int):
     await commandInfo.reply(embed=embed)
 
 
-async def set_voice_cooldown_command(commandInfo: commandInfo, cooldown: int):
+async def set_voice_cooldown_command(commandInfo: commandInfo, cooldown: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -80,6 +83,7 @@ async def set_voice_cooldown_command(commandInfo: commandInfo, cooldown: int):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     await set_voice_cooldown(str(commandInfo.guild.id), cooldown)
 
     embed = tanjunEmbed(

@@ -1,9 +1,11 @@
+import discord
+
 import utility
 from api import get_report_channel, remove_report_channel
 from localizer import tanjunLocalizer
 
 
-async def remove_channel(commandInfo: utility.commandInfo):
+async def remove_channel(commandInfo: utility.commandInfo) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -16,6 +18,7 @@ async def remove_channel(commandInfo: utility.commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not await get_report_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.remove_channel.noChannel.title"),

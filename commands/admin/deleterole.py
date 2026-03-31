@@ -1,10 +1,11 @@
 import discord
+from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reason: str = None):
+async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reason: Optional[str] = None) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.missingPermission.title"),
@@ -16,7 +17,9 @@ async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reaso
         await commandInfo.reply(embed=embed)
         return
 
-    if not commandInfo.guild.get_member(commandInfo.client.user.id).guild_permissions.manage_roles:
+    assert commandInfo.guild is not None
+    assert commandInfo.client.user is not None
+    if not commandInfo.guild.get_member(commandInfo.client.user.id).guild_permissions.manage_roles:  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -30,7 +33,7 @@ async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reaso
         await commandInfo.reply(embed=embed)
         return
 
-    if commandInfo.user.top_role.position <= role.position:
+    if isinstance(commandInfo.user, discord.Member) and commandInfo.user.top_role.position <= role.position:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.roleTooHigh.title"),
             description=tanjunLocalizer.localize(
@@ -41,7 +44,7 @@ async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reaso
         await commandInfo.reply(embed=embed)
         return
 
-    if commandInfo.guild.get_member(commandInfo.client.user.id).top_role.position <= role.position:
+    if commandInfo.guild.get_member(commandInfo.client.user.id).top_role.position <= role.position:  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.roleTooHighBot.title"),
             description=tanjunLocalizer.localize(

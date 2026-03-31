@@ -1,10 +1,11 @@
 import discord
+from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason: str = None):
+async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason: Optional[str] = None) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).kick_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.kick.missingPermission.title"),
@@ -13,6 +14,7 @@ async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason:
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not commandInfo.guild.me.guild_permissions.kick_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.kick.missingPermissionBot.title"),
@@ -24,7 +26,7 @@ async def kick(commandInfo: utility.commandInfo, target: discord.Member, reason:
         await commandInfo.reply(embed=embed)
         return
 
-    if target.top_role >= commandInfo.user.top_role:
+    if isinstance(commandInfo.user, discord.Member) and target.top_role >= commandInfo.user.top_role:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.kick.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.kick.targetTooHigh.description"),

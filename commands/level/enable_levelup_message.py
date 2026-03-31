@@ -1,9 +1,11 @@
+import discord
+
 from api import get_levelup_message_status, set_levelup_message_status
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def enable_levelup_message(commandInfo: commandInfo):
+async def enable_levelup_message(commandInfo: commandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -21,6 +23,7 @@ async def enable_levelup_message(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     current_status = await get_levelup_message_status(str(commandInfo.guild.id))
     if current_status:
         embed = tanjunEmbed(

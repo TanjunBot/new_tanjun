@@ -1,3 +1,5 @@
+from typing import Any, Optional
+
 import discord
 
 import utility
@@ -11,7 +13,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = None):
+async def show_reports(commandInfo: utility.commandInfo, user: Optional[discord.Member] = None) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -26,6 +28,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     reports = list(await get_reports(commandInfo.guild.id, user.id if user else None))
 
     if not reports:
@@ -42,7 +45,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
         await commandInfo.reply(embed=embed)
         return
 
-    async def checkIfCurrentReporterIsBlocked(reports: list, page: int):
+    async def checkIfCurrentReporterIsBlocked(reports: list[Any], page: int) -> bool:
         return await check_if_reporter_is_blocked(commandInfo.guild.id, reports[page][3])
 
     currentReporterIsBlocked = await checkIfCurrentReporterIsBlocked(reports, 0)
@@ -50,7 +53,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member = 
     class reportsView(discord.ui.View):
         nonlocal currentReporterIsBlocked
 
-        def __init__(self, reports: list, page: int = 0):
+        def __init__(self, reports: list[Any], page: int = 0) -> None:
             super().__init__()
             self.reports = reports
             self.page = page

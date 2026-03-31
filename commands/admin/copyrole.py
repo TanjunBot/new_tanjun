@@ -4,7 +4,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def copyrole(commandInfo: utility.commandInfo, role: discord.Role, copy_members: bool = False):
+async def copyrole(commandInfo: utility.commandInfo, role: discord.Role, copy_members: bool = False) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.copyrole.missingPermission.title"),
@@ -17,7 +17,9 @@ async def copyrole(commandInfo: utility.commandInfo, role: discord.Role, copy_me
         await commandInfo.reply(embed=embed)
         return
 
-    if not commandInfo.guild.get_member(commandInfo.client.user.id).guild_permissions.manage_roles:
+    assert commandInfo.guild is not None
+    assert commandInfo.client.user is not None
+    if not commandInfo.guild.get_member(commandInfo.client.user.id).guild_permissions.manage_roles:  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.copyrole.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
@@ -31,13 +33,21 @@ async def copyrole(commandInfo: utility.commandInfo, role: discord.Role, copy_me
 
     reasonLocale = tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.copyrole.reason", name=role.name)
 
+    # Get display_icon as bytes or str (URL) or None
+    if role.icon is not None:
+        display_icon: bytes | str | None = await role.icon.read()
+    elif role.unicode_emoji:
+        display_icon = role.unicode_emoji
+    else:
+        display_icon = None
+
     newRole = await commandInfo.guild.create_role(
         name=role.name,
         color=role.color,
         hoist=role.hoist,
         mentionable=role.mentionable,
         permissions=role.permissions,
-        display_icon=role.icon if role.icon else role.unicode_emoji,
+        display_icon=display_icon,
         reason=reasonLocale,
     )
 

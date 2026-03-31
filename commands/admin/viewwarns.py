@@ -1,5 +1,6 @@
 import math
 from datetime import datetime
+from typing import Any
 
 import discord
 from discord.ui import Button, View
@@ -12,7 +13,7 @@ WARNINGS_PER_PAGE = 5
 
 
 class WarningView(View):
-    def __init__(self, warnings, member, commandInfo):
+    def __init__(self, warnings: list[Any], member: discord.Member, commandInfo: utility.commandInfo) -> None:
         super().__init__(timeout=300)  # 5 minutes timeout
         self.warnings = warnings
         self.member = member
@@ -30,7 +31,7 @@ class WarningView(View):
             return False
         return True
 
-    def update_buttons(self):
+    def update_buttons(self) -> None:
         self.clear_items()
         start = self.page * WARNINGS_PER_PAGE
         end = start + WARNINGS_PER_PAGE
@@ -64,8 +65,9 @@ class WarningView(View):
             next_button.callback = self.next_page
             self.add_item(next_button)
 
-    async def remove_warning_callback(self, interaction: discord.Interaction):
-        warning_id = int(interaction.data["custom_id"].split("_")[1])
+    async def remove_warning_callback(self, interaction: discord.Interaction) -> None:
+        data: Any = interaction.data
+        warning_id = int(data["custom_id"].split("_")[1])
         await remove_warning(warning_id)
         self.warnings = [w for w in self.warnings if w[0] != warning_id]
 
@@ -87,13 +89,13 @@ class WarningView(View):
 
         await interaction.response.edit_message(embed=embed, view=self)
 
-    async def prev_page(self, interaction: discord.Interaction):
+    async def prev_page(self, interaction: discord.Interaction) -> None:
         self.page = max(0, self.page - 1)
         embed = create_warnings_embed(self.commandInfo, self.member, self.warnings, self.page)
         self.update_buttons()
         await interaction.response.edit_message(embed=embed, view=self)
 
-    async def next_page(self, interaction: discord.Interaction):
+    async def next_page(self, interaction: discord.Interaction) -> None:
         self.page = min(math.ceil(len(self.warnings) / WARNINGS_PER_PAGE) - 1, self.page + 1)
         embed = create_warnings_embed(self.commandInfo, self.member, self.warnings, self.page)
         self.update_buttons()
@@ -104,7 +106,12 @@ class WarningView(View):
             await self.message.edit(view=None)
 
 
-def create_warnings_embed(commandInfo, member, warnings, page):
+def create_warnings_embed(
+    commandInfo: utility.commandInfo,
+    member: discord.Member,
+    warnings: list[Any],
+    page: int,
+) -> utility.tanjunEmbed:
     start = page * WARNINGS_PER_PAGE
     end = start + WARNINGS_PER_PAGE
     current_warnings = warnings[start:end]
@@ -160,7 +167,7 @@ def create_warnings_embed(commandInfo, member, warnings, page):
     return embed
 
 
-async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member):
+async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member) -> None:
     if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).kick_members:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.missingPermission.title"),
@@ -172,6 +179,7 @@ async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     guild_id = commandInfo.guild.id
     user_id = member.id
 

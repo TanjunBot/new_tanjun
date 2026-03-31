@@ -1,3 +1,5 @@
+import discord
+
 import utility
 from api import (
     get_log_channel as get_log_channel_api,
@@ -8,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def remove_log_channel(commandInfo: utility.commandInfo):
+async def remove_log_channel(commandInfo: utility.commandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -26,6 +28,7 @@ async def remove_log_channel(commandInfo: utility.commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     logChannel = await get_log_channel_api(commandInfo.guild.id)
 
     if not logChannel:

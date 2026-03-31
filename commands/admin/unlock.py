@@ -1,13 +1,15 @@
 import discord
+from typing import Optional
 
 import utility
 from api import clear_channel_overwrites, get_channel_overwrites
 from localizer import tanjunLocalizer
 
 
-async def unlock_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel = None):
+async def unlock_channel(commandInfo: utility.commandInfo, channel: Optional[discord.TextChannel] = None) -> None:
     if channel is None:
-        channel = commandInfo.channel
+        assert commandInfo.channel is not None
+        channel = commandInfo.channel  # type: ignore[assignment]
 
     if (
         isinstance(commandInfo.user, discord.Member)
@@ -23,6 +25,7 @@ async def unlock_channel(commandInfo: utility.commandInfo, channel: discord.Text
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not channel.permissions_for(commandInfo.guild.me).manage_channels:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unlock.missingPermissionBot.title"),

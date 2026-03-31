@@ -5,9 +5,10 @@ from api import get_custom_formula, get_xp_scaling, getLevelLeaderboard
 from localizer import tanjunLocalizer
 
 
-async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
+async def leaderboard(commandInfo: utility.commandInfo, page: int = 1) -> None:
     if page < 1:
         page = 1
+    assert commandInfo.guild is not None
     leaderboard = await getLevelLeaderboard(commandInfo.guild.id)
     scaling = await get_xp_scaling(commandInfo.guild.id)
     custom_formula = await get_custom_formula(commandInfo.guild.id)
@@ -56,7 +57,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
         return embed
 
     class LeaderboardPaginator(discord.ui.View):
-        def __init__(self, current_page=1):
+        def __init__(self, current_page: int = 1) -> None:
             super().__init__(timeout=3600)
             self.current_page = current_page
             self.total_pages = int(len(leaderboard) / 10 + 1)

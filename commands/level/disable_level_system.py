@@ -9,9 +9,9 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def disable_level_system(commandInfo: commandInfo):
+async def disable_level_system(commandInfo: commandInfo) -> None:
     class ConfirmDisableView(discord.ui.View):
-        def __init__(self, commandInfo: commandInfo):
+        def __init__(self, commandInfo: commandInfo) -> None:
             super().__init__(timeout=60)
             self.commandInfo = commandInfo
             self.value = None
@@ -49,6 +49,7 @@ async def disable_level_system(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     current_status = await get_level_system_status(str(commandInfo.guild.id))
 
     if not current_status:

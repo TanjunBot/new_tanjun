@@ -1,5 +1,6 @@
 import aiohttp
 import discord
+from typing import Optional
 
 import utility
 from localizer import tanjunLocalizer
@@ -9,8 +10,8 @@ async def create_emoji(
     commandInfo: utility.commandInfo,
     name: str,
     image_url: str,
-    roles: list[discord.Role] = None,
-):
+    roles: Optional[list[discord.Role]] = None,
+) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_emojis
@@ -38,7 +39,8 @@ async def create_emoji(
                     return
                 image_data = await resp.read()
 
-        emoji = await commandInfo.guild.create_custom_emoji(name=name, image=image_data, roles=roles)
+        assert commandInfo.guild is not None
+        emoji = await commandInfo.guild.create_custom_emoji(name=name, image=image_data, roles=roles or [])
 
         roles_mention = (
             ", ".join([role.mention for role in roles])

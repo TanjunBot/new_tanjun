@@ -1,3 +1,5 @@
+from typing import Optional
+
 import discord
 
 from api import (
@@ -13,7 +15,7 @@ from localizer import tanjunLocalizer
 from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
-async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: discord.TextChannel, reason: str = None):
+async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: discord.TextChannel, reason: Optional[str] = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -31,6 +33,7 @@ async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: di
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     await add_channel_to_blacklist(str(commandInfo.guild.id), str(channel.id), reason)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.add_channel.success.title"),
@@ -46,7 +49,7 @@ async def add_channel_to_blacklist_command(commandInfo: commandInfo, channel: di
     await commandInfo.reply(embed=embed)
 
 
-async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channel: discord.TextChannel):
+async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -64,6 +67,7 @@ async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channe
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     await remove_channel_from_blacklist(str(commandInfo.guild.id), str(channel.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.remove_channel.success.title"),
@@ -76,7 +80,7 @@ async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channe
     await commandInfo.reply(embed=embed)
 
 
-async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.Role, reason: str = None):
+async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.Role, reason: Optional[str] = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -94,6 +98,7 @@ async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     await add_role_to_blacklist(str(commandInfo.guild.id), str(role.id), reason)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.add_role.success.title"),
@@ -109,7 +114,7 @@ async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.
     await commandInfo.reply(embed=embed)
 
 
-async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: discord.Role):
+async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: discord.Role) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -127,6 +132,7 @@ async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: dis
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     await remove_role_from_blacklist(str(commandInfo.guild.id), str(role.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.remove_role.success.title"),
@@ -139,7 +145,7 @@ async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: dis
     await commandInfo.reply(embed=embed)
 
 
-async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.Member, reason: str = None):
+async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.Member, reason: Optional[str] = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -157,6 +163,7 @@ async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -186,7 +193,7 @@ async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.
     await commandInfo.reply(embed=embed)
 
 
-async def remove_user_from_blacklist_command(commandInfo: commandInfo, user: discord.Member):
+async def remove_user_from_blacklist_command(commandInfo: commandInfo, user: discord.Member) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -204,6 +211,7 @@ async def remove_user_from_blacklist_command(commandInfo: commandInfo, user: dis
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     await remove_user_from_blacklist(str(commandInfo.guild.id), str(user.id))
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.blacklist.remove_user.success.title"),
@@ -216,7 +224,7 @@ async def remove_user_from_blacklist_command(commandInfo: commandInfo, user: dis
     await commandInfo.reply(embed=embed)
 
 
-async def show_blacklist_command(commandInfo: commandInfo):
+async def show_blacklist_command(commandInfo: commandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -234,6 +242,7 @@ async def show_blacklist_command(commandInfo: commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     blacklist = await get_blacklist(str(commandInfo.guild.id))
 
     embed = tanjunEmbed(

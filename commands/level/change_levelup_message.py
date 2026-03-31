@@ -1,9 +1,11 @@
+import discord
+
 from api import set_levelup_message
 from localizer import tanjunLocalizer
 from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
-async def change_levelup_message(commandInfo: commandInfo, new_message: str):
+async def change_levelup_message(commandInfo: commandInfo, new_message: str) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -21,6 +23,7 @@ async def change_levelup_message(commandInfo: commandInfo, new_message: str):
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

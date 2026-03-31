@@ -10,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def set_log_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel):
+async def set_log_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -28,6 +28,8 @@ async def set_log_channel(commandInfo: utility.commandInfo, channel: discord.Tex
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
+    assert commandInfo.client.user is not None
     selfMember = commandInfo.guild.get_member(commandInfo.client.user.id)
     permissions = channel.permissions_for(selfMember)
 

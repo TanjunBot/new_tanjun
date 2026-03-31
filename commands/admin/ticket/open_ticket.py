@@ -1,3 +1,5 @@
+from typing import Any
+
 import discord
 
 import utility
@@ -5,17 +7,18 @@ from api import check_if_opted_out, get_ticket_messages_by_id, open_ticket
 from localizer import tanjunLocalizer
 
 
-async def openTicket(interaction: discord.Interaction):
+async def openTicket(interaction: discord.Interaction) -> None:
+    data: Any = interaction.data
     if (
-        interaction.data["custom_id"].split(";")[0] != "ticket_create"
-        or interaction.data["custom_id"].split(";")[-1] == "optedOutConfirm"
+        data["custom_id"].split(";")[0] != "ticket_create"
+        or data["custom_id"].split(";")[-1] == "optedOutConfirm"
     ):
         return
 
     await interaction.response.defer(ephemeral=True)
 
     class optedOutView(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__()
 
         @discord.ui.button(
@@ -60,8 +63,9 @@ async def openTicket(interaction: discord.Interaction):
         await open_ticket_2(interaction)
 
 
-async def open_ticket_2(interaction: discord.Interaction):
-    ticket_id = interaction.data["custom_id"].split(";")[1]
+async def open_ticket_2(interaction: discord.Interaction) -> None:
+    data: Any = interaction.data
+    ticket_id = data["custom_id"].split(";")[1]
     print("ticket_id", ticket_id)
     ticket = await get_ticket_messages_by_id(ticket_id)
 
@@ -78,9 +82,10 @@ async def open_ticket_2(interaction: discord.Interaction):
     introduction = ticket[3]
     ping_role = ticket[4]
 
+    assert interaction.channel is not None
+    assert interaction.guild is not None
     channel = interaction.channel
-
-    if not channel.permissions_for(interaction.guild.me).create_private_threads:
+    if not isinstance(channel, discord.TextChannel) or not channel.permissions_for(interaction.guild.me).create_private_threads:
         await interaction.response.send_message(
             tanjunLocalizer.localize(
                 str(interaction.locale),
@@ -90,8 +95,9 @@ async def open_ticket_2(interaction: discord.Interaction):
         )
         return
 
+    locale_str = str(interaction.guild.preferred_locale.value if interaction.guild.preferred_locale else interaction.locale.value)
     ticket_created_locale = tanjunLocalizer.localize(
-        (interaction.guild.preferred_locale if interaction.guild.preferred_locale else interaction.locale),
+        locale_str,
         "commands.admin.open_ticket.success.ticketCreated",
         user=interaction.user,
     )

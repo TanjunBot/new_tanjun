@@ -14,7 +14,7 @@ from localizer import tanjunLocalizer
 
 async def configure_trigger_messages(
     commandInfo: utility.commandInfo,
-):
+) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
@@ -32,6 +32,7 @@ async def configure_trigger_messages(
         await commandInfo.reply(embed=embed)
         return
 
+    assert commandInfo.guild is not None
     trigger_messages = await get_trigger_messages(commandInfo.guild.id)
 
     if not trigger_messages:
@@ -112,7 +113,7 @@ async def configure_trigger_messages(
         return embed
 
     class TriggerMessageModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo):
+        def __init__(self, commandInfo: utility.commandInfo) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -180,7 +181,7 @@ async def configure_trigger_messages(
             await interaction.response.edit_message(embed=embed, view=view)
 
     class TriggerMessageChannelView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo, trigger_id: int):
+        def __init__(self, commandInfo: utility.commandInfo, trigger_id: int) -> None:
             super().__init__()
 
             channelSelect = discord.ui.ChannelSelect(
@@ -195,11 +196,13 @@ async def configure_trigger_messages(
             channelSelect.callback = self.on_channel_select
             self.add_item(channelSelect)
 
-        async def on_channel_select(self, interaction: discord.Interaction):
+        async def on_channel_select(self, interaction: discord.Interaction) -> None:
+            from typing import Any, cast
+            data = cast(Any, interaction.data)
             nonlocal channels
             await add_trigger_message_channel(
                 commandInfo.guild.id,
-                interaction.data["values"][0],
+                data["values"][0] if data else "",
                 trigger_messages[page][0],
             )
             nonlocal channels
@@ -209,7 +212,7 @@ async def configure_trigger_messages(
             await interaction.response.edit_message(embed=embed, view=view)
 
     class TriggerMessageView(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__()
 
         @discord.ui.button(
@@ -355,7 +358,7 @@ async def configure_trigger_messages(
                 selected_channel = 0
             await self.update_message(interaction)
 
-        async def update_message(self, interaction: discord.Interaction):
+        async def update_message(self, interaction: discord.Interaction) -> None:
             embed = await generate_embed()
             view = TriggerMessageView()
             await interaction.response.edit_message(embed=embed, view=view)

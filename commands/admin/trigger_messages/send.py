@@ -3,7 +3,7 @@ import discord
 from api import check_if_opted_out, is_trigger_message
 
 
-async def send_trigger_message(message: discord.Message):
+async def send_trigger_message(message: discord.Message) -> None:
     if not message.guild:
         return
 
