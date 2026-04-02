@@ -8,6 +8,7 @@ from datetime import time
 
 import discord
 from discord.ext import commands, tasks
+from typing import cast, Any
 
 from ai.refillToken import refillAiToken
 from api import check_pool_initialized, get_all_twitch_notification_uuids
@@ -29,88 +30,88 @@ embeds = {}
 
 
 class LoopCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
     @tasks.loop(seconds=10)
-    async def sendSendReadyGiveaways(self):
+    async def sendSendReadyGiveaways(self) -> None:
         try:
             await sendReadyGiveaways(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=10)
-    async def endGiveawaysLoop(self):
+    async def endGiveawaysLoop(self) -> None:
         try:
             await endGiveaways(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=60)
-    async def checkVoiceUsers(self):
+    async def checkVoiceUsers(self) -> None:
         try:
             await checkVoiceUsers(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=5)
-    async def clearNotifiedUsersLoop(self):
+    async def clearNotifiedUsersLoop(self) -> None:
         try:
             await clearNotifiedUsers(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=5)
-    async def addVoiceUserLoop(self):
+    async def addVoiceUserLoop(self) -> None:
         try:
             await addXpToVoiceUsers(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=60)
-    async def refillAiTokenLoop(self):
+    async def refillAiTokenLoop(self) -> None:
         try:
             await refillAiToken(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=5)
-    async def pingServerLoop(self):
+    async def pingServerLoop(self) -> None:
         try:
             await ping_server(self.bot)
         except Exception:
             pass
 
     @tasks.loop(hours=1)
-    async def backupDatabaseLoop(self):
+    async def backupDatabaseLoop(self) -> None:
         try:
             await create_database_backup(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=10)
-    async def removeExpiredClaimedBoosterRoles(self):
+    async def removeExpiredClaimedBoosterRoles(self) -> None:
         try:
             await remove_claimed_booster_roles_that_are_expired(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=10)
-    async def removeExpiredClaimedBoosterChannels(self):
+    async def removeExpiredClaimedBoosterChannels(self) -> None:
         try:
             await remove_claimed_booster_channels_that_are_expired(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=10)
-    async def sendScheduledMessages(self):
+    async def sendScheduledMessages(self) -> None:
         try:
             await send_scheduled_messages(self.bot)
         except Exception:
             pass
 
     @tasks.loop(seconds=10)
-    async def pollTwitchStreams(self):
+    async def pollTwitchStreams(self) -> None:
         try:
             twitch_api = getTwitchApi()
             if not twitch_api:
@@ -146,7 +147,7 @@ class LoopCog(commands.Cog):
             pass
 
     @tasks.loop(time=[time(hour=2), time(hour=8), time(hour=14), time(hour=20)])
-    async def sendPokemonWerbung(self):
+    async def sendPokemonWerbung(self) -> None:
         try:
             message = """
 👋 Heyo! 👋
@@ -173,14 +174,16 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
 <https://discord.gg/D3UVPKseD8>
             """
             channel = self.bot.get_channel(923337160600477777)
-            embed = discord.Embed(description=message, color=0xCB33F5, title="🐾Pokémon🐾")
-            message = await channel.send(embed=embed)
-            await message.publish()
+            if isinstance(channel, discord.TextChannel):
+                embed = discord.Embed(description=message, color=0xCB33F5, title="🐾Pokémon🐾")
+                sent_message = await channel.send(embed=embed)
+                if sent_message.guild:
+                    await sent_message.publish()
         except Exception:
             raise
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         while not check_pool_initialized():
             await asyncio.sleep(1)
 
@@ -199,5 +202,5 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
         self.sendPokemonWerbung.start()
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(LoopCog(bot))

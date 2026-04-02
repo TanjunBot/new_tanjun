@@ -10,8 +10,10 @@ from localizer import tanjunLocalizer
 
 async def close_ticket(interaction: discord.Interaction) -> None:
     data: Any = interaction.data
-    assert interaction.guild is not None
-    assert interaction.channel is not None
+    guild = interaction.guild
+    channel = interaction.channel
+    assert guild is not None
+    assert channel is not None
     if not data["custom_id"].startswith("ticket_close;"):
         return
 
@@ -32,7 +34,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         )
         return
 
-    ticket = await get_ticket_by_id(interaction.guild.id, ticket_id, ticket_channel_id)  # type: ignore[union-attr]
+    ticket = await get_ticket_by_id(guild.id, ticket_id, ticket_channel_id)
 
     if not ticket:
         await interaction.followup.send(
@@ -43,7 +45,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         )
         return
 
-    ticket_channel = interaction.channel
+    ticket_channel = channel
 
     if not hasattr(ticket_channel, "id") or not ticket_channel.id == int(ticket[6]):
         await interaction.followup.send(
@@ -55,15 +57,16 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         return
 
     ticket_opener = ticket[1]
-    ticket_opener_user = await interaction.guild.fetch_member(ticket_opener)  # type: ignore[union-attr]
+    ticket_opener_user = await guild.fetch_member(ticket_opener)
 
     ticket_open_time = ticket[2]
 
     summary_channel_id = int(ticket_message[7]) if ticket_message[7] else None
-    summary_channel = interaction.guild.get_channel(summary_channel_id)
+    summary_channel = guild.get_channel(summary_channel_id)
 
     if not summary_channel:
-        await interaction.channel.edit(archived=True, locked=True)
+        if isinstance(channel, discord.TextChannel) or isinstance(channel, discord.Thread):
+            await channel.edit(archived=True, locked=True)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 str(interaction.locale),
@@ -74,9 +77,9 @@ async def close_ticket(interaction: discord.Interaction) -> None:
                 "commands.admin.close_ticket.success.ticketClosedDescription",
             ),
         )
-        await interaction.channel.send(embed=embed)
+        await channel.send(embed=embed)
     else:
-        html_content = await generate_summary_html(interaction.channel, ticket_opener_user, ticket_open_time)
+        html_content = await generate_summary_html(channel, ticket_opener_user, ticket_open_time)
 
         url = await utility.upload_to_tanjun_logs(html_content)
 
@@ -88,7 +91,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
             description=tanjunLocalizer.localize(
                 str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosedDescription",
-                name=interaction.channel.name,
+                name=channel.name if hasattr(channel, "name") else str(channel.id),
             ),
         )
 
@@ -103,7 +106,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         view.add_item(btn1)
         btn2 = discord.ui.Button(
             label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.close_ticket.success.viewThread"),
-            url=f"https://discord.com/channels/{interaction.guild.id}/{ticket_channel.id}",
+            url=f"https://discord.com/channels/{guild.id}/{ticket_channel.id}",
         )
         view.add_item(btn2)
 
@@ -112,20 +115,21 @@ async def close_ticket(interaction: discord.Interaction) -> None:
                 str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
                 user=interaction.user.mention,
-                name=interaction.channel.name,
+                name=channel.name if hasattr(channel, "name") else str(channel.id),
             ),
             embed=embed,
             view=view,
         )
 
-        await interaction.channel.edit(archived=True, locked=True)
+        if isinstance(channel, discord.Thread):
+            await channel.edit(archived=True, locked=True)
 
-        await interaction.channel.send(
+        await channel.send(
             content=tanjunLocalizer.localize(
                 str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
                 user=interaction.user.mention,
-                name=interaction.channel.name,
+                name=channel.name if hasattr(channel, "name") else str(channel.id),
             ),
         )
 

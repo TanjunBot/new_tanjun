@@ -4,7 +4,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def faculty_command(commandInfo: utility.commandInfo, number: int):
+async def faculty_command(commandInfo: utility.commandInfo, number: int) -> None:
     try:
         number = int(number)
     except ValueError:

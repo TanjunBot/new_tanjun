@@ -9,7 +9,7 @@ async def fun_command(
     fun_type: str,
     member: discord.Member,
     message: str | None,
-):
+) -> None:
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,

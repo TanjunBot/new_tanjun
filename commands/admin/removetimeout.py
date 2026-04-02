@@ -6,8 +6,7 @@ from localizer import tanjunLocalizer
 
 async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Member, reason: str | None = None) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

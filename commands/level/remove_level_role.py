@@ -1,4 +1,5 @@
 import discord
+from typing import Any, cast
 
 from api import get_level_role, remove_level_role
 from localizer import tanjunLocalizer
@@ -6,14 +7,14 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role) -> None:
-    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
+    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.removelevelrole.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.removelevelrole.error.no_permission.description",
             ),
         )
@@ -25,11 +26,11 @@ async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role
     if not existing_role:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.removelevelrole.error.role_not_found.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.removelevelrole.error.role_not_found.description",
                 role=role.mention,
             ),
@@ -42,7 +43,7 @@ async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.removelevelrole.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            str(commandInfo.locale),
             "commands.level.removelevelrole.success.description",
             role=role.mention,
         ),

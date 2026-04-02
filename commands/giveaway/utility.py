@@ -29,7 +29,7 @@ from localizer import tanjunLocalizer
 from utility import relativeTimeStrToDate, tanjunEmbed
 
 
-async def generateGiveawayEmbed(giveawayInformation, locale):
+async def generateGiveawayEmbed(giveawayInformation, locale) -> None:
     requirements_parts = []
 
     if giveawayInformation["new_message_requirement"]:
@@ -130,7 +130,7 @@ async def generateGiveawayEmbed(giveawayInformation, locale):
     return embed
 
 
-async def sendGiveaway(giveawayid, client):
+async def sendGiveaway(giveawayid, client) -> None:
     giveawayInformation = await get_giveaway(giveawayid)
 
     if not giveawayInformation:
@@ -194,7 +194,7 @@ async def sendGiveaway(giveawayid, client):
     await set_giveaway_started(giveawayid)
 
 
-async def updateGiveawayEmbed(giveawayid, client):
+async def updateGiveawayEmbed(giveawayid, client) -> None:
     giveawayInformation = await get_giveaway(giveawayid)
 
     if not giveawayInformation:
@@ -243,7 +243,7 @@ async def updateGiveawayEmbed(giveawayid, client):
     await message.edit(embed=embed)
 
 
-async def add_giveaway_participant(giveawayid, userid, client):
+async def add_giveaway_participant(giveawayid, userid, client) -> None:
     giveawayInformation = await get_giveaway(giveawayid)
 
     if not giveawayInformation:
@@ -522,7 +522,7 @@ async def add_giveaway_participant(giveawayid, userid, client):
 
 
 async def addMessageToGiveaway(message: discord.Message):
-    if await check_if_opted_out(message.author.id):
+    if await check_if_opted_out(message.author.id) -> None:
         return
 
     if message.author.bot:
@@ -533,7 +533,7 @@ async def addMessageToGiveaway(message: discord.Message):
     await add_giveaway_new_message_channel_if_needed(message.author.id, message.guild.id, message.channel.id)
 
 
-async def endGiveaway(giveaway_id, client):
+async def endGiveaway(giveaway_id, client) -> None:
     giveawayInformation = await get_giveaway(giveaway_id)
 
     if giveawayInformation[13] == 1:
@@ -675,7 +675,7 @@ async def endGiveaway(giveaway_id, client):
     return embed
 
 
-async def updateGiveawayMessage(giveaway_id, client):
+async def updateGiveawayMessage(giveaway_id, client) -> None:
     giveawayInformation = await get_giveaway(giveaway_id)
 
     if not giveawayInformation:

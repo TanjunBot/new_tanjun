@@ -15,8 +15,7 @@ from localizer import tanjunLocalizer
 
 async def blacklist_list_channel(commandInfo: utility.commandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -43,19 +42,19 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo) -> None:
             self.selectedIndex = 0
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
-        async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             channel_id = self.channels[self.selectedIndex][0]
             await remove_log_blacklist_channel_api(self.guild.id, channel_id)
             self.channels = tuple(x for x in self.channels if x[0] != channel_id)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             self.selectedIndex = (self.selectedIndex - 1) % len(self.channels)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             self.selectedIndex = (self.selectedIndex + 1) % len(self.channels)
             await self.update_view(interaction)
 
@@ -70,7 +69,7 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo) -> None:
                 await self.update_view(interaction)
             return True
 
-        async def update_view(self, interaction: discord.Interaction):
+        async def update_view(self, interaction: discord.Interaction) -> None:
             if not self.channels or len(self.channels) == 0:
                 description = tanjunLocalizer.localize(
                     self.locale,

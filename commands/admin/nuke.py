@@ -25,7 +25,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.confirm"),
             style=discord.ButtonStyle.danger,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.nuke.confirmationPrompt")
             )
@@ -36,20 +36,19 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.cancel"),
             style=discord.ButtonStyle.secondary,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.nuke.cancelledMessage")
             )
             self.value = False
             self.stop()
 
-        async def on_timeout(self):
+        async def on_timeout(self) -> None:
             if self.message:
                 await self.message.edit(view=None)
 
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.missingPermission.title"),

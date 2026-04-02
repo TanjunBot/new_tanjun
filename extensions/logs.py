@@ -43,42 +43,42 @@ class EmbedColors:
     red = 0xFF0000
 
 
-class logEmbeds:
-    def __init__(self):
-        self.embeds = {}
+class LogEmbeds:
+    def __init__(self) -> None:
+        self.embeds: dict[str, list[discord.Embed]] = {}
 
-    def add_embed(self, guildId: int, embed: discord.Embed):
-        if guildId not in self.embeds:
-            self.embeds[guildId] = []
-        self.embeds[guildId].append(embed)
+    def add_embed(self, guild_id: str, embed: discord.Embed) -> None:
+        if guild_id not in self.embeds:
+            self.embeds[guild_id] = []
+        self.embeds[guild_id].append(embed)
 
-    def get_all_embeds(self):
+    def get_all_embeds(self) -> dict[str, list[discord.Embed]]:
         return self.embeds
 
-    def clearEmbeds(self):
+    def clear_embeds(self) -> None:
         self.embeds = {}
 
 
-logEmbeds = logEmbeds()
+log_embeds_manager = LogEmbeds()
 
 
-async def sendLogEmbeds(bot):
-    global logEmbeds
-    embeds = logEmbeds.get_all_embeds()
+async def sendLogEmbeds(bot: commands.Bot) -> None:
+    global log_embeds_manager
+    embeds = log_embeds_manager.get_all_embeds()
     for guildId, ems in embeds.items():
         try:
             destination = await get_log_channel(str(guildId))
             if destination is None:
                 continue
             destinationChannel = bot.get_channel(int(destination))
-            if destinationChannel is None:
+            if not isinstance(destinationChannel, (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread)):
                 continue
             for i in range(0, len(ems), 10):
                 chunk = ems[i : i + 10]
                 await destinationChannel.send(embeds=chunk)
         except Exception:
             pass
-    logEmbeds.clearEmbeds()
+    log_embeds_manager.clear_embeds()
 
 
 class ChannelBlacklistCommands(discord.app_commands.Group):
@@ -87,7 +87,7 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistc_add_description"),
     )
     @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_add_params_channel_description"))
-    async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None):
+    async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -111,7 +111,7 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistc_remove_description"),
     )
     @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_remove_params_channel_description"))
-    async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None):
+    async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -134,7 +134,7 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_blacklistc_show_name"),
         description=app_commands.locale_str("logs_blacklistc_show_description"),
     )
-    async def show_blacklist_channel_cmd(self, ctx: discord.Interaction):
+    async def show_blacklist_channel_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -157,7 +157,7 @@ class UserBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistu_add_description"),
     )
     @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_add_params_user_description"))
-    async def add_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member):
+    async def add_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -177,7 +177,7 @@ class UserBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistu_remove_description"),
     )
     @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_remove_params_user_description"))
-    async def remove_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member):
+    async def remove_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -196,7 +196,7 @@ class UserBlacklistCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_blacklistu_show_name"),
         description=app_commands.locale_str("logs_blacklistu_show_description"),
     )
-    async def show_blacklist_user_cmd(self, ctx: discord.Interaction):
+    async def show_blacklist_user_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -218,7 +218,7 @@ class RoleBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistr_add_description"),
     )
     @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_add_params_role_description"))
-    async def add_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role):
+    async def add_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -238,7 +238,7 @@ class RoleBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistr_remove_description"),
     )
     @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_remove_params_role_description"))
-    async def remove_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role):
+    async def remove_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -257,7 +257,7 @@ class RoleBlacklistCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_blacklistr_show_name"),
         description=app_commands.locale_str("logs_blacklistr_show_description"),
     )
-    async def show_blacklist_role_cmd(self, ctx: discord.Interaction):
+    async def show_blacklist_role_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -279,7 +279,7 @@ class LogsCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_set_description"),
     )
     @app_commands.describe(channel=app_commands.locale_str("logs_set_params_channel_description"))
-    async def set_log_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None):
+    async def set_log_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -302,7 +302,7 @@ class LogsCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_remove_name"),
         description=app_commands.locale_str("logs_remove_description"),
     )
-    async def remove_log_channel_cmd(self, ctx: discord.Interaction):
+    async def remove_log_channel_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -322,7 +322,7 @@ class LogsCommands(discord.app_commands.Group):
         name=app_commands.locale_str("logs_configure_name"),
         description=app_commands.locale_str("logs_configure_description"),
     )
-    async def configure_logs_cmd(self, ctx: discord.Interaction):
+    async def configure_logs_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
         commandInfo = utility.commandInfo(
             user=ctx.user,
@@ -340,11 +340,11 @@ class LogsCommands(discord.app_commands.Group):
 
 
 class LogsCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_automod_rule_create(self, rule: discord.AutoModRule):
+    async def on_automod_rule_create(self, rule: discord.AutoModRule) -> None:
         logEnable = rule.guild and (await get_log_enable(rule.guild.id))[1]
         if not logEnable:
             return
@@ -507,10 +507,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleCreate.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(rule.guild.id), embed)
+        log_embeds_manager.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_automod_rule_update(self, rule: discord.AutoModRule):
+    async def on_automod_rule_update(self, rule: discord.AutoModRule) -> None:
         logEnable = rule.guild and (await get_log_enable(rule.guild.id))[2]
         if not logEnable:
             return
@@ -675,10 +675,10 @@ class LogsCog(commands.Cog):
             description=description,
         )
         embed.set_footer(text=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.footer"))
-        logEmbeds.add_embed(str(rule.guild.id), embed)
+        log_embeds_manager.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_automod_rule_delete(self, rule: discord.AutoModRule):
+    async def on_automod_rule_delete(self, rule: discord.AutoModRule) -> None:
         logEnable = rule.guild and (await get_log_enable(rule.guild.id))[3]
         if not logEnable:
             return
@@ -842,10 +842,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(rule.guild.id), embed)
+        log_embeds_manager.add_embed(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_automod_action(self, execution: discord.AutoModAction):
+    async def on_automod_action(self, execution: discord.AutoModAction) -> None:
         logEnable = execution.guild and (await get_log_enable(execution.guild.id))[4]
         if not logEnable:
             return
@@ -926,10 +926,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(execution.guild.id), embed)
+        log_embeds_manager.add_embed(str(execution.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel):
+    async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel) -> None:
         logEnable = channel.guild and (await get_log_enable(channel.guild.id))[5]
         if not logEnable:
             return
@@ -1020,10 +1020,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelDelete.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(channel.guild.id), embed)
+        log_embeds_manager.add_embed(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_guild_channel_create(self, channel: discord.abc.GuildChannel):
+    async def on_guild_channel_create(self, channel: discord.abc.GuildChannel) -> None:
         logEnable = channel.guild and (await get_log_enable(channel.guild.id))[6]
         if not logEnable:
             return
@@ -1095,10 +1095,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelCreate.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(channel.guild.id), embed)
+        log_embeds_manager.add_embed(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_guild_channel_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel):
+    async def on_guild_channel_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel) -> None:
         logEnable = after.guild and (await get_log_enable(after.guild.id))[7]
         if not logEnable:
             return
@@ -1380,10 +1380,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(after.guild.id), embed)
+        log_embeds_manager.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_guild_update(self, before: discord.Guild, after: discord.Guild):
+    async def on_guild_update(self, before: discord.Guild, after: discord.Guild) -> None:
         logEnable = after.guild and (await get_log_enable(after.guild.id))[8]
         if not logEnable:
             return
@@ -1806,10 +1806,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildUpdate.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(after.id), embed)
+        log_embeds_manager.add_embed(str(after.id), embed)
 
     @commands.Cog.listener()
-    async def on_invite_create(self, invite: discord.Invite):
+    async def on_invite_create(self, invite: discord.Invite) -> None:
         logEnable = invite.guild and (await get_log_enable(invite.guild.id))[9]
         if not logEnable:
             return
@@ -1901,12 +1901,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteCreate.title"),
             description=description,
         )
-        if str(invite.guild.id) not in logEmbeds.get_all_embeds():
-            logEmbeds.add_embed(str(invite.guild.id), [])
-        logEmbeds.add_embed(str(invite.guild.id), embed)
+        log_embeds_manager.add_embed(str(invite.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_invite_delete(self, invite: discord.Invite):
+    async def on_invite_delete(self, invite: discord.Invite) -> None:
         logEnable = invite.guild and (await get_log_enable(invite.guild.id))[10]
         if not logEnable:
             return
@@ -1995,10 +1993,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteDelete.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(invite.guild.id), embed)
+        log_embeds_manager.add_embed(str(invite.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member):
+    async def on_member_join(self, member: discord.Member) -> None:
         logEnable = member.guild and (await get_log_enable(member.guild.id))[11]
         if not logEnable:
             return
@@ -2024,10 +2022,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(member.guild.id), embed)
+        log_embeds_manager.add_embed(str(member.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_member_remove(self, member: discord.Member):
+    async def on_member_remove(self, member: discord.Member) -> None:
         logEnable = member.guild and (await get_log_enable(member.guild.id))[12]
         if not logEnable:
             return
@@ -2060,10 +2058,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(member.guild.id), embed)
+        log_embeds_manager.add_embed(str(member.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_member_update(self, before: discord.Member, after: discord.Member):
+    async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
         logEnable = after.guild and (await get_log_enable(after.guild.id))[13]
         if not logEnable:
             return
@@ -2194,10 +2192,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUpdate.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(after.guild.id), embed)
+        log_embeds_manager.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_user_update(self, before: discord.User, after: discord.User):
+    async def on_user_update(self, before: discord.User, after: discord.User) -> None:
         for guild in self.bot.guilds:
             user = guild.get_member(before.id)
             if not user:
@@ -2302,10 +2300,10 @@ class LogsCog(commands.Cog):
                 title=tanjunLocalizer.localize(locale, "logs.userUpdate.title"),
                 description=description,
             )
-            logEmbeds.add_embed(str(guild.id), embed)
+            log_embeds_manager.add_embed(str(guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_member_ban(self, user: discord.Member):
+    async def on_member_ban(self, user: discord.Member) -> None:
         logEnable = user.guild and (await get_log_enable(user.guild.id))[15]
         if not logEnable:
             return
@@ -2338,10 +2336,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberBan.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(user.guild.id), embed)
+        log_embeds_manager.add_embed(str(user.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_member_unban(self, guild: discord.Guild, user: discord.User):
+    async def on_member_unban(self, guild: discord.Guild, user: discord.User) -> None:
         logEnable = guild and (await get_log_enable(guild.id))[16]
         if not logEnable:
             return
@@ -2375,10 +2373,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUnban.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(guild.id), embed)
+        log_embeds_manager.add_embed(str(guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_presence_update(self, before: discord.Member, after: discord.Member):
+    async def on_presence_update(self, before: discord.Member, after: discord.Member) -> None:
         logEnable = after.guild and (await get_log_enable(after.guild.id))[17]
         if not logEnable:
             return
@@ -2417,10 +2415,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.presenceUpdate.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(after.guild.id), embed)
+        log_embeds_manager.add_embed(str(after.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+    async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
         logEnable = after.guild and (await get_log_enable(after.guild.id))[18]
         if not logEnable:
             return
@@ -2561,7 +2559,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageEdit.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(after.guild.id), embed)
+        log_embeds_manager.add_embed(str(after.guild.id), embed)
 
         # if embedsChanged:
         #     for i in range(len(before.embeds)):
@@ -2572,7 +2570,7 @@ class LogsCog(commands.Cog):
         #             embeds[str(after.guild.id)].append(afterEmbed)
 
     @commands.Cog.listener()
-    async def on_message_delete(self, message: discord.Message):
+    async def on_message_delete(self, message: discord.Message) -> None:
         logEnable = message.guild and (await get_log_enable(message.guild.id))[19]
         if not logEnable:
             return
@@ -2657,12 +2655,12 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageDelete.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(message.guild.id), embed)
+        log_embeds_manager.add_embed(str(message.guild.id), embed)
         for emb in message.embeds:
-            logEmbeds.add_embed(str(message.guild.id), emb)
+            log_embeds_manager.add_embed(str(message.guild.id), emb)
 
     @commands.Cog.listener()
-    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
+    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User) -> None:
         logEnable = reaction.guild and (await get_log_enable(reaction.guild.id))[20]
         if not logEnable:
             return
@@ -2699,10 +2697,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionAdd.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(reaction.guild.id), embed)
+        log_embeds_manager.add_embed(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
+    async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User) -> None:
         logEnable = reaction.guild and (await get_log_enable(reaction.guild.id))[21]
         if not logEnable:
             return
@@ -2739,10 +2737,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionRemove.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(reaction.guild.id), embed)
+        log_embeds_manager.add_embed(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_guild_role_create(self, role: discord.Role):
+    async def on_guild_role_create(self, role: discord.Role) -> None:
         logEnable = role.guild and (await get_log_enable(role.guild.id))[22]
         if not logEnable:
             return
@@ -2817,10 +2815,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleCreate.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(role.guild.id), embed)
+        log_embeds_manager.add_embed(str(role.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_guild_role_delete(self, role: discord.Role):
+    async def on_guild_role_delete(self, role: discord.Role) -> None:
         logEnable = role.guild and (await get_log_enable(role.guild.id))[23]
         if not logEnable:
             return
@@ -2896,10 +2894,10 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleDelete.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(role.guild.id), embed)
+        log_embeds_manager.add_embed(str(role.guild.id), embed)
 
     @commands.Cog.listener()
-    async def on_guild_role_update(self, before: discord.Role, after: discord.Role):
+    async def on_guild_role_update(self, before: discord.Role, after: discord.Role) -> None:
         logEnable = after.guild and (await get_log_enable(after.guild.id))[24]
         if not logEnable:
             return
@@ -3025,17 +3023,17 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.title"),
             description=description,
         )
-        logEmbeds.add_embed(str(after.guild.id), embed)
+        log_embeds_manager.add_embed(str(after.guild.id), embed)
 
     @tasks.loop(seconds=10)
-    async def sendLogEmbeds(self):
+    async def sendLogEmbeds(self) -> None:
         try:
             await sendLogEmbeds(self.bot)
         except Exception:
             pass
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         logcmds = LogsCommands(
             name=app_commands.locale_str("logs_name"),
             description=app_commands.locale_str("logs_description"),
@@ -3060,5 +3058,5 @@ class LogsCog(commands.Cog):
         self.sendLogEmbeds.start()
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(LogsCog(bot))

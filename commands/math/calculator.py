@@ -20,7 +20,7 @@ class CalculatorButton(ui.Button):
         row: int,
         emoji: str | None = None,
         disabled: bool = False,
-    ):
+    ) -> None:
         super().__init__(
             label=label,
             style=style,
@@ -30,13 +30,13 @@ class CalculatorButton(ui.Button):
             disabled=disabled,
         )
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         view: CalculatorView = self.view
         await view.button_callback(interaction, self.custom_id)
 
 
 class CalculatorView(ui.View):
-    def __init__(self, command_info: utility.commandInfo, initial_equation: str = ""):
+    def __init__(self, command_info: utility.commandInfo, initial_equation: str = "") -> None:
         super().__init__(timeout=300)
         self.command_info = command_info
         self.display_equation = initial_equation
@@ -48,10 +48,10 @@ class CalculatorView(ui.View):
         self.create_buttons()
         self.nsp = utility.NumericStringParser()
 
-    def set_message(self, message: discord.Message):
+    def set_message(self, message: discord.Message) -> None:
         self.message = message
 
-    async def on_timeout(self):
+    async def on_timeout(self) -> None:
         for child in self.children:
             child.disabled = True
         if self.message:
@@ -66,7 +66,7 @@ class CalculatorView(ui.View):
             return False
         return True
 
-    def create_buttons(self):
+    def create_buttons(self) -> None:
         self.clear_items()
         if self.current_page == 0:
             buttons = [
@@ -255,7 +255,7 @@ class CalculatorView(ui.View):
                 )
             )
 
-    async def button_callback(self, interaction: discord.Interaction, button_id: str):
+    async def button_callback(self, interaction: discord.Interaction, button_id: str) -> None:
         if button_id == "clear":
             self.display_equation = ""
             self.equation = ""
@@ -430,7 +430,7 @@ class CalculatorView(ui.View):
 
         await self.update_message(interaction)
 
-    async def update_message(self, interaction: discord.Interaction):
+    async def update_message(self, interaction: discord.Interaction) -> None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(self.command_info.locale, "commands.math.calculator.title"),
         )
@@ -455,7 +455,7 @@ class CalculatorView(ui.View):
         await interaction.response.edit_message(embed=embed, view=self)
 
 
-async def calculator_command(command_info: utility.commandInfo, initial_equation: str = ""):
+async def calculator_command(command_info: utility.commandInfo, initial_equation: str = "") -> None:
     view = CalculatorView(command_info, initial_equation)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(command_info.locale, "commands.math.calculator.title"),

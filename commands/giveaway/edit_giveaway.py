@@ -19,7 +19,7 @@ class GiveawayEditor(ui.View):
         self,
         commandInfo: utility.commandInfo,
         giveawayId: int,
-    ):
+    ) -> None:
         super().__init__(timeout=600)  # 10 minutes timeout
         self.commandInfo = commandInfo
         self.giveawayId = giveawayId
@@ -28,7 +28,7 @@ class GiveawayEditor(ui.View):
         self.last_action = None
         self.generator_message = None
 
-    async def load_giveaway_data(self):
+    async def load_giveaway_data(self) -> None:
         giveaway = await get_giveaway(self.giveawayId)
         if not giveaway:
             return False
@@ -56,7 +56,7 @@ class GiveawayEditor(ui.View):
         }
         return True
 
-    def update_buttons(self):
+    def update_buttons(self) -> None:
         self.clear_items()
 
         # Add all the buttons
@@ -218,7 +218,7 @@ class GiveawayEditor(ui.View):
             )
         )
 
-    async def update_embed(self, editmessage=None):
+    async def update_embed(self, editmessage=None) -> None:
         self.update_buttons()
         embed = utility.tanjunEmbed(
             title=self.giveaway_data["title"],
@@ -372,7 +372,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         if button.custom_id == "change_description":
             await self.change_description(interaction, button)
         elif button.custom_id == "change_winners":
@@ -408,7 +408,7 @@ class GiveawayEditor(ui.View):
         elif button.custom_id == "confirm":
             await self.confirm(interaction, button)
 
-    async def confirm(self, interaction: discord.Interaction, button: ui.Button):
+    async def confirm(self, interaction: discord.Interaction, button: ui.Button) -> None:
         # Update the giveaway in the database
         await update_giveaway(
             giveaway_id=self.giveawayId,
@@ -445,7 +445,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.enter_description"),
             embed=None,
@@ -474,7 +474,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         modal = start_giveaway.ChangeWinnersModal(
             self,
             self.commandInfo,
@@ -494,12 +494,12 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         self.giveaway_data["with_button"] = not self.giveaway_data["with_button"]
         self.update_buttons()
         await self.update_embed(interaction.response.edit_message)
 
-    async def pro_required_error(self, interaction: discord.Interaction):
+    async def pro_required_error(self, interaction: discord.Interaction) -> None:
         await self.pro_required_error(interaction)
 
     async def custom_name(
@@ -507,7 +507,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
+        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
             await self.pro_required_error(interaction)
             return
         modal = start_giveaway.CustomNameModal(
@@ -525,7 +525,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         view = start_giveaway.SponsorView(self.commandInfo, self)
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(
@@ -540,7 +540,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.enter_price"),
             embed=None,
@@ -565,7 +565,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.enter_message"),
             embed=None,
@@ -597,7 +597,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         modal = start_giveaway.EndTimeModal(
             self,
             self.commandInfo,
@@ -614,7 +614,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
+        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
             await self.pro_required_error(interaction)
             return
         modal = start_giveaway.StartTimeModal(
@@ -632,7 +632,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         modal = start_giveaway.MessageRequirementModal(
             self,
             self.commandInfo,
@@ -652,7 +652,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
+        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
             await self.pro_required_error(interaction)
             return
         modal = start_giveaway.DayRequirementModal(
@@ -673,7 +673,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         view = start_giveaway.RoleRequirementView(
             self,
             self.commandInfo,
@@ -700,7 +700,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
+        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
             await self.pro_required_error(interaction)
             return
         modal = start_giveaway.VoiceRequirementModal(
@@ -722,7 +722,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
+        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
             await self.pro_required_error(interaction)
             return
         view = start_giveaway.AddChannelRequirementView(self.commandInfo, self)
@@ -740,7 +740,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         embed = await generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)
         await interaction.response.send_message(
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.preview"),
@@ -752,7 +752,7 @@ class GiveawayEditor(ui.View):
         self,
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
-    ):
+    ) -> None:
         view = start_giveaway.RemoveChannelRequirementView(self.commandInfo, self)
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(
@@ -767,8 +767,8 @@ class GiveawayEditor(ui.View):
 async def edit_giveaway(
     commandInfo,
     giveawayId,
-):
-    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
+) -> None:
+    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         await commandInfo.reply(
             tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.editor.no_permission"),
         )

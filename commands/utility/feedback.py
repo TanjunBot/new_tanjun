@@ -7,7 +7,7 @@ from utility import commandInfo, tanjunEmbed
 
 
 class feedbackModal(ui.Modal):
-    def __init__(self, commandInfo: commandInfo, title: str, description: str):
+    def __init__(self, commandInfo: commandInfo, title: str, description: str) -> None:
         self.commandInfo = commandInfo
         self.title = title
         self.description = description
@@ -62,8 +62,11 @@ class feedbackModal(ui.Modal):
         feedbackChannel = self.commandInfo.client.get_channel(1266385101512773773)
         if not isinstance(feedbackChannel, discord.TextChannel):
             return
-        feedbackTitle = self.children[0].value  # type: ignore[attr-defined]
-        feedbackDescription = self.children[1].value  # type: ignore[attr-defined]
+        from typing import cast
+        title_item = cast(discord.ui.TextInput[discord.ui.Modal], self.children[0])
+        desc_item = cast(discord.ui.TextInput[discord.ui.Modal], self.children[1])
+        feedbackTitle = title_item.value
+        feedbackDescription = desc_item.value
         embed = tanjunEmbed(
             title=feedbackTitle,
             description=feedbackDescription,

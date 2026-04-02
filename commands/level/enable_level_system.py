@@ -1,4 +1,5 @@
 import discord
+from typing import Any, cast
 
 from api import get_level_system_status, set_level_system_status
 from localizer import tanjunLocalizer
@@ -7,16 +8,15 @@ from utility import commandInfo, tanjunEmbed
 
 async def enable_level_system(commandInfo: commandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.enablelevelsystem.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.enablelevelsystem.error.no_permission.description",
             ),
         )
@@ -24,16 +24,16 @@ async def enable_level_system(commandInfo: commandInfo) -> None:
         return
 
     assert commandInfo.guild is not None
-    current_status = await get_level_system_status(str(commandInfo.guild.id))
+    current_status = bool(await get_level_system_status(str(commandInfo.guild.id)))
 
     if current_status:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.enablelevelsystem.error.already_enabled.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.enablelevelsystem.error.already_enabled.description",
             ),
         )

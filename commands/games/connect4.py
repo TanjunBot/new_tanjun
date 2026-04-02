@@ -11,11 +11,11 @@ class Connect4:
     def __init__(
         self,
         player1: discord.Member,
-        player2: discord.Member = None,
+        player2: discord.Member | None = None,
         locale: str = "en",
         rows: int = 6,
         columns: int = 7,
-    ):
+    ) -> None:
         self.player1 = player1
         self.player2 = player2
         if self.player2 is None:
@@ -36,7 +36,7 @@ class Connect4:
         self.locale = locale
         self.bot_difficulty = random.randint(1, 5)
 
-    def check_winner(self, board: list[list[str]] = None):
+    def check_winner(self, board: list[list[str]] | None = None) -> None:
         if not board:
             board = self.board
 
@@ -64,7 +64,7 @@ class Connect4:
                     return cell
         return None
 
-    def is_full(self, board: list[list[str]] = None):
+    def is_full(self, board: list[list[str]] | None = None) -> None:
         if not board:
             board = self.board
         for row in board:
@@ -73,7 +73,7 @@ class Connect4:
                     return False
         return True
 
-    def get_available_moves(self, board: list[list[str]] = None):
+    def get_available_moves(self, board: list[list[str]] | None = None) -> None:
         if not board:
             board = self.board
 
@@ -88,7 +88,7 @@ class Connect4:
                     break
         return available_moves
 
-    def minimax_make_move(self, board: list[list[str]], move: int, player: str):
+    def minimax_make_move(self, board: list[list[str]], move: int, player: str) -> None:
         # Create a copy of the board
         new_board = [row[:] for row in board]
 
@@ -102,7 +102,7 @@ class Connect4:
         depth: int,
         board: list[list[str]],
         maximizing_player: bool,
-    ):
+    ) -> None:
         # Check terminal states first
         winner = self.check_winner(board)
         if winner:
@@ -138,7 +138,7 @@ class Connect4:
 
         return best_score, best_move
 
-    async def getBoardString(self):
+    async def getBoardString(self) -> None:
         board_string = ""
         for j, row in enumerate(self.board):
             for i, cell in enumerate(row):
@@ -149,7 +149,7 @@ class Connect4:
             board_string += "\n"
         return board_string
 
-    def available_columns(self):
+    def available_columns(self) -> None:
         return [i for i, cell in enumerate(self.board[0]) if cell == self.empty_cell]
 
     async def update_board(
@@ -157,7 +157,7 @@ class Connect4:
         interaction: discord.Interaction,
         initial: bool = False,
         timeout: bool = False,
-    ):
+    ) -> None:
         self.winner = self.check_winner()
         title = tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.title")
         description = tanjunLocalizer.localize(
@@ -197,7 +197,7 @@ class Connect4:
         else:
             await interaction.followup.edit_message(message_id=interaction.message.id, view=view, embed=embed)
 
-    async def drop(self, interaction: discord.Interaction):
+    async def drop(self, interaction: discord.Interaction) -> None:
         drop_column = self.highlighted_column
         for row in range(self.rows - 1, -1, -1):
             if self.board[row][drop_column] == self.empty_cell:
@@ -228,7 +228,7 @@ class Connect4:
 
         await self.update_board(interaction)
 
-    async def bot_move(self):
+    async def bot_move(self) -> None:
         _, move = self.minimax(self.player2_move, int(self.bot_difficulty / 2) + 1, self.board, True)
         for row in range(self.rows - 1, -1, -1):
             if self.board[row][move % self.columns] == self.empty_cell:
@@ -239,18 +239,19 @@ class Connect4:
         self,
         timeout: int = 3600,
         disable_on_timeout: bool = False,
-        message: discord.Message = None,
+        message: discord.Message | None = None,
     ):
-        class Connect4View(discord.ui.View):
-            def __init__(self, connect4: Connect4):
+        class Connect4View(discord.ui.View) -> None:
+            def __init__(self, connect4: Connect4) -> None:
                 super().__init__(timeout=timeout)
                 self.connect4 = connect4
 
-            async def on_timeout(self):
+            async def on_timeout(self) -> None:
                 for child in self.children:
                     child.disabled = True
 
-                await message.edit(view=self)
+                if message:
+                    await message.edit(view=self)
 
             @discord.ui.button(
                 label="⬅️",
@@ -259,7 +260,7 @@ class Connect4:
                 disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def move_left(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def move_left(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
                     self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
@@ -289,7 +290,7 @@ class Connect4:
                 disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def drop(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def drop(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
                     self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
@@ -316,7 +317,7 @@ class Connect4:
                 disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def move_right(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def move_right(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
                     self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
@@ -347,11 +348,12 @@ class Connect4:
 async def connect4(
     commandInfo: utility.commandInfo,
     player1: discord.Member,
-    player2: discord.Member = None,
+    player2: discord.Member | None = None,
     rows: int = 6,
     columns: int = 7,
-):
-    if rows != 6 and columns != 7 and not checkIfhasPlus(commandInfo.guild.id):
+) -> None:
+    guild_id = commandInfo.guild.id if commandInfo.guild else 0
+    if rows != 6 and columns != 7 and not checkIfhasPlus(guild_id):
         await commandInfo.reply(
             embed=utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.connect4.error.no_plus.title"),

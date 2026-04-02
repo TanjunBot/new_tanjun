@@ -13,7 +13,7 @@ from utility import (
 )
 
 
-async def getEventRotation() -> dict[str, dict[str, str | dict[str, str]]] | None:
+async def getEventRotation() -> list[dict[str, Any]] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with (
         aiohttp.ClientSession() as session,
@@ -25,10 +25,9 @@ async def getEventRotation() -> dict[str, dict[str, str | dict[str, str]]] | Non
         if response.status != 200:
             return None
         json_data: Any = await response.json()
-        if isinstance(json_data, dict):
-            return json_data
-        else:
-            return None
+        if isinstance(json_data, list):
+            return cast(list[dict[str, Any]], json_data)
+        return None
 
 
 async def events(commandInfo: commandInfo) -> None:
@@ -43,32 +42,35 @@ async def events(commandInfo: commandInfo) -> None:
         return
 
     async def generate_page(page_num: int) -> discord.Embed:
-        event = eventRotation[str(page_num)]
-        startTime = event["startTime"]
-        if not isinstance(startTime, str):
+        if not eventRotation:
+             return tanjunEmbed(title="Error", description="No rotation found")
+        event = eventRotation[page_num]
+        startTime = str(event.get("startTime", ""))
+        if not startTime:
             return tanjunEmbed(
                 title=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.title"),
                 description=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.description", code="bse1"),
             )
         startTimestamp = date_time_to_timestamp(isoTimeToDate(startTime))
-        endTime = event["endTime"]
-        if not isinstance(endTime, str):
+        endTime = str(event.get("endTime", ""))
+        if not endTime:
             return tanjunEmbed(
                 title=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.title"),
                 description=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.description", code="bse2"),
             )
         endTimestamp = date_time_to_timestamp(isoTimeToDate(endTime))
-        if not isinstance(event["event"], dict):
+        event_info = event.get("event")
+        if not isinstance(event_info, dict):
             return tanjunEmbed(
                 title=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.title"),
                 description=tanjunLocalizer.localize(commandInfo.locale, "errors.unexpected.description", code="bse3"),
             )
-        map_ = event["event"]["map"]
+        map_ = str(event_info.get("map", "Unknown"))
         mapLocale = tanjunLocalizer.localize(
             commandInfo.locale,
             f"commands.utility.brawlstars.maps.{map_}",
         )
-        mode = event["event"]["mode"]
+        mode = str(event_info.get("mode", "Unknown"))
         modeLocale = tanjunLocalizer.localize(
             commandInfo.locale,
             f"commands.utility.brawlstars.gameModes.{mode}",
@@ -94,7 +96,7 @@ async def events(commandInfo: commandInfo) -> None:
         )
 
     class BrawlersPaginator(discord.ui.View):
-        def __init__(self, total_pages: int, current_page: int = 0):
+        def __init__(self, total_pages: int, current_page: int = 0) -> None:
             super().__init__(timeout=3600)
             self.total_pages = total_pages
             self.current_page = current_page

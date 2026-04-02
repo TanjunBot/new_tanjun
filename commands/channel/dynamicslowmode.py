@@ -23,10 +23,9 @@ async def addDynamicslowmode(
     messages: int,
     per: int,
     resetafter: int = 60,
-):
+) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -84,10 +83,9 @@ async def addDynamicslowmode(
     await commandInfo.reply(embed=embed)
 
 
-async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: discord.TextChannel):
+async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -131,10 +129,9 @@ async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: disco
     await commandInfo.reply(embed=embed)
 
 
-async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
+async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -182,7 +179,7 @@ async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
     await commandInfo.reply(embed=embed)
 
 
-async def dynamicslowmodeMessage(message: discord.Message):
+async def dynamicslowmodeMessage(message: discord.Message) -> None:
     if message.author.bot:
         return
 

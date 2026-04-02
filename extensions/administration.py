@@ -34,18 +34,20 @@ from utility import addFeedback, missingLocalization, tanjunEmbed
 
 
 class administrationCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
     @commands.command()
-    async def sync(self, ctx) -> None:
+    async def sync(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
+            return
+        if not ctx.bot.tree:
             return
         fmt = await ctx.bot.tree.sync()
         await ctx.send(f"{len(fmt)} Befehle wurden gesynced.")
 
     @commands.command()
-    async def feedback(self, ctx, *, content) -> None:
+    async def feedback(self, ctx: commands.Context, *, content: str) -> None:
         if ctx.author.id not in [
             689755528947433555,
             892113092387942420,
@@ -56,21 +58,21 @@ class administrationCog(commands.Cog):
         await ctx.send("Feedback wurde hinzugefügt. Vielen dank!")
 
     @commands.command()
-    async def blockFeedback(self, ctx, user: discord.User) -> None:
+    async def blockFeedback(self, ctx: commands.Context, user: discord.User) -> None:
         if ctx.author.id not in config.adminIds:
             return
         await feedbackBlockUser(user.id)
         await ctx.send(f"{user.name} wurde blockiert.")
 
     @commands.command()
-    async def unblockFeedback(self, ctx, user: discord.User) -> None:
+    async def unblockFeedback(self, ctx: commands.Context, user: discord.User) -> None:
         if ctx.author.id not in config.adminIds:
             return
         await feedbackUnblockUser(user.id)
         await ctx.send(f"{user.name} wurde entblockiert.")
 
     @commands.command()
-    async def test_bot(self, ctx):
+    async def test_bot(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
 
@@ -99,14 +101,14 @@ class administrationCog(commands.Cog):
         )
 
     @commands.command()
-    async def test_translation(self, ctx):
+    async def test_translation(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
         text = tanjunLocalizer.test_localize("de", "commands.logs")
         await ctx.send(str(text)[:4000])
 
     @commands.command()
-    async def update(self, ctx):
+    async def update(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
 
@@ -119,7 +121,7 @@ class administrationCog(commands.Cog):
                 await ctx.send(await response.text())
 
     @commands.command()
-    async def welcome(self, ctx, user: discord.Member = None):
+    async def welcome(self, ctx: commands.Context, user: discord.Member | None = None) -> None:
         if user is None:
             user = ctx.author
         if ctx.author.id not in config.adminIds:
@@ -127,7 +129,7 @@ class administrationCog(commands.Cog):
         await welcomeNewUser(user)
 
     @commands.command()
-    async def farewell(self, ctx, user: discord.Member = None):
+    async def farewell(self, ctx: commands.Context, user: discord.Member | None = None) -> None:
         if user is None:
             user = ctx.author
         if ctx.author.id not in config.adminIds:
@@ -136,8 +138,8 @@ class administrationCog(commands.Cog):
 
     @commands.command()
     async def onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus(
-        self, ctx
-    ):
+        self, ctx: commands.Context
+    ) -> None:
         if ctx.author.id not in config.adminIds:
             return
         emoji = ctx.bot.get_emoji(1266369876524666920)
@@ -145,14 +147,17 @@ class administrationCog(commands.Cog):
             f"{emoji} One thing about me ich fahr Auto seit vier Jahn'. Eines Tages woll ich in den Club Fahrn'. Ich stand an einer roten Ampel und ich war ganz allein, hinter mir war ein bus, und er fier mir rein. Er hupte mich an HUP HUP und ich stieg aus, schau mir an was passiert ist und er kommt raus."
         )
 
-    async def getBrawlers(self):
+    async def getBrawlers(self) -> dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
             async with session.get("https://api.brawlstars.com/v1/brawlers", headers=headers) as response:
-                return await response.json()
+                result = await response.json()
+                if not isinstance(result, dict):
+                    return {"items": []}
+                return result
 
     @commands.command()
-    async def bsstarpoweremojis(self, ctx, start: int = 0):
+    async def bsstarpoweremojis(self, ctx: commands.Context, start: int = 0) -> None:
         if ctx.author.id not in config.adminIds:
             return
         allBrawlers = await self.getBrawlers()
@@ -168,7 +173,7 @@ class administrationCog(commands.Cog):
                     await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
 
     @commands.command()
-    async def bsgadgetsemojis(self, ctx, start: int = 0):
+    async def bsgadgetsemojis(self, ctx: commands.Context, start: int = 0) -> None:
         if ctx.author.id not in config.adminIds:
             return
         allBrawlers = await self.getBrawlers()
@@ -184,14 +189,17 @@ class administrationCog(commands.Cog):
 
                     await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
 
-    async def getAccData(self, id: str):
+    async def getAccData(self, id: str) -> dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
             async with session.get(f"https://api.brawlstars.com/v1/players/%23{id}", headers=headers) as response:
-                return await response.json()
+                result = await response.json()
+                if not isinstance(result, dict):
+                    return {}
+                return result
 
     @commands.command()
-    async def bsaccdata(self, ctx, id: str):
+    async def bsaccdata(self, ctx: commands.Context, id: str) -> None:
         if ctx.author.id not in config.adminIds:
             return
         accData = await self.getAccData(id)
@@ -199,7 +207,7 @@ class administrationCog(commands.Cog):
         await ctx.send(f"```json\n{(json.dumps(accData, indent=4))[0:1900]}\n```")
 
     @commands.command()
-    async def editembedmessage(self, ctx):
+    async def editembedmessage(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
         message = await ctx.send(embed=tanjunEmbed(title="test", description="test. I will edit this soon.."))
@@ -207,27 +215,27 @@ class administrationCog(commands.Cog):
         await message.edit(embed=tanjunEmbed(title="test2", description="test2. I have edited this!"))
 
     @commands.command()
-    async def setguildlocale(self, ctx, locale: str):
+    async def setguildlocale(self, ctx: commands.Context, locale: str) -> None:
         if ctx.author.id not in config.adminIds:
             return
         await ctx.guild.edit(preferred_locale=locale)
         await ctx.send(f"The guild locale has been set to {locale}")
 
     @commands.command()
-    async def testgithubauthtoken(self, ctx):
+    async def testgithubauthtoken(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
         missingLocalization("JUSTATEST.IGNORETHIS.JUSTATEST")
         await ctx.send("jup gemacht :)")
 
     @commands.command()
-    async def testupdateuserroles(self, ctx):
+    async def testupdateuserroles(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
         await update_user_roles(ctx.message, 10, str(ctx.guild.id))
 
     @commands.command()
-    async def testgetcorrectnextnumber(self, ctx, mode: int, numbers: int):
+    async def testgetcorrectnextnumber(self, ctx: commands.Context, mode: int, numbers: int) -> None:
         if ctx.author.id not in config.adminIds:
             return
         await ctx.send("look in the console")
@@ -237,11 +245,11 @@ class administrationCog(commands.Cog):
             current_correct_number = get_correct_next_number(mode, current_correct_number)
 
     @commands.command()
-    async def sendUpdateTextToAllAdmins(self, ctx):
+    async def sendUpdateTextToAllAdmins(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
 
-        def check(m):
+        def check(m) -> None:
             return m.author == ctx.author and m.channel == ctx.channel
 
         try:
@@ -340,11 +348,11 @@ Das Tanjun-Team
                 pass
 
     @commands.command()
-    async def sendDemoIsNoMoreToAllAdmins(self, ctx):
+    async def sendDemoIsNoMoreToAllAdmins(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
 
-        def check(m):
+        def check(m) -> None:
             return m.author == ctx.author and m.channel == ctx.channel
 
         try:
@@ -424,7 +432,7 @@ Das Tanjun-Team
                 pass
 
     @commands.command()
-    async def me(self, ctx):
+    async def me(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
 
@@ -432,7 +440,7 @@ Das Tanjun-Team
         await ctx.send(f"{me.name} {me.id} {me.mention}")
 
     @commands.command()
-    async def permissionTest(self, ctx):
+    async def permissionTest(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
 
@@ -444,7 +452,7 @@ Das Tanjun-Team
         await ctx.send(f"{permissionResult}")
 
     @commands.command()
-    async def permissionTest2(self, ctx):
+    async def permissionTest2(self, ctx: commands.Context) -> None:
         if ctx.author.id not in config.adminIds:
             return
 
@@ -452,7 +460,7 @@ Das Tanjun-Team
         await ctx.send(f"{permissionResult}")
 
     @commands.command()
-    async def listPermissions(self, ctx, channel: discord.TextChannel = None):
+    async def listPermissions(self, ctx: commands.Context, channel: discord.TextChannel | None = None) -> None:
         if ctx.author.id not in config.adminIds:
             return
 
@@ -466,5 +474,5 @@ Das Tanjun-Team
         await ctx.send(f"{permissionText}")
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(administrationCog(bot))

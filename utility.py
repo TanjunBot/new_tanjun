@@ -158,7 +158,7 @@ class tanjunEmbed(discord.Embed):
         url: Any | None = None,
         description: Any | None = None,
         timestamp: datetime.datetime | None = None,
-    ):
+    ) -> None:
         # Initialize attributes that might not be set by property setters immediately
         self._timestamp = datetime.datetime.now(datetime.UTC)  # Default to current time
         self._colour = None  # This will be set by the property setter
@@ -172,7 +172,7 @@ class tanjunEmbed(discord.Embed):
 
         current_colour: int | discord.Colour | None = colour if colour is not None else color
         if current_colour is not None:
-            self.colour = current_colour  # type: ignore[assignment]
+            self.colour = current_colour
 
         self.title = str(title) if title is not None else None
         self.type = type
@@ -274,7 +274,7 @@ class tanjunEmbed(discord.Embed):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, tanjunEmbed):
             return NotImplemented
-        return self.to_dict() == other.to_dict()  # type: ignore[no-any-return]
+        return self.to_dict() == other.to_dict()
 
     @property
     def colour(self) -> discord.Colour | None:
@@ -289,30 +289,13 @@ class tanjunEmbed(discord.Embed):
         elif isinstance(value, int):
             self._colour = discord.Colour(value=value)
 
-    @overload  # type: ignore[override]
-    def color(self) -> discord.Colour | None: ...
+    @property
+    def color(self) -> discord.Colour | None:
+        return self.colour
 
-    @overload
-    def color(self, value: discord.Colour) -> None: ...
-
-    @overload
-    def color(self, value: int) -> None: ...
-
-    @overload
-    def color(self, value: None) -> None: ...
-
-    def color(self, value: discord.Colour | int | None = None) -> discord.Colour | None:
-        if value is None and (args := (value,)) and not hasattr(self, "_called_with_args"):
-            return getattr(self, "_colour", None)
-
-        if value is None:
-            self._colour = None
-        elif isinstance(value, discord.Colour):
-            self._colour = value
-        elif isinstance(value, int):
-            self._colour = discord.Colour(value=value)
-
-        return None
+    @color.setter
+    def color(self, value: int | discord.Colour | None) -> None:
+        self.colour = value
 
     @property
     def timestamp(self) -> datetime.datetime | None:
@@ -422,8 +405,8 @@ class tanjunEmbed(discord.Embed):
             pass
         return self
 
-    def set_field_at(self, index: int, *, name: Any, value: Any, inline: bool = True) -> Self:
-        if not hasattr(self, "_fields") or not isinstance(self._fields, list) or not self._fields:
+    def set_field_at(self, index: int, *, name: object, value: object, inline: bool = True) -> Self:
+        if not self._fields:
             raise IndexError("field index out of range, fields list not initialized or empty")
         try:
             field_to_modify: dict[str, Any] = self._fields[index]
@@ -434,8 +417,8 @@ class tanjunEmbed(discord.Embed):
             raise IndexError("field index out of range")
         return self
 
-    def to_dict(self) -> Any:
-        result: dict[str, Any] = {}
+    def to_dict(self) -> dict[str, object]:
+        result: dict[str, object] = {}
         for key in self.__slots__:
             if key.startswith("_") and hasattr(self, key):
                 attr_value = getattr(self, key)
@@ -482,7 +465,7 @@ class commandInfo:
         reply: Callable[..., Coroutine[Any, Any, discord.Message]],
         client: discord.Client,
         bot: discord.ext.commands.Bot | None = None,
-    ):
+    ) -> None:
         self.user = user
         self.channel = channel
         self.guild = guild
@@ -501,13 +484,13 @@ def cmp(a: int | float, b: int | float) -> int:
 
 class NumericStringParser:
     def __init__(self) -> None:
-        self.exprStack: list[Any] = []
-        self.push_first_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(pr[0])
-        self.push_uminus_sign_action: Callable[[ParseResults], None] = lambda pr: (
-            self.exprStack.append("unary -") if pr and pr[0] == "-" else None
+        self.exprStack: list[str | float] = []
+        self.push_first_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(str(pr[0]))
+        self.push_uminus_sign_action: Callable[[ParseResults], None] = (
+            lambda pr: self.exprStack.append("unary -") if pr and pr[0] == "-" else None
         )
-        self.push_operator_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(pr[0])
-        self.push_function_call_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(pr[0])
+        self.push_operator_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(str(pr[0]))
+        self.push_function_call_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(str(pr[0]))
         self.bnf: Forward = self._setup_parser()
         self.fn: dict[str, Callable[..., float | int]] = {
             "sin": math.sin,
@@ -637,7 +620,7 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
                     print(f"Tenor API request failed with status {response.status} for URL: {url}")
                     return None
                 try:
-                    return await response.json()  # type: ignore[no-any-return]
+                    return cast(dict[str, Any], await response.json())
                 except aiohttp.ContentTypeError:
                     print(f"Tenor API response was not JSON for URL: {url}. Response text: {await response.text()}")
                     return None
@@ -811,24 +794,21 @@ def eval_(node: ast.AST, variables: VariablesType) -> float | int | complex:
         # elif isinstance(node.value, bool): return int(node.value) # Optional: handle bools
         else:
             raise TypeError(f"Unsupported constant type in expression: {type(node.value)} ({node.value!r})")
-    elif isinstance(node, ast.Num):  # Deprecated
-        return node.n
+
     elif isinstance(node, ast.BinOp):
         left_val, right_val = eval_(node.left, variables), eval_(node.right, variables)
         op_type = type(node.op)
         if op_type in operators_map:
-            if not (isinstance(left_val, (int, float, complex)) and isinstance(right_val, (int, float, complex))):
-                raise TypeError(f"Operands for {op_type} must be numeric. Got {type(left_val)} and {type(right_val)}")
-            return operators_map[op_type](left_val, right_val)  # type: ignore[no-any-return, call-arg]
+            func = cast(OperatorFunc, operators_map[op_type])
+            return cast(float | int | complex, func(left_val, right_val))
         raise TypeError(f"Unsupported binary operator: {op_type}")
     elif isinstance(node, ast.UnaryOp):
         operand_val = eval_(node.operand, variables)
-        op_type = type(node.op)  # type: ignore[assignment]
-        if op_type in operators_map:
-            if not isinstance(operand_val, (int, float, complex)):
-                raise TypeError(f"Operand for {op_type} must be numeric. Got {type(operand_val)}")
-            return operators_map[op_type](operand_val)  # type: ignore[no-any-return, call-arg]
-        raise TypeError(f"Unsupported unary operator: {op_type}")
+        unary_op_type = type(node.op)
+        if unary_op_type in operators_map:
+            unary_func = cast(UnaryOperatorFunc, operators_map[unary_op_type])
+            return cast(float | int | complex, unary_func(operand_val))
+        raise TypeError(f"Unsupported unary operator: {unary_op_type}")
     elif isinstance(node, ast.Call):
         func_name_node = node.func
         func_to_call: Callable[..., Any] | None = None
@@ -847,7 +827,7 @@ def eval_(node: ast.AST, variables: VariablesType) -> float | int | complex:
             raise TypeError(f"'{func_id_str}' is not a callable function.")
         args = [eval_(arg, variables) for arg in node.args]
         try:
-            return func_to_call(*args)  # type: ignore[no-any-return]
+            return func_to_call(*args)
         except TypeError as e:
             raise TypeError(f"Error calling function '{getattr(func_to_call, '__name__', func_id_str)}': {e}")
     elif isinstance(node, ast.Name):
@@ -1017,6 +997,7 @@ class InteractionClient(Protocol):
     user: discord.ClientUser | None
     application_id: int | None
     _connection: Any
+    def get_channel(self, id: int) -> discord.abc.MessageableChannel | None: ...
 
 
 class InteractionGuild(Protocol):
@@ -1046,8 +1027,12 @@ class MockInteractionResponded(Exception):
 
 class MockInteraction:
     def __init__(
-        self, bot: InteractionClient, guild: InteractionGuild | None, channel: InteractionChannel | None, user: InteractionUser
-    ):
+        self,
+        bot: InteractionClient,
+        guild: InteractionGuild | None,
+        channel: InteractionChannel | None,
+        user: InteractionUser,
+    ) -> None:
         # Create a discord.Interaction compatible object but without using inheritance
         # to avoid type compatibility issues
         mock_snowflake_id = discord.utils.time_snowflake(datetime.datetime.now(datetime.UTC))
@@ -1072,11 +1057,11 @@ class MockInteraction:
 
     @property
     def guild(self) -> discord.Guild | None:
-        return self._mock_guild  # type: ignore
+        return self._mock_guild
 
     @property
     def channel(self) -> discord.abc.MessageableChannel | None:
-        return self._mock_channel  # type: ignore
+        return self._mock_channel
 
     async def original_response(self) -> discord.Message:
         if hasattr(self.response, "message") and self.response.message:
@@ -1085,7 +1070,7 @@ class MockInteraction:
 
 
 class MockInteractionResponse:
-    def __init__(self, interaction: MockInteraction):
+    def __init__(self, interaction: MockInteraction) -> None:
         self.interaction = interaction
         self.message: discord.Message | None = None
 
@@ -1103,13 +1088,13 @@ class MockInteractionResponse:
             "embeds": [embed.to_dict()] if embed else [],
             "author": {
                 "id": getattr(self.interaction.client.user, "id", 0)
-                if self.interaction.client and self.interaction.client.user
+                if self.interaction.client.user is not None
                 else 0,
                 "username": getattr(self.interaction.client.user, "name", "MockBot")
-                if self.interaction.client and self.interaction.client.user
+                if self.interaction.client.user is not None
                 else "MockBot",
                 "discriminator": getattr(self.interaction.client.user, "discriminator", "0000")
-                if self.interaction.client and self.interaction.client.user
+                if self.interaction.client.user is not None
                 else "0000",
                 "bot": True,
                 "avatar": None,
@@ -1129,7 +1114,7 @@ class MockInteractionResponse:
 
         channel = self.interaction._mock_channel
         if channel and hasattr(self.interaction, "_state"):
-            self.message = discord.Message(state=self.interaction._state, channel=channel, data=message_data)  # type: ignore
+            self.message = discord.Message(state=self.interaction._state, channel=channel, data=message_data)
         else:
             self.message = None
         self.interaction._response_issued = True
@@ -1141,7 +1126,7 @@ class MockInteractionResponse:
 
 
 class MockWebhook:
-    def __init__(self, state: Any, application_id: int | None, token: str):
+    def __init__(self, state: Any, application_id: int | None, token: str) -> None:
         self._state = state
         self.application_id = application_id
         self.token = token
@@ -1171,7 +1156,7 @@ class MockWebhook:
             mock_channel = self._state.Client.get_channel(0)
 
         # Use type ignore since we're mocking discord.Message creation
-        return discord.Message(state=self._state, channel=mock_channel, data=message_data)  # type: ignore
+        return discord.Message(state=self._state, channel=mock_channel, data=message_data)
 
     async def edit_message(self, message_id: int, **kwargs: Any) -> discord.Message:
         raise NotImplementedError
@@ -1191,10 +1176,10 @@ def create_mock_interaction(bot_instance: InteractionClient) -> MockInteraction:
         A MockInteraction instance
     """
     # Create mock guild and channel objects that match the protocol
-    mock_guild = type("MockGuild", (), {"id": 12345, "name": "Mock Guild"})() if bot_instance else None
-    mock_channel = type("MockChannel", (), {"id": 67890})() if bot_instance else None
+    mock_guild = type("MockGuild", (), {"id": 12345, "name": "Mock Guild"})() if bot_instance is not None else None
+    mock_channel = type("MockChannel", (), {"id": 67890})() if bot_instance is not None else None
 
-    if not bot_instance or not bot_instance.user:
+    if bot_instance is None or bot_instance.user is None:
         raise ValueError("Bot instance or bot user is not valid.")
 
     # Create a mock user that matches the protocol
@@ -1233,7 +1218,7 @@ async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict
                 form_data.add_field("image", f_up, filename=f"tbg.{clean_extension}")
             async with session.post("https://api.imgbb.com/1/upload", data=form_data) as response:
                 if response.status == 200:
-                    return await response.json()  # type: ignore[no-any-return]
+                    return cast(dict[str, Any], await response.json())
                 else:
                     print(f"ImgBB upload failed. Status: {response.status}, Response: {await response.text()}")
                     return None

@@ -63,8 +63,7 @@ async def schedule_message(
         if (
             commandInfo.guild is not None
             and repeat
-            and isinstance(commandInfo.user, discord.Member)
-            and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
+            and isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
         ):
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
@@ -139,8 +138,7 @@ async def schedule_message(
     if (
         channel
         and commandInfo.guild is not None
-        and isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
+        and isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
     ):
         start_time = send_time - timedelta(hours=1)
         end_time = send_time + timedelta(hours=1)

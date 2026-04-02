@@ -7,7 +7,7 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, date_time_to_timestamp, isoTimeToDate, tanjunEmbed
 
 
-async def getBattloeLog(playerTag: str):
+async def getBattleLog(playerTag: str) -> dict[str, Any] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with (
         aiohttp.ClientSession() as session,
@@ -18,17 +18,20 @@ async def getBattloeLog(playerTag: str):
     ):
         if response.status != 200:
             return None
-        return await response.json()
+        json_data: Any = await response.json()
+        if isinstance(json_data, dict):
+            return json_data
+        return None
 
 
-async def battlelog(commandInfo: commandInfo, playerTag: str = None):
+async def battlelog(commandInfo: commandInfo, playerTag: str | None = None) -> None:
     if not playerTag:
         playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
     if playerTag and playerTag.startswith("<@"):
         playerTagUserID = playerTag.split("<@")[1].split(">")[0]
         playerTag = await get_brawlstars_linked_account(playerTagUserID)
         if not playerTag:
-            return await commandInfo.reply(
+            await commandInfo.reply(
                 embed=tanjunEmbed(
                     title=tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -40,10 +43,11 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
                     ),
                 )
             )
+            return
     if playerTag and not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
     if not playerTag:
-        return await commandInfo.reply(
+        await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -55,7 +59,8 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
                 ),
             )
         )
-    battleLog = await getBattloeLog(playerTag)
+        return
+    battleLog = await getBattleLog(playerTag)
     if not battleLog:
         await commandInfo.reply(
             embed=tanjunEmbed(
@@ -77,11 +82,11 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
     class BattleLogPaginator(discord.ui.View):
         def __init__(
             self,
-            battle_log: dict,
+            battle_log: dict[str, Any],
             command_info: commandInfo,
             player_tag: str,
             player_name: str,
-        ):
+        ) -> None:
             super().__init__(timeout=3600)
             self.battle_log = battle_log
             self.command_info = command_info
@@ -248,7 +253,7 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
             )
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -265,7 +270,7 @@ async def battlelog(commandInfo: commandInfo, playerTag: str = None):
             await interaction.response.edit_message(view=self, embed=self.generate_page(self.current_page))
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(

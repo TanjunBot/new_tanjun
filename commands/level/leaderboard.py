@@ -1,4 +1,5 @@
 import discord
+from typing import Any, cast
 
 import utility
 from api import get_custom_formula, get_xp_scaling, getLevelLeaderboard
@@ -9,43 +10,44 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1) -> None:
     if page < 1:
         page = 1
     assert commandInfo.guild is not None
-    leaderboard = await getLevelLeaderboard(commandInfo.guild.id)
-    scaling = await get_xp_scaling(commandInfo.guild.id)
-    custom_formula = await get_custom_formula(commandInfo.guild.id)
-    if not leaderboard:
-        await commandInfo.message.channel.send(
-            tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.leaderboard.no_data")
+    leaderboard_data = cast(list[tuple[int, int]], await getLevelLeaderboard(commandInfo.guild.id))
+    scaling = str(await get_xp_scaling(commandInfo.guild.id))
+    custom_formula = str(await get_custom_formula(commandInfo.guild.id))
+    if not leaderboard_data:
+        await commandInfo.reply(
+            content=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.leaderboard.no_data")
         )
         return
-    if len(leaderboard) == 0:
-        await commandInfo.message.channel.send(
-            tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.leaderboard.no_data")
+    if len(leaderboard_data) == 0:
+        await commandInfo.reply(
+            content=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.leaderboard.no_data")
         )
         return
-    if page > len(leaderboard) / 10 + 1:
-        page = int(len(leaderboard) / 10 + 1)
+    if page > len(leaderboard_data) / 10 + 1:
+        page = int(len(leaderboard_data) / 10 + 1)
 
     async def generate_page(page_number: int) -> discord.Embed:
         description = ""
         for i in range(10):
             try:
-                placeData = leaderboard[i + (page_number - 1) * 10]
-                user = placeData[0]
-                xp = placeData[1]
+                placeData = leaderboard_data[i + (page_number - 1) * 10]
+                user_id = str(placeData[0])
+                xp = int(placeData[1])
                 level = utility.get_level_for_xp(xp, scaling, custom_formula)
                 xp_from_last_level = xp - utility.get_xp_for_level(level - 1, scaling, custom_formula)
                 xp_till_next_level = utility.get_xp_for_level(level, scaling, custom_formula)
-                description += f"\n{i + 1 + (page_number - 1) * 10}. <@{user}> - {tanjunLocalizer.localize(str(commandInfo.locale), 'commands.level.leaderboard.data', level=level, xp_from_last_level=xp_from_last_level, xp_till_next_level=xp_till_next_level)}"
-            except Exception:
+                description += f"\n{i + 1 + (page_number - 1) * 10}. <@{user_id}> - {tanjunLocalizer.localize(str(commandInfo.locale), 'commands.level.leaderboard.data', level=level, xp_from_last_level=xp_from_last_level, xp_till_next_level=xp_till_next_level)}"
+            except (IndexError, KeyError):
                 break
 
-        if int(len(leaderboard) / 10 + 1) > 1:
+        total_pages = int(len(leaderboard_data) / 10 + 1)
+        if total_pages > 1:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    str(commandInfo.locale),
                     "commands.level.leaderboard.title",
                     current_page=page_number,
-                    total_pages=int(len(leaderboard) / 10 + 1),
+                    total_pages=total_pages,
                 ),
                 description=description,
             )
@@ -60,10 +62,11 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1) -> None:
         def __init__(self, current_page: int = 1) -> None:
             super().__init__(timeout=3600)
             self.current_page = current_page
-            self.total_pages = int(len(leaderboard) / 10 + 1)
+            leaderboard_len: int = len(leaderboard_data)
+            self.total_pages = int(leaderboard_len / 10 + 1)
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -83,7 +86,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1) -> None:
             await interaction.response.edit_message(view=self, embed=new_page)
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(

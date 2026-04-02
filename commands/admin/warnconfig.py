@@ -12,7 +12,7 @@ async def warn_config(commandInfo: utility.commandInfo) -> None:
     config = await get_warn_config(commandInfo.guild.id)  # Retrieve current configuration settings
 
     class WarnConfigModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo, config: Any) -> None:
+        def __init__(self, commandInfo: utility.commandInfo, config: dict[str, int] | None) -> None:
             super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.modal.title"))
             self.commandInfo = commandInfo
 
@@ -88,7 +88,7 @@ async def warn_config(commandInfo: utility.commandInfo) -> None:
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction):
+        async def on_submit(self, interaction: discord.Interaction) -> None:
             # Parse input and update configurations
             try:
                 expiration_days = int(self.children[0].value)
@@ -129,8 +129,7 @@ async def warn_config(commandInfo: utility.commandInfo) -> None:
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.missingPermission.title"),

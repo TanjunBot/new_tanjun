@@ -14,19 +14,19 @@ MAX_EMBED_LENGTH = 6000  # Discord's maximum embed length
 
 async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
     class PaginationView(View):
-        def __init__(self, messages: list[tuple[Any, ...]], locale: str, page: int = 0):
+        def __init__(self, messages: list[tuple[Any, ...]], locale: str, page: int = 0) -> None:
             super().__init__(timeout=300)  # 5 minute timeout
             self.messages = messages
             self.page = page
             self.max_pages = (len(messages) - 1) // MESSAGES_PER_PAGE
             self.locale = locale
 
-            prev_button = Button(emoji="⬅️", style=discord.ButtonStyle.gray, disabled=page == 0)  # type: ignore[var-annotated]
-            prev_button.callback = self.previous_page  # type: ignore[method-assign]
+            prev_button: Button[Any] = Button(emoji="⬅️", style=discord.ButtonStyle.gray, disabled=page == 0)
+            setattr(prev_button, "callback", self.previous_page)
             self.add_item(prev_button)
 
             # Page counter button (disabled, just for display)
-            self.page_counter = Button(  # type: ignore[var-annotated]
+            self.page_counter: Button[Any] = Button(
                 label=tanjunLocalizer.localize(
                     locale,
                     "commands.utility.listscheduled.pagination.page_counter",
@@ -39,12 +39,12 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
             self.add_item(self.page_counter)
 
             # Next page button
-            next_button = Button(  # type: ignore[var-annotated]
+            next_button: Button[Any] = Button(
                 emoji="➡️",
                 style=discord.ButtonStyle.gray,
                 disabled=page == self.max_pages,
             )
-            next_button.callback = self.next_page  # type: ignore[method-assign]
+            setattr(next_button, "callback", self.next_page)
             self.add_item(next_button)
 
         def truncate_content(self, content: str) -> str:
@@ -156,7 +156,8 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
 
         async def on_timeout(self) -> None:
             for child in self.children:
-                child.disabled = True  # type: ignore[attr-defined]
+                if isinstance(child, Button):
+                    child.disabled = True
             if self.message:
                 await self.message.edit(view=discord.ui.View())
 

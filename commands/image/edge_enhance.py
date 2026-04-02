@@ -9,7 +9,7 @@ from localizer import tanjunLocalizer
 
 
 async def edge_enhance(commandInfo: utility.commandInfo, image: discord.Attachment):
-    if isinstance(image, discord.Attachment):
+    if isinstance(image, discord.Attachment) -> None:
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.typenotsupported.title"),

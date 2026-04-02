@@ -20,7 +20,7 @@ async def disable_level_system(commandInfo: commandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.disablelevelsystem.confirm"),
             style=discord.ButtonStyle.danger,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             self.value = True
             self.stop()
 
@@ -28,13 +28,12 @@ async def disable_level_system(commandInfo: commandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.disablelevelsystem.cancel"),
             style=discord.ButtonStyle.secondary,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             self.value = False
             self.stop()
 
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

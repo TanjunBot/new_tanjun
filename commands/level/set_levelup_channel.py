@@ -1,3 +1,4 @@
+
 import discord
 
 from api import set_levelup_channel
@@ -7,16 +8,15 @@ from utility import commandInfo, tanjunEmbed
 
 async def set_levelup_channel_command(commandInfo: commandInfo, channel: discord.TextChannel | None = None) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.setlevelupchannel.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.setlevelupchannel.error.no_permission.description",
             ),
         )
@@ -29,7 +29,7 @@ async def set_levelup_channel_command(commandInfo: commandInfo, channel: discord
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setlevelupchannel.success.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.level.setlevelupchannel.success.description",
                 channel=channel.mention,
             ),

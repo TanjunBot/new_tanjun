@@ -41,10 +41,11 @@ class CustomSituationCommands(discord.app_commands.Group):
         topp: app_commands.Range[float, 0, 1] = 1,
         frequencypenalty: app_commands.Range[float, 0, 2] = 0,
         presencepenalty: app_commands.Range[float, 0, 2] = 0,
-    ):
+    ) -> None:
+        from typing import cast
         commandInfo = utility.commandInfo(
             user=interaction.user,
-            channel=interaction.channel,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -73,10 +74,11 @@ class CustomSituationCommands(discord.app_commands.Group):
     async def delete_custom(
         self,
         interaction: discord.Interaction,
-    ):
+    ) -> None:
+        from typing import cast
         commandInfo = utility.commandInfo(
             user=interaction.user,
-            channel=interaction.channel,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -108,11 +110,12 @@ class AiCommands(discord.app_commands.Group):
         interaction: discord.Interaction,
         prompt: app_commands.Range[str, 1, 1000],
         personality: str,
-    ):
+    ) -> None:
         await interaction.response.defer()
+        from typing import cast
         commandInfo = utility.commandInfo(
             user=interaction.user,
-            channel=interaction.channel,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -154,11 +157,12 @@ class AiCommands(discord.app_commands.Group):
         topp: app_commands.Range[float, 0, 1] = 1,
         frequencypenalty: app_commands.Range[float, 0, 2] = 0,
         presencepenalty: app_commands.Range[float, 0, 2] = 0,
-    ):
+    ) -> None:
         await interaction.response.defer()
+        from typing import cast
         commandInfo = utility.commandInfo(
             user=interaction.user,
-            channel=interaction.channel,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -198,11 +202,12 @@ class AiCommands(discord.app_commands.Group):
         topp: app_commands.Range[float, 0, 1] = 1,
         frequencypenalty: app_commands.Range[float, 0, 2] = 0,
         presencepenalty: app_commands.Range[float, 0, 2] = 0,
-    ):
+    ) -> None:
         await interaction.response.defer()
+        from typing import cast
         commandInfo = utility.commandInfo(
             user=interaction.user,
-            channel=interaction.channel,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -232,11 +237,11 @@ class AiCommands(discord.app_commands.Group):
 
 
 class AiCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         aicmds = AiCommands(
             name=app_commands.locale_str("ai_name"),
             description=app_commands.locale_str("ai_description"),
@@ -247,8 +252,9 @@ class AiCog(commands.Cog):
                 description=app_commands.locale_str("ai_customsituations_description"),
             )
         )
-        self.bot.tree.add_command(aicmds)
+        if self.bot.tree:
+            self.bot.tree.add_command(aicmds)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(AiCog(bot))

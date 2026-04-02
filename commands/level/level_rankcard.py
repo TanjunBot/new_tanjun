@@ -93,13 +93,15 @@ async def fetch_image(url: str) -> io.BytesIO | None:
 
 async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
     image_data = await fetch_image(url)
+    if not image_data:
+        return [], 0
     image = Image.open(image_data)
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
-    duration = image.info.get("duration", 100)
+    duration = int(image.info.get("duration", 100))
     return frames, duration
 
 
-def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
+def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1) -> None:
     x1, y1, x2, y2 = xy
     draw.rectangle([x1 + radius, y1, x2 - radius, y2], fill=fill)
     draw.rectangle([x1, y1 + radius, x2, y2 - radius], fill=fill)
@@ -136,7 +138,14 @@ def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
         draw.line([x2, y1 + radius, x2, y2 - radius], fill=outline, width=width)
 
 
-def process_image(background_frames, avatar_frames, avatar_decoration_frames, user, user_info, commandInfo):
+def process_image(
+    background_frames: list[Image.Image],
+    avatar_frames: list[Image.Image],
+    avatar_decoration_frames: list[Image.Image] | None,
+    user: discord.Member,
+    user_info: dict[str, Any],
+    commandInfo: commandInfo,
+) -> io.BytesIO:
     DECORATION_SIZE_MULTIPLIER = 1.2
 
     num_frames = max(
@@ -268,30 +277,34 @@ def process_image(background_frames, avatar_frames, avatar_decoration_frames, us
         result_frames.append(frame)
 
     img_byte_arr = io.BytesIO()
+    # Explicitly calculate duration
+    duration = int(background_frames[0].info.get("duration", 100))
+    
     result_frames[0].save(
         img_byte_arr,
         format="GIF",
         save_all=True,
         append_images=result_frames[1:],
         loop=0,
-        duration=background_frames[0].info.get("duration", 100),
+        duration=duration,
     )
     img_byte_arr.seek(0)
 
     return img_byte_arr
 
 
-async def generate_rankcard(user: discord.Member, user_info: dict, commandInfo: commandInfo) -> io.BytesIO:
+async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], commandInfo: commandInfo) -> io.BytesIO:
     # Load background image or frames
-    if user_info["customBackground"]:
-        background_frames, _ = await get_image_or_gif_frames(user_info["customBackground"])
+    custom_bg = user_info.get("customBackground")
+    if custom_bg:
+        background_frames, _ = await get_image_or_gif_frames(str(custom_bg))
     else:
         background_frames = [Image.open("assets/rankCard.png").convert("RGBA")]
 
     # Load user avatar frames
     avatar_url = str(user.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
-    avatar_decoration_frames = None
+    avatar_decoration_frames: list[Image.Image] | None = None
     avatar_decoration_url = str(user.avatar_decoration.url) if user.avatar_decoration else None
     if avatar_decoration_url:
         avatar_decoration_frames, _ = await get_image_or_gif_frames(avatar_decoration_url)
@@ -308,5 +321,8 @@ async def generate_rankcard(user: discord.Member, user_info: dict, commandInfo: 
         user_info,
         commandInfo,
     )
+
+    if not isinstance(img_byte_arr, io.BytesIO):
+         raise TypeError("Expected io.BytesIO from process_image")
 
     return img_byte_arr

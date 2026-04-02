@@ -13,7 +13,7 @@ async def createrole(
     mentionable: bool = False,
     display_icon: discord.Attachment | str | None = None,
 ) -> None:
-    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
+    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.missingPermission.title"),
             description=tanjunLocalizer.localize(
@@ -27,7 +27,8 @@ async def createrole(
 
     assert commandInfo.guild is not None
     assert commandInfo.client.user is not None
-    if not commandInfo.guild.get_member(commandInfo.client.user.id).guild_permissions.manage_roles:  # type: ignore[union-attr]
+    bot_member = commandInfo.guild.get_member(commandInfo.client.user.id)
+    if not bot_member or not bot_member.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

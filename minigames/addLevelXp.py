@@ -119,7 +119,7 @@ async def handle_level_up(message: discord.Message, new_level: int) -> None:
     guild_id = str(message.guild.id)
     if await get_levelup_message_status(guild_id) and message.author.id not in notifiedUsers:
         channel = await determine_levelup_channel(message, guild_id)
-        await channel.send(await format_level_up_message(guild_id, message.author.mention, new_level, message.guild))  # type: ignore[attr-defined]
+        await channel.send(await format_level_up_message(guild_id, message.author.mention, new_level, message.guild))
         notifiedUsers.append(message.author.id)
 
     await update_user_roles(message, new_level, guild_id)
@@ -130,14 +130,13 @@ def clearNotifiedUsers() -> None:
     notifiedUsers = []
 
 
-async def determine_levelup_channel(message: discord.Message, guild_id: str) -> discord.abc.GuildChannel:
+async def determine_levelup_channel(message: discord.Message, guild_id: str) -> discord.abc.Messageable:
     level_up_channel_id = await get_levelup_channel(guild_id)
-    channel: discord.abc.GuildChannel = (
-        message.guild.get_channel(int(level_up_channel_id))  # type: ignore[assignment]
-        if message.guild != None and level_up_channel_id != None
-        else message.channel
-    )
-    return channel
+    if message.guild is not None and level_up_channel_id is not None:
+        ch = message.guild.get_channel(int(level_up_channel_id))
+        if isinstance(ch, discord.abc.Messageable):
+            return ch
+    return message.channel
 
 
 async def format_level_up_message(guild_id: str, user_mention: str, new_level: int, guild: discord.Guild) -> str:

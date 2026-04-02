@@ -16,7 +16,7 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, similar, tanjunEmbed
 
 
-async def getPlayerInfo(playerTag: str):
+async def getPlayerInfo(playerTag: str) -> None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with (
         aiohttp.ClientSession() as session,
@@ -30,7 +30,7 @@ async def getPlayerInfo(playerTag: str):
         return await response.json()
 
 
-async def brawlers(commandInfo: commandInfo, playerTag: str = None):
+async def brawlers(commandInfo: commandInfo, playerTag: str | None = None) -> None:
     if not playerTag:
         playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
     if playerTag and playerTag.startswith("<@"):
@@ -186,12 +186,12 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
         return embed
 
     class BrawlersPaginator(discord.ui.View):
-        def __init__(self, current_page=0):
+        def __init__(self, current_page=0) -> None:
             super().__init__(timeout=3600)
             self.current_page = current_page
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -211,7 +211,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             await interaction.response.edit_message(view=self, embed=new_page)
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -231,7 +231,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             await interaction.response.edit_message(view=self, embed=new_page)
 
         @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
-        async def search(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def search(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -244,7 +244,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             await interaction.response.send_modal(SearchModal(commandInfo))
 
     class SearchModal(discord.ui.Modal):
-        def __init__(self, commandInfo: commandInfo):
+        def __init__(self, commandInfo: commandInfo) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -266,7 +266,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction):
+        async def on_submit(self, interaction: discord.Interaction) -> None:
             try:
                 brawlerName = self.children[0].value
 

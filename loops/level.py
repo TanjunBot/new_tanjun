@@ -14,7 +14,9 @@ from api import (
 )
 from minigames.addLevelXp import is_blacklisted  # , fetch_xp_details
 
-voiceUsers = []
+import discord
+
+voiceUsers: list[discord.Member] = []
 
 """ redefinition of unused 'is_blacklisted' from line 12 Flake8(F811):
 async def is_blacklisted(user) -> bool:

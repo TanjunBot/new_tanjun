@@ -172,3 +172,44 @@ suppress-none-returning = true
 # project-wide, you would add it to the main 'ignore' list under '[tool.ruff.lint]', for example:
 # (in [tool.ruff.lint] section)
 # ignore = ["ANN205"]
+
+[tool.mypy]
+strict_optional = true
+extra_checks = true
+disallow_any_expr = true
+disallow_any_explicit = true
+local_partial_types = true
+allow_untyped_globals = false
+warn_no_return = true
+warn_unused_configs = true
+disallow_any_decorated = true
+disallow_any_unimported = true
+disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+no_implicit_reexport = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unreachable = true
+strict_equality = true
+strict_concatenate = true
+enable_error_code = [
+    "redundant-expr",
+    "truthy-bool",
+    "truthy-iterable",
+    "unused-awaitable",
+    "ignore-without-code",
+    "possibly-undefined",
+    "redundant-self"
+]
+exclude = [
+    '^\\.venv/',
+    '^\\.git/',
+    '^\\.mypy_cache/',
+    '^\\.github/'
+]
+

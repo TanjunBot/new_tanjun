@@ -26,28 +26,31 @@ async def calculate_user_channel_boost_command(
     role_boosts = await get_user_roles_boosts(str(commandInfo.guild.id), [str(role.id) for role in user.roles])
     channel_boost = await get_channel_boost(str(commandInfo.guild.id), str(channel.id))
 
-    total_additive_boost = 0
-    total_multiplicative_boost = 1
+    total_additive_boost = 0.0
+    total_multiplicative_boost = 1.0
 
     if user_boost:
-        if user_boost[1]:  # if additive
-            total_additive_boost += user_boost[0] - 1
+        boost_value, is_additive = user_boost
+        if is_additive:  # if additive
+            total_additive_boost += boost_value - 1
         else:
-            total_multiplicative_boost *= user_boost[0]
+            total_multiplicative_boost *= boost_value
 
     for role_boost in role_boosts:
-        if role_boost[1]:  # if additive
-            total_additive_boost += role_boost[0] - 1
+        boost_value, is_additive = role_boost
+        if is_additive:  # if additive
+            total_additive_boost += boost_value - 1
         else:
-            total_multiplicative_boost *= role_boost[0]
+            total_multiplicative_boost *= boost_value
 
     if channel_boost:
-        if channel_boost[1]:  # if additive
-            total_additive_boost += channel_boost[0] - 1
+        boost_value, is_additive = channel_boost
+        if is_additive:  # if additive
+            total_additive_boost += boost_value - 1
         else:
-            total_multiplicative_boost *= channel_boost[0]
+            total_multiplicative_boost *= boost_value
 
-    total_boost = (1 + total_additive_boost) * total_multiplicative_boost
+    total_boost = (1.0 + total_additive_boost) * total_multiplicative_boost
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.boosts.calculate_user_channel.title"),

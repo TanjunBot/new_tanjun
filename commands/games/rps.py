@@ -6,7 +6,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def rps(commandInfo: utility.commandInfo, user: discord.Member):
+async def rps(commandInfo: utility.commandInfo, user: discord.Member) -> None:
     player1 = commandInfo.user
     player2 = user if user is not None else "tanjun"
     player1_choice = None
@@ -19,7 +19,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
     if player2 == "tanjun" or user.bot:
         player2_choice = random.choice([rockLocale, paperLocale, scissorsLocale])
 
-    async def check_winner(interaction: discord.Interaction):
+    async def check_winner(interaction: discord.Interaction) -> None:
         if player1_choice == player2_choice:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.draw"),
@@ -67,12 +67,12 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
             await interaction.message.edit(embed=embed, view=None)
 
     class RPSView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo, is_player1: bool):
+        def __init__(self, commandInfo: utility.commandInfo, is_player1: bool) -> None:
             super().__init__()
             self.is_player1 = is_player1
 
         @discord.ui.button(label=rockLocale, style=discord.ButtonStyle.primary, custom_id="rock")
-        async def rock(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def rock(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
@@ -110,7 +110,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
                 await check_winner(interaction)
 
         @discord.ui.button(label=paperLocale, style=discord.ButtonStyle.primary, custom_id="paper")
-        async def paper(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def paper(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
@@ -152,7 +152,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member):
             style=discord.ButtonStyle.primary,
             custom_id="scissors",
         )
-        async def scissors(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def scissors(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 

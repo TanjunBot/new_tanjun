@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 import discord
 
@@ -14,14 +14,14 @@ from localizer import tanjunLocalizer
 
 
 async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | None = None) -> None:
-    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
+    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.reports.show_reports.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.reports.show_reports.missingPermission.description",
             ),
         )
@@ -29,36 +29,38 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
         return
 
     assert commandInfo.guild is not None
-    reports = list(await get_reports(commandInfo.guild.id, user.id if user else None))
+    reports = cast(list[tuple[Any, ...]], await get_reports(commandInfo.guild.id, user.id if user else None))
 
     if not reports:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.reports.show_reports.noReports.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.reports.show_reports.noReports.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    async def checkIfCurrentReporterIsBlocked(reports: list[Any], page: int) -> bool:
-        return await check_if_reporter_is_blocked(commandInfo.guild.id, reports[page][3])
+    async def checkIfCurrentReporterIsBlocked(reports: list[tuple[Any, ...]], page: int) -> bool:
+        assert commandInfo.guild is not None
+        return bool(await check_if_reporter_is_blocked(commandInfo.guild.id, str(reports[page][3])))
 
     currentReporterIsBlocked = await checkIfCurrentReporterIsBlocked(reports, 0)
 
     class reportsView(discord.ui.View):
-        nonlocal currentReporterIsBlocked
-
-        def __init__(self, reports: list[Any], page: int = 0) -> None:
+        def __init__(self, reports: list[tuple[Any, ...]], page: int = 0) -> None:
             super().__init__()
             self.reports = reports
             self.page = page
-            self.previous.disabled = len(reports) <= 1
-            self.next.disabled = len(reports) <= 1
+            self.update_buttons()
+
+        def update_buttons(self) -> None:
+            self.previous.disabled = len(self.reports) <= 1
+            self.next.disabled = len(self.reports) <= 1
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.show_reports.previous.label"),
@@ -69,7 +71,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
             self,
             interaction: discord.Interaction,
             button: discord.ui.Button,
-        ):
+        ) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -94,7 +96,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
             self,
             interaction: discord.Interaction,
             button: discord.ui.Button,
-        ):
+        ) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -139,7 +141,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
                 self,
                 interaction: discord.Interaction,
                 button: discord.ui.Button,
-            ):
+            ) -> None:
                 if interaction.user.id != commandInfo.user.id:
                     await interaction.response.send_message(
                         tanjunLocalizer.localize(
@@ -166,7 +168,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
                 self,
                 interaction: discord.Interaction,
                 button: discord.ui.Button,
-            ):
+            ) -> None:
                 if interaction.user.id != commandInfo.user.id:
                     await interaction.response.send_message(
                         tanjunLocalizer.localize(
@@ -190,7 +192,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
             self,
             interaction: discord.Interaction,
             button: discord.ui.Button,
-        ):
+        ) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -206,25 +208,45 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
                 self.page = 0
             await interaction.response.edit_message(view=self, embed=self.get_embed())
 
-        def get_embed(self=None):
-            if self is None:
-                self = reportsView(reports)
+        def get_embed(self) -> discord.Embed:
             report = self.reports[self.page]
-            user = report[2]
-            reporter = report[3]
-            reason = report[4]
-            createdAt = report[5]
+            user_str = str(report[2])
+            reporter_str = str(report[3])
+            reason = str(report[4])
+            createdAt = str(report[5])
+            accepted = bool(report[6])
+            acceptedAt = str(report[7])
+            resolved = bool(report[9])
+            resolvedAt = str(report[10])
 
-            locale = commandInfo.locale
+            locale = str(commandInfo.locale)
 
             description = tanjunLocalizer.localize(
                 locale,
                 "commands.admin.reports.show_reports.report.description",
-                user=user,
-                reporter=reporter,
+                user=user_str,
+                reporter=reporter_str,
                 reason=reason,
                 createdAt=createdAt,
             )
+
+            if accepted:
+                description += "\n" + tanjunLocalizer.localize(
+                    locale,
+                    "commands.admin.reports.show_reports.report.accepted",
+                    acceptedAt=acceptedAt,
+                )
+            else:
+                description += "\n" + tanjunLocalizer.localize(locale, "commands.admin.reports.show_reports.report.not_accepted")
+
+            if resolved:
+                description += "\n" + tanjunLocalizer.localize(
+                    locale,
+                    "commands.admin.reports.show_reports.report.resolved",
+                    resolvedAt=resolvedAt,
+                )
+            else:
+                description += "\n" + tanjunLocalizer.localize(locale, "commands.admin.reports.show_reports.report.not_resolved")
 
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
@@ -237,57 +259,5 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
             )
             return embed
 
-    def get_embed(self=None):
-        if self is None:
-            self = reportsView(reports)
-        report = self.reports[self.page]
-        user = report[2]
-        reporter = report[3]
-        reason = report[4]
-        createdAt = report[5]
-        accepted = report[6]
-        acceptedAt = report[7]
-        resolved = report[9]
-        resolvedAt = report[10]
-
-        locale = commandInfo.locale
-
-        description = tanjunLocalizer.localize(
-            locale,
-            "commands.admin.reports.show_reports.report.description",
-            user=user,
-            reporter=reporter,
-            reason=reason,
-            createdAt=createdAt,
-        )
-
-        if accepted:
-            description += "\n" + tanjunLocalizer.localize(
-                locale,
-                "commands.admin.reports.show_reports.report.accepted",
-                acceptedAt=acceptedAt,
-            )
-        else:
-            description += "\n" + tanjunLocalizer.localize(locale, "commands.admin.reports.show_reports.report.not_accepted")
-
-        if resolved:
-            description += "\n" + tanjunLocalizer.localize(
-                locale,
-                "commands.admin.reports.show_reports.report.resolved",
-                resolvedAt=resolvedAt,
-            )
-        else:
-            description += "\n" + tanjunLocalizer.localize(locale, "commands.admin.reports.show_reports.report.not_resolved")
-
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                locale,
-                "commands.admin.reports.show_reports.report.title",
-                index=self.page + 1,
-                total=len(self.reports),
-            ),
-            description=description,
-        )
-        return embed
-
-    await commandInfo.reply(embed=get_embed(), view=reportsView(reports))
+    view = reportsView(reports)
+    await commandInfo.reply(embed=view.get_embed(), view=view)

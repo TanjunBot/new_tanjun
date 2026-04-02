@@ -1,6 +1,7 @@
 import aiohttp
 import discord
 
+
 import utility
 from localizer import tanjunLocalizer
 
@@ -12,13 +13,12 @@ async def create_emoji(
     roles: list[discord.Role] | None = None,
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_emojis
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_emojis
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createEmoji.missingPermission.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.createEmoji.missingPermission.description",
             ),
         )
@@ -26,11 +26,14 @@ async def create_emoji(
         return
 
     try:
-        async with aiohttp.ClientSession() as session, session.get(image_url) as resp:
+        async with (
+            aiohttp.ClientSession() as session,
+            session.get(image_url) as resp,
+        ):
             if resp.status != 200:
                 await commandInfo.reply(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        str(commandInfo.locale),
                         "commands.admin.createEmoji.imageDownloadError",
                     )
                 )
@@ -49,7 +52,7 @@ async def create_emoji(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createEmoji.success.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.createEmoji.success.description",
                 emoji=str(emoji),
                 name=name,

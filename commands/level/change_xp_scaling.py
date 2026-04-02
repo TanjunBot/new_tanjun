@@ -24,16 +24,16 @@ class PaginationView(View):
         self.total_pages = total_pages
 
     @discord.ui.button(label="◀️", style=discord.ButtonStyle.gray, disabled=True)
-    async def prev_button(self, interaction: discord.Interaction, button: Button):
+    async def prev_button(self, interaction: discord.Interaction, button: Button) -> None:
         self.current_page = max(0, self.current_page - 1)
         await self.update_message(interaction)
 
     @discord.ui.button(label="▶️", style=discord.ButtonStyle.gray)
-    async def next_button(self, interaction: discord.Interaction, button: Button):
+    async def next_button(self, interaction: discord.Interaction, button: Button) -> None:
         self.current_page = min(self.total_pages - 1, self.current_page + 1)
         await self.update_message(interaction)
 
-    async def update_message(self, interaction: discord.Interaction):
+    async def update_message(self, interaction: discord.Interaction) -> None:
         self.prev_button.disabled = self.current_page == 0
         self.next_button.disabled = self.current_page == self.total_pages - 1
 
@@ -44,8 +44,7 @@ async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, cust
     if custom_formula:
         custom_formula = custom_formula.replace("x", "level")
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -144,7 +143,7 @@ async def show_xp_scalings(commandInfo: commandInfo, start_level: int = 1, end_l
     levels_per_page = 15
     total_pages = math.ceil((end_level - start_level + 1) / levels_per_page)
 
-    async def generatePage(page: int):
+    async def generatePage(page: int) -> None:
         if page >= total_pages:
             page = total_pages - 1
         current_start = start_level + page * levels_per_page

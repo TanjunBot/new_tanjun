@@ -144,13 +144,13 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
         pages.append(embed)
 
     class ClubPaginator(discord.ui.View):
-        def __init__(self, pages: list[tanjunEmbed], current_page=0):
+        def __init__(self, pages: list[tanjunEmbed], current_page=0) -> None:
             super().__init__(timeout=3600)
             self.pages = pages
             self.current_page = current_page
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -167,7 +167,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
             await interaction.response.edit_message(view=self, embed=pages[self.current_page])
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -184,7 +184,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
             await interaction.response.edit_message(view=self, embed=pages[self.current_page])
 
         @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
-        async def search(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def search(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -197,7 +197,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
             await interaction.response.send_modal(SearchModal(commandInfo))
 
     class SearchModal(discord.ui.Modal):
-        def __init__(self, commandInfo: CommandInfo):
+        def __init__(self, commandInfo: CommandInfo) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.brawlstars.club.search.title")
             )
@@ -216,7 +216,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction):
+        async def on_submit(self, interaction: discord.Interaction) -> None:
             try:
                 memberName = self.children[0].value
 

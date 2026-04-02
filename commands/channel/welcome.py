@@ -21,12 +21,11 @@ executor = ThreadPoolExecutor()
 async def setWelcomeChannel(
     commandInfo: utility.commandInfo,
     channel: discord.TextChannel,
-    message: str = None,
+    message: str | None = None,
     image_background: discord.Attachment = None,
-):
+) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -109,10 +108,9 @@ async def setWelcomeChannel(
     await commandInfo.reply(embed=embed)
 
 
-async def removeWelcomeChannel():
+async def removeWelcomeChannel() -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -147,15 +145,18 @@ async def removeWelcomeChannel():
     await commandInfo.reply(embed=embed)
 
 
-async def fetch_image(url):
-    async with aiohttp.ClientSession() as session, session.get(url) as response:
+async def fetch_image(url: str) -> io.BytesIO | None:
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(url) as response,
+    ):
         if response.status != 200:
             return None
         image_data = io.BytesIO(await response.read())
         return image_data
 
 
-async def get_image_or_gif_frames(url):
+async def get_image_or_gif_frames(url) -> None:
     image_data = await fetch_image(url)
     image = Image.open(image_data)
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
@@ -163,7 +164,7 @@ async def get_image_or_gif_frames(url):
     return frames, duration
 
 
-def process_image(background_frames, avatar_frames, user):
+def process_image(background_frames, avatar_frames, user) -> None:
     num_frames = max(len(background_frames), len(avatar_frames))
     background_frames *= (num_frames // len(background_frames)) + 1
     avatar_frames *= (num_frames // len(avatar_frames)) + 1
@@ -251,7 +252,7 @@ def process_image(background_frames, avatar_frames, user):
     return img_byte_arr
 
 
-async def welcomeNewUser(member: discord.Member):
+async def welcomeNewUser(member: discord.Member) -> None:
     welcomeChannel = await get_welcome_channel(member.guild.id)
     if welcomeChannel is None:
         return

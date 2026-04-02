@@ -8,10 +8,9 @@ from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
 
-async def seeTwitchLiveNotifications(commandInfo: commandInfo):
+async def seeTwitchLiveNotifications(commandInfo: commandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -43,13 +42,13 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
         return
 
     class TwitchLiveNotification(discord.ui.View):
-        def __init__(self, page: int = 0, notifications: list = notifications):
+        def __init__(self, page: int = 0, notifications: list = notifications) -> None:
             super().__init__()
             self.current_page = page
             self.notifications = notifications
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)
-        async def previous_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def previous_page(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -65,7 +64,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
             await self.update_message(interaction)
 
         @discord.ui.button(label="🗑️", style=discord.ButtonStyle.danger)
-        async def delete_notification(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def delete_notification(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -96,7 +95,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
             await self.update_message(interaction)
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)
-        async def next_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def next_page(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -111,7 +110,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo):
                 self.current_page = 0
             await self.update_message(interaction)
 
-        async def update_message(self, interaction: discord.Interaction):
+        async def update_message(self, interaction: discord.Interaction) -> None:
             notification = parse_twitch_notification_message(
                 notifications[self.current_page][5],
                 commandInfo.locale,

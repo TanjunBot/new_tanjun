@@ -5,10 +5,9 @@ from api import get_join_to_create_channel, remove_join_to_create_channel
 from localizer import tanjunLocalizer
 
 
-async def removejointocreatechannel(commandInfo: utility.commandInfo, channel: discord.TextChannel):
+async def removejointocreatechannel(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

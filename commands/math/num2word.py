@@ -4,7 +4,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def num2word(commandInfo: utility.commandInfo, number: int, locale: str):
+async def num2word(commandInfo: utility.commandInfo, number: int, locale: str) -> None:
     validLocales = [
         "en",
         "am",

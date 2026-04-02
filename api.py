@@ -1080,7 +1080,9 @@ async def get_custom_formula(guild_id: int | str | int) -> str | None:
     query = "SELECT customFormula FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return result[0][0] if result else None
+    if result and result[0] and result[0][0]:
+        return str(result[0][0])
+    return None
 
 
 async def add_level_role(guild_id: int | str | int, role_id: int | str | int, level: int) -> None:
@@ -1093,11 +1095,13 @@ async def add_level_role(guild_id: int | str | int, role_id: int | str | int, le
     await execute_action(query, params)
 
 
-async def get_level_roles(guild_id: int | str | int) -> list[tuple[Any, ...]]:
+async def get_level_roles(guild_id: int | str | int) -> list[tuple[int, str]]:
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return result if result else []
+    if not result:
+        return []
+    return [(int(row[0]), str(row[1])) for row in result]
 
 
 async def get_level_role(guild_id: int | str | int, role_id: int | str | int) -> int | None:
@@ -1122,7 +1126,9 @@ async def get_all_level_roles(guild_id: int | str | int) -> dict[int, list[str]]
     result = await execute_query(query, params)
     level_roles: dict[int, list[str]] = {}
     if result:
-        for level, role_id in result:
+        for row in result:
+            level = int(row[0])
+            role_id = str(row[1])
             if level not in level_roles:
                 level_roles[level] = []
             level_roles[level].append(role_id)
@@ -1177,7 +1183,7 @@ async def remove_user_boost(guild_id: int | str | int, user_id: int | str | int)
     await execute_action(query, params)
 
 
-async def get_all_boosts(guild_id: int | str | int) -> dict[str, list[tuple[Any, ...]]]:
+async def get_all_boosts(guild_id: int | str | int) -> dict[str, list[tuple[str, float, bool]]]:
     role_query = "SELECT role_id, boost, additive FROM roleXpBoost WHERE guild_id = %s"
     channel_query = "SELECT channel_id, boost, additive FROM channelXpBoost WHERE guild_id = %s"
     user_query = "SELECT user_id, boost, additive FROM userXpBoost WHERE guild_id = %s"
@@ -1186,30 +1192,40 @@ async def get_all_boosts(guild_id: int | str | int) -> dict[str, list[tuple[Any,
     channels = await execute_query(channel_query, (guild_id,))
     users = await execute_query(user_query, (guild_id,))
 
-    return {"roles": roles or [], "channels": channels or [], "users": users or []}
+    return {
+        "roles": [(str(r[0]), float(r[1]), bool(r[2])) for r in roles] if roles else [],
+        "channels": [(str(c[0]), float(c[1]), bool(c[2])) for c in channels] if channels else [],
+        "users": [(str(u[0]), float(u[1]), bool(u[2])) for u in users] if users else [],
+    }
 
 
-async def get_user_boost(guild_id: int | str | int, user_id: int | str | int) -> tuple[Any, ...] | None:
+async def get_user_boost(guild_id: int | str | int, user_id: int | str | int) -> tuple[float, bool] | None:
     query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
     params = (guild_id, user_id)
     result = await execute_query(query, params)
-    return result[0] if result else None
+    if result and result[0]:
+        return (float(result[0][0]), bool(result[0][1]))
+    return None
 
 
-async def get_user_roles_boosts(guild_id: int | str | int, role_ids: list[str]) -> list[tuple[Any, ...]]:
+async def get_user_roles_boosts(guild_id: int | str | int, role_ids: list[str]) -> list[tuple[float, bool]]:
     if not role_ids:
         return []
     query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
     params = (guild_id, tuple(role_ids))
     result = await execute_query(query, params)
-    return result if result else []
+    if not result:
+        return []
+    return [(float(row[0]), bool(row[1])) for row in result]
 
 
-async def get_channel_boost(guild_id: int | str | int, channel_id: int | str | int) -> tuple[Any, ...] | None:
+async def get_channel_boost(guild_id: int | str | int, channel_id: int | str | int) -> tuple[float, bool] | None:
     query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
     params = (guild_id, channel_id)
     result = await execute_query(query, params)
-    return result[0] if result else None
+    if result and result[0]:
+        return (float(result[0][0]), bool(result[0][1]))
+    return None
 
 
 async def add_channel_to_blacklist(guild_id: int | str | int, channel_id: int | str | int, reason: str | None = None) -> None:
@@ -1281,8 +1297,9 @@ async def get_user_level_info(guild_id: int | str, user_id: int | str) -> dict[s
     result = await execute_query(query, params)
     scaling = await get_xp_scaling(guild_id)
     custom_formula = await get_custom_formula(guild_id)
-    if result:
-        xp, custom_background = result[0]
+    if result and result[0]:
+        xp = int(result[0][0])
+        custom_background = str(result[0][1]) if result[0][1] else None
         level = get_level_for_xp(xp, scaling, custom_formula)
         xp_needed = get_xp_for_level(level, scaling, custom_formula)
         xp_for_last_level_needed = get_xp_for_level(level - 1, scaling, custom_formula)
@@ -1692,7 +1709,7 @@ async def update_giveaway(
         "DELETE FROM giveawayChannelRequirement WHERE giveawayId = %s",
         (giveaway_id,),
     )
-    if channel_requirements is not None and len(channel_requirements) > 0 and channel_requirements != {}:
+    if channel_requirements:
         for channel_id, amount in channel_requirements.items():
             query = "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)"
             params = (giveaway_id, channel_id, amount)
@@ -1861,11 +1878,13 @@ async def consumePaidToken(user_id: int | str, amount: int) -> None:
     await execute_action(query, params)
 
 
-async def getLevelLeaderboard(guild_id: int | str) -> list[tuple[Any, ...]] | None:
+async def getLevelLeaderboard(guild_id: int | str) -> list[tuple[str, int]] | None:
     query = "SELECT user_id, xp FROM level WHERE guild_id = %s ORDER BY xp DESC"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return result
+    if not result:
+        return None
+    return [(str(row[0]), int(row[1])) for row in result]
 
 
 async def addCustomSituation(

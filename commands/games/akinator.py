@@ -6,7 +6,7 @@ from localizer import tanjunLocalizer
 
 
 # Valid Themes: "Characters"; "Animals", "Objects"
-async def akinator(commandInfo: utility.commandInfo, theme: str = None):
+async def akinator(commandInfo: utility.commandInfo, theme: str | None = None) -> None:
     language = "en"
     if str(commandInfo.locale) == "en" or str(commandInfo.locale) == "en-US" or str(commandInfo.locale) == "en-GB":
         language = "en"
@@ -45,7 +45,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
     aki.start_game()
 
     class AkinatorView(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__()
 
         @discord.ui.button(
@@ -54,7 +54,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
             custom_id="akinator_yes",
             emoji="✅",
         )
-        async def akinator_yes(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def akinator_yes(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.defer()
             await update_embed(interaction, "y")
 
@@ -64,7 +64,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
             custom_id="akinator_no",
             emoji="❌",
         )
-        async def akinator_no(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def akinator_no(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -80,7 +80,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
             custom_id="akinator_idk",
             emoji="❔",
         )
-        async def akinator_idk(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def akinator_idk(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -96,7 +96,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
             custom_id="akinator_probably",
             emoji="🤔",
         )
-        async def akinator_probably(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def akinator_probably(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -112,7 +112,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
             custom_id="akinator_probably_not",
             emoji="🤨",
         )
-        async def akinator_probably_not(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def akinator_probably_not(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -128,7 +128,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
             custom_id="akinator_back",
             emoji="🔙",
         )
-        async def akinator_back(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def akinator_back(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -138,7 +138,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
                 return
             await update_embed(interaction, "b")
 
-    def answer_to_locale_string(answer: str):
+    def answer_to_locale_string(answer: str) -> None:
         if answer == "y":
             return tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.akinator.yes")
         elif answer == "n":
@@ -154,7 +154,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str = None):
         else:
             return tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.akinator.no_answer")
 
-    async def update_embed(interaction: discord.Interaction, answer: str):
+    async def update_embed(interaction: discord.Interaction, answer: str) -> None:
         if answer == "b":
             aki.go_back()
         else:

@@ -8,10 +8,10 @@ from localizer import tanjunLocalizer
 
 
 async def help(commandInfo: utility.commandInfo) -> None:
-    class HelpSelect(discord.ui.Select):
+    class HelpSelect(discord.ui.Select[Any]):
         cash: set[str] = set()
 
-        def __init__(self, client: discord.ext.commands.Bot, options: list[discord.SelectOption]):
+        def __init__(self, client: discord.ext.commands.Bot, options: list[discord.SelectOption]) -> None:
             self.client = client
             super().__init__(
                 placeholder=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.select.placeholder"),
@@ -31,7 +31,7 @@ async def help(commandInfo: utility.commandInfo) -> None:
             return localized
 
         async def callback(self, interaction: discord.Interaction) -> None:
-            texts = [""]
+            texts: list[str] = [""]
             current_index = 0
             total_length = 0
             locale = str(interaction.locale)
@@ -178,7 +178,7 @@ async def help(commandInfo: utility.commandInfo) -> None:
             total_length += len(command_text)
 
             # Create embeds
-            embeds = []
+            embeds: list[discord.Embed] = []
             overall_length = 0
             for i, text in enumerate(texts, 1):
                 overall_length += len(text)
@@ -212,8 +212,8 @@ async def help(commandInfo: utility.commandInfo) -> None:
 
         @classmethod
         def generate_options(self, client: discord.ext.commands.Bot) -> list[discord.SelectOption]:
-            options = []
-            groups = []
+            options: list[discord.SelectOption] = []
+            groups: list[str] = []
             for cmd in client.tree.walk_commands():
                 if cmd.parent is not None:
                     if cmd.parent.qualified_name not in groups:
@@ -246,7 +246,7 @@ async def help(commandInfo: utility.commandInfo) -> None:
             return options[:25]
 
     class PaginatedHelpView(discord.ui.View):
-        def __init__(self, client: discord.ext.commands.Bot, embeds: list[discord.Embed]):
+        def __init__(self, client: discord.ext.commands.Bot, embeds: list[discord.Embed]) -> None:
             super().__init__(timeout=3600)
             self.embeds = embeds
             self.current_page = 0
@@ -271,7 +271,7 @@ async def help(commandInfo: utility.commandInfo) -> None:
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
     class HelpView(discord.ui.View):
-        def __init__(self, client: discord.ext.commands.Bot, timeout: int = 3600):
+        def __init__(self, client: discord.ext.commands.Bot, timeout: int = 3600) -> None:
             super().__init__(timeout=timeout)
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))

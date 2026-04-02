@@ -7,7 +7,7 @@ from localizer import tanjunLocalizer
 joinToCreateChannels = []
 
 
-async def memberJoin(voiceState: discord.VoiceState, member: discord.Member):
+async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> None:
     print("memberJoin")
     if not voiceState.channel:
         return
@@ -46,7 +46,7 @@ async def memberJoin(voiceState: discord.VoiceState, member: discord.Member):
     )
 
 
-async def memberLeave(beforeVoice: discord.VoiceState):
+async def memberLeave(beforeVoice: discord.VoiceState) -> None:
     if not beforeVoice.channel:
         return
 
@@ -57,7 +57,7 @@ async def memberLeave(beforeVoice: discord.VoiceState):
         joinToCreateChannels.remove(beforeVoice.channel)
 
 
-async def removeAllJoinToCreateChannels():
+async def removeAllJoinToCreateChannels() -> None:
     for channel in joinToCreateChannels:
         for member in channel.members:
             await member.send(

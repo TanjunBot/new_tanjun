@@ -15,8 +15,7 @@ async def create_ticket(
     introduction: str | None = None,
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 
 async def delete_custom_situation(
     commandInfo: utility.commandInfo,
-):
+) -> None:
     situation = await getCustomSituationFromUser(commandInfo.user.id)
 
     if situation is None:

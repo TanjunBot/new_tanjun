@@ -4,6 +4,7 @@ import os
 import asyncmy
 import discord
 from discord.ext import commands
+from typing import Any, Optional, cast
 
 import api
 import config
@@ -18,20 +19,21 @@ from config import (
 from translator import TanjunTranslator
 
 
-async def loadextension(bot, extensionname):
+async def loadextension(bot: commands.AutoShardedBot, extensionname: str) -> None:
     extensionname = f"extensions.{extensionname}"
     try:
         await bot.load_extension(extensionname)
         print(f"{extensionname} loaded!")
     except Exception as e:
-        raise e
         print(f"Failed to load extension {extensionname}")
+        raise e
 
 
-async def loadTranslator(bot):
+async def loadTranslator(bot: commands.AutoShardedBot) -> None:
     print("loading translator...")
     translator = TanjunTranslator()
-    await bot.tree.set_translator(translator)
+    if bot.tree:
+        await bot.tree.set_translator(translator)
     print("translator loaded!")
 
 
@@ -51,17 +53,17 @@ intents.presences = False
 bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)
 
 
-async def main():
+async def main() -> None:
     print("starting bot...")
     print("discord.py version: ", discord.__version__)
-    for extension in os.listdir(os.fsencode("extensions")):
-        if os.fsdecode(extension).endswith(".py"):
-            extension = os.fsdecode(extension).replace(".py", "")
+    for filename in os.listdir("extensions"):
+        if filename.endswith(".py") and not filename.startswith("__"):
+            extension = filename.replace(".py", "")
             await loadextension(bot, extension)
     await loadTranslator(bot)
 
 
-async def create_pool():
+async def create_pool() -> Optional[asyncmy.Connection]:
     try:
         # p = await asyncmy.create_pool(
         #     host=database_ip,
@@ -78,7 +80,7 @@ async def create_pool():
             password=database_password,
             db=database_schema,
         )
-        return connection
+        return cast(asyncmy.Connection, connection)
     except Exception as e:
         print(f"Error creating pool: {e}")
         return None
@@ -90,11 +92,12 @@ if __name__ == "__main__":
 
 
 @bot.event
-async def on_ready():
+async def on_ready() -> None:
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
     pool = await create_pool()
     print(pool)
-    api.set_pool(pool)
+    if pool:
+        api.set_pool(pool)
     await api.create_tables()
     await initTwitch()
     print("Bot is running!")

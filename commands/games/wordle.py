@@ -9,7 +9,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-def generate_wordle_background():
+def generate_wordle_background() -> None:
     # Create a new image with a purple background
     width = 500
     height = 600
@@ -38,7 +38,7 @@ def generate_wordle_background():
     img.save("wordle_background.png")
 
 
-async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
+async def wordle(commandInfo: utility.commandInfo, language: str = "own") -> None:
     locale = str(commandInfo.locale)
     if language == "own":
         language = locale
@@ -57,7 +57,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
 
     guesses = []
 
-    async def generate_wordle_image(guesses: list[str], word: str):
+    async def generate_wordle_image(guesses: list[str], word: str) -> None:
         image = Image.open("assets/wordle_background.png")
         draw = ImageDraw.Draw(image)
         font = ImageFont.truetype("assets/fonts/Arial.ttf", 70)
@@ -123,7 +123,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
 
         return img_byte_arr
 
-    async def update_wordle_game(interaction: discord.Interaction, given_up: bool = False):
+    async def update_wordle_game(interaction: discord.Interaction, given_up: bool = False) -> None:
         img_byte_arr = await generate_wordle_image(guesses, word)
         if given_up:
             embed = utility.tanjunEmbed(
@@ -181,7 +181,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
         )
 
     class WordleInputModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo, config):
+        def __init__(self, commandInfo: utility.commandInfo, config) -> None:
             super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.modal.title"))
             self.commandInfo = commandInfo
 
@@ -198,7 +198,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction):
+        async def on_submit(self, interaction: discord.Interaction) -> None:
             # Parse input and update configurations
             try:
                 guess = self.children[0].value.lower()
@@ -228,7 +228,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
     class WordleView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo):
+        def __init__(self, commandInfo: utility.commandInfo) -> None:
             super().__init__(timeout=3600)
             self.commandInfo = commandInfo
 
@@ -236,7 +236,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
-        async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.notYourGame"),
@@ -250,7 +250,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own"):
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.buttons.giveUp"),
             style=discord.ButtonStyle.red,
         )
-        async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.notYourGame"),

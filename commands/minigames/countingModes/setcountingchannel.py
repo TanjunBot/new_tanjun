@@ -5,10 +5,9 @@ from localizer import tanjunLocalizer
 from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 
-async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChannel):
+async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChannel) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

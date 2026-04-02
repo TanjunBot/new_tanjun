@@ -15,8 +15,7 @@ from localizer import tanjunLocalizer
 
 async def blacklist_list_user(commandInfo: utility.commandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -43,19 +42,19 @@ async def blacklist_list_user(commandInfo: utility.commandInfo) -> None:
             self.selectedIndex = 0
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
-        async def remove_user(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def remove_user(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             user_id = self.users[self.selectedIndex][0]
             await remove_log_blacklist_user_api(self.guild.id, user_id)
             self.users = tuple(x for x in self.users if x[0] != user_id)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             self.selectedIndex = (self.selectedIndex - 1) % len(self.users)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button):
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
             self.selectedIndex = (self.selectedIndex + 1) % len(self.users)
             await self.update_view(interaction)
 
@@ -70,7 +69,7 @@ async def blacklist_list_user(commandInfo: utility.commandInfo) -> None:
                 await self.update_view(interaction)
             return True
 
-        async def update_view(self, interaction: discord.Interaction):
+        async def update_view(self, interaction: discord.Interaction) -> None:
             if not self.users or len(self.users) == 0:
                 description = tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListUser.noBlacklistedUsers")
             else:

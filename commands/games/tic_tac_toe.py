@@ -7,7 +7,7 @@ from localizer import tanjunLocalizer
 
 
 class TicTacToe:
-    def __init__(self, player1: discord.Member, player2: discord.Member = None):
+    def __init__(self, player1: discord.Member, player2: discord.Member | None = None) -> None:
         self.player1 = player1
         self.player2 = player2
         if self.player2 is None:
@@ -21,7 +21,7 @@ class TicTacToe:
         self.bot_difficulty = random.randint(1, 5)
         self.message = None
 
-    def check_winner(self, board: list[list[str]] = None):
+    def check_winner(self, board: list[list[str]] | None = None) -> None:
         if not board:
             board = self.board
         for i in range(3):
@@ -35,7 +35,7 @@ class TicTacToe:
             return board[0][2]
         return None
 
-    def is_full(self, board: list[list[str]] = None):
+    def is_full(self, board: list[list[str]] | None = None) -> None:
         if not board:
             board = self.board
         for row in board:
@@ -44,7 +44,7 @@ class TicTacToe:
                     return False
         return True
 
-    def evaluate_board(self, board: list[list[str]]):
+    def evaluate_board(self, board: list[list[str]]) -> None:
         winner = self.check_winner(board)
         if winner == self.player1_move:
             return -1
@@ -52,7 +52,7 @@ class TicTacToe:
             return 1
         return 0
 
-    def get_available_moves(self, board: list[list[str]]):
+    def get_available_moves(self, board: list[list[str]]) -> None:
         moves = []
         for i in range(9):
             if board[i // 3][i % 3] == "-":
@@ -65,7 +65,7 @@ class TicTacToe:
         depth: int,
         board: list[list[str]],
         maximizing_player: bool,
-    ):
+    ) -> None:
         # Check terminal states first
         winner = self.check_winner(board)
         if winner:
@@ -101,7 +101,7 @@ class TicTacToe:
 
         return best_score, best_move
 
-    def minimax_make_move(self, board: list[list[str]], move: int, player: str):
+    def minimax_make_move(self, board: list[list[str]], move: int, player: str) -> None:
         # Create a copy of the board
         new_board = [row[:] for row in board]
 
@@ -115,7 +115,7 @@ class TicTacToe:
         interaction: discord.Interaction,
         initial: bool = False,
         timeout: bool = False,
-    ):
+    ) -> None:
         self.winner = self.check_winner()
         title = tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.title")
         description = tanjunLocalizer.localize(
@@ -154,7 +154,7 @@ class TicTacToe:
         else:
             await interaction.followup.edit_message(message_id=interaction.message.id, view=view, embed=embed)
 
-    def toggle_turn(self):
+    def toggle_turn(self) -> None:
         if self.player2 == "tanjun" or self.player2.bot:
             self.current_player = self.player1
         else:
@@ -164,10 +164,10 @@ class TicTacToe:
         self,
         timeout: int = 3600,
         disable_on_timeout: bool = True,
-        message: discord.Message = None,
+        message: discord.Message | None = None,
     ):
-        class TicTacToeView(discord.ui.View):
-            def __init__(self, ticTacToe: TicTacToe):
+        class TicTacToeView(discord.ui.View) -> None:
+            def __init__(self, ticTacToe: TicTacToe) -> None:
                 super().__init__(timeout=timeout)
                 self.player1 = ticTacToe.player1
                 self.player2 = ticTacToe.player2
@@ -184,11 +184,12 @@ class TicTacToe:
                 self.update_board = ticTacToe.update_board
                 self.toggle_turn = ticTacToe.toggle_turn
 
-            async def on_timeout(self):
+            async def on_timeout(self) -> None:
                 for child in self.children:
                     child.disabled = True
 
-                await message.edit(view=self)
+                if message:
+                    await message.edit(view=self)
 
             @discord.ui.button(
                 label=self.board[0][0],
@@ -197,7 +198,7 @@ class TicTacToe:
                 disabled=self.board[0][0] != "-" or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def play_0(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def play_0(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id not in [
                     self.player1.id,
@@ -225,7 +226,7 @@ class TicTacToe:
                 disabled=self.board[0][1] != "-" or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def play_1(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def play_1(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id not in [
                     self.player1.id,
@@ -253,7 +254,7 @@ class TicTacToe:
                 disabled=self.board[0][2] != "-" or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def play_2(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def play_2(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id not in [
                     self.player1.id,
@@ -281,7 +282,7 @@ class TicTacToe:
                 disabled=self.board[1][0] != "-" or self.winner is not None or disable_on_timeout,
                 row=1,
             )
-            async def play_3(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def play_3(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id not in [
                     self.player1.id,
@@ -309,7 +310,7 @@ class TicTacToe:
                 disabled=self.board[1][1] != "-" or self.winner is not None or disable_on_timeout,
                 row=1,
             )
-            async def play_4(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def play_4(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id not in [
                     self.player1.id,
@@ -337,7 +338,7 @@ class TicTacToe:
                 disabled=self.board[1][2] != "-" or self.winner is not None or disable_on_timeout,
                 row=1,
             )
-            async def play_5(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def play_5(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id not in [
                     self.player1.id,
@@ -365,7 +366,7 @@ class TicTacToe:
                 disabled=self.board[2][0] != "-" or self.winner is not None or disable_on_timeout,
                 row=2,
             )
-            async def play_6(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def play_6(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id not in [
                     self.player1.id,
@@ -393,7 +394,7 @@ class TicTacToe:
                 disabled=self.board[2][1] != "-" or self.winner is not None or disable_on_timeout,
                 row=2,
             )
-            async def play_7(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def play_7(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id not in [
                     self.player1.id,
@@ -421,7 +422,7 @@ class TicTacToe:
                 disabled=self.board[2][2] != "-" or self.winner is not None or disable_on_timeout,
                 row=2,
             )
-            async def play_8(self, interaction: discord.Interaction, button: discord.ui.Button):
+            async def play_8(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
                 await interaction.response.defer()
                 if interaction.user.id not in [
                     self.player1.id,
@@ -442,7 +443,7 @@ class TicTacToe:
 
                 await self.make_move(interaction, int(button.custom_id))
 
-            async def make_move(self, interaction: discord.Interaction, place: int):
+            async def make_move(self, interaction: discord.Interaction, place: int) -> None:
                 place = int(place)
 
                 if place < 0 or place > 8:
@@ -487,7 +488,7 @@ class TicTacToe:
                 await self.update_board(interaction)
 
             def check_winners(self):
-                if self.check_winner():
+                if self.check_winner() -> None:
                     self.game_over = True
                     self.winner = self.check_winner()
                     return True
@@ -503,8 +504,8 @@ class TicTacToe:
 async def tic_tac_toe(
     commandInfo: utility.commandInfo,
     player1: discord.Member,
-    player2: discord.Member = None,
-):
+    player2: discord.Member | None = None,
+) -> None:
     if player2 is None:
         player2 = "tanjun"
 

@@ -1,8 +1,7 @@
-# Unused imports:
-# from localizer import tanjunLocalizer
 import discord
 from discord import app_commands
 from discord.ext import commands
+from typing import cast, Any
 
 import utility
 from commands.giveaway.add_blacklist_role import add_blacklist_role
@@ -28,10 +27,10 @@ class BlacklistCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
         role: discord.Role,
-    ):
+    ) -> None:
         commandInfo = utility.commandInfo(
             user=ctx.user,
-            channel=ctx.channel,
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -58,10 +57,10 @@ class BlacklistCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
         role: discord.Role,
-    ):
+    ) -> None:
         commandInfo = utility.commandInfo(
             user=ctx.user,
-            channel=ctx.channel,
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -88,10 +87,10 @@ class BlacklistCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
         user: discord.User,
-    ):
+    ) -> None:
         commandInfo = utility.commandInfo(
             user=ctx.user,
-            channel=ctx.channel,
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -118,10 +117,10 @@ class BlacklistCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
         user: discord.User,
-    ):
+    ) -> None:
         commandInfo = utility.commandInfo(
             user=ctx.user,
-            channel=ctx.channel,
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -144,10 +143,10 @@ class BlacklistCommands(discord.app_commands.Group):
     async def list(
         self,
         ctx: discord.Interaction,
-    ):
+    ) -> None:
         commandInfo = utility.commandInfo(
             user=ctx.user,
-            channel=ctx.channel,
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -177,10 +176,10 @@ class GiveawayCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         title: app_commands.Range[str, 0, 128],
         channel: discord.TextChannel = None,
-    ):
+    ) -> None:
         commandInfo = utility.commandInfo(
             user=ctx.user,
-            channel=ctx.channel,
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -211,10 +210,10 @@ class GiveawayCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
-    ):
+    ) -> None:
         commandInfo = utility.commandInfo(
             user=ctx.user,
-            channel=ctx.channel,
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -241,10 +240,10 @@ class GiveawayCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
-    ):
+    ) -> None:
         commandInfo = utility.commandInfo(
             user=ctx.user,
-            channel=ctx.channel,
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -271,10 +270,10 @@ class GiveawayCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
-    ):
+    ) -> None:
         commandInfo = utility.commandInfo(
             user=ctx.user,
-            channel=ctx.channel,
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -292,11 +291,11 @@ class GiveawayCommands(discord.app_commands.Group):
 
 
 class GiveawayCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         giveaway_commands = GiveawayCommands(
             name=app_commands.locale_str("giveaway_name"), description=app_commands.locale_str("giveaway_description")
         )
@@ -305,8 +304,9 @@ class GiveawayCog(commands.Cog):
             description=app_commands.locale_str("giveaway_blacklist_description"),
         )
         giveaway_commands.add_command(blacklistCmds)
-        self.bot.tree.add_command(giveaway_commands)
+        if self.bot.tree:
+            self.bot.tree.add_command(giveaway_commands)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(GiveawayCog(bot))

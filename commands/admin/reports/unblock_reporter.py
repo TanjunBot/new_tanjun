@@ -6,7 +6,7 @@ from localizer import tanjunLocalizer
 
 
 async def unblock_reporter_cmd(commandInfo: utility.commandInfo, user: discord.Member) -> None:
-    if isinstance(commandInfo.user, discord.Member) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
+    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         return await commandInfo.reply(
             embed=utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(

@@ -13,7 +13,7 @@ from localizer import tanjunLocalizer
 async def remove_blacklist_user(
     commandInfo: utility.commandInfo,
     user: discord.User,
-):
+) -> None:
     if not commandInfo.permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

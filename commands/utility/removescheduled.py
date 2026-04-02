@@ -10,7 +10,7 @@ from localizer import tanjunLocalizer
 
 
 class MessageSelectView(View):
-    def __init__(self, messages: list[tuple[Any, ...]], locale: str):
+    def __init__(self, messages: list[tuple[Any, ...]], locale: str) -> None:
         super().__init__(timeout=300)  # 5 minute timeout
         self.locale = locale
 
