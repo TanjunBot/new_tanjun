@@ -53,7 +53,9 @@ async def configure_trigger_messages(
     selected_channel = 0
 
     async def generate_embed():
+        nonlocal page, trigger_messages, channels, selected_channel
         if page < 0 or page >= len(trigger_messages):
+
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
