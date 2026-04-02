@@ -65,7 +65,7 @@ class TicTacToe:
         depth: int,
         board: list[list[str]],
         maximizing_player: bool,
-    ) -> None:
+    ):
         # Check terminal states first
         winner = self.check_winner(board)
         if winner:
@@ -115,7 +115,7 @@ class TicTacToe:
         interaction: discord.Interaction,
         initial: bool = False,
         timeout: bool = False,
-    ) -> None:
+    ):
         self.winner = self.check_winner()
         title = tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.title")
         description = tanjunLocalizer.localize(
@@ -166,7 +166,7 @@ class TicTacToe:
         disable_on_timeout: bool = True,
         message: discord.Message | None = None,
     ):
-        class TicTacToeView(discord.ui.View) -> None:
+        class TicTacToeView(discord.ui.View):
             def __init__(self, ticTacToe: TicTacToe) -> None:
                 super().__init__(timeout=timeout)
                 self.player1 = ticTacToe.player1
@@ -488,7 +488,7 @@ class TicTacToe:
                 await self.update_board(interaction)
 
             def check_winners(self):
-                if self.check_winner() -> None:
+                if self.check_winner():
                     self.game_over = True
                     self.winner = self.check_winner()
                     return True
@@ -505,7 +505,7 @@ async def tic_tac_toe(
     commandInfo: utility.commandInfo,
     player1: discord.Member,
     player2: discord.Member | None = None,
-) -> None:
+):
     if player2 is None:
         player2 = "tanjun"
 

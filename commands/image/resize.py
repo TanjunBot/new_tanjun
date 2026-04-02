@@ -9,7 +9,7 @@ from localizer import tanjunLocalizer
 
 
 async def resize(commandInfo: utility.commandInfo, image: discord.Attachment, width: int, height: int):
-    if isinstance(image, discord.Attachment) -> None:
+    if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.typenotsupported.title"),

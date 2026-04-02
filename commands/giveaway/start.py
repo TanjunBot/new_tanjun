@@ -714,7 +714,7 @@ class GiveawayBuilder(ui.View):
         commandInfo,
         title,
         target_channel,
-    ) -> None:
+    ):
         super().__init__(timeout=600)  # 10 minutes timeout
         self.commandInfo = commandInfo
         self.giveaway_data = {
@@ -1134,7 +1134,7 @@ class GiveawayBuilder(ui.View):
         await self.update_embed(interaction.response.edit_message)
 
     async def custom_name(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
+        if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
                 ephemeral=True,
@@ -1224,7 +1224,7 @@ class GiveawayBuilder(ui.View):
         await interaction.response.send_modal(modal)
 
     async def start_time(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
+        if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
                 ephemeral=True,
@@ -1257,7 +1257,7 @@ class GiveawayBuilder(ui.View):
         await interaction.response.send_modal(modal)
 
     async def day_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
+        if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
                 ephemeral=True,
@@ -1300,7 +1300,7 @@ class GiveawayBuilder(ui.View):
         )
 
     async def voice_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
+        if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
                 ephemeral=True,
@@ -1321,7 +1321,7 @@ class GiveawayBuilder(ui.View):
         await interaction.response.send_modal(modal)
 
     async def add_channel_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild) -> None:
+        if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
                 ephemeral=True,
@@ -1410,7 +1410,7 @@ async def start_giveaway(
     commandInfo,
     title,
     target_channel,
-) -> None:
+):
     if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
         await commandInfo.reply(
             tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.builder.no_permission"),

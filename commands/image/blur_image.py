@@ -14,7 +14,7 @@ async def blur_image(
     type: str = "gaussian",
     radius: int = 3,
 ):
-    if isinstance(image, discord.Attachment) -> None:
+    if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.blur.typenotsupported.title"),

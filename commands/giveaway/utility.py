@@ -522,7 +522,7 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:
 
 
 async def addMessageToGiveaway(message: discord.Message):
-    if await check_if_opted_out(message.author.id) -> None:
+    if await check_if_opted_out(message.author.id):
         return
 
     if message.author.bot:

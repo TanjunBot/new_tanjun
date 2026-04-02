@@ -16,7 +16,7 @@ async def add_custom_situation(
     frequency_penalty: float = 0,
     presence_penalty: float = 0,
 ):
-    if not utility.checkIfhasPlus(commandInfo.user) -> None:
+    if not utility.checkIfhasPlus(commandInfo.user):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.notplus.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.notplus.description"),

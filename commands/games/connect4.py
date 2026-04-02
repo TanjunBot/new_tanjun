@@ -15,7 +15,7 @@ class Connect4:
         locale: str = "en",
         rows: int = 6,
         columns: int = 7,
-    ) -> None:
+    ):
         self.player1 = player1
         self.player2 = player2
         if self.player2 is None:
@@ -102,7 +102,7 @@ class Connect4:
         depth: int,
         board: list[list[str]],
         maximizing_player: bool,
-    ) -> None:
+    ):
         # Check terminal states first
         winner = self.check_winner(board)
         if winner:
@@ -157,7 +157,7 @@ class Connect4:
         interaction: discord.Interaction,
         initial: bool = False,
         timeout: bool = False,
-    ) -> None:
+    ):
         self.winner = self.check_winner()
         title = tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.title")
         description = tanjunLocalizer.localize(
@@ -241,7 +241,7 @@ class Connect4:
         disable_on_timeout: bool = False,
         message: discord.Message | None = None,
     ):
-        class Connect4View(discord.ui.View) -> None:
+        class Connect4View(discord.ui.View):
             def __init__(self, connect4: Connect4) -> None:
                 super().__init__(timeout=timeout)
                 self.connect4 = connect4
@@ -351,7 +351,7 @@ async def connect4(
     player2: discord.Member | None = None,
     rows: int = 6,
     columns: int = 7,
-) -> None:
+):
     guild_id = commandInfo.guild.id if commandInfo.guild else 0
     if rows != 6 and columns != 7 and not checkIfhasPlus(guild_id):
         await commandInfo.reply(

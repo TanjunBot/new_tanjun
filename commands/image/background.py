@@ -10,7 +10,7 @@ from localizer import tanjunLocalizer
 
 
 async def background(commandInfo: utility.commandInfo, image: discord.Attachment):
-    if isinstance(image, discord.Attachment) -> None:
+    if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.typenotsupported.title"),

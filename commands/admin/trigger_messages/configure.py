@@ -14,7 +14,7 @@ from localizer import tanjunLocalizer
 
 async def configure_trigger_messages(
     commandInfo: utility.commandInfo,
-) -> None:
+):
     if (
         isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
@@ -53,7 +53,7 @@ async def configure_trigger_messages(
     selected_channel = 0
 
     async def generate_embed():
-        if page < 0 or page >= len(trigger_messages) -> None:
+        if page < 0 or page >= len(trigger_messages):
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,

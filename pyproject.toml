@@ -140,6 +140,7 @@ line-length = 127
 # TID = flake8-tidy-imports
 # N = pep8-naming
 # ANN = flake8-annotations (for type hint checking)
+[tool.ruff.lint]
 select = ["E", "W", "F", "I", "C901", "UP", "A", "B", "SIM", "TID", "N", "ANN"]
 
 # dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
