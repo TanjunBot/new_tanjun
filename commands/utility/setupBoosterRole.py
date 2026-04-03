@@ -21,7 +21,7 @@ async def setupBoosterRole(commandInfo: commandInfo, role: discord.Role) -> None
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and not commandInfo.user.guild_permissions.administrator:
+    if not getattr(commandInfo.user, "guild_permissions", None) or not commandInfo.user.guild_permissions.administrator:  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

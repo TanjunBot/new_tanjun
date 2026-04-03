@@ -22,7 +22,7 @@ from api import (
 from localizer import tanjunLocalizer
 from utility import get_level_for_xp  # , checkIfHasPro
 
-notifiedUsers = []
+notifiedUsers: list[int] = []
 
 
 async def addLevelXp(message: discord.Message) -> None:

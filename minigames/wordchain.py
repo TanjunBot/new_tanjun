@@ -46,7 +46,7 @@ async def wordchain(message: discord.Message) -> None:
         await message.delete()
         return
 
-    if await get_wordchain_last_user_id(message.channel.id) == message.author.id:
+    if str(await get_wordchain_last_user_id(message.channel.id)) == str(message.author.id):
         await message.delete()
         return
 

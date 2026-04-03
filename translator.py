@@ -26,7 +26,7 @@ class TanjunTranslator(app_commands.Translator):
         self,
         string: app_commands.locale_str,
         locale: discord.Locale,
-        context: app_commands.TranslationContext,
+        context: app_commands.TranslationContext[Any, Any], # type: ignore[type-arg]
     ) -> str | None:
         if str(locale.value) not in ["de", "de-DE", "en", "en-US", "en-GB"]:
             return None

@@ -182,7 +182,7 @@ class tanjunEmbed(discord.Embed):
             self.timestamp = timestamp
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> Self:
+    def from_dict(cls, data: "Mapping[str, Any]") -> "tanjunEmbed":
         self = cls.__new__(cls)
 
         self.title = None
@@ -276,11 +276,11 @@ class tanjunEmbed(discord.Embed):
         return self.to_dict() == other.to_dict()
 
     @property
-    def colour(self) -> discord.Colour | None:
+    def colour(self) -> discord.Colour | None:  # type: ignore[override]
         return getattr(self, "_colour", None)
 
     @colour.setter
-    def colour(self, value: int | discord.Colour | None) -> None:
+    def colour(self, value: int | discord.Colour | None) -> None:  # type: ignore[override]
         if value is None:
             self._colour = None
         elif isinstance(value, discord.Colour):
@@ -289,11 +289,11 @@ class tanjunEmbed(discord.Embed):
             self._colour = discord.Colour(value=value)
 
     @property
-    def color(self) -> discord.Colour | None:
+    def color(self) -> discord.Colour | None:  # type: ignore[override]
         return self.colour
 
     @color.setter
-    def color(self, value: int | discord.Colour | None) -> None:
+    def color(self, value: int | discord.Colour | None) -> None:  # type: ignore[override]
         self.colour = value
 
     @property
@@ -416,7 +416,7 @@ class tanjunEmbed(discord.Embed):
             raise IndexError("field index out of range")
         return self
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:  # type: ignore[override]
         result: dict[str, object] = {}
         for key in self.__slots__:
             if key.startswith("_") and hasattr(self, key):
@@ -826,7 +826,7 @@ def eval_(node: ast.AST, variables: VariablesType) -> float | int | complex:
             raise TypeError(f"'{func_id_str}' is not a callable function.")
         args = [eval_(arg, variables) for arg in node.args]
         try:
-            return func_to_call(*args)
+            return cast(float | int | complex, func_to_call(*args))
         except TypeError as e:
             raise TypeError(f"Error calling function '{getattr(func_to_call, '__name__', func_id_str)}': {e}")
     elif isinstance(node, ast.Name):
@@ -858,7 +858,7 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None
         print(f"Warning: Unknown XP scaling '{scaling}'. Using 'medium'.")
         result = LEVEL_SCALINGS["medium"](level)
 
-    if isinstance(result, complex):
+    if type(result) is complex:  # type: ignore[redundant-expr]
         print(f"Warning: Custom XP formula resulted in a complex number ({result}). Using real part or 0.")
         return math.floor(result.real) if result.real is not None else 0
     elif isinstance(result, (float, int)):
@@ -866,6 +866,7 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None
             print(f"Warning: XP calculation resulted in {result}. Returning 0.")
             return 0
         return math.floor(result)
+    return 0
 
 
 def get_level_for_xp(xp: int, scaling: str, custom_formula: str | None = None) -> int:
@@ -1057,11 +1058,11 @@ class MockInteraction:
 
     @property
     def guild(self) -> discord.Guild | None:
-        return self._mock_guild
+        return cast(discord.Guild | None, self._mock_guild)
 
     @property
     def channel(self) -> discord.abc.MessageableChannel | None:
-        return self._mock_channel
+        return cast(discord.abc.MessageableChannel | None, self._mock_channel)
 
     async def original_response(self) -> discord.Message:
         if hasattr(self.response, "message") and self.response.message:
@@ -1112,7 +1113,7 @@ class MockInteractionResponse:
 
         channel = self.interaction._mock_channel
         if channel and hasattr(self.interaction, "_state"):
-            self.message = discord.Message(state=self.interaction._state, channel=channel, data=message_data)
+            self.message = discord.Message(state=self.interaction._state, channel=cast(Any, channel), data=message_data) # type: ignore[arg-type]
         else:
             self.message = None
         self.interaction._response_issued = True
@@ -1154,7 +1155,7 @@ class MockWebhook:
             mock_channel = self._state.Client.get_channel(0)
 
         # Use type ignore since we're mocking discord.Message creation
-        return discord.Message(state=self._state, channel=mock_channel, data=message_data)
+        return discord.Message(state=self._state, channel=cast(Any, mock_channel), data=message_data) # type: ignore[arg-type]
 
     async def edit_message(self, message_id: int, **kwargs: Any) -> discord.Message:
         raise NotImplementedError
@@ -1174,10 +1175,10 @@ def create_mock_interaction(bot_instance: InteractionClient) -> MockInteraction:
         A MockInteraction instance
     """
     # Create mock guild and channel objects that match the protocol
-    mock_guild = type("MockGuild", (), {"id": 12345, "name": "Mock Guild"})() if bot_instance is not None else None
-    mock_channel = type("MockChannel", (), {"id": 67890})() if bot_instance is not None else None
+    mock_guild = type("MockGuild", (), {"id": 12345, "name": "Mock Guild"})()
+    mock_channel = type("MockChannel", (), {"id": 67890})()
 
-    if bot_instance is None or bot_instance.user is None:
+    if bot_instance.user is None:
         raise ValueError("Bot instance or bot user is not valid.")
 
     # Create a mock user that matches the protocol

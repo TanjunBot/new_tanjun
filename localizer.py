@@ -20,8 +20,8 @@ class Localizer:
         except FileNotFoundError:
             try:
                 with open("locales/en.json", encoding="utf-8") as file:
-                    data: object = json.load(file)
-                    return cast(list[dict[str, object]], data)
+                    fallback_data: object = json.load(file)
+                    return cast(list[dict[str, object]], fallback_data)
             except (FileNotFoundError, json.JSONDecodeError):
                 return []
         except json.JSONDecodeError:
@@ -31,7 +31,7 @@ class Localizer:
     def get_translation(self, translations: list[dict[str, object]], key: str) -> dict[str, object] | None:
         """Retrieve a nested translation using dot notation for nested keys."""
         translation: dict[str, object] | None = next(
-            (t for t in translations if isinstance(t, dict) and str(t.get("identifier", "")).lower() == key.lower()),
+            (t for t in translations if str(t.get("identifier", "")).lower() == key.lower()),
             None,
         )
 
