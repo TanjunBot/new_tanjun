@@ -76,7 +76,7 @@ class WarningView(View):
         await remove_warning(warning_id)
         self.warnings = [w for w in self.warnings if w[0] != warning_id]
 
-        if not self.warnings:
+        if len(self.warnings) == 0:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(self.commandInfo.locale), "commands.admin.viewwarns.noWarnings.title"),
                 description=tanjunLocalizer.localize(
@@ -134,7 +134,7 @@ def create_warnings_embed(
         expired = expires_at is not None and datetime.now() > expires_at
         expiration_str = (
             f"<t:{int(expires_at.timestamp())}:D>"
-            if expires_at
+            if expires_at is not None
             else tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.viewwarns.never",
@@ -149,7 +149,7 @@ def create_warnings_embed(
                 "commands.admin.viewwarns.warningDetails",
                 reason=(
                     reason
-                    if reason
+                    if reason is not None and len(reason.strip()) > 0
                     else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.noReason")
                 ),
                 date=f"<t:{int(created_at.timestamp())}:D>",
@@ -190,7 +190,7 @@ async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member
 
     warnings = await get_detailed_warnings(guild_id, user_id)
 
-    if not warnings:
+    if warnings is None or len(warnings) == 0:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.noWarnings.title"),
             description=tanjunLocalizer.localize(

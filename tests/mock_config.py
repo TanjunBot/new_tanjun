@@ -2,7 +2,8 @@ import sys
 from unittest.mock import MagicMock
 
 
-def patch_config_module():
+def patch_config_module() -> MagicMock:
+
     mock_config_module_instance = MagicMock()
 
     mock_config_module_instance.version = "1.0.5-test"

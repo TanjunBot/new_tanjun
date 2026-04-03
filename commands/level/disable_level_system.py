@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 
 from api import (
@@ -20,7 +21,7 @@ async def disable_level_system(commandInfo: commandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.disablelevelsystem.confirm"),
             style=discord.ButtonStyle.danger,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.value = True
             self.stop()
 
@@ -28,7 +29,7 @@ async def disable_level_system(commandInfo: commandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.disablelevelsystem.cancel"),
             style=discord.ButtonStyle.secondary,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.value = False
             self.stop()
 

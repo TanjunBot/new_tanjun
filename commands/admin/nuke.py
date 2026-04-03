@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from discord.ui import View
 
@@ -25,7 +26,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.confirm"),
             style=discord.ButtonStyle.danger,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.nuke.confirmationPrompt")
             )
@@ -36,7 +37,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.cancel"),
             style=discord.ButtonStyle.secondary,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.nuke.cancelledMessage")
             )

@@ -22,7 +22,7 @@ async def openTicket(interaction: discord.Interaction) -> None:
             label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.confirm"),
             custom_id=interaction.data["custom_id"] + ";optedOutConfirm",
         )
-        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await open_ticket_2(interaction)
             return
 
@@ -30,7 +30,7 @@ async def openTicket(interaction: discord.Interaction) -> None:
             label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.decline"),
             custom_id="optedOutDecline",
         )
-        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
                     interaction.locale,

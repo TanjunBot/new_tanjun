@@ -33,7 +33,8 @@ async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount
     if commandInfo.guild is None:
         raise ValueError("Guild is missing in commandInfo")
 
-    current_xp: int = int(await get_user_xp(str(commandInfo.guild.id), str(user.id)) or 0)
+    raw_xp = await get_user_xp(str(commandInfo.guild.id), str(user.id))
+    current_xp: int = int(raw_xp) if raw_xp is not None else 0
     new_xp = current_xp + amount
 
     scaling = await get_xp_scaling(str(commandInfo.guild.id))

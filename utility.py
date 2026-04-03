@@ -56,7 +56,7 @@ tenorCKey: str | None = "YOUR_TENOR_CLIENT_KEY"  # str
 
 
 class EmbedProxy:
-    def __init__(self, layer: dict[str, Any]):
+    def __init__(self, layer: dict[str, Any]) -> None:
         self.__dict__.update(layer)
 
     def __len__(self) -> int:
@@ -153,10 +153,10 @@ class tanjunEmbed(discord.Embed):
         *,
         colour: int | discord.Colour | None = 0xCB33F5,  # Hex color
         color: int | discord.Colour | None = 0xCB33F5,  # Hex color
-        title: Any | None = None,
+        title: object | None = None,
         type: LiteralType["rich", "image", "video", "gifv", "article", "link", "poll_result"] = "rich",
-        url: Any | None = None,
-        description: Any | None = None,
+        url: object | None = None,
+        description: object | None = None,
         timestamp: datetime.datetime | None = None,
     ) -> None:
         # Initialize attributes that might not be set by property setters immediately
@@ -312,7 +312,7 @@ class tanjunEmbed(discord.Embed):
     def footer(self) -> _EmbedFooterProxy:
         return EmbedProxy(getattr(self, "_footer", {}))
 
-    def set_footer(self, *, text: Any | None = None, icon_url: Any | None = None) -> Self:
+    def set_footer(self, *, text: object | None = None, icon_url: object | None = None) -> Self:
         self._footer = {}
         if text is not None:
             self._footer["text"] = str(text)
@@ -328,7 +328,7 @@ class tanjunEmbed(discord.Embed):
     def image(self) -> discord.embeds._EmbedMediaProxy:
         return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_image", {})))
 
-    def set_image(self, *, url: Any | None) -> Self:
+    def set_image(self, *, url: object | None) -> Self:
         if url is None:
             self._image = {}
         else:
@@ -339,7 +339,7 @@ class tanjunEmbed(discord.Embed):
     def thumbnail(self) -> discord.embeds._EmbedMediaProxy:
         return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_thumbnail", {})))
 
-    def set_thumbnail(self, *, url: Any | None) -> Self:
+    def set_thumbnail(self, *, url: object | None) -> Self:
         if url is None:
             self._thumbnail = {}
         else:
@@ -358,7 +358,7 @@ class tanjunEmbed(discord.Embed):
     def author(self) -> _EmbedAuthorProxy:
         return EmbedProxy(getattr(self, "_author", {}))
 
-    def set_author(self, *, name: Any, url: Any | None = None, icon_url: Any | None = None) -> Self:
+    def set_author(self, *, name: object, url: object | None = None, icon_url: object | None = None) -> Self:
         self._author = {"name": str(name)}
         if url is not None:
             self._author["url"] = str(url)
@@ -374,14 +374,14 @@ class tanjunEmbed(discord.Embed):
     def fields(self) -> list[_EmbedFieldProxy]:
         return [EmbedProxy(d) for d in getattr(self, "_fields", [])]
 
-    def add_field(self, *, name: Any, value: Any, inline: bool = True) -> Self:
+    def add_field(self, *, name: object, value: object, inline: bool = True) -> Self:
         field: dict[str, Any] = {"inline": inline, "name": str(name), "value": str(value)}
         if not hasattr(self, "_fields") or not isinstance(self._fields, list):
             self._fields = []
         self._fields.append(field)
         return self
 
-    def insert_field_at(self, index: int, *, name: Any, value: Any, inline: bool = True) -> Self:
+    def insert_field_at(self, index: int, *, name: object, value: object, inline: bool = True) -> Self:
         field: dict[str, Any] = {"inline": inline, "name": str(name), "value": str(value)}
         if not hasattr(self, "_fields") or not isinstance(self._fields, list):
             self._fields = []
@@ -417,7 +417,7 @@ class tanjunEmbed(discord.Embed):
             raise IndexError("field index out of range")
         return self
 
-    def to_dict(self) -> dict[str, object]:
+    def to_dict(self) -> dict[str, Any]:
         result: dict[str, object] = {}
         for key in self.__slots__:
             if key.startswith("_") and hasattr(self, key):
@@ -487,7 +487,7 @@ class NumericStringParser:
         self.exprStack: list[str | float] = []
         self.push_first_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(str(pr[0]))
         self.push_uminus_sign_action: Callable[[ParseResults], None] = (
-            lambda pr: self.exprStack.append("unary -") if pr and pr[0] == "-" else None
+            lambda pr: self.exprStack.append("unary -") if pr and len(pr) > 0 and pr[0] == "-" else None
         )
         self.push_operator_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(str(pr[0]))
         self.push_function_call_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(str(pr[0]))
@@ -584,7 +584,7 @@ class NumericStringParser:
                 if not s:
                     raise ValueError(f"Stack empty for argument to function {op}.")
                 arg = self.evaluateStack(s)
-                return func(arg)
+                return float(func(arg))
         elif isinstance(op, (int, float)):
             return op
         elif isinstance(op, str):

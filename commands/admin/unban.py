@@ -55,7 +55,7 @@ async def unban(commandInfo: utility.commandInfo, username: str, reason: str | N
                 user=user_to_unban.user.name,
                 reason=(
                     reason
-                    if reason
+                    if reason is not None and len(reason.strip()) > 0
                     else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.noReasonProvided")
                 ),
             ),

@@ -1,3 +1,4 @@
+from typing import Any
 import io
 import random
 
@@ -236,7 +237,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own") -> Non
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
-        async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.notYourGame"),
@@ -250,7 +251,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own") -> Non
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.buttons.giveUp"),
             style=discord.ButtonStyle.red,
         )
-        async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.notYourGame"),

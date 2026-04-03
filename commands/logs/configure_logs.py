@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 
 import utility
@@ -102,13 +103,13 @@ async def configure_logs(commandInfo: utility.commandInfo) -> None:
             custom_id="activate",
             disabled=log_enabled[selectedIndex + 1] == 1 if log_enabled else False,
         )
-        async def activate(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def activate(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await self.enable_disable_by_id(self.selectedIndex, True)
             log_enabled[self.selectedIndex + 1] = 1
             await self.regenerate_embed(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.selectedIndex -= 1
             if self.selectedIndex < 0:
                 self.selectedIndex = len(LOG_OPTIONS) - 1
@@ -117,7 +118,7 @@ async def configure_logs(commandInfo: utility.commandInfo) -> None:
             await self.regenerate_embed(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.selectedIndex += 1
             if self.selectedIndex >= len(LOG_OPTIONS):
                 self.selectedIndex = 0
@@ -134,7 +135,7 @@ async def configure_logs(commandInfo: utility.commandInfo) -> None:
             custom_id="deactivate",
             disabled=log_enabled[selectedIndex + 1] == 0 if log_enabled else False,
         )
-        async def deactivate(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def deactivate(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await self.enable_disable_by_id(self.selectedIndex, False)
             log_enabled[self.selectedIndex + 1] = 0
             await self.regenerate_embed(interaction)

@@ -1,3 +1,4 @@
+from typing import Any
 import difflib
 import random
 
@@ -153,7 +154,7 @@ async def flag_quiz(commandInfo: utility.commandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.flagquiz.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
-        async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.flagquiz.notYourGame"),
@@ -167,7 +168,7 @@ async def flag_quiz(commandInfo: utility.commandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.flagquiz.buttons.hint"),
             style=discord.ButtonStyle.blurple,
         )
-        async def hint_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def hint_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -189,7 +190,7 @@ async def flag_quiz(commandInfo: utility.commandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.flagquiz.buttons.giveUp"),
             style=discord.ButtonStyle.red,
         )
-        async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(

@@ -21,7 +21,8 @@ async def unblock_reporter_cmd(commandInfo: utility.commandInfo, user: discord.M
         )
 
     assert commandInfo.guild is not None
-    if not await check_if_reporter_is_blocked(commandInfo.guild.id, user.id):
+    blocked_status = await check_if_reporter_is_blocked(commandInfo.guild.id, user.id)
+    if blocked_status is None or len(blocked_status) == 0:
         return await commandInfo.reply(
             embed=utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(

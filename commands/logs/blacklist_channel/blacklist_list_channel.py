@@ -42,19 +42,19 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo) -> None:
             self.selectedIndex = 0
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
-        async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             channel_id = self.channels[self.selectedIndex][0]
             await remove_log_blacklist_channel_api(self.guild.id, channel_id)
             self.channels = tuple(x for x in self.channels if x[0] != channel_id)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.selectedIndex = (self.selectedIndex - 1) % len(self.channels)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.selectedIndex = (self.selectedIndex + 1) % len(self.channels)
             await self.update_view(interaction)
 

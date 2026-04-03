@@ -41,11 +41,11 @@ async def create_emoji(
             image_data = await resp.read()
 
         assert commandInfo.guild is not None
-        emoji = await commandInfo.guild.create_custom_emoji(name=name, image=image_data, roles=roles or [])
+        emoji = await commandInfo.guild.create_custom_emoji(name=name, image=image_data, roles=roles if roles is not None else [])
 
         roles_mention = (
             ", ".join([role.mention for role in roles])
-            if roles
+            if roles is not None and len(roles) > 0
             else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createEmoji.allRoles")
         )
 

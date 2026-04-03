@@ -150,7 +150,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
             self.current_page = current_page
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -167,7 +167,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
             await interaction.response.edit_message(view=self, embed=pages[self.current_page])
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -184,7 +184,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
             await interaction.response.edit_message(view=self, embed=pages[self.current_page])
 
         @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
-        async def search(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def search(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(

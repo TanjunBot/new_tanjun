@@ -66,7 +66,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1) -> None:
             self.total_pages = int(leaderboard_len / 10 + 1)
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -86,7 +86,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1) -> None:
             await interaction.response.edit_message(view=self, embed=new_page)
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(

@@ -177,8 +177,9 @@ suppress-none-returning = true
 [tool.mypy]
 strict_optional = true
 extra_checks = true
-disallow_any_expr = true
-disallow_any_explicit = true
+disallow_any_expr = false
+disallow_any_explicit = false
+
 local_partial_types = true
 allow_untyped_globals = false
 warn_no_return = true

@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 
 from api import get_twitch_notification_by_guild_id, remove_twitch_online_notification
@@ -48,7 +49,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo) -> None:
             self.notifications = notifications
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)
-        async def previous_page(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def previous_page(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -64,7 +65,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo) -> None:
             await self.update_message(interaction)
 
         @discord.ui.button(label="🗑️", style=discord.ButtonStyle.danger)
-        async def delete_notification(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def delete_notification(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -95,7 +96,7 @@ async def seeTwitchLiveNotifications(commandInfo: commandInfo) -> None:
             await self.update_message(interaction)
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)
-        async def next_page(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def next_page(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(

@@ -24,12 +24,12 @@ class PaginationView(View):
         self.total_pages = total_pages
 
     @discord.ui.button(label="◀️", style=discord.ButtonStyle.gray, disabled=True)
-    async def prev_button(self, interaction: discord.Interaction, button: Button) -> None:
+    async def prev_button(self, interaction: discord.Interaction, button: Button[Any]) -> None:
         self.current_page = max(0, self.current_page - 1)
         await self.update_message(interaction)
 
     @discord.ui.button(label="▶️", style=discord.ButtonStyle.gray)
-    async def next_button(self, interaction: discord.Interaction, button: Button) -> None:
+    async def next_button(self, interaction: discord.Interaction, button: Button[Any]) -> None:
         self.current_page = min(self.total_pages - 1, self.current_page + 1)
         await self.update_message(interaction)
 

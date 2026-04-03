@@ -1,3 +1,4 @@
+from typing import Any
 import random
 
 import discord
@@ -78,7 +79,7 @@ async def reroll_giveaway(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.reroll_giveaway.rerollOneWinner"),
             style=discord.ButtonStyle.primary,
         )
-        async def reroll_one(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def reroll_one(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             await perform_reroll(self.commandInfo, self.giveawayId, 1)
             self.stop()
@@ -87,7 +88,7 @@ async def reroll_giveaway(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.reroll_giveaway.rerollAllWinners"),
             style=discord.ButtonStyle.primary,
         )
-        async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             giveaway = await get_giveaway(self.giveawayId)
             await perform_reroll(self.commandInfo, self.giveawayId, giveaway[4])

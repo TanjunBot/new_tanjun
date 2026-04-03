@@ -358,7 +358,7 @@ async def show_level_roles_command(commandInfo: commandInfo) -> None:
             ),
             style=discord.ButtonStyle.red,
         )
-        async def confirm(self, interaction: discord.Interaction, button: Button) -> None:
+        async def confirm(self, interaction: discord.Interaction, button: Button[Any]) -> None:
             assert interaction.guild is not None
             for role_data in self.selected_roles:
                 level, role_id = role_data.split("|")
@@ -380,7 +380,7 @@ async def show_level_roles_command(commandInfo: commandInfo) -> None:
             ),
             style=discord.ButtonStyle.gray,
         )
-        async def cancel(self, interaction: discord.Interaction, button: Button) -> None:
+        async def cancel(self, interaction: discord.Interaction, button: Button[Any]) -> None:
             await interaction.response.edit_message(
                 content=tanjunLocalizer.localize(
                     self.commandInfo.locale,

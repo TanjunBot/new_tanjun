@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from akinator_python import Akinator
 
@@ -54,7 +55,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str | None = None) -
             custom_id="akinator_yes",
             emoji="✅",
         )
-        async def akinator_yes(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def akinator_yes(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             await update_embed(interaction, "y")
 
@@ -64,7 +65,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str | None = None) -
             custom_id="akinator_no",
             emoji="❌",
         )
-        async def akinator_no(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def akinator_no(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -80,7 +81,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str | None = None) -
             custom_id="akinator_idk",
             emoji="❔",
         )
-        async def akinator_idk(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def akinator_idk(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -96,7 +97,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str | None = None) -
             custom_id="akinator_probably",
             emoji="🤔",
         )
-        async def akinator_probably(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def akinator_probably(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -112,7 +113,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str | None = None) -
             custom_id="akinator_probably_not",
             emoji="🤨",
         )
-        async def akinator_probably_not(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def akinator_probably_not(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(
@@ -128,7 +129,7 @@ async def akinator(commandInfo: utility.commandInfo, theme: str | None = None) -
             custom_id="akinator_back",
             emoji="🔙",
         )
-        async def akinator_back(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def akinator_back(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             if interaction.user.id != commandInfo.user.id:
                 await interaction.followup.send(

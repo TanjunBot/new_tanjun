@@ -42,19 +42,19 @@ async def blacklist_list_user(commandInfo: utility.commandInfo) -> None:
             self.selectedIndex = 0
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
-        async def remove_user(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def remove_user(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             user_id = self.users[self.selectedIndex][0]
             await remove_log_blacklist_user_api(self.guild.id, user_id)
             self.users = tuple(x for x in self.users if x[0] != user_id)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.selectedIndex = (self.selectedIndex - 1) % len(self.users)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.selectedIndex = (self.selectedIndex + 1) % len(self.users)
             await self.update_view(interaction)
 

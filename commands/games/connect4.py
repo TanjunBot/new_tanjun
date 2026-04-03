@@ -1,3 +1,4 @@
+from typing import Any
 import random
 
 import discord
@@ -260,7 +261,7 @@ class Connect4:
                 disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def move_left(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+            async def move_left(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
                 await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
                     self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
@@ -290,7 +291,7 @@ class Connect4:
                 disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def drop(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+            async def drop(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
                 await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
                     self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
@@ -317,7 +318,7 @@ class Connect4:
                 disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def move_right(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+            async def move_right(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
                 await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
                     self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id

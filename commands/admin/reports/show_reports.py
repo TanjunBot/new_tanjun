@@ -70,7 +70,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
         async def previous(
             self,
             interaction: discord.Interaction,
-            button: discord.ui.Button,
+            button: discord.ui.Button[Any],
         ) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
@@ -95,7 +95,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
         async def remove(
             self,
             interaction: discord.Interaction,
-            button: discord.ui.Button,
+            button: discord.ui.Button[Any],
         ) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(
@@ -140,7 +140,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
             async def block(
                 self,
                 interaction: discord.Interaction,
-                button: discord.ui.Button,
+                button: discord.ui.Button[Any],
             ) -> None:
                 if interaction.user.id != commandInfo.user.id:
                     await interaction.response.send_message(
@@ -167,7 +167,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
             async def unblock(
                 self,
                 interaction: discord.Interaction,
-                button: discord.ui.Button,
+                button: discord.ui.Button[Any],
             ) -> None:
                 if interaction.user.id != commandInfo.user.id:
                     await interaction.response.send_message(
@@ -191,7 +191,7 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
         async def next(
             self,
             interaction: discord.Interaction,
-            button: discord.ui.Button,
+            button: discord.ui.Button[Any],
         ) -> None:
             if interaction.user.id != commandInfo.user.id:
                 await interaction.response.send_message(

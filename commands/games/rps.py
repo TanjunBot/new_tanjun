@@ -1,3 +1,4 @@
+from typing import Any
 import random
 
 import discord
@@ -72,7 +73,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member) -> None:
             self.is_player1 = is_player1
 
         @discord.ui.button(label=rockLocale, style=discord.ButtonStyle.primary, custom_id="rock")
-        async def rock(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def rock(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
@@ -110,7 +111,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member) -> None:
                 await check_winner(interaction)
 
         @discord.ui.button(label=paperLocale, style=discord.ButtonStyle.primary, custom_id="paper")
-        async def paper(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def paper(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
@@ -152,7 +153,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member) -> None:
             style=discord.ButtonStyle.primary,
             custom_id="scissors",
         )
-        async def scissors(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def scissors(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 

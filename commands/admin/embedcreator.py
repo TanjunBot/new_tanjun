@@ -33,7 +33,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setDescription"),
             style=discord.ButtonStyle.primary,
         )
-        async def set_description(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def set_description(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.send_message(
                 content=tanjunLocalizer.localize(
                     self.commandInfo.locale,
@@ -71,7 +71,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.addField"),
             style=discord.ButtonStyle.primary,
         )
-        async def add_field(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def add_field(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if self.field_count >= self.max_fields:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.embed.maxFieldsReached"),
@@ -84,35 +84,35 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setFooter"),
             style=discord.ButtonStyle.primary,
         )
-        async def set_footer(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def set_footer(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.send_modal(FooterModal(self))
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setColor"),
             style=discord.ButtonStyle.primary,
         )
-        async def set_color(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def set_color(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.send_modal(ColorModal(self))
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setImage"),
             style=discord.ButtonStyle.secondary,
         )
-        async def set_image(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def set_image(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.send_modal(ImageModal(self))
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setThumbnail"),
             style=discord.ButtonStyle.secondary,
         )
-        async def set_thumbnail(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def set_thumbnail(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.send_modal(ThumbnailModal(self))
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.editField"),
             style=discord.ButtonStyle.secondary,
         )
-        async def edit_field(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def edit_field(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if self.field_count == 0:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.embed.noFieldsToEdit"),
@@ -125,7 +125,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.removeField"),
             style=discord.ButtonStyle.danger,
         )
-        async def remove_field(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def remove_field(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if self.field_count == 0:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.embed.noFieldsToRemove"),
@@ -138,7 +138,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.preview"),
             style=discord.ButtonStyle.secondary,
         )
-        async def preview(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def preview(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if self.preview_message:
                 await self.preview_message.delete()
             
@@ -153,7 +153,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.send"),
             style=discord.ButtonStyle.green,
         )
-        async def send(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        async def send(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await self.target_channel.send(embed=self.embed)
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
@@ -379,7 +379,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
                 )
             )
             self.view = view
-            self.field_index = Select(
+            self.field_index = Select[Any](
                 placeholder=tanjunLocalizer.localize(
                     view.commandInfo.locale,
                     "commands.admin.embed.modals.editFieldModal.selectField",
@@ -450,7 +450,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
                 )
             )
             self.view = view
-            self.field_index = Select(
+            self.field_index = Select[Any](
                 placeholder=tanjunLocalizer.localize(
                     view.commandInfo.locale,
                     "commands.admin.embed.modals.removeFieldModal.selectField",
