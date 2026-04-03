@@ -1113,7 +1113,7 @@ class MockInteractionResponse:
 
         channel = self.interaction._mock_channel
         if channel and hasattr(self.interaction, "_state"):
-            self.message = discord.Message(state=self.interaction._state, channel=cast(Any, channel), data=message_data) # type: ignore[arg-type]
+            self.message = discord.Message(state=self.interaction._state, channel=cast(Any, channel), data=message_data)  # type: ignore[arg-type]
         else:
             self.message = None
         self.interaction._response_issued = True
@@ -1155,7 +1155,7 @@ class MockWebhook:
             mock_channel = self._state.Client.get_channel(0)
 
         # Use type ignore since we're mocking discord.Message creation
-        return discord.Message(state=self._state, channel=cast(Any, mock_channel), data=message_data) # type: ignore[arg-type]
+        return discord.Message(state=self._state, channel=cast(Any, mock_channel), data=message_data)  # type: ignore[arg-type]
 
     async def edit_message(self, message_id: int, **kwargs: Any) -> discord.Message:
         raise NotImplementedError

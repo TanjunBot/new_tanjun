@@ -63,7 +63,7 @@ async def schedule_message(
         if (
             commandInfo.guild is not None
             and repeat
-            and isinstance(commandInfo.user, discord.Member) # type: ignore[redundant-expr]
+            and isinstance(commandInfo.user, discord.Member)  # type: ignore[redundant-expr]
             and isinstance(commandInfo.channel, discord.abc.GuildChannel)
             and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
         ):
@@ -140,7 +140,7 @@ async def schedule_message(
     if (
         channel
         and commandInfo.guild is not None
-        and isinstance(commandInfo.user, discord.Member) # type: ignore[redundant-expr]
+        and isinstance(commandInfo.user, discord.Member)  # type: ignore[redundant-expr]
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
     ):
