@@ -141,7 +141,7 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
         async def preview(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if self.preview_message:
                 await self.preview_message.delete()
-            
+
             channel = cast(discord.abc.Messageable, interaction.channel)
             self.preview_message = await channel.send(embed=self.embed)
             await interaction.response.send_message(
@@ -469,7 +469,9 @@ async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextCh
             )
 
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

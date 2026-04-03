@@ -25,7 +25,9 @@ async def addDynamicslowmode(
     resetafter: int = 60,
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -85,7 +87,9 @@ async def addDynamicslowmode(
 
 async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -131,7 +135,9 @@ async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: disco
 
 async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

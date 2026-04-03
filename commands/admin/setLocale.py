@@ -5,7 +5,11 @@ from localizer import tanjunLocalizer
 
 
 async def set_locale(commandInfo: utility.commandInfo, locale: str) -> None:
-    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.setLocale.missingPermission.title"),
             description=tanjunLocalizer.localize(

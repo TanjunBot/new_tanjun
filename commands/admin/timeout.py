@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-
 import discord
 
 import utility
@@ -14,7 +13,9 @@ async def timeout(
     reason: str | None = None,
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.missingPermission.title"),

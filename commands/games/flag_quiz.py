@@ -1,6 +1,6 @@
-from typing import Any
 import difflib
 import random
+from typing import Any
 
 import discord
 

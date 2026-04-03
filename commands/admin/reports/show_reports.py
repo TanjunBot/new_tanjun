@@ -14,7 +14,11 @@ from localizer import tanjunLocalizer
 
 
 async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | None = None) -> None:
-    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 str(commandInfo.locale),
@@ -237,7 +241,9 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
                     acceptedAt=acceptedAt,
                 )
             else:
-                description += "\n" + tanjunLocalizer.localize(locale, "commands.admin.reports.show_reports.report.not_accepted")
+                description += "\n" + tanjunLocalizer.localize(
+                    locale, "commands.admin.reports.show_reports.report.not_accepted"
+                )
 
             if resolved:
                 description += "\n" + tanjunLocalizer.localize(
@@ -246,7 +252,9 @@ async def show_reports(commandInfo: utility.commandInfo, user: discord.Member | 
                     resolvedAt=resolvedAt,
                 )
             else:
-                description += "\n" + tanjunLocalizer.localize(locale, "commands.admin.reports.show_reports.report.not_resolved")
+                description += "\n" + tanjunLocalizer.localize(
+                    locale, "commands.admin.reports.show_reports.report.not_resolved"
+                )
 
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(

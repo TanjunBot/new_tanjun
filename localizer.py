@@ -1,6 +1,6 @@
 import json
 from string import Template
-from typing import Any, cast, List, Dict, Optional, Union
+from typing import Any, cast
 
 from utility import missingLocalization
 
@@ -9,28 +9,28 @@ reported_locales: list[str] = []
 
 class Localizer:
     def __init__(self) -> None:
-        self.translations: Dict[str, List[Dict[str, object]]] = {}
+        self.translations: dict[str, list[dict[str, object]]] = {}
 
-    def load_translations(self, locale: str) -> List[Dict[str, object]]:
+    def load_translations(self, locale: str) -> list[dict[str, object]]:
         """Load the translations from a JSON file based on the specified locale."""
         try:
             with open(f"locales/{locale}.json", encoding="utf-8") as file:
                 data: object = json.load(file)
-                return cast(List[Dict[str, object]], data)
+                return cast(list[dict[str, object]], data)
         except FileNotFoundError:
             try:
                 with open("locales/en.json", encoding="utf-8") as file:
                     data: object = json.load(file)
-                    return cast(List[Dict[str, object]], data)
+                    return cast(list[dict[str, object]], data)
             except (FileNotFoundError, json.JSONDecodeError):
                 return []
         except json.JSONDecodeError:
             print(f"Error decoding JSON from the translation file for locale '{locale}'.")
             return []
 
-    def get_translation(self, translations: List[Dict[str, object]], key: str) -> Optional[Dict[str, object]]:
+    def get_translation(self, translations: list[dict[str, object]], key: str) -> dict[str, object] | None:
         """Retrieve a nested translation using dot notation for nested keys."""
-        translation: Optional[Dict[str, object]] = next(
+        translation: dict[str, object] | None = next(
             (t for t in translations if isinstance(t, dict) and str(t.get("identifier", "")).lower() == key.lower()),
             None,
         )
@@ -42,8 +42,8 @@ class Localizer:
         locale_str: str = str(locale)
         if locale_str in ["en", "en-US", "en-GB"]:
             locale_str = "en"
-        translations: List[Dict[str, object]] = self.load_translations(locale_str)
-        translation: Optional[Dict[str, object]] = self.get_translation(translations, key)
+        translations: list[dict[str, object]] = self.load_translations(locale_str)
+        translation: dict[str, object] | None = self.get_translation(translations, key)
         if translation is None:
             print(f"No translation found for key '{key}'.")
             if locale_str not in reported_locales:

@@ -1,6 +1,6 @@
-from typing import Any
 import io
 import random
+from typing import Any
 
 import discord
 from PIL import Image, ImageDraw, ImageFont

@@ -69,6 +69,7 @@ class MessageTrackingCommands(discord.app_commands.Group):
     async def messagetrackingoptout(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=True)
         from typing import cast
+
         commandInfo = utility.commandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
@@ -90,6 +91,7 @@ class MessageTrackingCommands(discord.app_commands.Group):
     async def messagetrackingoptin(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=True)
         from typing import cast
+
         commandInfo = utility.commandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
@@ -803,6 +805,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
     async def removescheduled(self, interaction: discord.Interaction, messageid: int) -> None:
         await interaction.response.defer()
         from typing import cast
+
         commandInfo = utility.commandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
@@ -829,6 +832,7 @@ class utilityCog(commands.Cog):
     async def help_slash(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=True)
         from typing import cast
+
         commandInfo = utility.commandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),

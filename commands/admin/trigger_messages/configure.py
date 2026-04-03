@@ -16,7 +16,9 @@ async def configure_trigger_messages(
     commandInfo: utility.commandInfo,
 ):
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -55,7 +57,6 @@ async def configure_trigger_messages(
     async def generate_embed():
         nonlocal page, trigger_messages, channels, selected_channel
         if page < 0 or page >= len(trigger_messages):
-
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,

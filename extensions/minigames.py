@@ -1,7 +1,8 @@
+from typing import cast
+
 import discord
 from discord import app_commands
 from discord.ext import commands
-from typing import cast, Any
 
 import utility
 from commands.minigames.counting.removecountingchannel import (
@@ -101,7 +102,10 @@ class CountingCommands(discord.app_commands.Group):
         progress=app_commands.locale_str("minigames_setcprogress_params_progress_description"),
     )
     async def setcountingprogress(
-        self, interaction: discord.Interaction, channel: discord.TextChannel = None, progress: app_commands.Range[int, 1, 100000] = 0
+        self,
+        interaction: discord.Interaction,
+        channel: discord.TextChannel = None,
+        progress: app_commands.Range[int, 1, 100000] = 0,
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
@@ -156,7 +160,9 @@ class CountingChallengeCommands(discord.app_commands.Group):
     @app_commands.describe(
         channel=app_commands.locale_str("minigames_rcchallengech_params_channel_description"),
     )
-    async def removecountingchallengechannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
+    async def removecountingchallengechannel(
+        self, interaction: discord.Interaction, channel: discord.TextChannel = None
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -184,7 +190,10 @@ class CountingChallengeCommands(discord.app_commands.Group):
         progress=app_commands.locale_str("minigames_setcchallengep_params_progress_description"),
     )
     async def setcountingchallengeprogress(
-        self, interaction: discord.Interaction, channel: discord.TextChannel = None, progress: app_commands.Range[int, 1, 100000] = 0
+        self,
+        interaction: discord.Interaction,
+        channel: discord.TextChannel = None,
+        progress: app_commands.Range[int, 1, 100000] = 0,
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
@@ -267,7 +276,10 @@ class CountingModesCommands(discord.app_commands.Group):
         progress=app_commands.locale_str("minigames_setcmodesprogress_params_progress_description"),
     )
     async def setcountingmodesprogress(
-        self, interaction: discord.Interaction, channel: discord.TextChannel = None, progress: app_commands.Range[int, 1, 100000] = 0
+        self,
+        interaction: discord.Interaction,
+        channel: discord.TextChannel = None,
+        progress: app_commands.Range[int, 1, 100000] = 0,
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(

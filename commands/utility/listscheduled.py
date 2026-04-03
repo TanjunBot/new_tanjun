@@ -22,7 +22,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
             self.locale = locale
 
             prev_button: Button[Any] = Button(emoji="⬅️", style=discord.ButtonStyle.gray, disabled=page == 0)
-            setattr(prev_button, "callback", self.previous_page)
+            prev_button.callback = self.previous_page
             self.add_item(prev_button)
 
             # Page counter button (disabled, just for display)
@@ -44,7 +44,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
                 style=discord.ButtonStyle.gray,
                 disabled=page == self.max_pages,
             )
-            setattr(next_button, "callback", self.next_page)
+            next_button.callback = self.next_page
             self.add_item(next_button)
 
         def truncate_content(self, content: str) -> str:

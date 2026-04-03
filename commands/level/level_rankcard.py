@@ -279,7 +279,7 @@ def process_image(
     img_byte_arr = io.BytesIO()
     # Explicitly calculate duration
     duration = int(background_frames[0].info.get("duration", 100))
-    
+
     result_frames[0].save(
         img_byte_arr,
         format="GIF",
@@ -323,6 +323,6 @@ async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], com
     )
 
     if not isinstance(img_byte_arr, io.BytesIO):
-         raise TypeError("Expected io.BytesIO from process_image")
+        raise TypeError("Expected io.BytesIO from process_image")
 
     return img_byte_arr

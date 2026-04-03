@@ -71,7 +71,9 @@ async def sendLogEmbeds(bot: commands.Bot) -> None:
             if destination is None:
                 continue
             destinationChannel = bot.get_channel(int(destination))
-            if not isinstance(destinationChannel, (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread)):
+            if not isinstance(
+                destinationChannel, (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread)
+            ):
                 continue
             for i in range(0, len(ems), 10):
                 chunk = ems[i : i + 10]

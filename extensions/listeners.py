@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-from typing import Any, cast
 
 from api import remove_scheduled_message, update_scheduled_message_content
 from commands.admin.joinToCreate.joinToCreateListener import memberJoin, memberLeave

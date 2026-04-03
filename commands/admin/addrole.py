@@ -11,7 +11,11 @@ async def addrole(
     user: discord.Member | None = None,
     role: discord.Role | None = None,
 ) -> None:
-    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.missingPermission.title"),
             description=tanjunLocalizer.localize(
@@ -145,16 +149,12 @@ async def addrole(
             if data and data.get("component_type") == 6:  # RoleSelect
                 assert interaction.guild is not None
                 values = data.get("values", [])
-                self.selected_roles = [
-                    r for r in [interaction.guild.get_role(int(rid)) for rid in values] if r is not None
-                ]
+                self.selected_roles = [r for r in [interaction.guild.get_role(int(rid)) for rid in values] if r is not None]
                 await interaction.response.defer()
             elif data and data.get("component_type") == 5:  # UserSelect
                 assert interaction.guild is not None
                 values = data.get("values", [])
-                self.selected_users = [
-                    await interaction.guild.fetch_member(int(uid)) for uid in values
-                ]
+                self.selected_users = [await interaction.guild.fetch_member(int(uid)) for uid in values]
                 await interaction.response.defer()
             return True
 

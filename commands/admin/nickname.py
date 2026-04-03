@@ -6,7 +6,9 @@ from localizer import tanjunLocalizer
 
 async def change_nickname(commandInfo: utility.commandInfo, member: discord.Member, nickname: str | None = None) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_nicknames
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_nicknames
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nickname.missingPermission.title"),

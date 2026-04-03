@@ -1,7 +1,8 @@
+from typing import cast
+
 import discord
 from discord import app_commands
 from discord.ext import commands
-from typing import cast, Any
 
 import utility
 from commands.math.calc import calc as calcCommand
@@ -165,7 +166,9 @@ class mathCommands(discord.app_commands.Group):
         max=app_commands.locale_str("math_randomnumber_params_max_description"),
         amount=app_commands.locale_str("math_randomnumber_params_amount_description"),
     )
-    async def random_number(self, interaction: discord.Interaction, min: int, max: int, amount: app_commands.Range[int, 1, 10] = 1) -> None:
+    async def random_number(
+        self, interaction: discord.Interaction, min: int, max: int, amount: app_commands.Range[int, 1, 10] = 1
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -190,7 +193,9 @@ class mathCommands(discord.app_commands.Group):
         xmin=app_commands.locale_str("math_plotfunction_params_xmin_description"),
         xmax=app_commands.locale_str("math_plotfunction_params_xmax_description"),
     )
-    async def plot_function(self, interaction: discord.Interaction, func: str, xmin: float | None = None, xmax: float | None = None) -> None:
+    async def plot_function(
+        self, interaction: discord.Interaction, func: str, xmin: float | None = None, xmax: float | None = None
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,

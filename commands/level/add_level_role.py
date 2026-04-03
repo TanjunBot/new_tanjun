@@ -1,5 +1,6 @@
+from typing import cast
+
 import discord
-from typing import Any, cast
 
 from api import add_level_role, get_level_roles
 from localizer import tanjunLocalizer
@@ -7,7 +8,11 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def add_level_role_command(commandInfo: commandInfo, role: discord.Role, level: int) -> None:
-    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 str(commandInfo.locale),

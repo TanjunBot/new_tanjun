@@ -70,8 +70,14 @@ class BlacklistCommands(discord.app_commands.Group):
         channel=app_commands.locale_str("level_blacklist_addc_params_channel_description"),
         reason=app_commands.locale_str("level_blacklist_addc_params_reason_description"),
     )
-    async def add_channel(self, interaction: discord.Interaction, channel: discord.TextChannel, reason: app_commands.Range[str, 1, 100] | None = None) -> None:
+    async def add_channel(
+        self,
+        interaction: discord.Interaction,
+        channel: discord.TextChannel,
+        reason: app_commands.Range[str, 1, 100] | None = None,
+    ) -> None:
         from typing import cast
+
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -116,7 +122,9 @@ class BlacklistCommands(discord.app_commands.Group):
         role=app_commands.locale_str("level_blacklist_addr_params_role_description"),
         reason=app_commands.locale_str("level_blacklist_addr_params_reason_description"),
     )
-    async def add_role(self, interaction: discord.Interaction, role: discord.Role, reason: app_commands.Range[str, 1, 100] | None = None) -> None:
+    async def add_role(
+        self, interaction: discord.Interaction, role: discord.Role, reason: app_commands.Range[str, 1, 100] | None = None
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -161,7 +169,9 @@ class BlacklistCommands(discord.app_commands.Group):
         user=app_commands.locale_str("level_blacklist_addu_params_user_description"),
         reason=app_commands.locale_str("level_blacklist_addu_params_reason_description"),
     )
-    async def add_user(self, interaction: discord.Interaction, user: discord.Member, reason: app_commands.Range[str, 1, 100] | None = None) -> None:
+    async def add_user(
+        self, interaction: discord.Interaction, user: discord.Member, reason: app_commands.Range[str, 1, 100] | None = None
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -228,7 +238,9 @@ class LevelBoostCommands(discord.app_commands.Group):
         boost=app_commands.locale_str("level_boosts_addrole_params_boost_description"),
         additive=app_commands.locale_str("level_boosts_addrole_params_additive_description"),
     )
-    async def add_role_boost(self, interaction: discord.Interaction, role: discord.Role, boost: app_commands.Range[float, 0.1, 10.0], additive: bool) -> None:
+    async def add_role_boost(
+        self, interaction: discord.Interaction, role: discord.Role, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -253,7 +265,11 @@ class LevelBoostCommands(discord.app_commands.Group):
         additive=app_commands.locale_str("level_boosts_addchannel_params_additive_description"),
     )
     async def add_channel_boost(
-        self, interaction: discord.Interaction, channel: discord.TextChannel, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
+        self,
+        interaction: discord.Interaction,
+        channel: discord.TextChannel,
+        boost: app_commands.Range[float, 0.1, 10.0],
+        additive: bool,
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
@@ -278,7 +294,13 @@ class LevelBoostCommands(discord.app_commands.Group):
         boost=app_commands.locale_str("level_boosts_adduser_params_boost_description"),
         additive=app_commands.locale_str("level_boosts_adduser_params_additive_description"),
     )
-    async def add_user_boost(self, interaction: discord.Interaction, user: discord.Member, boost: app_commands.Range[float, 0.1, 10.0], additive: bool) -> None:
+    async def add_user_boost(
+        self,
+        interaction: discord.Interaction,
+        user: discord.Member,
+        boost: app_commands.Range[float, 0.1, 10.0],
+        additive: bool,
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -386,7 +408,9 @@ class LevelBoostCommands(discord.app_commands.Group):
         user=app_commands.locale_str("level_boosts_calculate_params_user_description"),
         channel=app_commands.locale_str("level_boosts_calculate_params_channel_description"),
     )
-    async def calculate_user_channel_boost(self, interaction: discord.Interaction, user: discord.Member, channel: discord.TextChannel) -> None:
+    async def calculate_user_channel_boost(
+        self, interaction: discord.Interaction, user: discord.Member, channel: discord.TextChannel
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -450,7 +474,9 @@ class LevelConfigCommands(discord.app_commands.Group):
     @app_commands.describe(
         newmessage=app_commands.locale_str("level_changelevelupmessage_params_newmessage_description"),
     )
-    async def changelevelupmessage(self, interaction: discord.Interaction, newmessage: app_commands.Range[str, 1, 255]) -> None:
+    async def changelevelupmessage(
+        self, interaction: discord.Interaction, newmessage: app_commands.Range[str, 1, 255]
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,

@@ -1,6 +1,8 @@
 import math
 import random
 
+import discord
+
 from api import (
     check_if_opted_out,
     get_channel_boost,
@@ -13,8 +15,6 @@ from api import (
     update_user_xp_from_voice,
 )
 from minigames.addLevelXp import is_blacklisted  # , fetch_xp_details
-
-import discord
 
 voiceUsers: list[discord.Member] = []
 

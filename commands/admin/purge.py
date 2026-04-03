@@ -1,6 +1,5 @@
 import discord
 
-
 import utility
 from localizer import tanjunLocalizer
 
@@ -16,7 +15,9 @@ async def purge(
         channel = cast(discord.TextChannel, commandInfo.channel)
 
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.purge.missingPermission.title"),

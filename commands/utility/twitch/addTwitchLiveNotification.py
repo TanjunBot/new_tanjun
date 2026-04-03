@@ -16,7 +16,9 @@ async def addTwitchLiveNotification(
     notification_message: str | None = None,
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

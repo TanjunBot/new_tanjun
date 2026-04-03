@@ -43,7 +43,7 @@ async def events(commandInfo: commandInfo) -> None:
 
     async def generate_page(page_num: int) -> discord.Embed:
         if not eventRotation:
-             return tanjunEmbed(title="Error", description="No rotation found")
+            return tanjunEmbed(title="Error", description="No rotation found")
         event = eventRotation[page_num]
         startTime = str(event.get("startTime", ""))
         if not startTime:

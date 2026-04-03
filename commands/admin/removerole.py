@@ -11,7 +11,11 @@ async def removerole(
     user: discord.Member | None = None,
     role: discord.Role | None = None,
 ) -> None:
-    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.missingPermission.title"),
             description=tanjunLocalizer.localize(
@@ -20,7 +24,7 @@ async def removerole(
             ),
         )
         await commandInfo.reply(embed=embed)
-        
+
         return
 
     if commandInfo.guild is None:
@@ -38,7 +42,7 @@ async def removerole(
             ),
         )
         await commandInfo.reply(embed=embed)
-        
+
         return
 
     class RoleManagementView(discord.ui.View):
@@ -157,7 +161,7 @@ async def removerole(
                 ),
             )
             await commandInfo.reply(embed=embed)
-            
+
             return
 
         if isinstance(commandInfo.user, discord.Member) and commandInfo.user.top_role.position <= role.position:
@@ -169,7 +173,7 @@ async def removerole(
                 ),
             )
             await commandInfo.reply(embed=embed)
-            
+
             return
 
         if commandInfo.guild.me.top_role.position <= role.position:
@@ -181,7 +185,7 @@ async def removerole(
                 ),
             )
             await commandInfo.reply(embed=embed)
-            
+
             return
 
         await user.remove_roles(role)

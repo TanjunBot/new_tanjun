@@ -9,7 +9,11 @@ from utility import commandInfo, tanjunEmbed
 
 
 async def show_level_roles_command(commandInfo: commandInfo) -> None:
-    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -190,7 +194,7 @@ async def show_level_roles_command(commandInfo: commandInfo) -> None:
             data = cast(dict[str, Any], interaction.data)
             component_type = data.get("component_type")
             custom_id = data.get("custom_id")
-            
+
             if component_type == 3:  # RoleSelect
                 values = cast(list[str], data.get("values", []))
                 if values:

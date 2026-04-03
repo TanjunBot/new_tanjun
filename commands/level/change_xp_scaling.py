@@ -44,7 +44,9 @@ async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, cust
     if custom_formula:
         custom_formula = custom_formula.replace("x", "level")
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

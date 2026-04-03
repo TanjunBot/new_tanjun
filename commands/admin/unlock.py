@@ -1,6 +1,5 @@
 import discord
 
-
 import utility
 from api import clear_channel_overwrites, get_channel_overwrites
 from localizer import tanjunLocalizer
@@ -12,7 +11,9 @@ async def unlock_channel(commandInfo: utility.commandInfo, channel: discord.Text
         channel = cast(discord.TextChannel, commandInfo.channel)
 
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unlock.missingPermission.title"),

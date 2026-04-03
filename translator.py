@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, cast, List, Dict, Optional
+from typing import cast
 
 import discord
 from discord import app_commands
@@ -11,14 +11,14 @@ from localizer import tanjunLocalizer
 
 class TanjunTranslator(app_commands.Translator):
     def __init__(self) -> None:
-        self.translations: List[Dict[str, object]] = []
+        self.translations: list[dict[str, object]] = []
         self.load_translations()
 
     def load_translations(self) -> None:
         try:
             with open("locales/de.json", encoding="utf-8") as f:
                 data: object = json.load(f)
-                self.translations = cast(List[Dict[str, object]], data)
+                self.translations = cast(list[dict[str, object]], data)
         except (FileNotFoundError, json.JSONDecodeError):
             self.translations = []
 
@@ -27,7 +27,7 @@ class TanjunTranslator(app_commands.Translator):
         string: app_commands.locale_str,
         locale: discord.Locale,
         context: app_commands.TranslationContext,
-    ) -> Optional[str]:
+    ) -> str | None:
         if str(locale.value) not in ["de", "de-DE", "en", "en-US", "en-GB"]:
             return None
 
@@ -41,7 +41,7 @@ class TanjunTranslator(app_commands.Translator):
 
         if isinstance(current, str):
             if current == "err: no translation found.":
-                 return None
+                return None
             return current
 
         return None

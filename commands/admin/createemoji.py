@@ -1,7 +1,6 @@
 import aiohttp
 import discord
 
-
 import utility
 from localizer import tanjunLocalizer
 
@@ -13,7 +12,9 @@ async def create_emoji(
     roles: list[discord.Role] | None = None,
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_emojis
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_emojis
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createEmoji.missingPermission.title"),
@@ -41,7 +42,9 @@ async def create_emoji(
             image_data = await resp.read()
 
         assert commandInfo.guild is not None
-        emoji = await commandInfo.guild.create_custom_emoji(name=name, image=image_data, roles=roles if roles is not None else [])
+        emoji = await commandInfo.guild.create_custom_emoji(
+            name=name, image=image_data, roles=roles if roles is not None else []
+        )
 
         roles_mention = (
             ", ".join([role.mention for role in roles])

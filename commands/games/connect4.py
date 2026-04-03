@@ -1,5 +1,5 @@
-from typing import Any
 import random
+from typing import Any
 
 import discord
 

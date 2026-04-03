@@ -1,8 +1,8 @@
-from typing import Any
 import asyncio
 import io
 import re
 from collections.abc import Callable
+from typing import Any
 
 import discord
 import matplotlib.pyplot as plt

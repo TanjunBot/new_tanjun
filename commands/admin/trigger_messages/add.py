@@ -1,5 +1,4 @@
 import discord
-from typing import Any, cast
 
 import utility
 from api import add_trigger_message as add_trigger_message_api
@@ -13,7 +12,9 @@ async def add_trigger_message(
     caseSensitive: bool = False,
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

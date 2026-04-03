@@ -1,10 +1,10 @@
 import asyncio
 import os
+from typing import cast
 
 import asyncmy
 import discord
 from discord.ext import commands
-from typing import Any, Optional, cast
 
 import api
 import config
@@ -63,7 +63,7 @@ async def main() -> None:
     await loadTranslator(bot)
 
 
-async def create_pool() -> Optional[asyncmy.Connection]:
+async def create_pool() -> asyncmy.Connection | None:
     try:
         # p = await asyncmy.create_pool(
         #     host=database_ip,

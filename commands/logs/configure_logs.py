@@ -1,4 +1,5 @@
 from typing import Any
+
 import discord
 
 import utility
@@ -40,7 +41,9 @@ LOG_OPTIONS = [
 
 async def configure_logs(commandInfo: utility.commandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

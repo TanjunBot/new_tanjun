@@ -1,5 +1,4 @@
 import discord
-from typing import Any, cast
 
 import utility
 from api import add_booster_role, delete_booster_role
@@ -7,7 +6,11 @@ from localizer import tanjunLocalizer
 
 
 async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Role) -> None:
-    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.missingPermission.title"),
             description=tanjunLocalizer.localize(
@@ -16,7 +19,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
             ),
         )
         await commandInfo.reply(embed=embed)
-        
+
         return
 
     if commandInfo.guild is None:
@@ -34,7 +37,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
             ),
         )
         await commandInfo.reply(embed=embed)
-        
+
         return
 
     if role is None:
@@ -46,7 +49,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
             ),
         )
         await commandInfo.reply(embed=embed)
-        
+
         return
 
     if isinstance(commandInfo.user, discord.Member) and role.position >= commandInfo.user.top_role.position:
@@ -58,7 +61,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
             ),
         )
         await commandInfo.reply(embed=embed)
-        
+
         return
 
     if commandInfo.client.user is None:
@@ -73,7 +76,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
             ),
         )
         await commandInfo.reply(embed=embed)
-        
+
         return
 
     try:

@@ -1411,7 +1411,11 @@ async def start_giveaway(
     title,
     target_channel,
 ):
-    if isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild
+    ):
         await commandInfo.reply(
             tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.builder.no_permission"),
         )

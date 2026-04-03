@@ -43,6 +43,7 @@ class CustomSituationCommands(discord.app_commands.Group):
         presencepenalty: app_commands.Range[float, 0, 2] = 0,
     ) -> None:
         from typing import cast
+
         commandInfo = utility.commandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
@@ -76,6 +77,7 @@ class CustomSituationCommands(discord.app_commands.Group):
         interaction: discord.Interaction,
     ) -> None:
         from typing import cast
+
         commandInfo = utility.commandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
@@ -113,6 +115,7 @@ class AiCommands(discord.app_commands.Group):
     ) -> None:
         await interaction.response.defer()
         from typing import cast
+
         commandInfo = utility.commandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
@@ -160,6 +163,7 @@ class AiCommands(discord.app_commands.Group):
     ) -> None:
         await interaction.response.defer()
         from typing import cast
+
         commandInfo = utility.commandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
@@ -205,6 +209,7 @@ class AiCommands(discord.app_commands.Group):
     ) -> None:
         await interaction.response.defer()
         from typing import cast
+
         commandInfo = utility.commandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),

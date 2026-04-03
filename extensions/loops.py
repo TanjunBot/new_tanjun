@@ -8,7 +8,6 @@ from datetime import time
 
 import discord
 from discord.ext import commands, tasks
-from typing import cast, Any
 
 from ai.refillToken import refillAiToken
 from api import check_pool_initialized, get_all_twitch_notification_uuids

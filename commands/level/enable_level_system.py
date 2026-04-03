@@ -1,5 +1,4 @@
 import discord
-from typing import Any, cast
 
 from api import get_level_system_status, set_level_system_status
 from localizer import tanjunLocalizer
@@ -8,7 +7,9 @@ from utility import commandInfo, tanjunEmbed
 
 async def enable_level_system(commandInfo: commandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

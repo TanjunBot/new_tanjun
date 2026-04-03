@@ -1,5 +1,3 @@
-from typing import Any
-
 import discord
 
 import utility
@@ -129,7 +127,9 @@ async def warn_config(commandInfo: utility.commandInfo) -> None:
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.missingPermission.title"),

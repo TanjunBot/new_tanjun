@@ -1,7 +1,8 @@
+from typing import cast
+
 import discord
 from discord import app_commands
 from discord.ext import commands
-from typing import cast, Any
 
 import utility
 from commands.admin.addrole import addrole as addroleCommand
@@ -164,7 +165,9 @@ class RoleCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_removerole_params_user_description"),
         role=app_commands.locale_str("admin_removerole_params_role_description"),
     )
-    async def removerole(self, interaction: discord.Interaction, user: discord.Member = None, role: discord.Role = None) -> None:
+    async def removerole(
+        self, interaction: discord.Interaction, user: discord.Member = None, role: discord.Role = None
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -237,7 +240,9 @@ class RoleCommands(discord.app_commands.Group):
         role=app_commands.locale_str("admin_deleterole_params_role_description"),
         reason=app_commands.locale_str("admin_deleterole_params_reason_description"),
     )
-    async def deleterole(self, interaction: discord.Interaction, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None) -> None:
+    async def deleterole(
+        self, interaction: discord.Interaction, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -322,7 +327,9 @@ class RoleCommands(discord.app_commands.Group):
             ),
         ]
     )
-    async def copyrole(self, interaction: discord.Interaction, role: discord.Role, copymembers: app_commands.Choice[str]) -> None:
+    async def copyrole(
+        self, interaction: discord.Interaction, role: discord.Role, copymembers: app_commands.Choice[str]
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,
@@ -573,7 +580,9 @@ class administrationCommands(discord.app_commands.Group):
         user=app_commands.locale_str("admin_kick_params_user_description"),
         reason=app_commands.locale_str("admin_kick_params_reason_description"),
     )
-    async def kick(self, interaction: discord.Interaction, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None) -> None:
+    async def kick(
+        self, interaction: discord.Interaction, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None
+    ) -> None:
         await interaction.response.defer(ephemeral=True)
         commandInfo = utility.commandInfo(
             user=interaction.user,

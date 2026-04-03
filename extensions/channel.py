@@ -1,9 +1,10 @@
 # Unused imports:
 # from localizer import tanjunLocalizer
+from typing import cast
+
 import discord
 from discord import app_commands
 from discord.ext import commands
-from typing import cast, Any
 
 import utility
 from commands.channel.dynamicslowmode import (

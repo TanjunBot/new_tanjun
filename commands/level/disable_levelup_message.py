@@ -1,5 +1,4 @@
 import discord
-from typing import Any, cast
 
 from api import get_levelup_message_status, set_levelup_message_status
 from localizer import tanjunLocalizer
@@ -8,7 +7,9 @@ from utility import commandInfo, tanjunEmbed
 
 async def disable_levelup_message(commandInfo: commandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

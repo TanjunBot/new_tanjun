@@ -1,6 +1,5 @@
 import discord
 
-
 import utility
 from localizer import tanjunLocalizer
 
@@ -11,7 +10,9 @@ async def set_slowmode(commandInfo: utility.commandInfo, seconds: int, channel: 
         channel = cast(discord.TextChannel, commandInfo.channel)
 
     if (
-        isinstance(commandInfo.user, discord.Member) and isinstance(commandInfo.channel, discord.abc.GuildChannel) and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.slowmode.missingPermission.title"),

@@ -63,6 +63,7 @@ class feedbackModal(ui.Modal):
         if not isinstance(feedbackChannel, discord.TextChannel):
             return
         from typing import cast
+
         title_item = cast(discord.ui.TextInput[discord.ui.Modal], self.children[0])
         desc_item = cast(discord.ui.TextInput[discord.ui.Modal], self.children[1])
         feedbackTitle = title_item.value

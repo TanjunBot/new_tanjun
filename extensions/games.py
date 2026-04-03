@@ -1,7 +1,8 @@
+from typing import cast
+
 import discord
 from discord import app_commands
 from discord.ext import commands
-from typing import cast, Any
 
 import utility
 from commands.games.akinator import akinator
@@ -79,7 +80,9 @@ class gameCommands(discord.app_commands.Group):
             ),
         ]
     )
-    async def connect4_cmd(self, interaction: discord.Interaction, user: discord.Member = None, size: app_commands.Choice[str] = "7,6") -> None:
+    async def connect4_cmd(
+        self, interaction: discord.Interaction, user: discord.Member = None, size: app_commands.Choice[str] = "7,6"
+    ) -> None:
         await interaction.response.defer()
         commandInfo = utility.commandInfo(
             user=interaction.user,

@@ -20,7 +20,6 @@ from typing import (
     Self,
     TypeVar,
     cast,
-    overload,
 )
 from typing import Literal as LiteralType
 
@@ -486,8 +485,8 @@ class NumericStringParser:
     def __init__(self) -> None:
         self.exprStack: list[str | float] = []
         self.push_first_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(str(pr[0]))
-        self.push_uminus_sign_action: Callable[[ParseResults], None] = (
-            lambda pr: self.exprStack.append("unary -") if pr and len(pr) > 0 and pr[0] == "-" else None
+        self.push_uminus_sign_action: Callable[[ParseResults], None] = lambda pr: (
+            self.exprStack.append("unary -") if pr and len(pr) > 0 and pr[0] == "-" else None
         )
         self.push_operator_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(str(pr[0]))
         self.push_function_call_action: Callable[[ParseResults], None] = lambda pr: self.exprStack.append(str(pr[0]))
@@ -997,6 +996,7 @@ class InteractionClient(Protocol):
     user: discord.ClientUser | None
     application_id: int | None
     _connection: Any
+
     def get_channel(self, id: int) -> discord.abc.MessageableChannel | None: ...
 
 
@@ -1087,9 +1087,7 @@ class MockInteractionResponse:
             "content": content or "",
             "embeds": [embed.to_dict()] if embed else [],
             "author": {
-                "id": getattr(self.interaction.client.user, "id", 0)
-                if self.interaction.client.user is not None
-                else 0,
+                "id": getattr(self.interaction.client.user, "id", 0) if self.interaction.client.user is not None else 0,
                 "username": getattr(self.interaction.client.user, "name", "MockBot")
                 if self.interaction.client.user is not None
                 else "MockBot",
