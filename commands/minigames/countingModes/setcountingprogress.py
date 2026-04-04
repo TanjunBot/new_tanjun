@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def setCountingProgress(CommandInfo: CommandInfo, channel: discord.TextChannel, progress: int) -> None:
+async def setCountingProgress(commandInfo: CommandInfo, channel: discord.TextChannel, progress: int) -> None:
     if commandInfo.guild is None:
         return
     if (

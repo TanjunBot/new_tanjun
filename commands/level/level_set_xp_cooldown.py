@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def set_text_cooldown_command(CommandInfo: CommandInfo, cooldown: int) -> None:
+async def set_text_cooldown_command(commandInfo: CommandInfo, cooldown: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

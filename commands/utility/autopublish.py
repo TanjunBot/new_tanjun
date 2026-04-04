@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def autopublish(CommandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+async def autopublish(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
     if commandInfo.guild is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

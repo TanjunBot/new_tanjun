@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def removewordchainchannel(CommandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+async def removewordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
     if commandInfo.guild is None:
         return
     if (

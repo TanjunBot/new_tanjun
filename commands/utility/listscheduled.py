@@ -104,7 +104,7 @@ async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
             return embed
 
         async def previous_page(self, interaction: discord.Interaction) -> None:
-            if interaction.user != CommandInfo.user:
+            if interaction.user != commandInfo.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         self.locale,
@@ -118,7 +118,7 @@ async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
             await self.update_message(interaction)
 
         async def next_page(self, interaction: discord.Interaction) -> None:
-            if interaction.user != CommandInfo.user:
+            if interaction.user != commandInfo.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         self.locale,

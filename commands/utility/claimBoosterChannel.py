@@ -12,7 +12,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def claimBoosterChannel(CommandInfo: CommandInfo, name: str) -> None:
+async def claimBoosterChannel(commandInfo: CommandInfo, name: str) -> None:
     if commandInfo.guild is None or isinstance(commandInfo.user, discord.User):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

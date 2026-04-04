@@ -6,7 +6,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def deleteBoosterChannel(CommandInfo: CommandInfo) -> None:
+async def deleteBoosterChannel(commandInfo: CommandInfo) -> None:
     if commandInfo.guild is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

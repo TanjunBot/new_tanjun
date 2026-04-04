@@ -4,7 +4,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def banner(CommandInfo: CommandInfo, user: discord.User) -> None:
+async def banner(commandInfo: CommandInfo, user: discord.User) -> None:
     user = await commandInfo.client.fetch_user(user.id)
 
     if not user.banner:

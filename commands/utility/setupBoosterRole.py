@@ -6,7 +6,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def setupBoosterRole(CommandInfo: CommandInfo, role: discord.Role) -> None:
+async def setupBoosterRole(commandInfo: CommandInfo, role: discord.Role) -> None:
     if isinstance(commandInfo.user, discord.User) or commandInfo.guild is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

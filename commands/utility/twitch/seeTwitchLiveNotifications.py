@@ -10,7 +10,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def seeTwitchLiveNotifications(CommandInfo: CommandInfo) -> None:
+async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

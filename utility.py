@@ -200,7 +200,7 @@ class tanjunEmbed(discord.Embed):
         self._footer = {}
 
         self.title = str(data["title"]) if data.get("title") is not None else None
-        self.type = data.get("type", "rich")
+        self.type = cast(Any, data.get("type", "rich"))
         self.description = str(data["description"]) if data.get("description") is not None else None
         self.url = str(data["url"]) if data.get("url") is not None else None
 
@@ -216,13 +216,13 @@ class tanjunEmbed(discord.Embed):
             except Exception:
                 pass
 
-        self._thumbnail = data.get("thumbnail", {})
-        self._video = data.get("video", {})
-        self._provider = data.get("provider", {})
-        self._author = data.get("author", {})
-        self._fields = data.get("fields", [])
-        self._image = data.get("image", {})
-        self._footer = data.get("footer", {})
+        self._thumbnail = cast(Any, data.get("thumbnail", {}))
+        self._video = cast(Any, data.get("video", {}))
+        self._provider = cast(Any, data.get("provider", {}))
+        self._author = cast(Any, data.get("author", {}))
+        self._fields = cast(Any, data.get("fields", []))
+        self._image = cast(Any, data.get("image", {}))
+        self._footer = cast(Any, data.get("footer", {}))
 
         return self
 
@@ -284,7 +284,7 @@ class tanjunEmbed(discord.Embed):
         if value is None:
             self._colour = None
         elif isinstance(value, discord.Colour):
-            self._colour = value
+            self._colour = value  # type: ignore[assignment]
         elif isinstance(value, int):
             self._colour = discord.Colour(value=value)
 
@@ -416,7 +416,7 @@ class tanjunEmbed(discord.Embed):
             raise IndexError("field index out of range")
         return self
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:  # type: ignore[override]
         result: dict[str, object] = {}
         for key in self.__slots__:
             if key.startswith("_") and hasattr(self, key):
@@ -866,7 +866,7 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None
             print(f"Warning: XP calculation resulted in {result}. Returning 0.")
             return 0
         return math.floor(result)
-    return 0
+    return 0  # type: ignore[unreachable]
 
 
 def get_level_for_xp(xp: int, scaling: str, custom_formula: str | None = None) -> int:
@@ -1113,7 +1113,7 @@ class MockInteractionResponse:
 
         channel = self.interaction._mock_channel
         if channel and hasattr(self.interaction, "_state"):
-            self.message = discord.Message(state=self.interaction._state, channel=cast(Any, channel), data=message_data)
+            self.message = discord.Message(state=self.interaction._state, channel=cast(Any, channel), data=message_data)  # type: ignore[arg-type]
         else:
             self.message = None
         self.interaction._response_issued = True
@@ -1155,7 +1155,7 @@ class MockWebhook:
             mock_channel = self._state.Client.get_channel(0)
 
         # Use type ignore since we're mocking discord.Message creation
-        return discord.Message(state=self._state, channel=cast(Any, mock_channel), data=message_data)
+        return discord.Message(state=self._state, channel=cast(Any, mock_channel), data=message_data)  # type: ignore[arg-type]
 
     async def edit_message(self, message_id: int, **kwargs: Any) -> discord.Message:
         raise NotImplementedError

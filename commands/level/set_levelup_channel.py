@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def set_levelup_channel_command(CommandInfo: CommandInfo, channel: discord.TextChannel | None = None) -> None:
+async def set_levelup_channel_command(commandInfo: CommandInfo, channel: discord.TextChannel | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

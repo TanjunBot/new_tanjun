@@ -8,7 +8,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def show_level_roles_command(CommandInfo: CommandInfo) -> None:
+async def show_level_roles_command(commandInfo: CommandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

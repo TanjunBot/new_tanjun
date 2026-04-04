@@ -13,7 +13,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def afk(CommandInfo: CommandInfo, reason: str) -> None:
+async def afk(commandInfo: CommandInfo, reason: str) -> None:
     if await check_if_opted_out(commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.afk.opted_out.title"),

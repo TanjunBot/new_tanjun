@@ -11,7 +11,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def disable_level_system(CommandInfo: CommandInfo) -> None:
+async def disable_level_system(commandInfo: CommandInfo) -> None:
     class ConfirmDisableView(discord.ui.View):
         def __init__(self, commandInfo: CommandInfo) -> None:
             super().__init__(timeout=60)

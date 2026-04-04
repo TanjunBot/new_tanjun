@@ -3,7 +3,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def unlink(CommandInfo: CommandInfo) -> None:
+async def unlink(commandInfo: CommandInfo) -> None:
     if not await get_brawlstars_linked_account(commandInfo.user.id):
         await commandInfo.reply(
             embed=tanjunEmbed(

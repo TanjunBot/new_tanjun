@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, get_level_for_xp, tanjunEmbed
 
 
-async def take_xp_command(CommandInfo: CommandInfo, user: discord.Member, amount: int) -> None:
+async def take_xp_command(commandInfo: CommandInfo, user: discord.Member, amount: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

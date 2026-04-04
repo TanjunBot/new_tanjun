@@ -7,7 +7,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def add_level_role_command(CommandInfo: CommandInfo, role: discord.Role, level: int) -> None:
+async def add_level_role_command(commandInfo: CommandInfo, role: discord.Role, level: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

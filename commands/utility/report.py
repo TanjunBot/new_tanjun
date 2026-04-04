@@ -12,7 +12,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def report(CommandInfo: CommandInfo, reason: str, user: discord.Member) -> None:
+async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) -> None:
     if commandInfo.guild is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "errors.guildOnly.title"),

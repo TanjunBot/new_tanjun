@@ -223,7 +223,7 @@ async def send_scheduled_messages(client: discord.Client) -> None:
             embed = utility.tanjunEmbed(description=content)
             await target.send(content=content, embed=embed)
 
-            if repeat_amount and repeat is not None_amount != 0:
+            if repeat_amount and repeat_amount != 0:
                 repeat_amount -= 1
                 if repeat_amount == 0:
                     await remove_scheduled_message(message_id)

@@ -4,7 +4,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def avatar(CommandInfo: CommandInfo, user: discord.Member) -> None:
+async def avatar(commandInfo: CommandInfo, user: discord.Member) -> None:
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,

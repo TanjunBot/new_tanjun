@@ -7,8 +7,8 @@ from utility import CommandInfo, tanjunEmbed
 
 
 class feedbackModal(ui.Modal):
-    def __init__(self, CommandInfo: CommandInfo, title: str, description: str) -> None:
-        self.commandInfo = CommandInfo
+    def __init__(self, commandInfo: CommandInfo, title: str, description: str) -> None:
+        self.commandInfo = commandInfo
         self.title = title
         self.description = description
         super().__init__(timeout=6000)

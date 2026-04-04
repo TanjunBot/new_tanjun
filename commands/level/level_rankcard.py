@@ -144,7 +144,7 @@ def process_image(
     avatar_decoration_frames: list[Image.Image] | None,
     user: discord.Member,
     user_info: dict[str, Any],
-    CommandInfo: CommandInfo,
+    commandInfo: CommandInfo,
 ) -> io.BytesIO:
     DECORATION_SIZE_MULTIPLIER = 1.2
 
@@ -293,7 +293,7 @@ def process_image(
     return img_byte_arr
 
 
-async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], CommandInfo: CommandInfo) -> io.BytesIO:
+async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], commandInfo: CommandInfo) -> io.BytesIO:
     # Load background image or frames
     custom_bg = user_info.get("customBackground")
     if custom_bg:

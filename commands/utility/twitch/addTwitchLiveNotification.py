@@ -10,7 +10,7 @@ from utility import CommandInfo, tanjunEmbed
 
 
 async def addTwitchLiveNotification(
-    CommandInfo: CommandInfo,
+    commandInfo: CommandInfo,
     twitch_name: str,
     channel: discord.TextChannel,
     notification_message: str | None = None,
