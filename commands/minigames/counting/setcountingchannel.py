@@ -26,9 +26,7 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
-    if await get_counting_channel_amount(commandInfo.guild.id) != 0 and not checkIfHasPro(
-        commandInfo.guild.id
-    ):
+    if await get_counting_channel_amount(commandInfo.guild.id) != 0 and not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingchannel.error.no_pro.title"),
             description=tanjunLocalizer.localize(

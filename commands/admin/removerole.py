@@ -14,7 +14,7 @@ async def removerole(  # type: ignore[no-any-unimported]
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and getattr(commandInfo.user, "guild_permissions")
+        and commandInfo.user.guild_permissions
         and not commandInfo.user.guild_permissions.manage_roles
     ):
         embed = utility.tanjunEmbed(

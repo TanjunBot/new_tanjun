@@ -100,8 +100,7 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         return
 
     await set_counting_challenge_progress(  # type: ignore[call-arg]
-        channel_id=channel.id,
-        guild_id=commandInfo.guild.id, progress=0
+        channel_id=channel.id, guild_id=commandInfo.guild.id, progress=0
     )
 
     introductionEmbed = tanjunEmbed(

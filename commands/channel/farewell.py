@@ -133,7 +133,8 @@ async def removeFarewellChannel() -> None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.notSet.title"),  # type: ignore[name-defined]
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale), "commands.admin.channel.farewell.notSet.description"  # type: ignore[name-defined]
+                str(commandInfo.locale),
+                "commands.admin.channel.farewell.notSet.description",  # type: ignore[name-defined]
             ),
         )
         await commandInfo.reply(embed=embed)  # type: ignore[name-defined]
