@@ -1,9 +1,8 @@
-from typing import cast
 import discord
 
 from api import set_counting_challenge_progress
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, CommandInfo, tanjunEmbed
+from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
 async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
@@ -100,7 +99,9 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
-    await set_counting_challenge_progress(channel_id=channel.id, guild_id=commandInfo.guild.id if commandInfo.guild else 0, progress=0)
+    await set_counting_challenge_progress(
+        channel_id=channel.id, guild_id=commandInfo.guild.id if commandInfo.guild else 0, progress=0
+    )
 
     introductionEmbed = tanjunEmbed(
         title=tanjunLocalizer.localize(

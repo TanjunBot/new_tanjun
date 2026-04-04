@@ -1,9 +1,8 @@
-from typing import cast
 import discord
 
 from api import get_counting_channel_amount, set_counting_progress
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, CommandInfo, tanjunEmbed
+from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
 async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
@@ -27,7 +26,9 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
-    if await get_counting_channel_amount((commandInfo.guild.id if commandInfo.guild else 0)) != 0 and not checkIfHasPro((commandInfo.guild.id if commandInfo.guild else 0) if commandInfo.guild else 0):
+    if await get_counting_channel_amount(commandInfo.guild.id if commandInfo.guild else 0) != 0 and not checkIfHasPro(
+        (commandInfo.guild.id if commandInfo.guild else 0) if commandInfo.guild else 0
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingchannel.error.no_pro.title"),
             description=tanjunLocalizer.localize(

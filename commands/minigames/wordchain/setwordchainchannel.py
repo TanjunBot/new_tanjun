@@ -1,9 +1,8 @@
-from typing import cast
 import discord
 
 from api import set_wordchain_word
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, CommandInfo, tanjunEmbed
+from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
 async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:

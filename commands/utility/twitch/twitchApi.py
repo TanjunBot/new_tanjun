@@ -90,7 +90,7 @@ twitch_api: "Twitch | None" = None
 async def initTwitch() -> TwitchAPI:
     global twitch_api
     print("initiating Twitch API...")
-    twitch_api: "Twitch | None" = TwitchAPI()
+    twitch_api: Twitch | None = TwitchAPI()
     await twitch_api.init()
     print("Twitch API initiated!")
     return twitch_api

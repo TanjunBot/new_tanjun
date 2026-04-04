@@ -1,9 +1,8 @@
-from typing import cast
 import discord
 
 from api import set_counting_mode_progress
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, CommandInfo, tanjunEmbed
+from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
 async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:

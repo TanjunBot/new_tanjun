@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 from api import get_user_level_info, set_custom_background
 from localizer import tanjunLocalizer
-from utility import checkIfhasPlus, CommandInfo, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
+from utility import CommandInfo, checkIfhasPlus, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
 
 executor = ThreadPoolExecutor()
 

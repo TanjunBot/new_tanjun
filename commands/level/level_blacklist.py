@@ -10,7 +10,7 @@ from api import (
     remove_user_from_blacklist,
 )
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, CommandInfo, tanjunEmbed
+from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
 async def add_channel_to_blacklist_command(

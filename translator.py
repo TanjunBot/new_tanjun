@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import cast, Any, Any
+from typing import Any, cast
 
 import discord
 from discord import app_commands

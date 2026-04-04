@@ -1,8 +1,7 @@
-from typing import Any
+from typing import Any, cast
 
 import aiohttp
 import discord
-from typing import cast, Any
 
 from config import brawlstarsToken
 from localizer import tanjunLocalizer

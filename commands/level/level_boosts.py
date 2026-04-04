@@ -15,7 +15,7 @@ from api import (
     remove_user_boost,
 )
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, CommandInfo, tanjunEmbed
+from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
 async def calculate_user_channel_boost_command(

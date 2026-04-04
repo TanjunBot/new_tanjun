@@ -45,7 +45,6 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             for group in self.client.tree.walk_commands():
                 command_text = ""
                 if group.name == self.values[0]:
-
                     if isinstance(group, app_commands.Group):
                         try:
                             group_desc = self.get_locale(

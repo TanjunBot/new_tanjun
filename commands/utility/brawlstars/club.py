@@ -5,8 +5,8 @@ import discord
 
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
-from utility import addThousandsSeparator, similar, tanjunEmbed
 from utility import CommandInfo as CommandInfo
+from utility import addThousandsSeparator, similar, tanjunEmbed
 
 
 async def getClubInfo(clubTag: str) -> dict[str, str | dict[str, dict[str, str]]] | None:

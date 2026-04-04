@@ -2,7 +2,7 @@ import discord
 
 from api import set_levelup_message
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, CommandInfo, tanjunEmbed
+from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
 async def change_levelup_message(commandInfo: CommandInfo, new_message: str) -> None:

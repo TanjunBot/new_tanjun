@@ -8,8 +8,8 @@ from api import get_custom_formula, set_custom_formula, set_xp_scaling
 from localizer import tanjunLocalizer
 from utility import (
     LEVEL_SCALINGS,
-    checkIfHasPro,
     CommandInfo,
+    checkIfHasPro,
     get_xp_for_level,
     tanjunEmbed,
 )

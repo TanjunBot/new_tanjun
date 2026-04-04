@@ -13,7 +13,7 @@ from api import (
     set_leave_channel,
 )
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, CommandInfo, draw_text_with_outline
+from utility import checkIfHasPro, draw_text_with_outline
 
 executor = ThreadPoolExecutor()
 
