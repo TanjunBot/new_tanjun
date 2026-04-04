@@ -8,6 +8,7 @@ THE COMMANDS IN THIS FILE ARE FOR ADMINISTRATIVE PURPOSES ONLY. THEY ARE NOT TO 
 # import platform
 import asyncio
 import json
+from typing import Any
 
 import aiohttp
 import discord
@@ -31,7 +32,6 @@ from tests import (  # type: ignore[attr-defined]
     test_ping,
 )
 from utility import addFeedback, missingLocalization, tanjunEmbed
-from typing import Any
 
 
 class administrationCog(commands.Cog):
@@ -139,7 +139,8 @@ class administrationCog(commands.Cog):
 
     @commands.command()
     async def onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus(
-        self, ctx: commands.Context  # type: ignore[type-arg]
+        self,
+        ctx: commands.Context,  # type: ignore[type-arg]
     ) -> None:
         if ctx.author.id not in config.adminIds:
             return

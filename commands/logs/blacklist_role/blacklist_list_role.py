@@ -1,3 +1,5 @@
+from typing import Any
+
 import discord
 
 import utility
@@ -11,7 +13,6 @@ from api import (
     remove_log_role_blacklist as remove_log_blacklist_role_api,
 )
 from localizer import tanjunLocalizer
-from typing import Any
 
 
 async def blacklist_list_role(commandInfo: utility.CommandInfo) -> None:

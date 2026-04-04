@@ -166,7 +166,10 @@ class RoleCommands(discord.app_commands.Group):
         role=app_commands.locale_str("admin_removerole_params_role_description"),
     )
     async def removerole(
-        self, interaction: discord.Interaction, user: discord.Member = None, role: discord.Role = None  # type: ignore[assignment]
+        self,
+        interaction: discord.Interaction,
+        user: discord.Member = None,
+        role: discord.Role = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
@@ -241,7 +244,10 @@ class RoleCommands(discord.app_commands.Group):
         reason=app_commands.locale_str("admin_deleterole_params_reason_description"),
     )
     async def deleterole(
-        self, interaction: discord.Interaction, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None  # type: ignore[assignment]
+        self,
+        interaction: discord.Interaction,
+        role: discord.Role,
+        reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
@@ -581,7 +587,10 @@ class administrationCommands(discord.app_commands.Group):
         reason=app_commands.locale_str("admin_kick_params_reason_description"),
     )
     async def kick(
-        self, interaction: discord.Interaction, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None  # type: ignore[assignment]
+        self,
+        interaction: discord.Interaction,
+        user: discord.Member,
+        reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer(ephemeral=True)
         commandInfo = utility.CommandInfo(

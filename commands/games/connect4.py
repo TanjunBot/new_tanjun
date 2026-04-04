@@ -218,7 +218,7 @@ class Connect4:
         else:
             self.current_player = self.player2 if self.current_player == self.player1 else self.player1  # type: ignore[assignment]
         if self.highlighted_column not in self.available_columns():  # type: ignore[operator, func-returns-value]  # type: ignore[func-returns-value]  # type: ignore[func-returns-value]  # type: ignore[func-returns-value]
-            self.highlighted_column = self.available_columns()[0, index, name-defined]  # type: ignore[func-returns-value, index, name-defined]
+            self.highlighted_column = self.available_columns()[0, index, name - defined]  # type: ignore[func-returns-value, index, name-defined]
 
         winner = self.check_winner()  # type: ignore[func-returns-value]
         if winner:

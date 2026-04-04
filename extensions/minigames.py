@@ -161,7 +161,9 @@ class CountingChallengeCommands(discord.app_commands.Group):
         channel=app_commands.locale_str("minigames_rcchallengech_params_channel_description"),
     )
     async def removecountingchallengechannel(
-        self, interaction: discord.Interaction, channel: discord.TextChannel = None  # type: ignore[assignment]
+        self,
+        interaction: discord.Interaction,
+        channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(

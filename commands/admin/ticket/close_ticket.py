@@ -1098,7 +1098,6 @@ async def generate_summary_html(
 
     channelJsObject = ""
 
-    from typing import Any
     for channel in mentioned_channels:
         any_channel = channel  # type: Any
         channelJsObject += f"""

@@ -91,7 +91,11 @@ async def setFarewellChannel(
     imgUrl = None
 
     if image_background is not None:
-        imgUrl = (await utility.upload_image_to_imgbb(image_background, image_background.filename.split(".")[-1, arg-type, call-overload, name-defined]))["data", arg-type, call-overload, name-defined][  # type: ignore[index, arg-type, call-overload, name-defined]
+        imgUrl = (
+            await utility.upload_image_to_imgbb(
+                image_background, image_background.filename.split(".")[-1, arg - type, call - overload, name - defined]
+            )
+        )["data", arg - type, call - overload, name - defined][  # type: ignore[index, arg-type, call-overload, name-defined]
             "url"
         ]
     else:
@@ -264,7 +268,7 @@ async def farewellUser(member: discord.Member) -> None:
     if farewellChannel is None:
         return
 
-    background_frames, _ = await get_image_or_gif_frames(farewellChannel[3, misc, call-overload, name-defined])  # type: ignore[func-returns-value, misc, call-overload, name-defined]
+    background_frames, _ = await get_image_or_gif_frames(farewellChannel[3, misc, call - overload, name - defined])  # type: ignore[func-returns-value, misc, call-overload, name-defined]
 
     avatar_url = str(member.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)  # type: ignore[func-returns-value, misc]

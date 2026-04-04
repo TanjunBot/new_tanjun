@@ -1,4 +1,5 @@
 import math
+from typing import Any
 
 import discord
 from discord.ui import Button, Modal, Select, TextInput, View
@@ -6,7 +7,6 @@ from discord.ui import Button, Modal, Select, TextInput, View
 from api import add_level_role, get_all_level_roles, remove_level_role
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
-from typing import Any
 
 
 async def show_level_roles_command(commandInfo: CommandInfo) -> None:

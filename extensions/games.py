@@ -81,7 +81,10 @@ class gameCommands(discord.app_commands.Group):
         ]
     )
     async def connect4_cmd(
-        self, interaction: discord.Interaction, user: discord.Member = None, size: app_commands.Choice[str] = "7,6"  # type: ignore[assignment]
+        self,
+        interaction: discord.Interaction,
+        user: discord.Member = None,
+        size: app_commands.Choice[str] = "7,6",  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(

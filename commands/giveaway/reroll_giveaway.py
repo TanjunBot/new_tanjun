@@ -92,7 +92,7 @@ async def reroll_giveaway(
         async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
             giveaway = await get_giveaway(self.giveawayId)
-            await perform_reroll(self.commandInfo, self.giveawayId, giveaway[4, arg-type])  # type: ignore[index, arg-type, name-defined, call-overload]
+            await perform_reroll(self.commandInfo, self.giveawayId, giveaway[4, arg - type])  # type: ignore[index, arg-type, name-defined, call-overload]
             self.stop()
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:

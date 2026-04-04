@@ -59,7 +59,8 @@ class CustomNameModal(ui.Modal):
         custom_name = self.children[0].value  # type: ignore[attr-defined]
         self.view.giveaway_data["custom_name"] = custom_name
         self.view.last_action = tanjunLocalizer.localize(
-            self.commandInfo.locale, "commands.giveaway.builder.custom_name.updated"  # type: ignore[misc]
+            self.commandInfo.locale,
+            "commands.giveaway.builder.custom_name.updated",  # type: ignore[misc]
         )
         await self.view.update_embed(interaction.response.edit_message)
 
@@ -115,12 +116,14 @@ class SponsorView(ui.View):
         if interaction.data["custom_id"] == "confirm":  # type: ignore[index, typeddict-item]
             self.view.giveaway_data["sponsor"] = self.selected_user if self.selected_user else None
             self.view.last_action = tanjunLocalizer.localize(
-                self.commandInfo.locale, "commands.giveaway.builder.sponsor.updated"  # type: ignore[misc]
+                self.commandInfo.locale,
+                "commands.giveaway.builder.sponsor.updated",  # type: ignore[misc]
             )
             await self.view.update_embed(interaction.response.edit_message)
         elif interaction.data["custom_id"] == "cancel":  # type: ignore[index, typeddict-item]
             self.view.last_action = tanjunLocalizer.localize(
-                self.commandInfo.locale, "commands.giveaway.builder.sponsor.cancelled"  # type: ignore[misc]
+                self.commandInfo.locale,
+                "commands.giveaway.builder.sponsor.cancelled",  # type: ignore[misc]
             )
             await self.view.update_embed(interaction.response.edit_message)
 
@@ -264,7 +267,8 @@ class StartTimeModal(ui.Modal):
         start_time = self.children[0].value  # type: ignore[attr-defined]
         self.view.giveaway_data["start_time"] = start_time
         self.view.last_action = tanjunLocalizer.localize(
-            self.commandInfo.locale, "commands.giveaway.builder.start_time.updated"  # type: ignore[misc]
+            self.commandInfo.locale,
+            "commands.giveaway.builder.start_time.updated",  # type: ignore[misc]
         )
         await self.view.update_embed(interaction.response.edit_message)
 
@@ -359,7 +363,8 @@ class DayRequirementModal(ui.Modal):
         day_requirement = int(self.children[0].value)  # type: ignore[attr-defined]
         self.view.giveaway_data["day_requirement"] = day_requirement
         self.view.last_action = tanjunLocalizer.localize(
-            self.commandInfo.locale, "commands.giveaway.builder.day_requirement.updated"  # type: ignore[misc]
+            self.commandInfo.locale,
+            "commands.giveaway.builder.day_requirement.updated",  # type: ignore[misc]
         )
         await self.view.update_embed(interaction.response.edit_message)
 

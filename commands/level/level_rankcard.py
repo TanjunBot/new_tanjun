@@ -1,6 +1,7 @@
 import asyncio
 import io
 from concurrent.futures import ThreadPoolExecutor
+from typing import Any
 
 import aiohttp
 import discord
@@ -9,7 +10,6 @@ from PIL import Image, ImageDraw, ImageFont, ImageSequence
 from api import get_user_level_info, set_custom_background
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfhasPlus, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
-from typing import Any
 
 executor = ThreadPoolExecutor()
 

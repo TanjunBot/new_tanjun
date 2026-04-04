@@ -1,3 +1,5 @@
+from typing import Any
+
 import discord
 
 import utility
@@ -10,7 +12,6 @@ from api import (
     remove_trigger_message_channel,
 )
 from localizer import tanjunLocalizer
-from typing import Any
 
 
 async def configure_trigger_messages(  # type: ignore[no-untyped-def]
@@ -178,7 +179,10 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             nonlocal trigger_messages
             trigger_messages = await get_trigger_messages(commandInfo.guild.id)  # type: ignore[union-attr]
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[0, index, call-overload, name-defined][0, index, call-overload, name-defined])  # type: ignore[union-attr, index, call-overload, name-defined]
+            channels = await get_trigger_message_channels(
+                commandInfo.guild.id,
+                trigger_messages[0, index, call - overload, name - defined][0, index, call - overload, name - defined],
+            )  # type: ignore[union-attr, index, call-overload, name-defined]
             embed = await generate_embed()  # type: ignore[no-untyped-call]
             view = TriggerMessageView()
             await interaction.response.edit_message(embed=embed, view=view)
@@ -210,7 +214,10 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
                 trigger_messages[page][0],  # type: ignore[index]
             )
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page, index, call-overload, name-defined][0, index, call-overload, name-defined])  # type: ignore[union-attr, index, call-overload, name-defined]
+            channels = await get_trigger_message_channels(
+                commandInfo.guild.id,
+                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
+            )  # type: ignore[union-attr, index, call-overload, name-defined]
             embed = await generate_embed()  # type: ignore[no-untyped-call]
             view = TriggerMessageView()
             await interaction.response.edit_message(embed=embed, view=view)
@@ -234,7 +241,10 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             if page < 0:
                 page = len(trigger_messages) - 1  # type: ignore[arg-type]
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page, index, call-overload, name-defined][0, index, call-overload, name-defined])  # type: ignore[union-attr, index, call-overload, name-defined]
+            channels = await get_trigger_message_channels(
+                commandInfo.guild.id,
+                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
+            )  # type: ignore[union-attr, index, call-overload, name-defined]
             nonlocal selected_channel
             selected_channel = 0
             await self.update_message(interaction)
@@ -249,10 +259,16 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         )
         async def remove(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             nonlocal trigger_messages
-            await remove_trigger_message(commandInfo.guild.id, trigger_messages[page, index, call-overload, name-defined][0, index, call-overload, name-defined])  # type: ignore[union-attr, index, call-overload, name-defined]
+            await remove_trigger_message(
+                commandInfo.guild.id,
+                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
+            )  # type: ignore[union-attr, index, call-overload, name-defined]
             trigger_messages = await get_trigger_messages(commandInfo.guild.id)  # type: ignore[union-attr]
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[0, index, call-overload, name-defined][0, index, call-overload, name-defined])  # type: ignore[union-attr, index, call-overload, name-defined]
+            channels = await get_trigger_message_channels(
+                commandInfo.guild.id,
+                trigger_messages[0, index, call - overload, name - defined][0, index, call - overload, name - defined],
+            )  # type: ignore[union-attr, index, call-overload, name-defined]
             await self.update_message(interaction)
 
         @discord.ui.button(
@@ -282,7 +298,10 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             if page >= len(trigger_messages):  # type: ignore[arg-type]
                 page = 0
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page, index, call-overload, name-defined][0, index, call-overload, name-defined])  # type: ignore[union-attr, index, call-overload, name-defined]
+            channels = await get_trigger_message_channels(
+                commandInfo.guild.id,
+                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
+            )  # type: ignore[union-attr, index, call-overload, name-defined]
             nonlocal selected_channel
             selected_channel = 0
             await self.update_message(interaction)
@@ -342,7 +361,10 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
                 channels[selected_channel][1],  # type: ignore[index]
                 trigger_messages[page][0],  # type: ignore[index]
             )
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page, index, call-overload, name-defined][0, index, call-overload, name-defined])  # type: ignore[union-attr, index, call-overload, name-defined]
+            channels = await get_trigger_message_channels(
+                commandInfo.guild.id,
+                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
+            )  # type: ignore[union-attr, index, call-overload, name-defined]
             await self.update_message(interaction)
 
         @discord.ui.button(

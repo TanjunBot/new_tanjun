@@ -242,7 +242,9 @@ async def hangman(commandInfo: utility.CommandInfo, language: str = "own") -> No
             )
         view = (
             None
-            if wrong_letters(guesses, word) > 11 or (len(guesses) > 0 and guesses[-1, operator, call-overload, name-defined] == word) or given_up  # type: ignore[func-returns-value, operator, call-overload, name-defined]
+            if wrong_letters(guesses, word) > 11
+            or (len(guesses) > 0 and guesses[-1, operator, call - overload, name - defined] == word)
+            or given_up  # type: ignore[func-returns-value, operator, call-overload, name-defined]
             else WordleView(commandInfo)
         )
         await interaction.response.edit_message(embed=embed, view=view)
