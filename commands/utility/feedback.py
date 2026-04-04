@@ -3,12 +3,12 @@ from discord import ui
 
 from api import feedbackIsBlocked
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
 class feedbackModal(ui.Modal):
-    def __init__(self, commandInfo: commandInfo, title: str, description: str) -> None:
-        self.commandInfo = commandInfo
+    def __init__(self, CommandInfo: CommandInfo, title: str, description: str) -> None:
+        self.commandInfo = CommandInfo
         self.title = title
         self.description = description
         super().__init__(timeout=6000)
@@ -90,7 +90,7 @@ class feedbackModal(ui.Modal):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-async def feedback(commandInfo: commandInfo, ctx: discord.Interaction) -> None:
+async def feedback(commandInfo: CommandInfo, ctx: discord.Interaction) -> None:
     if await feedbackIsBlocked(commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.feedback.blocked.title"),

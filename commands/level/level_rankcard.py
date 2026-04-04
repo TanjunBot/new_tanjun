@@ -8,12 +8,12 @@ from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 from api import get_user_level_info, set_custom_background
 from localizer import tanjunLocalizer
-from utility import checkIfhasPlus, commandInfo, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
+from utility import checkIfhasPlus, CommandInfo, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
 
 executor = ThreadPoolExecutor()
 
 
-async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member) -> None:
+async def show_rankcard_command(commandInfo: CommandInfo, user: discord.Member) -> None:
     assert commandInfo.guild is not None
     user_info = await get_user_level_info(str(commandInfo.guild.id), str(user.id))
 
@@ -40,7 +40,7 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member) 
     await commandInfo.reply(embed=embed, file=file)
 
 
-async def set_background_command(commandInfo: commandInfo, image: discord.Attachment) -> None:
+async def set_background_command(commandInfo: CommandInfo, image: discord.Attachment) -> None:
     if not checkIfhasPlus(commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.error.no_plus.title"),
@@ -144,7 +144,7 @@ def process_image(
     avatar_decoration_frames: list[Image.Image] | None,
     user: discord.Member,
     user_info: dict[str, Any],
-    commandInfo: commandInfo,
+    CommandInfo: CommandInfo,
 ) -> io.BytesIO:
     DECORATION_SIZE_MULTIPLIER = 1.2
 
@@ -293,7 +293,7 @@ def process_image(
     return img_byte_arr
 
 
-async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], commandInfo: commandInfo) -> io.BytesIO:
+async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], CommandInfo: CommandInfo) -> io.BytesIO:
     # Load background image or frames
     custom_bg = user_info.get("customBackground")
     if custom_bg:

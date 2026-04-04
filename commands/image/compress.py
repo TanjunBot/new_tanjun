@@ -8,7 +8,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def compress(commandInfo: utility.commandInfo, image: discord.Attachment, quality: int):
+async def compress(commandInfo: utility.CommandInfo, image: discord.Attachment, quality: int):
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(

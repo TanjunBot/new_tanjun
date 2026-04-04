@@ -15,11 +15,11 @@ from api import (
     remove_user_boost,
 )
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, commandInfo, tanjunEmbed
+from utility import checkIfHasPro, CommandInfo, tanjunEmbed
 
 
 async def calculate_user_channel_boost_command(
-    commandInfo: commandInfo, user: discord.Member, channel: discord.TextChannel
+    commandInfo: CommandInfo, user: discord.Member, channel: discord.TextChannel
 ) -> None:
     assert commandInfo.guild is not None
     user_boost = await get_user_boost(str(commandInfo.guild.id), str(user.id))
@@ -65,7 +65,7 @@ async def calculate_user_channel_boost_command(
     await commandInfo.reply(embed=embed)
 
 
-async def add_role_boost_command(commandInfo: commandInfo, role: discord.Role, boost: float, additive: bool) -> None:
+async def add_role_boost_command(commandInfo: CommandInfo, role: discord.Role, boost: float, additive: bool) -> None:
     assert commandInfo.guild is not None
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
@@ -94,7 +94,7 @@ async def add_role_boost_command(commandInfo: commandInfo, role: discord.Role, b
 
 
 async def add_channel_boost_command(
-    commandInfo: commandInfo, channel: discord.TextChannel, boost: float, additive: bool
+    commandInfo: CommandInfo, channel: discord.TextChannel, boost: float, additive: bool
 ) -> None:
     assert commandInfo.guild is not None
     if not checkIfHasPro(commandInfo.guild.id):
@@ -123,7 +123,7 @@ async def add_channel_boost_command(
     await commandInfo.reply(embed=embed)
 
 
-async def add_user_boost_command(commandInfo: commandInfo, user: discord.Member, boost: float, additive: bool) -> None:
+async def add_user_boost_command(commandInfo: CommandInfo, user: discord.Member, boost: float, additive: bool) -> None:
     assert commandInfo.guild is not None
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
@@ -151,7 +151,7 @@ async def add_user_boost_command(commandInfo: commandInfo, user: discord.Member,
     await commandInfo.reply(embed=embed)
 
 
-async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role) -> None:
+async def remove_role_boost_command(commandInfo: CommandInfo, role: discord.Role) -> None:
     assert commandInfo.guild is not None
     await remove_role_boost(str(commandInfo.guild.id), str(role.id))
     embed = tanjunEmbed(
@@ -165,7 +165,7 @@ async def remove_role_boost_command(commandInfo: commandInfo, role: discord.Role
     await commandInfo.reply(embed=embed)
 
 
-async def remove_channel_boost_command(commandInfo: commandInfo, channel: discord.TextChannel) -> None:
+async def remove_channel_boost_command(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
     assert commandInfo.guild is not None
     await remove_channel_boost(str(commandInfo.guild.id), str(channel.id))
     embed = tanjunEmbed(
@@ -179,7 +179,7 @@ async def remove_channel_boost_command(commandInfo: commandInfo, channel: discor
     await commandInfo.reply(embed=embed)
 
 
-async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Member) -> None:
+async def remove_user_boost_command(commandInfo: CommandInfo, user: discord.Member) -> None:
     assert commandInfo.guild is not None
     await remove_user_boost(str(commandInfo.guild.id), str(user.id))
     embed = tanjunEmbed(
@@ -193,7 +193,7 @@ async def remove_user_boost_command(commandInfo: commandInfo, user: discord.Memb
     await commandInfo.reply(embed=embed)
 
 
-async def show_boosts_command(commandInfo: commandInfo) -> None:
+async def show_boosts_command(commandInfo: CommandInfo) -> None:
     assert commandInfo.guild is not None
     boosts = await get_all_boosts(str(commandInfo.guild.id))
 

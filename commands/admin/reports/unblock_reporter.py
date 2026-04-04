@@ -5,7 +5,7 @@ from api import check_if_reporter_is_blocked, unblock_reporter
 from localizer import tanjunLocalizer
 
 
-async def unblock_reporter_cmd(commandInfo: utility.commandInfo, user: discord.Member) -> None:
+async def unblock_reporter_cmd(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

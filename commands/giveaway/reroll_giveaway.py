@@ -9,7 +9,7 @@ from localizer import tanjunLocalizer
 
 
 async def reroll_giveaway(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     giveawayId: int,
 ) -> None:
     if not commandInfo.permissions.manage_guild:
@@ -70,9 +70,9 @@ async def reroll_giveaway(
         return
 
     class RerollOptionsView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo, giveawayId: int) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo, giveawayId: int) -> None:
             super().__init__()
-            self.commandInfo = commandInfo
+            self.commandInfo = CommandInfo
             self.giveawayId = giveawayId
 
         @discord.ui.button(
@@ -124,7 +124,7 @@ async def reroll_giveaway(
         await perform_reroll(commandInfo, giveawayId, 1)
 
 
-async def perform_reroll(commandInfo: utility.commandInfo, giveawayId: int, reroll_count: int) -> None:
+async def perform_reroll(commandInfo: utility.CommandInfo, giveawayId: int, reroll_count: int) -> None:
     participants = await get_giveaway_participants(giveawayId)
 
     if not participants:
@@ -166,7 +166,7 @@ async def perform_reroll(commandInfo: utility.commandInfo, giveawayId: int, rero
     await commandInfo.reply(embed=embed)
 
     for winner in new_winners:
-        member = commandInfo.guild.get_member(int(winner))
+        member = CommandInfo.guild.get_member(int(winner))
         if member:
             await member.send(
                 tanjunLocalizer.localize(

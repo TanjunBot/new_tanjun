@@ -13,7 +13,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def blacklist_list_channel(commandInfo: utility.commandInfo) -> None:
+async def blacklist_list_channel(commandInfo: utility.CommandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

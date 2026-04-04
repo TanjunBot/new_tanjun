@@ -17,11 +17,11 @@ from utility import dateToRelativeTimeStr, relativeTimeStrToDate
 class GiveawayEditor(ui.View):
     def __init__(
         self,
-        commandInfo: utility.commandInfo,
+        CommandInfo: utility.CommandInfo,
         giveawayId: int,
     ):
         super().__init__(timeout=600)  # 10 minutes timeout
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.giveawayId = giveawayId
         self.giveaway_data = {}
         self.update_buttons()

@@ -8,7 +8,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def mirror(commandInfo: utility.commandInfo, image: discord.Attachment, axis: str):
+async def mirror(commandInfo: utility.CommandInfo, image: discord.Attachment, axis: str):
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(

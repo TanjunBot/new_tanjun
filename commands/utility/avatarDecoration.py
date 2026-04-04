@@ -1,10 +1,10 @@
 import discord
 
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def avatarDecoration(commandInfo: commandInfo, user: discord.Member) -> None:
+async def avatarDecoration(CommandInfo: CommandInfo, user: discord.Member) -> None:
     if not user.avatar_decoration:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

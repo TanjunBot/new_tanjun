@@ -11,7 +11,7 @@ from localizer import tanjunLocalizer
 
 
 async def add_blacklist_role(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     role: discord.Role,
 ) -> None:
     if not commandInfo.permissions.administrator:

@@ -13,7 +13,7 @@ from localizer import tanjunLocalizer
 
 
 async def configure_trigger_messages(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
 ):
     if (
         isinstance(commandInfo.user, discord.Member)
@@ -115,7 +115,7 @@ async def configure_trigger_messages(
         return embed
 
     class TriggerMessageModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -183,7 +183,7 @@ async def configure_trigger_messages(
             await interaction.response.edit_message(embed=embed, view=view)
 
     class TriggerMessageChannelView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo, trigger_id: int) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo, trigger_id: int) -> None:
             super().__init__()
 
             channelSelect = discord.ui.ChannelSelect(

@@ -503,7 +503,7 @@ class TicTacToe:
 
 
 async def tic_tac_toe(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     player1: discord.Member,
     player2: discord.Member | None = None,
 ):

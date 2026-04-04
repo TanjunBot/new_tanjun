@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 
 
 async def moverole(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     role: discord.Role,
     target_role: discord.Role,
     position: str,
@@ -37,7 +37,7 @@ async def moverole(
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and role.position >= commandInfo.user.top_role.position:
+    if isinstance(commandInfo.user, discord.Member) and role.position >= CommandInfo.user.top_role.position:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.roleTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.roleTooHigh.description"),

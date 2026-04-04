@@ -17,12 +17,12 @@ class WarningView(View):
         self,
         warnings: list[tuple[int, str, datetime, datetime | None, str]],
         member: discord.Member,
-        commandInfo: utility.commandInfo,
+        commandInfo: utility.CommandInfo,
     ) -> None:
         super().__init__(timeout=300)  # 5 minutes timeout
         self.warnings: list[tuple[int, str, datetime, datetime | None, str]] = warnings
         self.member: discord.Member = member
-        self.commandInfo: utility.commandInfo = commandInfo
+        self.commandInfo: utility.CommandInfo = CommandInfo
         self.page: int = 0
         self.message: discord.Message | None = None
         self.update_buttons()
@@ -112,7 +112,7 @@ class WarningView(View):
 
 
 def create_warnings_embed(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     member: discord.Member,
     warnings: list[tuple[int, str, datetime, datetime | None, str]],
     page: int,
@@ -172,7 +172,7 @@ def create_warnings_embed(
     return embed
 
 
-async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member) -> None:
+async def view_warnings(commandInfo: utility.CommandInfo, member: discord.Member) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -189,7 +189,7 @@ async def view_warnings(commandInfo: utility.commandInfo, member: discord.Member
         return
 
     assert commandInfo.guild is not None
-    guild_id = commandInfo.guild.id
+    guild_id = CommandInfo.guild.id
     user_id = member.id
 
     warnings = await get_detailed_warnings(guild_id, user_id)

@@ -5,7 +5,7 @@ from api import get_report_channel, set_report_channel
 from localizer import tanjunLocalizer
 
 
-async def set_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
+async def set_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

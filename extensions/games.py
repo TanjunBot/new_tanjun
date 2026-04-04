@@ -24,7 +24,7 @@ class gameCommands(discord.app_commands.Group):
     )
     async def tic_tac_toe_cmd(self, interaction: discord.Interaction, user: discord.Member = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -84,7 +84,7 @@ class gameCommands(discord.app_commands.Group):
         self, interaction: discord.Interaction, user: discord.Member = None, size: app_commands.Choice[str] = "7,6"
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -123,7 +123,7 @@ class gameCommands(discord.app_commands.Group):
     )
     async def akinator_cmd(self, interaction: discord.Interaction, theme: app_commands.Choice[str] = "characters") -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -241,7 +241,7 @@ class gameCommands(discord.app_commands.Group):
     )
     async def wordle_cmd(self, interaction: discord.Interaction, language: app_commands.Choice[str] = "own") -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -359,7 +359,7 @@ class gameCommands(discord.app_commands.Group):
     )
     async def hangman_cmd(self, interaction: discord.Interaction, language: app_commands.Choice[str] = "own") -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -379,7 +379,7 @@ class gameCommands(discord.app_commands.Group):
     )
     async def flag_quiz_cmd(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -401,7 +401,7 @@ class gameCommands(discord.app_commands.Group):
     )
     async def rps_cmd(self, interaction: discord.Interaction, user: discord.Member = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,

@@ -1,10 +1,10 @@
 import discord
 
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def banner(commandInfo: commandInfo, user: discord.User) -> None:
+async def banner(CommandInfo: CommandInfo, user: discord.User) -> None:
     user = await commandInfo.client.fetch_user(user.id)
 
     if not user.banner:

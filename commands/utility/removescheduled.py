@@ -37,11 +37,11 @@ class MessageSelectView(View):
                 "commands.utility.removescheduled.error.timeout.description",
             ),
         )
-        if self.message:
+        if self.message is not None:
             await self.message.edit(embed=embed, view=None)
 
 
-async def remove_scheduled_message(commandInfo: utility.commandInfo, message_id: int | None = None) -> None:
+async def remove_scheduled_message(commandInfo: utility.CommandInfo, message_id: int | None = None) -> None:
     messages = await get_scheduled_messages(commandInfo.user.id)
 
     if not messages:

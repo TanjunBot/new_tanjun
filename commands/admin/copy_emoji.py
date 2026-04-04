@@ -9,7 +9,7 @@ from utility import checkIfHasPro
 
 
 async def copy_emoji(
-    commandInfo: utility.commandInfo,
+    CommandInfo: utility.CommandInfo,
     emoji: str,
 ) -> None:
     if (
@@ -72,13 +72,13 @@ async def copy_emoji(
     failed_emojis = []
 
     # Get current emoji counts
-    guild_emojis = commandInfo.guild.emojis
+    guild_emojis = CommandInfo.guild.emojis
     animated_count = sum(1 for e in guild_emojis if e.animated)
     static_count = sum(1 for e in guild_emojis if not e.animated)
 
     # Get emoji limits based on guild boost level
-    animated_limit = commandInfo.guild.emoji_limit
-    static_limit = commandInfo.guild.emoji_limit
+    animated_limit = CommandInfo.guild.emoji_limit
+    static_limit = CommandInfo.guild.emoji_limit
 
     try:
         for match in matches:

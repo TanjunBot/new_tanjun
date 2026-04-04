@@ -2,10 +2,10 @@ import discord
 
 from api import addAutoPublish, checkIfChannelIsAutopublish, removeAutoPublish
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel) -> None:
+async def autopublish(CommandInfo: CommandInfo, channel: discord.TextChannel) -> None:
     if commandInfo.guild is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -92,7 +92,7 @@ async def autopublish(commandInfo: commandInfo, channel: discord.TextChannel) ->
     await commandInfo.reply(embed=embed)
 
 
-async def autopublish_remove(commandInfo: commandInfo, channel: discord.TextChannel) -> None:
+async def autopublish_remove(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
     if commandInfo.guild is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

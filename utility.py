@@ -182,7 +182,7 @@ class tanjunEmbed(discord.Embed):
             self.timestamp = timestamp
 
     @classmethod
-    def from_dict(cls, data: "Mapping[str, Any]") -> "tanjunEmbed":
+    def from_dict(cls, data: "Mapping[str, object]") -> "tanjunEmbed":
         self = cls.__new__(cls)
 
         self.title = None
@@ -206,7 +206,7 @@ class tanjunEmbed(discord.Embed):
 
         if "color" in data and data["color"] is not None:
             try:
-                self._colour = discord.Colour(value=int(data["color"]))
+                self._colour = discord.Colour(value=int(cast(Any, data["color"])))
             except (ValueError, TypeError):
                 pass
 
@@ -227,7 +227,7 @@ class tanjunEmbed(discord.Embed):
         return self
 
     def copy(self) -> Self:
-        return self.__class__.from_dict(self.to_dict())
+        return cast(Self, self.__class__.from_dict(self.to_dict()))
 
     def __len__(self) -> int:
         total: int = len(self.title or "") + len(self.description or "")
@@ -276,11 +276,11 @@ class tanjunEmbed(discord.Embed):
         return self.to_dict() == other.to_dict()
 
     @property
-    def colour(self) -> discord.Colour | None:  # type: ignore[override]
+    def colour(self) -> discord.Colour | None:
         return getattr(self, "_colour", None)
 
     @colour.setter
-    def colour(self, value: int | discord.Colour | None) -> None:  # type: ignore[override]
+    def colour(self, value: discord.Colour | None) -> None:
         if value is None:
             self._colour = None
         elif isinstance(value, discord.Colour):
@@ -289,11 +289,11 @@ class tanjunEmbed(discord.Embed):
             self._colour = discord.Colour(value=value)
 
     @property
-    def color(self) -> discord.Colour | None:  # type: ignore[override]
+    def color(self) -> discord.Colour | None:
         return self.colour
 
     @color.setter
-    def color(self, value: int | discord.Colour | None) -> None:  # type: ignore[override]
+    def color(self, value: discord.Colour | None) -> None:
         self.colour = value
 
     @property
@@ -416,7 +416,7 @@ class tanjunEmbed(discord.Embed):
             raise IndexError("field index out of range")
         return self
 
-    def to_dict(self) -> dict[str, Any]:  # type: ignore[override]
+    def to_dict(self) -> dict[str, Any]:
         result: dict[str, object] = {}
         for key in self.__slots__:
             if key.startswith("_") and hasattr(self, key):
@@ -451,7 +451,7 @@ class tanjunEmbed(discord.Embed):
         return result
 
 
-class commandInfo:
+class CommandInfo:
     def __init__(
         self,
         user: discord.Member | discord.User,
@@ -858,9 +858,9 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None
         print(f"Warning: Unknown XP scaling '{scaling}'. Using 'medium'.")
         result = LEVEL_SCALINGS["medium"](level)
 
-    if type(result) is complex:  # type: ignore[redundant-expr]
-        print(f"Warning: Custom XP formula resulted in a complex number ({result}). Using real part or 0.")
-        return math.floor(result.real) if result.real is not None else 0
+    if isinstance(result, complex):
+        print(f"Warning: Custom XP formula resulted in a complex number ({result}). Using real part.")
+        return math.floor(result.real)
     elif isinstance(result, (float, int)):
         if math.isinf(result) or math.isnan(result):
             print(f"Warning: XP calculation resulted in {result}. Returning 0.")
@@ -1113,7 +1113,7 @@ class MockInteractionResponse:
 
         channel = self.interaction._mock_channel
         if channel and hasattr(self.interaction, "_state"):
-            self.message = discord.Message(state=self.interaction._state, channel=cast(Any, channel), data=message_data)  # type: ignore[arg-type]
+            self.message = discord.Message(state=self.interaction._state, channel=cast(Any, channel), data=message_data)
         else:
             self.message = None
         self.interaction._response_issued = True
@@ -1155,7 +1155,7 @@ class MockWebhook:
             mock_channel = self._state.Client.get_channel(0)
 
         # Use type ignore since we're mocking discord.Message creation
-        return discord.Message(state=self._state, channel=cast(Any, mock_channel), data=message_data)  # type: ignore[arg-type]
+        return discord.Message(state=self._state, channel=cast(Any, mock_channel), data=message_data)
 
     async def edit_message(self, message_id: int, **kwargs: Any) -> discord.Message:
         raise NotImplementedError

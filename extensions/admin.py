@@ -71,7 +71,7 @@ class WarnCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -95,7 +95,7 @@ class WarnCommands(discord.app_commands.Group):
     )
     async def view(self, interaction: discord.Interaction, user: discord.Member) -> None:
         await interaction.response.defer(ephemeral=True)
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -115,7 +115,7 @@ class WarnCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_warn_config_description"),
     )
     async def config(self, interaction: discord.Interaction) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -142,7 +142,7 @@ class RoleCommands(discord.app_commands.Group):
     )
     async def addrole(self, interaction: discord.Interaction, user: discord.Member = None, role: discord.Role = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -169,7 +169,7 @@ class RoleCommands(discord.app_commands.Group):
         self, interaction: discord.Interaction, user: discord.Member = None, role: discord.Role = None
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -209,7 +209,7 @@ class RoleCommands(discord.app_commands.Group):
         display_emoji: app_commands.Range[str, 0, 1] = None,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -244,7 +244,7 @@ class RoleCommands(discord.app_commands.Group):
         self, interaction: discord.Interaction, role: discord.Role, reason: app_commands.Range[str, 0, 100] = None
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -288,7 +288,7 @@ class RoleCommands(discord.app_commands.Group):
         position: app_commands.Choice[str],
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -331,7 +331,7 @@ class RoleCommands(discord.app_commands.Group):
         self, interaction: discord.Interaction, role: discord.Role, copymembers: app_commands.Choice[str]
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -361,7 +361,7 @@ class ReportCommands(discord.app_commands.Group):
     )
     async def set_channel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -385,7 +385,7 @@ class ReportCommands(discord.app_commands.Group):
     )
     async def remove_channel(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -409,7 +409,7 @@ class ReportCommands(discord.app_commands.Group):
     )
     async def show_reports(self, interaction: discord.Interaction, user: discord.Member = None) -> None:
         await interaction.response.defer(ephemeral=True)
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -433,7 +433,7 @@ class ReportCommands(discord.app_commands.Group):
     )
     async def unblock_reporter(self, interaction: discord.Interaction, user: discord.Member) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -456,7 +456,7 @@ class TriggerMessagesCommands(discord.app_commands.Group):
     )
     async def configure(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -500,7 +500,7 @@ class TriggerMessagesCommands(discord.app_commands.Group):
         casesensitive: app_commands.Choice[str] = None,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -531,7 +531,7 @@ class JoinToCreateCommands(discord.app_commands.Group):
     )
     async def set_channel(self, interaction: discord.Interaction, channel: discord.VoiceChannel) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -555,7 +555,7 @@ class JoinToCreateCommands(discord.app_commands.Group):
     )
     async def remove_channel(self, interaction: discord.Interaction, channel: discord.VoiceChannel) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -584,7 +584,7 @@ class administrationCommands(discord.app_commands.Group):
         self, interaction: discord.Interaction, user: discord.Member, reason: app_commands.Range[str, 0, 100] = None
     ) -> None:
         await interaction.response.defer(ephemeral=True)
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -616,7 +616,7 @@ class administrationCommands(discord.app_commands.Group):
         delete_message_days: app_commands.Range[int, 0, 7] = 0,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -651,7 +651,7 @@ class administrationCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -683,7 +683,7 @@ class administrationCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -713,7 +713,7 @@ class administrationCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -793,7 +793,7 @@ class administrationCommands(discord.app_commands.Group):
         setting: app_commands.Choice[str] = "all",
     ) -> None:
         await interaction.response.defer(ephemeral=True)
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -828,7 +828,7 @@ class administrationCommands(discord.app_commands.Group):
         nickname: app_commands.Range[str, 0, 100] = None,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -858,7 +858,7 @@ class administrationCommands(discord.app_commands.Group):
         channel: discord.TextChannel = None,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -882,7 +882,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def lock(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -906,7 +906,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def unlock(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -930,7 +930,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def nuke(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -963,7 +963,7 @@ class administrationCommands(discord.app_commands.Group):
         channel: discord.TextChannel = None,
     ) -> None:
         await interaction.response.defer(ephemeral=True)
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -996,7 +996,7 @@ class administrationCommands(discord.app_commands.Group):
         channel: discord.TextChannel = None,
     ) -> None:
         await interaction.response.defer(ephemeral=True)
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -1024,7 +1024,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def createemoji(self, interaction: discord.Interaction, name: str, imageurl: str) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -1066,7 +1066,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def claimboosterrole(self, interaction: discord.Interaction, role: discord.Role = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -1102,7 +1102,7 @@ class administrationCommands(discord.app_commands.Group):
         introduction: app_commands.Range[str, 0, 1024] = None,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -1229,7 +1229,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def set_locale(self, interaction: discord.Interaction, locale: str) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -1253,7 +1253,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def copy_emoji(self, interaction: discord.Interaction, emoji: str) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,

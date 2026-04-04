@@ -347,13 +347,13 @@ class Connect4:
 
 
 async def connect4(
-    commandInfo: utility.commandInfo,
+    CommandInfo: utility.CommandInfo,
     player1: discord.Member,
     player2: discord.Member | None = None,
     rows: int = 6,
     columns: int = 7,
 ):
-    guild_id = commandInfo.guild.id if commandInfo.guild else 0
+    guild_id = CommandInfo.guild.id if commandInfo.guild else 0
     if rows != 6 and columns != 7 and not checkIfhasPlus(guild_id):
         await commandInfo.reply(
             embed=utility.tanjunEmbed(

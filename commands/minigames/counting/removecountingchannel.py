@@ -2,10 +2,12 @@ import discord
 
 from api import clear_counting, get_counting_progress
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def removeCountingChannel(commandInfo: commandInfo, channel: discord.TextChannel) -> None:
+async def removeCountingChannel(CommandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+    if commandInfo.guild is None:
+        return
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

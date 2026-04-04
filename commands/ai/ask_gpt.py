@@ -9,7 +9,7 @@ client = AsyncOpenAI(api_key=openAiKey)
 
 
 async def ask_gpt(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     name: str,
     situation: str,
     prompt: str,

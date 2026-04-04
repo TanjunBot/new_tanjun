@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import cast
+from typing import cast, Any, Any
 
 import discord
 from discord import app_commands
@@ -26,7 +26,7 @@ class TanjunTranslator(app_commands.Translator):
         self,
         string: app_commands.locale_str,
         locale: discord.Locale,
-        context: app_commands.TranslationContext[Any, Any],  # type: ignore[type-arg]
+        context: app_commands.TranslationContext[Any, Any],
     ) -> str | None:
         if str(locale.value) not in ["de", "de-DE", "en", "en-US", "en-GB"]:
             return None

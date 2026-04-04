@@ -36,7 +36,7 @@ class CalculatorButton(ui.Button):
 
 
 class CalculatorView(ui.View):
-    def __init__(self, command_info: utility.commandInfo, initial_equation: str = "") -> None:
+    def __init__(self, command_info: utility.CommandInfo, initial_equation: str = "") -> None:
         super().__init__(timeout=300)
         self.command_info = command_info
         self.display_equation = initial_equation
@@ -455,7 +455,7 @@ class CalculatorView(ui.View):
         await interaction.response.edit_message(embed=embed, view=self)
 
 
-async def calculator_command(command_info: utility.commandInfo, initial_equation: str = "") -> None:
+async def calculator_command(command_info: utility.CommandInfo, initial_equation: str = "") -> None:
     view = CalculatorView(command_info, initial_equation)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(command_info.locale, "commands.math.calculator.title"),

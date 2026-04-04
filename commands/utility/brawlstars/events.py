@@ -2,11 +2,12 @@ from typing import Any
 
 import aiohttp
 import discord
+from typing import cast, Any
 
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
 from utility import (
-    commandInfo,
+    CommandInfo,
     date_time_to_timestamp,
     isoTimeToDate,
     tanjunEmbed,
@@ -30,7 +31,7 @@ async def getEventRotation() -> list[dict[str, Any]] | None:
         return None
 
 
-async def events(commandInfo: commandInfo) -> None:
+async def events(commandInfo: CommandInfo) -> None:
     eventRotation = await getEventRotation()
     if not eventRotation:
         await commandInfo.reply(
@@ -103,7 +104,7 @@ async def events(commandInfo: commandInfo) -> None:
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
         async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == commandInfo.user.id:
+            if not interaction.user.id == CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -120,7 +121,7 @@ async def events(commandInfo: commandInfo) -> None:
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
         async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == commandInfo.user.id:
+            if not interaction.user.id == CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,

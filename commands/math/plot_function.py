@@ -16,14 +16,14 @@ from localizer import tanjunLocalizer
 
 
 async def plot_function_command(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     func_str: str,
     x_min: float | None = None,
     x_max: float | None = None,
 ) -> None:
     class FunctionPlotter:
-        def __init__(self, commandInfo: utility.commandInfo, author_id: int) -> None:
-            self.commandInfo = commandInfo
+        def __init__(self, commandInfo: utility.CommandInfo, author_id: int) -> None:
+            self.commandInfo = CommandInfo
             self.author_id = author_id
             self.functions: list[tuple[str, Callable, str]] = []
             self.x_min = -10

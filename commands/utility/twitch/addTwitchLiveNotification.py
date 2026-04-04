@@ -6,11 +6,11 @@ from commands.utility.twitch.twitchApi import (
     subscribe_to_twitch_online_notification,
 )
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
 async def addTwitchLiveNotification(
-    commandInfo: commandInfo,
+    CommandInfo: CommandInfo,
     twitch_name: str,
     channel: discord.TextChannel,
     notification_message: str | None = None,

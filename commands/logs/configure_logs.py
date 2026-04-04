@@ -39,7 +39,7 @@ LOG_OPTIONS = [
 ]
 
 
-async def configure_logs(commandInfo: utility.commandInfo) -> None:
+async def configure_logs(commandInfo: utility.CommandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

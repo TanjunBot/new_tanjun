@@ -1,9 +1,9 @@
 from api import check_if_opted_out, opt_in
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def optIn(commandInfo: commandInfo) -> None:
+async def optIn(CommandInfo: CommandInfo) -> None:
     if not await check_if_opted_out(commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.messagetrackingoptin.error.title"),

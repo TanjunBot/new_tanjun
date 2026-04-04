@@ -18,7 +18,7 @@ from localizer import tanjunLocalizer
 
 
 async def addDynamicslowmode(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     channel: discord.TextChannel,
     messages: int,
     per: int,
@@ -85,7 +85,7 @@ async def addDynamicslowmode(
     await commandInfo.reply(embed=embed)
 
 
-async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
+async def removeDynamicslowmode(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -133,7 +133,7 @@ async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: disco
     await commandInfo.reply(embed=embed)
 
 
-async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo) -> None:
+async def getDynamicslowmodeChannels(commandInfo: utility.CommandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

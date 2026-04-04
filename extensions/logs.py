@@ -91,7 +91,7 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
     @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_add_params_channel_description"))
     async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -115,7 +115,7 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
     @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_remove_params_channel_description"))
     async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -138,7 +138,7 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
     )
     async def show_blacklist_channel_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -161,7 +161,7 @@ class UserBlacklistCommands(discord.app_commands.Group):
     @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_add_params_user_description"))
     async def add_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -181,7 +181,7 @@ class UserBlacklistCommands(discord.app_commands.Group):
     @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_remove_params_user_description"))
     async def remove_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -200,7 +200,7 @@ class UserBlacklistCommands(discord.app_commands.Group):
     )
     async def show_blacklist_user_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -222,7 +222,7 @@ class RoleBlacklistCommands(discord.app_commands.Group):
     @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_add_params_role_description"))
     async def add_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -242,7 +242,7 @@ class RoleBlacklistCommands(discord.app_commands.Group):
     @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_remove_params_role_description"))
     async def remove_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -261,7 +261,7 @@ class RoleBlacklistCommands(discord.app_commands.Group):
     )
     async def show_blacklist_role_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -283,7 +283,7 @@ class LogsCommands(discord.app_commands.Group):
     @app_commands.describe(channel=app_commands.locale_str("logs_set_params_channel_description"))
     async def set_log_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -306,7 +306,7 @@ class LogsCommands(discord.app_commands.Group):
     )
     async def remove_log_channel_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -326,7 +326,7 @@ class LogsCommands(discord.app_commands.Group):
     )
     async def configure_logs_cmd(self, ctx: discord.Interaction) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,

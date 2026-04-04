@@ -7,7 +7,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def help(commandInfo: utility.commandInfo) -> None:
+async def help(commandInfo: utility.CommandInfo) -> None:
     class HelpSelect(discord.ui.Select[Any]):
         cash: set[str] = set()
 
@@ -21,7 +21,7 @@ async def help(commandInfo: utility.commandInfo) -> None:
             )
 
         @classmethod
-        def get_locale(self, key: str, locale: str, **kwargs: Any) -> str:
+        def get_locale(self, key: str, locale: str, **kwargs: object) -> str:
             key = key.replace("_", ".")
             if key in self.cash:
                 return key
@@ -43,8 +43,8 @@ async def help(commandInfo: utility.commandInfo) -> None:
             )
 
             for group in self.client.tree.walk_commands():
+                command_text = ""
                 if group.name == self.values[0]:
-                    command_text = ""
 
                     if isinstance(group, app_commands.Group):
                         try:

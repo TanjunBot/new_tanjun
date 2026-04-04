@@ -7,7 +7,7 @@ from localizer import tanjunLocalizer
 
 
 async def addrole(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     user: discord.Member | None = None,
     role: discord.Role | None = None,
 ) -> None:
@@ -41,13 +41,13 @@ async def addrole(
     class RoleManagementView(discord.ui.View):
         def __init__(
             self,
-            commandInfo: utility.commandInfo,
+            commandInfo: utility.CommandInfo,
             action: str = "add",
             user: discord.Member | None = None,
             role: discord.Role | None = None,
         ) -> None:
             super().__init__(timeout=300)
-            self.commandInfo = commandInfo
+            self.commandInfo = CommandInfo
             self.action = action
             self.selected_roles: list[discord.Role] = [role] if role else []
             self.selected_users: list[discord.Member] = [user] if user else []

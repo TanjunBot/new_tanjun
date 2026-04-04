@@ -12,7 +12,7 @@ MAX_CONTENT_LENGTH = 1000  # Maximum length for message content preview
 MAX_EMBED_LENGTH = 6000  # Discord's maximum embed length
 
 
-async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
+async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
     class PaginationView(View):
         def __init__(self, messages: list[tuple[Any, ...]], locale: str, page: int = 0) -> None:
             super().__init__(timeout=300)  # 5 minute timeout
@@ -22,7 +22,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
             self.locale = locale
 
             prev_button: Button[Any] = Button(emoji="⬅️", style=discord.ButtonStyle.gray, disabled=page == 0)
-            prev_button.callback = self.previous_page
+            setattr(prev_button, "callback", self.previous_page)
             self.add_item(prev_button)
 
             # Page counter button (disabled, just for display)
@@ -44,7 +44,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
                 style=discord.ButtonStyle.gray,
                 disabled=page == self.max_pages,
             )
-            next_button.callback = self.next_page
+            setattr(next_button, "callback", self.next_page)
             self.add_item(next_button)
 
         def truncate_content(self, content: str) -> str:
@@ -104,7 +104,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
             return embed
 
         async def previous_page(self, interaction: discord.Interaction) -> None:
-            if interaction.user != commandInfo.user:
+            if interaction.user != CommandInfo.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         self.locale,
@@ -118,7 +118,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
             await self.update_message(interaction)
 
         async def next_page(self, interaction: discord.Interaction) -> None:
-            if interaction.user != commandInfo.user:
+            if interaction.user != CommandInfo.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         self.locale,
@@ -158,7 +158,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo) -> None:
             for child in self.children:
                 if isinstance(child, Button):
                     child.disabled = True
-            if self.message:
+            if self.message is not None:
                 await self.message.edit(view=discord.ui.View())
 
     messages = await get_scheduled_messages(commandInfo.user.id)

@@ -84,13 +84,13 @@ class TwitchAPI:
         self.initial_check_done = True
 
 
-twitch_api = None
+twitch_api: "Twitch | None" = None
 
 
 async def initTwitch() -> TwitchAPI:
     global twitch_api
     print("initiating Twitch API...")
-    twitch_api = TwitchAPI()
+    twitch_api: "Twitch | None" = TwitchAPI()
     await twitch_api.init()
     print("Twitch API initiated!")
     return twitch_api

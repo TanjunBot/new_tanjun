@@ -6,7 +6,7 @@ from localizer import tanjunLocalizer
 
 
 async def add_trigger_message(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     trigger: str,
     response: str,
     caseSensitive: bool = False,

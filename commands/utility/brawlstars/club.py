@@ -6,7 +6,7 @@ import discord
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
 from utility import addThousandsSeparator, similar, tanjunEmbed
-from utility import commandInfo as CommandInfo
+from utility import CommandInfo as CommandInfo
 
 
 async def getClubInfo(clubTag: str) -> dict[str, str | dict[str, dict[str, str]]] | None:
@@ -151,7 +151,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
         async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == commandInfo.user.id:
+            if not interaction.user.id == CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -168,7 +168,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
         async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == commandInfo.user.id:
+            if not interaction.user.id == CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -185,7 +185,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
 
         @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
         async def search(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == commandInfo.user.id:
+            if not interaction.user.id == CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -201,7 +201,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.brawlstars.club.search.title")
             )
-            self.commandInfo = commandInfo
+            self.commandInfo = CommandInfo
             self.add_item(
                 discord.ui.TextInput(
                     label=tanjunLocalizer.localize(

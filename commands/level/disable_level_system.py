@@ -8,14 +8,14 @@ from api import (
     set_level_system_status,
 )
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def disable_level_system(commandInfo: commandInfo) -> None:
+async def disable_level_system(CommandInfo: CommandInfo) -> None:
     class ConfirmDisableView(discord.ui.View):
-        def __init__(self, commandInfo: commandInfo) -> None:
+        def __init__(self, commandInfo: CommandInfo) -> None:
             super().__init__(timeout=60)
-            self.commandInfo = commandInfo
+            self.commandInfo = CommandInfo
             self.value = None
 
         @discord.ui.button(

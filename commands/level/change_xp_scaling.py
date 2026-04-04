@@ -9,18 +9,18 @@ from localizer import tanjunLocalizer
 from utility import (
     LEVEL_SCALINGS,
     checkIfHasPro,
-    commandInfo,
+    CommandInfo,
     get_xp_for_level,
     tanjunEmbed,
 )
 
 
 class PaginationView(View):
-    def __init__(self, generate_page: Any, commandInfo: commandInfo, total_pages: int) -> None:
+    def __init__(self, generate_page: Any, commandInfo: CommandInfo, total_pages: int) -> None:
         super().__init__(timeout=60)
         self.generate_page = generate_page
         self.current_page = 0
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.total_pages = total_pages
 
     @discord.ui.button(label="◀️", style=discord.ButtonStyle.gray, disabled=True)
@@ -40,7 +40,7 @@ class PaginationView(View):
         await interaction.response.edit_message(embed=await self.generate_page(self.current_page), view=self)
 
 
-async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, custom_formula: str | None = None) -> None:
+async def change_xp_scaling_command(commandInfo: CommandInfo, scaling: str, custom_formula: str | None = None) -> None:
     if custom_formula:
         custom_formula = custom_formula.replace("x", "level")
     if (
@@ -138,7 +138,7 @@ async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, cust
     await commandInfo.reply(embed=embed)
 
 
-async def show_xp_scalings(commandInfo: commandInfo, start_level: int = 1, end_level: int = 5) -> None:
+async def show_xp_scalings(commandInfo: CommandInfo, start_level: int = 1, end_level: int = 5) -> None:
     if start_level > end_level:
         start_level, end_level = end_level, start_level
 

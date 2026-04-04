@@ -10,11 +10,11 @@ from api import (
     remove_user_from_blacklist,
 )
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, commandInfo, tanjunEmbed
+from utility import checkIfHasPro, CommandInfo, tanjunEmbed
 
 
 async def add_channel_to_blacklist_command(
-    commandInfo: commandInfo, channel: discord.TextChannel, reason: str | None = None
+    commandInfo: CommandInfo, channel: discord.TextChannel, reason: str | None = None
 ) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
@@ -50,7 +50,7 @@ async def add_channel_to_blacklist_command(
     await commandInfo.reply(embed=embed)
 
 
-async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channel: discord.TextChannel) -> None:
+async def remove_channel_from_blacklist_command(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -82,7 +82,7 @@ async def remove_channel_from_blacklist_command(commandInfo: commandInfo, channe
     await commandInfo.reply(embed=embed)
 
 
-async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.Role, reason: str | None = None) -> None:
+async def add_role_to_blacklist_command(commandInfo: CommandInfo, role: discord.Role, reason: str | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -117,7 +117,7 @@ async def add_role_to_blacklist_command(commandInfo: commandInfo, role: discord.
     await commandInfo.reply(embed=embed)
 
 
-async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: discord.Role) -> None:
+async def remove_role_from_blacklist_command(commandInfo: CommandInfo, role: discord.Role) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -149,7 +149,7 @@ async def remove_role_from_blacklist_command(commandInfo: commandInfo, role: dis
     await commandInfo.reply(embed=embed)
 
 
-async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.Member, reason: str | None = None) -> None:
+async def add_user_to_blacklist_command(commandInfo: CommandInfo, user: discord.Member, reason: str | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -198,7 +198,7 @@ async def add_user_to_blacklist_command(commandInfo: commandInfo, user: discord.
     await commandInfo.reply(embed=embed)
 
 
-async def remove_user_from_blacklist_command(commandInfo: commandInfo, user: discord.Member) -> None:
+async def remove_user_from_blacklist_command(commandInfo: CommandInfo, user: discord.Member) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -230,7 +230,7 @@ async def remove_user_from_blacklist_command(commandInfo: commandInfo, user: dis
     await commandInfo.reply(embed=embed)
 
 
-async def show_blacklist_command(commandInfo: commandInfo) -> None:
+async def show_blacklist_command(commandInfo: CommandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

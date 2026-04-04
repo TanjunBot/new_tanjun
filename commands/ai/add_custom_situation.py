@@ -8,7 +8,7 @@ from localizer import tanjunLocalizer
 
 
 async def add_custom_situation(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     name: str,
     situation: str,
     temperature: float = 1,

@@ -2,10 +2,10 @@ import discord
 
 from api import get_levelup_message_status, set_levelup_message_status
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def disable_levelup_message(commandInfo: commandInfo) -> None:
+async def disable_levelup_message(CommandInfo: CommandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

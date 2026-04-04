@@ -18,7 +18,7 @@ class GiveawayBuilderButton(ui.Button):
 
 class CustomNameModal(ui.Modal):
     def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.view = view
         self.title = title
         self.description = description
@@ -66,7 +66,7 @@ class CustomNameModal(ui.Modal):
 class SponsorView(ui.View):
     def __init__(self, commandInfo, view) -> None:
         super().__init__(timeout=300)
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.selected_user = []
         self.view = view
 
@@ -136,7 +136,7 @@ class SponsorView(ui.View):
 
 class ChangeWinnersModal(ui.Modal):
     def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.view = view
         self.title = title
         self.description = description
@@ -181,7 +181,7 @@ class ChangeWinnersModal(ui.Modal):
 
 class EndTimeModal(ui.Modal):
     def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.view = view
         self.title = title
         self.description = description
@@ -223,7 +223,7 @@ class EndTimeModal(ui.Modal):
 
 class StartTimeModal(ui.Modal):
     def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.view = view
         self.title = title
         self.description = description
@@ -270,7 +270,7 @@ class StartTimeModal(ui.Modal):
 
 class MessageRequirementModal(ui.Modal):
     def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.view = view
         self.title = title
         self.description = description
@@ -318,7 +318,7 @@ class MessageRequirementModal(ui.Modal):
 
 class DayRequirementModal(ui.Modal):
     def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.view = view
         self.title = title
         self.description = description
@@ -365,7 +365,7 @@ class DayRequirementModal(ui.Modal):
 
 class RoleRequirementView(ui.View):
     def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.view = view
         self.title = title
         self.description = description
@@ -449,7 +449,7 @@ class RoleRequirementView(ui.View):
 
 class VoiceRequirementModal(ui.Modal):
     def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.view = view
         self.title = title
         self.description = description
@@ -497,7 +497,7 @@ class VoiceRequirementModal(ui.Modal):
 
 class AddChannelRequirementValueModal(ui.Modal):
     def __init__(self, view, commandInfo, channel, title, description) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.view = view
         self.title = title
         self.channel = channel
@@ -545,7 +545,7 @@ class AddChannelRequirementValueModal(ui.Modal):
 
 class AddChannelRequirementView(ui.View):
     def __init__(self, commandInfo, view) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.selected_channels = []
         self.view = view
         super().__init__(timeout=600)  # 10 minutes timeout
@@ -630,7 +630,7 @@ class AddChannelRequirementView(ui.View):
 
 class RemoveChannelRequirementView(ui.View):
     def __init__(self, commandInfo, view) -> None:
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.selected_channels = []
         self.view = view
         super().__init__(timeout=300)
@@ -716,7 +716,7 @@ class GiveawayBuilder(ui.View):
         target_channel,
     ):
         super().__init__(timeout=600)  # 10 minutes timeout
-        self.commandInfo = commandInfo
+        self.commandInfo = CommandInfo
         self.giveaway_data = {
             "title": title,
             "description": "",

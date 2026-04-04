@@ -5,7 +5,7 @@ import aiohttp
 from api import add_brawlstars_linked_account, get_brawlstars_linked_account
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
 async def getPlayerInfo(playerTag: str) -> dict[str, str] | None:
@@ -26,7 +26,7 @@ async def getPlayerInfo(playerTag: str) -> dict[str, str] | None:
             return None
 
 
-async def link(commandInfo: commandInfo, playerTag: str) -> None:
+async def link(commandInfo: CommandInfo, playerTag: str) -> None:
     if not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
     playerInfo = await getPlayerInfo(playerTag)

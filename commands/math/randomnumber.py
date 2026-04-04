@@ -4,7 +4,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def random_number_command(commandInfo: utility.commandInfo, min: int, max: int, amount: int = 1) -> None:
+async def random_number_command(commandInfo: utility.CommandInfo, min: int, max: int, amount: int = 1) -> None:
     try:
         min = int(min)
         max = int(max)

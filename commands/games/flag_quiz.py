@@ -9,7 +9,7 @@ from commands.games.country_flags.flags import random_flag
 from localizer import tanjunLocalizer
 
 
-async def flag_quiz(commandInfo: utility.commandInfo) -> None:
+async def flag_quiz(commandInfo: utility.CommandInfo) -> None:
     locale = str(commandInfo.locale)
     flag_file = random_flag()
     correct_country = flag_file.replace(".png", "").replace("_", " ").title()
@@ -125,9 +125,9 @@ async def flag_quiz(commandInfo: utility.commandInfo) -> None:
         )
 
     class FlagQuizModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo) -> None:
             super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.flagquiz.modal.title"))
-            self.commandInfo = commandInfo
+            self.commandInfo = CommandInfo
 
             self.add_item(
                 discord.ui.TextInput(
@@ -146,16 +146,16 @@ async def flag_quiz(commandInfo: utility.commandInfo) -> None:
             await update_game(interaction)
 
     class FlagQuizView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo) -> None:
             super().__init__(timeout=3600)
-            self.commandInfo = commandInfo
+            self.commandInfo = CommandInfo
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.flagquiz.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
         async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.flagquiz.notYourGame"),
                     ephemeral=True,
@@ -170,7 +170,7 @@ async def flag_quiz(commandInfo: utility.commandInfo) -> None:
         )
         async def hint_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != CommandInfo.user.id:
                 await interaction.followup.send(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.flagquiz.notYourGame"),
                     ephemeral=True,
@@ -192,7 +192,7 @@ async def flag_quiz(commandInfo: utility.commandInfo) -> None:
         )
         async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != CommandInfo.user.id:
                 await interaction.followup.send(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.flagquiz.notYourGame"),
                     ephemeral=True,

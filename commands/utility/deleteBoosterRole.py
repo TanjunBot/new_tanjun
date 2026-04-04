@@ -3,10 +3,10 @@ import discord
 import utility
 from api import delete_booster_role, get_booster_role
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def deleteBoosterRole(commandInfo: commandInfo) -> None:
+async def deleteBoosterRole(CommandInfo: CommandInfo) -> None:
     if commandInfo.guild is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

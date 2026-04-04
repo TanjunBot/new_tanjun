@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 
 
 async def end_giveaway(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     giveawayId: int,
 ) -> None:
     if not commandInfo.permissions.manage_guild:

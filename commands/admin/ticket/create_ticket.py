@@ -6,7 +6,7 @@ from localizer import tanjunLocalizer
 
 
 async def create_ticket(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     channel: discord.TextChannel,
     name: str,
     description: str,

@@ -2,10 +2,10 @@ import discord
 
 from api import set_levelup_message
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, commandInfo, tanjunEmbed
+from utility import checkIfHasPro, CommandInfo, tanjunEmbed
 
 
-async def change_levelup_message(commandInfo: commandInfo, new_message: str) -> None:
+async def change_levelup_message(commandInfo: CommandInfo, new_message: str) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

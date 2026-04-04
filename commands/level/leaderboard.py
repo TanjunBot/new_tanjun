@@ -7,7 +7,7 @@ from api import get_custom_formula, get_xp_scaling, getLevelLeaderboard
 from localizer import tanjunLocalizer
 
 
-async def leaderboard(commandInfo: utility.commandInfo, page: int = 1) -> None:
+async def leaderboard(commandInfo: utility.CommandInfo, page: int = 1) -> None:
     if page < 1:
         page = 1
     assert commandInfo.guild is not None
@@ -68,7 +68,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1) -> None:
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
         async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == commandInfo.user.id:
+            if not interaction.user.id == CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -88,7 +88,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1) -> None:
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
         async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == commandInfo.user.id:
+            if not interaction.user.id == CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,

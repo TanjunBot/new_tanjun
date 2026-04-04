@@ -8,11 +8,11 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def create_embed(commandInfo: utility.commandInfo, channel: discord.TextChannel, title: str) -> None:
+async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextChannel, title: str) -> None:
     class EmbedCreatorView(View):
-        def __init__(self, commandInfo: utility.commandInfo, target_channel: discord.TextChannel) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo, target_channel: discord.TextChannel) -> None:
             super().__init__(timeout=1800)  # 30 minutes timeout
-            self.commandInfo: utility.commandInfo = commandInfo
+            self.commandInfo: utility.CommandInfo = CommandInfo
             self.embed: discord.Embed = discord.Embed(title=title, color=0xFFFFFF)
             self.preview_message: discord.Message | None = None
             self.target_channel: discord.TextChannel = target_channel

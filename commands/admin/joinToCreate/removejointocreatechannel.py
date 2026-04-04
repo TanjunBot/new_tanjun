@@ -5,7 +5,7 @@ from api import get_join_to_create_channel, remove_join_to_create_channel
 from localizer import tanjunLocalizer
 
 
-async def removejointocreatechannel(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
+async def removejointocreatechannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

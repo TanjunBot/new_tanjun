@@ -3,10 +3,10 @@ import discord
 import utility
 from api import delete_booster_channel, get_booster_channel
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def deleteBoosterChannel(commandInfo: commandInfo) -> None:
+async def deleteBoosterChannel(CommandInfo: CommandInfo) -> None:
     if commandInfo.guild is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

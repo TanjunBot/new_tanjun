@@ -2,7 +2,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def calc(commandInfo: utility.commandInfo, expression: str) -> None:
+async def calc(commandInfo: utility.CommandInfo, expression: str) -> None:
     nsp = utility.NumericStringParser()
 
     try:

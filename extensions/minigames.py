@@ -50,7 +50,7 @@ class CountingCommands(discord.app_commands.Group):
     )
     async def setcountingchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -76,7 +76,7 @@ class CountingCommands(discord.app_commands.Group):
     )
     async def removecountingchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -108,7 +108,7 @@ class CountingCommands(discord.app_commands.Group):
         progress: app_commands.Range[int, 1, 100000] = 0,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -136,7 +136,7 @@ class CountingChallengeCommands(discord.app_commands.Group):
     )
     async def setcountingchallengechannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -164,7 +164,7 @@ class CountingChallengeCommands(discord.app_commands.Group):
         self, interaction: discord.Interaction, channel: discord.TextChannel = None
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -196,7 +196,7 @@ class CountingChallengeCommands(discord.app_commands.Group):
         progress: app_commands.Range[int, 1, 100000] = 0,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -224,7 +224,7 @@ class CountingModesCommands(discord.app_commands.Group):
     )
     async def setcountingmodeschannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -250,7 +250,7 @@ class CountingModesCommands(discord.app_commands.Group):
     )
     async def removecountingmodeschannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -282,7 +282,7 @@ class CountingModesCommands(discord.app_commands.Group):
         progress: app_commands.Range[int, 1, 100000] = 0,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -310,7 +310,7 @@ class WordChainCommands(discord.app_commands.Group):
     )
     async def setwordchainchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -336,7 +336,7 @@ class WordChainCommands(discord.app_commands.Group):
     )
     async def removewordchainchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,

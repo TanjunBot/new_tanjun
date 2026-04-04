@@ -4,7 +4,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Member, reason: str | None = None) -> None:
+async def remove_timeout(commandInfo: utility.CommandInfo, member: discord.Member, reason: str | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -38,7 +38,7 @@ async def remove_timeout(commandInfo: utility.commandInfo, member: discord.Membe
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and member.top_role >= commandInfo.user.top_role:
+    if isinstance(commandInfo.user, discord.Member) and member.top_role >= CommandInfo.user.top_role:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.remove_timeout.targetTooHigh.title"),
             description=tanjunLocalizer.localize(

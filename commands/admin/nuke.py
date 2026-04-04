@@ -7,11 +7,11 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel | None = None) -> None:
+async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel | None = None) -> None:
     class ConfirmView(View):
-        def __init__(self, commandInfo: utility.commandInfo) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo) -> None:
             super().__init__(timeout=60)
-            self.commandInfo = commandInfo
+            self.commandInfo = CommandInfo
             self.value = None
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
@@ -73,7 +73,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
         return
 
     if channel is None:
-        channel = commandInfo.channel
+        channel = CommandInfo.channel
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.confirmationTitle"),
@@ -95,7 +95,7 @@ async def nuke_channel(commandInfo: utility.commandInfo, channel: discord.TextCh
         return
 
     def check(m: discord.Message) -> bool:
-        return m.author == commandInfo.user and m.channel == commandInfo.channel
+        return m.author == CommandInfo.user and m.channel == CommandInfo.channel
 
     try:
         confirmation_message = await commandInfo.client.wait_for("message", check=check, timeout=30.0)

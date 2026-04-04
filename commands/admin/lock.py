@@ -5,7 +5,7 @@ from api import clear_channel_overwrites, save_channel_overwrites
 from localizer import tanjunLocalizer
 
 
-async def lock_channel(commandInfo: utility.commandInfo, channel: discord.TextChannel | None = None) -> None:
+async def lock_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel | None = None) -> None:
     if channel is None:
         if commandInfo.channel is None:
             raise ValueError("Channel is missing in commandInfo")

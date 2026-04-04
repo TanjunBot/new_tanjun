@@ -9,10 +9,10 @@ from api import (
     report_user,
 )
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def report(commandInfo: commandInfo, reason: str, user: discord.Member) -> None:
+async def report(CommandInfo: CommandInfo, reason: str, user: discord.Member) -> None:
     if commandInfo.guild is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "errors.guildOnly.title"),
@@ -41,7 +41,7 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member) ->
         await commandInfo.reply(embed=embed)
         return
 
-    report_channel = commandInfo.guild.get_channel(int(report_channel_info[0]))
+    report_channel = CommandInfo.guild.get_channel(int(report_channel_info[0]))
     if not report_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -95,7 +95,7 @@ async def report(commandInfo: commandInfo, reason: str, user: discord.Member) ->
     )
 
     view = discord.ui.View()
-    guild_locale = str(commandInfo.guild.preferred_locale) if commandInfo.guild.preferred_locale else "en_US"
+    guild_locale = str(commandInfo.guild.preferred_locale) if commandInfo.guild.preferred_locale is not None else "en_US"
     accept_locale = tanjunLocalizer.localize(guild_locale, "commands.utility.report.accept.label")
     view.add_item(
         discord.ui.Button(

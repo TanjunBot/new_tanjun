@@ -5,7 +5,7 @@ from api import get_join_to_create_channel, set_join_to_create_channel
 from localizer import tanjunLocalizer
 
 
-async def jointocreatechannel(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
+async def jointocreatechannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

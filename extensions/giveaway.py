@@ -29,7 +29,7 @@ class BlacklistCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         role: discord.Role,
     ) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -59,7 +59,7 @@ class BlacklistCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         role: discord.Role,
     ) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -89,7 +89,7 @@ class BlacklistCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         user: discord.User,
     ) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -119,7 +119,7 @@ class BlacklistCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         user: discord.User,
     ) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -145,7 +145,7 @@ class BlacklistCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
     ) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -178,7 +178,7 @@ class GiveawayCommands(discord.app_commands.Group):
         title: app_commands.Range[str, 0, 128],
         channel: discord.TextChannel = None,
     ) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -212,7 +212,7 @@ class GiveawayCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
     ) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -242,7 +242,7 @@ class GiveawayCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
     ) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -272,7 +272,7 @@ class GiveawayCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
     ) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,

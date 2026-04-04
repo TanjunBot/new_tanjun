@@ -2,10 +2,10 @@ import discord
 
 from api import get_level_system_status, set_level_system_status
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def enable_level_system(commandInfo: commandInfo) -> None:
+async def enable_level_system(CommandInfo: CommandInfo) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

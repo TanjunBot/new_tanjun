@@ -6,7 +6,7 @@ from localizer import tanjunLocalizer
 
 
 async def create_emoji(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     name: str,
     image_url: str,
     roles: list[discord.Role] | None = None,

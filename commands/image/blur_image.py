@@ -9,7 +9,7 @@ from localizer import tanjunLocalizer
 
 
 async def blur_image(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     image: discord.Attachment,
     type: str = "gaussian",
     radius: int = 3,

@@ -7,8 +7,8 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def rps(commandInfo: utility.commandInfo, user: discord.Member) -> None:
-    player1 = commandInfo.user
+async def rps(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
+    player1 = CommandInfo.user
     player2 = user if user is not None else "tanjun"
     player1_choice = None
     player2_choice = None
@@ -68,7 +68,7 @@ async def rps(commandInfo: utility.commandInfo, user: discord.Member) -> None:
             await interaction.message.edit(embed=embed, view=None)
 
     class RPSView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo, is_player1: bool) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo, is_player1: bool) -> None:
             super().__init__()
             self.is_player1 = is_player1
 

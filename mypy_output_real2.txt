@@ -1,0 +1,1 @@
+/home/entcheneric/Documents/new_tanjun/.venv2/bin/python3: No module named mypy

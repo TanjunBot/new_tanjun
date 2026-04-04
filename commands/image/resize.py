@@ -8,7 +8,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def resize(commandInfo: utility.commandInfo, image: discord.Attachment, width: int, height: int):
+async def resize(commandInfo: utility.CommandInfo, image: discord.Attachment, width: int, height: int):
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(

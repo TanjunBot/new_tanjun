@@ -2,10 +2,12 @@ import discord
 
 from api import clear_wordchain, get_wordchain_word
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def removewordchainchannel(commandInfo: commandInfo, channel: discord.TextChannel) -> None:
+async def removewordchainchannel(CommandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+    if commandInfo.guild is None:
+        return
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

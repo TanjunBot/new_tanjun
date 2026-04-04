@@ -10,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def addMediaChannel(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
+async def addMediaChannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -75,7 +75,7 @@ async def addMediaChannel(commandInfo: utility.commandInfo, channel: discord.Tex
     await commandInfo.reply(embed=embed)
 
 
-async def removeMediaChannel(commandInfo: utility.commandInfo, channel: discord.TextChannel) -> None:
+async def removeMediaChannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

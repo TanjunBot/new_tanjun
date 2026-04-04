@@ -7,7 +7,7 @@ from localizer import tanjunLocalizer
 
 
 async def timeout(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     member: discord.Member,
     duration: int | timedelta,
     reason: str | None = None,
@@ -41,7 +41,7 @@ async def timeout(
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and member.top_role >= commandInfo.user.top_role:
+    if isinstance(commandInfo.user, discord.Member) and member.top_role >= CommandInfo.user.top_role:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.targetTooHigh.description"),

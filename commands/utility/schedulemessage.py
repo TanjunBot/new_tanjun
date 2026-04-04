@@ -14,7 +14,7 @@ from localizer import tanjunLocalizer
 
 
 async def schedule_message(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     content: str,
     send_in: str,
     channel: discord.TextChannel | None = None,
@@ -62,8 +62,8 @@ async def schedule_message(
     if channel:
         if (
             commandInfo.guild is not None
-            and repeat
-            and isinstance(commandInfo.user, discord.Member)  # type: ignore[redundant-expr]
+            and repeat is not None
+            and isinstance(commandInfo.user, discord.Member)
             and isinstance(commandInfo.channel, discord.abc.GuildChannel)
             and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
         ):
@@ -110,19 +110,6 @@ async def schedule_message(
 
     else:
         dmChannel = await commandInfo.user.create_dm()
-        if dmChannel is None:
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.utility.schedulemessage.noDMPermission.title",
-                ),
-                description=tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.utility.schedulemessage.noDMPermission.description",
-                ),
-            )
-            await commandInfo.reply(embed=embed)
-            return
         if commandInfo.guild is not None and not dmChannel.permissions_for(commandInfo.guild.me).send_messages:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
@@ -140,7 +127,7 @@ async def schedule_message(
     if (
         channel
         and commandInfo.guild is not None
-        and isinstance(commandInfo.user, discord.Member)  # type: ignore[redundant-expr]
+        and isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
     ):
@@ -236,7 +223,7 @@ async def send_scheduled_messages(client: discord.Client) -> None:
             embed = utility.tanjunEmbed(description=content)
             await target.send(content=content, embed=embed)
 
-            if repeat_amount and repeat_amount != 0:
+            if repeat_amount and repeat is not None_amount != 0:
                 repeat_amount -= 1
                 if repeat_amount == 0:
                     await remove_scheduled_message(message_id)

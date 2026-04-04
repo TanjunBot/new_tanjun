@@ -6,7 +6,7 @@ import discord
 from api import get_brawlstars_linked_account
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
-from utility import commandInfo, date_time_to_timestamp, isoTimeToDate, tanjunEmbed
+from utility import CommandInfo, date_time_to_timestamp, isoTimeToDate, tanjunEmbed
 
 
 async def getBattleLog(playerTag: str) -> dict[str, Any] | None:
@@ -26,7 +26,7 @@ async def getBattleLog(playerTag: str) -> dict[str, Any] | None:
         return None
 
 
-async def battlelog(commandInfo: commandInfo, playerTag: str | None = None) -> None:
+async def battlelog(commandInfo: CommandInfo, playerTag: str | None = None) -> None:
     if not playerTag:
         playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
     if playerTag and playerTag.startswith("<@"):
@@ -85,7 +85,7 @@ async def battlelog(commandInfo: commandInfo, playerTag: str | None = None) -> N
         def __init__(
             self,
             battle_log: dict[str, Any],
-            command_info: commandInfo,
+            command_info: CommandInfo,
             player_tag: str,
             player_name: str,
         ) -> None:

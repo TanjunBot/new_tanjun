@@ -70,7 +70,7 @@ class MessageTrackingCommands(discord.app_commands.Group):
         await interaction.response.defer(ephemeral=True)
         from typing import cast
 
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -92,7 +92,7 @@ class MessageTrackingCommands(discord.app_commands.Group):
         await interaction.response.defer(ephemeral=True)
         from typing import cast
 
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -125,7 +125,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
         icon: discord.Attachment = None,
     ) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -144,7 +144,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
     )
     async def deleteboosterrole(self, ctx) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -166,7 +166,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
     )
     async def setupboosterrole(self, ctx, role: discord.Role) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -185,7 +185,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
     )
     async def info(self, ctx) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -214,7 +214,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
     )
     async def claimboosterchannel(self, ctx, name: app_commands.Range[str, 1, 100]) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -233,7 +233,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
     )
     async def deleteboosterchannel(self, ctx) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -255,7 +255,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
     )
     async def setupboosterchannel(self, ctx, category: discord.CategoryChannel) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -274,7 +274,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
     )
     async def info(self, ctx) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -306,7 +306,7 @@ class AutoPublishCommands(discord.app_commands.Group):
     )
     async def autopublish(self, ctx, channel: discord.TextChannel = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -332,7 +332,7 @@ class AutoPublishCommands(discord.app_commands.Group):
     )
     async def autopublish_remove(self, ctx, channel: discord.TextChannel = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -360,7 +360,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
     )
     async def battlelog(self, ctx, tag: str | None = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -384,7 +384,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
     )
     async def playerinfo(self, ctx, tag: str | None = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -408,7 +408,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
     )
     async def brawlers(self, ctx, tag: str | None = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -432,7 +432,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
     )
     async def club(self, ctx, tag: str) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -453,7 +453,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
     )
     async def events(self, ctx) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -477,7 +477,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
     )
     async def link(self, ctx, tag: str) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -498,7 +498,7 @@ class BrawlStarsCommands(discord.app_commands.Group):
     )
     async def unlink(self, ctx) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -531,7 +531,7 @@ class TwitchCommands(discord.app_commands.Group):
         notificationmessage: app_commands.Range[str, 0, 1024] = None,
     ) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -557,7 +557,7 @@ class TwitchCommands(discord.app_commands.Group):
     )
     async def see(self, ctx) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -583,7 +583,7 @@ class utilityCommands(discord.app_commands.Group):
     )
     async def avatar(self, ctx, user: discord.Member = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -609,7 +609,7 @@ class utilityCommands(discord.app_commands.Group):
     )
     async def banner(self, ctx, user: discord.Member = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -635,7 +635,7 @@ class utilityCommands(discord.app_commands.Group):
     )
     async def avatardecoration(self, ctx, user: discord.Member = None) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -657,7 +657,7 @@ class utilityCommands(discord.app_commands.Group):
         description=app_commands.locale_str("utility_feedback_description"),
     )
     async def feedback(self, ctx) -> None:
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -680,7 +680,7 @@ class utilityCommands(discord.app_commands.Group):
     )
     async def afk(self, ctx, reason: app_commands.Range[str, 0, 1000]) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -704,7 +704,7 @@ class utilityCommands(discord.app_commands.Group):
     )
     async def report(self, ctx, user: discord.Member, reason: app_commands.Range[str, 12, 1024]) -> None:
         await ctx.response.defer(ephemeral=True)
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -750,7 +750,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         # attachment10: discord.Attachment = None,
     ) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -781,7 +781,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
     )
     async def listscheduled(self, ctx) -> None:
         await ctx.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
             guild=ctx.guild,
@@ -806,7 +806,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         await interaction.response.defer()
         from typing import cast
 
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -833,7 +833,7 @@ class utilityCog(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         from typing import cast
 
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,

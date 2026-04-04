@@ -5,7 +5,7 @@ from localizer import tanjunLocalizer
 
 
 async def purge(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     amount: int,
     channel: discord.TextChannel | None = None,
     setting: str = "all",

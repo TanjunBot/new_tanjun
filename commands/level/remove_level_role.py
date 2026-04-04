@@ -2,10 +2,10 @@ import discord
 
 from api import get_level_role, remove_level_role
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def remove_level_role_command(commandInfo: commandInfo, role: discord.Role) -> None:
+async def remove_level_role_command(CommandInfo: CommandInfo, role: discord.Role) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

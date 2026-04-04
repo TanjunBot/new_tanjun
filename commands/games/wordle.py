@@ -39,7 +39,7 @@ def generate_wordle_background() -> None:
     img.save("wordle_background.png")
 
 
-async def wordle(commandInfo: utility.commandInfo, language: str = "own") -> None:
+async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> None:
     locale = str(commandInfo.locale)
     if language == "own":
         language = locale
@@ -182,9 +182,9 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own") -> Non
         )
 
     class WordleInputModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo, config) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo, config) -> None:
             super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.modal.title"))
-            self.commandInfo = commandInfo
+            self.commandInfo = CommandInfo
 
             self.add_item(
                 discord.ui.TextInput(
@@ -229,16 +229,16 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own") -> Non
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
     class WordleView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo) -> None:
             super().__init__(timeout=3600)
-            self.commandInfo = commandInfo
+            self.commandInfo = CommandInfo
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
         async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.notYourGame"),
                     ephemeral=True,
@@ -252,7 +252,7 @@ async def wordle(commandInfo: utility.commandInfo, language: str = "own") -> Non
             style=discord.ButtonStyle.red,
         )
         async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.notYourGame"),
                     ephemeral=True,

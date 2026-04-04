@@ -7,7 +7,7 @@ from localizer import tanjunLocalizer
 
 
 async def removerole(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     user: discord.Member | None = None,
     role: discord.Role | None = None,
 ) -> None:
@@ -46,9 +46,9 @@ async def removerole(
         return
 
     class RoleManagementView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo, action: str = "remove") -> None:
+        def __init__(self, commandInfo: utility.CommandInfo, action: str = "remove") -> None:
             super().__init__(timeout=300)
-            self.commandInfo: utility.commandInfo = commandInfo
+            self.commandInfo: utility.CommandInfo = CommandInfo
             self.action: str = action
             self.selected_roles: list[discord.Role] = []
             self.selected_users: list[discord.Member] = []

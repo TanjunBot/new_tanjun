@@ -1,12 +1,12 @@
 from typing import Any
 
 import aiohttp
-import brawlstats
+import brawlstats  # type: ignore[import-untyped,import-not-found]
 
 from api import get_brawlstars_linked_account
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 bs_client = brawlstats.Client(brawlstarsToken, is_async=True)
 
@@ -28,7 +28,7 @@ async def getAllBrawlers() -> dict[str, Any] | None:
         return None
 
 
-async def playerInfo(commandInfo: commandInfo, playerTag: str | None = None) -> None:
+async def playerInfo(commandInfo: CommandInfo, playerTag: str | None = None) -> None:
     if not playerTag:
         playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
     if playerTag and playerTag.startswith("<@"):

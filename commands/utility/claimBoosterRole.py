@@ -8,10 +8,10 @@ from api import (
     remove_claimed_booster_role,
 )
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def claimBoosterRole(commandInfo: commandInfo, name: str, color: str, icon: discord.Attachment) -> None:
+async def claimBoosterRole(CommandInfo: CommandInfo, name: str, color: str, icon: discord.Attachment) -> None:
     if commandInfo.guild is None or isinstance(commandInfo.user, discord.User):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -98,7 +98,7 @@ async def claimBoosterRole(commandInfo: commandInfo, name: str, color: str, icon
         await commandInfo.reply(embed=embed)
         return
 
-    role = commandInfo.guild.get_role(int(booster_role))
+    role = CommandInfo.guild.get_role(int(booster_role))
     if not role:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

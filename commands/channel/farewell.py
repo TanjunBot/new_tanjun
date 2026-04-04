@@ -13,13 +13,13 @@ from api import (
     set_leave_channel,
 )
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, commandInfo, draw_text_with_outline
+from utility import checkIfHasPro, CommandInfo, draw_text_with_outline
 
 executor = ThreadPoolExecutor()
 
 
 async def setFarewellChannel(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     channel: discord.TextChannel,
     message: str | None = None,
     image_background: discord.Attachment = None,

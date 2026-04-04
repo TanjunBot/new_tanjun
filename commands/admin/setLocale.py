@@ -4,7 +4,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def set_locale(commandInfo: utility.commandInfo, locale: str) -> None:
+async def set_locale(commandInfo: utility.CommandInfo, locale: str) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

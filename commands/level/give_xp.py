@@ -2,10 +2,10 @@ import discord
 
 from api import get_custom_formula, get_user_xp, get_xp_scaling, update_user_xp
 from localizer import tanjunLocalizer
-from utility import commandInfo, get_level_for_xp, tanjunEmbed
+from utility import CommandInfo, get_level_for_xp, tanjunEmbed
 
 
-async def give_xp_command(commandInfo: commandInfo, user: discord.Member, amount: int) -> None:
+async def give_xp_command(CommandInfo: CommandInfo, user: discord.Member, amount: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

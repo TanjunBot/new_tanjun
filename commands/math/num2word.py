@@ -1,10 +1,10 @@
-import num2words
+import num2words  # type: ignore[import-untyped]
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def num2word(commandInfo: utility.commandInfo, number: int, locale: str) -> None:
+async def num2word(commandInfo: utility.CommandInfo, number: int, locale: str) -> None:
     validLocales = [
         "en",
         "am",

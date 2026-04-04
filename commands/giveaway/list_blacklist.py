@@ -9,7 +9,7 @@ from localizer import tanjunLocalizer
 
 
 async def list_blacklist(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
 ) -> None:
     if not commandInfo.permissions.administrator:
         embed = utility.tanjunEmbed(

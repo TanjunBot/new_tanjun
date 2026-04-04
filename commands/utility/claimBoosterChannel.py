@@ -9,10 +9,10 @@ from api import (
     remove_claimed_booster_channel,
 )
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def claimBoosterChannel(commandInfo: commandInfo, name: str) -> None:
+async def claimBoosterChannel(CommandInfo: CommandInfo, name: str) -> None:
     if commandInfo.guild is None or isinstance(commandInfo.user, discord.User):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -98,7 +98,7 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str) -> None:
         await commandInfo.reply(embed=embed)
         return
 
-    channel = commandInfo.guild.get_channel(int(booster_channel))
+    channel = CommandInfo.guild.get_channel(int(booster_channel))
     if not channel or not isinstance(channel, discord.CategoryChannel):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

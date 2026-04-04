@@ -10,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def blacklist_role(commandInfo: utility.commandInfo, role: discord.Role) -> None:
+async def blacklist_role(commandInfo: utility.CommandInfo, role: discord.Role) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

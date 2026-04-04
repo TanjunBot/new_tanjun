@@ -2,10 +2,10 @@ import discord
 
 from api import set_text_cooldown, set_voice_cooldown
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def set_text_cooldown_command(commandInfo: commandInfo, cooldown: int) -> None:
+async def set_text_cooldown_command(CommandInfo: CommandInfo, cooldown: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -53,7 +53,7 @@ async def set_text_cooldown_command(commandInfo: commandInfo, cooldown: int) -> 
     await commandInfo.reply(embed=embed)
 
 
-async def set_voice_cooldown_command(commandInfo: commandInfo, cooldown: int) -> None:
+async def set_voice_cooldown_command(commandInfo: CommandInfo, cooldown: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

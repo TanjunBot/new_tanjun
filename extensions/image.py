@@ -50,7 +50,7 @@ class ImageCommands(discord.app_commands.Group):
         radius: app_commands.Range[int, 1, 10] = 3,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -71,7 +71,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_contour_params_image_description"))
     async def contourimage(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -92,7 +92,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_detail_params_image_description"))
     async def detailimage(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -113,7 +113,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_edgeenhance_params_image_description"))
     async def edgeenhance(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -134,7 +134,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_emboss_params_image_description"))
     async def emboss(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -155,7 +155,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_findedges_params_image_description"))
     async def findedges(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -176,7 +176,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_sharpen_params_image_description"))
     async def sharpen(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -197,7 +197,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_smooth_params_image_description"))
     async def smooth(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -228,7 +228,7 @@ class ImageCommands(discord.app_commands.Group):
         height: app_commands.Range[int, 5, 15000],
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -257,7 +257,7 @@ class ImageCommands(discord.app_commands.Group):
         factor: app_commands.Range[float, 0.1, 10.0],
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -298,7 +298,7 @@ class ImageCommands(discord.app_commands.Group):
         direction: str = "x",
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -327,7 +327,7 @@ class ImageCommands(discord.app_commands.Group):
         quality: app_commands.Range[int, 1, 100],
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -350,7 +350,7 @@ class ImageCommands(discord.app_commands.Group):
     )
     async def background(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,

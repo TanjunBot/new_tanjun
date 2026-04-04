@@ -5,7 +5,7 @@ from api import add_booster_role, delete_booster_role
 from localizer import tanjunLocalizer
 
 
-async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Role) -> None:
+async def create_booster_role(commandInfo: utility.CommandInfo, role: discord.Role) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -52,7 +52,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
 
         return
 
-    if isinstance(commandInfo.user, discord.Member) and role.position >= commandInfo.user.top_role.position:
+    if isinstance(commandInfo.user, discord.Member) and role.position >= CommandInfo.user.top_role.position:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.targetTooHigh.title"),
             description=tanjunLocalizer.localize(
@@ -67,7 +67,7 @@ async def create_booster_role(commandInfo: utility.commandInfo, role: discord.Ro
     if commandInfo.client.user is None:
         raise ValueError("Client user is missing")
 
-    if role.position >= commandInfo.guild.me.top_role.position:
+    if role.position >= CommandInfo.guild.me.top_role.position:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.boosterRole.roleTooHighBot.title"),
             description=tanjunLocalizer.localize(

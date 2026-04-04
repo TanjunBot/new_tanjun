@@ -4,7 +4,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def unban(commandInfo: utility.commandInfo, username: str, reason: str | None = None) -> None:
+async def unban(commandInfo: utility.CommandInfo, username: str, reason: str | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

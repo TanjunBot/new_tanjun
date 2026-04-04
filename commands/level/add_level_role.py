@@ -4,10 +4,10 @@ import discord
 
 from api import add_level_role, get_level_roles
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def add_level_role_command(commandInfo: commandInfo, role: discord.Role, level: int) -> None:
+async def add_level_role_command(CommandInfo: CommandInfo, role: discord.Role, level: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

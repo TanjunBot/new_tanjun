@@ -3,10 +3,10 @@ import discord
 import utility
 from api import add_booster_role, get_booster_role
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def setupBoosterRole(commandInfo: commandInfo, role: discord.Role) -> None:
+async def setupBoosterRole(CommandInfo: CommandInfo, role: discord.Role) -> None:
     if isinstance(commandInfo.user, discord.User) or commandInfo.guild is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -21,7 +21,7 @@ async def setupBoosterRole(commandInfo: commandInfo, role: discord.Role) -> None
         await commandInfo.reply(embed=embed)
         return
 
-    if not getattr(commandInfo.user, "guild_permissions", None) or not commandInfo.user.guild_permissions.administrator:  # type: ignore[union-attr]
+    if not getattr(commandInfo.user, "guild_permissions", None) or not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

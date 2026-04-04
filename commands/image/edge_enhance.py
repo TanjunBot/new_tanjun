@@ -8,7 +8,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def edge_enhance(commandInfo: utility.commandInfo, image: discord.Attachment):
+async def edge_enhance(commandInfo: utility.CommandInfo, image: discord.Attachment):
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(

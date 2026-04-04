@@ -92,7 +92,7 @@ class mathCommands(discord.app_commands.Group):
     )
     async def calc(self, interaction: discord.Interaction, expression: app_commands.Range[str, 1, 128]) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -115,7 +115,7 @@ class mathCommands(discord.app_commands.Group):
     )
     async def calculator(self, interaction: discord.Interaction, equation: app_commands.Range[str, 1, 128] = "") -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -140,7 +140,7 @@ class mathCommands(discord.app_commands.Group):
     @app_commands.autocomplete(locale=num2wordLocaleAutocomplete)
     async def num2word(self, interaction: discord.Interaction, number: int, locale: str | None = None) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -170,7 +170,7 @@ class mathCommands(discord.app_commands.Group):
         self, interaction: discord.Interaction, min: int, max: int, amount: app_commands.Range[int, 1, 10] = 1
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -197,7 +197,7 @@ class mathCommands(discord.app_commands.Group):
         self, interaction: discord.Interaction, func: str, xmin: float | None = None, xmax: float | None = None
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -220,7 +220,7 @@ class mathCommands(discord.app_commands.Group):
     )
     async def faculty(self, interaction: discord.Interaction, number: app_commands.Range[int, 0, 100]) -> None:
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,

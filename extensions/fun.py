@@ -22,7 +22,7 @@ class funCommands(discord.app_commands.Group):
     ) -> None:
         fun_type = "hug"
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -49,7 +49,7 @@ class funCommands(discord.app_commands.Group):
     ) -> None:
         fun_type = "kiss"
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -76,7 +76,7 @@ class funCommands(discord.app_commands.Group):
     ) -> None:
         fun_type = "boop"
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -103,7 +103,7 @@ class funCommands(discord.app_commands.Group):
     ) -> None:
         fun_type = "wave"
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -130,7 +130,7 @@ class funCommands(discord.app_commands.Group):
     ) -> None:
         fun_type = "slap"
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -157,7 +157,7 @@ class funCommands(discord.app_commands.Group):
     ) -> None:
         fun_type = "laugh"
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -184,7 +184,7 @@ class funCommands(discord.app_commands.Group):
     ) -> None:
         fun_type = "tickle"
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -211,7 +211,7 @@ class funCommands(discord.app_commands.Group):
     ) -> None:
         fun_type = "pat"
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -238,7 +238,7 @@ class funCommands(discord.app_commands.Group):
     ) -> None:
         fun_type = "poke"
         await interaction.response.defer()
-        commandInfo = utility.commandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
