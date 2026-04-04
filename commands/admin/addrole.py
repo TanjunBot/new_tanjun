@@ -4,6 +4,7 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def addrole(
@@ -65,7 +66,7 @@ async def addrole(
                         commandInfo.locale,
                         "commands.admin.addrole.roleSelect.placeholder",
                     ),
-                    default_values=default_roles,
+                    default_values=default_roles,  # type: ignore[arg-type]
                     min_values=1,
                     max_values=25,
                     custom_id="role_select",
@@ -77,7 +78,7 @@ async def addrole(
                         commandInfo.locale,
                         "commands.admin.addrole.userSelect.placeholder",
                     ),
-                    default_values=default_users,
+                    default_values=default_users,  # type: ignore[arg-type]
                     min_values=1,
                     max_values=25,
                     custom_id="user_select",
@@ -88,11 +89,11 @@ async def addrole(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.confirm.label"),
             style=discord.ButtonStyle.green,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             if not self.selected_roles or not self.selected_users:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         f"commands.admin.{self.action}role.noSelection",
                     ),
                     ephemeral=True,
@@ -113,16 +114,16 @@ async def addrole(
 
             await interaction.response.edit_message(
                 content=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     f"commands.admin.{self.action}role.multipleSuccess",
                     count=success_count,
                     action=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.admin.add_role.multipleSuccess.action",
                     )
                     if self.action == "add"
                     else tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.admin.remove_role.multipleSuccess.action",
                     ),
                 ),
@@ -134,10 +135,10 @@ async def addrole(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.cancel.label"),
             style=discord.ButtonStyle.red,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.edit_message(
                 content=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     f"commands.admin.{self.action}role.cancelled",
                 ),
                 view=discord.ui.View(),

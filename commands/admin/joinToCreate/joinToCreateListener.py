@@ -4,7 +4,7 @@ import utility
 from api import get_join_to_create_channel
 from localizer import tanjunLocalizer
 
-joinToCreateChannels = []
+joinToCreateChannels = []  # type: ignore[var-annotated]
 
 
 async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> None:
@@ -25,7 +25,7 @@ async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> 
 
     overwrites = {member: discord.PermissionOverwrite(view_channel=True, manage_channels=True)}
 
-    await newChannel.edit(overwrites=overwrites)
+    await newChannel.edit(overwrites=overwrites)  # type: ignore[arg-type]
 
     await member.move_to(newChannel)
 

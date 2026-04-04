@@ -5,6 +5,7 @@ import discord
 import utility
 from api import get_custom_formula, get_xp_scaling, getLevelLeaderboard
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def leaderboard(commandInfo: utility.CommandInfo, page: int = 1) -> None:
@@ -67,8 +68,8 @@ async def leaderboard(commandInfo: utility.CommandInfo, page: int = 1) -> None:
             self.total_pages = int(leaderboard_len / 10 + 1)
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
+            if not interaction.user.id == CommandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -87,8 +88,8 @@ async def leaderboard(commandInfo: utility.CommandInfo, page: int = 1) -> None:
             await interaction.response.edit_message(view=self, embed=new_page)
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
+            if not interaction.user.id == CommandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,

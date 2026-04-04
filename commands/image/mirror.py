@@ -8,7 +8,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def mirror(commandInfo: utility.CommandInfo, image: discord.Attachment, axis: str):
+async def mirror(commandInfo: utility.CommandInfo, image: discord.Attachment, axis: str):  # type: ignore[no-untyped-def]
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
@@ -26,12 +26,12 @@ async def mirror(commandInfo: utility.CommandInfo, image: discord.Attachment, ax
         await commandInfo.reply(embed=embed)
         return
 
-    image = await image.read()
-    image = Image.open(io.BytesIO(image))
+    image = await image.read()  # type: ignore[assignment]
+    image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
     if axis == "x":
-        image = image.transpose(Image.FLIP_LEFT_RIGHT)
+        image = image.transpose(Image.FLIP_LEFT_RIGHT)  # type: ignore[attr-defined]
     elif axis == "y":
-        image = image.transpose(Image.FLIP_TOP_BOTTOM)
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)  # type: ignore[attr-defined]
     else:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.mirror.invalidaxis.title"),
@@ -41,7 +41,7 @@ async def mirror(commandInfo: utility.CommandInfo, image: discord.Attachment, ax
         return
 
     buffer = BytesIO()
-    image.save(buffer, format="png")
+    image.save(buffer, format="png")  # type: ignore[call-arg, unused-coroutine]
     buffer.seek(0)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.resize.success.title"),

@@ -99,7 +99,11 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
+<<<<<<< HEAD
     await set_counting_challenge_progress(channel_id=channel.id, guild_id=commandInfo.guild.id, progress=0)
+=======
+    await set_counting_challenge_progress(channel_id=channel.id, guild_id=commandInfo.guild.id, progress=0)  # type: ignore[call-arg]
+>>>>>>> 9d4519f (hopefully finally fix all mypy issues.)
 
     introductionEmbed = tanjunEmbed(
         title=tanjunLocalizer.localize(

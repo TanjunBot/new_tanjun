@@ -8,6 +8,7 @@ from discord.ui import Button, View
 import utility
 from api import get_detailed_warnings, remove_warning
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 WARNINGS_PER_PAGE = 5
 
@@ -22,7 +23,7 @@ class WarningView(View):
         super().__init__(timeout=300)  # 5 minutes timeout
         self.warnings: list[tuple[int, str, datetime, datetime | None, str]] = warnings
         self.member: discord.Member = member
-        self.commandInfo: utility.CommandInfo = CommandInfo
+        self.commandInfo: utility.CommandInfo = CommandInfo  # type: ignore[assignment]
         self.page: int = 0
         self.message: discord.Message | None = None
         self.update_buttons()
@@ -42,14 +43,14 @@ class WarningView(View):
         end = start + WARNINGS_PER_PAGE
 
         if self.page > 0:
-            prev_button = Button(
+            prev_button = Button(  # type: ignore[var-annotated]
                 label=tanjunLocalizer.localize(str(self.commandInfo.locale), "commands.admin.viewwarns.prevButton"),
                 style=discord.ButtonStyle.primary,
             )
-            prev_button.callback = self.prev_page
+            prev_button.callback = self.prev_page  # type: ignore[method-assign]
             self.add_item(prev_button)
         for i, (warning_id, _, _, expires_at, _) in enumerate(self.warnings[start:end], start=start + 1):
-            button = Button(
+            button = Button(  # type: ignore[var-annotated]
                 label=tanjunLocalizer.localize(
                     str(self.commandInfo.locale),
                     "commands.admin.viewwarns.removeButton",
@@ -59,15 +60,15 @@ class WarningView(View):
                 style=discord.ButtonStyle.danger,
                 disabled=expires_at is not None and datetime.now() > expires_at,
             )
-            button.callback = self.remove_warning_callback
+            button.callback = self.remove_warning_callback  # type: ignore[method-assign]
             self.add_item(button)
 
         if (self.page + 1) * WARNINGS_PER_PAGE < len(self.warnings):
-            next_button = Button(
+            next_button = Button(  # type: ignore[var-annotated]
                 label=tanjunLocalizer.localize(str(self.commandInfo.locale), "commands.admin.viewwarns.nextButton"),
                 style=discord.ButtonStyle.primary,
             )
-            next_button.callback = self.next_page
+            next_button.callback = self.next_page  # type: ignore[method-assign]
             self.add_item(next_button)
 
     async def remove_warning_callback(self, interaction: discord.Interaction) -> None:
@@ -149,7 +150,7 @@ def create_warnings_embed(
                 "commands.admin.viewwarns.warningDetails",
                 reason=(
                     reason
-                    if reason is not None and len(reason.strip()) > 0
+                    if reason is not None and len(reason.strip()) > 0  # type: ignore[redundant-expr]
                     else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.noReason")
                 ),
                 date=f"<t:{int(created_at.timestamp())}:D>",
@@ -189,7 +190,7 @@ async def view_warnings(commandInfo: utility.CommandInfo, member: discord.Member
         return
 
     assert commandInfo.guild is not None
-    guild_id = CommandInfo.guild.id
+    guild_id = CommandInfo.guild.id  # type: ignore[misc, union-attr]
     user_id = member.id
 
     warnings = await get_detailed_warnings(guild_id, user_id)

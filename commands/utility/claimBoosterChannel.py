@@ -98,7 +98,7 @@ async def claimBoosterChannel(commandInfo: CommandInfo, name: str) -> None:
         await commandInfo.reply(embed=embed)
         return
 
-    channel = CommandInfo.guild.get_channel(int(booster_channel))
+    channel = CommandInfo.guild.get_channel(int(booster_channel))  # type: ignore[misc, union-attr]
     if not channel or not isinstance(channel, discord.CategoryChannel):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -146,7 +146,7 @@ async def remove_claimed_booster_channels_that_are_expired(client: discord.Clien
         channel = guild.get_channel(int(channel))
         if channel is None:
             continue
-        if not user.premium_since and channel:
+        if not user.premium_since and channel:  # type: ignore[truthy-bool]
             await remove_claimed_booster_channel(user.id, guild_id)
             await channel.delete(
                 reason=tanjunLocalizer.localize(
@@ -154,5 +154,5 @@ async def remove_claimed_booster_channels_that_are_expired(client: discord.Clien
                     "commands.utility.claimboosterchannel.expired.reason",
                 )
             )
-        if not channel:
+        if not channel:  # type: ignore[truthy-bool]
             await remove_claimed_booster_channel(user.id, guild_id)

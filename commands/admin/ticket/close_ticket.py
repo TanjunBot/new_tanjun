@@ -62,11 +62,11 @@ async def close_ticket(interaction: discord.Interaction) -> None:
     ticket_open_time = ticket[2]
 
     summary_channel_id = int(ticket_message[7]) if ticket_message[7] else None
-    summary_channel = guild.get_channel(summary_channel_id)
+    summary_channel = guild.get_channel(summary_channel_id)  # type: ignore[arg-type]
 
     if not summary_channel:
         if isinstance(channel, discord.TextChannel) or isinstance(channel, discord.Thread):
-            await channel.edit(archived=True, locked=True)
+            await channel.edit(archived=True, locked=True)  # type: ignore[call-overload]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 str(interaction.locale),
@@ -77,9 +77,9 @@ async def close_ticket(interaction: discord.Interaction) -> None:
                 "commands.admin.close_ticket.success.ticketClosedDescription",
             ),
         )
-        await channel.send(embed=embed)
+        await channel.send(embed=embed)  # type: ignore[union-attr]
     else:
-        html_content = await generate_summary_html(channel, ticket_opener_user, ticket_open_time)
+        html_content = await generate_summary_html(channel, ticket_opener_user, ticket_open_time)  # type: ignore[arg-type]
 
         url = await utility.upload_to_tanjun_logs(html_content)
 
@@ -96,7 +96,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         )
 
         view = discord.ui.View()
-        btn1 = discord.ui.Button(
+        btn1 = discord.ui.Button(  # type: ignore[var-annotated]
             label=tanjunLocalizer.localize(
                 str(interaction.locale),
                 "commands.admin.close_ticket.success.viewOnlineSummary",
@@ -104,13 +104,13 @@ async def close_ticket(interaction: discord.Interaction) -> None:
             url=url,
         )
         view.add_item(btn1)
-        btn2 = discord.ui.Button(
+        btn2 = discord.ui.Button(  # type: ignore[var-annotated]
             label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.close_ticket.success.viewThread"),
             url=f"https://discord.com/channels/{guild.id}/{ticket_channel.id}",
         )
         view.add_item(btn2)
 
-        await summary_channel.send(
+        await summary_channel.send(  # type: ignore[union-attr]
             content=tanjunLocalizer.localize(
                 str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
@@ -124,7 +124,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         if isinstance(channel, discord.Thread):
             await channel.edit(archived=True, locked=True)
 
-        await channel.send(
+        await channel.send(  # type: ignore[union-attr]
             content=tanjunLocalizer.localize(
                 str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
@@ -139,7 +139,7 @@ async def generate_summary_html(
     ticket_opener_user: discord.Member,
     ticket_open_time: datetime.datetime,
 ) -> str:
-    locale = str(channel.guild.preferred_locale) if channel.guild.preferred_locale else "en"
+    locale = str(channel.guild.preferred_locale) if channel.guild.preferred_locale else "en"  # type: ignore[truthy-bool, redundant-expr]
     html = """
 <!DOCTYPE html>
 <html lang="en">
@@ -1026,7 +1026,7 @@ async def generate_summary_html(
     mentioned_roles = []
     mentioned_users = []
     mentioned_channels = []
-    async for message in channel.history(limit=42069, oldest_first=True):
+    async for message in channel.history(limit=42069, oldest_first=True):  # type: ignore[attr-defined]
         if message.content == "" and len(message.embeds) == 0:
             continue
         html += '<div class="message">'
@@ -1098,14 +1098,16 @@ async def generate_summary_html(
 
     channelJsObject = ""
 
+    from typing import Any
     for channel in mentioned_channels:
+        any_channel = channel  # type: Any
         channelJsObject += f"""
         {{
-            id: '{channel.id}',
-            name: '{channel.name}',
-            url: '{channel.jump_url}',
-            type: '{channel.type}',
-            topic: '{channel.topic}',
+            id: '{any_channel.id}',
+            name: '{any_channel.name}',
+            url: '{any_channel.jump_url}',
+            type: '{any_channel.type}',
+            topic: '{any_channel.topic}',
         }},
         """
 

@@ -2,6 +2,7 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def ban(
@@ -34,7 +35,7 @@ async def ban(
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and target.top_role >= CommandInfo.user.top_role:
+    if isinstance(commandInfo.user, discord.Member) and target.top_role >= CommandInfo.user.top_role:  # type: ignore[misc, union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.ban.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.ban.targetTooHigh.description"),

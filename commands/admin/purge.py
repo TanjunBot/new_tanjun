@@ -12,7 +12,7 @@ async def purge(
 ) -> None:
     if channel is None:
         assert commandInfo.channel is not None
-        channel = cast(discord.TextChannel, commandInfo.channel)
+        channel = cast(discord.TextChannel, commandInfo.channel)  # type: ignore[name-defined]
 
     if (
         isinstance(commandInfo.user, discord.Member)
@@ -50,7 +50,7 @@ async def purge(
 
     try:
 
-        def check(m: discord.Message) -> bool:
+        def check(m: discord.Message) -> bool:  # type: ignore[return]
             if setting == "all":
                 return True
             elif setting == "bot":
@@ -64,15 +64,15 @@ async def purge(
             elif setting == "botNotPinned":
                 return not m.pinned and m.author.bot
             elif setting == "notAdmin":
-                return not m.author.guild_permissions.administrator
+                return not m.author.guild_permissions.administrator  # type: ignore[union-attr]
             elif setting == "userNotAdmin":
-                return not m.author.guild_permissions.administrator and not m.author.bot
+                return not m.author.guild_permissions.administrator and not m.author.bot  # type: ignore[union-attr]
             elif setting == "embeds":
-                return m.embeds
+                return m.embeds  # type: ignore[return-value]
             elif setting == "files":
-                return m.attachments
+                return m.attachments  # type: ignore[return-value]
             elif setting == "notAdminNotPinned":
-                return not m.author.guild_permissions.administrator and not m.pinned
+                return not m.author.guild_permissions.administrator and not m.pinned  # type: ignore[union-attr]
 
         deleted = await channel.purge(limit=amount, check=check, bulk=True)
         embed = utility.tanjunEmbed(

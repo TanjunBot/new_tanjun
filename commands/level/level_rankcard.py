@@ -9,6 +9,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageSequence
 from api import get_user_level_info, set_custom_background
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfhasPlus, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
+from typing import Any
 
 executor = ThreadPoolExecutor()
 
@@ -69,16 +70,16 @@ async def set_background_command(commandInfo: CommandInfo, image: discord.Attach
     uploaded_image = await upload_image_to_imgbb(await image.read(), image.content_type.split("/")[1])
 
     await set_custom_background(
-        str(commandInfo.guild.id),
+        str(commandInfo.guild.id),  # type: ignore[union-attr]
         str(commandInfo.user.id),
-        uploaded_image["data"]["url"],
+        uploaded_image["data"]["url"],  # type: ignore[index]
     )
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.title"),
         description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.description"),
     )
-    embed.set_image(url=uploaded_image["data"]["url"])
+    embed.set_image(url=uploaded_image["data"]["url"])  # type: ignore[index]
 
     await commandInfo.reply(embed=embed)
 
@@ -101,7 +102,7 @@ async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
     return frames, duration
 
 
-def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1) -> None:
+def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1) -> None:  # type: ignore[no-untyped-def]
     x1, y1, x2, y2 = xy
     draw.rectangle([x1 + radius, y1, x2 - radius, y2], fill=fill)
     draw.rectangle([x1, y1 + radius, x2, y2 - radius], fill=fill)
@@ -266,11 +267,11 @@ def process_image(
         if avatar_decoration_frames:
             decoration = avatar_decoration_frames[frame_index]
             # Resize the decoration and ensure RGBA mode
-            decoration = decoration.resize((decoration_size, decoration_size)).convert("RGBA")
+            decoration = decoration.resize((decoration_size, decoration_size)).convert("RGBA")  # type: ignore[possibly-undefined]
             # Create a new transparent image for the decoration
             decoration_layer = Image.new("RGBA", frame.size, (0, 0, 0, 0))
             # Paste the decoration onto the transparent layer
-            decoration_layer.paste(decoration, (25 - offset, 50 - offset), decoration)
+            decoration_layer.paste(decoration, (25 - offset, 50 - offset), decoration)  # type: ignore[possibly-undefined]
             # Composite the decoration layer with the frame
             frame = Image.alpha_composite(frame, decoration_layer)
 

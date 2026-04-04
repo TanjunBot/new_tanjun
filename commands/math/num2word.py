@@ -1,4 +1,4 @@
-import num2words
+import num2words  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer

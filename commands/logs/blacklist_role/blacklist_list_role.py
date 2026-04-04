@@ -11,6 +11,7 @@ from api import (
     remove_log_role_blacklist as remove_log_blacklist_role_api,
 )
 from localizer import tanjunLocalizer
+from typing import Any
 
 
 async def blacklist_list_role(commandInfo: utility.CommandInfo) -> None:
@@ -36,7 +37,7 @@ async def blacklist_list_role(commandInfo: utility.CommandInfo) -> None:
     blacklisted_roles = await get_log_blacklist_roles_api(commandInfo.guild.id)
 
     class BlacklistView(discord.ui.View):
-        def __init__(self, roles: list, locale: str, guild: discord.Guild) -> None:
+        def __init__(self, roles: list, locale: str, guild: discord.Guild) -> None:  # type: ignore[type-arg]
             super().__init__()
             self.roles = roles
             self.locale = locale
@@ -44,19 +45,19 @@ async def blacklist_list_role(commandInfo: utility.CommandInfo) -> None:
             self.selectedIndex = 0
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
-        async def remove_role(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def remove_role(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             role_id = self.roles[self.selectedIndex][0]
             await remove_log_blacklist_role_api(self.guild.id, role_id)
-            self.roles = tuple(x for x in self.roles if x[0] != role_id)
+            self.roles = tuple(x for x in self.roles if x[0] != role_id)  # type: ignore[assignment]
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             self.selectedIndex = (self.selectedIndex - 1) % len(self.roles)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             self.selectedIndex = (self.selectedIndex + 1) % len(self.roles)
             await self.update_view(interaction)
 

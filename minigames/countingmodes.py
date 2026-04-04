@@ -343,7 +343,7 @@ async def counting(message: discord.Message) -> None:
         return
 
     # Ensure progress is an integer for calculations
-    progress_int = 0 if progress is None else int(progress)
+    progress_int = 0 if progress is None else int(progress)  # type: ignore[redundant-expr]
 
     mode = await get_counting_mode_mode(message.channel.id)
 

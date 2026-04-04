@@ -22,16 +22,16 @@ async def disable_level_system(commandInfo: CommandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.disablelevelsystem.confirm"),
             style=discord.ButtonStyle.danger,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            self.value = True
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
+            self.value = True  # type: ignore[assignment]
             self.stop()
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.disablelevelsystem.cancel"),
             style=discord.ButtonStyle.secondary,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            self.value = False
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
+            self.value = False  # type: ignore[assignment]
             self.stop()
 
     if (
@@ -84,7 +84,7 @@ async def disable_level_system(commandInfo: CommandInfo) -> None:
     if view.value is None:
         await message.delete()
         return
-    elif view.value:
+    elif view.value:  # type: ignore[unreachable]
         await delete_level_system_data(str(commandInfo.guild.id))
         await set_level_system_status(str(commandInfo.guild.id), False)
 

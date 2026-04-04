@@ -25,12 +25,13 @@ from localizer import tanjunLocalizer
 from loops.create_database_backup import create_database_backup
 from minigames.addLevelXp import update_user_roles
 from minigames.countingmodes import get_correct_next_number, get_first_number
-from tests import (
+from tests import (  # type: ignore[attr-defined]
     test_commands,
     test_database,
     test_ping,
 )
 from utility import addFeedback, missingLocalization, tanjunEmbed
+from typing import Any
 
 
 class administrationCog(commands.Cog):
@@ -38,7 +39,7 @@ class administrationCog(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def sync(self, ctx: commands.Context) -> None:
+    async def sync(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         if not ctx.bot.tree:
@@ -47,7 +48,7 @@ class administrationCog(commands.Cog):
         await ctx.send(f"{len(fmt)} Befehle wurden gesynced.")
 
     @commands.command()
-    async def feedback(self, ctx: commands.Context, *, content: str) -> None:
+    async def feedback(self, ctx: commands.Context, *, content: str) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in [
             689755528947433555,
             892113092387942420,
@@ -58,21 +59,21 @@ class administrationCog(commands.Cog):
         await ctx.send("Feedback wurde hinzugefügt. Vielen dank!")
 
     @commands.command()
-    async def blockFeedback(self, ctx: commands.Context, user: discord.User) -> None:
+    async def blockFeedback(self, ctx: commands.Context, user: discord.User) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         await feedbackBlockUser(user.id)
         await ctx.send(f"{user.name} wurde blockiert.")
 
     @commands.command()
-    async def unblockFeedback(self, ctx: commands.Context, user: discord.User) -> None:
+    async def unblockFeedback(self, ctx: commands.Context, user: discord.User) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         await feedbackUnblockUser(user.id)
         await ctx.send(f"{user.name} wurde entblockiert.")
 
     @commands.command()
-    async def test_bot(self, ctx: commands.Context) -> None:
+    async def test_bot(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
 
@@ -101,14 +102,14 @@ class administrationCog(commands.Cog):
         )
 
     @commands.command()
-    async def test_translation(self, ctx: commands.Context) -> None:
+    async def test_translation(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         text = tanjunLocalizer.test_localize("de", "commands.logs")
         await ctx.send(str(text)[:4000])
 
     @commands.command()
-    async def update(self, ctx: commands.Context) -> None:
+    async def update(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
 
@@ -121,24 +122,24 @@ class administrationCog(commands.Cog):
                 await ctx.send(await response.text())
 
     @commands.command()
-    async def welcome(self, ctx: commands.Context, user: discord.Member | None = None) -> None:
+    async def welcome(self, ctx: commands.Context, user: discord.Member | None = None) -> None:  # type: ignore[type-arg]
         if user is None:
-            user = ctx.author
+            user = ctx.author  # type: ignore[assignment]
         if ctx.author.id not in config.adminIds:
             return
-        await welcomeNewUser(user)
+        await welcomeNewUser(user)  # type: ignore[arg-type]
 
     @commands.command()
-    async def farewell(self, ctx: commands.Context, user: discord.Member | None = None) -> None:
+    async def farewell(self, ctx: commands.Context, user: discord.Member | None = None) -> None:  # type: ignore[type-arg]
         if user is None:
-            user = ctx.author
+            user = ctx.author  # type: ignore[assignment]
         if ctx.author.id not in config.adminIds:
             return
-        await farewellUser(user)
+        await farewellUser(user)  # type: ignore[arg-type]
 
     @commands.command()
     async def onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus(
-        self, ctx: commands.Context
+        self, ctx: commands.Context  # type: ignore[type-arg]
     ) -> None:
         if ctx.author.id not in config.adminIds:
             return
@@ -157,7 +158,7 @@ class administrationCog(commands.Cog):
                 return result
 
     @commands.command()
-    async def bsstarpoweremojis(self, ctx: commands.Context, start: int = 0) -> None:
+    async def bsstarpoweremojis(self, ctx: commands.Context, start: int = 0) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         allBrawlers = await self.getBrawlers()
@@ -169,11 +170,11 @@ class administrationCog(commands.Cog):
                 url = f"https://cdn.brawlify.com/star-powers/borderless/{starPower['id']}.png"
                 async with aiohttp.ClientSession() as session, session.get(url) as response:
                     image = await response.read()
-                    emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)
+                    emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)  # type: ignore[union-attr]
                     await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
 
     @commands.command()
-    async def bsgadgetsemojis(self, ctx: commands.Context, start: int = 0) -> None:
+    async def bsgadgetsemojis(self, ctx: commands.Context, start: int = 0) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         allBrawlers = await self.getBrawlers()
@@ -185,7 +186,7 @@ class administrationCog(commands.Cog):
                 url = f"https://cdn.brawlify.com/gadgets/borderless/{gadget['id']}.png"
                 async with aiohttp.ClientSession() as session, session.get(url) as response:
                     image = await response.read()
-                    emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)
+                    emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)  # type: ignore[union-attr]
 
                     await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
 
@@ -199,7 +200,7 @@ class administrationCog(commands.Cog):
                 return result
 
     @commands.command()
-    async def bsaccdata(self, ctx: commands.Context, id: str) -> None:
+    async def bsaccdata(self, ctx: commands.Context, id: str) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         accData = await self.getAccData(id)
@@ -207,7 +208,7 @@ class administrationCog(commands.Cog):
         await ctx.send(f"```json\n{(json.dumps(accData, indent=4))[0:1900]}\n```")
 
     @commands.command()
-    async def editembedmessage(self, ctx: commands.Context) -> None:
+    async def editembedmessage(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         message = await ctx.send(embed=tanjunEmbed(title="test", description="test. I will edit this soon.."))
@@ -215,48 +216,48 @@ class administrationCog(commands.Cog):
         await message.edit(embed=tanjunEmbed(title="test2", description="test2. I have edited this!"))
 
     @commands.command()
-    async def setguildlocale(self, ctx: commands.Context, locale: str) -> None:
+    async def setguildlocale(self, ctx: commands.Context, locale: str) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
-        await ctx.guild.edit(preferred_locale=locale)
+        await ctx.guild.edit(preferred_locale=locale)  # type: ignore[union-attr, arg-type]
         await ctx.send(f"The guild locale has been set to {locale}")
 
     @commands.command()
-    async def testgithubauthtoken(self, ctx: commands.Context) -> None:
+    async def testgithubauthtoken(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         missingLocalization("JUSTATEST.IGNORETHIS.JUSTATEST")
         await ctx.send("jup gemacht :)")
 
     @commands.command()
-    async def testupdateuserroles(self, ctx: commands.Context) -> None:
+    async def testupdateuserroles(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
-        await update_user_roles(ctx.message, 10, str(ctx.guild.id))
+        await update_user_roles(ctx.message, 10, str(ctx.guild.id))  # type: ignore[union-attr]
 
     @commands.command()
-    async def testgetcorrectnextnumber(self, ctx: commands.Context, mode: int, numbers: int) -> None:
+    async def testgetcorrectnextnumber(self, ctx: commands.Context, mode: int, numbers: int) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         await ctx.send("look in the console")
         current_correct_number = get_first_number(mode)
         for i in range(numbers):
             print(f"i: {i}, current_correct_number: {current_correct_number}")
-            current_correct_number = get_correct_next_number(mode, current_correct_number)
+            current_correct_number = get_correct_next_number(mode, current_correct_number)  # type: ignore[assignment]
 
     @commands.command()
-    async def sendUpdateTextToAllAdmins(self, ctx: commands.Context) -> None:
+    async def sendUpdateTextToAllAdmins(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
 
-        def check(m) -> None:
-            return m.author == ctx.author and m.channel == ctx.channel
+        def check(m) -> None:  # type: ignore[no-untyped-def]
+            return m.author == ctx.author and m.channel == ctx.channel  # type: ignore[no-any-return]
 
         try:
             await ctx.channel.send(
                 "Willst du wirklich die Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!"
             )
-            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
@@ -267,7 +268,7 @@ class administrationCog(commands.Cog):
 
         try:
             await ctx.channel.send("Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)")
-            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
@@ -278,7 +279,7 @@ class administrationCog(commands.Cog):
 
         try:
             await ctx.channel.send("sag wallah.")
-            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
@@ -289,7 +290,7 @@ class administrationCog(commands.Cog):
 
         try:
             await ctx.channel.send("Gebe das geheime geheim passwort ein.")
-            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
@@ -348,18 +349,18 @@ Das Tanjun-Team
                 pass
 
     @commands.command()
-    async def sendDemoIsNoMoreToAllAdmins(self, ctx: commands.Context) -> None:
+    async def sendDemoIsNoMoreToAllAdmins(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
 
-        def check(m) -> None:
-            return m.author == ctx.author and m.channel == ctx.channel
+        def check(m) -> None:  # type: ignore[no-untyped-def]
+            return m.author == ctx.author and m.channel == ctx.channel  # type: ignore[no-any-return]
 
         try:
             await ctx.channel.send(
                 "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!"
             )
-            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
@@ -370,7 +371,7 @@ Das Tanjun-Team
 
         try:
             await ctx.channel.send("Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)")
-            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
@@ -381,7 +382,7 @@ Das Tanjun-Team
 
         try:
             await ctx.channel.send("sag wallah.")
-            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
@@ -392,7 +393,7 @@ Das Tanjun-Team
 
         try:
             await ctx.channel.send("Gebe das geheime geheim passwort ein.")
-            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
             await ctx.channel.send("Timeout! Abgebrochen!")
             return
@@ -432,42 +433,42 @@ Das Tanjun-Team
                 pass
 
     @commands.command()
-    async def me(self, ctx: commands.Context) -> None:
+    async def me(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
 
-        me = ctx.guild.me
+        me = ctx.guild.me  # type: ignore[union-attr]
         await ctx.send(f"{me.name} {me.id} {me.mention}")
 
     @commands.command()
-    async def permissionTest(self, ctx: commands.Context) -> None:
+    async def permissionTest(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
 
         permissionResult = (
-            not ctx.channel.permissions_for(ctx.guild.me).manage_messages
-            or not ctx.channel.permissions_for(ctx.guild.me).read_message_history
-            or not ctx.channel.permissions_for(ctx.guild.me).manage_channels
+            not ctx.channel.permissions_for(ctx.guild.me).manage_messages  # type: ignore[union-attr]
+            or not ctx.channel.permissions_for(ctx.guild.me).read_message_history  # type: ignore[union-attr]
+            or not ctx.channel.permissions_for(ctx.guild.me).manage_channels  # type: ignore[union-attr]
         )
         await ctx.send(f"{permissionResult}")
 
     @commands.command()
-    async def permissionTest2(self, ctx: commands.Context) -> None:
+    async def permissionTest2(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
 
-        permissionResult = ctx.channel.permissions_for(ctx.guild.me).manage_messages
+        permissionResult = ctx.channel.permissions_for(ctx.guild.me).manage_messages  # type: ignore[union-attr]
         await ctx.send(f"{permissionResult}")
 
     @commands.command()
-    async def listPermissions(self, ctx: commands.Context, channel: discord.TextChannel | None = None) -> None:
+    async def listPermissions(self, ctx: commands.Context, channel: discord.TextChannel | None = None) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
 
         if not channel:
-            channel = ctx.channel
+            channel = ctx.channel  # type: ignore[assignment]
 
-        permissionResult = channel.permissions_for(ctx.guild.me)
+        permissionResult = channel.permissions_for(ctx.guild.me)  # type: ignore[union-attr]
         permissionText = ""
         for permission in permissionResult:
             permissionText += f"{permission}\n"

@@ -2,7 +2,7 @@ import asyncio
 import os
 from typing import cast
 
-import asyncmy
+import asyncmy  # type: ignore[import-not-found]
 import discord
 from discord.ext import commands
 
@@ -32,7 +32,7 @@ async def loadextension(bot: commands.AutoShardedBot, extensionname: str) -> Non
 async def loadTranslator(bot: commands.AutoShardedBot) -> None:
     print("loading translator...")
     translator = TanjunTranslator()
-    if bot.tree:
+    if bot.tree:  # type: ignore[truthy-bool]
         await bot.tree.set_translator(translator)
     print("translator loaded!")
 
@@ -50,7 +50,7 @@ intents.auto_moderation_execution = True
 intents.invites = True
 intents.presences = False
 
-bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)
+bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)  # type: ignore[arg-type]
 
 
 async def main() -> None:
@@ -63,7 +63,7 @@ async def main() -> None:
     await loadTranslator(bot)
 
 
-async def create_pool() -> asyncmy.Connection | None:
+async def create_pool() -> asyncmy.Connection | None:  # type: ignore[no-any-unimported]
     try:
         # p = await asyncmy.create_pool(
         #     host=database_ip,
@@ -80,7 +80,7 @@ async def create_pool() -> asyncmy.Connection | None:
             password=database_password,
             db=database_schema,
         )
-        return cast(asyncmy.Connection, connection)
+        return cast(asyncmy.Connection, connection)  # type: ignore[no-any-unimported]
     except Exception as e:
         print(f"Error creating pool: {e}")
         return None
@@ -103,4 +103,4 @@ async def on_ready() -> None:
     print("Bot is running!")
 
 
-bot.run(config.token)
+bot.run(config.token)  # type: ignore[arg-type]

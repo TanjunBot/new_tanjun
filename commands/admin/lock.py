@@ -9,7 +9,7 @@ async def lock_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
     if channel is None:
         if commandInfo.channel is None:
             raise ValueError("Channel is missing in commandInfo")
-        channel = cast(discord.TextChannel, commandInfo.channel)
+        channel = cast(discord.TextChannel, commandInfo.channel)  # type: ignore[name-defined]
 
     if (
         isinstance(commandInfo.user, discord.Member)
@@ -46,9 +46,9 @@ async def lock_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
         for target, overwrites in channel.overwrites.items():
             if isinstance(target, discord.Role):
                 # Using type-safe access to internal attributes for Zenith level
-                raw_values = cast(dict[str, Optional[bool]], getattr(overwrites, "_values", {}))
+                raw_values = cast(dict[str, Optional[bool]], getattr(overwrites, "_values", {}))  # type: ignore[name-defined]
                 overwrite_dict: dict[str, bool] = {k: v for k, v in raw_values.items() if v is not None}
-                await save_channel_overwrites(channel.id, target.id, overwrite_dict)
+                await save_channel_overwrites(channel.id, target.id, overwrite_dict)  # type: ignore[arg-type]
 
                 # Remove send_messages permission
                 overwrites.send_messages = False

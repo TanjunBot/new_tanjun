@@ -2,6 +2,7 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def copyrole(commandInfo: utility.CommandInfo, role: discord.Role, copy_members: bool = False) -> None:
@@ -23,7 +24,7 @@ async def copyrole(commandInfo: utility.CommandInfo, role: discord.Role, copy_me
 
     assert commandInfo.guild is not None
     assert commandInfo.client.user is not None
-    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)
+    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[misc, union-attr]
     if not bot_member or not bot_member.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.copyrole.missingPermissionBot.title"),
@@ -52,7 +53,7 @@ async def copyrole(commandInfo: utility.CommandInfo, role: discord.Role, copy_me
         hoist=role.hoist,
         mentionable=role.mentionable,
         permissions=role.permissions,
-        display_icon=display_icon,
+        display_icon=display_icon,  # type: ignore[arg-type]
         reason=reasonLocale,
     )
 

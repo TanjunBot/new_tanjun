@@ -52,14 +52,14 @@ async def create_ticket(
         channel_id=channel.id,
         name=name,
         description=description,
-        ping_role=ping_role.id if ping_role is not None else None,
-        summary_channel_id=summary_channel.id if summary_channel is not None else None,
-        introduction=introduction,
+        ping_role=ping_role.id if ping_role is not None else None,  # type: ignore[arg-type]
+        summary_channel_id=summary_channel.id if summary_channel is not None else None,  # type: ignore[arg-type]
+        introduction=introduction,  # type: ignore[arg-type]
     )
 
     view = discord.ui.View()
     label = tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.create_ticket.button.label")
-    btn = discord.ui.Button(
+    btn = discord.ui.Button(  # type: ignore[var-annotated]
         label=label,
         style=discord.ButtonStyle.success,
         emoji="🎫",

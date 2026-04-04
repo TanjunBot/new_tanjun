@@ -25,7 +25,7 @@ from loops.giveaway import checkVoiceUsers, endGiveaways, sendReadyGiveaways
 from loops.level import addXpToVoiceUsers
 from minigames.addLevelXp import clearNotifiedUsers
 
-embeds = {}
+embeds = {}  # type: ignore[var-annotated]
 
 
 class LoopCog(commands.Cog):
@@ -35,35 +35,35 @@ class LoopCog(commands.Cog):
     @tasks.loop(seconds=10)
     async def sendSendReadyGiveaways(self) -> None:
         try:
-            await sendReadyGiveaways(self.bot)
+            await sendReadyGiveaways(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
             pass
 
     @tasks.loop(seconds=10)
     async def endGiveawaysLoop(self) -> None:
         try:
-            await endGiveaways(self.bot)
+            await endGiveaways(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
             pass
 
     @tasks.loop(seconds=60)
     async def checkVoiceUsers(self) -> None:
         try:
-            await checkVoiceUsers(self.bot)
+            await checkVoiceUsers(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
             pass
 
     @tasks.loop(seconds=5)
     async def clearNotifiedUsersLoop(self) -> None:
         try:
-            await clearNotifiedUsers(self.bot)
+            await clearNotifiedUsers(self.bot)  # type: ignore[misc, call-arg, func-returns-value]  # type: ignore[func-returns-value]  # type: ignore[func-returns-value]  # type: ignore[func-returns-value]
         except Exception:
             pass
 
     @tasks.loop(seconds=5)
     async def addVoiceUserLoop(self) -> None:
         try:
-            await addXpToVoiceUsers(self.bot)
+            await addXpToVoiceUsers(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
             pass
 
@@ -186,19 +186,19 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
         while not check_pool_initialized():
             await asyncio.sleep(1)
 
-        self.pollTwitchStreams.start()
-        self.sendSendReadyGiveaways.start()
-        self.endGiveawaysLoop.start()
-        self.checkVoiceUsers.start()
-        self.clearNotifiedUsersLoop.start()
-        self.addVoiceUserLoop.start()
-        self.refillAiTokenLoop.start()
-        self.pingServerLoop.start()
-        self.backupDatabaseLoop.start()
-        self.removeExpiredClaimedBoosterRoles.start()
-        self.removeExpiredClaimedBoosterChannels.start()
-        self.sendScheduledMessages.start()
-        self.sendPokemonWerbung.start()
+        self.pollTwitchStreams.start()  # type: ignore[unused-awaitable]
+        self.sendSendReadyGiveaways.start()  # type: ignore[unused-awaitable]
+        self.endGiveawaysLoop.start()  # type: ignore[unused-awaitable]
+        self.checkVoiceUsers.start()  # type: ignore[unused-awaitable]
+        self.clearNotifiedUsersLoop.start()  # type: ignore[unused-awaitable]
+        self.addVoiceUserLoop.start()  # type: ignore[unused-awaitable]
+        self.refillAiTokenLoop.start()  # type: ignore[unused-awaitable]
+        self.pingServerLoop.start()  # type: ignore[unused-awaitable]
+        self.backupDatabaseLoop.start()  # type: ignore[unused-awaitable]
+        self.removeExpiredClaimedBoosterRoles.start()  # type: ignore[unused-awaitable]
+        self.removeExpiredClaimedBoosterChannels.start()  # type: ignore[unused-awaitable]
+        self.sendScheduledMessages.start()  # type: ignore[unused-awaitable]
+        self.sendPokemonWerbung.start()  # type: ignore[unused-awaitable]
 
 
 async def setup(bot: commands.Bot) -> None:

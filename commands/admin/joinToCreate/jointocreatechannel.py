@@ -32,7 +32,7 @@ async def jointocreatechannel(commandInfo: utility.CommandInfo, channel: discord
         await commandInfo.reply(embed=embed)
         return
 
-    await set_join_to_create_channel(commandInfo.guild.id, channel.id)
+    await set_join_to_create_channel(commandInfo.guild.id, channel.id)  # type: ignore[union-attr]
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.jointocreatechannel.success.title"),
         description=tanjunLocalizer.localize(

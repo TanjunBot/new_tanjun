@@ -120,7 +120,7 @@ async def claimBoosterRole(commandInfo: CommandInfo, name: str, color: str, icon
         permissions=role.permissions,
         colour=int(color, 16) if color else role.color,
         hoist=role.hoist,
-        display_icon=await icon.read(),  # type: ignore[arg-type]
+        display_icon=await icon.read(),  # type: ignore[arg-type, unused-ignore]
         mentionable=role.mentionable,
     )
     await newRole.edit(position=role.position + 1)
@@ -147,7 +147,7 @@ async def remove_claimed_booster_roles_that_are_expired(client: discord.Client) 
         role = guild.get_role(int(role))
         if role is None:
             continue
-        if not user.premium_since and role:
+        if not user.premium_since and role:  # type: ignore[truthy-bool]
             await user.remove_roles(role)
             await remove_claimed_booster_role(user.id, guild_id)
             await role.delete(
@@ -156,5 +156,5 @@ async def remove_claimed_booster_roles_that_are_expired(client: discord.Client) 
                     "commands.utility.claimboosterrole.expired.reason",
                 )
             )
-        if not role:
+        if not role:  # type: ignore[truthy-bool]
             await remove_claimed_booster_role(user.id, guild_id)

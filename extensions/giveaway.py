@@ -34,7 +34,7 @@ class BlacklistCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.locale,
+            locale=ctx.locale,  # type: ignore[arg-type]
             message=ctx.message,
             permissions=ctx.permissions,
             reply=ctx.followup.send,
@@ -64,7 +64,7 @@ class BlacklistCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.locale,
+            locale=ctx.locale,  # type: ignore[arg-type]
             message=ctx.message,
             permissions=ctx.permissions,
             reply=ctx.followup.send,
@@ -94,7 +94,7 @@ class BlacklistCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.locale,
+            locale=ctx.locale,  # type: ignore[arg-type]
             message=ctx.message,
             permissions=ctx.permissions,
             reply=ctx.followup.send,
@@ -124,7 +124,7 @@ class BlacklistCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.locale,
+            locale=ctx.locale,  # type: ignore[arg-type]
             message=ctx.message,
             permissions=ctx.permissions,
             reply=ctx.followup.send,
@@ -150,7 +150,7 @@ class BlacklistCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.locale,
+            locale=ctx.locale,  # type: ignore[arg-type]
             message=ctx.message,
             permissions=ctx.permissions,
             reply=ctx.followup.send,
@@ -176,25 +176,25 @@ class GiveawayCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
         title: app_commands.Range[str, 0, 128],
-        channel: discord.TextChannel = None,
+        channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.locale,
+            locale=ctx.locale,  # type: ignore[arg-type]
             message=ctx.message,
             permissions=ctx.permissions,
             reply=ctx.followup.send,
             client=ctx.client,
         )
 
-        if not channel:
-            channel = ctx.channel
+        if not channel:  # type: ignore[truthy-bool]
+            channel = ctx.channel  # type: ignore[assignment]
 
         await ctx.response.defer()
-        await start_giveaway(
+        await start_giveaway(  # type: ignore[no-untyped-call]
             commandInfo=commandInfo,
             title=title,
             target_channel=channel,
@@ -217,7 +217,7 @@ class GiveawayCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.locale,
+            locale=ctx.locale,  # type: ignore[arg-type]
             message=ctx.message,
             permissions=ctx.permissions,
             reply=ctx.followup.send,
@@ -247,7 +247,7 @@ class GiveawayCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.locale,
+            locale=ctx.locale,  # type: ignore[arg-type]
             message=ctx.message,
             permissions=ctx.permissions,
             reply=ctx.followup.send,
@@ -277,7 +277,7 @@ class GiveawayCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
-            locale=ctx.locale,
+            locale=ctx.locale,  # type: ignore[arg-type]
             message=ctx.message,
             permissions=ctx.permissions,
             reply=ctx.followup.send,
@@ -285,7 +285,7 @@ class GiveawayCommands(discord.app_commands.Group):
         )
 
         await ctx.response.defer()
-        await edit_giveaway(
+        await edit_giveaway(  # type: ignore[no-untyped-call]
             commandInfo=commandInfo,
             giveawayId=giveawayid,
         )
@@ -305,7 +305,7 @@ class GiveawayCog(commands.Cog):
             description=app_commands.locale_str("giveaway_blacklist_description"),
         )
         giveaway_commands.add_command(blacklistCmds)
-        if self.bot.tree:
+        if self.bot.tree:  # type: ignore[truthy-bool]
             self.bot.tree.add_command(giveaway_commands)
 
 

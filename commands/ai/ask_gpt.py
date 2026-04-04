@@ -57,7 +57,7 @@ async def ask_gpt(
         presence_penalty=float(presence_penalty),
     )
 
-    tokenCost = int(response.usage.total_tokens * 0.125)
+    tokenCost = int(response.usage.total_tokens * 0.125)  # type: ignore[union-attr]
 
     await useToken(commandInfo.user.id, tokenCost)
 
@@ -74,9 +74,9 @@ async def ask_gpt(
             "commands.ai.ask.success.footer",
             cost=tokenCost,
             token=token - tokenCost if token - tokenCost > 0 else 0,
-            free=tokenOverview[0],
-            plus=tokenOverview[1],
-            paid=tokenOverview[2],
+            free=tokenOverview[0],  # type: ignore[index]
+            plus=tokenOverview[1],  # type: ignore[index]
+            paid=tokenOverview[2],  # type: ignore[index]
         )
     )
     await commandInfo.reply(embed=embed)

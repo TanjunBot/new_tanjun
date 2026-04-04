@@ -2,6 +2,7 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def createrole(
@@ -31,7 +32,7 @@ async def createrole(
 
     assert commandInfo.guild is not None
     assert commandInfo.client.user is not None
-    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)
+    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[misc, union-attr]
     if not bot_member or not bot_member.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -158,11 +159,11 @@ async def createrole(
         display_icon_data = display_icon
     role = await commandInfo.guild.create_role(
         name=name,
-        color=color if color is not None else discord.Color.default(),
+        color=color if color is not None else discord.Color.default(),  # type: ignore[arg-type]
         reason=reason,
         hoist=hoist,
         mentionable=mentionable,
-        display_icon=display_icon_data,
+        display_icon=display_icon_data,  # type: ignore[arg-type]
     )
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.success.title"),

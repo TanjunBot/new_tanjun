@@ -8,7 +8,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def sharpen(commandInfo: utility.CommandInfo, image: discord.Attachment):
+async def sharpen(commandInfo: utility.CommandInfo, image: discord.Attachment):  # type: ignore[no-untyped-def]
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
@@ -26,12 +26,12 @@ async def sharpen(commandInfo: utility.CommandInfo, image: discord.Attachment):
         await commandInfo.reply(embed=embed)
         return
 
-    image = await image.read()
-    image = Image.open(io.BytesIO(image))
-    image = image.filter(ImageFilter.SHARPEN())
+    image = await image.read()  # type: ignore[assignment]
+    image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
+    image = image.filter(ImageFilter.SHARPEN())  # type: ignore[attr-defined]
 
     buffer = BytesIO()
-    image.save(buffer, format="png")
+    image.save(buffer, format="png")  # type: ignore[call-arg, unused-coroutine]
     buffer.seek(0)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.sharpen.success.title"),

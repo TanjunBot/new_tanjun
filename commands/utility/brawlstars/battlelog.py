@@ -255,7 +255,7 @@ async def battlelog(commandInfo: CommandInfo, playerTag: str | None = None) -> N
             )
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -272,7 +272,7 @@ async def battlelog(commandInfo: CommandInfo, playerTag: str | None = None) -> N
             await interaction.response.edit_message(view=self, embed=self.generate_page(self.current_page))
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(

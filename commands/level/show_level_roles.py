@@ -6,6 +6,7 @@ from discord.ui import Button, Modal, Select, TextInput, View
 from api import add_level_role, get_all_level_roles, remove_level_role
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
+from typing import Any
 
 
 async def show_level_roles_command(commandInfo: CommandInfo) -> None:
@@ -43,7 +44,7 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             options = [
                 discord.SelectOption(
                     label=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.level.showlevelroles.data",
                         level=level,
                     ),
@@ -55,53 +56,53 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             start = self.current_page * 25
             end = start + 25
 
-            select = Select(
+            select = Select(  # type: ignore[var-annotated]
                 placeholder=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.select_placeholder",
                 ),
                 options=options[start:end],
             )
-            select.callback = self.on_select
+            select.callback = self.on_select  # type: ignore[method-assign]
             self.add_item(select)
 
             if self.current_page > 0:
-                prev_button = Button(
+                prev_button = Button(  # type: ignore[var-annotated]
                     label=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.level.showlevelroles.previous_button",
                     ),
                     style=discord.ButtonStyle.gray,
                 )
-                prev_button.callback = self.previous_page
+                prev_button.callback = self.previous_page  # type: ignore[method-assign]
                 self.add_item(prev_button)
 
             if end < len(options):
-                next_button = Button(
+                next_button = Button(  # type: ignore[var-annotated]
                     label=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.level.showlevelroles.next_button",
                     ),
                     style=discord.ButtonStyle.gray,
                 )
-                next_button.callback = self.next_page
+                next_button.callback = self.next_page  # type: ignore[method-assign]
                 self.add_item(next_button)
 
-            add_button = Button(
-                label=tanjunLocalizer.localize(self.commandInfo.locale, "commands.level.showlevelroles.add_button"),
+            add_button = Button(  # type: ignore[var-annotated]
+                label=tanjunLocalizer.localize(self.commandInfo.locale, "commands.level.showlevelroles.add_button"),  # type: ignore[misc]
                 style=discord.ButtonStyle.green,
             )
-            add_button.callback = self.add_role
+            add_button.callback = self.add_role  # type: ignore[method-assign]
             self.add_item(add_button)
 
-            remove_button = Button(
+            remove_button = Button(  # type: ignore[var-annotated]
                 label=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.remove_button",
                 ),
                 style=discord.ButtonStyle.red,
             )
-            remove_button.callback = self.remove_role
+            remove_button.callback = self.remove_role  # type: ignore[method-assign]
             self.add_item(remove_button)
 
         async def on_select(self, interaction: discord.Interaction) -> None:
@@ -117,12 +118,12 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
 
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.selected_level.title",
                     level=level,
                 ),
                 description=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.selected_level.description",
                     roles=", ".join([f"<@&{role}>" for role in roles]),
                 ),
@@ -145,20 +146,20 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
         async def add_role(self, interaction: discord.Interaction) -> None:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.add_role_prompt",
                 ),
-                view=AddRoleView(self.commandInfo),
+                view=AddRoleView(self.commandInfo),  # type: ignore[arg-type]
                 ephemeral=True,
             )
 
         async def remove_role(self, interaction: discord.Interaction) -> None:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.remove_role_prompt",
                 ),
-                view=RemoveRoleView(self.commandInfo, self.level_roles),
+                view=RemoveRoleView(self.commandInfo, self.level_roles),  # type: ignore[arg-type]
                 ephemeral=True,
             )
 
@@ -169,7 +170,7 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             self.add_item(
                 discord.ui.RoleSelect(
                     placeholder=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.level.showlevelroles.role_select_placeholder",
                     ),
                     min_values=1,
@@ -180,7 +181,7 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             self.add_item(
                 Button(
                     label=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.level.showlevelroles.cancel_button",
                     ),
                     style=discord.ButtonStyle.red,
@@ -199,11 +200,11 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
                 values = cast(list[str], data.get("values", []))
                 if values:
                     self.selected_role = values[0]
-                    await interaction.response.send_modal(AddRoleLevelModal(self.commandInfo, self.selected_role))
+                    await interaction.response.send_modal(AddRoleLevelModal(self.commandInfo, self.selected_role))  # type: ignore[arg-type]
             elif custom_id == "cancel_button":
                 await interaction.response.edit_message(
                     content=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.level.showlevelroles.add_role_cancelled",
                     ),
                     view=None,
@@ -220,7 +221,7 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             )
             self.commandInfo = CommandInfo
             self.role_id = role_id
-            self.level = TextInput(
+            self.level = TextInput(  # type: ignore[var-annotated]
                 label=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.level.showlevelroles.add_role_modal.level_label",
@@ -243,7 +244,7 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             except ValueError:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.level.showlevelroles.add_role_modal.invalid_level",
                     ),
                     ephemeral=True,
@@ -254,7 +255,7 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             await add_level_role(str(interaction.guild.id), self.role_id, level)
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.add_role_modal.success",
                     role=f"<@&{self.role_id}>",
                     level=level,
@@ -278,7 +279,7 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
                     options.append(
                         discord.SelectOption(
                             label=tanjunLocalizer.localize(
-                                self.commandInfo.locale,
+                                self.commandInfo.locale,  # type: ignore[misc]
                                 "commands.level.showlevelroles.remove_role_data",
                                 level=level,
                                 role=f"{role_id}",
@@ -290,37 +291,37 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             start = self.current_page * 25
             end = start + 25
 
-            select = Select(
+            select = Select(  # type: ignore[var-annotated]
                 placeholder=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.remove_role_select_placeholder",
                 ),
                 options=options[start:end],
                 max_values=min(len(options[start:end]), 25),
             )
-            select.callback = self.on_select
+            select.callback = self.on_select  # type: ignore[method-assign]
             self.add_item(select)
 
             if self.current_page > 0:
-                prev_button = Button(
+                prev_button = Button(  # type: ignore[var-annotated]
                     label=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.level.showlevelroles.previous_button",
                     ),
                     style=discord.ButtonStyle.gray,
                 )
-                prev_button.callback = self.previous_page
+                prev_button.callback = self.previous_page  # type: ignore[method-assign]
                 self.add_item(prev_button)
 
             if end < len(options):
-                next_button = Button(
+                next_button = Button(  # type: ignore[var-annotated]
                     label=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.level.showlevelroles.next_button",
                     ),
                     style=discord.ButtonStyle.gray,
                 )
-                next_button.callback = self.next_page
+                next_button.callback = self.next_page  # type: ignore[method-assign]
                 self.add_item(next_button)
 
         async def on_select(self, interaction: discord.Interaction) -> None:
@@ -330,11 +331,11 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             self.selected_roles = cast(list[str], data.get("values", []))
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.remove_role_confirm",
                     count=len(self.selected_roles),
                 ),
-                view=RemoveRoleConfirmView(self.commandInfo, self.selected_roles),
+                view=RemoveRoleConfirmView(self.commandInfo, self.selected_roles),  # type: ignore[arg-type]
                 ephemeral=True,
             )
 
@@ -362,15 +363,15 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             ),
             style=discord.ButtonStyle.red,
         )
-        async def confirm(self, interaction: discord.Interaction, button: Button[Any]) -> None:
+        async def confirm(self, interaction: discord.Interaction, button: Button[Any]) -> None:  # type: ignore[misc]
             assert interaction.guild is not None
             for role_data in self.selected_roles:
                 level, role_id = role_data.split("|")
-                await remove_level_role(str(interaction.guild.id), role_id, int(level))
+                await remove_level_role(str(interaction.guild.id), role_id, int(level))  # type: ignore[call-arg]
 
             await interaction.response.edit_message(
                 content=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.remove_role_success",
                     count=len(self.selected_roles),
                 ),
@@ -384,10 +385,10 @@ async def show_level_roles_command(commandInfo: CommandInfo) -> None:
             ),
             style=discord.ButtonStyle.gray,
         )
-        async def cancel(self, interaction: discord.Interaction, button: Button[Any]) -> None:
+        async def cancel(self, interaction: discord.Interaction, button: Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.edit_message(
                 content=tanjunLocalizer.localize(
-                    self.commandInfo.locale,
+                    self.commandInfo.locale,  # type: ignore[misc]
                     "commands.level.showlevelroles.remove_role_cancelled",
                 ),
                 view=None,

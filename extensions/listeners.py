@@ -56,14 +56,14 @@ class ListenerCog(commands.Cog):
             if not isinstance(custom_id, str):
                 return
             if custom_id.startswith("giveaway_enter"):
-                giveaway_id = interaction.data["custom_id"].split("; ")[1]
-                embed = await add_giveaway_participant(
+                giveaway_id = interaction.data["custom_id"].split("; ")[1]  # type: ignore[typeddict-item]
+                embed = await add_giveaway_participant(  # type: ignore[func-returns-value]
                     giveawayid=giveaway_id,
                     userid=interaction.user.id,
                     client=self.bot,
                 )
                 if embed:
-                    await interaction.response.send_message(embed=embed, ephemeral=True)
+                    await interaction.response.send_message(embed=embed, ephemeral=True)  # type: ignore[unreachable]
             elif custom_id.startswith("ai_add_custom_situation_approve"):
                 if interaction.user.id not in adminIds:
                     return
@@ -88,13 +88,13 @@ class ListenerCog(commands.Cog):
     async def on_voice_state_update(self, user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
         await memberLeave(before)
         await memberJoin(after, user)
-        await handleVoiceChange(user, before, after)
-        await handleLevelVoiceChange(user, before, after)
+        await handleVoiceChange(user, before, after)  # type: ignore[no-untyped-call]
+        await handleLevelVoiceChange(user, before, after)  # type: ignore[no-untyped-call]
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
         if after.reference:
-            await update_scheduled_message_content(after.reference.message_id, after.content)
+            await update_scheduled_message_content(after.reference.message_id, after.content)  # type: ignore[arg-type]
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message) -> None:

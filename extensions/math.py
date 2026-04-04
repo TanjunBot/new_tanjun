@@ -97,7 +97,7 @@ class mathCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -120,7 +120,7 @@ class mathCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -145,7 +145,7 @@ class mathCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -175,7 +175,7 @@ class mathCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -202,7 +202,7 @@ class mathCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -225,9 +225,9 @@ class mathCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
-            permissions=interaction.user.guild_permissions,
+            permissions=interaction.user.guild_permissions,  # type: ignore[union-attr]
             reply=interaction.followup.send,
             client=interaction.client,
         )
@@ -245,7 +245,7 @@ class mathCog(commands.Cog):
             name=app_commands.locale_str("math_name"),
             description=app_commands.locale_str("math_description"),
         )
-        if self.bot.tree:
+        if self.bot.tree:  # type: ignore[truthy-bool]
             self.bot.tree.add_command(mathcmds)
 
 

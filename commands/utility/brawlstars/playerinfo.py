@@ -1,7 +1,7 @@
 from typing import Any
 
 import aiohttp
-import brawlstats
+import brawlstats  # type: ignore[import-not-found]
 
 from api import get_brawlstars_linked_account
 from config import brawlstarsToken
@@ -66,7 +66,7 @@ async def playerInfo(commandInfo: CommandInfo, playerTag: str | None = None) -> 
         )
         return
 
-    player: brawlstats.Player = await bs_client.get_player(playerTag)
+    player: brawlstats.Player = await bs_client.get_player(playerTag)  # type: ignore[no-any-unimported]
     if player is None or not isinstance(player, brawlstats.Player):
         await commandInfo.reply(
             tanjunLocalizer.localize(

@@ -5,6 +5,7 @@ import discord
 import utility
 from api import add_warning, get_warn_config, get_warnings
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def warn_user(commandInfo: utility.CommandInfo, member: discord.Member, reason: str | None = None) -> None:
@@ -20,7 +21,7 @@ async def warn_user(commandInfo: utility.CommandInfo, member: discord.Member, re
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and member.top_role >= CommandInfo.user.top_role:
+    if isinstance(commandInfo.user, discord.Member) and member.top_role >= CommandInfo.user.top_role:  # type: ignore[misc, union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.targetTooHigh.description"),
@@ -29,15 +30,15 @@ async def warn_user(commandInfo: utility.CommandInfo, member: discord.Member, re
         return
 
     assert commandInfo.guild is not None
-    guild_id = CommandInfo.guild.id
+    guild_id = CommandInfo.guild.id  # type: ignore[misc, union-attr]
     user_id = member.id
 
     warn_config = await get_warn_config(guild_id)
 
-    expireDate = datetime.now(UTC) + timedelta(days=warn_config["expiration_days"])
+    expireDate = datetime.now(UTC) + timedelta(days=warn_config["expiration_days"])  # type: ignore[index]
 
-    await add_warning(guild_id, user_id, reason, expireDate, commandInfo.user.id)
-    warn_count = len(await get_warnings(guild_id, user_id))
+    await add_warning(guild_id, user_id, reason, expireDate, commandInfo.user.id)  # type: ignore[arg-type]
+    warn_count = len(await get_warnings(guild_id, user_id))  # type: ignore[arg-type]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.success.title"),

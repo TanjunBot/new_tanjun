@@ -34,8 +34,8 @@ async def addTwitchLiveNotification(
         return
 
     if (
-        not channel.permissions_for(commandInfo.guild.me).send_messages
-        and not channel.permissions_for(commandInfo.guild.me).embed_links
+        not channel.permissions_for(commandInfo.guild.me).send_messages  # type: ignore[union-attr]
+        and not channel.permissions_for(commandInfo.guild.me).embed_links  # type: ignore[union-attr]
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -65,7 +65,7 @@ async def addTwitchLiveNotification(
         await commandInfo.reply(embed=embed)
         return
 
-    await set_twitch_online_notification(commandInfo.guild.id, channel.id, uuid, twitch_name, notification_message)
+    await set_twitch_online_notification(commandInfo.guild.id, channel.id, uuid, twitch_name, notification_message)  # type: ignore[union-attr, arg-type]
 
     await subscribe_to_twitch_online_notification(uuid)
 

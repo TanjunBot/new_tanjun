@@ -49,7 +49,7 @@ class CustomSituationCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -83,7 +83,7 @@ class CustomSituationCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -121,7 +121,7 @@ class AiCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -133,12 +133,12 @@ class AiCommands(discord.app_commands.Group):
         await ask_gpt(
             commandInfo,
             name=personality,
-            situation=situation[1],
+            situation=situation[1],  # type: ignore[index]
             prompt=prompt,
-            temperature=situation[4],
-            top_p=situation[5],
-            frequency_penalty=situation[6],
-            presence_penalty=situation[7],
+            temperature=situation[4],  # type: ignore[index]
+            top_p=situation[5],  # type: ignore[index]
+            frequency_penalty=situation[6],  # type: ignore[index]
+            presence_penalty=situation[7],  # type: ignore[index]
         )
 
     @app_commands.command(
@@ -169,7 +169,7 @@ class AiCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -215,7 +215,7 @@ class AiCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -257,7 +257,7 @@ class AiCog(commands.Cog):
                 description=app_commands.locale_str("ai_customsituations_description"),
             )
         )
-        if self.bot.tree:
+        if self.bot.tree:  # type: ignore[truthy-bool]
             self.bot.tree.add_command(aicmds)
 
 

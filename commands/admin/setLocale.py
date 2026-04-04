@@ -23,7 +23,7 @@ async def set_locale(commandInfo: utility.CommandInfo, locale: str) -> None:
         raise ValueError("Guild is missing in commandInfo")
 
     await commandInfo.guild.edit(
-        preferred_locale=locale,
+        preferred_locale=locale,  # type: ignore[arg-type]
         reason=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.setLocale.setLocaleReason"),
     )
     embed = utility.tanjunEmbed(

@@ -7,7 +7,7 @@ async def send_trigger_message(message: discord.Message) -> None:
     if not message.guild:
         return
 
-    if not message.channel:
+    if not message.channel:  # type: ignore[truthy-bool]
         return
 
     if not message.content:

@@ -4,6 +4,7 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def removerole(
@@ -49,7 +50,7 @@ async def removerole(
     class RoleManagementView(discord.ui.View):
         def __init__(self, commandInfo: utility.CommandInfo, action: str = "remove") -> None:
             super().__init__(timeout=300)
-            self.commandInfo: utility.CommandInfo = CommandInfo
+            self.commandInfo: utility.CommandInfo = CommandInfo  # type: ignore[assignment]
             self.action: str = action
             self.selected_roles: list[discord.Role] = []
             self.selected_users: list[discord.Member] = []
@@ -74,7 +75,7 @@ async def removerole(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.confirm"),
             style=discord.ButtonStyle.green,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             if not self.selected_roles or not self.selected_users:
                 await interaction.response.send_message(
                     content=tanjunLocalizer.localize(
@@ -111,8 +112,8 @@ async def removerole(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.cancel"),
             style=discord.ButtonStyle.red,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            await interaction.response.edit_message(
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
+            await interaction.response.edit_message(  # type: ignore[misc]
                 tanjunLocalizer.localize(
                     str(self.commandInfo.locale),
                     f"commands.admin.{self.action}role.cancelled",
@@ -125,7 +126,7 @@ async def removerole(
             self,
             interaction: discord.Interaction,
             error: Exception,
-            item: discord.ui.Item,
+            item: discord.ui.Item,  # type: ignore[type-arg]
         ) -> None:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.removerole.error"),

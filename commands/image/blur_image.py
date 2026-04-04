@@ -8,7 +8,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def blur_image(
+async def blur_image(  # type: ignore[no-untyped-def]
     commandInfo: utility.CommandInfo,
     image: discord.Attachment,
     type: str = "gaussian",
@@ -34,15 +34,15 @@ async def blur_image(
         await commandInfo.reply(embed=embed)
         return
 
-    image = await image.read()
-    image = Image.open(io.BytesIO(image))
+    image = await image.read()  # type: ignore[assignment]
+    image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
     if type == "gaussian":
-        image = image.filter(ImageFilter.GaussianBlur(radius))
+        image = image.filter(ImageFilter.GaussianBlur(radius))  # type: ignore[attr-defined]
     elif type == "boxblurr":
-        image = image.filter(ImageFilter.BoxBlur(radius))
+        image = image.filter(ImageFilter.BoxBlur(radius))  # type: ignore[attr-defined]
 
     buffer = BytesIO()
-    image.save(buffer, format="png")
+    image.save(buffer, format="png")  # type: ignore[call-arg, unused-coroutine]
     buffer.seek(0)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.blur.success.title"),

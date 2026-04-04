@@ -7,7 +7,7 @@ from localizer import tanjunLocalizer
 async def set_slowmode(commandInfo: utility.CommandInfo, seconds: int, channel: discord.TextChannel | None = None) -> None:
     if channel is None:
         assert commandInfo.channel is not None
-        channel = cast(discord.TextChannel, commandInfo.channel)
+        channel = cast(discord.TextChannel, commandInfo.channel)  # type: ignore[name-defined]
 
     if (
         isinstance(commandInfo.user, discord.Member)

@@ -3,6 +3,7 @@ import discord
 import utility
 from api import get_warn_config, set_warn_config
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def warn_config(commandInfo: utility.CommandInfo) -> None:
@@ -89,14 +90,14 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
         async def on_submit(self, interaction: discord.Interaction) -> None:
             # Parse input and update configurations
             try:
-                expiration_days = int(self.children[0].value)
-                timeout_threshold = int(self.children[1].value)
-                timeout_duration = int(self.children[2].value)
-                kick_threshold = int(self.children[3].value)
-                ban_threshold = int(self.children[4].value)
+                expiration_days = int(self.children[0].value)  # type: ignore[attr-defined]
+                timeout_threshold = int(self.children[1].value)  # type: ignore[attr-defined]
+                timeout_duration = int(self.children[2].value)  # type: ignore[attr-defined]
+                kick_threshold = int(self.children[3].value)  # type: ignore[attr-defined]
+                ban_threshold = int(self.children[4].value)  # type: ignore[attr-defined]
 
                 await set_warn_config(
-                    interaction.guild_id,
+                    interaction.guild_id,  # type: ignore[arg-type]
                     expiration_days=expiration_days,
                     timeout_threshold=timeout_threshold,
                     timeout_duration=timeout_duration,
@@ -106,11 +107,11 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
 
                 embed = utility.tanjunEmbed(
                     title=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.admin.warnconfig.success.title",
                     ),
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.admin.warnconfig.success.description",
                     ),
                 )
@@ -118,9 +119,9 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
 
             except ValueError:
                 embed = utility.tanjunEmbed(
-                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.warnconfig.error.title"),
+                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.warnconfig.error.title"),  # type: ignore[misc]
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.admin.warnconfig.error.invalidInput",
                     ),
                 )

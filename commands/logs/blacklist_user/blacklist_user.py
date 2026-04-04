@@ -44,7 +44,7 @@ async def blacklist_user(commandInfo: utility.CommandInfo, user: discord.Member)
             ),
         )
     else:
-        await add_log_blacklist_user_api(commandInfo.guild.id, user.id)
+        await add_log_blacklist_user_api(commandInfo.guild.id, user.id)  # type: ignore[call-arg]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.blacklistUser.blacklisted.title"),
             description=tanjunLocalizer.localize(

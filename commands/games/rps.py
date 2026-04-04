@@ -5,11 +5,12 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def rps(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
-    player1 = CommandInfo.user
-    player2 = user if user is not None else "tanjun"
+    player1 = CommandInfo.user  # type: ignore[misc]
+    player2 = user if user is not None else "tanjun"  # type: ignore[redundant-expr]
     player1_choice = None
     player2_choice = None
 
@@ -33,14 +34,14 @@ async def rps(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
                     player2_choice=player2_choice,
                 ),
             )
-            await interaction.message.edit(embed=embed, view=None)
+            await interaction.message.edit(embed=embed, view=None)  # type: ignore[union-attr]
 
         elif (
-            (player1_choice == rockLocale and player2_choice == scissorsLocale)
-            or (player1_choice == paperLocale and player2_choice == rockLocale)
-            or (player1_choice == scissorsLocale and player2_choice == paperLocale)
+            (player1_choice == rockLocale and player2_choice == scissorsLocale)  # type: ignore[redundant-expr, unreachable]
+            or (player1_choice == paperLocale and player2_choice == rockLocale)  # type: ignore[redundant-expr, unreachable]
+            or (player1_choice == scissorsLocale and player2_choice == paperLocale)  # type: ignore[unreachable]
         ):
-            embed = utility.tanjunEmbed(
+            embed = utility.tanjunEmbed(  # type: ignore[unreachable]
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.rps.win"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -65,7 +66,7 @@ async def rps(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
                     player2_choice=player2_choice,
                 ),
             )
-            await interaction.message.edit(embed=embed, view=None)
+            await interaction.message.edit(embed=embed, view=None)  # type: ignore[union-attr]
 
     class RPSView(discord.ui.View):
         def __init__(self, commandInfo: utility.CommandInfo, is_player1: bool) -> None:
@@ -73,7 +74,7 @@ async def rps(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
             self.is_player1 = is_player1
 
         @discord.ui.button(label=rockLocale, style=discord.ButtonStyle.primary, custom_id="rock")
-        async def rock(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def rock(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
@@ -104,14 +105,14 @@ async def rps(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
                             player2=player2.mention,
                         ),
                     )
-                    await interaction.message.edit(embed=embed, view=view)
+                    await interaction.message.edit(embed=embed, view=view)  # type: ignore[union-attr]
 
             else:
                 player2_choice = rockLocale
                 await check_winner(interaction)
 
         @discord.ui.button(label=paperLocale, style=discord.ButtonStyle.primary, custom_id="paper")
-        async def paper(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def paper(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
@@ -142,7 +143,7 @@ async def rps(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
                             player2=player2.mention,
                         ),
                     )
-                    await interaction.message.edit(embed=embed, view=view)
+                    await interaction.message.edit(embed=embed, view=view)  # type: ignore[union-attr]
 
             else:
                 player2_choice = paperLocale
@@ -153,7 +154,7 @@ async def rps(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
             style=discord.ButtonStyle.primary,
             custom_id="scissors",
         )
-        async def scissors(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def scissors(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
             nonlocal player1_choice, player2_choice
 
@@ -184,7 +185,7 @@ async def rps(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
                             player2=player2.mention,
                         ),
                     )
-                    await interaction.message.edit(embed=embed, view=view)
+                    await interaction.message.edit(embed=embed, view=view)  # type: ignore[union-attr]
 
             else:
                 player2_choice = scissorsLocale

@@ -84,13 +84,13 @@ class BlacklistCommands(discord.app_commands.Group):
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
             client=interaction.client,
         )
-        await add_channel_to_blacklist_command(commandInfo, channel, reason)
+        await add_channel_to_blacklist_command(commandInfo, channel, reason)  # type: ignore[name-defined]
 
     @app_commands.command(
         name=app_commands.locale_str("level_blacklist_removec_name"),
@@ -103,10 +103,10 @@ class BlacklistCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -128,10 +128,10 @@ class BlacklistCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -150,10 +150,10 @@ class BlacklistCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -175,10 +175,10 @@ class BlacklistCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -197,10 +197,10 @@ class BlacklistCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -216,10 +216,10 @@ class BlacklistCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -244,10 +244,10 @@ class LevelBoostCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -274,10 +274,10 @@ class LevelBoostCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -304,10 +304,10 @@ class LevelBoostCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -326,10 +326,10 @@ class LevelBoostCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -348,10 +348,10 @@ class LevelBoostCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -370,10 +370,10 @@ class LevelBoostCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -389,10 +389,10 @@ class LevelBoostCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -414,10 +414,10 @@ class LevelBoostCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -435,10 +435,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -455,10 +455,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -480,10 +480,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -500,10 +500,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -520,10 +520,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -543,10 +543,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -570,10 +570,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -594,10 +594,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=await interaction.original_response(),
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -618,10 +618,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -641,10 +641,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -661,10 +661,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -685,10 +685,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -708,10 +708,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -730,10 +730,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -752,10 +752,10 @@ class LevelConfigCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -776,16 +776,16 @@ class levelCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
             client=interaction.client,
         )
-        await show_rankcard_command(commandInfo, user or cast(discord.Member, interaction.user))
+        await show_rankcard_command(commandInfo, user or cast(discord.Member, interaction.user))  # type: ignore[name-defined]
 
     @app_commands.command(
         name=app_commands.locale_str("level_setbackground_name"),
@@ -798,10 +798,10 @@ class levelCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=interaction.message,
             permissions=interaction.permissions,
             reply=interaction.followup.send,
@@ -820,10 +820,10 @@ class levelCommands(discord.app_commands.Group):
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,
             command=interaction.command,
-            locale=interaction.locale,
+            locale=interaction.locale,  # type: ignore[arg-type]
             message=await interaction.original_response(),
             permissions=interaction.permissions,
             reply=interaction.followup.send,

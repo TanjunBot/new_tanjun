@@ -257,7 +257,7 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.buttons.previous"),
             style=discord.ButtonStyle.gray,
         )
-        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             self.current_page = (self.current_page - 1) % len(self.embeds)
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
@@ -265,7 +265,7 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.buttons.next"),
             style=discord.ButtonStyle.gray,
         )
-        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             self.current_page = (self.current_page + 1) % len(self.embeds)
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 

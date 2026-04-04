@@ -20,9 +20,9 @@ async def openTicket(interaction: discord.Interaction) -> None:
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.confirm"),
-            custom_id=interaction.data["custom_id"] + ";optedOutConfirm",
+            custom_id=interaction.data["custom_id"] + ";optedOutConfirm",  # type: ignore[index, typeddict-item]
         )
-        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await open_ticket_2(interaction)
             return
 
@@ -30,7 +30,7 @@ async def openTicket(interaction: discord.Interaction) -> None:
             label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.decline"),
             custom_id="optedOutDecline",
         )
-        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
                     interaction.locale,
@@ -42,8 +42,8 @@ async def openTicket(interaction: discord.Interaction) -> None:
 
         async def on_timeout(self) -> None:
             for item in self.children:
-                item.disabled = True
-            await self.message.edit(view=self)
+                item.disabled = True  # type: ignore[attr-defined]
+            await self.message.edit(view=self)  # type: ignore[attr-defined]
 
     if await check_if_opted_out(interaction.user.id):
         view = optedOutView()
@@ -96,7 +96,7 @@ async def open_ticket_2(interaction: discord.Interaction) -> None:
         return
 
     locale_str = str(
-        interaction.guild.preferred_locale.value if interaction.guild.preferred_locale else interaction.locale.value
+        interaction.guild.preferred_locale.value if interaction.guild.preferred_locale else interaction.locale.value  # type: ignore[truthy-bool, redundant-expr]
     )
     ticket_created_locale = tanjunLocalizer.localize(
         locale_str,
@@ -120,7 +120,7 @@ async def open_ticket_2(interaction: discord.Interaction) -> None:
         await thread.send(introduction)
 
     view = discord.ui.View()
-    btn = discord.ui.Button(
+    btn = discord.ui.Button(  # type: ignore[var-annotated]
         style=discord.ButtonStyle.danger,
         label=tanjunLocalizer.localize(
             interaction.locale,
@@ -148,7 +148,7 @@ async def open_ticket_2(interaction: discord.Interaction) -> None:
 
     await open_ticket(
         guild_id=interaction.guild.id,
-        opener_id=interaction.user.id,
+        opener_id=interaction.user.id,  # type: ignore[arg-type]
         ticket_message_id=ticket_id,
         channel_id=thread.id,
     )

@@ -36,7 +36,7 @@ class CalculatorButton(ui.Button[Any]):
     async def callback(self, interaction: discord.Interaction) -> None:
         if self.view is None or self.custom_id is None:
             return
-        view: CalculatorView = self.view  # type: ignore[assignment]
+        view: CalculatorView = self.view  # type: ignore[assignment, unused-ignore]
         await view.button_callback(interaction, self.custom_id)
 
 
@@ -249,7 +249,7 @@ class CalculatorView(ui.View):
                 ("=", discord.ButtonStyle.success, "equals", 4, None),
             ]
 
-        for label, style, custom_id, row, emoji in buttons:
+        for label, style, custom_id, row, emoji in buttons:  # type: ignore[possibly-undefined]
             self.add_item(
                 CalculatorButton(
                     label=label,
