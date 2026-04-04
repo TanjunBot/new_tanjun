@@ -102,7 +102,7 @@ async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextCha
 
     await set_wordchain_word(
         channel_id=channel.id,
-        (commandInfo.guild.id if commandInfo.guild else 0),
+        guild_id=commandInfo.guild.id if commandInfo.guild else 0,
         word="",
         worder_id="nobody",
     )

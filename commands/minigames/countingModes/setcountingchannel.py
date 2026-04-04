@@ -102,7 +102,7 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
 
     await set_counting_mode_progress(
         channel_id=channel.id,
-        (commandInfo.guild.id if commandInfo.guild else 0),
+        guild_id=commandInfo.guild.id if commandInfo.guild else 0,
         progress=1,
         mode=8,
         goal=128,
