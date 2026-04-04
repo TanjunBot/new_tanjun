@@ -13,6 +13,7 @@ BACKSPACEEMOJI = "math_backspace:1254371946695757854"
 
 from typing import Any
 
+
 class CalculatorButton(ui.Button[Any]):
     def __init__(
         self,
