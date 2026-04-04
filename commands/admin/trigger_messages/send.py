@@ -1,9 +1,9 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import check_if_opted_out, is_trigger_message
 
 
-async def send_trigger_message(message: discord.Message) -> None:
+async def send_trigger_message(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
     if not message.guild:
         return
 

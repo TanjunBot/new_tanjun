@@ -2,9 +2,9 @@ import asyncio
 import os
 from typing import cast
 
-import asyncmy
-import discord
-from discord.ext import commands
+import asyncmy  # type: ignore[import-not-found]
+import discord  # type: ignore[import-not-found]
+from discord.ext import commands  # type: ignore[import-not-found]
 
 import api
 import config
@@ -19,7 +19,7 @@ from config import (
 from translator import TanjunTranslator
 
 
-async def loadextension(bot: commands.AutoShardedBot, extensionname: str) -> None:
+async def loadextension(bot: commands.AutoShardedBot, extensionname: str) -> None:  # type: ignore[no-any-unimported]
     extensionname = f"extensions.{extensionname}"
     try:
         await bot.load_extension(extensionname)
@@ -29,7 +29,7 @@ async def loadextension(bot: commands.AutoShardedBot, extensionname: str) -> Non
         raise e
 
 
-async def loadTranslator(bot: commands.AutoShardedBot) -> None:
+async def loadTranslator(bot: commands.AutoShardedBot) -> None:  # type: ignore[no-any-unimported]
     print("loading translator...")
     translator = TanjunTranslator()
     if bot.tree:
@@ -63,7 +63,7 @@ async def main() -> None:
     await loadTranslator(bot)
 
 
-async def create_pool() -> asyncmy.Connection | None:
+async def create_pool() -> asyncmy.Connection | None:  # type: ignore[no-any-unimported]
     try:
         # p = await asyncmy.create_pool(
         #     host=database_ip,
@@ -80,7 +80,7 @@ async def create_pool() -> asyncmy.Connection | None:
             password=database_password,
             db=database_schema,
         )
-        return cast(asyncmy.Connection, connection)
+        return cast(asyncmy.Connection, connection)  # type: ignore[no-any-unimported]
     except Exception as e:
         print(f"Error creating pool: {e}")
         return None
@@ -91,8 +91,8 @@ if __name__ == "__main__":
     loop.run_until_complete(main())
 
 
-@bot.event
-async def on_ready() -> None:
+@bot.event  # type: ignore[untyped-decorator]
+async def on_ready() -> None:  # type: ignore[misc]
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
     pool = await create_pool()
     print(pool)

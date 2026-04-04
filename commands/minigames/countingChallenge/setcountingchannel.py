@@ -1,11 +1,11 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import set_counting_challenge_progress
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
-async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
     if commandInfo.guild is None:
         return
     if (
@@ -26,7 +26,7 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
-    if not checkIfHasPro((commandInfo.guild.id if commandInfo.guild else 0) if commandInfo.guild else 0):
+    if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingchannel.error.no_pro.title"),
             description=tanjunLocalizer.localize(
@@ -37,9 +37,9 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
-    if not commandInfo.guild or not commandInfo.client.user:
+    if commandInfo.client.user is None:
         return
-    selfMember = (commandInfo.guild.get_member if commandInfo.guild else None)(commandInfo.client.user.id)
+    selfMember = commandInfo.guild.get_member(commandInfo.client.user.id)
     if selfMember is None:
         return
 
@@ -99,8 +99,9 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
-    await set_counting_challenge_progress(
-        channel_id=channel.id, guild_id=commandInfo.guild.id if commandInfo.guild else 0, progress=0
+    await set_counting_challenge_progress(  # type: ignore[call-arg]
+        channel_id=channel.id,
+        guild_id=commandInfo.guild.id, progress=0
     )
 
     introductionEmbed = tanjunEmbed(

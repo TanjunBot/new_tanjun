@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import (
     accept_report,
@@ -12,7 +12,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) -> None:
+async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) -> None:  # type: ignore[no-any-unimported]
     if commandInfo.guild is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "errors.guildOnly.title"),
@@ -41,7 +41,7 @@ async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) ->
         await commandInfo.reply(embed=embed)
         return
 
-    report_channel = CommandInfo.guild.get_channel(int(report_channel_info[0]))
+    report_channel = commandInfo.guild.get_channel(int(report_channel_info[0]))
     if not report_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -95,7 +95,7 @@ async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) ->
     )
 
     view = discord.ui.View()
-    guild_locale = str(commandInfo.guild.preferred_locale) if commandInfo.guild.preferred_locale is not None else "en_US"
+    guild_locale = str(commandInfo.guild.preferred_locale)
     accept_locale = tanjunLocalizer.localize(guild_locale, "commands.utility.report.accept.label")
     view.add_item(
         discord.ui.Button(
@@ -143,7 +143,7 @@ async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) ->
     )
 
 
-async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> None:
+async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> None:  # type: ignore[no-any-unimported]
     report_action = custom_id.split(";")[0]
     reporter_id = custom_id.split(";")[2]
     report_id = custom_id.split(";")[1]

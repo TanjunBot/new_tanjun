@@ -1,7 +1,7 @@
 import math
 import random
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import (
     check_if_opted_out,
@@ -16,7 +16,7 @@ from api import (
 )
 from minigames.addLevelXp import is_blacklisted  # , fetch_xp_details
 
-voiceUsers: list[discord.Member] = []
+voiceUsers: list[discord.Member] = []  # type: ignore[no-any-unimported]
 
 """ redefinition of unused 'is_blacklisted' from line 12 Flake8(F811):
 async def is_blacklisted(user) -> bool:
@@ -36,25 +36,25 @@ async def is_blacklisted(user) -> bool:
 """
 
 
-async def fetch_xp_details(user):
+async def fetch_xp_details(user):  # type: ignore[no-untyped-def]
     scaling = await get_xp_scaling(user.guild.id)
     custom_formula = await get_custom_formula(user.guild.id)
     xp_to_add = await calculate_xp(user)
     return scaling, custom_formula, xp_to_add
 
 
-async def calculate_xp(user) -> int:
+async def calculate_xp(user) -> int:  # type: ignore[no-untyped-def]
     # nosec: B311
     base_xp = random.randint(1, 3)
     user_boost = await get_user_boost(user.guild.id, str(user.id))
     if not user_boost:
-        user_boost = []
+        user_boost = []  # type: ignore[assignment]
     role_boosts = await get_user_roles_boosts(user.guild.id, [str(role.id) for role in user.roles])
     if not role_boosts:
         role_boosts = []
     channel_boost = await get_channel_boost(user.guild.id, str(user.id))
     if not channel_boost:
-        channel_boost = []
+        channel_boost = []  # type: ignore[assignment]
 
     total_additive_boost = sum(boost[0] - 1 for boost in role_boosts if boost[1])
     total_multiplicative_boost = math.prod(boost[0] for boost in role_boosts if not boost[1])
@@ -82,7 +82,7 @@ async def calculate_xp(user) -> int:
     return int(base_xp * total_boost)
 
 
-async def addXpToVoiceUsers(client):
+async def addXpToVoiceUsers(client):  # type: ignore[no-untyped-def]
     for user in voiceUsers:
         if not await get_level_system_status(user.guild.id):
             return
@@ -94,7 +94,7 @@ async def addXpToVoiceUsers(client):
         await update_user_xp_from_voice(user.guild.id, user.id, xp_to_add, True)
 
 
-async def handleVoiceChange(user, before, after):
+async def handleVoiceChange(user, before, after):  # type: ignore[no-untyped-def]
     if await check_if_opted_out(user.id):
         return
 
@@ -108,7 +108,7 @@ async def handleVoiceChange(user, before, after):
         updateVoiceUsers(active_members)
 
 
-def updateVoiceUsers(active_members):
+def updateVoiceUsers(active_members):  # type: ignore[no-untyped-def]
     global voiceUsers
     current_users_set = set(voiceUsers)
     active_users_set = set(active_members)
@@ -122,11 +122,11 @@ def updateVoiceUsers(active_members):
         removeVoiceUser(user)
 
 
-def addVoiceUser(user):
+def addVoiceUser(user):  # type: ignore[no-untyped-def]
     if user not in voiceUsers:
         voiceUsers.append(user)
 
 
-def removeVoiceUser(user):
+def removeVoiceUser(user):  # type: ignore[no-untyped-def]
     if user in voiceUsers:
         voiceUsers.remove(user)

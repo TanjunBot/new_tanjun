@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import (
@@ -11,7 +11,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def claimBoosterRole(commandInfo: CommandInfo, name: str, color: str, icon: discord.Attachment) -> None:
+async def claimBoosterRole(commandInfo: CommandInfo, name: str, color: str, icon: discord.Attachment) -> None:  # type: ignore[no-any-unimported]
     if commandInfo.guild is None or isinstance(commandInfo.user, discord.User):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -98,7 +98,7 @@ async def claimBoosterRole(commandInfo: CommandInfo, name: str, color: str, icon
         await commandInfo.reply(embed=embed)
         return
 
-    role = CommandInfo.guild.get_role(int(booster_role))
+    role = commandInfo.guild.get_role(int(booster_role))
     if not role:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -120,7 +120,7 @@ async def claimBoosterRole(commandInfo: CommandInfo, name: str, color: str, icon
         permissions=role.permissions,
         colour=int(color, 16) if color else role.color,
         hoist=role.hoist,
-        display_icon=await icon.read() if icon else "MISSING",
+        display_icon=await icon.read() if icon is not None else "MISSING",
         mentionable=role.mentionable,
     )
     await newRole.edit(position=role.position + 1)
@@ -133,7 +133,7 @@ async def claimBoosterRole(commandInfo: CommandInfo, name: str, color: str, icon
     await commandInfo.reply(embed=embed)
 
 
-async def remove_claimed_booster_roles_that_are_expired(client: discord.Client) -> None:
+async def remove_claimed_booster_roles_that_are_expired(client: discord.Client) -> None:  # type: ignore[no-any-unimported]
     claimed_booster_roles = await get_claimed_booster_role()
     if not isinstance(claimed_booster_roles, list):
         return

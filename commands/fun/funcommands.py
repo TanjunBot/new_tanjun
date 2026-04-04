@@ -1,10 +1,10 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def fun_command(
+async def fun_command(  # type: ignore[no-any-unimported]
     commandInfo: utility.CommandInfo,
     fun_type: str,
     member: discord.Member,

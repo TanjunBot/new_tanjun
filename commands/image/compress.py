@@ -1,14 +1,14 @@
 import io
 from io import BytesIO
 
-import discord
+import discord  # type: ignore[import-not-found]
 from PIL import Image
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def compress(commandInfo: utility.CommandInfo, image: discord.Attachment, quality: int):
+async def compress(commandInfo: utility.CommandInfo, image: discord.Attachment, quality: int):  # type: ignore[no-any-unimported,no-untyped-def]
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(

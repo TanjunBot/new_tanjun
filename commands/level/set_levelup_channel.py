@@ -1,11 +1,11 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import set_levelup_channel
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def set_levelup_channel_command(commandInfo: CommandInfo, channel: discord.TextChannel | None = None) -> None:
+async def set_levelup_channel_command(commandInfo: CommandInfo, channel: discord.TextChannel | None = None) -> None:  # type: ignore[no-any-unimported]
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

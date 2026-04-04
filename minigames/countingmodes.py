@@ -3,7 +3,7 @@
 import random
 from math import sqrt
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import (
     check_if_opted_out,
@@ -311,12 +311,12 @@ def get_first_number(mode: int) -> int:
     return 0
 
 
-async def counting(message: discord.Message) -> None:
+async def counting(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
     if message.author.bot:
         return
 
     if message.guild == None:
-        embed: discord.Embed = tanjunEmbed(
+        embed: discord.Embed = tanjunEmbed(  # type: ignore[no-any-unimported]
             title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
             description=tanjunLocalizer.localize(
                 "en_US",
@@ -343,7 +343,7 @@ async def counting(message: discord.Message) -> None:
         return
 
     # Ensure progress is an integer for calculations
-    progress_int = 0 if progress is None else int(progress)
+    progress_int = 0 if progress is None else int(progress)  # type: ignore[redundant-expr]
 
     mode = await get_counting_mode_mode(message.channel.id)
 

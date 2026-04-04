@@ -1,11 +1,11 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import clear_counting, get_counting_progress
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def removeCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+async def removeCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
     if commandInfo.guild is None:
         return
     if (

@@ -1,8 +1,9 @@
 # Unused imports:
 # from typing import List, Optional
-import discord
+from typing import Any
+import discord  # type: ignore[import-not-found]
 from discord import app_commands
-from discord.ext import commands
+from discord.ext import commands  # type: ignore[import-not-found]
 
 import utility
 from commands.utility.afk import afk as afkCommand
@@ -61,18 +62,18 @@ from commands.utility.twitch.seeTwitchLiveNotifications import (
 from localizer import tanjunLocalizer
 
 
-class MessageTrackingCommands(discord.app_commands.Group):
-    @app_commands.command(
+class MessageTrackingCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_messageoptout_name"),
         description=app_commands.locale_str("utility_messageoptout_description"),
     )
-    async def messagetrackingoptout(self, interaction: discord.Interaction) -> None:
+    async def messagetrackingoptout(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer(ephemeral=True)
         from typing import cast
 
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -84,17 +85,17 @@ class MessageTrackingCommands(discord.app_commands.Group):
 
         await optOutCommand(commandInfo=commandInfo)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_messageoptin_name"),
         description=app_commands.locale_str("utility_messageoptin_description"),
     )
-    async def messagetrackingoptin(self, interaction: discord.Interaction) -> None:
+    async def messagetrackingoptin(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer(ephemeral=True)
         from typing import cast
 
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -107,17 +108,17 @@ class MessageTrackingCommands(discord.app_commands.Group):
         await optInCommand(commandInfo=commandInfo)
 
 
-class BoosterRoleCommands(discord.app_commands.Group):
-    @app_commands.command(
+class BoosterRoleCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_claimboosterrole_name"),
         description=app_commands.locale_str("utility_claimboosterrole_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_claimboosterrole_params_name_description"),
         color=app_commands.locale_str("utility_claimboosterrole_params_color_description"),
         icon=app_commands.locale_str("utility_claimboosterrole_params_icon_description"),
     )
-    async def claimboosterrole(
+    async def claimboosterrole(  # type: ignore[misc,no-any-unimported,no-untyped-def]
         self,
         ctx,
         name: app_commands.Range[str, 1, 100],
@@ -138,11 +139,11 @@ class BoosterRoleCommands(discord.app_commands.Group):
         )
         await claimboosterroleCommand(commandInfo=commandInfo, name=name, color=color, icon=icon)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_deleteboosterrole_name"),
         description=app_commands.locale_str("utility_deleteboosterrole_description"),
     )
-    async def deleteboosterrole(self, ctx) -> None:
+    async def deleteboosterrole(self, ctx) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -157,14 +158,14 @@ class BoosterRoleCommands(discord.app_commands.Group):
         )
         await deleteboosterroleCommand(commandInfo=commandInfo)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_setupboosterrole_name"),
         description=app_commands.locale_str("utility_setupboosterrole_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         role=app_commands.locale_str("utility_setupboosterrole_params_role_description"),
     )
-    async def setupboosterrole(self, ctx, role: discord.Role) -> None:
+    async def setupboosterrole(self, ctx, role: discord.Role) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -179,11 +180,11 @@ class BoosterRoleCommands(discord.app_commands.Group):
         )
         await setupboosterroleCommand(commandInfo=commandInfo, role=role)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_boosterroleinfo_name"),
         description=app_commands.locale_str("utility_boosterroleinfo_description"),
     )
-    async def info(self, ctx) -> None:
+    async def info(self, ctx) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -204,15 +205,15 @@ class BoosterRoleCommands(discord.app_commands.Group):
         await commandInfo.reply(embed=embed)
 
 
-class BoosterChannelCommands(discord.app_commands.Group):
-    @app_commands.command(
+class BoosterChannelCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_claimboosterchannel_name"),
         description=app_commands.locale_str("utility_claimboosterchannel_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_claimboosterchannel_params_name_description"),
     )
-    async def claimboosterchannel(self, ctx, name: app_commands.Range[str, 1, 100]) -> None:
+    async def claimboosterchannel(self, ctx, name: app_commands.Range[str, 1, 100]) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -227,11 +228,11 @@ class BoosterChannelCommands(discord.app_commands.Group):
         )
         await claimboosterchannelCommand(commandInfo=commandInfo, name=name)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_deleteboosterch_name"),
         description=app_commands.locale_str("utility_deleteboosterchannel_description"),
     )
-    async def deleteboosterchannel(self, ctx) -> None:
+    async def deleteboosterchannel(self, ctx) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -246,14 +247,14 @@ class BoosterChannelCommands(discord.app_commands.Group):
         )
         await deleteboosterchannelCommand(commandInfo=commandInfo)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_setupboosterchannel_name"),
         description=app_commands.locale_str("utility_setupboosterchannel_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         category=app_commands.locale_str("utility_setupboosterchannel_params_category_description"),
     )
-    async def setupboosterchannel(self, ctx, category: discord.CategoryChannel) -> None:
+    async def setupboosterchannel(self, ctx, category: discord.CategoryChannel) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -268,11 +269,11 @@ class BoosterChannelCommands(discord.app_commands.Group):
         )
         await setupboosterchannelCommand(commandInfo=commandInfo, category=category)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_boosterchannelinfo_name"),
         description=app_commands.locale_str("utility_boosterchannelinfo_description"),
     )
-    async def info(self, ctx) -> None:
+    async def info(self, ctx) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -296,15 +297,15 @@ class BoosterChannelCommands(discord.app_commands.Group):
         await commandInfo.reply(embed=embed)
 
 
-class AutoPublishCommands(discord.app_commands.Group):
-    @app_commands.command(
+class AutoPublishCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_autopublish_name"),
         description=app_commands.locale_str("utility_autopublish_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         channel=app_commands.locale_str("utility_autopublish_params_channel_description"),
     )
-    async def autopublish(self, ctx, channel: discord.TextChannel = None) -> None:
+    async def autopublish(self, ctx, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -323,14 +324,14 @@ class AutoPublishCommands(discord.app_commands.Group):
 
         await autopublishCommand(commandInfo=commandInfo, channel=channel)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_autopublish_remove_name"),
         description=app_commands.locale_str("utility_autopublish_remove_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         channel=app_commands.locale_str("utility_autopublish_remove_params_channel_description"),
     )
-    async def autopublish_remove(self, ctx, channel: discord.TextChannel = None) -> None:
+    async def autopublish_remove(self, ctx, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -350,15 +351,15 @@ class AutoPublishCommands(discord.app_commands.Group):
         await autopublishRemoveCommand(commandInfo=commandInfo, channel=channel)
 
 
-class BrawlStarsCommands(discord.app_commands.Group):
-    @app_commands.command(
+class BrawlStarsCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_bs_battlelog_name"),
         description=app_commands.locale_str("utility_bs_battlelog_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         tag=app_commands.locale_str("utility_bs_battlelog_params_tag_description"),
     )
-    async def battlelog(self, ctx, tag: str | None = None) -> None:
+    async def battlelog(self, ctx, tag: str | None = None) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -375,14 +376,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
         await battlelogCommand(commandInfo=commandInfo, playerTag=tag)
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_bs_playerinfo_name"),
         description=app_commands.locale_str("utility_bs_playerinfo_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         tag=app_commands.locale_str("utility_bs_playerinfo_params_tag_description"),
     )
-    async def playerinfo(self, ctx, tag: str | None = None) -> None:
+    async def playerinfo(self, ctx, tag: str | None = None) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -399,14 +400,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
         await brawlstarsPlayerInfoCommand(commandInfo=commandInfo, playerTag=tag)
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_bs_brawlers_name"),
         description=app_commands.locale_str("utility_bs_brawlers_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         tag=app_commands.locale_str("utility_bs_brawlers_params_tag_description"),
     )
-    async def brawlers(self, ctx, tag: str | None = None) -> None:
+    async def brawlers(self, ctx, tag: str | None = None) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -423,14 +424,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
         await brawlstarsBrawlersCommand(commandInfo=commandInfo, playerTag=tag)
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_bs_club_name"),
         description=app_commands.locale_str("utility_bs_club_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         tag=app_commands.locale_str("utility_bs_club_params_tag_description"),
     )
-    async def club(self, ctx, tag: str) -> None:
+    async def club(self, ctx, tag: str) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -447,11 +448,11 @@ class BrawlStarsCommands(discord.app_commands.Group):
         await brawlstarsClubCommand(commandInfo=commandInfo, clubTag=tag)
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_bs_events_name"),
         description=app_commands.locale_str("utility_bs_events_description"),
     )
-    async def events(self, ctx) -> None:
+    async def events(self, ctx) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -468,14 +469,14 @@ class BrawlStarsCommands(discord.app_commands.Group):
         await brawlstarsEventsCommand(commandInfo=commandInfo)
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_bs_link_name"),
         description=app_commands.locale_str("utility_bs_link_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         tag=app_commands.locale_str("utility_bs_link_params_tag_description"),
     )
-    async def link(self, ctx, tag: str) -> None:
+    async def link(self, ctx, tag: str) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -492,11 +493,11 @@ class BrawlStarsCommands(discord.app_commands.Group):
         await brawlstarsLinkCommand(commandInfo=commandInfo, playerTag=tag)
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_bs_unlink_name"),
         description=app_commands.locale_str("utility_bs_unlink_description"),
     )
-    async def unlink(self, ctx) -> None:
+    async def unlink(self, ctx) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -513,17 +514,17 @@ class BrawlStarsCommands(discord.app_commands.Group):
         return
 
 
-class TwitchCommands(discord.app_commands.Group):
-    @app_commands.command(
+class TwitchCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_twitch_add_name"),
         description=app_commands.locale_str("utility_twitch_add_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         twitchname=app_commands.locale_str("utility_twitch_add_params_twitchname_description"),
         channel=app_commands.locale_str("utility_twitch_add_params_channel_description"),
         notificationmessage=app_commands.locale_str("utility_twitch_add_params_notificationmessage_description"),
     )
-    async def add(
+    async def add(  # type: ignore[misc,no-any-unimported,no-untyped-def]
         self,
         ctx,
         twitchname: str,
@@ -551,11 +552,11 @@ class TwitchCommands(discord.app_commands.Group):
         )
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_twitch_see_name"),
         description=app_commands.locale_str("utility_twitch_see_description"),
     )
-    async def see(self, ctx) -> None:
+    async def see(self, ctx) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -573,15 +574,15 @@ class TwitchCommands(discord.app_commands.Group):
         return
 
 
-class utilityCommands(discord.app_commands.Group):
-    @app_commands.command(
+class utilityCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_avatar_name"),
         description=app_commands.locale_str("utility_avatar_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         user=app_commands.locale_str("utility_avatar_params_user_description"),
     )
-    async def avatar(self, ctx, user: discord.Member = None) -> None:
+    async def avatar(self, ctx, user: discord.Member = None) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -600,14 +601,14 @@ class utilityCommands(discord.app_commands.Group):
 
         await avatarCommand(commandInfo=commandInfo, user=user)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_banner_name"),
         description=app_commands.locale_str("utility_banner_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         user=app_commands.locale_str("utility_banner_params_user_description"),
     )
-    async def banner(self, ctx, user: discord.Member = None) -> None:
+    async def banner(self, ctx, user: discord.Member = None) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -626,14 +627,14 @@ class utilityCommands(discord.app_commands.Group):
 
         await bannerCommand(commandInfo=commandInfo, user=user)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_avatardecoration_name"),
         description=app_commands.locale_str("utility_avatardecoration_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         user=app_commands.locale_str("utility_avatardecoration_params_user_description"),
     )
-    async def avatardecoration(self, ctx, user: discord.Member = None) -> None:
+    async def avatardecoration(self, ctx, user: discord.Member = None) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -652,11 +653,11 @@ class utilityCommands(discord.app_commands.Group):
 
         await avatarDecorationCommand(commandInfo=commandInfo, user=user)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_feedback_name"),
         description=app_commands.locale_str("utility_feedback_description"),
     )
-    async def feedback(self, ctx) -> None:
+    async def feedback(self, ctx) -> None:  # type: ignore[misc,no-untyped-def]
         commandInfo = utility.CommandInfo(
             user=ctx.user,
             channel=ctx.channel,
@@ -671,14 +672,14 @@ class utilityCommands(discord.app_commands.Group):
 
         await feedbackCommand(commandInfo=commandInfo, ctx=ctx)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_afk_name"),
         description=app_commands.locale_str("utility_afk_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         reason=app_commands.locale_str("utility_afk_params_reason_description"),
     )
-    async def afk(self, ctx, reason: app_commands.Range[str, 0, 1000]) -> None:
+    async def afk(self, ctx, reason: app_commands.Range[str, 0, 1000]) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -694,15 +695,15 @@ class utilityCommands(discord.app_commands.Group):
 
         await afkCommand(commandInfo=commandInfo, reason=reason)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_report_name"),
         description=app_commands.locale_str("utility_report_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         user=app_commands.locale_str("utility_report_params_user_description"),
         reason=app_commands.locale_str("utility_report_params_reason_description"),
     )
-    async def report(self, ctx, user: discord.Member, reason: app_commands.Range[str, 12, 1024]) -> None:
+    async def report(self, ctx, user: discord.Member, reason: app_commands.Range[str, 12, 1024]) -> None:  # type: ignore[misc,no-any-unimported,no-untyped-def]
         await ctx.response.defer(ephemeral=True)
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -718,19 +719,19 @@ class utilityCommands(discord.app_commands.Group):
         await reportCommand(commandInfo=commandInfo, user=user, reason=reason)
 
 
-class ScheduledMessageCommands(discord.app_commands.Group):
-    @app_commands.command(
+class ScheduledMessageCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_schedulemessage_name"),
         description=app_commands.locale_str("utility_schedulemessage_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         content=app_commands.locale_str("utility_schedulemessage_params_content_description"),
         sendin=app_commands.locale_str("utility_schedulemessage_params_sendin_description"),
         channel=app_commands.locale_str("utility_schedulemessage_params_channel_description"),
         repeatinterval=app_commands.locale_str("utility_schedulemessage_params_repeat_description"),
         repeatamount=app_commands.locale_str("utility_schedulemessage_params_repeatamount_description"),
     )
-    async def schedulemessage(
+    async def schedulemessage(  # type: ignore[misc,no-any-unimported,no-untyped-def]
         self,
         ctx,
         content: app_commands.Range[str, 1, 1024],
@@ -762,7 +763,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        attachments = []  # [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
+        attachments: list[Any] = []  # [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
         #                          attachment6, attachment7, attachment8, attachment9, attachment10] if a is not None]
 
         await scheduleMessageCommand(
@@ -775,11 +776,11 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             attachments=attachments or [],
         )
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_listscheduled_name"),
         description=app_commands.locale_str("utility_listscheduled_description"),
     )
-    async def listscheduled(self, ctx) -> None:
+    async def listscheduled(self, ctx) -> None:  # type: ignore[misc,no-untyped-def]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -795,20 +796,20 @@ class ScheduledMessageCommands(discord.app_commands.Group):
 
         await listScheduledCommand(commandInfo=commandInfo)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_removescheduled_name"),
         description=app_commands.locale_str("utility_removescheduled_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         messageid=app_commands.locale_str("utility_removescheduled_params_messageid_description"),
     )
-    async def removescheduled(self, interaction: discord.Interaction, messageid: int) -> None:
+    async def removescheduled(self, interaction: discord.Interaction, messageid: int) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer()
         from typing import cast
 
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -821,21 +822,21 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         await removeScheduledCommand(commandInfo=commandInfo, message_id=messageid)
 
 
-class utilityCog(commands.Cog):
-    def __init__(self, bot: commands.Bot) -> None:
+class utilityCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
         self.bot = bot
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("utility_help_name"),
         description=app_commands.locale_str("utility_help_description"),
     )
-    async def help_slash(self, interaction: discord.Interaction) -> None:
+    async def help_slash(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer(ephemeral=True)
         from typing import cast
 
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -848,8 +849,8 @@ class utilityCog(commands.Cog):
         await helpCommand(commandInfo=commandInfo)
         return
 
-    @commands.Cog.listener()
-    async def on_ready(self) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_ready(self) -> None:  # type: ignore[misc]
         utilityCmds = utilityCommands(
             name=app_commands.locale_str("utilitycmd_name"),
             description=app_commands.locale_str("utilitycmd_description"),
@@ -892,5 +893,5 @@ class utilityCog(commands.Cog):
         self.bot.tree.add_command(utilityCmds)
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
     await bot.add_cog(utilityCog(bot))

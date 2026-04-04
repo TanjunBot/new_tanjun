@@ -25,8 +25,8 @@ async def list_blacklist(
         await commandInfo.reply(embed=embed)
         return
 
-    blacklistedRoles = [role[0] for role in await get_blacklist_role_api(commandInfo.guild.id)]
-    blacklistedUsers = [user[0] for user in await get_blacklist_user_api(commandInfo.guild.id)]
+    blacklistedRoles = [role[0] for role in await get_blacklist_role_api(commandInfo.guild.id)]  # type: ignore[union-attr]
+    blacklistedUsers = [user[0] for user in await get_blacklist_user_api(commandInfo.guild.id)]  # type: ignore[union-attr]
 
     if len(blacklistedRoles) == 0 and len(blacklistedUsers) == 0:
         embed = utility.tanjunEmbed(

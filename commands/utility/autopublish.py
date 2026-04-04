@@ -1,11 +1,11 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import addAutoPublish, checkIfChannelIsAutopublish, removeAutoPublish
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def autopublish(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+async def autopublish(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
     if commandInfo.guild is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -36,7 +36,6 @@ async def autopublish(commandInfo: CommandInfo, channel: discord.TextChannel) ->
 
     if (
         isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild
     ):
         embed = tanjunEmbed(
@@ -92,7 +91,7 @@ async def autopublish(commandInfo: CommandInfo, channel: discord.TextChannel) ->
     await commandInfo.reply(embed=embed)
 
 
-async def autopublish_remove(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+async def autopublish_remove(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
     if commandInfo.guild is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -123,7 +122,6 @@ async def autopublish_remove(commandInfo: CommandInfo, channel: discord.TextChan
 
     if (
         isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild
     ):
         embed = tanjunEmbed(
@@ -161,8 +159,8 @@ async def autopublish_remove(commandInfo: CommandInfo, channel: discord.TextChan
     await commandInfo.reply(embed=embed)
 
 
-async def publish_message(message: discord.Message) -> None:
-    if message.channel and hasattr(message.channel, "is_news") and message.channel.is_news():
+async def publish_message(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
+    if message.channel is not None and hasattr(message.channel, "is_news") and message.channel.is_news():
         if await checkIfChannelIsAutopublish(message.channel.id):
             try:
                 await message.publish()

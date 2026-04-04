@@ -1,10 +1,10 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def kick(commandInfo: utility.CommandInfo, target: discord.Member, reason: str | None = None) -> None:
+async def kick(commandInfo: utility.CommandInfo, target: discord.Member, reason: str | None = None) -> None:  # type: ignore[no-any-unimported]
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -29,7 +29,7 @@ async def kick(commandInfo: utility.CommandInfo, target: discord.Member, reason:
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and target.top_role >= CommandInfo.user.top_role:
+    if isinstance(commandInfo.user, discord.Member) and target.top_role >= CommandInfo.user.top_role:  # type: ignore[name-defined]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.kick.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.kick.targetTooHigh.description"),

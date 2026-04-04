@@ -3,13 +3,13 @@ from __future__ import annotations
 import json
 from typing import Any, cast
 
-import discord
+import discord  # type: ignore[import-not-found]
 from discord import app_commands
 
 from localizer import tanjunLocalizer
 
 
-class TanjunTranslator(app_commands.Translator):
+class TanjunTranslator(app_commands.Translator):  # type: ignore[misc,no-any-unimported]
     def __init__(self) -> None:
         self.translations: list[dict[str, object]] = []
         self.load_translations()
@@ -22,7 +22,7 @@ class TanjunTranslator(app_commands.Translator):
         except (FileNotFoundError, json.JSONDecodeError):
             self.translations = []
 
-    async def translate(
+    async def translate(  # type: ignore[no-any-unimported]
         self,
         string: app_commands.locale_str,
         locale: discord.Locale,

@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import add_trigger_message as add_trigger_message_api

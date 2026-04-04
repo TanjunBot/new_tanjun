@@ -1,11 +1,11 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import clear_wordchain, get_wordchain_word
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def removewordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+async def removewordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
     if commandInfo.guild is None:
         return
     if (

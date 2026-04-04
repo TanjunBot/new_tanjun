@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import (
@@ -35,32 +35,32 @@ async def blacklist_list_channel(commandInfo: utility.CommandInfo) -> None:
     assert commandInfo.guild is not None
     blacklisted_channels = await get_log_blacklist_channels_api(commandInfo.guild.id)
 
-    class BlacklistView(discord.ui.View):
-        def __init__(self, channels: list, locale: str, guild: discord.Guild) -> None:
+    class BlacklistView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, channels: list, locale: str, guild: discord.Guild) -> None:  # type: ignore[no-any-unimported,type-arg]
             super().__init__()
             self.channels = channels
             self.locale = locale
             self.guild = guild
             self.selectedIndex = 0
 
-        @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
-        async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)  # type: ignore[untyped-decorator]
+        async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
             channel_id = self.channels[self.selectedIndex][0]
             await remove_log_blacklist_channel_api(self.guild.id, channel_id)
-            self.channels = tuple(x for x in self.channels if x[0] != channel_id)
+            self.channels = tuple(x for x in self.channels if x[0] != channel_id)  # type: ignore[assignment]
             await self.update_view(interaction)
 
-        @discord.ui.button(label="⬆️", custom_id="up")
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        @discord.ui.button(label="⬆️", custom_id="up")  # type: ignore[untyped-decorator]
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
             self.selectedIndex = (self.selectedIndex - 1) % len(self.channels)
             await self.update_view(interaction)
 
-        @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        @discord.ui.button(label="⬇️", custom_id="down")  # type: ignore[untyped-decorator]
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
             self.selectedIndex = (self.selectedIndex + 1) % len(self.channels)
             await self.update_view(interaction)
 
-        async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
             from typing import Any, cast
 
             data = cast(Any, interaction.data)
@@ -71,7 +71,7 @@ async def blacklist_list_channel(commandInfo: utility.CommandInfo) -> None:
                 await self.update_view(interaction)
             return True
 
-        async def update_view(self, interaction: discord.Interaction) -> None:
+        async def update_view(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             if not self.channels or len(self.channels) == 0:
                 description = tanjunLocalizer.localize(
                     self.locale,

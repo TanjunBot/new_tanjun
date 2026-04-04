@@ -1,6 +1,6 @@
 from typing import Any
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import (
@@ -61,7 +61,7 @@ async def configure_logs(commandInfo: utility.CommandInfo) -> None:
     assert commandInfo.guild is not None
     log_enabled = list(await get_log_enable_api(commandInfo.guild.id))
 
-    async def build_log_settings_embed(locale: str, guild: discord.Guild, selectedIndex: int) -> None:
+    async def build_log_settings_embed(locale: str, guild: discord.Guild, selectedIndex: int) -> None:  # type: ignore[no-any-unimported]
         description = ""
         for index, option in enumerate(LOG_OPTIONS):
             localizedOption = tanjunLocalizer.localize(locale, f"commands.logs.configureLogs.configurationEmbed.{option}")
@@ -75,7 +75,7 @@ async def configure_logs(commandInfo: utility.CommandInfo) -> None:
                 description += f"➤ {localizedOption}: {enabledLocalized}\n"
             else:
                 description += f"{localizedOption}: {enabledLocalized}\n"
-        return description
+        return description  # type: ignore[return-value]
 
     if not log_enabled:
         embed = utility.tanjunEmbed(
@@ -90,14 +90,14 @@ async def configure_logs(commandInfo: utility.CommandInfo) -> None:
 
     selectedIndex = 0
 
-    class logConfigureView(discord.ui.View):
-        def __init__(self, locale: str, guild: discord.Guild, selectedIndex: int) -> None:
+    class logConfigureView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, locale: str, guild: discord.Guild, selectedIndex: int) -> None:  # type: ignore[no-any-unimported]
             super().__init__()
             self.locale = locale
             self.guild = guild
             self.selectedIndex = selectedIndex
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.logs.configureLogs.configurationEmbed.activate",
@@ -106,30 +106,30 @@ async def configure_logs(commandInfo: utility.CommandInfo) -> None:
             custom_id="activate",
             disabled=log_enabled[selectedIndex + 1] == 1 if log_enabled else False,
         )
-        async def activate(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def activate(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await self.enable_disable_by_id(self.selectedIndex, True)
             log_enabled[self.selectedIndex + 1] = 1
             await self.regenerate_embed(interaction)
 
-        @discord.ui.button(label="⬆️", custom_id="up")
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        @discord.ui.button(label="⬆️", custom_id="up")  # type: ignore[untyped-decorator]
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             self.selectedIndex -= 1
             if self.selectedIndex < 0:
                 self.selectedIndex = len(LOG_OPTIONS) - 1
             global selectedIndex
-            selectedIndex = self.selectedIndex
+            selectedIndex = self.selectedIndex  # type: ignore[name-defined]
             await self.regenerate_embed(interaction)
 
-        @discord.ui.button(label="⬇️", custom_id="down")
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        @discord.ui.button(label="⬇️", custom_id="down")  # type: ignore[untyped-decorator]
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             self.selectedIndex += 1
             if self.selectedIndex >= len(LOG_OPTIONS):
                 self.selectedIndex = 0
             global selectedIndex
-            selectedIndex = self.selectedIndex
+            selectedIndex = self.selectedIndex  # type: ignore[name-defined]
             await self.regenerate_embed(interaction)
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.logs.configureLogs.configurationEmbed.deactivate",
@@ -138,7 +138,7 @@ async def configure_logs(commandInfo: utility.CommandInfo) -> None:
             custom_id="deactivate",
             disabled=log_enabled[selectedIndex + 1] == 0 if log_enabled else False,
         )
-        async def deactivate(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def deactivate(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await self.enable_disable_by_id(self.selectedIndex, False)
             log_enabled[self.selectedIndex + 1] = 0
             await self.regenerate_embed(interaction)
@@ -148,8 +148,8 @@ async def configure_logs(commandInfo: utility.CommandInfo) -> None:
                 item.disabled = True
             await self.message.edit(view=self)
 
-        async def regenerate_embed(self, interaction: discord.Interaction) -> None:
-            description = await build_log_settings_embed(self.locale, self.guild, self.selectedIndex)
+        async def regenerate_embed(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+            description = await build_log_settings_embed(self.locale, self.guild, self.selectedIndex)  # type: ignore[func-returns-value]
             self.embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(self.locale, "commands.logs.configureLogs.title"),
                 description=description,
@@ -161,7 +161,7 @@ async def configure_logs(commandInfo: utility.CommandInfo) -> None:
         async def enable_disable_by_id(self, id: int, enable: bool) -> None:
             await set_log_enable_api(self.guild.id, **{LOG_OPTIONS[id]: enable})
 
-    configurationEmbed = await build_log_settings_embed(commandInfo.locale, commandInfo.guild, 0)
+    configurationEmbed = await build_log_settings_embed(commandInfo.locale, commandInfo.guild, 0)  # type: ignore[func-returns-value]
     view = logConfigureView(commandInfo.locale, commandInfo.guild, 0)
 
     embed = utility.tanjunEmbed(

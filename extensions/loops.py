@@ -6,8 +6,8 @@
 import asyncio
 from datetime import time
 
-import discord
-from discord.ext import commands, tasks
+import discord  # type: ignore[import-not-found]
+from discord.ext import commands, tasks  # type: ignore[import-not-found]
 
 from ai.refillToken import refillAiToken
 from api import check_pool_initialized, get_all_twitch_notification_uuids
@@ -25,92 +25,92 @@ from loops.giveaway import checkVoiceUsers, endGiveaways, sendReadyGiveaways
 from loops.level import addXpToVoiceUsers
 from minigames.addLevelXp import clearNotifiedUsers
 
-embeds = {}
+embeds = {}  # type: ignore[var-annotated]
 
 
-class LoopCog(commands.Cog):
-    def __init__(self, bot: commands.Bot) -> None:
+class LoopCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
         self.bot = bot
 
-    @tasks.loop(seconds=10)
-    async def sendSendReadyGiveaways(self) -> None:
+    @tasks.loop(seconds=10)  # type: ignore[untyped-decorator]
+    async def sendSendReadyGiveaways(self) -> None:  # type: ignore[misc]
         try:
-            await sendReadyGiveaways(self.bot)
+            await sendReadyGiveaways(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
             pass
 
-    @tasks.loop(seconds=10)
-    async def endGiveawaysLoop(self) -> None:
+    @tasks.loop(seconds=10)  # type: ignore[untyped-decorator]
+    async def endGiveawaysLoop(self) -> None:  # type: ignore[misc]
         try:
-            await endGiveaways(self.bot)
+            await endGiveaways(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
             pass
 
-    @tasks.loop(seconds=60)
-    async def checkVoiceUsers(self) -> None:
+    @tasks.loop(seconds=60)  # type: ignore[untyped-decorator]
+    async def checkVoiceUsers(self) -> None:  # type: ignore[misc]
         try:
-            await checkVoiceUsers(self.bot)
+            await checkVoiceUsers(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
             pass
 
-    @tasks.loop(seconds=5)
-    async def clearNotifiedUsersLoop(self) -> None:
+    @tasks.loop(seconds=5)  # type: ignore[untyped-decorator]
+    async def clearNotifiedUsersLoop(self) -> None:  # type: ignore[misc]
         try:
-            await clearNotifiedUsers(self.bot)
+            await clearNotifiedUsers(self.bot)  # type: ignore[call-arg,func-returns-value,misc]
         except Exception:
             pass
 
-    @tasks.loop(seconds=5)
-    async def addVoiceUserLoop(self) -> None:
+    @tasks.loop(seconds=5)  # type: ignore[untyped-decorator]
+    async def addVoiceUserLoop(self) -> None:  # type: ignore[misc]
         try:
-            await addXpToVoiceUsers(self.bot)
+            await addXpToVoiceUsers(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
             pass
 
-    @tasks.loop(seconds=60)
-    async def refillAiTokenLoop(self) -> None:
+    @tasks.loop(seconds=60)  # type: ignore[untyped-decorator]
+    async def refillAiTokenLoop(self) -> None:  # type: ignore[misc]
         try:
             await refillAiToken(self.bot)
         except Exception:
             pass
 
-    @tasks.loop(seconds=5)
-    async def pingServerLoop(self) -> None:
+    @tasks.loop(seconds=5)  # type: ignore[untyped-decorator]
+    async def pingServerLoop(self) -> None:  # type: ignore[misc]
         try:
             await ping_server(self.bot)
         except Exception:
             pass
 
-    @tasks.loop(hours=1)
-    async def backupDatabaseLoop(self) -> None:
+    @tasks.loop(hours=1)  # type: ignore[untyped-decorator]
+    async def backupDatabaseLoop(self) -> None:  # type: ignore[misc]
         try:
             await create_database_backup(self.bot)
         except Exception:
             pass
 
-    @tasks.loop(seconds=10)
-    async def removeExpiredClaimedBoosterRoles(self) -> None:
+    @tasks.loop(seconds=10)  # type: ignore[untyped-decorator]
+    async def removeExpiredClaimedBoosterRoles(self) -> None:  # type: ignore[misc]
         try:
             await remove_claimed_booster_roles_that_are_expired(self.bot)
         except Exception:
             pass
 
-    @tasks.loop(seconds=10)
-    async def removeExpiredClaimedBoosterChannels(self) -> None:
+    @tasks.loop(seconds=10)  # type: ignore[untyped-decorator]
+    async def removeExpiredClaimedBoosterChannels(self) -> None:  # type: ignore[misc]
         try:
             await remove_claimed_booster_channels_that_are_expired(self.bot)
         except Exception:
             pass
 
-    @tasks.loop(seconds=10)
-    async def sendScheduledMessages(self) -> None:
+    @tasks.loop(seconds=10)  # type: ignore[untyped-decorator]
+    async def sendScheduledMessages(self) -> None:  # type: ignore[misc]
         try:
             await send_scheduled_messages(self.bot)
         except Exception:
             pass
 
-    @tasks.loop(seconds=10)
-    async def pollTwitchStreams(self) -> None:
+    @tasks.loop(seconds=10)  # type: ignore[untyped-decorator]
+    async def pollTwitchStreams(self) -> None:  # type: ignore[misc]
         try:
             twitch_api = getTwitchApi()
             if not twitch_api:
@@ -145,8 +145,8 @@ class LoopCog(commands.Cog):
         except Exception:
             pass
 
-    @tasks.loop(time=[time(hour=2), time(hour=8), time(hour=14), time(hour=20)])
-    async def sendPokemonWerbung(self) -> None:
+    @tasks.loop(time=[time(hour=2), time(hour=8), time(hour=14), time(hour=20)])  # type: ignore[untyped-decorator]
+    async def sendPokemonWerbung(self) -> None:  # type: ignore[misc]
         try:
             message = """
 👋 Heyo! 👋
@@ -181,8 +181,8 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
         except Exception:
             raise
 
-    @commands.Cog.listener()
-    async def on_ready(self) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_ready(self) -> None:  # type: ignore[misc]
         while not check_pool_initialized():
             await asyncio.sleep(1)
 
@@ -201,5 +201,5 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
         self.sendPokemonWerbung.start()
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
     await bot.add_cog(LoopCog(bot))

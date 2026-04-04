@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import Any, cast
 
-import asyncmy  # type: ignore[import-untyped]
+import asyncmy  # type: ignore[import-not-found,import-untyped,unused-ignore]
 
 from config import database_ip, database_password, database_schema, database_user
 from utility import get_level_for_xp, get_xp_for_level

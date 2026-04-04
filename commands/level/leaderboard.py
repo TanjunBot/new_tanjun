@@ -1,6 +1,6 @@
 from typing import Any, cast
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import get_custom_formula, get_xp_scaling, getLevelLeaderboard
@@ -27,7 +27,7 @@ async def leaderboard(commandInfo: utility.CommandInfo, page: int = 1) -> None:
     if page > len(leaderboard_data) / 10 + 1:
         page = int(len(leaderboard_data) / 10 + 1)
 
-    async def generate_page(page_number: int) -> discord.Embed:
+    async def generate_page(page_number: int) -> discord.Embed:  # type: ignore[no-any-unimported]
         description = ""
         for i in range(10):
             try:
@@ -59,16 +59,16 @@ async def leaderboard(commandInfo: utility.CommandInfo, page: int = 1) -> None:
             )
         return embed
 
-    class LeaderboardPaginator(discord.ui.View):
+    class LeaderboardPaginator(discord.ui.View):  # type: ignore[misc,no-any-unimported]
         def __init__(self, current_page: int = 1) -> None:
             super().__init__(timeout=3600)
             self.current_page = current_page
             leaderboard_len: int = len(leaderboard_data)
             self.total_pages = int(leaderboard_len / 10 + 1)
 
-        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            if not interaction.user.id == CommandInfo.user.id:  # type: ignore[name-defined]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -86,9 +86,9 @@ async def leaderboard(commandInfo: utility.CommandInfo, page: int = 1) -> None:
             new_page = await generate_page(self.current_page)
             await interaction.response.edit_message(view=self, embed=new_page)
 
-        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            if not interaction.user.id == CommandInfo.user.id:  # type: ignore[name-defined]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,

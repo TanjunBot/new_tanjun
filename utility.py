@@ -23,9 +23,9 @@ from typing import (
 )
 from typing import Literal as LiteralType
 
-import aiohttp
-import discord
-from github import Github
+import aiohttp  # type: ignore[import-not-found]
+import discord  # type: ignore[import-not-found]
+from github import Github  # type: ignore[import-not-found]
 from pyparsing import (
     CaselessLiteral,
     Combine,
@@ -112,7 +112,7 @@ class _EmbedAuthorProxy(Protocol):
     proxy_icon_url: str | None
 
 
-class tanjunEmbed(discord.Embed):
+class tanjunEmbed(discord.Embed):  # type: ignore[misc,no-any-unimported]
     """Represents a Discord embed.
     (Docstring remains the same)
     """
@@ -137,7 +137,7 @@ class tanjunEmbed(discord.Embed):
     url: str | None
     type: LiteralType["rich", "image", "video", "gifv", "article", "link", "poll_result"]
     _timestamp: datetime.datetime
-    _colour: discord.Colour | None
+    _colour: discord.Colour | None  # type: ignore[no-any-unimported]
     _footer: dict[str, str]  # Stores footer data
     _image: dict[str, str]  # Stores image data
     _thumbnail: dict[str, str]  # Stores thumbnail data
@@ -147,7 +147,7 @@ class tanjunEmbed(discord.Embed):
     _fields: list[dict[str, Any]]  # Stores a list of field dictionaries
     description: str | None
 
-    def __init__(
+    def __init__(  # type: ignore[no-any-unimported]
         self,
         *,
         colour: int | discord.Colour | None = 0xCB33F5,  # Hex color
@@ -169,7 +169,7 @@ class tanjunEmbed(discord.Embed):
         self._author = {}
         self._fields = []
 
-        current_colour: int | discord.Colour | None = colour if colour is not None else color
+        current_colour: int | discord.Colour | None = colour if colour is not None else color  # type: ignore[no-any-unimported]
         if current_colour is not None:
             self.colour = current_colour
 
@@ -276,24 +276,24 @@ class tanjunEmbed(discord.Embed):
         return self.to_dict() == other.to_dict()
 
     @property
-    def colour(self) -> discord.Colour | None:
+    def colour(self) -> discord.Colour | None:  # type: ignore[no-any-unimported]
         return getattr(self, "_colour", None)
 
     @colour.setter
-    def colour(self, value: discord.Colour | None) -> None:
+    def colour(self, value: int | discord.Colour | None) -> None:  # type: ignore[no-any-unimported]
         if value is None:
             self._colour = None
         elif isinstance(value, discord.Colour):
-            self._colour = value  # type: ignore[assignment]
+            self._colour = value
         elif isinstance(value, int):
             self._colour = discord.Colour(value=value)
 
     @property
-    def color(self) -> discord.Colour | None:
+    def color(self) -> discord.Colour | None:  # type: ignore[no-any-unimported]
         return self.colour
 
     @color.setter
-    def color(self, value: discord.Colour | None) -> None:
+    def color(self, value: int | discord.Colour | None) -> None:  # type: ignore[no-any-unimported]
         self.colour = value
 
     @property
@@ -324,8 +324,8 @@ class tanjunEmbed(discord.Embed):
         return self
 
     @property
-    def image(self) -> discord.embeds._EmbedMediaProxy:
-        return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_image", {})))
+    def image(self) -> discord.embeds._EmbedMediaProxy:  # type: ignore[no-any-unimported]
+        return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_image", {})))  # type: ignore[no-any-unimported]
 
     def set_image(self, *, url: object | None) -> Self:
         if url is None:
@@ -335,8 +335,8 @@ class tanjunEmbed(discord.Embed):
         return self
 
     @property
-    def thumbnail(self) -> discord.embeds._EmbedMediaProxy:
-        return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_thumbnail", {})))
+    def thumbnail(self) -> discord.embeds._EmbedMediaProxy:  # type: ignore[no-any-unimported]
+        return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_thumbnail", {})))  # type: ignore[no-any-unimported]
 
     def set_thumbnail(self, *, url: object | None) -> Self:
         if url is None:
@@ -346,8 +346,8 @@ class tanjunEmbed(discord.Embed):
         return self
 
     @property
-    def video(self) -> discord.embeds._EmbedMediaProxy:
-        return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_video", {})))
+    def video(self) -> discord.embeds._EmbedMediaProxy:  # type: ignore[no-any-unimported]
+        return cast(discord.embeds._EmbedMediaProxy, EmbedProxy(getattr(self, "_video", {})))  # type: ignore[no-any-unimported]
 
     @property
     def provider(self) -> _EmbedProviderProxy:
@@ -416,7 +416,7 @@ class tanjunEmbed(discord.Embed):
             raise IndexError("field index out of range")
         return self
 
-    def to_dict(self) -> dict[str, Any]:  # type: ignore[override]
+    def to_dict(self) -> dict[str, Any]:  # type: ignore[override,unused-ignore]
         result: dict[str, object] = {}
         for key in self.__slots__:
             if key.startswith("_") and hasattr(self, key):
@@ -452,7 +452,7 @@ class tanjunEmbed(discord.Embed):
 
 
 class CommandInfo:
-    def __init__(
+    def __init__(  # type: ignore[no-any-unimported]
         self,
         user: discord.Member | discord.User,
         channel: discord.abc.GuildChannel | None,
@@ -994,11 +994,11 @@ def dateToRelativeTimeStr(date_obj: datetime.datetime) -> str:
 
 
 class InteractionClient(Protocol):
-    user: discord.ClientUser | None
+    user: discord.ClientUser | None  # type: ignore[no-any-unimported]
     application_id: int | None
     _connection: Any
 
-    def get_channel(self, id: int) -> discord.abc.MessageableChannel | None: ...
+    def get_channel(self, id: int) -> discord.abc.MessageableChannel | None: ...  # type: ignore[no-any-unimported]
 
 
 class InteractionGuild(Protocol):
@@ -1057,14 +1057,14 @@ class MockInteraction:
         self._state = bot._connection
 
     @property
-    def guild(self) -> discord.Guild | None:
-        return cast(discord.Guild | None, self._mock_guild)
+    def guild(self) -> discord.Guild | None:  # type: ignore[no-any-unimported]
+        return cast(discord.Guild | None, self._mock_guild)  # type: ignore[no-any-unimported]
 
     @property
-    def channel(self) -> discord.abc.MessageableChannel | None:
-        return cast(discord.abc.MessageableChannel | None, self._mock_channel)
+    def channel(self) -> discord.abc.MessageableChannel | None:  # type: ignore[no-any-unimported]
+        return cast(discord.abc.MessageableChannel | None, self._mock_channel)  # type: ignore[no-any-unimported]
 
-    async def original_response(self) -> discord.Message:
+    async def original_response(self) -> discord.Message:  # type: ignore[no-any-unimported]
         if hasattr(self.response, "message") and self.response.message:
             return self.response.message
         raise discord.NotFound(None, "Original response message not found or not sent.")
@@ -1073,9 +1073,9 @@ class MockInteraction:
 class MockInteractionResponse:
     def __init__(self, interaction: MockInteraction) -> None:
         self.interaction = interaction
-        self.message: discord.Message | None = None
+        self.message: discord.Message | None = None  # type: ignore[no-any-unimported]
 
-    async def send_message(
+    async def send_message(  # type: ignore[no-any-unimported]
         self, content: str | None = None, *, embed: discord.Embed | tanjunEmbed | None = None, **kwargs: Any
     ) -> None:
         if self.interaction._response_issued:
@@ -1113,7 +1113,7 @@ class MockInteractionResponse:
 
         channel = self.interaction._mock_channel
         if channel and hasattr(self.interaction, "_state"):
-            self.message = discord.Message(state=self.interaction._state, channel=cast(Any, channel), data=message_data)  # type: ignore[arg-type]
+            self.message = discord.Message(state=self.interaction._state, channel=cast(Any, channel), data=message_data)  # type: ignore[arg-type,unused-ignore]
         else:
             self.message = None
         self.interaction._response_issued = True
@@ -1131,7 +1131,7 @@ class MockWebhook:
         self.token = token
         self.id = 0
 
-    async def send(
+    async def send(  # type: ignore[no-any-unimported]
         self, content: str | None = None, *, embed: discord.Embed | tanjunEmbed | None = None, **kwargs: Any
     ) -> discord.Message:
         message_data: dict[str, Any] = {
@@ -1155,9 +1155,9 @@ class MockWebhook:
             mock_channel = self._state.Client.get_channel(0)
 
         # Use type ignore since we're mocking discord.Message creation
-        return discord.Message(state=self._state, channel=cast(Any, mock_channel), data=message_data)  # type: ignore[arg-type]
+        return discord.Message(state=self._state, channel=cast(Any, mock_channel), data=message_data)  # type: ignore[arg-type,unused-ignore]
 
-    async def edit_message(self, message_id: int, **kwargs: Any) -> discord.Message:
+    async def edit_message(self, message_id: int, **kwargs: Any) -> discord.Message:  # type: ignore[no-any-unimported]
         raise NotImplementedError
 
     async def delete_message(self, message_id: int) -> None:

@@ -1,5 +1,5 @@
-import discord
-from discord.ext import commands
+import discord  # type: ignore[import-not-found]
+from discord.ext import commands  # type: ignore[import-not-found]
 
 from api import remove_scheduled_message, update_scheduled_message_content
 from commands.admin.joinToCreate.joinToCreateListener import memberJoin, memberLeave
@@ -28,12 +28,12 @@ from minigames.countingmodes import counting as countingModes
 from minigames.wordchain import wordchain
 
 
-class ListenerCog(commands.Cog):
-    def __init__(self, bot: commands.Bot) -> None:
+class ListenerCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_message(self, message: discord.Message) -> None:  # type: ignore[misc,no-any-unimported]
         await counting(message)
         await countingChallenge(message)
         await countingModes(message)
@@ -47,8 +47,8 @@ class ListenerCog(commands.Cog):
         await mediaChannelMessage(message)
         await dynamicslowmodeMessage(message)
 
-    @commands.Cog.listener()
-    async def on_interaction(self, interaction: discord.Interaction) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_interaction(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         try:
             if not interaction.data:
                 return
@@ -57,13 +57,13 @@ class ListenerCog(commands.Cog):
                 return
             if custom_id.startswith("giveaway_enter"):
                 giveaway_id = interaction.data["custom_id"].split("; ")[1]
-                embed = await add_giveaway_participant(
+                embed = await add_giveaway_participant(  # type: ignore[func-returns-value]
                     giveawayid=giveaway_id,
                     userid=interaction.user.id,
                     client=self.bot,
                 )
                 if embed:
-                    await interaction.response.send_message(embed=embed, ephemeral=True)
+                    await interaction.response.send_message(embed=embed, ephemeral=True)  # type: ignore[unreachable]
             elif custom_id.startswith("ai_add_custom_situation_approve"):
                 if interaction.user.id not in adminIds:
                     return
@@ -84,30 +84,30 @@ class ListenerCog(commands.Cog):
         except Exception:
             pass
 
-    @commands.Cog.listener()
-    async def on_voice_state_update(self, user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_voice_state_update(self, user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:  # type: ignore[misc,no-any-unimported]
         await memberLeave(before)
         await memberJoin(after, user)
-        await handleVoiceChange(user, before, after)
-        await handleLevelVoiceChange(user, before, after)
+        await handleVoiceChange(user, before, after)  # type: ignore[no-untyped-call]
+        await handleLevelVoiceChange(user, before, after)  # type: ignore[no-untyped-call]
 
-    @commands.Cog.listener()
-    async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:  # type: ignore[misc,no-any-unimported]
         if after.reference:
             await update_scheduled_message_content(after.reference.message_id, after.content)
 
-    @commands.Cog.listener()
-    async def on_message_delete(self, message: discord.Message) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_message_delete(self, message: discord.Message) -> None:  # type: ignore[misc,no-any-unimported]
         await remove_scheduled_message(message.id)
 
-    @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_member_join(self, member: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
         await welcomeNewUser(member)
 
-    @commands.Cog.listener()
-    async def on_member_remove(self, member: discord.Member) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_member_remove(self, member: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
         await farewellUser(member)
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
     await bot.add_cog(ListenerCog(bot))

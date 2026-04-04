@@ -1,7 +1,7 @@
 import math
 import random
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import (
     check_if_opted_out,
@@ -25,7 +25,7 @@ from utility import get_level_for_xp  # , checkIfHasPro
 notifiedUsers: list[int] = []
 
 
-async def addLevelXp(message: discord.Message) -> None:
+async def addLevelXp(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
     if message.author.bot or await check_if_opted_out(str(message.author.id)):
         return
 
@@ -52,7 +52,7 @@ async def addLevelXp(message: discord.Message) -> None:
         await handle_level_up(message, new_level)
 
 
-async def is_blacklisted(message: discord.Message, guild_id: str) -> bool:
+async def is_blacklisted(message: discord.Message, guild_id: str) -> bool:  # type: ignore[no-any-unimported]
     blacklist = await get_blacklist(guild_id)
     user_id = str(message.author.id)
     channel_id = str(message.channel.id)
@@ -65,14 +65,14 @@ async def is_blacklisted(message: discord.Message, guild_id: str) -> bool:
     )
 
 
-async def fetch_xp_details(message: discord.Message, guild_id: str) -> tuple[str, str | None, int]:
+async def fetch_xp_details(message: discord.Message, guild_id: str) -> tuple[str, str | None, int]:  # type: ignore[no-any-unimported]
     scaling = await get_xp_scaling(guild_id)
     custom_formula = await get_custom_formula(guild_id)
     xp_to_add = await calculate_xp(message, guild_id)
     return scaling, custom_formula, xp_to_add
 
 
-async def calculate_xp(message: discord.Message, guild_id: str) -> int:
+async def calculate_xp(message: discord.Message, guild_id: str) -> int:  # type: ignore[no-any-unimported]
     # nosec: B311
     base_xp = random.randint(1, 3)
     user_boost = await get_user_boost(guild_id, str(message.author.id))
@@ -113,7 +113,7 @@ async def calculate_xp(message: discord.Message, guild_id: str) -> int:
     return int(base_xp * total_boost)
 
 
-async def handle_level_up(message: discord.Message, new_level: int) -> None:
+async def handle_level_up(message: discord.Message, new_level: int) -> None:  # type: ignore[no-any-unimported]
     if message.guild == None:
         return
     guild_id = str(message.guild.id)
@@ -130,7 +130,7 @@ def clearNotifiedUsers() -> None:
     notifiedUsers = []
 
 
-async def determine_levelup_channel(message: discord.Message, guild_id: str) -> discord.abc.Messageable:
+async def determine_levelup_channel(message: discord.Message, guild_id: str) -> discord.abc.Messageable:  # type: ignore[no-any-unimported]
     level_up_channel_id = await get_levelup_channel(guild_id)
     if message.guild is not None and level_up_channel_id is not None:
         ch = message.guild.get_channel(int(level_up_channel_id))
@@ -139,7 +139,7 @@ async def determine_levelup_channel(message: discord.Message, guild_id: str) -> 
     return message.channel
 
 
-async def format_level_up_message(guild_id: str, user_mention: str, new_level: int, guild: discord.Guild) -> str:
+async def format_level_up_message(guild_id: str, user_mention: str, new_level: int, guild: discord.Guild) -> str:  # type: ignore[no-any-unimported]
     level_up_message = await get_levelup_message(guild_id)
     if not level_up_message:
         level_up_message = tanjunLocalizer.localize(
@@ -149,7 +149,7 @@ async def format_level_up_message(guild_id: str, user_mention: str, new_level: i
     return level_up_message.replace("{user}", user_mention).replace("{level}", str(new_level))
 
 
-async def update_user_roles(message: discord.Message, new_level: int, guild_id: str) -> None:
+async def update_user_roles(message: discord.Message, new_level: int, guild_id: str) -> None:  # type: ignore[no-any-unimported]
     if message.guild == None or not isinstance(message.author, discord.Member):
         return
     level_roles = await get_level_roles(guild_id)

@@ -1,6 +1,6 @@
 from typing import Any
 
-import discord
+import discord  # type: ignore[import-not-found]
 from discord import app_commands
 
 import utility
@@ -8,10 +8,10 @@ from localizer import tanjunLocalizer
 
 
 async def help(commandInfo: utility.CommandInfo) -> None:
-    class HelpSelect(discord.ui.Select[Any]):
+    class HelpSelect(discord.ui.Select[Any]):  # type: ignore[misc,no-any-unimported]
         cash: set[str] = set()
 
-        def __init__(self, client: discord.ext.commands.Bot, options: list[discord.SelectOption]) -> None:
+        def __init__(self, client: discord.ext.commands.Bot, options: list[discord.SelectOption]) -> None:  # type: ignore[no-any-unimported]
             self.client = client
             super().__init__(
                 placeholder=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.select.placeholder"),
@@ -30,7 +30,7 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             self.cash.add(localized)
             return localized
 
-        async def callback(self, interaction: discord.Interaction) -> None:
+        async def callback(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             texts: list[str] = [""]
             current_index = 0
             total_length = 0
@@ -42,8 +42,8 @@ async def help(commandInfo: utility.CommandInfo) -> None:
                 locale,
             )
 
+            command_text = ""
             for group in self.client.tree.walk_commands():
-                command_text = ""
                 if group.name == self.values[0]:
                     if isinstance(group, app_commands.Group):
                         try:
@@ -177,7 +177,7 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             total_length += len(command_text)
 
             # Create embeds
-            embeds: list[discord.Embed] = []
+            embeds: list[discord.Embed] = []  # type: ignore[no-any-unimported]
             overall_length = 0
             for i, text in enumerate(texts, 1):
                 overall_length += len(text)
@@ -210,8 +210,8 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             await interaction.response.edit_message(embeds=[embeds[0]], view=view)
 
         @classmethod
-        def generate_options(self, client: discord.ext.commands.Bot) -> list[discord.SelectOption]:
-            options: list[discord.SelectOption] = []
+        def generate_options(self, client: discord.ext.commands.Bot) -> list[discord.SelectOption]:  # type: ignore[no-any-unimported]
+            options: list[discord.SelectOption] = []  # type: ignore[no-any-unimported]
             groups: list[str] = []
             for cmd in client.tree.walk_commands():
                 if cmd.parent is not None:
@@ -244,8 +244,8 @@ async def help(commandInfo: utility.CommandInfo) -> None:
                 )
             return options[:25]
 
-    class PaginatedHelpView(discord.ui.View):
-        def __init__(self, client: discord.ext.commands.Bot, embeds: list[discord.Embed]) -> None:
+    class PaginatedHelpView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, client: discord.ext.commands.Bot, embeds: list[discord.Embed]) -> None:  # type: ignore[no-any-unimported]
             super().__init__(timeout=3600)
             self.embeds = embeds
             self.current_page = 0
@@ -253,24 +253,24 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.buttons.previous"),
             style=discord.ButtonStyle.gray,
         )
-        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             self.current_page = (self.current_page - 1) % len(self.embeds)
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.buttons.next"),
             style=discord.ButtonStyle.gray,
         )
-        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             self.current_page = (self.current_page + 1) % len(self.embeds)
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
-    class HelpView(discord.ui.View):
-        def __init__(self, client: discord.ext.commands.Bot, timeout: int = 3600) -> None:
+    class HelpView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, client: discord.ext.commands.Bot, timeout: int = 3600) -> None:  # type: ignore[no-any-unimported]
             super().__init__(timeout=timeout)
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))

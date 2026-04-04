@@ -1,18 +1,18 @@
 import random
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import check_if_opted_out, get_counting_progress, get_last_counter_id, increase_counting_progress
 from localizer import tanjunLocalizer
 from utility import tanjunEmbed
 
 
-async def counting(message: discord.Message) -> None:
+async def counting(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
     if message.author.bot:
         return
 
     if message.guild == None:
-        embed: discord.Embed = tanjunEmbed(
+        embed: discord.Embed = tanjunEmbed(  # type: ignore[no-any-unimported]
             title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
             description=tanjunLocalizer.localize(
                 "en_US",

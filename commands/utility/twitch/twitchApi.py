@@ -1,7 +1,8 @@
 from collections.abc import Mapping
+from typing import Any
 
-import aiohttp
-import discord
+import aiohttp  # type: ignore[import-not-found]
+import discord  # type: ignore[import-not-found]
 
 from api import get_twitch_online_notification_by_twitch_uuid
 from config import twitchId, twitchSecret
@@ -14,7 +15,7 @@ class TwitchAPI:
         self.client_id = twitchId
         self.client_secret = twitchSecret
         self.access_token = None
-        self.session: aiohttp.ClientSession | None = None
+        self.session: aiohttp.ClientSession | None = None  # type: ignore[no-any-unimported]
         self.headers: Mapping[str, str] | None = None
         self.base_url = "https://api.twitch.tv/helix"
         self.stream_status: dict[str, bool] = {}  # Keep track of stream status
@@ -84,13 +85,13 @@ class TwitchAPI:
         self.initial_check_done = True
 
 
-twitch_api: "Twitch | None" = None
+twitch_api: TwitchAPI | None = None
 
 
 async def initTwitch() -> TwitchAPI:
     global twitch_api
     print("initiating Twitch API...")
-    twitch_api: Twitch | None = TwitchAPI()
+    twitch_api = TwitchAPI()
     await twitch_api.init()
     print("Twitch API initiated!")
     return twitch_api
@@ -101,7 +102,7 @@ def getTwitchApi() -> TwitchAPI | None:
     return twitch_api
 
 
-async def notify_twitch_online(client: discord.Client, uuid: str, data: dict) -> None:
+async def notify_twitch_online(client: discord.Client, uuid: str, data: dict[str, Any]) -> None:  # type: ignore[no-any-unimported]
     datas = await get_twitch_online_notification_by_twitch_uuid(uuid)
     if datas is None:
         return
@@ -113,7 +114,7 @@ async def notify_twitch_online(client: discord.Client, uuid: str, data: dict) ->
         return
     message = parse_twitch_notification_message(
         notificationMessage,
-        str(guild.preferred_locale) if guild.preferred_locale else "en",
+        str(guild.preferred_locale),
         data["user_name"],
     )
     channel = guild.get_channel(int(channelId))

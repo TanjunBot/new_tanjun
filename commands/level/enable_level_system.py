@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import get_level_system_status, set_level_system_status
 from localizer import tanjunLocalizer

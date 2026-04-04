@@ -1,8 +1,8 @@
 import json
-from typing import Any
+from typing import Any, cast
 
-import aiohttp
-import discord
+import aiohttp  # type: ignore[import-not-found]
+import discord  # type: ignore[import-not-found]
 
 from api import get_brawlstars_linked_account
 from commands.utility.brawlstars.bshelper import (
@@ -17,7 +17,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, similar, tanjunEmbed
 
 
-async def getPlayerInfo(playerTag: str) -> None:
+async def getPlayerInfo(playerTag: str) -> dict[str, Any] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with (
         aiohttp.ClientSession() as session,
@@ -28,7 +28,7 @@ async def getPlayerInfo(playerTag: str) -> None:
     ):
         if response.status != 200:
             return None
-        return await response.json()
+        return cast(dict[str, Any], await response.json())
 
 
 async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> None:
@@ -38,7 +38,7 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
         playerTagUserID = playerTag.split("<@")[1].split(">")[0]
         playerTag = await get_brawlstars_linked_account(playerTagUserID)
         if not playerTag:
-            return await commandInfo.reply(
+            await commandInfo.reply(
                 embed=tanjunEmbed(
                     title=tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -50,10 +50,11 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
                     ),
                 )
             )
+            return
     if playerTag and not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
     if not playerTag:
-        return await commandInfo.reply(
+        await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -65,19 +66,21 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
                 ),
             )
         )
+        return
     playerInfo = await getPlayerInfo(playerTag)
     if not playerInfo:
-        return await commandInfo.reply(
+        await commandInfo.reply(
             tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.brawlstars.brawlers.error.notFound",
             )
         )
+        return
 
     playerName = playerInfo["name"]
     total_brawlers = len(playerInfo["brawlers"])
 
-    async def generate_page(page_number: int) -> discord.Embed:
+    async def generate_page(page_number: int) -> tanjunEmbed:
         brawler = playerInfo["brawlers"][page_number]
         id = brawler["id"]
         name = parseName(brawler["name"])
@@ -168,7 +171,7 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
             description += "\n"
             description += "\n"
 
-        if commandInfo.user.id == 1295625022454370346 and commandInfo.guild.id == 947219439764521060:
+        if commandInfo.user.id == 1295625022454370346 and commandInfo.guild and commandInfo.guild.id == 947219439764521060:
             description += "\n"
             description += f"raw: \n```json\n{json.dumps(brawler, indent=4)}\n```"
 
@@ -186,14 +189,14 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
         embed.set_thumbnail(url=f"https://cdn.brawlify.com/brawlers/borderless/{id}.png")
         return embed
 
-    class BrawlersPaginator(discord.ui.View):
-        def __init__(self, current_page=0) -> None:
+    class BrawlersPaginator(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, current_page: int = 0) -> None:
             super().__init__(timeout=3600)
             self.current_page = current_page
 
-        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -211,9 +214,9 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
             new_page = await generate_page(self.current_page)
             await interaction.response.edit_message(view=self, embed=new_page)
 
-        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -231,9 +234,9 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
             new_page = await generate_page(self.current_page)
             await interaction.response.edit_message(view=self, embed=new_page)
 
-        @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
-        async def search(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)  # type: ignore[untyped-decorator]
+        async def search(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -244,7 +247,7 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
                 return
             await interaction.response.send_modal(SearchModal(commandInfo))
 
-    class SearchModal(discord.ui.Modal):
+    class SearchModal(discord.ui.Modal):  # type: ignore[misc,no-any-unimported]
         def __init__(self, commandInfo: CommandInfo) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
@@ -252,7 +255,7 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
                     "commands.utility.brawlstars.brawlers.search.title",
                 )
             )
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
             self.add_item(
                 discord.ui.TextInput(
                     label=tanjunLocalizer.localize(
@@ -267,13 +270,13 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             try:
                 brawlerName = self.children[0].value
 
                 desiredPage = 0
-                bestSimilarity = -100
-                for i, brawler in enumerate(playerInfo["brawlers"]):
+                bestSimilarity: float = -100.0
+                for i, brawler in enumerate(cast(dict[str, Any], playerInfo)["brawlers"]):
                     similarity = similar(brawler["name"].lower(), brawlerName.lower())
                     if similarity > bestSimilarity:
                         bestSimilarity = similarity

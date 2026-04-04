@@ -1,14 +1,14 @@
 import io
 from io import BytesIO
 
-import discord
+import discord  # type: ignore[import-not-found]
 from PIL import Image, ImageFilter
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def sharpen(commandInfo: utility.CommandInfo, image: discord.Attachment):
+async def sharpen(commandInfo: utility.CommandInfo, image: discord.Attachment):  # type: ignore[no-any-unimported,no-untyped-def]
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(

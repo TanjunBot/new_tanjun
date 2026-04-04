@@ -1,7 +1,7 @@
 import re
 
-import aiohttp
-import discord
+import aiohttp  # type: ignore[import-not-found]
+import discord  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer
@@ -9,7 +9,7 @@ from utility import checkIfHasPro
 
 
 async def copy_emoji(
-    CommandInfo: utility.CommandInfo,
+    commandInfo: utility.CommandInfo,
     emoji: str,
 ) -> None:
     if (
@@ -58,7 +58,7 @@ async def copy_emoji(
         return
 
     # Check if user has pro when trying to add multiple emojis
-    if len(matches) > 1 and not await checkIfHasPro(commandInfo.guild.id):
+    if len(matches) > 1 and not checkIfHasPro(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.copyEmoji.error.proRequired.title"),
             description=tanjunLocalizer.localize(
@@ -72,13 +72,13 @@ async def copy_emoji(
     failed_emojis = []
 
     # Get current emoji counts
-    guild_emojis = CommandInfo.guild.emojis
+    guild_emojis = commandInfo.guild.emojis
     animated_count = sum(1 for e in guild_emojis if e.animated)
     static_count = sum(1 for e in guild_emojis if not e.animated)
 
     # Get emoji limits based on guild boost level
-    animated_limit = CommandInfo.guild.emoji_limit
-    static_limit = CommandInfo.guild.emoji_limit
+    animated_limit = commandInfo.guild.emoji_limit
+    static_limit = commandInfo.guild.emoji_limit
 
     try:
         for match in matches:

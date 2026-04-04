@@ -1,7 +1,7 @@
 from typing import Any
 
-import discord
-from discord.ui import Select, View
+import discord  # type: ignore[import-not-found]
+from discord.ui import Select, View  # type: ignore[import-not-found]
 
 import utility
 from api import get_scheduled_messages
@@ -9,7 +9,7 @@ from api import remove_scheduled_message as remove_message
 from localizer import tanjunLocalizer
 
 
-class MessageSelectView(View):
+class MessageSelectView(View):  # type: ignore[misc,no-any-unimported]
     def __init__(self, messages: list[tuple[Any, ...]], locale: str) -> None:
         super().__init__(timeout=300)  # 5 minute timeout
         self.locale = locale
@@ -26,7 +26,7 @@ class MessageSelectView(View):
             ][:25],
         )
 
-    def set_message(self, message: discord.Message) -> None:
+    def set_message(self, message: discord.Message) -> None:  # type: ignore[no-any-unimported]
         self.message = message
 
     async def on_timeout(self) -> None:

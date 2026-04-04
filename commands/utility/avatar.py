@@ -1,10 +1,10 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def avatar(commandInfo: CommandInfo, user: discord.Member) -> None:
+async def avatar(commandInfo: CommandInfo, user: discord.Member) -> None:  # type: ignore[no-any-unimported]
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,

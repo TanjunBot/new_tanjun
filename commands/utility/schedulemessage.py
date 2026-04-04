@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import (
@@ -13,7 +13,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def schedule_message(
+async def schedule_message(  # type: ignore[no-any-unimported]
     commandInfo: utility.CommandInfo,
     content: str,
     send_in: str,
@@ -64,7 +64,6 @@ async def schedule_message(
             commandInfo.guild is not None
             and repeat is not None
             and isinstance(commandInfo.user, discord.Member)
-            and isinstance(commandInfo.channel, discord.abc.GuildChannel)
             and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
         ):
             embed = utility.tanjunEmbed(
@@ -128,7 +127,6 @@ async def schedule_message(
         channel
         and commandInfo.guild is not None
         and isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_messages
     ):
         start_time = send_time - timedelta(hours=1)
@@ -173,7 +171,7 @@ async def schedule_message(
     await commandInfo.reply(embed=embed)
 
 
-async def send_scheduled_messages(client: discord.Client) -> None:
+async def send_scheduled_messages(client: discord.Client) -> None:  # type: ignore[no-any-unimported]
     """Send all scheduled messages that are ready to be sent"""
     ready_messages = await get_ready_scheduled_messages()
 
@@ -191,7 +189,7 @@ async def send_scheduled_messages(client: discord.Client) -> None:
             repeat_interval = msg[6]
             repeat_amount = msg[7]
 
-            target: (
+            target: (  # type: ignore[no-any-unimported]
                 discord.VoiceChannel
                 | discord.StageChannel
                 | discord.ForumChannel
@@ -212,7 +210,7 @@ async def send_scheduled_messages(client: discord.Client) -> None:
                 target = channel
             else:
                 user = await client.fetch_user(user_id)
-                if not user:
+                if user is None:
                     continue
 
                 target = user.dm_channel if user.dm_channel else await user.create_dm()

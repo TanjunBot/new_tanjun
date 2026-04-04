@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import (
@@ -10,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def add_blacklist_user(
+async def add_blacklist_user(  # type: ignore[no-any-unimported]
     commandInfo: utility.CommandInfo,
     user: discord.User,
 ) -> None:
@@ -28,7 +28,7 @@ async def add_blacklist_user(
         await commandInfo.reply(embed=embed)
         return
 
-    if await check_if_user_blacklisted(commandInfo.guild.id, user.id):
+    if await check_if_user_blacklisted(commandInfo.guild.id, user.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -43,7 +43,7 @@ async def add_blacklist_user(
         return
 
     await add_blacklist_user_api(
-        guild_id=commandInfo.guild.id,
+        guild_id=commandInfo.guild.id,  # type: ignore[union-attr]
         user_id=user.id,
     )
 

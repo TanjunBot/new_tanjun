@@ -1,11 +1,11 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import set_wordchain_word
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
-async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
     if commandInfo.guild is None:
         return
     if (
@@ -26,7 +26,7 @@ async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextCha
         await commandInfo.reply(embed=embed)
         return
 
-    if not checkIfHasPro((commandInfo.guild.id if commandInfo.guild else 0) if commandInfo.guild else 0):
+    if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.error.no_pro.title"),
             description=tanjunLocalizer.localize(
@@ -37,9 +37,9 @@ async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextCha
         await commandInfo.reply(embed=embed)
         return
 
-    if not commandInfo.guild or not commandInfo.client.user:
+    if commandInfo.client.user is None:
         return
-    selfMember = (commandInfo.guild.get_member if commandInfo.guild else None)(commandInfo.client.user.id)
+    selfMember = commandInfo.guild.get_member(commandInfo.client.user.id)
     if selfMember is None:
         return
 
@@ -101,7 +101,7 @@ async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextCha
 
     await set_wordchain_word(
         channel_id=channel.id,
-        guild_id=commandInfo.guild.id if commandInfo.guild else 0,
+        guild_id=commandInfo.guild.id,
         word="",
         worder_id="nobody",
     )

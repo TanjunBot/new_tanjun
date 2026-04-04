@@ -1,12 +1,12 @@
 from typing import Any, cast
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def addrole(
+async def addrole(  # type: ignore[no-any-unimported]
     commandInfo: utility.CommandInfo,
     user: discord.Member | None = None,
     role: discord.Role | None = None,
@@ -38,8 +38,8 @@ async def addrole(
         await commandInfo.reply(embed=embed)
         return
 
-    class RoleManagementView(discord.ui.View):
-        def __init__(
+    class RoleManagementView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+        def __init__(  # type: ignore[no-any-unimported]
             self,
             commandInfo: utility.CommandInfo,
             action: str = "add",
@@ -47,10 +47,10 @@ async def addrole(
             role: discord.Role | None = None,
         ) -> None:
             super().__init__(timeout=300)
-            self.commandInfo = CommandInfo
+            self.commandInfo = CommandInfo  # type: ignore[name-defined]
             self.action = action
-            self.selected_roles: list[discord.Role] = [role] if role else []
-            self.selected_users: list[discord.Member] = [user] if user else []
+            self.selected_roles: list[discord.Role] = [role] if role else []  # type: ignore[no-any-unimported]
+            self.selected_users: list[discord.Member] = [user] if user else []  # type: ignore[no-any-unimported]
 
             default_roles = (
                 [discord.SelectDefaultValue(id=role.id, type=discord.SelectDefaultValueType.role)] if role else None
@@ -84,11 +84,11 @@ async def addrole(
                 )
             )
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.confirm.label"),
             style=discord.ButtonStyle.green,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             if not self.selected_roles or not self.selected_users:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -130,11 +130,11 @@ async def addrole(
             )
             self.stop()
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.addrole.cancel.label"),
             style=discord.ButtonStyle.red,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await interaction.response.edit_message(
                 content=tanjunLocalizer.localize(
                     self.commandInfo.locale,
@@ -144,7 +144,7 @@ async def addrole(
             )
             self.stop()
 
-        async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
             data = cast(Any, interaction.data)
             if data and data.get("component_type") == 6:  # RoleSelect
                 assert interaction.guild is not None

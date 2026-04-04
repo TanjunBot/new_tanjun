@@ -2,9 +2,9 @@
 # from localizer import tanjunLocalizer
 from typing import cast
 
-import discord
+import discord  # type: ignore[import-not-found]
 from discord import app_commands
-from discord.ext import commands
+from discord.ext import commands  # type: ignore[import-not-found]
 
 import utility
 from commands.channel.dynamicslowmode import (
@@ -36,34 +36,34 @@ from commands.channel.welcome import (
 )
 
 
-class WelcomeCommands(discord.app_commands.Group):
-    @app_commands.command(
+class WelcomeCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("channel_w_name"),
         description=app_commands.locale_str("channel_w_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         channel=app_commands.locale_str("channel_w_params_channel_description"),
         message=app_commands.locale_str("channel_w_params_message_description"),
         background=app_commands.locale_str("channel_w_params_image_description"),
     )
-    async def welcome(
+    async def welcome(  # type: ignore[misc,no-any-unimported,no-untyped-def]
         self,
         ctx,
         channel: discord.TextChannel = None,
         message: app_commands.Range[str, 0, 1024] = None,
         background: discord.Attachment = None,
     ) -> None:
-        await interaction.response.defer()
+        await interaction.response.defer()  # type: ignore[name-defined]
         commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
+            user=interaction.user,  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined,no-any-unimported]
+            guild=interaction.guild,  # type: ignore[name-defined]
+            command=interaction.command,  # type: ignore[name-defined]
+            locale=interaction.locale,  # type: ignore[name-defined]
+            message=interaction.message,  # type: ignore[name-defined]
+            permissions=interaction.permissions,  # type: ignore[name-defined]
+            reply=interaction.followup.send,  # type: ignore[name-defined]
+            client=interaction.client,  # type: ignore[name-defined]
         )
 
         await setWelcomeChannelCommand(
@@ -74,15 +74,15 @@ class WelcomeCommands(discord.app_commands.Group):
         )
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("channel_w_remove_name"),
         description=app_commands.locale_str("channel_w_remove_description"),
     )
-    async def remove_welcome(self, interaction: discord.Interaction) -> None:
+    async def remove_welcome(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -92,52 +92,52 @@ class WelcomeCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await removeWelcomeChannelCommand(commandInfo=commandInfo)
+        await removeWelcomeChannelCommand(commandInfo=commandInfo)  # type: ignore[call-arg]
         return
 
 
-class FarewellCommands(discord.app_commands.Group):
-    @app_commands.command(
+class FarewellCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("channel_farewell_set_ch_name"),
         description=app_commands.locale_str("channel_farewell_set_ch_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         channel=app_commands.locale_str("channel_farewell_set_ch_params_channel_description"),
         message=app_commands.locale_str("channel_farewell_set_ch_params_message_description"),
         background=app_commands.locale_str("channel_farewell_set_ch_params_image_description"),
     )
-    async def set_farewell_channel(
+    async def set_farewell_channel(  # type: ignore[misc,no-any-unimported,no-untyped-def]
         self,
         ctx,
         channel: discord.TextChannel = None,
         message: app_commands.Range[str, 0, 1024] = None,
         background: discord.Attachment = None,
     ) -> None:
-        await interaction.response.defer()
+        await interaction.response.defer()  # type: ignore[name-defined]
         commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
+            user=interaction.user,  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined,no-any-unimported]
+            guild=interaction.guild,  # type: ignore[name-defined]
+            command=interaction.command,  # type: ignore[name-defined]
+            locale=interaction.locale,  # type: ignore[name-defined]
+            message=interaction.message,  # type: ignore[name-defined]
+            permissions=interaction.permissions,  # type: ignore[name-defined]
+            reply=interaction.followup.send,  # type: ignore[name-defined]
+            client=interaction.client,  # type: ignore[name-defined]
         )
 
         await setFarewellChannelCommand(commandInfo, channel, message, background)
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("channel_farewell_remove_ch_name"),
         description=app_commands.locale_str("channel_farewell_remove_ch_description"),
     )
-    async def remove_farewell_channel(self, interaction: discord.Interaction) -> None:
+    async def remove_farewell_channel(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -147,23 +147,23 @@ class FarewellCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await removeFarewellChannelCommand(commandInfo=commandInfo)
+        await removeFarewellChannelCommand(commandInfo=commandInfo)  # type: ignore[call-arg]
         return
 
 
-class MediaCommands(discord.app_commands.Group):
-    @app_commands.command(
+class MediaCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("channel_media_name"),
         description=app_commands.locale_str("channel_media_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         channel=app_commands.locale_str("channel_media_params_channel_description"),
     )
-    async def media_add_cmd(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
+    async def media_add_cmd(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -176,18 +176,18 @@ class MediaCommands(discord.app_commands.Group):
         await addMediaChannelCommand(commandInfo=commandInfo, channel=channel)
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("channel_mediaremove_name"),
         description=app_commands.locale_str("channel_mediaremove_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         channel=app_commands.locale_str("channel_mediaremove_params_channel_description"),
     )
-    async def media_remove_cmd(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
+    async def media_remove_cmd(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -201,18 +201,18 @@ class MediaCommands(discord.app_commands.Group):
         return
 
 
-class DynamicslowmodeCommands(discord.app_commands.Group):
-    @app_commands.command(
+class DynamicslowmodeCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("channel_ds_add_name"),
         description=app_commands.locale_str("channel_ds_add_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         channel=app_commands.locale_str("channel_ds_add_params_channel_description"),
         messages=app_commands.locale_str("channel_ds_add_params_messages_description"),
         per=app_commands.locale_str("channel_ds_add_params_per_description"),
         resetafter=app_commands.locale_str("channel_ds_add_params_resetafter_description"),
     )
-    async def add_dynamicslowmode(
+    async def add_dynamicslowmode(  # type: ignore[misc,no-any-unimported,no-untyped-def]
         self,
         ctx,
         channel: discord.TextChannel,
@@ -220,17 +220,17 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         per: app_commands.Range[int, 1, 2147483647],
         resetafter: app_commands.Range[int, 1, 2147483647] = 60,
     ) -> None:
-        await interaction.response.defer()
+        await interaction.response.defer()  # type: ignore[name-defined]
         commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
+            user=interaction.user,  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined,no-any-unimported]
+            guild=interaction.guild,  # type: ignore[name-defined]
+            command=interaction.command,  # type: ignore[name-defined]
+            locale=interaction.locale,  # type: ignore[name-defined]
+            message=interaction.message,  # type: ignore[name-defined]
+            permissions=interaction.permissions,  # type: ignore[name-defined]
+            reply=interaction.followup.send,  # type: ignore[name-defined]
+            client=interaction.client,  # type: ignore[name-defined]
         )
 
         await addDynamicslowmodeCommand(
@@ -242,18 +242,18 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         )
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("channel_ds_remove_name"),
         description=app_commands.locale_str("channel_ds_remove_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         channel=app_commands.locale_str("channel_ds_remove_params_channel_description"),
     )
-    async def remove_dynamicslowmode(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
+    async def remove_dynamicslowmode(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -266,15 +266,15 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         await removeDynamicslowmodeCommand(commandInfo=commandInfo, channel=channel)
         return
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("channel_ds_get_name"),
         description=app_commands.locale_str("channel_ds_get_description"),
     )
-    async def get_dynamicslowmode_channels(self, interaction: discord.Interaction) -> None:
+    async def get_dynamicslowmode_channels(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -288,7 +288,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         return
 
 
-class ChannelCommands(discord.app_commands.Group):
+class ChannelCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
     def _init_(self) -> None:
         super()._init_(
             name=app_commands.locale_str("channel_name"),
@@ -296,12 +296,12 @@ class ChannelCommands(discord.app_commands.Group):
         )
 
 
-class ChannelCog(commands.Cog):
-    def __init__(self, bot: commands.Bot) -> None:
+class ChannelCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_ready(self) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_ready(self) -> None:  # type: ignore[misc]
         channel_commands = ChannelCommands()
 
         welcome_commands = WelcomeCommands(
@@ -330,5 +330,5 @@ class ChannelCog(commands.Cog):
             self.bot.tree.add_command(channel_commands)
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
     await bot.add_cog(ChannelCog(bot))

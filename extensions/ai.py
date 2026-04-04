@@ -1,6 +1,6 @@
-import discord
+import discord  # type: ignore[import-not-found]
 from discord import app_commands
-from discord.ext import commands
+from discord.ext import commands  # type: ignore[import-not-found]
 
 import utility
 from api import getCustomSituation, getCustomSituations
@@ -9,7 +9,7 @@ from commands.ai.ask_gpt import ask_gpt
 from commands.ai.delete_custom_situation import delete_custom_situation
 
 
-async def aiCustomSituationAutocomplete(
+async def aiCustomSituationAutocomplete(  # type: ignore[no-any-unimported]
     interaction: discord.Interaction,
     current: str,
 ) -> list[app_commands.Choice[str]]:
@@ -19,12 +19,12 @@ async def aiCustomSituationAutocomplete(
     return [app_commands.Choice(name=situation, value=situation) for situation in filtered_situations[:25]]
 
 
-class CustomSituationCommands(discord.app_commands.Group):
-    @app_commands.command(
+class CustomSituationCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("ai_createcustom_name"),
         description=app_commands.locale_str("ai_createcustom_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("ai_createcustom_params_name_description"),
         personality=app_commands.locale_str("ai_createcustom_params_personality_description"),
         temperature=app_commands.locale_str("ai_createcustom_params_temperature_description"),
@@ -32,7 +32,7 @@ class CustomSituationCommands(discord.app_commands.Group):
         frequencypenalty=app_commands.locale_str("ai_createcustom_params_frequencypenalty_description"),
         presencepenalty=app_commands.locale_str("ai_createcustom_params_presencepenalty_description"),
     )
-    async def add_custom(
+    async def add_custom(  # type: ignore[misc,no-any-unimported]
         self,
         interaction: discord.Interaction,
         name: app_commands.Range[str, 3, 15],
@@ -46,7 +46,7 @@ class CustomSituationCommands(discord.app_commands.Group):
 
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -68,11 +68,11 @@ class CustomSituationCommands(discord.app_commands.Group):
             presence_penalty=presencepenalty,
         )
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("ai_deletecustom_name"),
         description=app_commands.locale_str("ai_deletecustom_description"),
     )
-    async def delete_custom(
+    async def delete_custom(  # type: ignore[misc,no-any-unimported]
         self,
         interaction: discord.Interaction,
     ) -> None:
@@ -80,7 +80,7 @@ class CustomSituationCommands(discord.app_commands.Group):
 
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -97,17 +97,17 @@ class CustomSituationCommands(discord.app_commands.Group):
         )
 
 
-class AiCommands(discord.app_commands.Group):
-    @app_commands.command(
+class AiCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("ai_askcustom_name"),
         description=app_commands.locale_str("ai_askcustom_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         prompt=app_commands.locale_str("ai_askcustom_params_prompt_description"),
         personality=app_commands.locale_str("ai_askcustom_params_personality_description"),
     )
-    @app_commands.autocomplete(personality=aiCustomSituationAutocomplete)
-    async def ask_custom_situation(
+    @app_commands.autocomplete(personality=aiCustomSituationAutocomplete)  # type: ignore[untyped-decorator]
+    async def ask_custom_situation(  # type: ignore[misc,no-any-unimported]
         self,
         interaction: discord.Interaction,
         prompt: app_commands.Range[str, 1, 1000],
@@ -118,7 +118,7 @@ class AiCommands(discord.app_commands.Group):
 
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -133,26 +133,26 @@ class AiCommands(discord.app_commands.Group):
         await ask_gpt(
             commandInfo,
             name=personality,
-            situation=situation[1],
+            situation=situation[1],  # type: ignore[index]
             prompt=prompt,
-            temperature=situation[4],
-            top_p=situation[5],
-            frequency_penalty=situation[6],
-            presence_penalty=situation[7],
+            temperature=situation[4],  # type: ignore[index]
+            top_p=situation[5],  # type: ignore[index]
+            frequency_penalty=situation[6],  # type: ignore[index]
+            presence_penalty=situation[7],  # type: ignore[index]
         )
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("ai_askgpt_name"),
         description=app_commands.locale_str("ai_askgpt_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         prompt=app_commands.locale_str("ai_askgpt_params_prompt_description"),
         temperature=app_commands.locale_str("ai_askgpt_params_temperature_description"),
         topp=app_commands.locale_str("ai_askgpt_params_topp_description"),
         frequencypenalty=app_commands.locale_str("ai_askgpt_params_frequencypenalty_description"),
         presencepenalty=app_commands.locale_str("ai_askgpt_params_presencepenalty_description"),
     )
-    async def ask_gpt_command(
+    async def ask_gpt_command(  # type: ignore[misc,no-any-unimported]
         self,
         interaction: discord.Interaction,
         prompt: app_commands.Range[str, 1, 1000],
@@ -166,7 +166,7 @@ class AiCommands(discord.app_commands.Group):
 
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -187,18 +187,18 @@ class AiCommands(discord.app_commands.Group):
             presence_penalty=presencepenalty,
         )
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("ai_asktanjuwun_name"),
         description=app_commands.locale_str("ai_asktanjuwun_description"),
     )
-    @app_commands.describe(
+    @app_commands.describe(  # type: ignore[untyped-decorator]
         prompt=app_commands.locale_str("ai_asktanjuwun_params_prompt_description"),
         temperature=app_commands.locale_str("ai_asktanjuwun_params_temperature_description"),
         topp=app_commands.locale_str("ai_asktanjuwun_params_topp_description"),
         frequencypenalty=app_commands.locale_str("ai_asktanjuwun_params_frequencypenalty_description"),
         presencepenalty=app_commands.locale_str("ai_asktanjuwun_params_presencepenalty_description"),
     )
-    async def ask_tanjuwun_command(
+    async def ask_tanjuwun_command(  # type: ignore[misc,no-any-unimported]
         self,
         interaction: discord.Interaction,
         prompt: app_commands.Range[str, 1, 1000],
@@ -212,7 +212,7 @@ class AiCommands(discord.app_commands.Group):
 
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -241,12 +241,12 @@ class AiCommands(discord.app_commands.Group):
         )
 
 
-class AiCog(commands.Cog):
-    def __init__(self, bot: commands.Bot) -> None:
+class AiCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_ready(self) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_ready(self) -> None:  # type: ignore[misc]
         aicmds = AiCommands(
             name=app_commands.locale_str("ai_name"),
             description=app_commands.locale_str("ai_description"),
@@ -261,5 +261,5 @@ class AiCog(commands.Cog):
             self.bot.tree.add_command(aicmds)
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
     await bot.add_cog(AiCog(bot))

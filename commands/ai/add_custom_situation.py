@@ -1,13 +1,13 @@
 import random
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import addCustomSituation, getCustomSituation, getCustomSituationFromUser
 from localizer import tanjunLocalizer
 
 
-async def add_custom_situation(
+async def add_custom_situation(  # type: ignore[no-untyped-def]
     commandInfo: utility.CommandInfo,
     name: str,
     situation: str,

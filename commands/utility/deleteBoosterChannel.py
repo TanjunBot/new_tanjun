@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import delete_booster_channel, get_booster_channel
@@ -37,7 +37,6 @@ async def deleteBoosterChannel(commandInfo: CommandInfo) -> None:
 
     if (
         isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
         and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(

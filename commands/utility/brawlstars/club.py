@@ -1,7 +1,7 @@
 from typing import Any
 
-import aiohttp
-import discord
+import aiohttp  # type: ignore[import-not-found]
+import discord  # type: ignore[import-not-found]
 
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
@@ -9,7 +9,7 @@ from utility import CommandInfo as CommandInfo
 from utility import addThousandsSeparator, similar, tanjunEmbed
 
 
-async def getClubInfo(clubTag: str) -> dict[str, str | dict[str, dict[str, str]]] | None:
+async def getClubInfo(clubTag: str) -> dict[str, Any] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with (
         aiohttp.ClientSession() as session,
@@ -113,9 +113,9 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
         commandInfo.locale,
         "commands.utility.brawlstars.club.description.overview",
         name=clubName,
-        trophies=addThousandsSeparator(trophies),
+        trophies=addThousandsSeparator(trophies),  # type: ignore[arg-type]
         description=clubDescription,
-        requiredTrophies=addThousandsSeparator(requiredTrophies),
+        requiredTrophies=addThousandsSeparator(requiredTrophies),  # type: ignore[arg-type]
     )
     pages = []
     for i, member in enumerate(members):
@@ -143,15 +143,15 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
         )
         pages.append(embed)
 
-    class ClubPaginator(discord.ui.View):
-        def __init__(self, pages: list[tanjunEmbed], current_page=0) -> None:
+    class ClubPaginator(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, pages: list[tanjunEmbed], current_page=0) -> None:  # type: ignore[no-untyped-def]
             super().__init__(timeout=3600)
             self.pages = pages
             self.current_page = current_page
 
-        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            if not interaction.user.id == CommandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -166,9 +166,9 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
                 self.current_page -= 1
             await interaction.response.edit_message(view=self, embed=pages[self.current_page])
 
-        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            if not interaction.user.id == CommandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -183,9 +183,9 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
                 self.current_page += 1
             await interaction.response.edit_message(view=self, embed=pages[self.current_page])
 
-        @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
-        async def search(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
-            if not interaction.user.id == CommandInfo.user.id:
+        @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)  # type: ignore[untyped-decorator]
+        async def search(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            if not interaction.user.id == CommandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -196,7 +196,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
                 return
             await interaction.response.send_modal(SearchModal(commandInfo))
 
-    class SearchModal(discord.ui.Modal):
+    class SearchModal(discord.ui.Modal):  # type: ignore[misc,no-any-unimported]
         def __init__(self, commandInfo: CommandInfo) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.brawlstars.club.search.title")
@@ -216,7 +216,7 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             try:
                 memberName = self.children[0].value
 
@@ -225,11 +225,11 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
                 for i, member in enumerate(members):
                     similarity = similar(member["name"].lower(), memberName.lower())
                     if similarity > bestSimilarity:
-                        bestSimilarity = similarity
+                        bestSimilarity = similarity  # type: ignore[assignment]
                         desiredPage = i
                     similarity = similar(member["tag"].lower(), memberName.lower())
                     if similarity > bestSimilarity:
-                        bestSimilarity = similarity
+                        bestSimilarity = similarity  # type: ignore[assignment]
                         desiredPage = i
 
                 view = ClubPaginator(pages, desiredPage)
@@ -239,11 +239,11 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
             except ValueError:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.utility.brawlstars.brawlers.search.error.title",
                     ),
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.utility.brawlstars.brawlers.search.error.invalidInput",
                     ),
                 )
@@ -252,11 +252,11 @@ async def club(commandInfo: CommandInfo, clubTag: str) -> None:
             except Exception:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.utility.brawlstars.brawlers.search.error.title",
                     ),
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.utility.brawlstars.brawlers.search.error.invalidInput",
                     ),
                 )

@@ -1,4 +1,4 @@
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI  # type: ignore[import-not-found]
 
 import utility
 from api import getToken, getTokenOverview, includeToToken, useToken
@@ -36,8 +36,8 @@ async def ask_gpt(
     Stick to your personality as close as possible. Here are some additional information about the server and the prompter:
     Name: {commandInfo.user.name}
     userID: {commandInfo.user.id}
-    Server: {commandInfo.guild.name}
-    User Roles: {", ".join([role.name for role in commandInfo.user.roles])}
+    Server: {commandInfo.guild.name if commandInfo.guild else "Direct Message"}
+    User Roles: {", ".join([role.name for role in getattr(commandInfo.user, "roles", [])])}
 
     Here is your Personality. Here is the prompt you are supposed to answer:
     """
@@ -74,9 +74,9 @@ async def ask_gpt(
             "commands.ai.ask.success.footer",
             cost=tokenCost,
             token=token - tokenCost if token - tokenCost > 0 else 0,
-            free=tokenOverview[0],
-            plus=tokenOverview[1],
-            paid=tokenOverview[2],
+            free=tokenOverview[0],  # type: ignore[index]
+            plus=tokenOverview[1],  # type: ignore[index]
+            paid=tokenOverview[2],  # type: ignore[index]
         )
     )
     await commandInfo.reply(embed=embed)

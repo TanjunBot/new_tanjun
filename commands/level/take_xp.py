@@ -1,11 +1,11 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import get_custom_formula, get_user_xp, get_xp_scaling, update_user_xp
 from localizer import tanjunLocalizer
 from utility import CommandInfo, get_level_for_xp, tanjunEmbed
 
 
-async def take_xp_command(commandInfo: CommandInfo, user: discord.Member, amount: int) -> None:
+async def take_xp_command(commandInfo: CommandInfo, user: discord.Member, amount: int) -> None:  # type: ignore[no-any-unimported]
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

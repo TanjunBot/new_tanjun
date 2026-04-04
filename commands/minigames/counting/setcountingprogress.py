@@ -1,11 +1,11 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import get_counting_progress, set_counting_progress
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def setCountingProgress(commandInfo: CommandInfo, channel: discord.TextChannel, progress: int) -> None:
+async def setCountingProgress(commandInfo: CommandInfo, channel: discord.TextChannel, progress: int) -> None:  # type: ignore[no-any-unimported]
     if commandInfo.guild is None:
         return
     if (
@@ -68,7 +68,7 @@ async def setCountingProgress(commandInfo: CommandInfo, channel: discord.TextCha
         return
 
     # Set the new progress
-    await set_counting_progress(channel.id, progress, (commandInfo.guild.id if commandInfo.guild else 0))
+    await set_counting_progress(channel.id, progress, commandInfo.guild.id)
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingprogress.success.title"),

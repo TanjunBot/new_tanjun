@@ -1,8 +1,8 @@
 import math
 from typing import Any
 
-import discord
-from discord.ui import Button, View
+import discord  # type: ignore[import-not-found]
+from discord.ui import Button, View  # type: ignore[import-not-found]
 
 from api import get_custom_formula, set_custom_formula, set_xp_scaling
 from localizer import tanjunLocalizer
@@ -15,7 +15,7 @@ from utility import (
 )
 
 
-class PaginationView(View):
+class PaginationView(View):  # type: ignore[misc,no-any-unimported]
     def __init__(self, generate_page: Any, commandInfo: CommandInfo, total_pages: int) -> None:
         super().__init__(timeout=60)
         self.generate_page = generate_page
@@ -23,17 +23,17 @@ class PaginationView(View):
         self.commandInfo = CommandInfo
         self.total_pages = total_pages
 
-    @discord.ui.button(label="◀️", style=discord.ButtonStyle.gray, disabled=True)
-    async def prev_button(self, interaction: discord.Interaction, button: Button[Any]) -> None:
+    @discord.ui.button(label="◀️", style=discord.ButtonStyle.gray, disabled=True)  # type: ignore[untyped-decorator]
+    async def prev_button(self, interaction: discord.Interaction, button: Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
         self.current_page = max(0, self.current_page - 1)
         await self.update_message(interaction)
 
-    @discord.ui.button(label="▶️", style=discord.ButtonStyle.gray)
-    async def next_button(self, interaction: discord.Interaction, button: Button[Any]) -> None:
+    @discord.ui.button(label="▶️", style=discord.ButtonStyle.gray)  # type: ignore[untyped-decorator]
+    async def next_button(self, interaction: discord.Interaction, button: Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
         self.current_page = min(self.total_pages - 1, self.current_page + 1)
         await self.update_message(interaction)
 
-    async def update_message(self, interaction: discord.Interaction) -> None:
+    async def update_message(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         self.prev_button.disabled = self.current_page == 0
         self.next_button.disabled = self.current_page == self.total_pages - 1
 
@@ -108,7 +108,7 @@ async def change_xp_scaling_command(commandInfo: CommandInfo, scaling: str, cust
 
     await set_xp_scaling(str(commandInfo.guild.id), scaling)
     if scaling == "custom":
-        await set_custom_formula(str(commandInfo.guild.id), custom_formula)
+        await set_custom_formula(str(commandInfo.guild.id), custom_formula)  # type: ignore[arg-type]
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.changexpscaling.success.title"),
@@ -163,9 +163,9 @@ async def show_xp_scalings(commandInfo: CommandInfo, start_level: int = 1, end_l
 
         for scaling in list(LEVEL_SCALINGS.keys()) + ["custom"]:
             if scaling == "custom":
-                if not checkIfHasPro(commandInfo.guild.id):
+                if not checkIfHasPro(commandInfo.guild.id):  # type: ignore[union-attr]
                     continue
-                custom_formula = await get_custom_formula(str(commandInfo.guild.id))
+                custom_formula = await get_custom_formula(str(commandInfo.guild.id))  # type: ignore[union-attr]
                 if not custom_formula:
                     continue
                 formula_display = custom_formula
@@ -181,7 +181,7 @@ async def show_xp_scalings(commandInfo: CommandInfo, start_level: int = 1, end_l
                         commandInfo.locale,
                         "commands.level.showxpscalings.data",
                         level=i,
-                        xp=get_xp_for_level(i, scaling, custom_formula if scaling == "custom" else None),
+                        xp=get_xp_for_level(i, scaling, custom_formula if scaling == "custom" else None),  # type: ignore[possibly-undefined]
                     )
                     for i in range(current_start, current_end + 1)
                 ]
@@ -198,11 +198,11 @@ async def show_xp_scalings(commandInfo: CommandInfo, start_level: int = 1, end_l
                 inline=False,
             )
 
-        return embed
+        return embed  # type: ignore[return-value]
 
     if total_pages == 1:
-        await commandInfo.reply(embed=await generatePage(0))
+        await commandInfo.reply(embed=await generatePage(0))  # type: ignore[func-returns-value]
     else:
         view = PaginationView(generatePage, commandInfo, total_pages)
-        message = await commandInfo.reply(embed=await generatePage(0), view=view)
+        message = await commandInfo.reply(embed=await generatePage(0), view=view)  # type: ignore[func-returns-value]
         view.message = message

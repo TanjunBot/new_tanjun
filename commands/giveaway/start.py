@@ -1,6 +1,6 @@
 import datetime
 
-import discord
+import discord  # type: ignore[import-not-found]
 from discord import ui
 
 import utility
@@ -8,17 +8,17 @@ from api import add_giveaway
 from localizer import tanjunLocalizer
 
 
-class GiveawayBuilderButton(ui.Button):
-    def __init__(self, label, custom_id, style, row=None) -> None:
+class GiveawayBuilderButton(ui.Button):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, label, custom_id, style, row=None) -> None:  # type: ignore[no-untyped-def]
         super().__init__(label=label, custom_id=custom_id, style=style, row=row)
 
-    async def callback(self, interaction: discord.Interaction) -> None:
+    async def callback(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         await self.view.button_callback(interaction, self)
 
 
-class CustomNameModal(ui.Modal):
-    def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = CommandInfo
+class CustomNameModal(ui.Modal):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, view, commandInfo, title, description) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
         self.view = view
         self.title = title
         self.description = description
@@ -41,7 +41,7 @@ class CustomNameModal(ui.Modal):
             )
         )
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -54,7 +54,7 @@ class CustomNameModal(ui.Modal):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
+    async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         custom_name = self.children[0].value
         self.view.giveaway_data["custom_name"] = custom_name
         self.view.last_action = tanjunLocalizer.localize(
@@ -63,11 +63,11 @@ class CustomNameModal(ui.Modal):
         await self.view.update_embed(interaction.response.edit_message)
 
 
-class SponsorView(ui.View):
-    def __init__(self, commandInfo, view) -> None:
+class SponsorView(ui.View):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, commandInfo, view) -> None:  # type: ignore[no-untyped-def]
         super().__init__(timeout=300)
-        self.commandInfo = CommandInfo
-        self.selected_user = []
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
+        self.selected_user = []  # type: ignore[var-annotated]
         self.view = view
 
         userSelect = discord.ui.UserSelect(
@@ -97,7 +97,7 @@ class SponsorView(ui.View):
         cancelBtn.callback = self.on_button_press
         self.add_item(cancelBtn)
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -110,7 +110,7 @@ class SponsorView(ui.View):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_button_press(self, interaction: discord.Interaction) -> None:
+    async def on_button_press(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         if interaction.data["custom_id"] == "confirm":
             self.view.giveaway_data["sponsor"] = self.selected_user if self.selected_user else None
             self.view.last_action = tanjunLocalizer.localize(
@@ -123,7 +123,7 @@ class SponsorView(ui.View):
             )
             await self.view.update_embed(interaction.response.edit_message)
 
-    async def on_user_select(self, interaction: discord.Interaction) -> None:
+    async def on_user_select(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         self.selected_user = interaction.data["values"][0]
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(
@@ -134,9 +134,9 @@ class SponsorView(ui.View):
         )
 
 
-class ChangeWinnersModal(ui.Modal):
-    def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = CommandInfo
+class ChangeWinnersModal(ui.Modal):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, view, commandInfo, title, description) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
         self.view = view
         self.title = title
         self.description = description
@@ -159,7 +159,7 @@ class ChangeWinnersModal(ui.Modal):
             )
         )
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -172,16 +172,16 @@ class ChangeWinnersModal(ui.Modal):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
+    async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         winners = int(self.children[0].value)
         self.view.giveaway_data["winners"] = winners
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.winner.updated")
         await self.view.update_embed(interaction.response.edit_message)
 
 
-class EndTimeModal(ui.Modal):
-    def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = CommandInfo
+class EndTimeModal(ui.Modal):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, view, commandInfo, title, description) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
         self.view = view
         self.title = title
         self.description = description
@@ -201,7 +201,7 @@ class EndTimeModal(ui.Modal):
             )
         )
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -214,16 +214,16 @@ class EndTimeModal(ui.Modal):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
+    async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         end_time = self.children[0].value
         self.view.giveaway_data["end_time"] = end_time
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.end_time.updated")
         await self.view.update_embed(interaction.response.edit_message)
 
 
-class StartTimeModal(ui.Modal):
-    def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = CommandInfo
+class StartTimeModal(ui.Modal):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, view, commandInfo, title, description) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
         self.view = view
         self.title = title
         self.description = description
@@ -246,7 +246,7 @@ class StartTimeModal(ui.Modal):
             )
         )
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -259,7 +259,7 @@ class StartTimeModal(ui.Modal):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
+    async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         start_time = self.children[0].value
         self.view.giveaway_data["start_time"] = start_time
         self.view.last_action = tanjunLocalizer.localize(
@@ -268,9 +268,9 @@ class StartTimeModal(ui.Modal):
         await self.view.update_embed(interaction.response.edit_message)
 
 
-class MessageRequirementModal(ui.Modal):
-    def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = CommandInfo
+class MessageRequirementModal(ui.Modal):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, view, commandInfo, title, description) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
         self.view = view
         self.title = title
         self.description = description
@@ -293,7 +293,7 @@ class MessageRequirementModal(ui.Modal):
             )
         )
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -306,7 +306,7 @@ class MessageRequirementModal(ui.Modal):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
+    async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         new_message_requirement = int(self.children[0].value)
         self.view.giveaway_data["new_message_requirement"] = new_message_requirement
         self.view.last_action = tanjunLocalizer.localize(
@@ -316,9 +316,9 @@ class MessageRequirementModal(ui.Modal):
         await self.view.update_embed(interaction.response.edit_message)
 
 
-class DayRequirementModal(ui.Modal):
-    def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = CommandInfo
+class DayRequirementModal(ui.Modal):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, view, commandInfo, title, description) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
         self.view = view
         self.title = title
         self.description = description
@@ -341,7 +341,7 @@ class DayRequirementModal(ui.Modal):
             )
         )
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -354,7 +354,7 @@ class DayRequirementModal(ui.Modal):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
+    async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         day_requirement = int(self.children[0].value)
         self.view.giveaway_data["day_requirement"] = day_requirement
         self.view.last_action = tanjunLocalizer.localize(
@@ -363,9 +363,9 @@ class DayRequirementModal(ui.Modal):
         await self.view.update_embed(interaction.response.edit_message)
 
 
-class RoleRequirementView(ui.View):
-    def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = CommandInfo
+class RoleRequirementView(ui.View):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, view, commandInfo, title, description) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
         self.view = view
         self.title = title
         self.description = description
@@ -399,7 +399,7 @@ class RoleRequirementView(ui.View):
         confirmBtn.callback = self.confirm
         self.add_item(confirmBtn)
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -412,14 +412,14 @@ class RoleRequirementView(ui.View):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def cancel(self, interaction: discord.Interaction) -> None:
+    async def cancel(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         self.view.last_action = tanjunLocalizer.localize(
             self.commandInfo.locale,
             "commands.giveaway.builder.role_requirement.cancelled",
         )
         await self.view.update_embed(interaction.response.edit_message)
 
-    async def confirm(self, interaction: discord.Interaction) -> None:
+    async def confirm(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         self.view.giveaway_data["role_requirement"] = self.roles
         self.view.last_action = tanjunLocalizer.localize(
             self.commandInfo.locale,
@@ -427,7 +427,7 @@ class RoleRequirementView(ui.View):
         )
         await self.view.update_embed(interaction.response.edit_message)
 
-    async def submit(self, interaction: discord.Interaction) -> None:
+    async def submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         role_ids = [role for role in interaction.data["values"]]
         if len(role_ids) > 1 and not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
@@ -447,9 +447,9 @@ class RoleRequirementView(ui.View):
         )
 
 
-class VoiceRequirementModal(ui.Modal):
-    def __init__(self, view, commandInfo, title, description) -> None:
-        self.commandInfo = CommandInfo
+class VoiceRequirementModal(ui.Modal):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, view, commandInfo, title, description) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
         self.view = view
         self.title = title
         self.description = description
@@ -472,7 +472,7 @@ class VoiceRequirementModal(ui.Modal):
             )
         )
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -485,7 +485,7 @@ class VoiceRequirementModal(ui.Modal):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
+    async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         voice_requirement = int(self.children[0].value)
         self.view.giveaway_data["voice_requirement"] = voice_requirement
         self.view.last_action = tanjunLocalizer.localize(
@@ -495,9 +495,9 @@ class VoiceRequirementModal(ui.Modal):
         await self.view.update_embed(interaction.response.edit_message)
 
 
-class AddChannelRequirementValueModal(ui.Modal):
-    def __init__(self, view, commandInfo, channel, title, description) -> None:
-        self.commandInfo = CommandInfo
+class AddChannelRequirementValueModal(ui.Modal):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, view, commandInfo, channel, title, description) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
         self.view = view
         self.title = title
         self.channel = channel
@@ -524,7 +524,7 @@ class AddChannelRequirementValueModal(ui.Modal):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -533,7 +533,7 @@ class AddChannelRequirementValueModal(ui.Modal):
             return False
         return True
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
+    async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         value = self.children[0].value
         self.view.giveaway_data["channel_requirements"][str(self.channel)] = value
         self.view.last_action = tanjunLocalizer.localize(
@@ -543,10 +543,10 @@ class AddChannelRequirementValueModal(ui.Modal):
         await self.view.update_embed(interaction.response.edit_message)
 
 
-class AddChannelRequirementView(ui.View):
-    def __init__(self, commandInfo, view) -> None:
-        self.commandInfo = CommandInfo
-        self.selected_channels = []
+class AddChannelRequirementView(ui.View):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, commandInfo, view) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
+        self.selected_channels = []  # type: ignore[var-annotated]
         self.view = view
         super().__init__(timeout=600)  # 10 minutes timeout
 
@@ -576,7 +576,7 @@ class AddChannelRequirementView(ui.View):
         cancelBtn.callback = self.on_button_press
         self.add_item(cancelBtn)
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -589,7 +589,7 @@ class AddChannelRequirementView(ui.View):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_channel_select(self, interaction: discord.Interaction) -> None:
+    async def on_channel_select(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         self.selected_channels = interaction.data["values"]
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(
@@ -599,7 +599,7 @@ class AddChannelRequirementView(ui.View):
             ),
         )
 
-    async def on_button_press(self, interaction: discord.Interaction) -> None:
+    async def on_button_press(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         if interaction.data["custom_id"] == "confirm":
             self.view.giveaway_data["channel_requirements"][str(self.selected_channels[0])] = 0
             self.view.last_action = tanjunLocalizer.localize(
@@ -628,10 +628,10 @@ class AddChannelRequirementView(ui.View):
             await self.view.update_embed(interaction.response.edit_message)
 
 
-class RemoveChannelRequirementView(ui.View):
-    def __init__(self, commandInfo, view) -> None:
-        self.commandInfo = CommandInfo
-        self.selected_channels = []
+class RemoveChannelRequirementView(ui.View):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, commandInfo, view) -> None:  # type: ignore[no-untyped-def]
+        self.commandInfo = CommandInfo  # type: ignore[name-defined]
+        self.selected_channels = []  # type: ignore[var-annotated]
         self.view = view
         super().__init__(timeout=300)
 
@@ -669,7 +669,7 @@ class RemoveChannelRequirementView(ui.View):
         cancelBtn.callback = self.on_button_press
         self.add_item(cancelBtn)
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -682,7 +682,7 @@ class RemoveChannelRequirementView(ui.View):
         self.view.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.modal.timeout")
         await self.view.update_embed()
 
-    async def on_channel_select(self, interaction: discord.Interaction) -> None:
+    async def on_channel_select(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         self.selected_channels = interaction.data["values"]
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(
@@ -692,7 +692,7 @@ class RemoveChannelRequirementView(ui.View):
             ),
         )
 
-    async def on_button_press(self, interaction: discord.Interaction) -> None:
+    async def on_button_press(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
         if interaction.data["custom_id"] == "confirm":
             channel_id = self.selected_channels[0]
             self.view.giveaway_data["channel_requirements"].pop(str(channel_id))
@@ -708,8 +708,8 @@ class RemoveChannelRequirementView(ui.View):
             )
 
 
-class GiveawayBuilder(ui.View):
-    def __init__(
+class GiveawayBuilder(ui.View):  # type: ignore[misc,no-any-unimported]
+    def __init__(  # type: ignore[no-untyped-def]
         self,
         commandInfo,
         title,
@@ -901,7 +901,7 @@ class GiveawayBuilder(ui.View):
             )
         )
 
-    async def update_embed(self, editmessage=None) -> None:
+    async def update_embed(self, editmessage=None) -> None:  # type: ignore[no-untyped-def]
         self.update_buttons()
         embed = utility.tanjunEmbed(
             title=self.giveaway_data["title"],
@@ -1042,7 +1042,7 @@ class GiveawayBuilder(ui.View):
         else:
             await editmessage(embed=embed, view=self, content="")
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
         if interaction.user != self.commandInfo.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.not_authorized"),
@@ -1051,7 +1051,7 @@ class GiveawayBuilder(ui.View):
             return False
         return True
 
-    async def button_callback(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def button_callback(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         if button.custom_id == "change_description":
             await self.change_description(interaction, button)
         elif button.custom_id == "change_winners":
@@ -1087,7 +1087,7 @@ class GiveawayBuilder(ui.View):
         elif button.custom_id == "confirm":
             await self.confirm(interaction, button)
 
-    async def change_description(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def change_description(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.enter_description"),
             embed=None,
@@ -1112,7 +1112,7 @@ class GiveawayBuilder(ui.View):
             )
             await self.update_embed()
 
-    async def change_winners(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def change_winners(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         modal = ChangeWinnersModal(
             self,
             self.commandInfo,
@@ -1128,12 +1128,12 @@ class GiveawayBuilder(ui.View):
 
         await interaction.response.send_modal(modal)
 
-    async def toggle_button(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def toggle_button(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         self.giveaway_data["with_button"] = not self.giveaway_data["with_button"]
         self.update_buttons()
         await self.update_embed(interaction.response.edit_message)
 
-    async def custom_name(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
+    async def custom_name(self, interaction: discord.Interaction, button: GiveawayBuilderButton):  # type: ignore[no-any-unimported,no-untyped-def]
         if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
@@ -1151,7 +1151,7 @@ class GiveawayBuilder(ui.View):
         )
         await interaction.response.send_modal(modal)
 
-    async def sponsor(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def sponsor(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         view = SponsorView(self.commandInfo, self)
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(
@@ -1162,7 +1162,7 @@ class GiveawayBuilder(ui.View):
             embed=None,
         )
 
-    async def price(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def price(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.enter_price"),
             embed=None,
@@ -1183,7 +1183,7 @@ class GiveawayBuilder(ui.View):
             self.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.price.updated")
             await self.update_embed()
 
-    async def message(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def message(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.enter_message"),
             embed=None,
@@ -1211,7 +1211,7 @@ class GiveawayBuilder(ui.View):
             self.last_action = tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.message.updated")
             await self.update_embed()
 
-    async def end_time(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def end_time(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         modal = EndTimeModal(
             self,
             self.commandInfo,
@@ -1223,7 +1223,7 @@ class GiveawayBuilder(ui.View):
         )
         await interaction.response.send_modal(modal)
 
-    async def start_time(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
+    async def start_time(self, interaction: discord.Interaction, button: GiveawayBuilderButton):  # type: ignore[no-any-unimported,no-untyped-def]
         if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
@@ -1241,7 +1241,7 @@ class GiveawayBuilder(ui.View):
         )
         await interaction.response.send_modal(modal)
 
-    async def new_message_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def new_message_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         modal = MessageRequirementModal(
             self,
             self.commandInfo,
@@ -1256,7 +1256,7 @@ class GiveawayBuilder(ui.View):
         )
         await interaction.response.send_modal(modal)
 
-    async def day_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
+    async def day_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):  # type: ignore[no-any-unimported,no-untyped-def]
         if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
@@ -1277,7 +1277,7 @@ class GiveawayBuilder(ui.View):
         )
         await interaction.response.send_modal(modal)
 
-    async def role_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def role_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         view = RoleRequirementView(
             self,
             self.commandInfo,
@@ -1299,7 +1299,7 @@ class GiveawayBuilder(ui.View):
             embed=None,
         )
 
-    async def voice_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
+    async def voice_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):  # type: ignore[no-any-unimported,no-untyped-def]
         if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
@@ -1320,7 +1320,7 @@ class GiveawayBuilder(ui.View):
         )
         await interaction.response.send_modal(modal)
 
-    async def add_channel_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
+    async def add_channel_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):  # type: ignore[no-any-unimported,no-untyped-def]
         if not utility.checkIfHasPro(self.commandInfo.guild):
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
@@ -1338,7 +1338,7 @@ class GiveawayBuilder(ui.View):
             view=view,
         )
 
-    async def remove_channel_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def remove_channel_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         view = RemoveChannelRequirementView(self.commandInfo, self)
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(
@@ -1349,15 +1349,15 @@ class GiveawayBuilder(ui.View):
             view=view,
         )
 
-    async def preview(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
-        embed = await utility.generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)
+    async def preview(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
+        embed = await utility.generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)  # type: ignore[attr-defined]
         await interaction.response.send_message(
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.preview"),
             embed=embed,
             view=self,
         )
 
-    async def confirm(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:
+    async def confirm(self, interaction: discord.Interaction, button: GiveawayBuilderButton) -> None:  # type: ignore[no-any-unimported]
         title = self.giveaway_data["title"]
         description = self.giveaway_data["description"]
         winners = self.giveaway_data["winners"]
@@ -1403,10 +1403,10 @@ class GiveawayBuilder(ui.View):
         await interaction.response.edit_message(content=None, embed=embed, view=ui.View())
 
         if start_time < datetime.datetime.now():
-            await utility.sendGiveaway(giveawayId, self.commandInfo.client)
+            await utility.sendGiveaway(giveawayId, self.commandInfo.client)  # type: ignore[attr-defined]
 
 
-async def start_giveaway(
+async def start_giveaway(  # type: ignore[no-untyped-def]
     commandInfo,
     title,
     target_channel,

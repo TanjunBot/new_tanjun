@@ -1,12 +1,12 @@
 from typing import Any, cast
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def removerole(
+async def removerole(  # type: ignore[no-any-unimported]
     commandInfo: utility.CommandInfo,
     user: discord.Member | None = None,
     role: discord.Role | None = None,
@@ -14,7 +14,8 @@ async def removerole(
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+        and getattr(commandInfo.user, "guild_permissions")
+        and not commandInfo.user.guild_permissions.manage_roles
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.missingPermission.title"),
@@ -45,13 +46,13 @@ async def removerole(
 
         return
 
-    class RoleManagementView(discord.ui.View):
+    class RoleManagementView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
         def __init__(self, commandInfo: utility.CommandInfo, action: str = "remove") -> None:
             super().__init__(timeout=300)
-            self.commandInfo: utility.CommandInfo = CommandInfo
+            self.commandInfo: utility.CommandInfo = CommandInfo  # type: ignore[name-defined]
             self.action: str = action
-            self.selected_roles: list[discord.Role] = []
-            self.selected_users: list[discord.Member] = []
+            self.selected_roles: list[discord.Role] = []  # type: ignore[no-any-unimported]
+            self.selected_users: list[discord.Member] = []  # type: ignore[no-any-unimported]
             self.add_item(
                 discord.ui.RoleSelect(
                     placeholder=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.selectRoles"),
@@ -69,11 +70,11 @@ async def removerole(
                 )
             )
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.confirm"),
             style=discord.ButtonStyle.green,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             if not self.selected_roles or not self.selected_users:
                 await interaction.response.send_message(
                     content=tanjunLocalizer.localize(
@@ -106,11 +107,11 @@ async def removerole(
             )
             self.stop()
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.cancel"),
             style=discord.ButtonStyle.red,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await interaction.response.edit_message(
                 tanjunLocalizer.localize(
                     str(self.commandInfo.locale),
@@ -120,7 +121,7 @@ async def removerole(
             )
             self.stop()
 
-        async def on_error(
+        async def on_error(  # type: ignore[no-any-unimported]
             self,
             interaction: discord.Interaction,
             error: Exception,
@@ -131,15 +132,15 @@ async def removerole(
                 ephemeral=True,
             )
 
-        async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
             data = cast(dict[str, object], interaction.data)
-            if data is not None and data.get("component_type") == 6:  # RoleSelect
+            if data.get("component_type") == 6:  # RoleSelect
                 if interaction.guild is None:
                     raise ValueError("Guild is missing")
                 values = cast(list[str], data.get("values", []))
                 self.selected_roles = [r for r in [interaction.guild.get_role(int(rid)) for rid in values] if r is not None]
                 await interaction.response.defer()
-            elif data is not None and data.get("component_type") == 5:  # UserSelect
+            elif data.get("component_type") == 5:  # UserSelect
                 if interaction.guild is None:
                     raise ValueError("Guild is missing")
                 values = cast(list[str], data.get("values", []))

@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import (
     addAfkMessage,
@@ -49,7 +49,7 @@ async def afk(commandInfo: CommandInfo, reason: str) -> None:
     await commandInfo.reply(embed=embed)
 
 
-async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:
+async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
     if await check_if_opted_out(message.author.id) or message.guild is None:
         return
     if await checkIfUserIsAfk(message.author.id):
@@ -80,7 +80,7 @@ async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:
         await message.channel.send(embed=embed)
 
 
-async def checkIfMentionsAreAfk(message: discord.Message) -> None:
+async def checkIfMentionsAreAfk(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
     if await check_if_opted_out(message.author.id) or message.guild is None:
         return
 

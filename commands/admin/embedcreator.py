@@ -1,26 +1,26 @@
 import re
 from typing import Any, cast
 
-import discord
-from discord.ui import Modal, Select, TextInput, View
+import discord  # type: ignore[import-not-found]
+from discord.ui import Modal, Select, TextInput, View  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextChannel, title: str) -> None:
-    class EmbedCreatorView(View):
-        def __init__(self, commandInfo: utility.CommandInfo, target_channel: discord.TextChannel) -> None:
+async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextChannel, title: str) -> None:  # type: ignore[no-any-unimported]
+    class EmbedCreatorView(View):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, commandInfo: utility.CommandInfo, target_channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
             super().__init__(timeout=1800)  # 30 minutes timeout
-            self.commandInfo: utility.CommandInfo = CommandInfo
-            self.embed: discord.Embed = discord.Embed(title=title, color=0xFFFFFF)
-            self.preview_message: discord.Message | None = None
-            self.target_channel: discord.TextChannel = target_channel
+            self.commandInfo: utility.CommandInfo = CommandInfo  # type: ignore[name-defined]
+            self.embed: discord.Embed = discord.Embed(title=title, color=0xFFFFFF)  # type: ignore[no-any-unimported]
+            self.preview_message: discord.Message | None = None  # type: ignore[no-any-unimported]
+            self.target_channel: discord.TextChannel = target_channel  # type: ignore[no-any-unimported]
             self.field_count: int = 0
             self.max_fields: int = 25
-            self.message: discord.Message | None = None
+            self.message: discord.Message | None = None  # type: ignore[no-any-unimported]
 
-        async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
             if interaction.user != self.commandInfo.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(self.commandInfo.locale), "commands.admin.embed.unauthorizedUser"),
@@ -29,11 +29,11 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
                 return False
             return True
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setDescription"),
             style=discord.ButtonStyle.primary,
         )
-        async def set_description(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def set_description(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await interaction.response.send_message(
                 content=tanjunLocalizer.localize(
                     self.commandInfo.locale,
@@ -67,11 +67,11 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
                     )
                 )
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.addField"),
             style=discord.ButtonStyle.primary,
         )
-        async def add_field(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def add_field(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             if self.field_count >= self.max_fields:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.embed.maxFieldsReached"),
@@ -80,39 +80,39 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             else:
                 await interaction.response.send_modal(FieldModal(self))
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setFooter"),
             style=discord.ButtonStyle.primary,
         )
-        async def set_footer(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def set_footer(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await interaction.response.send_modal(FooterModal(self))
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setColor"),
             style=discord.ButtonStyle.primary,
         )
-        async def set_color(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def set_color(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await interaction.response.send_modal(ColorModal(self))
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setImage"),
             style=discord.ButtonStyle.secondary,
         )
-        async def set_image(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def set_image(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await interaction.response.send_modal(ImageModal(self))
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.setThumbnail"),
             style=discord.ButtonStyle.secondary,
         )
-        async def set_thumbnail(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def set_thumbnail(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await interaction.response.send_modal(ThumbnailModal(self))
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.editField"),
             style=discord.ButtonStyle.secondary,
         )
-        async def edit_field(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def edit_field(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             if self.field_count == 0:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.embed.noFieldsToEdit"),
@@ -121,11 +121,11 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             else:
                 await interaction.response.send_modal(EditFieldModal(self))
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.removeField"),
             style=discord.ButtonStyle.danger,
         )
-        async def remove_field(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def remove_field(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             if self.field_count == 0:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.embed.noFieldsToRemove"),
@@ -134,26 +134,26 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             else:
                 await interaction.response.send_modal(RemoveFieldModal(self))
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.preview"),
             style=discord.ButtonStyle.secondary,
         )
-        async def preview(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def preview(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             if self.preview_message:
                 await self.preview_message.delete()
 
-            channel = cast(discord.abc.Messageable, interaction.channel)
+            channel = cast(discord.abc.Messageable, interaction.channel)  # type: ignore[no-any-unimported]
             self.preview_message = await channel.send(embed=self.embed)
             await interaction.response.send_message(
                 tanjunLocalizer.localize(str(self.commandInfo.locale), "commands.admin.embed.previewSent"),
                 ephemeral=True,
             )
 
-        @discord.ui.button(
+        @discord.ui.button(  # type: ignore[untyped-decorator]
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.embed.buttons.send"),
             style=discord.ButtonStyle.green,
         )
-        async def send(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+        async def send(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
             await self.target_channel.send(embed=self.embed)
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
@@ -172,7 +172,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             if self.message:
                 await self.message.edit(view=self)
 
-    class FieldModal(Modal):
+    class FieldModal(Modal):  # type: ignore[misc,no-any-unimported]
         def __init__(self, view: "EmbedCreatorView") -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
@@ -181,7 +181,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
                 )
             )
             self.view: EmbedCreatorView = view
-            self.name: TextInput = TextInput(
+            self.name: TextInput = TextInput(  # type: ignore[no-any-unimported]
                 label=tanjunLocalizer.localize(
                     str(view.commandInfo.locale),
                     "commands.admin.embed.modals.fieldModal.nameLabel",
@@ -216,7 +216,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             self.add_item(self.value)
             self.add_item(self.inline)
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             inline = self.inline.value.lower() == "true" or self.inline.value.lower() == "y"
             self.view.embed.add_field(name=self.name.value, value=self.value.value, inline=inline)
             self.view.field_count += 1
@@ -225,7 +225,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
                 ephemeral=True,
             )
 
-    class FooterModal(Modal):
+    class FooterModal(Modal):  # type: ignore[misc,no-any-unimported]
         def __init__(self, view: "EmbedCreatorView") -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
@@ -258,7 +258,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             self.add_item(self.text)
             self.add_item(self.icon_url)
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             self.view.embed.set_footer(
                 text=self.text.value,
                 icon_url=self.icon_url.value if self.icon_url.value else None,
@@ -268,8 +268,8 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
                 ephemeral=True,
             )
 
-    class ColorModal(Modal):
-        def __init__(self, view) -> None:
+    class ColorModal(Modal):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, view) -> None:  # type: ignore[no-untyped-def]
             super().__init__(
                 title=tanjunLocalizer.localize(
                     view.commandInfo.locale,
@@ -290,7 +290,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             )
             self.add_item(self.color)
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             color_regex: str = r"^#(?:[0-9a-fA-F]{3}){1,2}$"
             if re.match(color_regex, str(self.color.value)):
                 color: int = int(str(self.color.value).replace("#", ""), 16)
@@ -311,8 +311,8 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
                     ephemeral=True,
                 )
 
-    class ImageModal(Modal):
-        def __init__(self, view) -> None:
+    class ImageModal(Modal):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, view) -> None:  # type: ignore[no-untyped-def]
             super().__init__(
                 title=tanjunLocalizer.localize(
                     view.commandInfo.locale,
@@ -332,15 +332,15 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             )
             self.add_item(self.image_url)
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             self.view.embed.set_image(url=self.image_url.value)
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.view.commandInfo.locale, "commands.admin.embed.imageUpdated"),
                 ephemeral=True,
             )
 
-    class ThumbnailModal(Modal):
-        def __init__(self, view) -> None:
+    class ThumbnailModal(Modal):  # type: ignore[misc,no-any-unimported]
+        def __init__(self, view) -> None:  # type: ignore[no-untyped-def]
             super().__init__(
                 title=tanjunLocalizer.localize(
                     view.commandInfo.locale,
@@ -360,7 +360,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             )
             self.add_item(self.thumbnail_url)
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             self.view.embed.set_thumbnail(url=self.thumbnail_url.value)
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
@@ -370,7 +370,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
                 ephemeral=True,
             )
 
-    class EditFieldModal(Modal):
+    class EditFieldModal(Modal):  # type: ignore[misc,no-any-unimported]
         def __init__(self, view: "EmbedCreatorView") -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
@@ -432,7 +432,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             self.add_item(self.value)
             self.add_item(self.inline)
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             index = int(self.field_index.values[0])
             inline = self.inline.value.lower() == "y"
             self.view.embed.set_field_at(index, name=self.name.value, value=self.value.value, inline=inline)
@@ -441,7 +441,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
                 ephemeral=True,
             )
 
-    class RemoveFieldModal(Modal):
+    class RemoveFieldModal(Modal):  # type: ignore[misc,no-any-unimported]
         def __init__(self, view: "EmbedCreatorView") -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
@@ -459,7 +459,7 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
             )
             self.add_item(self.field_index)
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             index = int(self.field_index.values[0])
             self.view.embed.remove_field(index)
             self.view.field_count -= 1

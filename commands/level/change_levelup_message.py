@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 from api import set_levelup_message
 from localizer import tanjunLocalizer

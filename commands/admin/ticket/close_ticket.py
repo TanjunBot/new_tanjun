@@ -1,14 +1,14 @@
 import datetime
 from typing import Any
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import get_ticket_by_id, get_ticket_messages_by_id
 from localizer import tanjunLocalizer
 
 
-async def close_ticket(interaction: discord.Interaction) -> None:
+async def close_ticket(interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
     data: Any = interaction.data
     guild = interaction.guild
     channel = interaction.channel
@@ -134,7 +134,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         )
 
 
-async def generate_summary_html(
+async def generate_summary_html(  # type: ignore[no-any-unimported]
     channel: discord.abc.GuildChannel,
     ticket_opener_user: discord.Member,
     ticket_open_time: datetime.datetime,

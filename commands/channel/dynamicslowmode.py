@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import (
@@ -17,7 +17,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def addDynamicslowmode(
+async def addDynamicslowmode(  # type: ignore[no-any-unimported]
     commandInfo: utility.CommandInfo,
     channel: discord.TextChannel,
     messages: int,
@@ -43,9 +43,9 @@ async def addDynamicslowmode(
         return
 
     if (
-        not channel.permissions_for(commandInfo.guild.me).manage_messages
-        or not channel.permissions_for(commandInfo.guild.me).read_message_history
-        or not channel.permissions_for(commandInfo.guild.me).manage_channels
+        not channel.permissions_for(commandInfo.guild.me).manage_messages  # type: ignore[union-attr]
+        or not channel.permissions_for(commandInfo.guild.me).read_message_history  # type: ignore[union-attr]
+        or not channel.permissions_for(commandInfo.guild.me).manage_channels  # type: ignore[union-attr]
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -74,7 +74,7 @@ async def addDynamicslowmode(
         await commandInfo.reply(embed=embed)
         return
 
-    await add_dynamicslowmode(commandInfo.guild.id, channel.id, messages, per, resetafter)
+    await add_dynamicslowmode(commandInfo.guild.id, channel.id, messages, per, resetafter)  # type: ignore[union-attr]
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.channel.dynamicslowmode.success.title"),
         description=tanjunLocalizer.localize(
@@ -85,7 +85,7 @@ async def addDynamicslowmode(
     await commandInfo.reply(embed=embed)
 
 
-async def removeDynamicslowmode(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
+async def removeDynamicslowmode(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -118,7 +118,7 @@ async def removeDynamicslowmode(commandInfo: utility.CommandInfo, channel: disco
         await commandInfo.reply(embed=embed)
         return
 
-    await remove_dynamicslowmode(commandInfo.guild.id, channel.id)
+    await remove_dynamicslowmode(commandInfo.guild.id, channel.id)  # type: ignore[union-attr]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -152,7 +152,7 @@ async def getDynamicslowmodeChannels(commandInfo: utility.CommandInfo) -> None:
         await commandInfo.reply(embed=embed)
         return
 
-    channels = await get_dynamicslowmode_channels(commandInfo.guild.id)
+    channels = await get_dynamicslowmode_channels(commandInfo.guild.id)  # type: ignore[union-attr]
     if not channels:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -185,7 +185,7 @@ async def getDynamicslowmodeChannels(commandInfo: utility.CommandInfo) -> None:
     await commandInfo.reply(embed=embed)
 
 
-async def dynamicslowmodeMessage(message: discord.Message) -> None:
+async def dynamicslowmodeMessage(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
     if message.author.bot:
         return
 
@@ -207,7 +207,7 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
     minTime = message_time - timedelta(seconds=dynamicSlowmodeChannel[4])
 
     messages = 1
-    for dynamicSlowmodeMessage in dynamicSlowmodeMessages:
+    for dynamicSlowmodeMessage in dynamicSlowmodeMessages:  # type: ignore[union-attr]
         if dynamicSlowmodeMessage[3] < minTime:
             messages += 1
 

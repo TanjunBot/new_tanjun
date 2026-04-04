@@ -1,10 +1,10 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def copyrole(commandInfo: utility.CommandInfo, role: discord.Role, copy_members: bool = False) -> None:
+async def copyrole(commandInfo: utility.CommandInfo, role: discord.Role, copy_members: bool = False) -> None:  # type: ignore[no-any-unimported]
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -23,7 +23,7 @@ async def copyrole(commandInfo: utility.CommandInfo, role: discord.Role, copy_me
 
     assert commandInfo.guild is not None
     assert commandInfo.client.user is not None
-    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)
+    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[name-defined]
     if not bot_member or not bot_member.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.copyrole.missingPermissionBot.title"),

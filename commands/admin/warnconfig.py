@@ -1,4 +1,4 @@
-import discord
+import discord  # type: ignore[import-not-found]
 
 import utility
 from api import get_warn_config, set_warn_config
@@ -9,10 +9,10 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
     assert commandInfo.guild is not None
     config = await get_warn_config(commandInfo.guild.id)  # Retrieve current configuration settings
 
-    class WarnConfigModal(discord.ui.Modal):
+    class WarnConfigModal(discord.ui.Modal):  # type: ignore[misc,no-any-unimported]
         def __init__(self, commandInfo: utility.CommandInfo, config: dict[str, int] | None) -> None:
             super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.modal.title"))
-            self.commandInfo = CommandInfo
+            self.commandInfo = CommandInfo  # type: ignore[name-defined]
 
             # Provide default values from the current configuration
             self.add_item(
@@ -86,7 +86,7 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:
+        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
             # Parse input and update configurations
             try:
                 expiration_days = int(self.children[0].value)

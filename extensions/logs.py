@@ -3,9 +3,9 @@
 # import os
 import difflib
 
-import discord
+import discord  # type: ignore[import-not-found]
 from discord import app_commands
-from discord.ext import commands, tasks
+from discord.ext import commands, tasks  # type: ignore[import-not-found]
 
 import utility
 from api import (
@@ -34,7 +34,7 @@ from commands.logs.set_log_channel import set_log_channel
 from localizer import tanjunLocalizer
 from utility import upload_image_to_imgbb, upload_to_tanjun_logs
 
-embeds = {}
+embeds = {}  # type: ignore[var-annotated]
 
 
 class EmbedColors:
@@ -45,14 +45,14 @@ class EmbedColors:
 
 class LogEmbeds:
     def __init__(self) -> None:
-        self.embeds: dict[str, list[discord.Embed]] = {}
+        self.embeds: dict[str, list[discord.Embed]] = {}  # type: ignore[no-any-unimported]
 
-    def add_embed(self, guild_id: str, embed: discord.Embed) -> None:
+    def add_embed(self, guild_id: str, embed: discord.Embed) -> None:  # type: ignore[no-any-unimported]
         if guild_id not in self.embeds:
             self.embeds[guild_id] = []
         self.embeds[guild_id].append(embed)
 
-    def get_all_embeds(self) -> dict[str, list[discord.Embed]]:
+    def get_all_embeds(self) -> dict[str, list[discord.Embed]]:  # type: ignore[no-any-unimported]
         return self.embeds
 
     def clear_embeds(self) -> None:
@@ -62,7 +62,7 @@ class LogEmbeds:
 log_embeds_manager = LogEmbeds()
 
 
-async def sendLogEmbeds(bot: commands.Bot) -> None:
+async def sendLogEmbeds(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
     global log_embeds_manager
     embeds = log_embeds_manager.get_all_embeds()
     for guildId, ems in embeds.items():
@@ -83,13 +83,13 @@ async def sendLogEmbeds(bot: commands.Bot) -> None:
     log_embeds_manager.clear_embeds()
 
 
-class ChannelBlacklistCommands(discord.app_commands.Group):
-    @app_commands.command(
+class ChannelBlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_blacklistc_add_name"),
         description=app_commands.locale_str("logs_blacklistc_add_description"),
     )
-    @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_add_params_channel_description"))
-    async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:
+    @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_add_params_channel_description"))  # type: ignore[untyped-decorator]
+    async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -108,12 +108,12 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
 
         await blacklist_channel(commandInfo=commandInfo, channel=channel)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_blacklistc_remove_name"),
         description=app_commands.locale_str("logs_blacklistc_remove_description"),
     )
-    @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_remove_params_channel_description"))
-    async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:
+    @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_remove_params_channel_description"))  # type: ignore[untyped-decorator]
+    async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -132,11 +132,11 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
 
         await blacklist_remove_channel(commandInfo=commandInfo, channel=channel)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_blacklistc_show_name"),
         description=app_commands.locale_str("logs_blacklistc_show_description"),
     )
-    async def show_blacklist_channel_cmd(self, ctx: discord.Interaction) -> None:
+    async def show_blacklist_channel_cmd(self, ctx: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -153,13 +153,13 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         await blacklist_list_channel(commandInfo=commandInfo)
 
 
-class UserBlacklistCommands(discord.app_commands.Group):
-    @app_commands.command(
+class UserBlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_blacklistu_add_name"),
         description=app_commands.locale_str("logs_blacklistu_add_description"),
     )
-    @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_add_params_user_description"))
-    async def add_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member) -> None:
+    @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_add_params_user_description"))  # type: ignore[untyped-decorator]
+    async def add_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -174,12 +174,12 @@ class UserBlacklistCommands(discord.app_commands.Group):
         )
         await blacklist_user(commandInfo=commandInfo, user=user)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_blacklistu_remove_name"),
         description=app_commands.locale_str("logs_blacklistu_remove_description"),
     )
-    @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_remove_params_user_description"))
-    async def remove_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member) -> None:
+    @app_commands.describe(user=app_commands.locale_str("logs_blacklistu_remove_params_user_description"))  # type: ignore[untyped-decorator]
+    async def remove_blacklist_user_cmd(self, ctx: discord.Interaction, user: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -194,11 +194,11 @@ class UserBlacklistCommands(discord.app_commands.Group):
         )
         await blacklist_remove_user(commandInfo=commandInfo, user=user)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_blacklistu_show_name"),
         description=app_commands.locale_str("logs_blacklistu_show_description"),
     )
-    async def show_blacklist_user_cmd(self, ctx: discord.Interaction) -> None:
+    async def show_blacklist_user_cmd(self, ctx: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -214,13 +214,13 @@ class UserBlacklistCommands(discord.app_commands.Group):
         await blacklist_list_user(commandInfo=commandInfo)
 
 
-class RoleBlacklistCommands(discord.app_commands.Group):
-    @app_commands.command(
+class RoleBlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_blacklistr_add_name"),
         description=app_commands.locale_str("logs_blacklistr_add_description"),
     )
-    @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_add_params_role_description"))
-    async def add_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role) -> None:
+    @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_add_params_role_description"))  # type: ignore[untyped-decorator]
+    async def add_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -235,12 +235,12 @@ class RoleBlacklistCommands(discord.app_commands.Group):
         )
         await blacklist_role(commandInfo=commandInfo, role=role)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_blacklistr_remove_name"),
         description=app_commands.locale_str("logs_blacklistr_remove_description"),
     )
-    @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_remove_params_role_description"))
-    async def remove_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role) -> None:
+    @app_commands.describe(role=app_commands.locale_str("logs_blacklistr_remove_params_role_description"))  # type: ignore[untyped-decorator]
+    async def remove_blacklist_role_cmd(self, ctx: discord.Interaction, role: discord.Role) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -255,11 +255,11 @@ class RoleBlacklistCommands(discord.app_commands.Group):
         )
         await blacklist_remove_role(commandInfo=commandInfo, role=role)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_blacklistr_show_name"),
         description=app_commands.locale_str("logs_blacklistr_show_description"),
     )
-    async def show_blacklist_role_cmd(self, ctx: discord.Interaction) -> None:
+    async def show_blacklist_role_cmd(self, ctx: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -275,13 +275,13 @@ class RoleBlacklistCommands(discord.app_commands.Group):
         await blacklist_list_role(commandInfo=commandInfo)
 
 
-class LogsCommands(discord.app_commands.Group):
-    @app_commands.command(
+class LogsCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_set_name"),
         description=app_commands.locale_str("logs_set_description"),
     )
-    @app_commands.describe(channel=app_commands.locale_str("logs_set_params_channel_description"))
-    async def set_log_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:
+    @app_commands.describe(channel=app_commands.locale_str("logs_set_params_channel_description"))  # type: ignore[untyped-decorator]
+    async def set_log_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -300,11 +300,11 @@ class LogsCommands(discord.app_commands.Group):
 
         await set_log_channel(commandInfo=commandInfo, channel=channel)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_remove_name"),
         description=app_commands.locale_str("logs_remove_description"),
     )
-    async def remove_log_channel_cmd(self, ctx: discord.Interaction) -> None:
+    async def remove_log_channel_cmd(self, ctx: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -320,11 +320,11 @@ class LogsCommands(discord.app_commands.Group):
 
         await remove_log_channel(commandInfo=commandInfo)
 
-    @app_commands.command(
+    @app_commands.command(  # type: ignore[untyped-decorator]
         name=app_commands.locale_str("logs_configure_name"),
         description=app_commands.locale_str("logs_configure_description"),
     )
-    async def configure_logs_cmd(self, ctx: discord.Interaction) -> None:
+    async def configure_logs_cmd(self, ctx: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
         await ctx.response.defer()
         commandInfo = utility.CommandInfo(
             user=ctx.user,
@@ -341,12 +341,12 @@ class LogsCommands(discord.app_commands.Group):
         await configure_logs(commandInfo=commandInfo)
 
 
-class LogsCog(commands.Cog):
-    def __init__(self, bot) -> None:
+class LogsCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
+    def __init__(self, bot) -> None:  # type: ignore[no-untyped-def]
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_automod_rule_create(self, rule: discord.AutoModRule) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_automod_rule_create(self, rule: discord.AutoModRule) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = rule.guild and (await get_log_enable(rule.guild.id))[1]
         if not logEnable:
             return
@@ -511,8 +511,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(rule.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_automod_rule_update(self, rule: discord.AutoModRule) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_automod_rule_update(self, rule: discord.AutoModRule) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = rule.guild and (await get_log_enable(rule.guild.id))[2]
         if not logEnable:
             return
@@ -679,8 +679,8 @@ class LogsCog(commands.Cog):
         embed.set_footer(text=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.footer"))
         log_embeds_manager.add_embed(str(rule.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_automod_rule_delete(self, rule: discord.AutoModRule) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_automod_rule_delete(self, rule: discord.AutoModRule) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = rule.guild and (await get_log_enable(rule.guild.id))[3]
         if not logEnable:
             return
@@ -846,8 +846,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(rule.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_automod_action(self, execution: discord.AutoModAction) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_automod_action(self, execution: discord.AutoModAction) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = execution.guild and (await get_log_enable(execution.guild.id))[4]
         if not logEnable:
             return
@@ -930,8 +930,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(execution.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = channel.guild and (await get_log_enable(channel.guild.id))[5]
         if not logEnable:
             return
@@ -1024,8 +1024,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(channel.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_guild_channel_create(self, channel: discord.abc.GuildChannel) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_guild_channel_create(self, channel: discord.abc.GuildChannel) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = channel.guild and (await get_log_enable(channel.guild.id))[6]
         if not logEnable:
             return
@@ -1099,8 +1099,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(channel.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_guild_channel_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_guild_channel_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = after.guild and (await get_log_enable(after.guild.id))[7]
         if not logEnable:
             return
@@ -1384,8 +1384,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(after.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_guild_update(self, before: discord.Guild, after: discord.Guild) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_guild_update(self, before: discord.Guild, after: discord.Guild) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = after.guild and (await get_log_enable(after.guild.id))[8]
         if not logEnable:
             return
@@ -1810,8 +1810,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(after.id), embed)
 
-    @commands.Cog.listener()
-    async def on_invite_create(self, invite: discord.Invite) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_invite_create(self, invite: discord.Invite) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = invite.guild and (await get_log_enable(invite.guild.id))[9]
         if not logEnable:
             return
@@ -1905,8 +1905,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(invite.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_invite_delete(self, invite: discord.Invite) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_invite_delete(self, invite: discord.Invite) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = invite.guild and (await get_log_enable(invite.guild.id))[10]
         if not logEnable:
             return
@@ -1997,8 +1997,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(invite.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_member_join(self, member: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = member.guild and (await get_log_enable(member.guild.id))[11]
         if not logEnable:
             return
@@ -2026,8 +2026,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(member.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_member_remove(self, member: discord.Member) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_member_remove(self, member: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = member.guild and (await get_log_enable(member.guild.id))[12]
         if not logEnable:
             return
@@ -2062,8 +2062,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(member.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = after.guild and (await get_log_enable(after.guild.id))[13]
         if not logEnable:
             return
@@ -2090,7 +2090,7 @@ class LogsCog(commands.Cog):
                 await before.display_avatar.read() if before.display_avatar else None
             )  # Read the old avatar as bytes
             avatar_upload_response = await utility.upload_image_to_imgbb(avatar_bytes, "png") if avatar_bytes else {}
-            avatar_url_before = avatar_upload_response.get("data", {}).get("url", defaultAvatarUrl)
+            avatar_url_before = avatar_upload_response.get("data", {}).get("url", defaultAvatarUrl)  # type: ignore[union-attr]
 
             # Upload new avatar to ImgBB
             new_avatar_bytes = (
@@ -2099,7 +2099,7 @@ class LogsCog(commands.Cog):
             new_avatar_upload_response = (
                 await utility.upload_image_to_imgbb(new_avatar_bytes, "png") if new_avatar_bytes else {}
             )
-            new_avatar_url = new_avatar_upload_response.get("data", {}).get("url", defaultAvatarUrl)
+            new_avatar_url = new_avatar_upload_response.get("data", {}).get("url", defaultAvatarUrl)  # type: ignore[union-attr]
 
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2117,13 +2117,13 @@ class LogsCog(commands.Cog):
             # Upload old banner to ImgBB
             banner_bytes = await before.banner.read() if before.banner else None  # Read the old banner as bytes
             banner_upload_response = await utility.upload_image_to_imgbb(banner_bytes, "png") if banner_bytes else {}
-            banner_url_before = banner_upload_response.get("data", {}).get("url", noneLocale)
+            banner_url_before = banner_upload_response.get("data", {}).get("url", noneLocale)  # type: ignore[union-attr]
 
             # Upload new banner to ImgBB
             if after.banner:
                 new_banner_bytes = await after.banner.read()  # Read the new banner as bytes
                 new_banner_upload_response = await utility.upload_image_to_imgbb(new_banner_bytes, "png")
-                new_banner_url = new_banner_upload_response.get("data", {}).get("url", noneLocale)
+                new_banner_url = new_banner_upload_response.get("data", {}).get("url", noneLocale)  # type: ignore[union-attr]
             else:
                 new_banner_url = noneLocale
 
@@ -2196,8 +2196,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(after.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_user_update(self, before: discord.User, after: discord.User) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_user_update(self, before: discord.User, after: discord.User) -> None:  # type: ignore[misc,no-any-unimported]
         for guild in self.bot.guilds:
             user = guild.get_member(before.id)
             if not user:
@@ -2267,7 +2267,7 @@ class LogsCog(commands.Cog):
                 # Upload old banner to ImgBB
                 banner_bytes = await before.banner.read() if before.banner else None  # Read the old banner as bytes
                 banner_upload_response = await utility.upload_image_to_imgbb(banner_bytes, "png") if banner_bytes else {}
-                banner_url_before = banner_upload_response.get("data", {}).get("url", noneLocale)
+                banner_url_before = banner_upload_response.get("data", {}).get("url", noneLocale)  # type: ignore[union-attr]
                 """ Unused:
                 banner_url_after = (
                     after.banner.url if after.banner else noneLocale
@@ -2278,7 +2278,7 @@ class LogsCog(commands.Cog):
                 if after.banner:
                     new_banner_bytes = await after.banner.read()  # Read the new banner as bytes
                     new_banner_upload_response = await utility.upload_image_to_imgbb(new_banner_bytes, "png")
-                    new_banner_url = new_banner_upload_response.get("data", {}).get("url", noneLocale)
+                    new_banner_url = new_banner_upload_response.get("data", {}).get("url", noneLocale)  # type: ignore[union-attr]
                 else:
                     new_banner_url = noneLocale
 
@@ -2304,8 +2304,8 @@ class LogsCog(commands.Cog):
             )
             log_embeds_manager.add_embed(str(guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_member_ban(self, user: discord.Member) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_member_ban(self, user: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = user.guild and (await get_log_enable(user.guild.id))[15]
         if not logEnable:
             return
@@ -2340,8 +2340,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(user.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_member_unban(self, guild: discord.Guild, user: discord.User) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_member_unban(self, guild: discord.Guild, user: discord.User) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = guild and (await get_log_enable(guild.id))[16]
         if not logEnable:
             return
@@ -2377,8 +2377,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_presence_update(self, before: discord.Member, after: discord.Member) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_presence_update(self, before: discord.Member, after: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = after.guild and (await get_log_enable(after.guild.id))[17]
         if not logEnable:
             return
@@ -2419,8 +2419,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(after.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = after.guild and (await get_log_enable(after.guild.id))[18]
         if not logEnable:
             return
@@ -2554,7 +2554,7 @@ class LogsCog(commands.Cog):
 
         # Ensure the description does not exceed 4000 characters
         if len(description) > 4000:
-            description = description[:3000] + f" {truncated_notice}"
+            description = description[:3000] + f" {truncated_notice}"  # type: ignore[possibly-undefined]
 
         embed = discord.Embed(
             color=EmbedColors.yellow,
@@ -2571,8 +2571,8 @@ class LogsCog(commands.Cog):
         #             embeds[str(after.guild.id)].append(beforeEmbed)
         #             embeds[str(after.guild.id)].append(afterEmbed)
 
-    @commands.Cog.listener()
-    async def on_message_delete(self, message: discord.Message) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_message_delete(self, message: discord.Message) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = message.guild and (await get_log_enable(message.guild.id))[19]
         if not logEnable:
             return
@@ -2661,8 +2661,8 @@ class LogsCog(commands.Cog):
         for emb in message.embeds:
             log_embeds_manager.add_embed(str(message.guild.id), emb)
 
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = reaction.guild and (await get_log_enable(reaction.guild.id))[20]
         if not logEnable:
             return
@@ -2701,8 +2701,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(reaction.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = reaction.guild and (await get_log_enable(reaction.guild.id))[21]
         if not logEnable:
             return
@@ -2741,8 +2741,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(reaction.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_guild_role_create(self, role: discord.Role) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_guild_role_create(self, role: discord.Role) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = role.guild and (await get_log_enable(role.guild.id))[22]
         if not logEnable:
             return
@@ -2819,8 +2819,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(role.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_guild_role_delete(self, role: discord.Role) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_guild_role_delete(self, role: discord.Role) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = role.guild and (await get_log_enable(role.guild.id))[23]
         if not logEnable:
             return
@@ -2898,8 +2898,8 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(role.guild.id), embed)
 
-    @commands.Cog.listener()
-    async def on_guild_role_update(self, before: discord.Role, after: discord.Role) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_guild_role_update(self, before: discord.Role, after: discord.Role) -> None:  # type: ignore[misc,no-any-unimported]
         logEnable = after.guild and (await get_log_enable(after.guild.id))[24]
         if not logEnable:
             return
@@ -3027,15 +3027,15 @@ class LogsCog(commands.Cog):
         )
         log_embeds_manager.add_embed(str(after.guild.id), embed)
 
-    @tasks.loop(seconds=10)
-    async def sendLogEmbeds(self) -> None:
+    @tasks.loop(seconds=10)  # type: ignore[untyped-decorator]
+    async def sendLogEmbeds(self) -> None:  # type: ignore[misc]
         try:
             await sendLogEmbeds(self.bot)
         except Exception:
             pass
 
-    @commands.Cog.listener()
-    async def on_ready(self) -> None:
+    @commands.Cog.listener()  # type: ignore[untyped-decorator]
+    async def on_ready(self) -> None:  # type: ignore[misc]
         logcmds = LogsCommands(
             name=app_commands.locale_str("logs_name"),
             description=app_commands.locale_str("logs_description"),
@@ -3060,5 +3060,5 @@ class LogsCog(commands.Cog):
         self.sendLogEmbeds.start()
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
     await bot.add_cog(LogsCog(bot))
