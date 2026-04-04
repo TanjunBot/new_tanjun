@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import (
@@ -13,7 +13,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def schedule_message(  # type: ignore[no-any-unimported]
+async def schedule_message(
     commandInfo: utility.CommandInfo,
     content: str,
     send_in: str,
@@ -171,7 +171,7 @@ async def schedule_message(  # type: ignore[no-any-unimported]
     await commandInfo.reply(embed=embed)
 
 
-async def send_scheduled_messages(client: discord.Client) -> None:  # type: ignore[no-any-unimported]
+async def send_scheduled_messages(client: discord.Client) -> None:
     """Send all scheduled messages that are ready to be sent"""
     ready_messages = await get_ready_scheduled_messages()
 
@@ -189,7 +189,7 @@ async def send_scheduled_messages(client: discord.Client) -> None:  # type: igno
             repeat_interval = msg[6]
             repeat_amount = msg[7]
 
-            target: (  # type: ignore[no-any-unimported]
+            target: (
                 discord.VoiceChannel
                 | discord.StageChannel
                 | discord.ForumChannel
@@ -209,8 +209,9 @@ async def send_scheduled_messages(client: discord.Client) -> None:  # type: igno
 
                 target = channel
             else:
-                user = await client.fetch_user(user_id)
-                if user is None:
+                try:
+                    user = await client.fetch_user(user_id)
+                except discord.NotFound:
                     continue
 
                 target = user.dm_channel if user.dm_channel else await user.create_dm()

@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import (
@@ -12,7 +12,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def configure_trigger_messages(  # type: ignore[no-untyped-def]
+async def configure_trigger_messages(
     commandInfo: utility.CommandInfo,
 ):
     if (
@@ -54,7 +54,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
     page = 0
     selected_channel = 0
 
-    async def generate_embed():  # type: ignore[no-untyped-def]
+    async def generate_embed():
         nonlocal page, trigger_messages, channels, selected_channel
         if page < 0 or page >= len(trigger_messages):
             embed = utility.tanjunEmbed(
@@ -114,7 +114,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         )
         return embed
 
-    class TriggerMessageModal(discord.ui.Modal):  # type: ignore[misc,no-any-unimported]
+    class TriggerMessageModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.CommandInfo) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
@@ -169,20 +169,20 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+        async def on_submit(self, interaction: discord.Interaction) -> None:
             trigger = self.children[0].value.strip()
             response = self.children[1].value.strip()
             caseSensitive = self.children[2].value == "y"
-            await add_trigger_message(commandInfo.guild.id, trigger, response, caseSensitive)  # type: ignore[union-attr]
+            await add_trigger_message(commandInfo.guild.id, trigger, response, caseSensitive)
             nonlocal trigger_messages
-            trigger_messages = await get_trigger_messages(commandInfo.guild.id)  # type: ignore[union-attr]
+            trigger_messages = await get_trigger_messages(commandInfo.guild.id)
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[0][0])  # type: ignore[index,union-attr]
-            embed = await generate_embed()  # type: ignore[no-untyped-call]
+            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[0][0])
+            embed = await generate_embed()
             view = TriggerMessageView()
             await interaction.response.edit_message(embed=embed, view=view)
 
-    class TriggerMessageChannelView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+    class TriggerMessageChannelView(discord.ui.View):
         def __init__(self, commandInfo: utility.CommandInfo, trigger_id: int) -> None:
             super().__init__()
 
@@ -198,47 +198,47 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             channelSelect.callback = self.on_channel_select
             self.add_item(channelSelect)
 
-        async def on_channel_select(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+        async def on_channel_select(self, interaction: discord.Interaction) -> None:
             from typing import Any, cast
 
             data = cast(Any, interaction.data)
             nonlocal channels
             await add_trigger_message_channel(
-                commandInfo.guild.id,  # type: ignore[union-attr]
+                commandInfo.guild.id,
                 data["values"][0] if data is not None else "",
-                trigger_messages[page][0],  # type: ignore[index]
+                trigger_messages[page][0],
             )
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page][0])  # type: ignore[index,union-attr]
-            embed = await generate_embed()  # type: ignore[no-untyped-call]
+            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page][0])
+            embed = await generate_embed()
             view = TriggerMessageView()
             await interaction.response.edit_message(embed=embed, view=view)
 
-    class TriggerMessageView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+    class TriggerMessageView(discord.ui.View):
         def __init__(self) -> None:
             super().__init__()
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.trigger_messages.configure.previous.label",
             ),
             style=discord.ButtonStyle.secondary,
             emoji="⬅️",
-            disabled=len(trigger_messages) <= 1,  # type: ignore[arg-type]
+            disabled=len(trigger_messages) <= 1,
         )
-        async def trigger(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        async def trigger(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             nonlocal page
             page -= 1
             if page < 0:
-                page = len(trigger_messages) - 1  # type: ignore[arg-type]
+                page = len(trigger_messages) - 1
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page][0])  # type: ignore[index,union-attr]
+            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page][0])
             nonlocal selected_channel
             selected_channel = 0
             await self.update_message(interaction)
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.trigger_messages.configure.remove.label",
@@ -246,15 +246,15 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             style=discord.ButtonStyle.danger,
             emoji="🗑️",
         )
-        async def remove(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        async def remove(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             nonlocal trigger_messages
-            await remove_trigger_message(commandInfo.guild.id, trigger_messages[page][0])  # type: ignore[index,union-attr]
-            trigger_messages = await get_trigger_messages(commandInfo.guild.id)  # type: ignore[union-attr]
+            await remove_trigger_message(commandInfo.guild.id, trigger_messages[page][0])
+            trigger_messages = await get_trigger_messages(commandInfo.guild.id)
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[0][0])  # type: ignore[index,union-attr]
+            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[0][0])
             await self.update_message(interaction)
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.trigger_messages.configure.new.label",
@@ -262,45 +262,45 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             style=discord.ButtonStyle.primary,
             emoji="➕",
         )
-        async def new(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        async def new(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             modal = TriggerMessageModal(commandInfo)
             await interaction.response.send_modal(modal)
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.trigger_messages.configure.next.label",
             ),
             style=discord.ButtonStyle.secondary,
             emoji="➡️",
-            disabled=len(trigger_messages) <= 1,  # type: ignore[arg-type]
+            disabled=len(trigger_messages) <= 1,
         )
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             nonlocal page
             page += 1
-            if page >= len(trigger_messages):  # type: ignore[arg-type]
+            if page >= len(trigger_messages):
                 page = 0
             nonlocal channels
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page][0])  # type: ignore[index,union-attr]
+            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page][0])
             nonlocal selected_channel
             selected_channel = 0
             await self.update_message(interaction)
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.trigger_messages.configure.up.label"),
             style=discord.ButtonStyle.secondary,
             emoji="⬆️",
             row=1,
-            disabled=len(channels) <= 1,  # type: ignore[arg-type]
+            disabled=len(channels) <= 1,
         )
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             nonlocal selected_channel
             selected_channel -= 1
             if selected_channel < 0:
-                selected_channel = len(channels) - 1  # type: ignore[arg-type]
+                selected_channel = len(channels) - 1
             await self.update_message(interaction)
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.trigger_messages.configure.add_channel.label",
@@ -309,13 +309,13 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             emoji="➕",
             row=1,
         )
-        async def add_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
-            view = TriggerMessageChannelView(commandInfo, trigger_messages[page][0])  # type: ignore[index]
+        async def add_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+            view = TriggerMessageChannelView(commandInfo, trigger_messages[page][0])
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.trigger_messages.configure.trigger.addChannel.title",
-                    trigger=trigger_messages[page][2],  # type: ignore[index]
+                    trigger=trigger_messages[page][2],
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -324,7 +324,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             )
             await interaction.response.edit_message(embed=embed, view=view)
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.trigger_messages.configure.remove_channel.label",
@@ -332,19 +332,19 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             style=discord.ButtonStyle.danger,
             emoji="🚫",
             row=1,
-            disabled=len(channels) <= 1,  # type: ignore[arg-type]
+            disabled=len(channels) <= 1,
         )
-        async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             nonlocal channels
             await remove_trigger_message_channel(
-                commandInfo.guild.id,  # type: ignore[union-attr]
-                channels[selected_channel][1],  # type: ignore[index]
-                trigger_messages[page][0],  # type: ignore[index]
+                commandInfo.guild.id,
+                channels[selected_channel][1],
+                trigger_messages[page][0],
             )
-            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page][0])  # type: ignore[index,union-attr]
+            channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[page][0])
             await self.update_message(interaction)
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.trigger_messages.configure.down.label",
@@ -352,20 +352,20 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             style=discord.ButtonStyle.secondary,
             emoji="⬇️",
             row=1,
-            disabled=len(channels) <= 1,  # type: ignore[arg-type]
+            disabled=len(channels) <= 1,
         )
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             nonlocal selected_channel
             selected_channel += 1
-            if selected_channel >= len(channels):  # type: ignore[arg-type]
+            if selected_channel >= len(channels):
                 selected_channel = 0
             await self.update_message(interaction)
 
-        async def update_message(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
-            embed = await generate_embed()  # type: ignore[no-untyped-call]
+        async def update_message(self, interaction: discord.Interaction) -> None:
+            embed = await generate_embed()
             view = TriggerMessageView()
             await interaction.response.edit_message(embed=embed, view=view)
 
     view = TriggerMessageView()
-    embed = await generate_embed()  # type: ignore[no-untyped-call]
+    embed = await generate_embed()
     await commandInfo.reply(embed=embed, view=view)

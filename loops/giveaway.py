@@ -1,22 +1,22 @@
 from api import add_giveaway_voice_minutes_if_needed, check_if_opted_out, get_end_ready_giveaways, get_send_ready_giveaways
 from commands.giveaway.utility import endGiveaway, sendGiveaway
 
-voiceUsers = []  # type: ignore[var-annotated]
+voiceUsers = []
 
 
-async def sendReadyGiveaways(client):  # type: ignore[no-untyped-def]
+async def sendReadyGiveaways(client):
     ready_giveaways = await get_send_ready_giveaways()
     if ready_giveaways:
         for giveaway in ready_giveaways:
             await sendGiveaway(giveawayid=giveaway[0], client=client)
 
 
-async def checkVoiceUsers(client):  # type: ignore[no-untyped-def]
+async def checkVoiceUsers(client):
     for user in voiceUsers:
         await add_giveaway_voice_minutes_if_needed(user.id, user.guild.id)
 
 
-async def handleVoiceChange(user, before, after):  # type: ignore[no-untyped-def]
+async def handleVoiceChange(user, before, after):
     if await check_if_opted_out(user.id):
         return
 
@@ -30,7 +30,7 @@ async def handleVoiceChange(user, before, after):  # type: ignore[no-untyped-def
         updateVoiceUsers(active_members)
 
 
-def updateVoiceUsers(active_members):  # type: ignore[no-untyped-def]
+def updateVoiceUsers(active_members):
     global voiceUsers
     current_users_set = set(voiceUsers)
     active_users_set = set(active_members)
@@ -44,17 +44,17 @@ def updateVoiceUsers(active_members):  # type: ignore[no-untyped-def]
         removeVoiceUser(user)
 
 
-def addVoiceUser(user):  # type: ignore[no-untyped-def]
+def addVoiceUser(user):
     if user not in voiceUsers:
         voiceUsers.append(user)
 
 
-def removeVoiceUser(user):  # type: ignore[no-untyped-def]
+def removeVoiceUser(user):
     if user in voiceUsers:
         voiceUsers.remove(user)
 
 
-async def endGiveaways(client):  # type: ignore[no-untyped-def]
+async def endGiveaways(client):
     ready_giveaways = await get_end_ready_giveaways()
     if ready_giveaways:
         for giveaway in ready_giveaways:

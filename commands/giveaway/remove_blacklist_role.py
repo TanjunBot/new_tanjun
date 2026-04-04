@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import (
@@ -10,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def remove_blacklist_role(  # type: ignore[no-any-unimported]
+async def remove_blacklist_role(
     commandInfo: utility.CommandInfo,
     role: discord.Role,
 ) -> None:
@@ -28,7 +28,7 @@ async def remove_blacklist_role(  # type: ignore[no-any-unimported]
         await commandInfo.reply(embed=embed)
         return
 
-    blacklistedRoles = [role[0] for role in await get_giveaway_blacklisted_roles(commandInfo.guild.id)]  # type: ignore[union-attr]
+    blacklistedRoles = [role[0] for role in await get_giveaway_blacklisted_roles(commandInfo.guild.id)]
 
     if str(role.id) not in blacklistedRoles:
         embed = utility.tanjunEmbed(
@@ -45,7 +45,7 @@ async def remove_blacklist_role(  # type: ignore[no-any-unimported]
         return
 
     await remove_blacklist_role_api(
-        guild_id=commandInfo.guild.id,  # type: ignore[union-attr]
+        guild_id=commandInfo.guild.id,
         role_id=role.id,
     )
 

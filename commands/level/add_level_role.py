@@ -1,13 +1,13 @@
 from typing import cast
 
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import add_level_role, get_level_roles
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def add_level_role_command(commandInfo: CommandInfo, role: discord.Role, level: int) -> None:  # type: ignore[no-any-unimported]
+async def add_level_role_command(commandInfo: CommandInfo, role: discord.Role, level: int) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

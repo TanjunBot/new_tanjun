@@ -1,10 +1,10 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def deleterole(commandInfo: utility.CommandInfo, role: discord.Role, reason: str | None = None) -> None:  # type: ignore[no-any-unimported]
+async def deleterole(commandInfo: utility.CommandInfo, role: discord.Role, reason: str | None = None) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -22,7 +22,7 @@ async def deleterole(commandInfo: utility.CommandInfo, role: discord.Role, reaso
 
     assert commandInfo.guild is not None
     assert commandInfo.client.user is not None
-    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[name-defined]
+    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)
     if not bot_member or not bot_member.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

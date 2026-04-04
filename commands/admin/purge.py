@@ -1,10 +1,10 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def purge(  # type: ignore[no-any-unimported]
+async def purge(
     commandInfo: utility.CommandInfo,
     amount: int,
     channel: discord.TextChannel | None = None,
@@ -12,7 +12,7 @@ async def purge(  # type: ignore[no-any-unimported]
 ) -> None:
     if channel is None:
         assert commandInfo.channel is not None
-        channel = cast(discord.TextChannel, commandInfo.channel)  # type: ignore[name-defined]
+        channel = cast(discord.TextChannel, commandInfo.channel)
 
     if (
         isinstance(commandInfo.user, discord.Member)
@@ -50,11 +50,11 @@ async def purge(  # type: ignore[no-any-unimported]
 
     try:
 
-        def check(m: discord.Message) -> bool:  # type: ignore[no-any-unimported,return]
+        def check(m: discord.Message) -> bool:
             if setting == "all":
                 return True
             elif setting == "bot":
-                return m.author.bot  # type: ignore[no-any-return]
+                return m.author.bot
             elif setting == "user":
                 return not m.author.bot
             elif setting == "notPinned":
@@ -68,9 +68,9 @@ async def purge(  # type: ignore[no-any-unimported]
             elif setting == "userNotAdmin":
                 return not m.author.guild_permissions.administrator and not m.author.bot
             elif setting == "embeds":
-                return m.embeds  # type: ignore[no-any-return]
+                return m.embeds
             elif setting == "files":
-                return m.attachments  # type: ignore[no-any-return]
+                return m.attachments
             elif setting == "notAdminNotPinned":
                 return not m.author.guild_permissions.administrator and not m.pinned
 

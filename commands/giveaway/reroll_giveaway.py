@@ -1,7 +1,7 @@
 import random
 from typing import Any
 
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import get_giveaway, get_giveaway_participants
@@ -41,7 +41,7 @@ async def reroll_giveaway(
         await commandInfo.reply(embed=embed)
         return
 
-    if giveaway[1] != str(commandInfo.guild.id):  # type: ignore[union-attr]
+    if giveaway[1] != str(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -69,32 +69,32 @@ async def reroll_giveaway(
         await commandInfo.reply(embed=embed)
         return
 
-    class RerollOptionsView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+    class RerollOptionsView(discord.ui.View):
         def __init__(self, commandInfo: utility.CommandInfo, giveawayId: int) -> None:
             super().__init__()
-            self.commandInfo = CommandInfo  # type: ignore[name-defined]
+            self.commandInfo = CommandInfo
             self.giveawayId = giveawayId
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.reroll_giveaway.rerollOneWinner"),
             style=discord.ButtonStyle.primary,
         )
-        async def reroll_one(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        async def reroll_one(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             await perform_reroll(self.commandInfo, self.giveawayId, 1)
             self.stop()
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.reroll_giveaway.rerollAllWinners"),
             style=discord.ButtonStyle.primary,
         )
-        async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.defer()
             giveaway = await get_giveaway(self.giveawayId)
-            await perform_reroll(self.commandInfo, self.giveawayId, giveaway[4])  # type: ignore[index]
+            await perform_reroll(self.commandInfo, self.giveawayId, giveaway[4])
             self.stop()
 
-        async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
+        async def interaction_check(self, interaction: discord.Interaction) -> bool:
             if interaction.user != self.commandInfo.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -166,12 +166,12 @@ async def perform_reroll(commandInfo: utility.CommandInfo, giveawayId: int, rero
     await commandInfo.reply(embed=embed)
 
     for winner in new_winners:
-        member = CommandInfo.guild.get_member(int(winner))  # type: ignore[name-defined]
+        member = CommandInfo.guild.get_member(int(winner))
         if member:
             await member.send(
                 tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.giveaway.reroll_giveaway.winnerDM",
-                    guild_name=commandInfo.guild.name,  # type: ignore[union-attr]
+                    guild_name=commandInfo.guild.name,
                 )
             )

@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import get_report_channel, remove_report_channel

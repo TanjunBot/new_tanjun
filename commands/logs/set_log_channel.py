@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import (
@@ -10,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def set_log_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
+async def set_log_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -31,7 +31,7 @@ async def set_log_channel(commandInfo: utility.CommandInfo, channel: discord.Tex
 
     assert commandInfo.guild is not None
     assert commandInfo.client.user is not None
-    selfMember = CommandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[name-defined]
+    selfMember = CommandInfo.guild.get_member(commandInfo.client.user.id)
     permissions = channel.permissions_for(selfMember)
 
     if not permissions.send_messages:

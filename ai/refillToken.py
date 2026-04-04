@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from discord import Client  # type: ignore[import-not-found]
+from discord import Client
 
 from api import resetToken
 
 
-async def refillAiToken(client: Client):  # type: ignore[no-any-unimported,no-untyped-def]
+async def refillAiToken(client: Client):
     now = datetime.now()
 
     formatted_now = now.strftime("%d %H:%M")

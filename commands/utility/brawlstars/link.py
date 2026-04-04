@@ -1,6 +1,6 @@
 from typing import Any
 
-import aiohttp  # type: ignore[import-not-found]
+import aiohttp
 
 from api import add_brawlstars_linked_account, get_brawlstars_linked_account
 from config import brawlstarsToken

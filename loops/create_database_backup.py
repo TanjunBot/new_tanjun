@@ -2,7 +2,7 @@ import platform
 import subprocess
 from typing import cast
 
-from discord import Client, File, TextChannel  # type: ignore[import-not-found]
+from discord import Client, File, TextChannel
 
 from config import database_password, database_user
 
@@ -31,12 +31,12 @@ def dump_database_schema(user: str, password: str, output_file: str) -> None:
         print("mysqldump command not found. Make sure MySQL is installed and mysqldump is in your PATH.")
 
 
-async def create_database_backup(client: Client) -> None:  # type: ignore[no-any-unimported]
+async def create_database_backup(client: Client) -> None:
     assert database_user is not None
     assert database_password is not None
     dump_database_schema(database_user, database_password, "backup.sql")
 
-    channel = cast(TextChannel, client.get_channel(1259573137108893766))  # type: ignore[no-any-unimported]
+    channel = cast(TextChannel, client.get_channel(1259573137108893766))
 
     if channel is not None:
         await channel.send(file=File("backup.sql"))

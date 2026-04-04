@@ -1,8 +1,8 @@
 import json
 from typing import Any, cast
 
-import aiohttp  # type: ignore[import-not-found]
-import discord  # type: ignore[import-not-found]
+import aiohttp
+import discord
 
 from api import get_brawlstars_linked_account
 from commands.utility.brawlstars.bshelper import (
@@ -189,13 +189,13 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
         embed.set_thumbnail(url=f"https://cdn.brawlify.com/brawlers/borderless/{id}.png")
         return embed
 
-    class BrawlersPaginator(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+    class BrawlersPaginator(discord.ui.View):
         def __init__(self, current_page: int = 0) -> None:
             super().__init__(timeout=3600)
             self.current_page = current_page
 
-        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -214,8 +214,8 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
             new_page = await generate_page(self.current_page)
             await interaction.response.edit_message(view=self, embed=new_page)
 
-        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -234,8 +234,8 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
             new_page = await generate_page(self.current_page)
             await interaction.response.edit_message(view=self, embed=new_page)
 
-        @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)  # type: ignore[untyped-decorator]
-        async def search(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
+        async def search(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == commandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -247,7 +247,7 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
                 return
             await interaction.response.send_modal(SearchModal(commandInfo))
 
-    class SearchModal(discord.ui.Modal):  # type: ignore[misc,no-any-unimported]
+    class SearchModal(discord.ui.Modal):
         def __init__(self, commandInfo: CommandInfo) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
@@ -270,9 +270,9 @@ async def brawlers(commandInfo: CommandInfo, playerTag: str | None = None) -> No
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+        async def on_submit(self, interaction: discord.Interaction) -> None:
             try:
-                brawlerName = self.children[0].value
+                brawlerName = self.children[0].value  # type: ignore[attr-defined]
 
                 desiredPage = 0
                 bestSimilarity: float = -100.0

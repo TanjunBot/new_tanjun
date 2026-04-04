@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from localizer import tanjunLocalizer

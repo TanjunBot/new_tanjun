@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 from discord import ui
 
 import utility
@@ -11,8 +11,10 @@ DIVIDEEMOJI = "math_divide:1254373636224323644"
 BACKSPACEEMOJI = "math_backspace:1254371946695757854"
 
 
-class CalculatorButton(ui.Button):  # type: ignore[misc,no-any-unimported]
-    def __init__(  # type: ignore[no-any-unimported]
+from typing import Any
+
+class CalculatorButton(ui.Button[Any]):
+    def __init__(
         self,
         label: str,
         style: discord.ButtonStyle,
@@ -30,12 +32,14 @@ class CalculatorButton(ui.Button):  # type: ignore[misc,no-any-unimported]
             disabled=disabled,
         )
 
-    async def callback(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
-        view: CalculatorView = self.view
+    async def callback(self, interaction: discord.Interaction) -> None:
+        if self.view is None or self.custom_id is None:
+            return
+        view: CalculatorView = self.view  # type: ignore[assignment]
         await view.button_callback(interaction, self.custom_id)
 
 
-class CalculatorView(ui.View):  # type: ignore[misc,no-any-unimported]
+class CalculatorView(ui.View):
     def __init__(self, command_info: utility.CommandInfo, initial_equation: str = "") -> None:
         super().__init__(timeout=300)
         self.command_info = command_info
@@ -44,20 +48,21 @@ class CalculatorView(ui.View):  # type: ignore[misc,no-any-unimported]
         self.result = ""
         self.history: list[str] = []
         self.variables: dict[str, float] = {}
+        self.message: discord.Message | None = None
         self.current_page = 0
         self.create_buttons()
         self.nsp = utility.NumericStringParser()
 
-    def set_message(self, message: discord.Message) -> None:  # type: ignore[no-any-unimported]
+    def set_message(self, message: discord.Message) -> None:
         self.message = message
 
     async def on_timeout(self) -> None:
         for child in self.children:
-            child.disabled = True
+            child.disabled = True  # type: ignore[attr-defined]
         if self.message:
             await self.message.edit(view=self)
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user != self.command_info.user:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(self.command_info.locale, "commands.math.calculator.unauthorizedUser"),
@@ -243,7 +248,7 @@ class CalculatorView(ui.View):  # type: ignore[misc,no-any-unimported]
                 ("=", discord.ButtonStyle.success, "equals", 4, None),
             ]
 
-        for label, style, custom_id, row, emoji in buttons:  # type: ignore[possibly-undefined]
+        for label, style, custom_id, row, emoji in buttons:
             self.add_item(
                 CalculatorButton(
                     label=label,
@@ -255,7 +260,7 @@ class CalculatorView(ui.View):  # type: ignore[misc,no-any-unimported]
                 )
             )
 
-    async def button_callback(self, interaction: discord.Interaction, button_id: str) -> None:  # type: ignore[no-any-unimported]
+    async def button_callback(self, interaction: discord.Interaction, button_id: str) -> None:
         if button_id == "clear":
             self.display_equation = ""
             self.equation = ""
@@ -430,7 +435,7 @@ class CalculatorView(ui.View):  # type: ignore[misc,no-any-unimported]
 
         await self.update_message(interaction)
 
-    async def update_message(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+    async def update_message(self, interaction: discord.Interaction) -> None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(self.command_info.locale, "commands.math.calculator.title"),
         )

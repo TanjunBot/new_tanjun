@@ -1,10 +1,10 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def banner(commandInfo: CommandInfo, user: discord.User) -> None:  # type: ignore[no-any-unimported]
+async def banner(commandInfo: CommandInfo, user: discord.User) -> None:
     user = await commandInfo.client.fetch_user(user.id)
 
     if not user.banner:

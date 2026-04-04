@@ -1,12 +1,12 @@
 from typing import Any, cast
 
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def removerole(  # type: ignore[no-any-unimported]
+async def removerole(
     commandInfo: utility.CommandInfo,
     user: discord.Member | None = None,
     role: discord.Role | None = None,
@@ -46,13 +46,13 @@ async def removerole(  # type: ignore[no-any-unimported]
 
         return
 
-    class RoleManagementView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+    class RoleManagementView(discord.ui.View):
         def __init__(self, commandInfo: utility.CommandInfo, action: str = "remove") -> None:
             super().__init__(timeout=300)
-            self.commandInfo: utility.CommandInfo = CommandInfo  # type: ignore[name-defined]
+            self.commandInfo: utility.CommandInfo = CommandInfo
             self.action: str = action
-            self.selected_roles: list[discord.Role] = []  # type: ignore[no-any-unimported]
-            self.selected_users: list[discord.Member] = []  # type: ignore[no-any-unimported]
+            self.selected_roles: list[discord.Role] = []
+            self.selected_users: list[discord.Member] = []
             self.add_item(
                 discord.ui.RoleSelect(
                     placeholder=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.selectRoles"),
@@ -70,11 +70,11 @@ async def removerole(  # type: ignore[no-any-unimported]
                 )
             )
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.confirm"),
             style=discord.ButtonStyle.green,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not self.selected_roles or not self.selected_users:
                 await interaction.response.send_message(
                     content=tanjunLocalizer.localize(
@@ -107,11 +107,11 @@ async def removerole(  # type: ignore[no-any-unimported]
             )
             self.stop()
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removerole.cancel"),
             style=discord.ButtonStyle.red,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.edit_message(
                 tanjunLocalizer.localize(
                     str(self.commandInfo.locale),
@@ -121,7 +121,7 @@ async def removerole(  # type: ignore[no-any-unimported]
             )
             self.stop()
 
-        async def on_error(  # type: ignore[no-any-unimported]
+        async def on_error(
             self,
             interaction: discord.Interaction,
             error: Exception,
@@ -132,7 +132,7 @@ async def removerole(  # type: ignore[no-any-unimported]
                 ephemeral=True,
             )
 
-        async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
+        async def interaction_check(self, interaction: discord.Interaction) -> bool:
             data = cast(dict[str, object], interaction.data)
             if data.get("component_type") == 6:  # RoleSelect
                 if interaction.guild is None:

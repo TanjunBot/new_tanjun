@@ -1,7 +1,7 @@
 import re
 
-import aiohttp  # type: ignore[import-not-found]
-import discord  # type: ignore[import-not-found]
+import aiohttp
+import discord
 
 import utility
 from localizer import tanjunLocalizer

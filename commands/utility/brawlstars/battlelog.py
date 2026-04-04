@@ -1,7 +1,7 @@
 from typing import Any
 
-import aiohttp  # type: ignore[import-not-found]
-import discord  # type: ignore[import-not-found]
+import aiohttp
+import discord
 
 from api import get_brawlstars_linked_account
 from config import brawlstarsToken
@@ -81,7 +81,7 @@ async def battlelog(commandInfo: CommandInfo, playerTag: str | None = None) -> N
 
     playerName = ""
 
-    class BattleLogPaginator(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+    class BattleLogPaginator(discord.ui.View):
         def __init__(
             self,
             battle_log: dict[str, Any],
@@ -97,7 +97,7 @@ async def battlelog(commandInfo: CommandInfo, playerTag: str | None = None) -> N
             self.current_page = 0
             self.total_pages = len(battle_log["items"])
 
-        def generate_page(self, page_num: int) -> discord.Embed:  # type: ignore[no-any-unimported]
+        def generate_page(self, page_num: int) -> discord.Embed:
             item = self.battle_log["items"][page_num]
             description = ""
             battleTime = isoTimeToDate(item["battleTime"])
@@ -254,8 +254,8 @@ async def battlelog(commandInfo: CommandInfo, playerTag: str | None = None) -> N
                 description=description,
             )
 
-        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -271,8 +271,8 @@ async def battlelog(commandInfo: CommandInfo, playerTag: str | None = None) -> N
                 self.current_page -= 1
             await interaction.response.edit_message(view=self, embed=self.generate_page(self.current_page))
 
-        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             if not interaction.user.id == self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(

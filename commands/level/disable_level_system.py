@@ -1,6 +1,6 @@
 from typing import Any
 
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import (
     delete_level_system_data,
@@ -12,26 +12,26 @@ from utility import CommandInfo, tanjunEmbed
 
 
 async def disable_level_system(commandInfo: CommandInfo) -> None:
-    class ConfirmDisableView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+    class ConfirmDisableView(discord.ui.View):
         def __init__(self, commandInfo: CommandInfo) -> None:
             super().__init__(timeout=60)
             self.commandInfo = CommandInfo
             self.value = None
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.disablelevelsystem.confirm"),
             style=discord.ButtonStyle.danger,
         )
-        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
-            self.value = True  # type: ignore[assignment]
+        async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+            self.value = True
             self.stop()
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.disablelevelsystem.cancel"),
             style=discord.ButtonStyle.secondary,
         )
-        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
-            self.value = False  # type: ignore[assignment]
+        async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+            self.value = False
             self.stop()
 
     if (
@@ -84,7 +84,7 @@ async def disable_level_system(commandInfo: CommandInfo) -> None:
     if view.value is None:
         await message.delete()
         return
-    elif view.value:  # type: ignore[unreachable]
+    elif view.value:
         await delete_level_system_data(str(commandInfo.guild.id))
         await set_level_system_status(str(commandInfo.guild.id), False)
 

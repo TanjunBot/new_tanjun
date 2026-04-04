@@ -1,8 +1,8 @@
-import aiohttp  # type: ignore[import-not-found]
-from discord import Client  # type: ignore[import-not-found]
+import aiohttp
+from discord import Client
 
 
-async def ping_server(client: Client) -> None:  # type: ignore[no-any-unimported]
+async def ping_server(client: Client) -> None:
     if client == None or client.user == None:
         return
     url = "https://botstatus-api.tanjun.bot"

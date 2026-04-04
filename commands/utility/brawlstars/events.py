@@ -1,7 +1,7 @@
 from typing import Any, cast
 
-import aiohttp  # type: ignore[import-not-found]
-import discord  # type: ignore[import-not-found]
+import aiohttp
+import discord
 
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
@@ -41,7 +41,7 @@ async def events(commandInfo: CommandInfo) -> None:
         )
         return
 
-    async def generate_page(page_num: int) -> discord.Embed:  # type: ignore[no-any-unimported]
+    async def generate_page(page_num: int) -> discord.Embed:
         if not eventRotation:
             return tanjunEmbed(title="Error", description="No rotation found")
         event = eventRotation[page_num]
@@ -95,15 +95,15 @@ async def events(commandInfo: CommandInfo) -> None:
             description=description,
         )
 
-    class BrawlersPaginator(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+    class BrawlersPaginator(discord.ui.View):
         def __init__(self, total_pages: int, current_page: int = 0) -> None:
             super().__init__(timeout=3600)
             self.total_pages = total_pages
             self.current_page = current_page
 
-        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
-        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
-            if not interaction.user.id == CommandInfo.user.id:  # type: ignore[misc]
+        @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
+        async def previous(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+            if not interaction.user.id == CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -118,9 +118,9 @@ async def events(commandInfo: CommandInfo) -> None:
                 self.current_page -= 1
             await interaction.response.edit_message(view=self, embed=await generate_page(self.current_page))
 
-        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)  # type: ignore[untyped-decorator]
-        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
-            if not interaction.user.id == CommandInfo.user.id:  # type: ignore[misc]
+        @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
+        async def next(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
+            if not interaction.user.id == CommandInfo.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,

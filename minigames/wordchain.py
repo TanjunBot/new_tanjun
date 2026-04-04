@@ -1,18 +1,18 @@
 # Unused imports:
 # import random
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import check_if_opted_out, clear_wordchain, get_wordchain_last_user_id, get_wordchain_word, set_wordchain_word
 from localizer import tanjunLocalizer
 from utility import tanjunEmbed
 
 
-async def wordchain(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
+async def wordchain(message: discord.Message) -> None:
     if message.author.bot:
         return
 
     if message.guild == None:
-        embed: discord.Embed = tanjunEmbed(  # type: ignore[no-any-unimported]
+        embed: discord.Embed = tanjunEmbed(
             title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
             description=tanjunLocalizer.localize(
                 "en_US",

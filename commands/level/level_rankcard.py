@@ -2,8 +2,8 @@ import asyncio
 import io
 from concurrent.futures import ThreadPoolExecutor
 
-import aiohttp  # type: ignore[import-not-found]
-import discord  # type: ignore[import-not-found]
+import aiohttp
+import discord
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 from api import get_user_level_info, set_custom_background
@@ -13,7 +13,7 @@ from utility import CommandInfo, checkIfhasPlus, draw_text_with_outline, tanjunE
 executor = ThreadPoolExecutor()
 
 
-async def show_rankcard_command(commandInfo: CommandInfo, user: discord.Member) -> None:  # type: ignore[no-any-unimported]
+async def show_rankcard_command(commandInfo: CommandInfo, user: discord.Member) -> None:
     assert commandInfo.guild is not None
     user_info = await get_user_level_info(str(commandInfo.guild.id), str(user.id))
 
@@ -40,7 +40,7 @@ async def show_rankcard_command(commandInfo: CommandInfo, user: discord.Member) 
     await commandInfo.reply(embed=embed, file=file)
 
 
-async def set_background_command(commandInfo: CommandInfo, image: discord.Attachment) -> None:  # type: ignore[no-any-unimported]
+async def set_background_command(commandInfo: CommandInfo, image: discord.Attachment) -> None:
     if not checkIfhasPlus(commandInfo.user.id):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.error.no_plus.title"),
@@ -69,16 +69,16 @@ async def set_background_command(commandInfo: CommandInfo, image: discord.Attach
     uploaded_image = await upload_image_to_imgbb(await image.read(), image.content_type.split("/")[1])
 
     await set_custom_background(
-        str(commandInfo.guild.id),  # type: ignore[union-attr]
+        str(commandInfo.guild.id),
         str(commandInfo.user.id),
-        uploaded_image["data"]["url"],  # type: ignore[index]
+        uploaded_image["data"]["url"],
     )
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.title"),
         description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.description"),
     )
-    embed.set_image(url=uploaded_image["data"]["url"])  # type: ignore[index]
+    embed.set_image(url=uploaded_image["data"]["url"])
 
     await commandInfo.reply(embed=embed)
 
@@ -101,7 +101,7 @@ async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
     return frames, duration
 
 
-def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1) -> None:  # type: ignore[no-untyped-def]
+def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1) -> None:
     x1, y1, x2, y2 = xy
     draw.rectangle([x1 + radius, y1, x2 - radius, y2], fill=fill)
     draw.rectangle([x1, y1 + radius, x2, y2 - radius], fill=fill)
@@ -138,12 +138,12 @@ def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1) -
         draw.line([x2, y1 + radius, x2, y2 - radius], fill=outline, width=width)
 
 
-def process_image(  # type: ignore[no-any-unimported]
+def process_image(
     background_frames: list[Image.Image],
     avatar_frames: list[Image.Image],
     avatar_decoration_frames: list[Image.Image] | None,
     user: discord.Member,
-    user_info: dict[str, Any],  # type: ignore[name-defined]
+    user_info: dict[str, Any],
     commandInfo: CommandInfo,
 ) -> io.BytesIO:
     DECORATION_SIZE_MULTIPLIER = 1.2
@@ -266,11 +266,11 @@ def process_image(  # type: ignore[no-any-unimported]
         if avatar_decoration_frames:
             decoration = avatar_decoration_frames[frame_index]
             # Resize the decoration and ensure RGBA mode
-            decoration = decoration.resize((decoration_size, decoration_size)).convert("RGBA")  # type: ignore[possibly-undefined]
+            decoration = decoration.resize((decoration_size, decoration_size)).convert("RGBA")
             # Create a new transparent image for the decoration
             decoration_layer = Image.new("RGBA", frame.size, (0, 0, 0, 0))
             # Paste the decoration onto the transparent layer
-            decoration_layer.paste(decoration, (25 - offset, 50 - offset), decoration)  # type: ignore[possibly-undefined]
+            decoration_layer.paste(decoration, (25 - offset, 50 - offset), decoration)
             # Composite the decoration layer with the frame
             frame = Image.alpha_composite(frame, decoration_layer)
 
@@ -293,7 +293,7 @@ def process_image(  # type: ignore[no-any-unimported]
     return img_byte_arr
 
 
-async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], commandInfo: CommandInfo) -> io.BytesIO:  # type: ignore[name-defined,no-any-unimported]
+async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], commandInfo: CommandInfo) -> io.BytesIO:
     # Load background image or frames
     custom_bg = user_info.get("customBackground")
     if custom_bg:

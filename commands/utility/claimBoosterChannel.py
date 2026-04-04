@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import (
     claim_booster_channel,
@@ -98,7 +98,7 @@ async def claimBoosterChannel(commandInfo: CommandInfo, name: str) -> None:
         await commandInfo.reply(embed=embed)
         return
 
-    channel = CommandInfo.guild.get_channel(int(booster_channel))  # type: ignore[misc,union-attr]
+    channel = CommandInfo.guild.get_channel(int(booster_channel))
     if not channel or not isinstance(channel, discord.CategoryChannel):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -114,7 +114,7 @@ async def claimBoosterChannel(commandInfo: CommandInfo, name: str) -> None:
         return
 
     reason = tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.claimboosterchannel.success.reason")
-    overwrites: Mapping[discord.Role | discord.Member | discord.Object, discord.PermissionOverwrite] = {  # type: ignore[no-any-unimported]
+    overwrites: Mapping[discord.Role | discord.Member | discord.Object, discord.PermissionOverwrite] = {
         commandInfo.guild.default_role: discord.PermissionOverwrite(connect=False),
         commandInfo.user: discord.PermissionOverwrite(manage_channels=True, connect=True, speak=True),
     }
@@ -132,7 +132,7 @@ async def claimBoosterChannel(commandInfo: CommandInfo, name: str) -> None:
     await commandInfo.reply(embed=embed)
 
 
-async def remove_claimed_booster_channels_that_are_expired(client: discord.Client) -> None:  # type: ignore[no-any-unimported]
+async def remove_claimed_booster_channels_that_are_expired(client: discord.Client) -> None:
     claimed_booster_channels = await get_claimed_booster_channel()
     if claimed_booster_channels is None or isinstance(claimed_booster_channels, str):
         return

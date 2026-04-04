@@ -1,14 +1,14 @@
 import io
 from io import BytesIO
 
-import discord  # type: ignore[import-not-found]
+import discord
 from PIL import Image, ImageFilter
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def blur_image(  # type: ignore[no-any-unimported,no-untyped-def]
+async def blur_image(
     commandInfo: utility.CommandInfo,
     image: discord.Attachment,
     type: str = "gaussian",

@@ -1,11 +1,11 @@
-import aiohttp  # type: ignore[import-not-found]
-import discord  # type: ignore[import-not-found]
+import aiohttp
+import discord
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def create_emoji(  # type: ignore[no-any-unimported]
+async def create_emoji(
     commandInfo: utility.CommandInfo,
     name: str,
     image_url: str,

@@ -1,4 +1,4 @@
-from openai import AsyncOpenAI  # type: ignore[import-not-found]
+from openai import AsyncOpenAI
 
 import utility
 from api import getToken, getTokenOverview, includeToToken, useToken
@@ -74,9 +74,9 @@ async def ask_gpt(
             "commands.ai.ask.success.footer",
             cost=tokenCost,
             token=token - tokenCost if token - tokenCost > 0 else 0,
-            free=tokenOverview[0],  # type: ignore[index]
-            plus=tokenOverview[1],  # type: ignore[index]
-            paid=tokenOverview[2],  # type: ignore[index]
+            free=tokenOverview[0],
+            plus=tokenOverview[1],
+            paid=tokenOverview[2],
         )
     )
     await commandInfo.reply(embed=embed)

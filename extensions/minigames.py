@@ -1,8 +1,8 @@
 from typing import cast
 
-import discord  # type: ignore[import-not-found]
+import discord
 from discord import app_commands
-from discord.ext import commands  # type: ignore[import-not-found]
+from discord.ext import commands
 
 import utility
 from commands.minigames.counting.removecountingchannel import (
@@ -40,19 +40,19 @@ from commands.minigames.wordchain.setwordchainchannel import (
 )
 
 
-class CountingCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class CountingCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("minigames_setcountingch_name"),
         description=app_commands.locale_str("minigames_setcountingch_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_setcountingch_params_channel_description"),
     )
-    async def setcountingchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def setcountingchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -63,22 +63,22 @@ class CountingCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await setCountingChannelCommand(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("minigames_removecountingch_name"),
         description=app_commands.locale_str("minigames_removecountingch_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_removecountingch_params_channel_description"),
     )
-    async def removecountingchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def removecountingchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -89,19 +89,19 @@ class CountingCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await removeCountingChannelCommand(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("minigames_setcprogress_name"),
         description=app_commands.locale_str("minigames_setcprogress_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_setcprogress_params_channel_description"),
         progress=app_commands.locale_str("minigames_setcprogress_params_progress_description"),
     )
-    async def setcountingprogress(  # type: ignore[misc,no-any-unimported]
+    async def setcountingprogress(
         self,
         interaction: discord.Interaction,
         channel: discord.TextChannel = None,
@@ -110,7 +110,7 @@ class CountingCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -121,24 +121,24 @@ class CountingCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await setCountingProgressCommand(commandInfo, channel, progress)
 
 
-class CountingChallengeCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class CountingChallengeCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("minigames_setcchallengech_name"),
         description=app_commands.locale_str("minigames_setcchallengech_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_setcchallengech_params_channel_description"),
     )
-    async def setcountingchallengechannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def setcountingchallengechannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -149,24 +149,24 @@ class CountingChallengeCommands(discord.app_commands.Group):  # type: ignore[mis
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await setCountingChallengeChannelCommand(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("minigames_rcchallengech_name"),
         description=app_commands.locale_str("minigames_rcchallengech_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_rcchallengech_params_channel_description"),
     )
-    async def removecountingchallengechannel(  # type: ignore[misc,no-any-unimported]
+    async def removecountingchallengechannel(
         self, interaction: discord.Interaction, channel: discord.TextChannel = None
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -177,19 +177,19 @@ class CountingChallengeCommands(discord.app_commands.Group):  # type: ignore[mis
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await removeCountingChallengeChannelCommand(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("minigames_setcchallengep_name"),
         description=app_commands.locale_str("minigames_setcchallengep_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_setcchallengep_params_channel_description"),
         progress=app_commands.locale_str("minigames_setcchallengep_params_progress_description"),
     )
-    async def setcountingchallengeprogress(  # type: ignore[misc,no-any-unimported]
+    async def setcountingchallengeprogress(
         self,
         interaction: discord.Interaction,
         channel: discord.TextChannel = None,
@@ -198,7 +198,7 @@ class CountingChallengeCommands(discord.app_commands.Group):  # type: ignore[mis
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -209,24 +209,24 @@ class CountingChallengeCommands(discord.app_commands.Group):  # type: ignore[mis
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await setCountingChallengeProgressCommand(commandInfo, channel, progress)
 
 
-class CountingModesCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class CountingModesCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("minigames_setcmodesch_name"),
         description=app_commands.locale_str("minigames_setcmodesch_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_setcmodesch_params_channel_description"),
     )
-    async def setcountingmodeschannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def setcountingmodeschannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -237,22 +237,22 @@ class CountingModesCommands(discord.app_commands.Group):  # type: ignore[misc,no
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await setCountingModesChannelCommand(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("minigames_removecmodesch_name"),
         description=app_commands.locale_str("minigames_removecmodesch_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_removecmodesch_params_channel_description"),
     )
-    async def removecountingmodeschannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def removecountingmodeschannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -263,19 +263,19 @@ class CountingModesCommands(discord.app_commands.Group):  # type: ignore[misc,no
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await removeCountingModesChannelCommand(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("minigames_setcmodesprogress_name"),
         description=app_commands.locale_str("minigames_setcmodesprogress_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_setcmodesprogress_params_channel_description"),
         progress=app_commands.locale_str("minigames_setcmodesprogress_params_progress_description"),
     )
-    async def setcountingmodesprogress(  # type: ignore[misc,no-any-unimported]
+    async def setcountingmodesprogress(
         self,
         interaction: discord.Interaction,
         channel: discord.TextChannel = None,
@@ -284,7 +284,7 @@ class CountingModesCommands(discord.app_commands.Group):  # type: ignore[misc,no
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -295,24 +295,24 @@ class CountingModesCommands(discord.app_commands.Group):  # type: ignore[misc,no
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await setCountingModesProgressCommand(commandInfo, channel, progress)
 
 
-class WordChainCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class WordChainCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("minigames_setwordcainch_name"),
         description=app_commands.locale_str("minigames_setwordcainch_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_setwordcainch_params_channel_description"),
     )
-    async def setwordchainchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def setwordchainchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -323,22 +323,22 @@ class WordChainCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await setWordChainChannelCommand(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("minigames_removewordchch_name"),
         description=app_commands.locale_str("minigames_removewordchch_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("minigames_removewordchch_params_channel_description"),
     )
-    async def removewordchainchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def removewordchainchannel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -349,21 +349,21 @@ class WordChainCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         )
 
         if not channel:
-            channel = cast(discord.TextChannel, interaction.channel)  # type: ignore[no-any-unimported]
+            channel = cast(discord.TextChannel, interaction.channel)
 
         await removeWordChainChannelCommand(commandInfo, channel)
 
 
-class minigameCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
+class minigameCommands(discord.app_commands.Group):
     pass
 
 
-class minigameCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
-    def __init__(self, bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
+class minigameCog(commands.Cog):
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @commands.Cog.listener()  # type: ignore[untyped-decorator]
-    async def on_ready(self) -> None:  # type: ignore[misc]
+    @commands.Cog.listener()
+    async def on_ready(self) -> None:
         minigameCmds = minigameCommands(
             name=app_commands.locale_str("minigame_name"),
             description=app_commands.locale_str("minigame_description"),
@@ -392,5 +392,5 @@ class minigameCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
             self.bot.tree.add_command(minigameCmds)
 
 
-async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(minigameCog(bot))

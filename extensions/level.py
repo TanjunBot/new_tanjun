@@ -1,9 +1,9 @@
 # Unused imports:
 # from localizer import tanjunLocalizer
 
-import discord  # type: ignore[import-not-found]
+import discord
 from discord import app_commands
-from discord.ext import commands  # type: ignore[import-not-found]
+from discord.ext import commands
 
 import utility
 from commands.level.add_level_role import add_level_role_command
@@ -61,16 +61,16 @@ from commands.level.take_xp import take_xp_command
 from utility import LEVEL_SCALINGS  # , tanjunEmbed
 
 
-class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class BlacklistCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("level_blacklist_addc_name"),
         description=app_commands.locale_str("level_blacklist_addc_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("level_blacklist_addc_params_channel_description"),
         reason=app_commands.locale_str("level_blacklist_addc_params_reason_description"),
     )
-    async def add_channel(  # type: ignore[misc,no-any-unimported]
+    async def add_channel(
         self,
         interaction: discord.Interaction,
         channel: discord.TextChannel,
@@ -81,7 +81,7 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         await interaction.response.defer()
         CommandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -90,20 +90,20 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
             reply=interaction.followup.send,
             client=interaction.client,
         )
-        await add_channel_to_blacklist_command(commandInfo, channel, reason)  # type: ignore[name-defined]
+        await add_channel_to_blacklist_command(commandInfo, channel, reason)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_blacklist_removec_name"),
         description=app_commands.locale_str("level_blacklist_removec_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("level_blacklist_removec_params_channel_description"),
     )
-    async def remove_channel(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:  # type: ignore[misc,no-any-unimported]
+    async def remove_channel(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -114,21 +114,21 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         )
         await remove_channel_from_blacklist_command(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_blacklist_addr_name"),
         description=app_commands.locale_str("level_blacklist_addr_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         role=app_commands.locale_str("level_blacklist_addr_params_role_description"),
         reason=app_commands.locale_str("level_blacklist_addr_params_reason_description"),
     )
-    async def add_role(  # type: ignore[misc,no-any-unimported]
+    async def add_role(
         self, interaction: discord.Interaction, role: discord.Role, reason: app_commands.Range[str, 1, 100] | None = None
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -139,18 +139,18 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         )
         await add_role_to_blacklist_command(commandInfo, role, reason)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_blacklist_remover_name"),
         description=app_commands.locale_str("level_blacklist_remover_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         role=app_commands.locale_str("level_blacklist_remover_params_role_description"),
     )
-    async def remove_role(self, interaction: discord.Interaction, role: discord.Role) -> None:  # type: ignore[misc,no-any-unimported]
+    async def remove_role(self, interaction: discord.Interaction, role: discord.Role) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -161,21 +161,21 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         )
         await remove_role_from_blacklist_command(commandInfo, role)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_blacklist_addu_name"),
         description=app_commands.locale_str("level_blacklist_addu_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("level_blacklist_addu_params_user_description"),
         reason=app_commands.locale_str("level_blacklist_addu_params_reason_description"),
     )
-    async def add_user(  # type: ignore[misc,no-any-unimported]
+    async def add_user(
         self, interaction: discord.Interaction, user: discord.Member, reason: app_commands.Range[str, 1, 100] | None = None
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -186,18 +186,18 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         )
         await add_user_to_blacklist_command(commandInfo, user, reason)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_blacklist_removeu_name"),
         description=app_commands.locale_str("level_blacklist_removeu_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("level_blacklist_removeu_params_user_description"),
     )
-    async def remove_user(self, interaction: discord.Interaction, user: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
+    async def remove_user(self, interaction: discord.Interaction, user: discord.Member) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -208,15 +208,15 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         )
         await remove_user_from_blacklist_command(commandInfo, user)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_blacklist_show_name"),
         description=app_commands.locale_str("level_blacklist_show_description"),
     )
-    async def show(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
+    async def show(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -228,23 +228,23 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         await show_blacklist_command(commandInfo)
 
 
-class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class LevelBoostCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("level_boosts_addrole_name"),
         description=app_commands.locale_str("level_boosts_addrole_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         role=app_commands.locale_str("level_boosts_addrole_params_role_description"),
         boost=app_commands.locale_str("level_boosts_addrole_params_boost_description"),
         additive=app_commands.locale_str("level_boosts_addrole_params_additive_description"),
     )
-    async def add_role_boost(  # type: ignore[misc,no-any-unimported]
+    async def add_role_boost(
         self, interaction: discord.Interaction, role: discord.Role, boost: app_commands.Range[float, 0.1, 10.0], additive: bool
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -255,16 +255,16 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         )
         await add_role_boost_command(commandInfo, role, boost, additive)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_boosts_addchannel_name"),
         description=app_commands.locale_str("level_boosts_addchannel_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("level_boosts_addchannel_params_channel_description"),
         boost=app_commands.locale_str("level_boosts_addchannel_params_boost_description"),
         additive=app_commands.locale_str("level_boosts_addchannel_params_additive_description"),
     )
-    async def add_channel_boost(  # type: ignore[misc,no-any-unimported]
+    async def add_channel_boost(
         self,
         interaction: discord.Interaction,
         channel: discord.TextChannel,
@@ -274,7 +274,7 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -285,16 +285,16 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         )
         await add_channel_boost_command(commandInfo, channel, boost, additive)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_boosts_adduser_name"),
         description=app_commands.locale_str("level_boosts_adduser_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("level_boosts_adduser_params_user_description"),
         boost=app_commands.locale_str("level_boosts_adduser_params_boost_description"),
         additive=app_commands.locale_str("level_boosts_adduser_params_additive_description"),
     )
-    async def add_user_boost(  # type: ignore[misc,no-any-unimported]
+    async def add_user_boost(
         self,
         interaction: discord.Interaction,
         user: discord.Member,
@@ -304,7 +304,7 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -315,18 +315,18 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         )
         await add_user_boost_command(commandInfo, user, boost, additive)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_boosts_removerole_name"),
         description=app_commands.locale_str("level_boosts_removerole_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         role=app_commands.locale_str("level_boosts_removerole_params_role_description"),
     )
-    async def remove_role_boost(self, interaction: discord.Interaction, role: discord.Role) -> None:  # type: ignore[misc,no-any-unimported]
+    async def remove_role_boost(self, interaction: discord.Interaction, role: discord.Role) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -337,18 +337,18 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         )
         await remove_role_boost_command(commandInfo, role)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_boosts_removechannel_name"),
         description=app_commands.locale_str("level_boosts_removechannel_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("level_boosts_removechannel_params_channel_description"),
     )
-    async def remove_channel_boost(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:  # type: ignore[misc,no-any-unimported]
+    async def remove_channel_boost(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -359,18 +359,18 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         )
         await remove_channel_boost_command(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_boosts_removeuser_name"),
         description=app_commands.locale_str("level_boosts_removeuser_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("level_boosts_removeuser_params_user_description"),
     )
-    async def remove_user_boost(self, interaction: discord.Interaction, user: discord.Member) -> None:  # type: ignore[misc,no-any-unimported]
+    async def remove_user_boost(self, interaction: discord.Interaction, user: discord.Member) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -381,15 +381,15 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         )
         await remove_user_boost_command(commandInfo, user)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_boosts_show_name"),
         description=app_commands.locale_str("level_boosts_show_description"),
     )
-    async def show_boosts(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
+    async def show_boosts(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -400,21 +400,21 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         )
         await show_boosts_command(commandInfo)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_boosts_calculate_name"),
         description=app_commands.locale_str("level_boosts_calculate_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("level_boosts_calculate_params_user_description"),
         channel=app_commands.locale_str("level_boosts_calculate_params_channel_description"),
     )
-    async def calculate_user_channel_boost(  # type: ignore[misc,no-any-unimported]
+    async def calculate_user_channel_boost(
         self, interaction: discord.Interaction, user: discord.Member, channel: discord.TextChannel
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -426,16 +426,16 @@ class LevelBoostCommands(discord.app_commands.Group):  # type: ignore[misc,no-an
         await calculate_user_channel_boost_command(commandInfo, user, channel)
 
 
-class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class LevelConfigCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("level_disable_name"),
         description=app_commands.locale_str("level_disable_description"),
     )
-    async def disablelevelsystem(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
+    async def disablelevelsystem(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -447,15 +447,15 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await disableLevelSystemCommand(commandInfo)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_enable_name"),
         description=app_commands.locale_str("level_enable_description"),
     )
-    async def enablelevelsystem(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
+    async def enablelevelsystem(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -467,20 +467,20 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await enableLevelSystemCommand(commandInfo)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_changelevelupmessage_name"),
         description=app_commands.locale_str("level_changelevelupmessage_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         newmessage=app_commands.locale_str("level_changelevelupmessage_params_newmessage_description"),
     )
-    async def changelevelupmessage(  # type: ignore[misc,no-any-unimported]
+    async def changelevelupmessage(
         self, interaction: discord.Interaction, newmessage: app_commands.Range[str, 1, 255]
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -492,15 +492,15 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await changeLevelupMessageCommand(commandInfo, newmessage)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_disablelevelupmessage_name"),
         description=app_commands.locale_str("level_disablelevelupmessage_description"),
     )
-    async def disablelevelupmessage(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
+    async def disablelevelupmessage(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -512,15 +512,15 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await disableLevelupMessageCommand(commandInfo)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_enablelevelupmessage_name"),
         description=app_commands.locale_str("level_enablelevelupmessage_description"),
     )
-    async def enablelevelupmessage(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
+    async def enablelevelupmessage(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -532,18 +532,18 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await enableLevelupMessageCommand(commandInfo)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_setlevelupchannel_name"),
         description=app_commands.locale_str("level_setlevelupchannel_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         channel=app_commands.locale_str("level_setlevelupchannel_params_channel_description"),
     )
-    async def setlevelupchannel(self, interaction: discord.Interaction, channel: discord.TextChannel | None = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def setlevelupchannel(self, interaction: discord.Interaction, channel: discord.TextChannel | None = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -555,22 +555,22 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await setLevelupChannelCommand(commandInfo, channel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_changexpscaling_name"),
         description=app_commands.locale_str("level_changexpscaling_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         scaling=app_commands.locale_str("level_changexpscaling_params_scaling_description"),
         customformula=app_commands.locale_str("level_changexpscaling_params_customformula_description"),
     )
-    @app_commands.choices(  # type: ignore[untyped-decorator]
+    @app_commands.choices(
         scaling=[app_commands.Choice(name=key, value=key) for key in list(LEVEL_SCALINGS.keys()) + ["custom"]]
     )
-    async def changexpscaling(self, interaction: discord.Interaction, scaling: str, customformula: str | None = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def changexpscaling(self, interaction: discord.Interaction, scaling: str, customformula: str | None = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -582,19 +582,19 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await change_xp_scaling_command(commandInfo, scaling, customformula)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_showxpscalings_name"),
         description=app_commands.locale_str("level_showxpscalings_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         startlevel=app_commands.locale_str("level_showxpscalings_params_startlevel_description"),
         endlevel=app_commands.locale_str("level_showxpscalings_params_endlevel_description"),
     )
-    async def showxpscalings(self, interaction: discord.Interaction, startlevel: int = 1, endlevel: int = 5) -> None:  # type: ignore[misc,no-any-unimported]
+    async def showxpscalings(self, interaction: discord.Interaction, startlevel: int = 1, endlevel: int = 5) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -606,19 +606,19 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await show_xp_scalings(commandInfo, startlevel, endlevel)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_addlevelrole_name"),
         description=app_commands.locale_str("level_addlevelrole_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         role=app_commands.locale_str("level_addlevelrole_params_role_description"),
         level=app_commands.locale_str("level_addlevelrole_params_level_description"),
     )
-    async def addlevelrole(self, interaction: discord.Interaction, role: discord.Role, level: int) -> None:  # type: ignore[misc,no-any-unimported]
+    async def addlevelrole(self, interaction: discord.Interaction, role: discord.Role, level: int) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -630,18 +630,18 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await add_level_role_command(commandInfo, role, level)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_removelevelrole_name"),
         description=app_commands.locale_str("level_removelevelrole_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         role=app_commands.locale_str("level_removelevelrole_params_role_description"),
     )
-    async def removelevelrole(self, interaction: discord.Interaction, role: discord.Role) -> None:  # type: ignore[misc,no-any-unimported]
+    async def removelevelrole(self, interaction: discord.Interaction, role: discord.Role) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -653,15 +653,15 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await remove_level_role_command(commandInfo, role)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_showlevelroles_name"),
         description=app_commands.locale_str("level_showlevelroles_description"),
     )
-    async def showlevelroles(self, interaction: discord.Interaction) -> None:  # type: ignore[misc,no-any-unimported]
+    async def showlevelroles(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -673,19 +673,19 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
 
         await show_level_roles_command(commandInfo)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_givexp_name"),
         description=app_commands.locale_str("level_givexp_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("level_givexp_params_user_description"),
         amount=app_commands.locale_str("level_givexp_params_amount_description"),
     )
-    async def give_xp(self, interaction: discord.Interaction, user: discord.Member, amount: int) -> None:  # type: ignore[misc,no-any-unimported]
+    async def give_xp(self, interaction: discord.Interaction, user: discord.Member, amount: int) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -696,19 +696,19 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
         )
         await give_xp_command(commandInfo, user, amount)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_takexp_name"),
         description=app_commands.locale_str("level_takexp_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("level_takexp_params_user_description"),
         amount=app_commands.locale_str("level_takexp_params_amount_description"),
     )
-    async def take_xp(self, interaction: discord.Interaction, user: discord.Member, amount: int) -> None:  # type: ignore[misc,no-any-unimported]
+    async def take_xp(self, interaction: discord.Interaction, user: discord.Member, amount: int) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -719,18 +719,18 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
         )
         await take_xp_command(commandInfo, user, amount)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_settextcooldown_name"),
         description=app_commands.locale_str("level_settextcooldown_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         cooldown=app_commands.locale_str("level_settextcooldown_params_cooldown_description"),
     )
-    async def settextcooldown(self, interaction: discord.Interaction, cooldown: int) -> None:  # type: ignore[misc,no-any-unimported]
+    async def settextcooldown(self, interaction: discord.Interaction, cooldown: int) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -741,18 +741,18 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
         )
         await set_text_cooldown_command(commandInfo, cooldown)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_setvoicecooldown_name"),
         description=app_commands.locale_str("level_setvoicecooldown_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         cooldown=app_commands.locale_str("level_setvoicecooldown_params_cooldown_description"),
     )
-    async def setvoicecooldown(self, interaction: discord.Interaction, cooldown: int) -> None:  # type: ignore[misc,no-any-unimported]
+    async def setvoicecooldown(self, interaction: discord.Interaction, cooldown: int) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -764,19 +764,19 @@ class LevelConfigCommands(discord.app_commands.Group):  # type: ignore[misc,no-a
         await set_voice_cooldown_command(commandInfo, cooldown)
 
 
-class levelCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class levelCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("level_rank_name"),
         description=app_commands.locale_str("level_rank_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("level_rank_params_user_description"),
     )
-    async def rankcard(self, interaction: discord.Interaction, user: discord.Member | None = None) -> None:  # type: ignore[misc,no-any-unimported]
+    async def rankcard(self, interaction: discord.Interaction, user: discord.Member | None = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -785,20 +785,20 @@ class levelCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-uni
             reply=interaction.followup.send,
             client=interaction.client,
         )
-        await show_rankcard_command(commandInfo, user or cast(discord.Member, interaction.user))  # type: ignore[name-defined]
+        await show_rankcard_command(commandInfo, user or cast(discord.Member, interaction.user))
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_setbackground_name"),
         description=app_commands.locale_str("level_setbackground_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         image=app_commands.locale_str("level_setbackground_params_image_description"),
     )
-    async def set_background(self, interaction: discord.Interaction, image: discord.Attachment) -> None:  # type: ignore[misc,no-any-unimported]
+    async def set_background(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -809,18 +809,18 @@ class levelCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-uni
         )
         await set_background_command(commandInfo, image)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("level_leaderboard_name"),
         description=app_commands.locale_str("level_leaderboard_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         page=app_commands.locale_str("level_leaderboard_params_page_description"),
     )
-    async def leaderboard(self, interaction: discord.Interaction, page: int = 1) -> None:  # type: ignore[misc,no-any-unimported]
+    async def leaderboard(self, interaction: discord.Interaction, page: int = 1) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -832,12 +832,12 @@ class levelCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-uni
         await leaderboard(commandInfo, page)
 
 
-class levelCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
-    def __init__(self, bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
+class levelCog(commands.Cog):
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @commands.Cog.listener()  # type: ignore[untyped-decorator]
-    async def on_ready(self) -> None:  # type: ignore[misc]
+    @commands.Cog.listener()
+    async def on_ready(self) -> None:
         levelCmds = levelCommands(
             name=app_commands.locale_str("levelcommands_name"),
             description=app_commands.locale_str("levelcommands_description"),
@@ -861,5 +861,5 @@ class levelCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
         self.bot.tree.add_command(levelCmds)
 
 
-async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(levelCog(bot))

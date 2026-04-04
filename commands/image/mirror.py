@@ -1,14 +1,14 @@
 import io
 from io import BytesIO
 
-import discord  # type: ignore[import-not-found]
+import discord
 from PIL import Image
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def mirror(commandInfo: utility.CommandInfo, image: discord.Attachment, axis: str):  # type: ignore[no-any-unimported,no-untyped-def]
+async def mirror(commandInfo: utility.CommandInfo, image: discord.Attachment, axis: str):
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
@@ -29,9 +29,9 @@ async def mirror(commandInfo: utility.CommandInfo, image: discord.Attachment, ax
     image = await image.read()
     image = Image.open(io.BytesIO(image))
     if axis == "x":
-        image = image.transpose(Image.FLIP_LEFT_RIGHT)  # type: ignore[attr-defined]
+        image = image.transpose(Image.FLIP_LEFT_RIGHT)
     elif axis == "y":
-        image = image.transpose(Image.FLIP_TOP_BOTTOM)  # type: ignore[attr-defined]
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)
     else:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.mirror.invalidaxis.title"),

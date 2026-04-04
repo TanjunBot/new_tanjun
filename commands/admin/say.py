@@ -1,10 +1,10 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def say(commandInfo: utility.CommandInfo, channel: discord.TextChannel, *, message: str) -> None:  # type: ignore[no-any-unimported]
+async def say(commandInfo: utility.CommandInfo, channel: discord.TextChannel, *, message: str) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

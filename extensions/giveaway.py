@@ -1,8 +1,8 @@
 from typing import cast
 
-import discord  # type: ignore[import-not-found]
+import discord
 from discord import app_commands
-from discord.ext import commands  # type: ignore[import-not-found]
+from discord.ext import commands
 
 import utility
 from commands.giveaway.add_blacklist_role import add_blacklist_role
@@ -16,22 +16,22 @@ from commands.giveaway.reroll_giveaway import reroll_giveaway
 from commands.giveaway.start import start_giveaway
 
 
-class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class BlacklistCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("giveaway_bl_add_role_name"),
         description=app_commands.locale_str("giveaway_bl_add_role_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         role=app_commands.locale_str("giveaway_bl_add_role_role_description"),
     )
-    async def add_role(  # type: ignore[misc,no-any-unimported]
+    async def add_role(
         self,
         ctx: discord.Interaction,
         role: discord.Role,
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
-            channel=cast(discord.abc.GuildChannel, ctx.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -47,21 +47,21 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
             role=role,
         )
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("giveaway_bl_remove_role_name"),
         description=app_commands.locale_str("giveaway_bl_remove_role_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         role=app_commands.locale_str("giveaway_bl_remove_role_role_description"),
     )
-    async def remove_role(  # type: ignore[misc,no-any-unimported]
+    async def remove_role(
         self,
         ctx: discord.Interaction,
         role: discord.Role,
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
-            channel=cast(discord.abc.GuildChannel, ctx.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -77,21 +77,21 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
             role=role,
         )
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("giveaway_bl_add_user_name"),
         description=app_commands.locale_str("giveaway_bl_add_user_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("giveaway_bl_add_user_user_description"),
     )
-    async def add_user(  # type: ignore[misc,no-any-unimported]
+    async def add_user(
         self,
         ctx: discord.Interaction,
         user: discord.User,
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
-            channel=cast(discord.abc.GuildChannel, ctx.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -107,21 +107,21 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
             user=user,
         )
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("giveaway_bl_remove_user_name"),
         description=app_commands.locale_str("giveaway_bl_remove_user_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         user=app_commands.locale_str("giveaway_bl_remove_user_user_description"),
     )
-    async def remove_user(  # type: ignore[misc,no-any-unimported]
+    async def remove_user(
         self,
         ctx: discord.Interaction,
         user: discord.User,
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
-            channel=cast(discord.abc.GuildChannel, ctx.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -137,17 +137,17 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
             user=user,
         )
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("giveaway_bl_list_name"),
         description=app_commands.locale_str("giveaway_bl_list_description"),
     )
-    async def list(  # type: ignore[misc,no-any-unimported]
+    async def list(
         self,
         ctx: discord.Interaction,
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
-            channel=cast(discord.abc.GuildChannel, ctx.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -163,16 +163,16 @@ class BlacklistCommands(discord.app_commands.Group):  # type: ignore[misc,no-any
         )
 
 
-class GiveawayCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class GiveawayCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("giveaway_start_name"),
         description=app_commands.locale_str("giveaway_start_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         title=app_commands.locale_str("giveaway_start_params_title_description"),
         channel=app_commands.locale_str("giveaway_start_params_channel_description"),
     )
-    async def start(  # type: ignore[misc,no-any-unimported]
+    async def start(
         self,
         ctx: discord.Interaction,
         title: app_commands.Range[str, 0, 128],
@@ -180,7 +180,7 @@ class GiveawayCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
-            channel=cast(discord.abc.GuildChannel, ctx.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -194,27 +194,27 @@ class GiveawayCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-
             channel = ctx.channel
 
         await ctx.response.defer()
-        await start_giveaway(  # type: ignore[no-untyped-call]
+        await start_giveaway(
             commandInfo=commandInfo,
             title=title,
             target_channel=channel,
         )
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("giveaway_end_name"),
         description=app_commands.locale_str("giveaway_end_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         giveawayid=app_commands.locale_str("giveaway_end_params_giveawayid_description"),
     )
-    async def end(  # type: ignore[misc,no-any-unimported]
+    async def end(
         self,
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
-            channel=cast(discord.abc.GuildChannel, ctx.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -230,21 +230,21 @@ class GiveawayCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-
             giveawayId=giveawayid,
         )
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("giveaway_reroll_name"),
         description=app_commands.locale_str("giveaway_reroll_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         giveawayid=app_commands.locale_str("giveaway_reroll_params_giveawayid_description"),
     )
-    async def reroll(  # type: ignore[misc,no-any-unimported]
+    async def reroll(
         self,
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
-            channel=cast(discord.abc.GuildChannel, ctx.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -260,21 +260,21 @@ class GiveawayCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-
             giveawayId=giveawayid,
         )
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("giveaway_edit_name"),
         description=app_commands.locale_str("giveaway_edit_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         giveawayid=app_commands.locale_str("giveaway_edit_params_giveawayid_description"),
     )
-    async def edit(  # type: ignore[misc,no-any-unimported]
+    async def edit(
         self,
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
     ) -> None:
         commandInfo = utility.CommandInfo(
             user=ctx.user,
-            channel=cast(discord.abc.GuildChannel, ctx.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
             command=ctx.command,
             locale=ctx.locale,
@@ -285,18 +285,18 @@ class GiveawayCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-
         )
 
         await ctx.response.defer()
-        await edit_giveaway(  # type: ignore[no-untyped-call]
+        await edit_giveaway(
             commandInfo=commandInfo,
             giveawayId=giveawayid,
         )
 
 
-class GiveawayCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
-    def __init__(self, bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
+class GiveawayCog(commands.Cog):
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @commands.Cog.listener()  # type: ignore[untyped-decorator]
-    async def on_ready(self) -> None:  # type: ignore[misc]
+    @commands.Cog.listener()
+    async def on_ready(self) -> None:
         giveaway_commands = GiveawayCommands(
             name=app_commands.locale_str("giveaway_name"), description=app_commands.locale_str("giveaway_description")
         )
@@ -309,5 +309,5 @@ class GiveawayCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
             self.bot.tree.add_command(giveaway_commands)
 
 
-async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(GiveawayCog(bot))

@@ -1,36 +1,36 @@
 from typing import Any
 
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import check_if_opted_out, get_ticket_messages_by_id, open_ticket
 from localizer import tanjunLocalizer
 
 
-async def openTicket(interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+async def openTicket(interaction: discord.Interaction) -> None:
     data: Any = interaction.data
     if data["custom_id"].split(";")[0] != "ticket_create" or data["custom_id"].split(";")[-1] == "optedOutConfirm":
         return
 
     await interaction.response.defer(ephemeral=True)
 
-    class optedOutView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+    class optedOutView(discord.ui.View):
         def __init__(self) -> None:
             super().__init__()
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.confirm"),
             custom_id=interaction.data["custom_id"] + ";optedOutConfirm",
         )
-        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await open_ticket_2(interaction)
             return
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.decline"),
             custom_id="optedOutDecline",
         )
-        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
                     interaction.locale,
@@ -60,7 +60,7 @@ async def openTicket(interaction: discord.Interaction) -> None:  # type: ignore[
         await open_ticket_2(interaction)
 
 
-async def open_ticket_2(interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+async def open_ticket_2(interaction: discord.Interaction) -> None:
     data: Any = interaction.data
     ticket_id = data["custom_id"].split(";")[1]
     print("ticket_id", ticket_id)

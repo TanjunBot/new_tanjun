@@ -1,8 +1,8 @@
 from collections.abc import Mapping
 from typing import Any
 
-import aiohttp  # type: ignore[import-not-found]
-import discord  # type: ignore[import-not-found]
+import aiohttp
+import discord
 
 from api import get_twitch_online_notification_by_twitch_uuid
 from config import twitchId, twitchSecret
@@ -15,7 +15,7 @@ class TwitchAPI:
         self.client_id = twitchId
         self.client_secret = twitchSecret
         self.access_token = None
-        self.session: aiohttp.ClientSession | None = None  # type: ignore[no-any-unimported]
+        self.session: aiohttp.ClientSession | None = None
         self.headers: Mapping[str, str] | None = None
         self.base_url = "https://api.twitch.tv/helix"
         self.stream_status: dict[str, bool] = {}  # Keep track of stream status
@@ -102,7 +102,7 @@ def getTwitchApi() -> TwitchAPI | None:
     return twitch_api
 
 
-async def notify_twitch_online(client: discord.Client, uuid: str, data: dict[str, Any]) -> None:  # type: ignore[no-any-unimported]
+async def notify_twitch_online(client: discord.Client, uuid: str, data: dict[str, Any]) -> None:
     datas = await get_twitch_online_notification_by_twitch_uuid(uuid)
     if datas is None:
         return

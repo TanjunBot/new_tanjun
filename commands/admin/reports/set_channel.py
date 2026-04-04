@@ -1,11 +1,11 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import get_report_channel, set_report_channel
 from localizer import tanjunLocalizer
 
 
-async def set_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
+async def set_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)

@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import (
     accept_report,
@@ -12,7 +12,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) -> None:  # type: ignore[no-any-unimported]
+async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) -> None:
     if commandInfo.guild is None:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "errors.guildOnly.title"),
@@ -143,7 +143,7 @@ async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) ->
     )
 
 
-async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> None:  # type: ignore[no-any-unimported]
+async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> None:
     report_action = custom_id.split(";")[0]
     reporter_id = custom_id.split(";")[2]
     report_id = custom_id.split(";")[1]

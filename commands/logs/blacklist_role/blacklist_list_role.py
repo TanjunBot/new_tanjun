@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import (
@@ -35,32 +35,32 @@ async def blacklist_list_role(commandInfo: utility.CommandInfo) -> None:
     assert commandInfo.guild is not None
     blacklisted_roles = await get_log_blacklist_roles_api(commandInfo.guild.id)
 
-    class BlacklistView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
-        def __init__(self, roles: list, locale: str, guild: discord.Guild) -> None:  # type: ignore[no-any-unimported,type-arg]
+    class BlacklistView(discord.ui.View):
+        def __init__(self, roles: list, locale: str, guild: discord.Guild) -> None:
             super().__init__()
             self.roles = roles
             self.locale = locale
             self.guild = guild
             self.selectedIndex = 0
 
-        @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)  # type: ignore[untyped-decorator]
-        async def remove_role(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
+        async def remove_role(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             role_id = self.roles[self.selectedIndex][0]
             await remove_log_blacklist_role_api(self.guild.id, role_id)
-            self.roles = tuple(x for x in self.roles if x[0] != role_id)  # type: ignore[assignment]
+            self.roles = tuple(x for x in self.roles if x[0] != role_id)
             await self.update_view(interaction)
 
-        @discord.ui.button(label="⬆️", custom_id="up")  # type: ignore[untyped-decorator]
-        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        @discord.ui.button(label="⬆️", custom_id="up")
+        async def up(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.selectedIndex = (self.selectedIndex - 1) % len(self.roles)
             await self.update_view(interaction)
 
-        @discord.ui.button(label="⬇️", custom_id="down")  # type: ignore[untyped-decorator]
-        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,name-defined,no-any-unimported]
+        @discord.ui.button(label="⬇️", custom_id="down")
+        async def down(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.selectedIndex = (self.selectedIndex + 1) % len(self.roles)
             await self.update_view(interaction)
 
-        async def interaction_check(self, interaction: discord.Interaction) -> bool:  # type: ignore[no-any-unimported]
+        async def interaction_check(self, interaction: discord.Interaction) -> bool:
             from typing import Any, cast
 
             data = cast(Any, interaction.data)
@@ -71,7 +71,7 @@ async def blacklist_list_role(commandInfo: utility.CommandInfo) -> None:
                 await self.update_view(interaction)
             return True
 
-        async def update_view(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+        async def update_view(self, interaction: discord.Interaction) -> None:
             if not self.roles or len(self.roles) == 0:
                 description = tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListRole.noBlacklistedRoles")
             else:

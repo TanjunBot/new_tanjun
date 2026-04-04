@@ -1,11 +1,11 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import set_wordchain_word
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
-async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
+async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
     if commandInfo.guild is None:
         return
     if (

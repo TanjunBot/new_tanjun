@@ -3,7 +3,7 @@ from api import deleteCustomSituation, getCustomSituationFromUser, unlockCustomS
 from localizer import tanjunLocalizer
 
 
-async def approve_custom_situation(interaction) -> None:  # type: ignore[no-untyped-def]
+async def approve_custom_situation(interaction) -> None:
     situationId = interaction.data["custom_id"].split(";")[1]
     situation = await getCustomSituationFromUser(situationId)
     if not situation:
@@ -33,7 +33,7 @@ async def approve_custom_situation(interaction) -> None:  # type: ignore[no-unty
     await interaction.channel.send("Situation wurde freigeschaltet!", delete_after=25)
 
 
-async def deny_custom_situation(interaction) -> None:  # type: ignore[no-untyped-def]
+async def deny_custom_situation(interaction) -> None:
     situationId = interaction.data["custom_id"].split(";")[1]
     situation = await getCustomSituationFromUser(situationId)
     if not situation:

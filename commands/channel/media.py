@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import (
@@ -10,7 +10,7 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def addMediaChannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
+async def addMediaChannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -30,8 +30,8 @@ async def addMediaChannel(commandInfo: utility.CommandInfo, channel: discord.Tex
         return
 
     if (
-        not channel.permissions_for(commandInfo.guild.me).manage_messages  # type: ignore[union-attr]
-        or not channel.permissions_for(commandInfo.guild.me).read_message_history  # type: ignore[union-attr]
+        not channel.permissions_for(commandInfo.guild.me).manage_messages
+        or not channel.permissions_for(commandInfo.guild.me).read_message_history
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -46,7 +46,7 @@ async def addMediaChannel(commandInfo: utility.CommandInfo, channel: discord.Tex
         await commandInfo.reply(embed=embed)
         return
 
-    if await get_media_channel(commandInfo.guild.id):  # type: ignore[union-attr]
+    if await get_media_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.media.alreadySet.title"),
             description=tanjunLocalizer.localize(
@@ -67,7 +67,7 @@ async def addMediaChannel(commandInfo: utility.CommandInfo, channel: discord.Tex
         )
     )
 
-    await add_media_channel(commandInfo.guild.id, channel.id)  # type: ignore[union-attr]
+    await add_media_channel(commandInfo.guild.id, channel.id)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.media.success.title"),
         description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.media.success.description"),
@@ -75,7 +75,7 @@ async def addMediaChannel(commandInfo: utility.CommandInfo, channel: discord.Tex
     await commandInfo.reply(embed=embed)
 
 
-async def removeMediaChannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
+async def removeMediaChannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -102,7 +102,7 @@ async def removeMediaChannel(commandInfo: utility.CommandInfo, channel: discord.
         await commandInfo.reply(embed=embed)
         return
 
-    await remove_media_channel(commandInfo.guild.id, channel.id)  # type: ignore[union-attr]
+    await remove_media_channel(commandInfo.guild.id, channel.id)
 
     await channel.send(
         embed=utility.tanjunEmbed(
@@ -126,7 +126,7 @@ async def removeMediaChannel(commandInfo: utility.CommandInfo, channel: discord.
     await commandInfo.reply(embed=embed)
 
 
-async def mediaChannelMessage(message: discord.Message) -> None:  # type: ignore[no-any-unimported]
+async def mediaChannelMessage(message: discord.Message) -> None:
     if message.author.bot:
         return
 

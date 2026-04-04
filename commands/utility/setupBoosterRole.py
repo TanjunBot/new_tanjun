@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import add_booster_role, get_booster_role
@@ -6,7 +6,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def setupBoosterRole(commandInfo: CommandInfo, role: discord.Role) -> None:  # type: ignore[no-any-unimported]
+async def setupBoosterRole(commandInfo: CommandInfo, role: discord.Role) -> None:
     if isinstance(commandInfo.user, discord.User) or commandInfo.guild is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

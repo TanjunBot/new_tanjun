@@ -1,17 +1,17 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import check_if_reporter_is_blocked, unblock_reporter
 from localizer import tanjunLocalizer
 
 
-async def unblock_reporter_cmd(commandInfo: utility.CommandInfo, user: discord.Member) -> None:  # type: ignore[no-any-unimported]
+async def unblock_reporter_cmd(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
         and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild
     ):
-        return await commandInfo.reply(  # type: ignore[no-any-return]
+        return await commandInfo.reply(
             embed=utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -27,7 +27,7 @@ async def unblock_reporter_cmd(commandInfo: utility.CommandInfo, user: discord.M
     assert commandInfo.guild is not None
     blocked_status = await check_if_reporter_is_blocked(commandInfo.guild.id, user.id)
     if blocked_status is None or len(blocked_status) == 0:
-        return await commandInfo.reply(  # type: ignore[no-any-return]
+        return await commandInfo.reply(
             embed=utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,

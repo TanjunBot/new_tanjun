@@ -1,11 +1,11 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import get_join_to_create_channel, remove_join_to_create_channel
 from localizer import tanjunLocalizer
 
 
-async def removejointocreatechannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
+async def removejointocreatechannel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
         isinstance(commandInfo.user, discord.Member)
         and isinstance(commandInfo.channel, discord.abc.GuildChannel)
@@ -34,7 +34,7 @@ async def removejointocreatechannel(commandInfo: utility.CommandInfo, channel: d
         await commandInfo.reply(embed=embed)
         return
 
-    await remove_join_to_create_channel(commandInfo.guild.id, channel.id)  # type: ignore[call-arg,union-attr]
+    await remove_join_to_create_channel(commandInfo.guild.id, channel.id)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.removejointocreatechannel.success.title"),
         description=tanjunLocalizer.localize(

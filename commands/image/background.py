@@ -1,15 +1,15 @@
 import io
 from io import BytesIO
 
-import discord  # type: ignore[import-not-found]
+import discord
 from PIL import Image
-from rembg import remove as removeBackground  # type: ignore[import-not-found]
+from rembg import remove as removeBackground
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def background(commandInfo: utility.CommandInfo, image: discord.Attachment):  # type: ignore[no-any-unimported,no-untyped-def]
+async def background(commandInfo: utility.CommandInfo, image: discord.Attachment):
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(

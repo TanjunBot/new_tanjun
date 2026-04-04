@@ -1,13 +1,13 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import get_join_to_create_channel
 from localizer import tanjunLocalizer
 
-joinToCreateChannels = []  # type: ignore[var-annotated]
+joinToCreateChannels = []
 
 
-async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> None:  # type: ignore[no-any-unimported]
+async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> None:
     print("memberJoin")
     if not voiceState.channel:
         return
@@ -46,7 +46,7 @@ async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> 
     )
 
 
-async def memberLeave(beforeVoice: discord.VoiceState) -> None:  # type: ignore[no-any-unimported]
+async def memberLeave(beforeVoice: discord.VoiceState) -> None:
     if not beforeVoice.channel:
         return
 

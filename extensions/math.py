@@ -1,8 +1,8 @@
 from typing import cast
 
-import discord  # type: ignore[import-not-found]
+import discord
 from discord import app_commands
-from discord.ext import commands  # type: ignore[import-not-found]
+from discord.ext import commands
 
 import utility
 from commands.math.calc import calc as calcCommand
@@ -13,7 +13,7 @@ from commands.math.plot_function import plot_function_command
 from commands.math.randomnumber import random_number_command
 
 
-async def num2wordLocaleAutocomplete(  # type: ignore[no-any-unimported]
+async def num2wordLocaleAutocomplete(
     interaction: discord.Interaction,
     current: str,
 ) -> list[app_commands.Choice[str]]:
@@ -82,19 +82,19 @@ async def num2wordLocaleAutocomplete(  # type: ignore[no-any-unimported]
     ]
 
 
-class mathCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unimported]
-    @app_commands.command(  # type: ignore[untyped-decorator]
+class mathCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("math_calc_name"),
         description=app_commands.locale_str("math_calc_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         expression=app_commands.locale_str("math_calc_params_expression_description"),
     )
-    async def calc(self, interaction: discord.Interaction, expression: app_commands.Range[str, 1, 128]) -> None:  # type: ignore[misc,no-any-unimported]
+    async def calc(self, interaction: discord.Interaction, expression: app_commands.Range[str, 1, 128]) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -106,18 +106,18 @@ class mathCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unim
 
         await calcCommand(commandInfo=commandInfo, expression=expression)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("math_calculator_name"),
         description=app_commands.locale_str("math_calculator_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         equation=app_commands.locale_str("math_calculator_params_equation_description"),
     )
-    async def calculator(self, interaction: discord.Interaction, equation: app_commands.Range[str, 1, 128] = "") -> None:  # type: ignore[misc,no-any-unimported]
+    async def calculator(self, interaction: discord.Interaction, equation: app_commands.Range[str, 1, 128] = "") -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -129,20 +129,20 @@ class mathCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unim
 
         await calculator_command(commandInfo, equation)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("math_num2word_name"),
         description=app_commands.locale_str("math_num2word_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         number=app_commands.locale_str("math_num2word_params_number_description"),
         locale=app_commands.locale_str("math_num2word_params_locale_description"),
     )
-    @app_commands.autocomplete(locale=num2wordLocaleAutocomplete)  # type: ignore[untyped-decorator]
-    async def num2word(self, interaction: discord.Interaction, number: int, locale: str | None = None) -> None:  # type: ignore[misc,no-any-unimported]
+    @app_commands.autocomplete(locale=num2wordLocaleAutocomplete)
+    async def num2word(self, interaction: discord.Interaction, number: int, locale: str | None = None) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -157,22 +157,22 @@ class mathCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unim
 
         await num2word_command(commandInfo, number, locale)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("math_randomnumber_name"),
         description=app_commands.locale_str("math_randomnumber_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         min=app_commands.locale_str("math_randomnumber_params_min_description"),
         max=app_commands.locale_str("math_randomnumber_params_max_description"),
         amount=app_commands.locale_str("math_randomnumber_params_amount_description"),
     )
-    async def random_number(  # type: ignore[misc,no-any-unimported]
+    async def random_number(
         self, interaction: discord.Interaction, min: int, max: int, amount: app_commands.Range[int, 1, 10] = 1
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -184,22 +184,22 @@ class mathCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unim
 
         await random_number_command(commandInfo, min, max, amount)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("math_plotfunction_name"),
         description=app_commands.locale_str("math_plotfunction_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         func=app_commands.locale_str("math_plotfunction_params_func_description"),
         xmin=app_commands.locale_str("math_plotfunction_params_xmin_description"),
         xmax=app_commands.locale_str("math_plotfunction_params_xmax_description"),
     )
-    async def plot_function(  # type: ignore[misc,no-any-unimported]
+    async def plot_function(
         self, interaction: discord.Interaction, func: str, xmin: float | None = None, xmax: float | None = None
     ) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -211,18 +211,18 @@ class mathCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unim
 
         await plot_function_command(commandInfo, func, xmin, xmax)
 
-    @app_commands.command(  # type: ignore[untyped-decorator]
+    @app_commands.command(
         name=app_commands.locale_str("math_faculty_name"),
         description=app_commands.locale_str("math_faculty_description"),
     )
-    @app_commands.describe(  # type: ignore[untyped-decorator]
+    @app_commands.describe(
         number=app_commands.locale_str("math_faculty_params_number_description"),
     )
-    async def faculty(self, interaction: discord.Interaction, number: app_commands.Range[int, 0, 100]) -> None:  # type: ignore[misc,no-any-unimported]
+    async def faculty(self, interaction: discord.Interaction, number: app_commands.Range[int, 0, 100]) -> None:
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[no-any-unimported]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
             command=interaction.command,
             locale=interaction.locale,
@@ -235,12 +235,12 @@ class mathCommands(discord.app_commands.Group):  # type: ignore[misc,no-any-unim
         await faculty_command(commandInfo, number)
 
 
-class mathCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
-    def __init__(self, bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
+class mathCog(commands.Cog):
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @commands.Cog.listener()  # type: ignore[untyped-decorator]
-    async def on_ready(self) -> None:  # type: ignore[misc]
+    @commands.Cog.listener()
+    async def on_ready(self) -> None:
         mathcmds = mathCommands(
             name=app_commands.locale_str("math_name"),
             description=app_commands.locale_str("math_description"),
@@ -249,5 +249,5 @@ class mathCog(commands.Cog):  # type: ignore[misc,no-any-unimported]
             self.bot.tree.add_command(mathcmds)
 
 
-async def setup(bot: commands.Bot) -> None:  # type: ignore[no-any-unimported]
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(mathCog(bot))

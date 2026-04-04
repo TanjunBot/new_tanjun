@@ -1,7 +1,7 @@
 import random
 from typing import Any
 
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from localizer import tanjunLocalizer
@@ -9,7 +9,7 @@ from utility import checkIfhasPlus
 
 
 class Connect4:
-    def __init__(  # type: ignore[no-any-unimported]
+    def __init__(
         self,
         player1: discord.Member,
         player2: discord.Member | None = None,
@@ -45,24 +45,24 @@ class Connect4:
             for j, cell in enumerate(row):
                 # Horizontal check
                 if j < self.columns - 3 and cell == row[j + 1] == row[j + 2] == row[j + 3] != self.empty_cell:
-                    return cell  # type: ignore[return-value]
+                    return cell
                 # Vertical check
                 if i < self.rows - 3 and cell == board[i + 1][j] == board[i + 2][j] == board[i + 3][j] != self.empty_cell:
-                    return cell  # type: ignore[return-value]
+                    return cell
                 # Diagonal check (top-left to bottom-right)
                 if (
                     i < self.rows - 3
                     and j < self.columns - 3
                     and cell == board[i + 1][j + 1] == board[i + 2][j + 2] == board[i + 3][j + 3] != self.empty_cell
                 ):
-                    return cell  # type: ignore[return-value]
+                    return cell
                 # Diagonal check (top-right to bottom-left)
                 if (
                     i < self.rows - 3
                     and j > 2
                     and cell == board[i + 1][j - 1] == board[i + 2][j - 2] == board[i + 3][j - 3] != self.empty_cell
                 ):
-                    return cell  # type: ignore[return-value]
+                    return cell
         return None
 
     def is_full(self, board: list[list[str]] | None = None) -> None:
@@ -71,23 +71,23 @@ class Connect4:
         for row in board:
             for cell in row:
                 if cell == self.empty_cell:
-                    return False  # type: ignore[return-value]
-        return True  # type: ignore[return-value]
+                    return False
+        return True
 
     def get_available_moves(self, board: list[list[str]] | None = None) -> None:
         if not board:
             board = self.board
 
         available_moves = []
-        available_columns = self.available_columns()  # type: ignore[func-returns-value]
-        for column in available_columns:  # type: ignore[attr-defined]
+        available_columns = self.available_columns()
+        for column in available_columns:
             # Find the lowest empty cell in this column
             for row in range(self.rows - 1, -1, -1):
                 if board[row][column] == self.empty_cell:
                     board_index = column + (row * self.columns)  # Convert to board index
                     available_moves.append(board_index)
                     break
-        return available_moves  # type: ignore[return-value]
+        return available_moves
 
     def minimax_make_move(self, board: list[list[str]], move: int, player: str) -> None:
         # Create a copy of the board
@@ -95,9 +95,9 @@ class Connect4:
 
         # The player parameter is now the actual symbol (X or O), not the player object
         new_board[move // self.columns][move % self.columns] = player
-        return new_board  # type: ignore[return-value]
+        return new_board
 
-    def minimax(  # type: ignore[no-untyped-def]
+    def minimax(
         self,
         current_player: str,
         depth: int,
@@ -105,15 +105,15 @@ class Connect4:
         maximizing_player: bool,
     ):
         # Check terminal states first
-        winner = self.check_winner(board)  # type: ignore[func-returns-value]
+        winner = self.check_winner(board)
         if winner:
             # Return higher scores for quicker wins/losses
-            if winner == self.player2_move:  # type: ignore[unreachable]
+            if winner == self.player2_move:
                 return 10 + depth, ""  # AI win
             else:
                 return -10 - depth, ""  # Player win
-        if self.is_full(board):  # type: ignore[func-returns-value]
-            return 0, ""  # type: ignore[unreachable]
+        if self.is_full(board):
+            return 0, ""
 
         if depth == 0:
             return 0, ""
@@ -121,10 +121,10 @@ class Connect4:
         scores = []
         moves = []
         current_move = self.player2_move if maximizing_player else self.player1_move
-        available_moves = self.get_available_moves(board)  # type: ignore[func-returns-value]
-        for move in available_moves:  # type: ignore[attr-defined]
-            new_board = self.minimax_make_move(board, move, current_move)  # type: ignore[func-returns-value]
-            score, _ = self.minimax(current_player, depth - 1, new_board, not maximizing_player)  # type: ignore[arg-type]
+        available_moves = self.get_available_moves(board)
+        for move in available_moves:
+            new_board = self.minimax_make_move(board, move, current_move)
+            score, _ = self.minimax(current_player, depth - 1, new_board, not maximizing_player)
             scores.append(score)
             moves.append(move)
 
@@ -148,24 +148,24 @@ class Connect4:
                 else:
                     board_string += cell
             board_string += "\n"
-        return board_string  # type: ignore[return-value]
+        return board_string
 
     def available_columns(self) -> None:
-        return [i for i, cell in enumerate(self.board[0]) if cell == self.empty_cell]  # type: ignore[return-value]
+        return [i for i, cell in enumerate(self.board[0]) if cell == self.empty_cell]
 
-    async def update_board(  # type: ignore[no-any-unimported,no-untyped-def]
+    async def update_board(
         self,
         interaction: discord.Interaction,
         initial: bool = False,
         timeout: bool = False,
     ):
-        self.winner = self.check_winner()  # type: ignore[func-returns-value]
+        self.winner = self.check_winner()
         title = tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.title")
         description = tanjunLocalizer.localize(
             interaction.locale,
             "commands.games.connect4.description",
             player1=self.player1.mention,
-            player2=self.player2.mention if self.player2 != "tanjun" else "Tanjun",  # type: ignore[union-attr]
+            player2=self.player2.mention if self.player2 != "tanjun" else "Tanjun",
         )
         if self.player2 == "tanjun":
             description += "\n" + tanjunLocalizer.localize(
@@ -174,55 +174,55 @@ class Connect4:
                 difficulty=self.bot_difficulty,
             )
         if self.winner is not None:
-            winner = self.player1 if self.winner == self.player1_move else self.player2  # type: ignore[unreachable]
+            winner = self.player1 if self.winner == self.player1_move else self.player2
             description += "\n" + tanjunLocalizer.localize(
                 str(interaction.locale),
                 "commands.games.connect4.winner",
                 winner=winner.mention if winner != "tanjun" else "Tanjun",
             )
-        elif self.is_full():  # type: ignore[func-returns-value]
-            description += "\n" + tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.draw")  # type: ignore[unreachable]
+        elif self.is_full():
+            description += "\n" + tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.draw")
         else:
             description += "\n" + tanjunLocalizer.localize(
                 str(interaction.locale),
                 "commands.games.connect4.currentTurn",
                 player=(self.current_player.mention if self.current_player != "tanjun" else "Tanjun"),
             )
-        board_string = await self.getBoardString()  # type: ignore[func-returns-value]
-        embed = utility.tanjunEmbed(title=title, description=description + "\n\n" + board_string)  # type: ignore[operator]
+        board_string = await self.getBoardString()
+        embed = utility.tanjunEmbed(title=title, description=description + "\n\n" + board_string)
         if initial:
             self.message = await interaction.reply(embed=embed)
         view = self.getBoardView(timeout=3600, disable_on_timeout=timeout, message=self.message)
         if initial:
-            await self.message.edit(view=view, embed=embed)  # type: ignore[attr-defined]
+            await self.message.edit(view=view, embed=embed)
         else:
             await interaction.followup.edit_message(message_id=interaction.message.id, view=view, embed=embed)
 
-    async def drop(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+    async def drop(self, interaction: discord.Interaction) -> None:
         drop_column = self.highlighted_column
         for row in range(self.rows - 1, -1, -1):
             if self.board[row][drop_column] == self.empty_cell:
                 self.board[row][drop_column] = self.player1_move if self.current_player == self.player1 else self.player2_move
                 break
-        winner = self.check_winner()  # type: ignore[func-returns-value]
+        winner = self.check_winner()
         if winner:
-            self.game_over = True  # type: ignore[unreachable]
+            self.game_over = True
 
-        if self.is_full():  # type: ignore[func-returns-value]
-            self.game_over = True  # type: ignore[unreachable]
+        if self.is_full():
+            self.game_over = True
             await self.update_board(interaction)
             return
 
-        if self.player2 == "tanjun" or self.player2.bot:  # type: ignore[union-attr]
+        if self.player2 == "tanjun" or self.player2.bot:
             await self.bot_move()
         else:
             self.current_player = self.player2 if self.current_player == self.player1 else self.player1
-        if self.highlighted_column not in self.available_columns():  # type: ignore[func-returns-value,operator]
-            self.highlighted_column = self.available_columns()[0]  # type: ignore[func-returns-value,index]
+        if self.highlighted_column not in self.available_columns():
+            self.highlighted_column = self.available_columns()[0]
 
-        winner = self.check_winner()  # type: ignore[func-returns-value]
+        winner = self.check_winner()
         if winner:
-            self.game_over = True  # type: ignore[unreachable]
+            self.game_over = True
         if self.game_over:
             await self.update_board(interaction)
             return
@@ -236,13 +236,13 @@ class Connect4:
                 self.board[row][move % self.columns] = self.player2_move
                 break
 
-    def getBoardView(  # type: ignore[no-any-unimported,no-untyped-def]
+    def getBoardView(
         self,
         timeout: int = 3600,
         disable_on_timeout: bool = False,
         message: discord.Message | None = None,
     ):
-        class Connect4View(discord.ui.View):  # type: ignore[misc,no-any-unimported]
+        class Connect4View(discord.ui.View):
             def __init__(self, connect4: Connect4) -> None:
                 super().__init__(timeout=timeout)
                 self.connect4 = connect4
@@ -254,17 +254,17 @@ class Connect4:
                 if message:
                     await message.edit(view=self)
 
-            @discord.ui.button(  # type: ignore[untyped-decorator]
+            @discord.ui.button(
                 label="⬅️",
                 style=discord.ButtonStyle.secondary,
                 custom_id="left",
-                disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,  # type: ignore[arg-type,func-returns-value,redundant-expr]
+                disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def move_left(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            async def move_left(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
                 await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
-                    self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id  # type: ignore[union-attr]
+                    self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
                 ):
                     await interaction.followup.send(
                         tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.notYourGame"),
@@ -279,22 +279,22 @@ class Connect4:
                     )
                     return
 
-                highlighted_index = self.connect4.available_columns().index(self.connect4.highlighted_column)  # type: ignore[attr-defined,func-returns-value]
+                highlighted_index = self.connect4.available_columns().index(self.connect4.highlighted_column)
                 highlighted_index -= 1
-                self.connect4.highlighted_column = self.connect4.available_columns()[highlighted_index]  # type: ignore[func-returns-value,index]
+                self.connect4.highlighted_column = self.connect4.available_columns()[highlighted_index]
                 await self.connect4.update_board(interaction)
 
-            @discord.ui.button(  # type: ignore[untyped-decorator]
+            @discord.ui.button(
                 label=tanjunLocalizer.localize(self.locale, "commands.games.connect4.drop"),
                 style=discord.ButtonStyle.secondary,
                 custom_id="drop",
-                disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,  # type: ignore[arg-type,func-returns-value,redundant-expr]
+                disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def drop(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            async def drop(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
                 await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
-                    self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id  # type: ignore[union-attr]
+                    self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
                 ):
                     await interaction.followup.send(
                         tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.notYourGame"),
@@ -311,17 +311,17 @@ class Connect4:
 
                 await self.connect4.drop(interaction)
 
-            @discord.ui.button(  # type: ignore[untyped-decorator]
+            @discord.ui.button(
                 label="➡️",
                 style=discord.ButtonStyle.secondary,
                 custom_id="right",
-                disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,  # type: ignore[arg-type,func-returns-value,redundant-expr]
+                disabled=len(self.available_columns()) == 0 or self.winner is not None or disable_on_timeout,
                 row=0,
             )
-            async def move_right(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+            async def move_right(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
                 await interaction.response.defer()
                 if interaction.user.id != self.connect4.player1.id and (
-                    self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id  # type: ignore[union-attr]
+                    self.connect4.player2 == "tanjun" or interaction.user.id != self.connect4.player2.id
                 ):
                     await interaction.followup.send(
                         tanjunLocalizer.localize(str(interaction.locale), "commands.games.connect4.notYourGame"),
@@ -336,17 +336,17 @@ class Connect4:
                     )
                     return
 
-                highlighted_index = self.connect4.available_columns().index(self.connect4.highlighted_column)  # type: ignore[attr-defined,func-returns-value]
+                highlighted_index = self.connect4.available_columns().index(self.connect4.highlighted_column)
                 highlighted_index += 1
-                if highlighted_index >= len(self.connect4.available_columns()):  # type: ignore[arg-type,func-returns-value]
+                if highlighted_index >= len(self.connect4.available_columns()):
                     highlighted_index = 0
-                self.connect4.highlighted_column = self.connect4.available_columns()[highlighted_index]  # type: ignore[func-returns-value,index]
+                self.connect4.highlighted_column = self.connect4.available_columns()[highlighted_index]
                 await self.connect4.update_board(interaction)
 
         return Connect4View(self)
 
 
-async def connect4(  # type: ignore[no-any-unimported,no-untyped-def]
+async def connect4(
     commandInfo: utility.CommandInfo,
     player1: discord.Member,
     player2: discord.Member | None = None,

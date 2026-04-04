@@ -1,13 +1,13 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def set_slowmode(commandInfo: utility.CommandInfo, seconds: int, channel: discord.TextChannel | None = None) -> None:  # type: ignore[no-any-unimported]
+async def set_slowmode(commandInfo: utility.CommandInfo, seconds: int, channel: discord.TextChannel | None = None) -> None:
     if channel is None:
         assert commandInfo.channel is not None
-        channel = cast(discord.TextChannel, commandInfo.channel)  # type: ignore[name-defined]
+        channel = cast(discord.TextChannel, commandInfo.channel)
 
     if (
         isinstance(commandInfo.user, discord.Member)

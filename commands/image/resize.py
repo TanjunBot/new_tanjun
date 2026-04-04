@@ -1,14 +1,14 @@
 import io
 from io import BytesIO
 
-import discord  # type: ignore[import-not-found]
+import discord
 from PIL import Image
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def resize(commandInfo: utility.CommandInfo, image: discord.Attachment, width: int, height: int):  # type: ignore[no-any-unimported,no-untyped-def]
+async def resize(commandInfo: utility.CommandInfo, image: discord.Attachment, width: int, height: int):
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(

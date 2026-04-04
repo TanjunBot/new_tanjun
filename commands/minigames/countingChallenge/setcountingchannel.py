@@ -1,11 +1,11 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import set_counting_challenge_progress
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
-async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
+async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
     if commandInfo.guild is None:
         return
     if (
@@ -99,7 +99,7 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
-    await set_counting_challenge_progress(  # type: ignore[call-arg]
+    await set_counting_challenge_progress(
         channel_id=channel.id, guild_id=commandInfo.guild.id, progress=0
     )
 

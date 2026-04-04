@@ -1,12 +1,12 @@
 from datetime import timedelta
 
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from localizer import tanjunLocalizer
 
 
-async def timeout(  # type: ignore[no-any-unimported]
+async def timeout(
     commandInfo: utility.CommandInfo,
     member: discord.Member,
     duration: int | timedelta,
@@ -41,7 +41,7 @@ async def timeout(  # type: ignore[no-any-unimported]
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and member.top_role >= CommandInfo.user.top_role:  # type: ignore[name-defined]
+    if isinstance(commandInfo.user, discord.Member) and member.top_role >= CommandInfo.user.top_role:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.timeout.targetTooHigh.description"),

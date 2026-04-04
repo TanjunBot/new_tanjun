@@ -1,11 +1,11 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import get_counting_challenge_progress, set_counting_challenge_progress
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def setCountingProgress(commandInfo: CommandInfo, channel: discord.TextChannel, progress: int) -> None:  # type: ignore[no-any-unimported]
+async def setCountingProgress(commandInfo: CommandInfo, channel: discord.TextChannel, progress: int) -> None:
     if commandInfo.guild is None:
         return
     if (

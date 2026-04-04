@@ -1,11 +1,11 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import get_counting_channel_amount, set_counting_progress
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
 
-async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:  # type: ignore[no-any-unimported]
+async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
     if commandInfo.guild is None:
         return
     if (

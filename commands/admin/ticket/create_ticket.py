@@ -1,11 +1,11 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 import utility
 from api import create_ticket_message
 from localizer import tanjunLocalizer
 
 
-async def create_ticket(  # type: ignore[no-any-unimported]
+async def create_ticket(
     commandInfo: utility.CommandInfo,
     channel: discord.TextChannel,
     name: str,
@@ -52,9 +52,9 @@ async def create_ticket(  # type: ignore[no-any-unimported]
         channel_id=channel.id,
         name=name,
         description=description,
-        ping_role=ping_role.id if ping_role is not None else None,  # type: ignore[arg-type]
-        summary_channel_id=summary_channel.id if summary_channel is not None else None,  # type: ignore[arg-type]
-        introduction=introduction,  # type: ignore[arg-type]
+        ping_role=ping_role.id if ping_role is not None else None,
+        summary_channel_id=summary_channel.id if summary_channel is not None else None,
+        introduction=introduction,
     )
 
     view = discord.ui.View()

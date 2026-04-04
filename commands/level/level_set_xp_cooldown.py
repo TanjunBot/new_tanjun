@@ -1,4 +1,4 @@
-import discord  # type: ignore[import-not-found]
+import discord
 
 from api import set_text_cooldown, set_voice_cooldown
 from localizer import tanjunLocalizer

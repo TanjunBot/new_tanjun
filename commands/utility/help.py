@@ -1,6 +1,6 @@
 from typing import Any
 
-import discord  # type: ignore[import-not-found]
+import discord
 from discord import app_commands
 
 import utility
@@ -8,10 +8,10 @@ from localizer import tanjunLocalizer
 
 
 async def help(commandInfo: utility.CommandInfo) -> None:
-    class HelpSelect(discord.ui.Select[Any]):  # type: ignore[misc,no-any-unimported]
+    class HelpSelect(discord.ui.Select[Any]):
         cash: set[str] = set()
 
-        def __init__(self, client: discord.ext.commands.Bot, options: list[discord.SelectOption]) -> None:  # type: ignore[no-any-unimported]
+        def __init__(self, client: discord.ext.commands.Bot, options: list[discord.SelectOption]) -> None:
             self.client = client
             super().__init__(
                 placeholder=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.select.placeholder"),
@@ -30,7 +30,7 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             self.cash.add(localized)
             return localized
 
-        async def callback(self, interaction: discord.Interaction) -> None:  # type: ignore[no-any-unimported]
+        async def callback(self, interaction: discord.Interaction) -> None:
             texts: list[str] = [""]
             current_index = 0
             total_length = 0
@@ -177,7 +177,7 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             total_length += len(command_text)
 
             # Create embeds
-            embeds: list[discord.Embed] = []  # type: ignore[no-any-unimported]
+            embeds: list[discord.Embed] = []
             overall_length = 0
             for i, text in enumerate(texts, 1):
                 overall_length += len(text)
@@ -210,8 +210,8 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             await interaction.response.edit_message(embeds=[embeds[0]], view=view)
 
         @classmethod
-        def generate_options(self, client: discord.ext.commands.Bot) -> list[discord.SelectOption]:  # type: ignore[no-any-unimported]
-            options: list[discord.SelectOption] = []  # type: ignore[no-any-unimported]
+        def generate_options(self, client: discord.ext.commands.Bot) -> list[discord.SelectOption]:
+            options: list[discord.SelectOption] = []
             groups: list[str] = []
             for cmd in client.tree.walk_commands():
                 if cmd.parent is not None:
@@ -244,8 +244,8 @@ async def help(commandInfo: utility.CommandInfo) -> None:
                 )
             return options[:25]
 
-    class PaginatedHelpView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
-        def __init__(self, client: discord.ext.commands.Bot, embeds: list[discord.Embed]) -> None:  # type: ignore[no-any-unimported]
+    class PaginatedHelpView(discord.ui.View):
+        def __init__(self, client: discord.ext.commands.Bot, embeds: list[discord.Embed]) -> None:
             super().__init__(timeout=3600)
             self.embeds = embeds
             self.current_page = 0
@@ -253,24 +253,24 @@ async def help(commandInfo: utility.CommandInfo) -> None:
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.buttons.previous"),
             style=discord.ButtonStyle.gray,
         )
-        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.current_page = (self.current_page - 1) % len(self.embeds)
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
-        @discord.ui.button(  # type: ignore[untyped-decorator]
+        @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.help.buttons.next"),
             style=discord.ButtonStyle.gray,
         )
-        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc,no-any-unimported]
+        async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:
             self.current_page = (self.current_page + 1) % len(self.embeds)
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
-    class HelpView(discord.ui.View):  # type: ignore[misc,no-any-unimported]
-        def __init__(self, client: discord.ext.commands.Bot, timeout: int = 3600) -> None:  # type: ignore[no-any-unimported]
+    class HelpView(discord.ui.View):
+        def __init__(self, client: discord.ext.commands.Bot, timeout: int = 3600) -> None:
             super().__init__(timeout=timeout)
             options = HelpSelect.generate_options(client)
             self.add_item(HelpSelect(client, options))
