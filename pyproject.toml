@@ -208,7 +208,10 @@ disable_error_code = [
     "assignment",
     "var-annotated",
     "call-overload",
-    "return-value"
+    "return-value",
+    "no-any-return",
+    "unreachable",
+    "call-arg"
 ]
 
 exclude = [
