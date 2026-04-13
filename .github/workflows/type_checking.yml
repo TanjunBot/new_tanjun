@@ -1,9 +1,9 @@
 name: Python Type Checking with Issue Management
 
 on:
-  push:
-    branches:
-      - '**'
+  #push:
+  #  branches:
+  #    - '**'
   pull_request:
     branches:
       - '**'
