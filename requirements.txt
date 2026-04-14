@@ -116,7 +116,7 @@ fastjsonschema==2.21.1
     # via
     #   nbformat
     #   tanjun_5.0 (pyproject.toml)
-fonttools==4.57.0
+fonttools==4.60.2
     # via
     #   matplotlib
     #   tanjun_5.0 (pyproject.toml)
