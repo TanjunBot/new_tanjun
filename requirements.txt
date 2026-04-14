@@ -350,7 +350,7 @@ tinycss2==1.4.0
     # via
     #   bleach
     #   tanjun_5.0 (pyproject.toml)
-tornado==6.4.2
+tornado==6.5.5
     # via
     #   jupyter-client
     #   tanjun_5.0 (pyproject.toml)
