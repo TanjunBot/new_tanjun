@@ -97,7 +97,7 @@ dependencies = [
     "python-dotenv==1.1.0",
     "pyzmq==26.4.0",
     "referencing==0.36.2",
-    "requests==2.32.3",
+    "requests==2.33.0",
     "rpds-py==0.24.0",
     "scipy==1.15.2",
     "six==1.17.0",
