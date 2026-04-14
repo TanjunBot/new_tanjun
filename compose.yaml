@@ -1,7 +1,7 @@
 ---
 services:
   tanjunbot:
-    image: ghcr.io/TanjunBot/new_tanjun:latest
+    image: ghcr.io/tanjunbot/new_tanjun:latest
     container_name: tanjunbot
     restart: unless-stopped
     environment:
