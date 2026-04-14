@@ -303,8 +303,10 @@ python-dateutil==2.9.0.post0
     #   twitchapi
 python-dotenv==1.1.0
     # via tanjun_5.0 (pyproject.toml)
-pywin32==311
-    # via jupyter-core
+pywin32==311 ; sys_platform == "win32"
+    # via
+    #   jupyter-core
+    #   tanjun_5.0 (pyproject.toml)
 pyzmq==26.4.0
     # via
     #   jupyter-client
