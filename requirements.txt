@@ -316,7 +316,7 @@ referencing==0.36.2
     #   jsonschema
     #   jsonschema-specifications
     #   tanjun_5.0 (pyproject.toml)
-requests==2.32.3
+requests==2.33.0
     # via
     #   akinator-python
     #   pygithub
