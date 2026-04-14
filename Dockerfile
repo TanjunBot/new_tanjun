@@ -26,4 +26,4 @@ COPY . .
 RUN useradd -m appuser
 USER appuser
 
-CMD ["python", "src/main.py"]
+CMD ["python", "main.py"]
