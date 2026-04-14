@@ -150,6 +150,7 @@ async def sendGiveaway(giveawayid, client) -> None:  # type: ignore[no-untyped-d
     channel_requirements = await get_giveaway_channel_requirements(giveawayid)
 
     giveawayData = {
+        "id": giveawayInformation[0],
         "title": giveawayInformation[2],
         "description": giveawayInformation[3],
         "winners": giveawayInformation[4],
@@ -214,6 +215,7 @@ async def updateGiveawayEmbed(giveawayid, client) -> None:  # type: ignore[no-un
     channel_requirements = await get_giveaway_channel_requirements(giveawayid)
 
     giveawayData = {
+        "id": giveawayInformation[0],
         "title": giveawayInformation[2],
         "description": giveawayInformation[3],
         "winners": giveawayInformation[4],
@@ -265,11 +267,19 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
         await remove_giveaway_participant(giveawayid, userid)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
+                (
+                    guild.preferred_locale
+                    if hasattr(guild, "preferred_locale")
+                    else "en_US"
+                ),
                 "commands.giveaway.giveawayEmbed.participation_removed.title",
             ),
             description=tanjunLocalizer.localize(
-                str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
+                (
+                    guild.preferred_locale
+                    if hasattr(guild, "preferred_locale")
+                    else "en_US"
+                ),
                 "commands.giveaway.giveawayEmbed.participation_removed.description",
             ),
         )
@@ -283,7 +293,11 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
         btn = discord.ui.Button(  # type: ignore[var-annotated]
             style=discord.ButtonStyle.primary,
             label=tanjunLocalizer.localize(
-                str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
+                (
+                    guild.preferred_locale
+                    if hasattr(guild, "preferred_locale")
+                    else "en_US"
+                ),
                 "commands.giveaway.giveawayEmbed.button_text",
             )
             + "("
@@ -695,6 +709,7 @@ async def updateGiveawayMessage(giveaway_id, client) -> None:  # type: ignore[no
     channel_requirements = await get_giveaway_channel_requirements(giveaway_id)
 
     giveawayData = {
+        "id": giveawayInformation[0],
         "title": giveawayInformation[2],
         "description": giveawayInformation[3],
         "winners": giveawayInformation[4],
