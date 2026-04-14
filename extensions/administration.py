@@ -8,6 +8,9 @@ THE COMMANDS IN THIS FILE ARE FOR ADMINISTRATIVE PURPOSES ONLY. THEY ARE NOT TO 
 # import platform
 import asyncio
 import json
+import os
+import re
+import subprocess
 from typing import Any
 
 import aiohttp
@@ -474,6 +477,171 @@ Das Tanjun-Team
         for permission in permissionResult:
             permissionText += f"{permission}\n"
         await ctx.send(f"{permissionText}")
+
+    @commands.command()
+    async def database_sync(self, ctx: commands.Context, url: str | None = None) -> None:  # type: ignore[type-arg]
+        if ctx.author.id not in config.adminIds:
+            return
+
+        attachment_url = None
+        if ctx.message.attachments:
+            attachment_url = ctx.message.attachments[0].url
+        elif url:
+            attachment_url = url
+        else:
+            await ctx.send(
+                "Bitte stelle einen direkten Link oder einen Dateianhang für den SQL Dump bereit.\n"
+                "**Tipp:** Wenn die Datei für Discord zu groß ist (mehr als 25MB), kannst du sie z.B. bei "
+                "**[Catbox.moe](https://catbox.moe)** hochladen ("
+                "unterstützt bis zu 200MB, direkter Download-Link) oder in der Kommandozeile über Transfer.sh senden:\n"
+                "`curl --upload-file ./dein-dump.sql https://transfer.sh/dump.sql`"
+            )
+            return
+
+        status_msg = await ctx.send("Lade SQL Dump herunter...")
+
+        try:
+            async with aiohttp.ClientSession() as session, session.get(attachment_url) as resp:
+                if resp.status != 200:
+                    await status_msg.edit(content=f"Download fehlgeschlagen! Status: {resp.status}")
+                    return
+                content = await resp.read()
+
+            with open("temp_import.sql", "wb") as f:
+                f.write(content)
+        except Exception as e:
+            await status_msg.edit(content=f"Fehler beim Herunterladen: {e}")
+            return
+
+        await status_msg.edit(content="Analysiere SQL Dump für Schemata...")
+
+        schemas: set[str] = set()
+        with open("temp_import.sql", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                use_match = re.search(r"^USE\s+`?([^\s`;]+)`?", line, re.IGNORECASE)
+                create_match = re.search(
+                    r"CREATE DATABASE\s+(?:/\*.*?\*/\s+)?(?:IF NOT EXISTS\s+)?`?([^\s`;]+)`?", line, re.IGNORECASE
+                )
+                if create_match:
+                    schemas.add(create_match.group(1))
+                elif use_match:
+                    schemas.add(use_match.group(1))
+
+        if not schemas:
+            schemas.add("Kein spezifisches Schema im Dump gefunden (direkter Import in Bot-Datenbank)")
+
+        schema_list = "\n".join([f"- `{s}`" for s in schemas])
+        await status_msg.edit(
+            content=f"Ich habe folgende Schemata im Dump gefunden:\n{schema_list}\n\n**Welches Schema soll geladen werden?** Bitte tippe den exakten Namen des Schemas in den Chat (oder `abbrechen` um abzubrechen)."
+        )
+
+        def check(m: discord.Message) -> bool:
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        try:
+            confirmation_message = await self.bot.wait_for("message", check=check, timeout=60.0)
+        except TimeoutError:
+            await ctx.channel.send("Timeout! Datenbank-Sync abgebrochen.")
+            return
+
+        selected_schema = confirmation_message.content.strip()
+        if selected_schema.lower() == "abbrechen":
+            await ctx.channel.send("Datenbank-Sync abgebrochen.")
+            return
+
+        if selected_schema not in schemas and "Kein spezifisches" not in list(schemas)[0]:
+            await ctx.channel.send(
+                "Warnung: Das eingegebene Schema wurde im Dump nicht explizit gefunden, fahre trotzdem fort..."
+            )
+
+        # Parse and filter sql dump
+        await ctx.channel.send(f"Bereite Import für Schema `{selected_schema}` vor und erstelle Backup...")
+
+        assert config.database_user is not None
+        assert config.database_password is not None
+        assert config.database_schema is not None
+
+        # Backup current database
+        backup_file = "current_db_backup.sql"
+        dump_command = [
+            "mysqldump",
+            "-u",
+            config.database_user,
+            f"--password={config.database_password}",
+            config.database_schema,
+        ]
+
+        try:
+            with open(backup_file, "w") as f:
+                subprocess.run(dump_command, stdout=f, check=True)
+            await ctx.channel.send("Backup von der aktuellen Datenbank erfolgreich erstellt:", file=discord.File(backup_file))
+        except Exception as e:
+            await ctx.channel.send(f"Fehler beim Erstellen des Backups: {e}\nAbbruch aus Sicherheitsgründen.")
+            return
+
+        # Prepare filtered sql
+        filtered_sql_file = "filtered_import.sql"
+        current_schema = None
+
+        try:
+            with (
+                open("temp_import.sql", encoding="utf-8", errors="ignore") as f_in,
+                open(filtered_sql_file, "w", encoding="utf-8") as f_out,
+            ):
+                for line in f_in:
+                    use_m = re.search(r"^USE\s+`?([^\s`;]+)`?", line, re.IGNORECASE)
+                    create_m = re.search(
+                        r"CREATE DATABASE\s+(?:/\*.*?\*/\s+)?(?:IF NOT EXISTS\s+)?`?([^\s`;]+)`?", line, re.IGNORECASE
+                    )
+
+                    if create_m:
+                        current_schema = create_m.group(1)
+                    elif use_m:
+                        current_schema = use_m.group(1)
+
+                    if current_schema is None or current_schema.lower() == selected_schema.lower():
+                        mod_line = re.sub(
+                            rf"(CREATE DATABASE\s+(?:/\*.*?\*/\s+)?(?:IF NOT EXISTS\s+)?)`?{re.escape(selected_schema)}`?",
+                            rf"\g<1>`{config.database_schema}`",
+                            line,
+                            flags=re.IGNORECASE,
+                        )
+                        mod_line = re.sub(
+                            rf"(USE\s+)`?{re.escape(selected_schema)}`?",
+                            rf"\g<1>`{config.database_schema}`",
+                            mod_line,
+                            flags=re.IGNORECASE,
+                        )
+                        f_out.write(mod_line)
+        except Exception as e:
+            await ctx.channel.send(f"Fehler beim Filtern des SQL Dumps: {e}")
+            return
+
+        # Import filtered sql
+        await ctx.channel.send(f"Lösche aktuelle Datenbank (`{config.database_schema}`) und importiere neues Schema...")
+
+        db_recreate_cmd = f"DROP DATABASE IF EXISTS `{config.database_schema}`; CREATE DATABASE `{config.database_schema}`;"
+        try:
+            subprocess.run(
+                ["mysql", "-u", config.database_user, f"--password={config.database_password}", "-e", db_recreate_cmd],
+                check=True,
+            )
+
+            with open(filtered_sql_file) as f:
+                subprocess.run(
+                    ["mysql", "-u", config.database_user, f"--password={config.database_password}", config.database_schema],
+                    stdin=f,
+                    check=True,
+                )
+
+            await ctx.channel.send("Datenbank erfolgreich synchronisiert und importiert!")
+        except subprocess.CalledProcessError as e:
+            await ctx.channel.send(f"Fehler beim Importieren der Datenbank: {e}\nBitte überprüfe das Backup-SQL!")
+
+        # Clean up temporary files
+        for tmp_file in ["temp_import.sql", "filtered_import.sql"]:
+            if os.path.exists(tmp_file):
+                os.remove(tmp_file)
 
 
 async def setup(bot: commands.Bot) -> None:
