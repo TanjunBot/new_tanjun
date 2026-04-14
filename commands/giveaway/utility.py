@@ -267,19 +267,11 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
         await remove_giveaway_participant(giveawayid, userid)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                (
-                    guild.preferred_locale
-                    if hasattr(guild, "preferred_locale")
-                    else "en_US"
-                ),
+                (guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"),
                 "commands.giveaway.giveawayEmbed.participation_removed.title",
             ),
             description=tanjunLocalizer.localize(
-                (
-                    guild.preferred_locale
-                    if hasattr(guild, "preferred_locale")
-                    else "en_US"
-                ),
+                (guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"),
                 "commands.giveaway.giveawayEmbed.participation_removed.description",
             ),
         )
@@ -293,11 +285,7 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
         btn = discord.ui.Button(  # type: ignore[var-annotated]
             style=discord.ButtonStyle.primary,
             label=tanjunLocalizer.localize(
-                (
-                    guild.preferred_locale
-                    if hasattr(guild, "preferred_locale")
-                    else "en_US"
-                ),
+                (guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US"),
                 "commands.giveaway.giveawayEmbed.button_text",
             )
             + "("
