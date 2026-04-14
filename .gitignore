@@ -171,3 +171,14 @@ share/
 pyvenv.cfg
 lib64
 
+# Mypy Logs
+current_mypy.txt
+mypy_errors.txt
+mypy_output_real.txt
+mypy_output_real2.txt
+mypy_output_real3.txt
+mypy_output.txt
+mypy_reports.txt
+mypy_summary.txt
+new_current_mypy.txt
+pip_output.txt
