@@ -7,12 +7,6 @@ import utility
 from api import get_ticket_by_id, get_ticket_messages_by_id
 from localizer import tanjunLocalizer
 
-import discord
-
-import utility
-from api import get_ticket_by_id, get_ticket_messages_by_id
-from localizer import tanjunLocalizer
-
 
 async def close_ticket(interaction: discord.Interaction) -> None:
     data: Any = interaction.data

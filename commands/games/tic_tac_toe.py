@@ -6,11 +6,6 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 
-import discord
-
-import utility
-from localizer import tanjunLocalizer
-
 
 class TicTacToe:
     def __init__(self, player1: discord.Member, player2: discord.Member | None = None) -> None:

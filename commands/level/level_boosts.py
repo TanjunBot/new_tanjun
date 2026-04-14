@@ -17,20 +17,6 @@ from api import (
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
-from api import (
-    add_channel_boost,
-    add_role_boost,
-    add_user_boost,
-    get_all_boosts,
-    get_channel_boost,
-    get_user_boost,
-    get_user_roles_boosts,
-    remove_channel_boost,
-    remove_role_boost,
-    remove_user_boost,
-)
-from localizer import tanjunLocalizer
-from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 async def calculate_user_channel_boost_command(
     commandInfo: CommandInfo, user: discord.Member, channel: discord.TextChannel

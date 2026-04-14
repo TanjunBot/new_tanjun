@@ -12,17 +12,6 @@ from api import (
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
-from api import (
-    add_channel_to_blacklist,
-    add_role_to_blacklist,
-    add_user_to_blacklist,
-    get_blacklist,
-    remove_channel_from_blacklist,
-    remove_role_from_blacklist,
-    remove_user_from_blacklist,
-)
-from localizer import tanjunLocalizer
-from utility import checkIfHasPro, commandInfo, tanjunEmbed
 
 async def add_channel_to_blacklist_command(
     commandInfo: CommandInfo, channel: discord.TextChannel, reason: str | None = None

@@ -10,13 +10,6 @@ from api import get_detailed_warnings, remove_warning
 from localizer import tanjunLocalizer
 from utility import CommandInfo
 
-import discord
-from discord.ui import Button, View
-
-import utility
-from api import get_detailed_warnings, remove_warning
-from localizer import tanjunLocalizer
-
 WARNINGS_PER_PAGE = 5
 
 

@@ -8,9 +8,6 @@ from rembg import remove as removeBackground  # type: ignore[import-not-found]
 import utility
 from localizer import tanjunLocalizer
 
-import utility
-from localizer import tanjunLocalizer
-
 
 async def background(commandInfo: utility.CommandInfo, image: discord.Attachment):  # type: ignore[no-untyped-def]
     if isinstance(image, discord.Attachment):
