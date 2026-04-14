@@ -1,33 +1,32 @@
-import utility
-from localizer import tanjunLocalizer
-from api import get_scheduled_messages
+from typing import Any
+
 import discord
-from discord.ui import View, Button
+from discord.ui import Button, View
+
+import utility
+from api import get_scheduled_messages
+from localizer import tanjunLocalizer
 
 MESSAGES_PER_PAGE = 1
 MAX_CONTENT_LENGTH = 1000  # Maximum length for message content preview
 MAX_EMBED_LENGTH = 6000  # Discord's maximum embed length
 
 
-async def list_scheduled_messages(commandInfo: utility.commandInfo):
-
+async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
     class PaginationView(View):
-        def __init__(self, messages, locale, page=0):
+        def __init__(self, messages: list[tuple[Any, ...]], locale: str, page: int = 0) -> None:
             super().__init__(timeout=300)  # 5 minute timeout
             self.messages = messages
             self.page = page
             self.max_pages = (len(messages) - 1) // MESSAGES_PER_PAGE
             self.locale = locale
 
-            # Previous page button
-            prev_button = Button(
-                emoji="⬅️", style=discord.ButtonStyle.gray, disabled=page == 0
-            )
-            prev_button.callback = self.previous_page
+            prev_button: Button[Any] = Button(emoji="⬅️", style=discord.ButtonStyle.gray, disabled=page == 0)
+            prev_button.callback = self.previous_page  # type: ignore[method-assign]
             self.add_item(prev_button)
 
             # Page counter button (disabled, just for display)
-            self.page_counter = Button(
+            self.page_counter: Button[Any] = Button(
                 label=tanjunLocalizer.localize(
                     locale,
                     "commands.utility.listscheduled.pagination.page_counter",
@@ -40,12 +39,12 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
             self.add_item(self.page_counter)
 
             # Next page button
-            next_button = Button(
+            next_button: Button[Any] = Button(
                 emoji="➡️",
                 style=discord.ButtonStyle.gray,
                 disabled=page == self.max_pages,
             )
-            next_button.callback = self.next_page
+            next_button.callback = self.next_page  # type: ignore[method-assign]
             self.add_item(next_button)
 
         def truncate_content(self, content: str) -> str:
@@ -54,26 +53,20 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
                 return content
             return content[: MAX_CONTENT_LENGTH - 3] + "..."
 
-        def get_embed(self):
+        def get_embed(self) -> discord.Embed:
             start_idx = self.page * MESSAGES_PER_PAGE
-            page_messages = self.messages[start_idx: start_idx + MESSAGES_PER_PAGE]
+            page_messages = self.messages[start_idx : start_idx + MESSAGES_PER_PAGE]
 
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    self.locale, "commands.utility.listscheduled.title"
-                )
-            )
+            embed = utility.tanjunEmbed(title=tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.title"))
 
-            current_length = len(embed.title)
+            current_length = len(embed.title) if embed.title else 0
 
             for msg in page_messages:
                 # Truncate content
                 content = self.truncate_content(msg[4])
 
                 # Calculate field lengths
-                field_name = tanjunLocalizer.localize(
-                    self.locale, "commands.utility.listscheduled.message_id", id=msg[0]
-                )
+                field_name = tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.message_id", id=msg[0])
 
                 field_value = tanjunLocalizer.localize(
                     self.locale,
@@ -83,14 +76,9 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
                     channel=(
                         "<#" + str(msg[2]) + ">"
                         if msg[2]
-                        else tanjunLocalizer.localize(
-                            self.locale, "commands.utility.listscheduled.direct_message"
-                        )
+                        else tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.direct_message")
                     ),
-                    repeat=msg[6]
-                    or tanjunLocalizer.localize(
-                        self.locale, "commands.utility.listscheduled.no_repeat"
-                    ),
+                    repeat=msg[6] or tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.no_repeat"),
                 )
 
                 # Check if adding this field would exceed the limit
@@ -115,7 +103,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
 
             return embed
 
-        async def previous_page(self, interaction: discord.Interaction):
+        async def previous_page(self, interaction: discord.Interaction) -> None:
             if interaction.user != commandInfo.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -129,7 +117,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
             self.page = max(0, self.page - 1)
             await self.update_message(interaction)
 
-        async def next_page(self, interaction: discord.Interaction):
+        async def next_page(self, interaction: discord.Interaction) -> None:
             if interaction.user != commandInfo.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
@@ -143,7 +131,7 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
             self.page = min(self.max_pages, self.page + 1)
             await self.update_message(interaction)
 
-        async def update_message(self, interaction: discord.Interaction):
+        async def update_message(self, interaction: discord.Interaction) -> None:
             self.page_counter.label = tanjunLocalizer.localize(
                 self.locale,
                 "commands.utility.listscheduled.pagination.page_counter",
@@ -163,19 +151,21 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
                 view=PaginationView(self.messages, self.locale, self.page),
             )
 
-        async def on_timeout(self):
+        def set_message(self, message: discord.Message) -> None:
+            self.message = message
+
+        async def on_timeout(self) -> None:
             for child in self.children:
-                child.disabled = True
-            if self.message:
+                if isinstance(child, Button):
+                    child.disabled = True
+            if self.message is not None:
                 await self.message.edit(view=discord.ui.View())
 
     messages = await get_scheduled_messages(commandInfo.user.id)
 
     if not messages:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.utility.listscheduled.no_messages.title"
-            ),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.listscheduled.no_messages.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.utility.listscheduled.no_messages.description",
@@ -185,8 +175,9 @@ async def list_scheduled_messages(commandInfo: utility.commandInfo):
         return
 
     view = PaginationView(messages, commandInfo.locale)
-    view.user = commandInfo.user
-    view.message = await commandInfo.reply(
-        embed=view.get_embed(),
-        view=view if len(messages) > MESSAGES_PER_PAGE else discord.ui.View(),
+    view.set_message(
+        await commandInfo.reply(
+            embed=view.get_embed(),
+            view=view if len(messages) > MESSAGES_PER_PAGE else discord.ui.View(),
+        )
     )

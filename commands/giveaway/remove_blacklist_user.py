@@ -1,16 +1,19 @@
+import discord
+
+import utility
 from api import (
-    remove_giveaway_blacklisted_user as remove_blacklist_user_api,
     check_if_user_blacklisted,
 )
-import discord
-import utility
+from api import (
+    remove_giveaway_blacklisted_user as remove_blacklist_user_api,
+)
 from localizer import tanjunLocalizer
 
 
 async def remove_blacklist_user(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     user: discord.User,
-):
+) -> None:
     if not commandInfo.permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -25,7 +28,7 @@ async def remove_blacklist_user(
         await commandInfo.reply(embed=embed)
         return
 
-    if not await check_if_user_blacklisted(commandInfo.guild.id, user.id):
+    if not await check_if_user_blacklisted(commandInfo.guild.id, user.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -40,7 +43,7 @@ async def remove_blacklist_user(
         return
 
     await remove_blacklist_user_api(
-        guild_id=commandInfo.guild.id,
+        guild_id=commandInfo.guild.id,  # type: ignore[union-attr]
         user_id=user.id,
     )
 

@@ -1,43 +1,36 @@
+from typing import Any
+
 import discord
+
 import utility
+from api import check_if_opted_out, get_ticket_messages_by_id, open_ticket
 from localizer import tanjunLocalizer
-from api import get_ticket_messages_by_id, check_if_opted_out, open_ticket
 
 
-async def openTicket(interaction: discord.Interaction):
-    if (
-        interaction.data["custom_id"].split(";")[0] != "ticket_create"
-        or interaction.data["custom_id"].split(";")[-1] == "optedOutConfirm"
-    ):
+async def openTicket(interaction: discord.Interaction) -> None:
+    data: Any = interaction.data
+    if data["custom_id"].split(";")[0] != "ticket_create" or data["custom_id"].split(";")[-1] == "optedOutConfirm":
         return
 
     await interaction.response.defer(ephemeral=True)
 
     class optedOutView(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                interaction.locale, "commands.admin.open_ticket.optedOutWarning.confirm"
-            ),
-            custom_id=interaction.data["custom_id"] + ";optedOutConfirm",
+            label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.confirm"),
+            custom_id=interaction.data["custom_id"] + ";optedOutConfirm",  # type: ignore[index, typeddict-item]
         )
-        async def optedOutConfirm(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def optedOutConfirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await open_ticket_2(interaction)
             return
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(
-                interaction.locale, "commands.admin.open_ticket.optedOutWarning.decline"
-            ),
+            label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.open_ticket.optedOutWarning.decline"),
             custom_id="optedOutDecline",
         )
-        async def optedOutDecline(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+        async def optedOutDecline(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
                     interaction.locale,
@@ -47,16 +40,16 @@ async def openTicket(interaction: discord.Interaction):
             )
             return
 
-        async def on_timeout(self):
+        async def on_timeout(self) -> None:
             for item in self.children:
-                item.disabled = True
-            await self.message.edit(view=self)
+                item.disabled = True  # type: ignore[attr-defined]
+            await self.message.edit(view=self)  # type: ignore[attr-defined]
 
     if await check_if_opted_out(interaction.user.id):
         view = optedOutView()
         await interaction.followup.send(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.open_ticket.optedOutWarning.description",
             ),
             view=view,
@@ -67,15 +60,16 @@ async def openTicket(interaction: discord.Interaction):
         await open_ticket_2(interaction)
 
 
-async def open_ticket_2(interaction: discord.Interaction):
-    ticket_id = interaction.data["custom_id"].split(";")[1]
+async def open_ticket_2(interaction: discord.Interaction) -> None:
+    data: Any = interaction.data
+    ticket_id = data["custom_id"].split(";")[1]
     print("ticket_id", ticket_id)
     ticket = await get_ticket_messages_by_id(ticket_id)
 
     if not ticket:
         await interaction.response.send_message(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.open_ticket.error.ticketNotFound",
             ),
             ephemeral=True,
@@ -85,24 +79,27 @@ async def open_ticket_2(interaction: discord.Interaction):
     introduction = ticket[3]
     ping_role = ticket[4]
 
+    assert interaction.channel is not None
+    assert interaction.guild is not None
     channel = interaction.channel
-
-    if not channel.permissions_for(interaction.guild.me).create_private_threads:
+    if (
+        not isinstance(channel, discord.TextChannel)
+        or not channel.permissions_for(interaction.guild.me).create_private_threads
+    ):
         await interaction.response.send_message(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.open_ticket.error.channelMissingPermission",
             ),
             ephemeral=True,
         )
         return
 
+    locale_str = str(
+        interaction.guild.preferred_locale.value if interaction.guild.preferred_locale else interaction.locale.value  # type: ignore[truthy-bool, redundant-expr]
+    )
     ticket_created_locale = tanjunLocalizer.localize(
-        (
-            interaction.guild.preferred_locale
-            if interaction.guild.preferred_locale
-            else interaction.locale
-        ),
+        locale_str,
         "commands.admin.open_ticket.success.ticketCreated",
         user=interaction.user,
     )
@@ -123,7 +120,7 @@ async def open_ticket_2(interaction: discord.Interaction):
         await thread.send(introduction)
 
     view = discord.ui.View()
-    btn = discord.ui.Button(
+    btn = discord.ui.Button(  # type: ignore[var-annotated]
         style=discord.ButtonStyle.danger,
         label=tanjunLocalizer.localize(
             interaction.locale,
@@ -151,7 +148,7 @@ async def open_ticket_2(interaction: discord.Interaction):
 
     await open_ticket(
         guild_id=interaction.guild.id,
-        opener_id=interaction.user.id,
+        opener_id=interaction.user.id,  # type: ignore[arg-type]
         ticket_message_id=ticket_id,
         channel_id=thread.id,
     )

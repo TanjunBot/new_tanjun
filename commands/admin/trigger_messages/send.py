@@ -1,12 +1,13 @@
 import discord
-from api import is_trigger_message, check_if_opted_out
+
+from api import check_if_opted_out, is_trigger_message
 
 
-async def send_trigger_message(message: discord.Message):
+async def send_trigger_message(message: discord.Message) -> None:
     if not message.guild:
         return
 
-    if not message.channel:
+    if not message.channel:  # type: ignore[truthy-bool]
         return
 
     if not message.content:
@@ -15,9 +16,7 @@ async def send_trigger_message(message: discord.Message):
     if message.author.bot:
         return
 
-    trigger_message = await is_trigger_message(
-        message.guild.id, message.content, message.channel.id
-    )
+    trigger_message = await is_trigger_message(message.guild.id, message.content, message.channel.id)
     if not trigger_message:
         return
 

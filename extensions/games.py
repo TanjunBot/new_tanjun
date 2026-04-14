@@ -1,15 +1,17 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-import utility
+from typing import cast
 
-from commands.games.tic_tac_toe import tic_tac_toe
-from commands.games.connect4 import connect4
+import discord
+from discord import app_commands
+from discord.ext import commands
+
+import utility
 from commands.games.akinator import akinator
-from commands.games.wordle import wordle
-from commands.games.hangman import hangman
+from commands.games.connect4 import connect4
 from commands.games.flag_quiz import flag_quiz
+from commands.games.hangman import hangman
 from commands.games.rps import rps
+from commands.games.tic_tac_toe import tic_tac_toe
+from commands.games.wordle import wordle
 
 
 class gameCommands(discord.app_commands.Group):
@@ -20,20 +22,20 @@ class gameCommands(discord.app_commands.Group):
     @app_commands.describe(
         user=app_commands.locale_str("games_ttt_params_user_description"),
     )
-    async def tic_tac_toe_cmd(self, ctx, user: discord.Member = None):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
+    async def tic_tac_toe_cmd(self, interaction: discord.Interaction, user: discord.Member = None) -> None:  # type: ignore[assignment]
+        await interaction.response.defer()
+        commandInfo = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
-        await tic_tac_toe(commandInfo, ctx.user, user)
+        await tic_tac_toe(commandInfo, ctx.user, user)  # type: ignore[name-defined]
 
     @app_commands.command(
         name=app_commands.locale_str("games_connect4_name"),
@@ -79,22 +81,25 @@ class gameCommands(discord.app_commands.Group):
         ]
     )
     async def connect4_cmd(
-        self, ctx, user: discord.Member = None, size: app_commands.Choice[str] = "7,6"
-    ):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
+        self,
+        interaction: discord.Interaction,
+        user: discord.Member = None,
+        size: app_commands.Choice[str] = "7,6",  # type: ignore[assignment]
+    ) -> None:
+        await interaction.response.defer()
+        commandInfo = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
-        size = size.value.split(",") if size != "7,6" else "7,6".split(",")
-        await connect4(commandInfo, ctx.user, user, int(size[0]), int(size[1]))
+        size = size.value.split(",") if size != "7,6" else ["7", "6"]  # type: ignore[assignment]
+        await connect4(commandInfo, ctx.user, user, int(size[0, index]), int(size[1, index]))  # type: ignore[name-defined, index]
 
     @app_commands.command(
         name=app_commands.locale_str("games_akinator_name"),
@@ -119,23 +124,21 @@ class gameCommands(discord.app_commands.Group):
             ),
         ]
     )
-    async def akinator_cmd(self, ctx, theme: app_commands.Choice[str] = "characters"):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
+    async def akinator_cmd(self, interaction: discord.Interaction, theme: app_commands.Choice[str] = "characters") -> None:  # type: ignore[assignment]
+        await interaction.response.defer()
+        commandInfo = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
-        await akinator(
-            commandInfo, theme.value if theme != "characters" else "characters"
-        )
+        await akinator(commandInfo, theme.value if theme != "characters" else "characters")
 
     @app_commands.command(
         name=app_commands.locale_str("games_wordle_name"),
@@ -239,18 +242,18 @@ class gameCommands(discord.app_commands.Group):
     @app_commands.describe(
         language=app_commands.locale_str("games_wordle_params_language_description"),
     )
-    async def wordle_cmd(self, ctx, language: app_commands.Choice[str] = "own"):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
+    async def wordle_cmd(self, interaction: discord.Interaction, language: app_commands.Choice[str] = "own") -> None:  # type: ignore[assignment]
+        await interaction.response.defer()
+        commandInfo = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
         await wordle(commandInfo, language.value if language != "own" else "own")
@@ -357,18 +360,18 @@ class gameCommands(discord.app_commands.Group):
     @app_commands.describe(
         language=app_commands.locale_str("games_hangman_params_language_description"),
     )
-    async def hangman_cmd(self, ctx, language: app_commands.Choice[str] = "own"):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
+    async def hangman_cmd(self, interaction: discord.Interaction, language: app_commands.Choice[str] = "own") -> None:  # type: ignore[assignment]
+        await interaction.response.defer()
+        commandInfo = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
         await hangman(commandInfo, language.value if language != "own" else "own")
@@ -377,18 +380,18 @@ class gameCommands(discord.app_commands.Group):
         name=app_commands.locale_str("games_flagquiz_name"),
         description=app_commands.locale_str("games_flagquiz_description"),
     )
-    async def flag_quiz_cmd(self, ctx):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
+    async def flag_quiz_cmd(self, interaction: discord.Interaction) -> None:
+        await interaction.response.defer()
+        commandInfo = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
         await flag_quiz(commandInfo)
 
@@ -399,32 +402,34 @@ class gameCommands(discord.app_commands.Group):
     @app_commands.describe(
         user=app_commands.locale_str("games_rps_params_user_description"),
     )
-    async def rps_cmd(self, ctx, user: discord.Member = None):
-        await ctx.response.defer()
-        commandInfo = utility.commandInfo(
-            user=ctx.user,
-            channel=ctx.channel,
-            guild=ctx.guild,
-            command=ctx.command,
-            locale=ctx.locale,
-            message=ctx.message,
-            permissions=ctx.permissions,
-            reply=ctx.followup.send,
-            client=ctx.client,
+    async def rps_cmd(self, interaction: discord.Interaction, user: discord.Member = None) -> None:  # type: ignore[assignment]
+        await interaction.response.defer()
+        commandInfo = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
         await rps(commandInfo, user)
 
 
 class gameCog(commands.Cog):
-
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self):
-        gameCmds = gameCommands(name=app_commands.locale_str("games_name"), description=app_commands.locale_str("games_description"))
-        self.bot.tree.add_command(gameCmds)
+    async def on_ready(self) -> None:
+        gameCmds = gameCommands(
+            name=app_commands.locale_str("games_name"), description=app_commands.locale_str("games_description")
+        )
+        if self.bot.tree:  # type: ignore[truthy-bool]
+            self.bot.tree.add_command(gameCmds)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(gameCog(bot))

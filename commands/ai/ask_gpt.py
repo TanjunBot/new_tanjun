@@ -1,14 +1,15 @@
-import utility
-from localizer import tanjunLocalizer
-from api import getToken, getTokenOverview, useToken, includeToToken
-from config import openAiKey
 from openai import AsyncOpenAI
+
+import utility
+from api import getToken, getTokenOverview, includeToToken, useToken
+from config import openAiKey
+from localizer import tanjunLocalizer
 
 client = AsyncOpenAI(api_key=openAiKey)
 
 
 async def ask_gpt(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     name: str,
     situation: str,
     prompt: str,
@@ -16,8 +17,7 @@ async def ask_gpt(
     top_p: float = 1,
     frequency_penalty: float = 0,
     presence_penalty: float = 0,
-):
-
+) -> None:
     token = await getToken(commandInfo.user.id)
 
     if not token:
@@ -26,12 +26,8 @@ async def ask_gpt(
 
     if token < 20:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.ai.ask.notoken.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.ai.ask.notoken.description"
-            ),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.notoken.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.notoken.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -40,8 +36,8 @@ async def ask_gpt(
     Stick to your personality as close as possible. Here are some additional information about the server and the prompter:
     Name: {commandInfo.user.name}
     userID: {commandInfo.user.id}
-    Server: {commandInfo.guild.name}
-    User Roles: {", ".join([role.name for role in commandInfo.user.roles])}
+    Server: {commandInfo.guild.name if commandInfo.guild else "Direct Message"}
+    User Roles: {", ".join([role.name for role in getattr(commandInfo.user, "roles", [])])}
 
     Here is your Personality. Here is the prompt you are supposed to answer:
     """
@@ -61,16 +57,14 @@ async def ask_gpt(
         presence_penalty=float(presence_penalty),
     )
 
-    tokenCost = int(response.usage.total_tokens * 0.125)
+    tokenCost = int(response.usage.total_tokens * 0.125)  # type: ignore[union-attr]
 
     await useToken(commandInfo.user.id, tokenCost)
 
     tokenOverview = await getTokenOverview(commandInfo.user.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.ai.ask.success.title", name=name
-        ),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.success.title", name=name),
         description=response.choices[0].message.content,
     )
 
@@ -80,9 +74,9 @@ async def ask_gpt(
             "commands.ai.ask.success.footer",
             cost=tokenCost,
             token=token - tokenCost if token - tokenCost > 0 else 0,
-            free=tokenOverview[0],
-            plus=tokenOverview[1],
-            paid=tokenOverview[2],
+            free=tokenOverview[0],  # type: ignore[index]
+            plus=tokenOverview[1],  # type: ignore[index]
+            paid=tokenOverview[2],  # type: ignore[index]
         )
     )
     await commandInfo.reply(embed=embed)

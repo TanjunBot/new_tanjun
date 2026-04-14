@@ -1,12 +1,18 @@
-from api import set_wordchain_word
-from utility import commandInfo, checkIfHasPro, tanjunEmbed
-from localizer import tanjunLocalizer
 import discord
 
+from api import set_wordchain_word
+from localizer import tanjunLocalizer
+from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
-async def setwordchainchannel(commandInfo: commandInfo, channel: discord.TextChannel):
 
-    if not commandInfo.user.guild_permissions.moderate_members:
+async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+    if commandInfo.guild is None:
+        return
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -22,9 +28,7 @@ async def setwordchainchannel(commandInfo: commandInfo, channel: discord.TextCha
 
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "minigames.setwordchainchannel.error.no_pro.title"
-            ),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.error.no_pro.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "minigames.setwordchainchannel.error.no_pro.description",
@@ -33,7 +37,11 @@ async def setwordchainchannel(commandInfo: commandInfo, channel: discord.TextCha
         await commandInfo.reply(embed=embed)
         return
 
+    if commandInfo.client.user is None:
+        return
     selfMember = commandInfo.guild.get_member(commandInfo.client.user.id)
+    if selfMember is None:
+        return
 
     if not channel.permissions_for(selfMember).send_messages:
         embed = tanjunEmbed(
@@ -99,19 +107,15 @@ async def setwordchainchannel(commandInfo: commandInfo, channel: discord.TextCha
     )
 
     introductionEmbed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "minigames.setwordchainchannel.introduction.title"
-        ),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.introduction.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale, "minigames.setwordchainchannel.introduction.description"
+            str(commandInfo.locale), "minigames.setwordchainchannel.introduction.description"
         ),
     )
     await channel.send(embed=introductionEmbed)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "minigames.setwordchainchannel.success.title"
-        ),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.setwordchainchannel.success.description",

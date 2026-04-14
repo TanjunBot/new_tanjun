@@ -1,63 +1,51 @@
-import utility
-from localizer import tanjunLocalizer
-import discord
-from PIL import Image
 import io
 from io import BytesIO
 
+import discord
+from PIL import Image
 
-async def compress(
-    commandInfo: utility.commandInfo, image: discord.Attachment, quality: int
-):
+import utility
+from localizer import tanjunLocalizer
+
+
+async def compress(commandInfo: utility.CommandInfo, image: discord.Attachment, quality: int):  # type: ignore[no-untyped-def]
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.image.typenotsupported.title"
-                ),
-                description=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.image.typenotsupported.description"
-                ),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.typenotsupported.title"),
+                description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.typenotsupported.description"),
             )
             await commandInfo.reply(embed=embed)
             return
 
     if image.size > 8 * 1024 * 1024:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.image.filesize.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.image.filesize.description"
-            ),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.filesize.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.filesize.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    image = await image.read()
-    image = Image.open(io.BytesIO(image))
+    image = await image.read()  # type: ignore[assignment]
+    image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
 
     # Convert to RGB mode (required for JPEG)
-    if image.mode in ("RGBA", "P"):
-        image = image.convert("RGB")
+    if image.mode in ("RGBA", "P"):  # type: ignore[attr-defined]
+        image = image.convert("RGB")  # type: ignore[attr-defined]
 
     buffer = BytesIO()
     # Save as JPEG with the specified quality
-    image.save(buffer, format="JPEG", quality=quality, optimize=True)
+    image.save(buffer, format="JPEG", quality=quality, optimize=True)  # type: ignore[call-arg, unused-coroutine]
     buffer.seek(0)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.image.compress.success.title"
-        ),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.compress.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.image.compress.success.description",
             newSize=f"{round(buffer.getbuffer().nbytes / 1024, 2)}",
-            oldSize=f"{round(len(image.tobytes()) / 1024, 2)}",
+            oldSize=f"{round(len(image.tobytes()) / 1024, 2)}",  # type: ignore[attr-defined]
         ),
     )
     embed.set_image(url="attachment://image.jpg")
-    await commandInfo.reply(
-        embed=embed, file=discord.File(fp=buffer, filename="image.jpg")
-    )
+    await commandInfo.reply(embed=embed, file=discord.File(fp=buffer, filename="image.jpg"))

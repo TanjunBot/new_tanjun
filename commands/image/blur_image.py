@@ -1,13 +1,15 @@
-import utility
-from localizer import tanjunLocalizer
-import discord
-from PIL import Image, ImageFilter
 import io
 from io import BytesIO
 
+import discord
+from PIL import Image, ImageFilter
 
-async def blur_image(
-    commandInfo: utility.commandInfo,
+import utility
+from localizer import tanjunLocalizer
+
+
+async def blur_image(  # type: ignore[no-untyped-def]
+    commandInfo: utility.CommandInfo,
     image: discord.Attachment,
     type: str = "gaussian",
     radius: int = 3,
@@ -15,9 +17,7 @@ async def blur_image(
     if isinstance(image, discord.Attachment):
         if not image.filename.endswith((".png", ".jpg", ".jpeg")):
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale, "commands.image.blur.typenotsupported.title"
-                ),
+                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.blur.typenotsupported.title"),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.image.blur.typenotsupported.description",
@@ -28,35 +28,25 @@ async def blur_image(
 
     if image.size > 8 * 1024 * 1024:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.image.blur.filesize.title"
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale, "commands.image.blur.filesize.description"
-            ),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.blur.filesize.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.blur.filesize.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    image = await image.read()
-    image = Image.open(io.BytesIO(image))
+    image = await image.read()  # type: ignore[assignment]
+    image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
     if type == "gaussian":
-        image = image.filter(ImageFilter.GaussianBlur(radius))
+        image = image.filter(ImageFilter.GaussianBlur(radius))  # type: ignore[attr-defined]
     elif type == "boxblurr":
-        image = image.filter(ImageFilter.BoxBlur(radius))
+        image = image.filter(ImageFilter.BoxBlur(radius))  # type: ignore[attr-defined]
 
     buffer = BytesIO()
-    image.save(buffer, format="png")
+    image.save(buffer, format="png")  # type: ignore[call-arg, unused-coroutine]
     buffer.seek(0)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.image.blur.success.title"
-        ),
-        description=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.image.blur.success.description"
-        ),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.blur.success.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.blur.success.description"),
     )
     embed.set_image(url="attachment://image.png")
-    await commandInfo.reply(
-        embed=embed, file=discord.File(fp=buffer, filename="image.png")
-    )
+    await commandInfo.reply(embed=embed, file=discord.File(fp=buffer, filename="image.png"))

@@ -6,7 +6,7 @@ body:
   attributes:
     value: |
       > [!IMPORTANT]  
-      > Please read our [security policy](https://github.com/TanjunBot/new-tanjun/blob/master/SECURITY.md) before creating security-related issues.
+      > Please read our [security policy](https://github.com/TanjunBot/new_tanjun/blob/master/SECURITY.md) before creating security-related issues.
 
       > [!WARNING]
       > Please do not disclose critical security vulnerabilities publicly. If the issue is sensitive, consider contacting us through a private ticket on [our discord server](https://go.tanjun.bot/discord) or via email at [support@tanjun.bot](mailto:support@tanjun.bot).

@@ -1,12 +1,17 @@
-import utility
-from localizer import tanjunLocalizer
-from api import unblock_reporter, check_if_reporter_is_blocked
 import discord
 
+import utility
+from api import check_if_reporter_is_blocked, unblock_reporter
+from localizer import tanjunLocalizer
 
-async def unblock_reporter_cmd(commandInfo: utility.commandInfo, user: discord.Member):
-    if not commandInfo.user.guild_permissions.manage_guild:
-        return await commandInfo.reply(
+
+async def unblock_reporter_cmd(commandInfo: utility.CommandInfo, user: discord.Member) -> None:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild
+    ):
+        return await commandInfo.reply(  # type: ignore[return-value]
             embed=utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -19,8 +24,10 @@ async def unblock_reporter_cmd(commandInfo: utility.commandInfo, user: discord.M
             )
         )
 
-    if not await check_if_reporter_is_blocked(commandInfo.guild.id, user.id):
-        return await commandInfo.reply(
+    assert commandInfo.guild is not None
+    blocked_status = await check_if_reporter_is_blocked(commandInfo.guild.id, user.id)
+    if blocked_status is None or len(blocked_status) == 0:
+        return await commandInfo.reply(  # type: ignore[return-value]
             embed=utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -35,9 +42,7 @@ async def unblock_reporter_cmd(commandInfo: utility.commandInfo, user: discord.M
 
     await unblock_reporter(commandInfo.guild.id, user.id)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "commands.admin.reports.unblock_reporter.success.title"
-        ),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.reports.unblock_reporter.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.reports.unblock_reporter.success.description",

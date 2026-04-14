@@ -1,14 +1,18 @@
-from api import get_counting_challenge_progress, clear_counting_challenge
-from utility import commandInfo, tanjunEmbed
-from localizer import tanjunLocalizer
 import discord
 
+from api import clear_counting_challenge, get_counting_challenge_progress
+from localizer import tanjunLocalizer
+from utility import CommandInfo, tanjunEmbed
 
-async def removecountingchallengechannel(
-    commandInfo: commandInfo, channel: discord.TextChannel
-):
 
-    if not commandInfo.user.guild_permissions.moderate_members:
+async def removecountingchallengechannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+    if commandInfo.guild is None:
+        return
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -42,9 +46,7 @@ async def removecountingchallengechannel(
     await clear_counting_challenge(channel.id)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "minigames.removecountingchallengechannel.success.title"
-        ),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.removecountingchallengechannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.removecountingchallengechannel.success.description",

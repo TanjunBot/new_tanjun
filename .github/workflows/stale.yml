@@ -19,7 +19,7 @@ jobs:
           close-issue-message: 'Dieses Issue wurde geschlossen, weil es seit 5 Tagen keine Aktivität aufweist.'
           days-before-stale: 30
           days-before-close: 5
-          exempt-issue-labels: 'help wanted, question, deferred'
+          exempt-issue-labels: 'help wanted, question, deferred, Renovate'
           exempt-pr-labels: 'help wanted, question, deferred'
           exempt-all-milestones: true
           operations-per-run: 100

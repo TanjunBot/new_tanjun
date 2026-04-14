@@ -1,129 +1,135 @@
-import discord
-import utility
-from localizer import tanjunLocalizer
-from api import get_ticket_by_id, get_ticket_messages_by_id
 import datetime
+from typing import Any
+
+import discord
+
+import utility
+from api import get_ticket_by_id, get_ticket_messages_by_id
+from localizer import tanjunLocalizer
 
 
-async def close_ticket(interaction: discord.Interaction):
-    if not interaction.data["custom_id"].startswith("ticket_close;"):
+async def close_ticket(interaction: discord.Interaction) -> None:
+    data: Any = interaction.data
+    guild = interaction.guild
+    channel = interaction.channel
+    assert guild is not None
+    assert channel is not None
+    if not data["custom_id"].startswith("ticket_close;"):
         return
 
     await interaction.response.defer()
 
     ticket_id, ticket_channel_id = (
-        interaction.data["custom_id"].split(";")[1],
-        interaction.data["custom_id"].split(";")[2],
+        data["custom_id"].split(";")[1],
+        data["custom_id"].split(";")[2],
     )
 
     ticket_message = await get_ticket_messages_by_id(ticket_id)
     if not ticket_message:
         await interaction.followup.send(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.error.ticketNotFound1",
             )
         )
         return
 
-    ticket = await get_ticket_by_id(interaction.guild.id, ticket_id, ticket_channel_id)
+    ticket = await get_ticket_by_id(guild.id, ticket_id, ticket_channel_id)
 
     if not ticket:
         await interaction.followup.send(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.error.ticketNotFound2",
             )
         )
         return
 
-    ticket_channel = interaction.channel
+    ticket_channel = channel
 
-    if not ticket_channel.id == int(ticket[6]):
+    if not hasattr(ticket_channel, "id") or not ticket_channel.id == int(ticket[6]):
         await interaction.followup.send(
             tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.error.ticketNotFound3",
             )
         )
         return
 
     ticket_opener = ticket[1]
-    ticket_opener_user = await interaction.guild.fetch_member(ticket_opener)
+    ticket_opener_user = await guild.fetch_member(ticket_opener)
 
     ticket_open_time = ticket[2]
 
     summary_channel_id = int(ticket_message[7]) if ticket_message[7] else None
-    summary_channel = interaction.guild.get_channel(summary_channel_id)
+    summary_channel = guild.get_channel(summary_channel_id)  # type: ignore[arg-type]
 
     if not summary_channel:
-        await interaction.channel.edit(archived=True, locked=True)
+        if isinstance(channel, discord.TextChannel) or isinstance(channel, discord.Thread):
+            await channel.edit(archived=True, locked=True)  # type: ignore[call-overload]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
             ),
             description=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosedDescription",
             ),
         )
-        await interaction.channel.send(embed=embed)
+        await channel.send(embed=embed)  # type: ignore[union-attr]
     else:
-        html_content = await generate_summary_html(
-            interaction.channel, ticket_opener_user, ticket_open_time
-        )
+        html_content = await generate_summary_html(channel, ticket_opener_user, ticket_open_time)  # type: ignore[arg-type]
 
         url = await utility.upload_to_tanjun_logs(html_content)
 
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
             ),
             description=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosedDescription",
-                name=interaction.channel.name,
+                name=channel.name if hasattr(channel, "name") else str(channel.id),
             ),
         )
 
         view = discord.ui.View()
-        btn1 = discord.ui.Button(
+        btn1 = discord.ui.Button(  # type: ignore[var-annotated]
             label=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.viewOnlineSummary",
             ),
             url=url,
         )
         view.add_item(btn1)
-        btn2 = discord.ui.Button(
-            label=tanjunLocalizer.localize(
-                interaction.locale, "commands.admin.close_ticket.success.viewThread"
-            ),
-            url=f"https://discord.com/channels/{interaction.guild.id}/{ticket_channel.id}",
+        btn2 = discord.ui.Button(  # type: ignore[var-annotated]
+            label=tanjunLocalizer.localize(str(interaction.locale), "commands.admin.close_ticket.success.viewThread"),
+            url=f"https://discord.com/channels/{guild.id}/{ticket_channel.id}",
         )
         view.add_item(btn2)
 
-        await summary_channel.send(
+        await summary_channel.send(  # type: ignore[union-attr]
             content=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
                 user=interaction.user.mention,
-                name=interaction.channel.name,
+                name=channel.name if hasattr(channel, "name") else str(channel.id),
             ),
             embed=embed,
             view=view,
         )
 
-        await interaction.channel.edit(archived=True, locked=True)
+        if isinstance(channel, discord.Thread):
+            await channel.edit(archived=True, locked=True)
 
-        await interaction.channel.send(
+        await channel.send(  # type: ignore[union-attr]
             content=tanjunLocalizer.localize(
-                interaction.locale,
+                str(interaction.locale),
                 "commands.admin.close_ticket.success.ticketClosed",
                 user=interaction.user.mention,
-                name=interaction.channel.name,
+                name=channel.name if hasattr(channel, "name") else str(channel.id),
             ),
         )
 
@@ -132,10 +138,8 @@ async def generate_summary_html(
     channel: discord.abc.GuildChannel,
     ticket_opener_user: discord.Member,
     ticket_open_time: datetime.datetime,
-):
-    locale = (
-        str(channel.guild.preferred_locale) if channel.guild.preferred_locale else "en"
-    )
+) -> str:
+    locale = str(channel.guild.preferred_locale) if channel.guild.preferred_locale else "en"  # type: ignore[truthy-bool, redundant-expr]
     html = """
 <!DOCTYPE html>
 <html lang="en">
@@ -1022,7 +1026,7 @@ async def generate_summary_html(
     mentioned_roles = []
     mentioned_users = []
     mentioned_channels = []
-    async for message in channel.history(limit=42069, oldest_first=True):
+    async for message in channel.history(limit=42069, oldest_first=True):  # type: ignore[attr-defined]
         if message.content == "" and len(message.embeds) == 0:
             continue
         html += '<div class="message">'
@@ -1045,7 +1049,9 @@ async def generate_summary_html(
                     html += f'<div class="embed-field"><div class="embed-field-name">{field.name}</div><div class="embed-field-value">{field.value}</div></div>'
                 html += "</div>"
             if embed.image:
-                html += f'<div class="embed-image"><img src="{embed.image.url}" alt="Large Image" class="embed-large-image"></div>'
+                html += (
+                    f'<div class="embed-image"><img src="{embed.image.url}" alt="Large Image" class="embed-large-image"></div>'
+                )
             if embed.footer:
                 if embed.footer.icon_url:
                     html += f'<div class="embed-footer"><img src="{embed.footer.icon_url}" alt="Footer Icon" class="embed-footer-icon"><span class="embed-footer-text">{embed.footer.text}</span></div>'
@@ -1093,13 +1099,14 @@ async def generate_summary_html(
     channelJsObject = ""
 
     for channel in mentioned_channels:
+        any_channel = channel  # type: Any
         channelJsObject += f"""
         {{
-            id: '{channel.id}',
-            name: '{channel.name}',
-            url: '{channel.jump_url}',
-            type: '{channel.type}',
-            topic: '{channel.topic}',
+            id: '{any_channel.id}',
+            name: '{any_channel.name}',
+            url: '{any_channel.jump_url}',
+            type: '{any_channel.type}',
+            topic: '{any_channel.topic}',
         }},
         """
 

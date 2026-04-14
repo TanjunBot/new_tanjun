@@ -1,32 +1,43 @@
+import random
+
+import discord
+
 from api import (
+    check_if_opted_out,
     get_counting_challenge_progress,
     get_last_challenge_counter_id,
-    check_if_opted_out,
     increase_counting_challenge_progress,
     set_counting_challenge_progress,
 )
-import discord
 from localizer import tanjunLocalizer
 from utility import tanjunEmbed
-import random
 
 
-async def counting(message: discord.Message):
+async def counting(message: discord.Message) -> None:
     if message.author.bot:
+        return
+
+    if message.guild == None:
+        embed: discord.Embed = tanjunEmbed(
+            title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
+            description=tanjunLocalizer.localize(
+                "en_US",
+                "errors.guildonly.description",
+            ),
+        )
+        await message.channel.send(embed=embed)
         return
 
     progress = await get_counting_challenge_progress(message.channel.id)
 
-    locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
+    locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
 
     if not progress and progress != 0:
         return
 
     if await check_if_opted_out(message.author.id):
         try:
-            await message.author.send(
-                tanjunLocalizer.localize(locale, "minigames.counting.opted_out")
-            )
+            await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
         except discord.Forbidden:
             pass
         await message.delete()
@@ -37,12 +48,8 @@ async def counting(message: discord.Message):
     if not content:
         await message.add_reaction("💀")
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                locale, "minigames.counting.failed.title"
-            ),
-            description=tanjunLocalizer.localize(
-                locale, "minigames.counting.failed.description"
-            ),
+            title=tanjunLocalizer.localize(locale, "minigames.counting.failed.title"),
+            description=tanjunLocalizer.localize(locale, "minigames.counting.failed.description"),
         )
         await message.reply(embed=embed)
         await set_counting_challenge_progress(message.channel.id, 0)
@@ -51,12 +58,8 @@ async def counting(message: discord.Message):
     if not content.isdigit():
         await message.add_reaction("💀")
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                locale, "minigames.counting.failed.title"
-            ),
-            description=tanjunLocalizer.localize(
-                locale, "minigames.counting.failed.description"
-            ),
+            title=tanjunLocalizer.localize(locale, "minigames.counting.failed.title"),
+            description=tanjunLocalizer.localize(locale, "minigames.counting.failed.description"),
         )
         await message.reply(embed=embed)
         await set_counting_challenge_progress(message.channel.id, 0)
@@ -67,12 +70,8 @@ async def counting(message: discord.Message):
     if number != progress + 1:
         await message.add_reaction("💀")
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                locale, "minigames.counting.failed.title"
-            ),
-            description=tanjunLocalizer.localize(
-                locale, "minigames.counting.failed.description"
-            ),
+            title=tanjunLocalizer.localize(locale, "minigames.counting.failed.title"),
+            description=tanjunLocalizer.localize(locale, "minigames.counting.failed.description"),
         )
         await message.reply(embed=embed)
         await set_counting_challenge_progress(message.channel.id, 0)
@@ -83,12 +82,8 @@ async def counting(message: discord.Message):
     if last_counter_id == str(message.author.id):
         await message.add_reaction("💀")
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                locale, "minigames.counting.failed_double.title"
-            ),
-            description=tanjunLocalizer.localize(
-                locale, "minigames.counting.failed_double.description"
-            ),
+            title=tanjunLocalizer.localize(locale, "minigames.counting.failed_double.title"),
+            description=tanjunLocalizer.localize(locale, "minigames.counting.failed_double.description"),
         )
         await message.reply(embed=embed)
         await set_counting_challenge_progress(message.channel.id, 0)
@@ -97,5 +92,5 @@ async def counting(message: discord.Message):
     await increase_counting_challenge_progress(message.channel.id, message.author.id)
     # nosec: B311
     if random.randint(1, 100) == 1:
-        await message.channel.send(progress + 2)
+        await message.channel.send(str(progress + 2))
         await increase_counting_challenge_progress(message.channel.id, "me")

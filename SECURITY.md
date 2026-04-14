@@ -4,24 +4,15 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.x   | :x:                |
-| 0.2.x   | :x:                |
-| 0.3.x   | :x:                |
-| 0.4.x   | :x:                |
-| 0.5.x   | :x:                |
-| 0.6.x   | :x:                |
-| 0.7.x   | :x:                |
-| 0.8.x   | :x:                |
-| 0.9.x   | :warning:¹         |
+| 0.x.x   | :x:                |
 | 1.0.x   | :white_check_mark: |
-
-¹Support for this version will end on 23/01/2025.
+| 1.1.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
 We value the security of our Discord Bot and appreciate responsible disclosure of any vulnerabilities. To report a security issue, please follow these steps:
 
-1. **Create an Issue**: Use the [Issues tab](https://github.com/TanjunBot/new-tanjun/issues/new?assignees=&labels=security%2Fvulnerability&projects=&template=security.yml) on our GitHub repository. Make sure to select the **Security Vulnerability Report** template.
+1. **Create an Issue**: Use the [Issues tab](https://github.com/TanjunBot/new_tanjun/issues/new?assignees=&labels=security%2Fvulnerability&projects=&template=security.yml) on our GitHub repository. Make sure to select the **Security Vulnerability Report** template.
 
 2. **Describe the Vulnerability**: Provide a clear and detailed description of the security vulnerability. Include:
    - Steps to reproduce the vulnerability (if known).

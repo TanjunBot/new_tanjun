@@ -1,12 +1,18 @@
-from api import set_counting_mode_progress
-from utility import commandInfo, checkIfHasPro, tanjunEmbed
-from localizer import tanjunLocalizer
 import discord
 
+from api import set_counting_mode_progress
+from localizer import tanjunLocalizer
+from utility import CommandInfo, checkIfHasPro, tanjunEmbed
 
-async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChannel):
 
-    if not commandInfo.user.guild_permissions.moderate_members:
+async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
+    if commandInfo.guild is None:
+        return
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -22,9 +28,7 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
 
     if not checkIfHasPro(commandInfo.guild.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale, "minigames.setcountingchannel.error.no_pro.title"
-            ),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingchannel.error.no_pro.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "minigames.setcountingchannel.error.no_pro.description",
@@ -33,7 +37,11 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
         await commandInfo.reply(embed=embed)
         return
 
+    if commandInfo.client.user is None:
+        return
     selfMember = commandInfo.guild.get_member(commandInfo.client.user.id)
+    if selfMember is None:
+        return
 
     if not channel.permissions_for(selfMember).send_messages:
         embed = tanjunEmbed(
@@ -101,9 +109,7 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
     )
 
     introductionEmbed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "minigames.setcountingchannel.modesintroduction.title"
-        ),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingchannel.modesintroduction.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.setcountingchannel.modesintroduction.description",
@@ -112,9 +118,7 @@ async def setCountingChannel(commandInfo: commandInfo, channel: discord.TextChan
     await channel.send(embed=introductionEmbed)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            commandInfo.locale, "minigames.setcountingchannel.success.title"
-        ),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setcountingchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "minigames.setcountingchannel.success.description",
