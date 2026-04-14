@@ -1,0 +1,8 @@
+# These owners will be the default owners for everything 
+# in the repoand will be requested for review by default
+# when someone opens a pull request.
+
+*          @EntchenEric @2000Arion
+
+.github/*  @2000Arion
+locales/*  @2000Arion
