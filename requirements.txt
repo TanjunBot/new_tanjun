@@ -279,7 +279,7 @@ pygments==2.19.1
     #   enum-tools
     #   nbconvert
     #   tanjun_5.0 (pyproject.toml)
-pyjwt[crypto]==2.10.1
+pyjwt[crypto]==2.12.0
     # via
     #   pygithub
     #   tanjun_5.0 (pyproject.toml)
