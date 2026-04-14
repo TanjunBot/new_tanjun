@@ -659,7 +659,7 @@ async def create_tables() -> None:
 
 
 async def add_warning(
-    guild_id: str | int, user_id: str | int, reason: str, expiration_date: datetime.datetime, created_by: str | int
+    guild_id: str | int, user_id: str | int, reason: str, expiration_date: datetime, created_by: str | int
 ) -> None:
     query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at, created_by) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, user_id, reason, expiration_date, created_by)
