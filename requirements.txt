@@ -209,7 +209,7 @@ nbclient==0.10.2
     # via
     #   nbconvert
     #   tanjun_5.0 (pyproject.toml)
-nbconvert==7.16.6
+nbconvert==7.17.0
     # via tanjun_5.0 (pyproject.toml)
 nbformat==5.10.4
     # via
