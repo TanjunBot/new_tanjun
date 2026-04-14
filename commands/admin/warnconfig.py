@@ -3,15 +3,17 @@ import discord
 import utility
 from api import get_warn_config, set_warn_config
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
-async def warn_config(commandInfo: utility.commandInfo):
+async def warn_config(commandInfo: utility.CommandInfo) -> None:
+    assert commandInfo.guild is not None
     config = await get_warn_config(commandInfo.guild.id)  # Retrieve current configuration settings
 
     class WarnConfigModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo, config):
-            super().__init__(title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.modal.title"))
-            self.commandInfo = commandInfo
+        def __init__(self, commandInfo: utility.CommandInfo, config: dict[str, int] | None) -> None:
+            super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.modal.title"))
+            self.commandInfo = CommandInfo
 
             # Provide default values from the current configuration
             self.add_item(
@@ -85,17 +87,17 @@ async def warn_config(commandInfo: utility.commandInfo):
                 )
             )
 
-        async def on_submit(self, interaction: discord.Interaction):
+        async def on_submit(self, interaction: discord.Interaction) -> None:
             # Parse input and update configurations
             try:
-                expiration_days = int(self.children[0].value)
-                timeout_threshold = int(self.children[1].value)
-                timeout_duration = int(self.children[2].value)
-                kick_threshold = int(self.children[3].value)
-                ban_threshold = int(self.children[4].value)
+                expiration_days = int(self.children[0].value)  # type: ignore[attr-defined]
+                timeout_threshold = int(self.children[1].value)  # type: ignore[attr-defined]
+                timeout_duration = int(self.children[2].value)  # type: ignore[attr-defined]
+                kick_threshold = int(self.children[3].value)  # type: ignore[attr-defined]
+                ban_threshold = int(self.children[4].value)  # type: ignore[attr-defined]
 
                 await set_warn_config(
-                    interaction.guild_id,
+                    interaction.guild_id,  # type: ignore[arg-type]
                     expiration_days=expiration_days,
                     timeout_threshold=timeout_threshold,
                     timeout_duration=timeout_duration,
@@ -105,11 +107,11 @@ async def warn_config(commandInfo: utility.commandInfo):
 
                 embed = utility.tanjunEmbed(
                     title=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.admin.warnconfig.success.title",
                     ),
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.admin.warnconfig.success.description",
                     ),
                 )
@@ -117,17 +119,21 @@ async def warn_config(commandInfo: utility.commandInfo):
 
             except ValueError:
                 embed = utility.tanjunEmbed(
-                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.warnconfig.error.title"),
+                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.admin.warnconfig.error.title"),  # type: ignore[misc]
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.commandInfo.locale,  # type: ignore[misc]
                         "commands.admin.warnconfig.error.invalidInput",
                     ),
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    if not commandInfo.user.guild_permissions.administrator:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.warnconfig.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.warnconfig.missingPermission.description",

@@ -1,12 +1,14 @@
+from typing import Any
+
 import aiohttp
 
 from api import add_brawlstars_linked_account, get_brawlstars_linked_account
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def getPlayerInfo(playerTag: str):
+async def getPlayerInfo(playerTag: str) -> dict[str, str] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with (
         aiohttp.ClientSession() as session,
@@ -17,15 +19,19 @@ async def getPlayerInfo(playerTag: str):
     ):
         if response.status != 200:
             return None
-        return await response.json()
+        json_data: Any = await response.json()
+        if isinstance(json_data, dict):
+            return json_data
+        else:
+            return None
 
 
-async def link(commandInfo: commandInfo, playerTag: str):
+async def link(commandInfo: CommandInfo, playerTag: str) -> None:
     if not playerTag.startswith("#"):
         playerTag = f"#{playerTag}"
     playerInfo = await getPlayerInfo(playerTag)
     if not playerInfo:
-        return await commandInfo.reply(
+        await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -37,9 +43,10 @@ async def link(commandInfo: commandInfo, playerTag: str):
                 ),
             )
         )
+        return
 
     if await get_brawlstars_linked_account(commandInfo.user.id):
-        return await commandInfo.reply(
+        await commandInfo.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -51,10 +58,11 @@ async def link(commandInfo: commandInfo, playerTag: str):
                 ),
             )
         )
+        return
 
     await add_brawlstars_linked_account(commandInfo.user.id, playerTag)
 
-    return await commandInfo.reply(
+    await commandInfo.reply(
         embed=tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -67,3 +75,4 @@ async def link(commandInfo: commandInfo, playerTag: str):
             ),
         )
     )
+    return

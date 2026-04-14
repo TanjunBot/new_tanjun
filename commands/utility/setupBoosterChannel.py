@@ -3,11 +3,25 @@ import discord
 import utility
 from api import add_booster_channel, get_booster_channel
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
-async def setupBoosterChannel(commandInfo: commandInfo, category: discord.CategoryChannel):
-    if not commandInfo.user.guild_permissions.administrator:
+async def setupBoosterChannel(commandInfo: CommandInfo, category: discord.CategoryChannel) -> None:
+    if isinstance(commandInfo.user, discord.User) or commandInfo.guild is None:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildonly.title",
+            ),
+            description=tanjunLocalizer.localize(
+                commandInfo.locale,
+                "errors.guildonly.description",
+            ),
+        )
+        await commandInfo.reply(embed=embed)
+        return
+
+    if not getattr(commandInfo.user, "guild_permissions", None) or not commandInfo.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -39,7 +53,7 @@ async def setupBoosterChannel(commandInfo: commandInfo, category: discord.Catego
     await add_booster_channel(commandInfo.guild.id, category.id)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.setupboosterchannel.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.setupboosterchannel.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.setupboosterchannel.success.description",

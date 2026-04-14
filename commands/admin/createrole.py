@@ -2,20 +2,25 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
 async def createrole(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     name: str,
-    color: discord.Color | str = None,
-    reason: str = None,
+    color: discord.Color | str | None = None,
+    reason: str | None = None,
     hoist: bool = False,
     mentionable: bool = False,
-    display_icon: discord.Attachment | str = None,
-):
-    if not commandInfo.user.guild_permissions.manage_roles:
+    display_icon: discord.Attachment | str | None = None,
+) -> None:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+    ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createrole.missingPermission.description",
@@ -25,7 +30,10 @@ async def createrole(
         await commandInfo.reply(embed=embed)
         return
 
-    if not commandInfo.guild.get_member(commandInfo.client.user.id).guild_permissions.manage_roles:
+    assert commandInfo.guild is not None
+    assert commandInfo.client.user is not None
+    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[misc, union-attr]
+    if not bot_member or not bot_member.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -42,7 +50,7 @@ async def createrole(
 
     if not name:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.missingName.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.missingName.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createrole.missingName.description",
@@ -54,7 +62,7 @@ async def createrole(
 
     if len(name) > 100:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.nameTooLong.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.nameTooLong.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createrole.nameTooLong.description",
@@ -87,7 +95,7 @@ async def createrole(
 
     if reason and len(reason) > 512:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.reasonTooLong.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.reasonTooLong.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.createrole.reasonTooLong.description",
@@ -114,7 +122,7 @@ async def createrole(
             return
 
         if isinstance(display_icon, discord.Attachment):
-            if not display_icon.endswith((".png", ".jpg", ".jpeg", ".gif")):
+            if display_icon.filename.endswith((".png", ".jpg", ".jpeg", ".gif")):
                 embed = utility.tanjunEmbed(
                     title=tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -144,16 +152,21 @@ async def createrole(
                 await commandInfo.reply(embed=embed)
                 return
 
+    display_icon_data: bytes | str | None = None
+    if isinstance(display_icon, discord.Attachment):
+        display_icon_data = await display_icon.read()
+    elif isinstance(display_icon, str):
+        display_icon_data = display_icon
     role = await commandInfo.guild.create_role(
         name=name,
-        color=color,
+        color=color if color is not None else discord.Color.default(),  # type: ignore[arg-type]
         reason=reason,
         hoist=hoist,
         mentionable=mentionable,
-        display_icon=display_icon,
+        display_icon=display_icon_data,  # type: ignore[arg-type]
     )
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.createrole.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createrole.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.createrole.success.description",

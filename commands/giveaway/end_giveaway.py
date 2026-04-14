@@ -5,9 +5,9 @@ from localizer import tanjunLocalizer
 
 
 async def end_giveaway(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     giveawayId: int,
-):
+) -> None:
     if not commandInfo.permissions.manage_guild:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -37,7 +37,7 @@ async def end_giveaway(
         await commandInfo.reply(embed=embed)
         return
 
-    if giveaway[1] != str(commandInfo.guild.id):
+    if giveaway[1] != str(commandInfo.guild.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

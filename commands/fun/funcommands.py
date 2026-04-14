@@ -5,11 +5,11 @@ from localizer import tanjunLocalizer
 
 
 async def fun_command(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     fun_type: str,
     member: discord.Member,
     message: str | None,
-):
+) -> None:
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
             commandInfo.locale,

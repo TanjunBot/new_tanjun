@@ -1,58 +1,67 @@
 import json
 from string import Template
+from typing import Any, cast
 
 from utility import missingLocalization
 
-reported_locales = []
+reported_locales: list[str] = []
 
 
 class Localizer:
-    def __init__(self):
-        self.translations = {}
+    def __init__(self) -> None:
+        self.translations: dict[str, list[dict[str, object]]] = {}
 
-    def load_translations(self, locale: str) -> Any:
+    def load_translations(self, locale: str) -> list[dict[str, object]]:
         """Load the translations from a JSON file based on the specified locale."""
         try:
             with open(f"locales/{locale}.json", encoding="utf-8") as file:
-                return json.load(file)
+                data: object = json.load(file)
+                return cast(list[dict[str, object]], data)
         except FileNotFoundError:
-            with open("locales/en.json", encoding="utf-8") as file:
-                return json.load(file)
+            try:
+                with open("locales/en.json", encoding="utf-8") as file:
+                    fallback_data: object = json.load(file)
+                    return cast(list[dict[str, object]], fallback_data)
+            except (FileNotFoundError, json.JSONDecodeError):
+                return []
         except json.JSONDecodeError:
             print(f"Error decoding JSON from the translation file for locale '{locale}'.")
-            return {}
+            return []
 
-    def get_translation(self, translations: list[str], key: str) -> str:
+    def get_translation(self, translations: list[dict[str, object]], key: str) -> dict[str, object] | None:
         """Retrieve a nested translation using dot notation for nested keys."""
-        translation = next(
-            (translation for translation in translations if translation["identifier"].lower() == key.lower()),
+        translation: dict[str, object] | None = next(
+            (t for t in translations if str(t.get("identifier", "")).lower() == key.lower()),
             None,
         )
 
         return translation
 
-    def localize(self, locale: str, key: str, **args) -> str:
+    def localize(self, locale: object, key: str, **args: object) -> str:
         """Retrieve the localized text for the specified locale and format it with any arguments provided."""
-        if locale in ["en", "en-US", "en-GB"]:
-            locale = "en"
-        translations = self.load_translations(locale)
-        translation = self.get_translation(translations, key)
+        locale_str: str = str(locale)
+        if locale_str in ["en", "en-US", "en-GB"]:
+            locale_str = "en"
+        translations: list[dict[str, object]] = self.load_translations(locale_str)
+        translation: dict[str, object] | None = self.get_translation(translations, key)
         if translation is None:
             print(f"No translation found for key '{key}'.")
-            if locale not in reported_locales:
-                reported_locales.append(locale)
+            if locale_str not in reported_locales:
+                reported_locales.append(locale_str)
                 missingLocalization(key)
             return "err: no translation found."
 
-        template_string = translation["translation"]
-        template = Template(template_string)
-        return template.safe_substitute(args)
+        template_string: str = str(translation.get("translation", ""))
+        template: Template = Template(template_string)
+        # safe_substitute expects dict[str, object] which args is now
+        return str(template.safe_substitute(args))
 
-    def test_localize(self, locale: str, key: str, **args) -> str:
+    def test_localize(self, locale: str, key: str, **args: Any) -> str:
         translations = self.load_translations(locale)
-        template_string = self.get_translation(translations, key)
-        if template_string is None:
+        translation = self.get_translation(translations, key)
+        if translation is None:
             return self.localize("de", key, **args) if locale != "de" else f"No translation found for key '{key}'."
+        template_string = str(translation.get("translation", ""))
         template = Template(template_string)
         return template.safe_substitute(args)
 

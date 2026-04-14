@@ -2,65 +2,73 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utility import CommandInfo
 
 
-async def deleterole(commandInfo: utility.commandInfo, role: discord.Role, reason: str = None):
-    if not commandInfo.user.guild_permissions.manage_roles:
+async def deleterole(commandInfo: utility.CommandInfo, role: discord.Role, reason: str | None = None) -> None:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+    ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.deleterole.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.missingPermission.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.deleterole.missingPermission.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    if not commandInfo.guild.get_member(commandInfo.client.user.id).guild_permissions.manage_roles:
+    assert commandInfo.guild is not None
+    assert commandInfo.client.user is not None
+    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[misc, union-attr]
+    if not bot_member or not bot_member.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.deleterole.missingPermissionBot.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.deleterole.missingPermissionBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    if commandInfo.user.top_role.position <= role.position:
+    if isinstance(commandInfo.user, discord.Member) and commandInfo.user.top_role.position <= role.position:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.deleterole.roleTooHigh.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.roleTooHigh.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.deleterole.roleTooHigh.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    if commandInfo.guild.get_member(commandInfo.client.user.id).top_role.position <= role.position:
+    if bot_member and bot_member.top_role.position <= role.position:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.deleterole.roleTooHighBot.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.roleTooHighBot.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                str(commandInfo.locale),
                 "commands.admin.deleterole.roleTooHighBot.description",
             ),
         )
         await commandInfo.reply(embed=embed)
         return
 
-    role_name = role.name
+    role_name: str = str(role.name)
     await role.delete(reason=reason)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.admin.deleterole.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.deleterole.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            str(commandInfo.locale),
             "commands.admin.deleterole.success.description",
             role=role_name,
-            reason=reason,
+            reason=reason if reason else "None",
         ),
     )
     await commandInfo.reply(embed=embed)

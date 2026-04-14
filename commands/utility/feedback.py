@@ -3,15 +3,15 @@ from discord import ui
 
 from api import feedbackIsBlocked
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
 class feedbackModal(ui.Modal):
-    def __init__(self, commandInfo, title, description):
+    def __init__(self, commandInfo: CommandInfo, title: str, description: str) -> None:
         self.commandInfo = commandInfo
         self.title = title
         self.description = description
-        super().__init__(timeout=600)  # 10 minutes timeout
+        super().__init__(timeout=6000)
 
         self.add_item(
             ui.TextInput(
@@ -58,20 +58,16 @@ class feedbackModal(ui.Modal):
             return False
         return True
 
-    async def on_timeout(self):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.utility.feedback.modal.timeout.title"),
-            description=tanjunLocalizer.localize(
-                self.commandInfo.locale,
-                "commands.utility.feedback.modal.timeout.description",
-            ),
-        )
-        await self.view.send(embed=embed)
-
-    async def on_submit(self, interaction: discord.Interaction):
+    async def on_submit(self, interaction: discord.Interaction) -> None:
         feedbackChannel = self.commandInfo.client.get_channel(1266385101512773773)
-        feedbackTitle = self.children[0].value
-        feedbackDescription = self.children[1].value
+        if not isinstance(feedbackChannel, discord.TextChannel):
+            return
+        from typing import cast
+
+        title_item = cast(discord.ui.TextInput[discord.ui.Modal], self.children[0])
+        desc_item = cast(discord.ui.TextInput[discord.ui.Modal], self.children[1])
+        feedbackTitle = title_item.value
+        feedbackDescription = desc_item.value
         embed = tanjunEmbed(
             title=feedbackTitle,
             description=feedbackDescription,
@@ -94,18 +90,18 @@ class feedbackModal(ui.Modal):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-async def feedback(commandInfo: commandInfo, ctx):
+async def feedback(commandInfo: CommandInfo, ctx: discord.Interaction) -> None:
     if await feedbackIsBlocked(commandInfo.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.feedback.blocked.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.feedback.blocked.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.feedback.blocked.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.feedback.blocked.description"),
         )
         await commandInfo.reply(embed=embed)
         return
     modal = feedbackModal(
         commandInfo=commandInfo,
-        title=tanjunLocalizer.localize(ctx.locale, "commands.utility.feedback.modal.title"),
-        description=tanjunLocalizer.localize(ctx.locale, "commands.utility.feedback.modal.description"),
+        title=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.feedback.modal.title"),
+        description=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.feedback.modal.description"),
     )
 
     await ctx.response.send_modal(modal)

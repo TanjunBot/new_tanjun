@@ -6,16 +6,20 @@ from commands.utility.twitch.twitchApi import (
     subscribe_to_twitch_online_notification,
 )
 from localizer import tanjunLocalizer
-from utility import commandInfo, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
 async def addTwitchLiveNotification(
-    commandInfo: commandInfo,
+    commandInfo: CommandInfo,
     twitch_name: str,
     channel: discord.TextChannel,
-    notification_message: str = None,
-):
-    if not commandInfo.user.guild_permissions.administrator:
+    notification_message: str | None = None,
+) -> None:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+    ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -30,8 +34,8 @@ async def addTwitchLiveNotification(
         return
 
     if (
-        not channel.permissions_for(commandInfo.guild.me).send_messages
-        and not channel.permissions_for(commandInfo.guild.me).embed_links
+        not channel.permissions_for(commandInfo.guild.me).send_messages  # type: ignore[union-attr]
+        and not channel.permissions_for(commandInfo.guild.me).embed_links  # type: ignore[union-attr]
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -61,7 +65,7 @@ async def addTwitchLiveNotification(
         await commandInfo.reply(embed=embed)
         return
 
-    await set_twitch_online_notification(commandInfo.guild.id, channel.id, uuid, twitch_name, notification_message)
+    await set_twitch_online_notification(commandInfo.guild.id, channel.id, uuid, twitch_name, notification_message)  # type: ignore[union-attr, arg-type]
 
     await subscribe_to_twitch_online_notification(uuid)
 

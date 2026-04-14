@@ -1,8 +1,7 @@
-# Unused imports:
-# from utility import missingLocalization
 from __future__ import annotations
 
 import json
+from typing import Any, cast
 
 import discord
 from discord import app_commands
@@ -11,40 +10,38 @@ from localizer import tanjunLocalizer
 
 
 class TanjunTranslator(app_commands.Translator):
-    def __init__(self):
-        self.translations = {}
+    def __init__(self) -> None:
+        self.translations: list[dict[str, object]] = []
         self.load_translations()
 
-    def load_translations(self):
-        with open("locales/de.json", encoding="utf-8") as f:
-            self.translations = json.load(f)
+    def load_translations(self) -> None:
+        try:
+            with open("locales/de.json", encoding="utf-8") as f:
+                data: object = json.load(f)
+                self.translations = cast(list[dict[str, object]], data)
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.translations = []
 
     async def translate(
         self,
         string: app_commands.locale_str,
         locale: discord.Locale,
-        context: app_commands.TranslationContext,
+        context: app_commands.TranslationContext[Any, Any],
     ) -> str | None:
-        if locale.value not in ["de", "de-DE", "en", "en-US", "en-GB"]:
+        if str(locale.value) not in ["de", "de-DE", "en", "en-US", "en-GB"]:
             return None
 
-        if locale.value in ["en-US", "en-GB"]:
-            locale = "en"
+        locale_str: str = str(locale.value)
+        if locale_str in ["en-US", "en-GB"]:
+            locale_str = "en"
 
-        string = str(string).replace("_", ".")
+        key_str: str = str(string).replace("_", ".")
 
-        current = tanjunLocalizer.localize(locale, string)
+        current: object = tanjunLocalizer.localize(locale_str, key_str)
 
         if isinstance(current, str):
+            if current == "err: no translation found.":
+                return None
             return current
-        elif isinstance(current, dict):
-            if context.location == app_commands.TranslationContextLocation.command_name:
-                return current.get("name")
-            elif context.location == app_commands.TranslationContextLocation.command_description:
-                return current.get("description")
-            elif context.location == app_commands.TranslationContextLocation.parameter_name:
-                return current.get("name")
-            elif context.location == app_commands.TranslationContextLocation.parameter_description:
-                return current.get("description")
 
         return None

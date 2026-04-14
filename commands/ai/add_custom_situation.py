@@ -7,8 +7,8 @@ from api import addCustomSituation, getCustomSituation, getCustomSituationFromUs
 from localizer import tanjunLocalizer
 
 
-async def add_custom_situation(
-    commandInfo: utility.commandInfo,
+async def add_custom_situation(  # type: ignore[no-untyped-def]
+    commandInfo: utility.CommandInfo,
     name: str,
     situation: str,
     temperature: float = 1,
@@ -16,49 +16,49 @@ async def add_custom_situation(
     frequency_penalty: float = 0,
     presence_penalty: float = 0,
 ):
-    if not utility.checkIfhasPlus(commandInfo.user):
+    if not utility.checkIfhasPlus(commandInfo.user):  # type: ignore[arg-type]
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.notplus.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.notplus.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.notplus.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.notplus.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if len(situation) < 10:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.shortsituation.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.shortsituation.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.shortsituation.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.shortsituation.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if len(name) < 3:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.shortname.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.shortname.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.shortname.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.shortname.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if len(situation) > 4000:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.longsituation.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.longsituation.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.longsituation.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.longsituation.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if len(name) > 15:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.longname.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.longname.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.longname.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.longname.description"),
         )
         await commandInfo.reply(embed=embed)
         return
 
     if temperature < 0 or temperature > 2:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.invalidtemperature.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.invalidtemperature.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.ai.addcustom.invalidtemperature.description",
@@ -69,8 +69,8 @@ async def add_custom_situation(
 
     if top_p < 0 or top_p > 1:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.invalidtop_p.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.invalidtop_p.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.invalidtop_p.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.invalidtop_p.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -107,7 +107,7 @@ async def add_custom_situation(
 
     if customSituation and commandInfo.user.id != 689755528947433555:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.namealreadyexists.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.namealreadyexists.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.ai.addcustom.namealreadyexists.description",
@@ -120,8 +120,8 @@ async def add_custom_situation(
 
     if userCustomSituation and commandInfo.user.id != 689755528947433555:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.alreadyexists.title"),
-            description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.alreadyexists.description"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.alreadyexists.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.alreadyexists.description"),
         )
         await commandInfo.reply(embed=embed)
         return
@@ -141,8 +141,8 @@ async def add_custom_situation(
     )
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.ai.addcustom.success.description", name=name),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.success.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.success.description", name=name),
     )
     await commandInfo.reply(embed=embed)
 
@@ -153,7 +153,7 @@ async def add_custom_situation(
         description=f"Name: `{name}`\nUser: `{commandInfo.user.name}`\nSituation: \n```\n{situation}\n```",
     )
     view = discord.ui.View()
-    btn = discord.ui.Button(
+    btn = discord.ui.Button(  # type: ignore[var-annotated]
         label="Akzeptieren",
         style=discord.ButtonStyle.success,
         custom_id="ai_add_custom_situation_approve;" + str(commandInfo.user.id) + ";" + str(commandInfo.locale),
@@ -167,4 +167,4 @@ async def add_custom_situation(
         row=0,
     )
     view.add_item(btn)
-    await channel.send("<@&1152916080986161225>", embed=embed, view=view)
+    await channel.send("<@&1152916080986161225>", embed=embed, view=view)  # type: ignore[union-attr]

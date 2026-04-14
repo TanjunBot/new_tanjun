@@ -4,10 +4,10 @@ import utility
 from api import get_join_to_create_channel
 from localizer import tanjunLocalizer
 
-joinToCreateChannels = []
+joinToCreateChannels = []  # type: ignore[var-annotated]
 
 
-async def memberJoin(voiceState: discord.VoiceState, member: discord.Member):
+async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> None:
     print("memberJoin")
     if not voiceState.channel:
         return
@@ -25,7 +25,7 @@ async def memberJoin(voiceState: discord.VoiceState, member: discord.Member):
 
     overwrites = {member: discord.PermissionOverwrite(view_channel=True, manage_channels=True)}
 
-    await newChannel.edit(overwrites=overwrites)
+    await newChannel.edit(overwrites=overwrites)  # type: ignore[arg-type]
 
     await member.move_to(newChannel)
 
@@ -46,7 +46,7 @@ async def memberJoin(voiceState: discord.VoiceState, member: discord.Member):
     )
 
 
-async def memberLeave(beforeVoice: discord.VoiceState):
+async def memberLeave(beforeVoice: discord.VoiceState) -> None:
     if not beforeVoice.channel:
         return
 
@@ -57,7 +57,7 @@ async def memberLeave(beforeVoice: discord.VoiceState):
         joinToCreateChannels.remove(beforeVoice.channel)
 
 
-async def removeAllJoinToCreateChannels():
+async def removeAllJoinToCreateChannels() -> None:
     for channel in joinToCreateChannels:
         for member in channel.members:
             await member.send(

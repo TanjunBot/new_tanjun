@@ -11,7 +11,10 @@ DIVIDEEMOJI = "math_divide:1254373636224323644"
 BACKSPACEEMOJI = "math_backspace:1254371946695757854"
 
 
-class CalculatorButton(ui.Button):
+from typing import Any
+
+
+class CalculatorButton(ui.Button[Any]):
     def __init__(
         self,
         label: str,
@@ -20,7 +23,7 @@ class CalculatorButton(ui.Button):
         row: int,
         emoji: str | None = None,
         disabled: bool = False,
-    ):
+    ) -> None:
         super().__init__(
             label=label,
             style=style,
@@ -30,13 +33,15 @@ class CalculatorButton(ui.Button):
             disabled=disabled,
         )
 
-    async def callback(self, interaction: discord.Interaction):
-        view: CalculatorView = self.view
+    async def callback(self, interaction: discord.Interaction) -> None:
+        if self.view is None or self.custom_id is None:
+            return
+        view: CalculatorView = self.view  # type: ignore[assignment, unused-ignore]
         await view.button_callback(interaction, self.custom_id)
 
 
 class CalculatorView(ui.View):
-    def __init__(self, command_info: utility.commandInfo, initial_equation: str = ""):
+    def __init__(self, command_info: utility.CommandInfo, initial_equation: str = "") -> None:
         super().__init__(timeout=300)
         self.command_info = command_info
         self.display_equation = initial_equation
@@ -44,16 +49,17 @@ class CalculatorView(ui.View):
         self.result = ""
         self.history: list[str] = []
         self.variables: dict[str, float] = {}
+        self.message: discord.Message | None = None
         self.current_page = 0
         self.create_buttons()
         self.nsp = utility.NumericStringParser()
 
-    def set_message(self, message: discord.Message):
+    def set_message(self, message: discord.Message) -> None:
         self.message = message
 
-    async def on_timeout(self):
+    async def on_timeout(self) -> None:
         for child in self.children:
-            child.disabled = True
+            child.disabled = True  # type: ignore[attr-defined]
         if self.message:
             await self.message.edit(view=self)
 
@@ -66,7 +72,7 @@ class CalculatorView(ui.View):
             return False
         return True
 
-    def create_buttons(self):
+    def create_buttons(self) -> None:
         self.clear_items()
         if self.current_page == 0:
             buttons = [
@@ -243,7 +249,7 @@ class CalculatorView(ui.View):
                 ("=", discord.ButtonStyle.success, "equals", 4, None),
             ]
 
-        for label, style, custom_id, row, emoji in buttons:
+        for label, style, custom_id, row, emoji in buttons:  # type: ignore[possibly-undefined]
             self.add_item(
                 CalculatorButton(
                     label=label,
@@ -255,7 +261,7 @@ class CalculatorView(ui.View):
                 )
             )
 
-    async def button_callback(self, interaction: discord.Interaction, button_id: str):
+    async def button_callback(self, interaction: discord.Interaction, button_id: str) -> None:
         if button_id == "clear":
             self.display_equation = ""
             self.equation = ""
@@ -430,7 +436,7 @@ class CalculatorView(ui.View):
 
         await self.update_message(interaction)
 
-    async def update_message(self, interaction: discord.Interaction):
+    async def update_message(self, interaction: discord.Interaction) -> None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(self.command_info.locale, "commands.math.calculator.title"),
         )
@@ -455,7 +461,7 @@ class CalculatorView(ui.View):
         await interaction.response.edit_message(embed=embed, view=self)
 
 
-async def calculator_command(command_info: utility.commandInfo, initial_equation: str = ""):
+async def calculator_command(command_info: utility.CommandInfo, initial_equation: str = "") -> None:
     view = CalculatorView(command_info, initial_equation)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(command_info.locale, "commands.math.calculator.title"),

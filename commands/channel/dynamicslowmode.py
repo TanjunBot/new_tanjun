@@ -18,13 +18,17 @@ from localizer import tanjunLocalizer
 
 
 async def addDynamicslowmode(
-    commandInfo: utility.commandInfo,
+    commandInfo: utility.CommandInfo,
     channel: discord.TextChannel,
     messages: int,
     per: int,
     resetafter: int = 60,
-):
-    if not commandInfo.user.guild_permissions.manage_channels:
+) -> None:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -39,9 +43,9 @@ async def addDynamicslowmode(
         return
 
     if (
-        not channel.permissions_for(commandInfo.guild.me).manage_messages
-        or not channel.permissions_for(commandInfo.guild.me).read_message_history
-        or not channel.permissions_for(commandInfo.guild.me).manage_channels
+        not channel.permissions_for(commandInfo.guild.me).manage_messages  # type: ignore[union-attr]
+        or not channel.permissions_for(commandInfo.guild.me).read_message_history  # type: ignore[union-attr]
+        or not channel.permissions_for(commandInfo.guild.me).manage_channels  # type: ignore[union-attr]
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -70,9 +74,9 @@ async def addDynamicslowmode(
         await commandInfo.reply(embed=embed)
         return
 
-    await add_dynamicslowmode(commandInfo.guild.id, channel.id, messages, per, resetafter)
+    await add_dynamicslowmode(commandInfo.guild.id, channel.id, messages, per, resetafter)  # type: ignore[union-attr]
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.channel.dynamicslowmode.success.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.channel.dynamicslowmode.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.channel.dynamicslowmode.success.description",
@@ -81,8 +85,12 @@ async def addDynamicslowmode(
     await commandInfo.reply(embed=embed)
 
 
-async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: discord.TextChannel):
-    if not commandInfo.user.guild_permissions.manage_channels:
+async def removeDynamicslowmode(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -110,7 +118,7 @@ async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: disco
         await commandInfo.reply(embed=embed)
         return
 
-    await remove_dynamicslowmode(commandInfo.guild.id, channel.id)
+    await remove_dynamicslowmode(commandInfo.guild.id, channel.id)  # type: ignore[union-attr]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -125,8 +133,12 @@ async def removeDynamicslowmode(commandInfo: utility.commandInfo, channel: disco
     await commandInfo.reply(embed=embed)
 
 
-async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
-    if not commandInfo.user.guild_permissions.manage_channels:
+async def getDynamicslowmodeChannels(commandInfo: utility.CommandInfo) -> None:
+    if (
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).manage_channels
+    ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -140,7 +152,7 @@ async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
         await commandInfo.reply(embed=embed)
         return
 
-    channels = await get_dynamicslowmode_channels(commandInfo.guild.id)
+    channels = await get_dynamicslowmode_channels(commandInfo.guild.id)  # type: ignore[union-attr]
     if not channels:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -167,13 +179,13 @@ async def getDynamicslowmodeChannels(commandInfo: utility.commandInfo):
         )
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.channel.dynamicslowmode.channels.title"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.channel.dynamicslowmode.channels.title"),
         description=description,
     )
     await commandInfo.reply(embed=embed)
 
 
-async def dynamicslowmodeMessage(message: discord.Message):
+async def dynamicslowmodeMessage(message: discord.Message) -> None:
     if message.author.bot:
         return
 
@@ -184,36 +196,36 @@ async def dynamicslowmodeMessage(message: discord.Message):
     cashed_slowmode_delay = dynamicSlowmodeChannel[5]
 
     if not cashed_slowmode_delay:
-        await cash_slowmode_delay(message.channel.id, message.channel.slowmode_delay)
-        cashed_slowmode_delay = message.channel.slowmode_delay
+        await cash_slowmode_delay(message.channel.id, message.channel.slowmode_delay)  # type: ignore[union-attr, arg-type]
+        cashed_slowmode_delay = message.channel.slowmode_delay  # type: ignore[union-attr]
 
     message_time = message.created_at.replace(tzinfo=None)
-    await add_dynamicslowmode_message(message.channel.id, message.id, message_time)
+    await add_dynamicslowmode_message(message.channel.id, message.id, message_time)  # type: ignore[arg-type]
 
     dynamicSlowmodeMessages = await get_dynamicslowmode_messages(message.channel.id)
 
     minTime = message_time - timedelta(seconds=dynamicSlowmodeChannel[4])
 
     messages = 1
-    for dynamicSlowmodeMessage in dynamicSlowmodeMessages:
+    for dynamicSlowmodeMessage in dynamicSlowmodeMessages:  # type: ignore[union-attr]
         if dynamicSlowmodeMessage[3] < minTime:
             messages += 1
 
     await clear_old_dynamicslowmode_messages(message.channel.id, minTime)
 
     reasonLocale = tanjunLocalizer.localize(
-        (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),
+        (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]
         "commands.channel.dynamicslowmode.reason",
         messages=messages,
         per=dynamicSlowmodeChannel[3],
     )
     resetReasonLocale = tanjunLocalizer.localize(
-        (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),
+        (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]
         "commands.channel.dynamicslowmode.resetReason",
     )
     newSlowmode = int(messages / dynamicSlowmodeChannel[3])
-    if newSlowmode != message.channel.slowmode_delay and newSlowmode > cashed_slowmode_delay:
-        await message.channel.edit(slowmode_delay=newSlowmode, reason=reasonLocale)
-    elif newSlowmode < cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:
-        await message.channel.edit(slowmode_delay=cashed_slowmode_delay, reason=resetReasonLocale)
+    if newSlowmode != message.channel.slowmode_delay and newSlowmode > cashed_slowmode_delay:  # type: ignore[union-attr]
+        await message.channel.edit(slowmode_delay=newSlowmode, reason=reasonLocale)  # type: ignore[union-attr]
+    elif newSlowmode < cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
+        await message.channel.edit(slowmode_delay=cashed_slowmode_delay, reason=resetReasonLocale)  # type: ignore[union-attr]
         await remove_cashed_slowmode_delay(message.channel.id)

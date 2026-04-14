@@ -1,6 +1,7 @@
 import asyncio
 import io
 from concurrent.futures import ThreadPoolExecutor
+from typing import Any
 
 import aiohttp
 import discord
@@ -8,17 +9,18 @@ from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 from api import get_user_level_info, set_custom_background
 from localizer import tanjunLocalizer
-from utility import checkIfhasPlus, commandInfo, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
+from utility import CommandInfo, checkIfhasPlus, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
 
 executor = ThreadPoolExecutor()
 
 
-async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
+async def show_rankcard_command(commandInfo: CommandInfo, user: discord.Member) -> None:
+    assert commandInfo.guild is not None
     user_info = await get_user_level_info(str(commandInfo.guild.id), str(user.id))
 
     if not user_info:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.rank.error.no_data.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.error.no_data.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.rank.error.no_data.description",
@@ -32,17 +34,17 @@ async def show_rankcard_command(commandInfo: commandInfo, user: discord.Member):
 
     file = discord.File(rankcard_image, filename="rankcard.gif")
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.rank.success.title", user=user.name),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.success.title", user=user.name),
     )
     embed.set_image(url="attachment://rankcard.gif")
 
     await commandInfo.reply(embed=embed, file=file)
 
 
-async def set_background_command(commandInfo: commandInfo, image: discord.Attachment):
+async def set_background_command(commandInfo: CommandInfo, image: discord.Attachment) -> None:
     if not checkIfhasPlus(commandInfo.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setbackground.error.no_plus.title"),
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.error.no_plus.title"),
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.setbackground.error.no_plus.description",
@@ -68,21 +70,21 @@ async def set_background_command(commandInfo: commandInfo, image: discord.Attach
     uploaded_image = await upload_image_to_imgbb(await image.read(), image.content_type.split("/")[1])
 
     await set_custom_background(
-        str(commandInfo.guild.id),
+        str(commandInfo.guild.id),  # type: ignore[union-attr]
         str(commandInfo.user.id),
-        uploaded_image["data"]["url"],
+        uploaded_image["data"]["url"],  # type: ignore[index]
     )
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setbackground.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.setbackground.success.description"),
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.title"),
+        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.description"),
     )
-    embed.set_image(url=uploaded_image["data"]["url"])
+    embed.set_image(url=uploaded_image["data"]["url"])  # type: ignore[index]
 
     await commandInfo.reply(embed=embed)
 
 
-async def fetch_image(url):
+async def fetch_image(url: str) -> io.BytesIO | None:
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status != 200:
             return None
@@ -90,15 +92,17 @@ async def fetch_image(url):
         return image_data
 
 
-async def get_image_or_gif_frames(url):
+async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
     image_data = await fetch_image(url)
+    if not image_data:
+        return [], 0
     image = Image.open(image_data)
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
-    duration = image.info.get("duration", 100)
+    duration = int(image.info.get("duration", 100))
     return frames, duration
 
 
-def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
+def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1) -> None:  # type: ignore[no-untyped-def]
     x1, y1, x2, y2 = xy
     draw.rectangle([x1 + radius, y1, x2 - radius, y2], fill=fill)
     draw.rectangle([x1, y1 + radius, x2, y2 - radius], fill=fill)
@@ -135,7 +139,14 @@ def draw_rounded_rectangle(draw, xy, radius, fill=None, outline=None, width=1):
         draw.line([x2, y1 + radius, x2, y2 - radius], fill=outline, width=width)
 
 
-def process_image(background_frames, avatar_frames, avatar_decoration_frames, user, user_info, commandInfo):
+def process_image(
+    background_frames: list[Image.Image],
+    avatar_frames: list[Image.Image],
+    avatar_decoration_frames: list[Image.Image] | None,
+    user: discord.Member,
+    user_info: dict[str, Any],
+    commandInfo: CommandInfo,
+) -> io.BytesIO:
     DECORATION_SIZE_MULTIPLIER = 1.2
 
     num_frames = max(
@@ -202,7 +213,7 @@ def process_image(background_frames, avatar_frames, avatar_decoration_frames, us
         draw_text_with_outline(
             draw,
             (250, 105),
-            tanjunLocalizer.localize(commandInfo.locale, "commands.level.rank.data.level", level=user_info["level"]),
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.data.level", level=user_info["level"]),
             info_font,
             (255, 255, 255, 255),
             (0, 0, 0, 255),
@@ -256,41 +267,45 @@ def process_image(background_frames, avatar_frames, avatar_decoration_frames, us
         if avatar_decoration_frames:
             decoration = avatar_decoration_frames[frame_index]
             # Resize the decoration and ensure RGBA mode
-            decoration = decoration.resize((decoration_size, decoration_size)).convert("RGBA")
+            decoration = decoration.resize((decoration_size, decoration_size)).convert("RGBA")  # type: ignore[possibly-undefined]
             # Create a new transparent image for the decoration
             decoration_layer = Image.new("RGBA", frame.size, (0, 0, 0, 0))
             # Paste the decoration onto the transparent layer
-            decoration_layer.paste(decoration, (25 - offset, 50 - offset), decoration)
+            decoration_layer.paste(decoration, (25 - offset, 50 - offset), decoration)  # type: ignore[possibly-undefined]
             # Composite the decoration layer with the frame
             frame = Image.alpha_composite(frame, decoration_layer)
 
         result_frames.append(frame)
 
     img_byte_arr = io.BytesIO()
+    # Explicitly calculate duration
+    duration = int(background_frames[0].info.get("duration", 100))
+
     result_frames[0].save(
         img_byte_arr,
         format="GIF",
         save_all=True,
         append_images=result_frames[1:],
         loop=0,
-        duration=background_frames[0].info.get("duration", 100),
+        duration=duration,
     )
     img_byte_arr.seek(0)
 
     return img_byte_arr
 
 
-async def generate_rankcard(user: discord.Member, user_info: dict, commandInfo: commandInfo) -> io.BytesIO:
+async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], commandInfo: CommandInfo) -> io.BytesIO:
     # Load background image or frames
-    if user_info["customBackground"]:
-        background_frames, _ = await get_image_or_gif_frames(user_info["customBackground"])
+    custom_bg = user_info.get("customBackground")
+    if custom_bg:
+        background_frames, _ = await get_image_or_gif_frames(str(custom_bg))
     else:
         background_frames = [Image.open("assets/rankCard.png").convert("RGBA")]
 
     # Load user avatar frames
     avatar_url = str(user.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
-    avatar_decoration_frames = None
+    avatar_decoration_frames: list[Image.Image] | None = None
     avatar_decoration_url = str(user.avatar_decoration.url) if user.avatar_decoration else None
     if avatar_decoration_url:
         avatar_decoration_frames, _ = await get_image_or_gif_frames(avatar_decoration_url)
@@ -307,5 +322,8 @@ async def generate_rankcard(user: discord.Member, user_info: dict, commandInfo: 
         user_info,
         commandInfo,
     )
+
+    if not isinstance(img_byte_arr, io.BytesIO):
+        raise TypeError("Expected io.BytesIO from process_image")
 
     return img_byte_arr

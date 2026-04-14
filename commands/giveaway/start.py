@@ -5,6 +5,7 @@ from discord import ui
 
 import utility
 from api import add_giveaway
+from commands.giveaway.utility import generateGiveawayEmbed, sendGiveaway
 from localizer import tanjunLocalizer
 
 
@@ -1350,7 +1351,8 @@ class GiveawayBuilder(ui.View):
         )
 
     async def preview(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        embed = await utility.generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)
+        self.giveaway_data["id"] = "1234567890"
+        embed = await generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)
         await interaction.response.send_message(
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.preview"),
             embed=embed,
@@ -1395,6 +1397,8 @@ class GiveawayBuilder(ui.View):
             channel_id=target_channel.id,
         )
 
+        self.giveaway_data["id"] = giveawayId
+
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.success.title"),
             description=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.success.description"),
@@ -1403,7 +1407,7 @@ class GiveawayBuilder(ui.View):
         await interaction.response.edit_message(content=None, embed=embed, view=ui.View())
 
         if start_time < datetime.datetime.now():
-            await utility.sendGiveaway(giveawayId, self.commandInfo.client)
+            await sendGiveaway(giveawayId, self.commandInfo.client)
 
 
 async def start_giveaway(
