@@ -166,7 +166,7 @@ jupyter-client==8.6.3
     # via
     #   nbclient
     #   tanjun_5.0 (pyproject.toml)
-jupyter-core==5.7.2
+jupyter-core==5.8.1
     # via
     #   jupyter-client
     #   nbclient
