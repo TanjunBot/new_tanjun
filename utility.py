@@ -1,7 +1,3 @@
-# Unused imports:
-# import cmath
-# import base64
-# import json
 import ast
 import collections
 import datetime
@@ -13,7 +9,7 @@ import os
 import random
 import re
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Coroutine, Mapping
 from difflib import SequenceMatcher
 from typing import (
     Any,
@@ -32,10 +28,8 @@ from pyparsing import (
     Forward,
     Literal,
     Word,
-    # Group,
     ZeroOrMore,
     alphas,
-    # oneOf,
     nums,
 )
 from pyparsing import (
@@ -781,7 +775,7 @@ class tanjunEmbed:
         return result  # type: ignore # This payload is equivalent to the EmbedData type
 
 
-class commandInfo:
+class CommandInfo:
     def __init__(
         self,
         user: discord.abc.User,
@@ -791,7 +785,7 @@ class commandInfo:
         locale: str,
         message: discord.Message,
         permissions: discord.Permissions,
-        reply: collections.abc.Coroutine,
+        reply: Coroutine,
         client: discord.Client,
     ):
         self.user = user
@@ -803,6 +797,9 @@ class commandInfo:
         self.permissions = permissions
         self.reply = reply
         self.client = client
+
+
+commandInfo = CommandInfo
 
 
 def cmp(a: int, b: int) -> int:
