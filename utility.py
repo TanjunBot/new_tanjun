@@ -1,5 +1,4 @@
 import ast
-import collections
 import datetime
 import gzip
 import math
