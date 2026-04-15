@@ -1,7 +1,11 @@
 import json
 from collections.abc import Sequence
 from datetime import datetime
+<<<<<<< HEAD
 from typing import Any
+=======
+from typing import Any, Dict, List, Sequence, Tuple
+>>>>>>> d1849ce (fix: clean up unused imports and fix type annotations)
 
 import asyncmy
 from discord import Entitlement
