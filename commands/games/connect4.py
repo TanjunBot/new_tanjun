@@ -201,9 +201,7 @@ class Connect4:
         # Find the lowest empty row in this column
         for row in range(self.rows - 1, -1, -1):
             if self.board[row][drop_column] == self.empty_cell:
-                self.board[row][drop_column] = (
-                    self.player1_move if self.current_player == self.player1 else self.player2_move
-                )
+                self.board[row][drop_column] = self.player1_move if self.current_player == self.player1 else self.player2_move
                 break
 
         winner = self.check_winner()

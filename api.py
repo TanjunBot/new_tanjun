@@ -1,7 +1,7 @@
 import json
 from collections.abc import Sequence
 from datetime import datetime
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Any
 
 import asyncmy
 from discord import Entitlement
