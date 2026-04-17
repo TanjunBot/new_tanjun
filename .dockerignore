@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+venv
+.env.local
+.git
+.gitignore
+.dockerignore
+*.swp
+*.swo
+.DS_Store

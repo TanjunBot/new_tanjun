@@ -14,15 +14,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
   && rm -rf /var/lib/apt/lists/*
 
-# Install the application requirements
-COPY requirements.txt .
+# Install system requirements
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    python3-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir --upgrade pip
+# Install application requirements
+COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy in the source code
-COPY . .
+# Copy requirements first
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy the entire source code
+COPY --chown=appuser:appuser . /usr/local/app/
 
 RUN useradd -m appuser
 USER appuser
