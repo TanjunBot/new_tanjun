@@ -8,7 +8,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   aiohttp
     #   tanjun_5.0 (pyproject.toml)
-aiohttp==3.11.18
+aiohttp==3.13.4
     # via
     #   discord-py
     #   tanjun_5.0 (pyproject.toml)
