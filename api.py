@@ -9,20 +9,14 @@ from discord import Entitlement
 from config import database_ip, database_password, database_schema, database_user
 from utility import get_level_for_xp, get_xp_for_level
 
-pool = None
+# Remove global pool and set_pool functions
+# The pool will be accessed from the bot object
 
 
-def set_pool(p: Any) -> None:
-    global pool
-    pool = p
-
-
-def check_pool_initialized() -> bool:
-    return pool is not None
-
-
-async def execute_query(query: str, params: Sequence[Any] | dict[str, Any] | None = None) -> list[tuple[Any, ...]] | None:
-    if not pool:
+async def execute_query(query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None) -> list[tuple[Any, ...]] | None:
+    if bot and hasattr(bot, '_pool'):
+        pool = bot._pool
+    else:
         print(
             "Tried to execute action without pool. Pool is not yet initialized.Returning...\nquery: ",
             query,
@@ -30,59 +24,48 @@ async def execute_query(query: str, params: Sequence[Any] | dict[str, Any] | Non
         return
 
     try:
-        connection = await asyncmy.connect(
-            host=database_ip,
-            user=database_user,
-            password=database_password,
-            db=database_schema,
-        )
-        async with connection.cursor() as cursor:
-            await cursor.execute(query, params)
-            result = await cursor.fetchall()
-            return result
+        async with pool.acquire() as connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(query, params)
+                result = await cursor.fetchall()
+                return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
 
 
-async def execute_action(query: str, params: Any = None) -> Any:
-    if not pool:
+async def execute_action(query: str, params: Any = None, bot=None) -> Any:
+    if bot and hasattr(bot, '_pool'):
+        pool = bot._pool
+    else:
         print(
             ("Tried to execute action without pool. Pool is not yet initialized. Returning...\nquery: "),
             query,
         )
         return
     try:
-        connection = await asyncmy.connect(
-            host=database_ip,
-            user=database_user,
-            password=database_password,
-            db=database_schema,
-        )
-        async with connection.cursor() as cursor:
-            await cursor.execute(query, params)
-            await connection.commit()
-            return cursor.rowcount
+        async with pool.acquire() as connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(query, params)
+                await connection.commit()
+                return cursor.rowcount
 
     except Exception as e:
         print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
 
 
-async def execute_insert_and_get_id(query: str, params: Any = None) -> int | None:
-    if not pool:
+async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
+    if bot and hasattr(bot, '_pool'):
+        pool = bot._pool
+    else:
         return None
     try:
-        connection = await asyncmy.connect(
-            host=database_ip,
-            user=database_user,
-            password=database_password,
-            db=database_schema,
-        )
-        async with connection.cursor() as cursor:
-            await cursor.execute(query, params)
-            await connection.commit()
-            await cursor.execute("SELECT LAST_INSERT_ID()")
-            last_id = await cursor.fetchone()
-            return last_id[0] if last_id else None
+        async with pool.acquire() as connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(query, params)
+                await connection.commit()
+                await cursor.execute("SELECT LAST_INSERT_ID()")
+                last_id = await cursor.fetchone()
+                return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
     return None
@@ -656,7 +639,7 @@ async def create_tables() -> None:
 
     for table_name in tables:
         table_query = tables[table_name]
-        await execute_action(table_query)
+        await execute_action(table_query, bot=bot)
 
 
 async def add_warning(

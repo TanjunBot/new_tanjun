@@ -5,7 +5,7 @@ import os
 import sys
 from typing import cast
 
-# import asyncmy  # type: ignore[import-not-found]
+import asyncmy  # type: ignore[import-not-found]
 import discord
 from discord.ext import commands
 
@@ -66,27 +66,7 @@ async def main() -> None:
     await loadTranslator(bot)
 
 
-async def create_pool() -> asyncmy.Connection | None:  # type: ignore[no-any-unimported]
-    try:
-        # p = await asyncmy.create_pool(
-        #     host=database_ip,
-        #     user=database_user,
-        #     password=database_password,
-        #     db=database_schema,
-        #     maxsize=1,
-        #     minsize=1,
-        # )
-        # return p
-        connection = await asyncmy.connect(
-            host=database_ip,
-            user=database_user,
-            password=database_password,
-            db=database_schema,
-        )
-        return cast(asyncmy.Connection, connection)  # type: ignore[no-any-unimported]
-    except Exception as e:
-        print(f"Error creating pool: {e}")
-        return None
+# Removed unused create_pool function as the pool is now created directly in main()
 
 
 @bot.event
@@ -109,6 +89,32 @@ if __name__ == "__main__":
 
         # Load translator
         await loadTranslator(bot)
+
+        # Initialize the database pool
+        pool = await asyncmy.create_pool(
+            host=database_ip,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+            maxsize=10,
+            minsize=1,
+        )
+        bot._pool = pool  # Attach the pool to the bot for use in extensions
+
+        # Initialize the database pool
+        pool = await asyncmy.create_pool(
+            host=database_ip,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+            maxsize=10,
+            minsize=1,
+        )
+        bot._pool = pool  # Attach the pool to the bot for use in extensions
+
+        # Create database tables
+        from api import create_tables
+        await create_tables(bot)
 
         # Start the bot
         await bot.start(config.token)  # type: ignore[arg-type]
