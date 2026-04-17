@@ -6,9 +6,7 @@ import asyncmy  # type: ignore[import-not-found]
 import discord
 from discord.ext import commands
 
-import api
 import config
-from commands.utility.twitch.twitchApi import initTwitch
 from config import (
     database_ip,
     database_password,
@@ -88,10 +86,12 @@ async def create_pool() -> asyncmy.Connection | None:  # type: ignore[no-any-uni
 
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    print(f"Logged in as {bot.user} (ID: {bot.user.id})")
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
 
+
 if __name__ == "__main__":
+
     async def main():
         print("starting bot...")
         print("discord.py version: ", discord.__version__)
