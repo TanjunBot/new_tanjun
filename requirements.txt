@@ -371,7 +371,7 @@ tinycss2==1.4.0
     #   bleach
     #   tanjun_5.0 (pyproject.toml)
 <<<<<<< HEAD
-tornado==6.4.2
+tornado==6.5.5
 =======
 tornado==6.5.5
 >>>>>>> master
