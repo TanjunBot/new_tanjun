@@ -3,8 +3,8 @@ from io import BytesIO
 
 import discord
 from PIL import Image
-# from rembg import remove as removeBackground  # type: ignore[import-not-found]
 
+# from rembg import remove as removeBackground  # type: ignore[import-not-found]
 import utility
 from localizer import tanjunLocalizer
 
@@ -29,7 +29,7 @@ async def background(commandInfo: utility.CommandInfo, image: discord.Attachment
 
     image = await image.read()  # type: ignore[assignment]
     image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
-#    image = removeBackground(image)
+    #    image = removeBackground(image)
     # Background removal functionality is temporarily disabled
     # You can re-enable this when rembg is properly installed
     # image = removeBackground(image)
