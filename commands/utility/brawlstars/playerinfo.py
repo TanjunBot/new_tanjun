@@ -1,7 +1,7 @@
 from typing import Any
 
 import aiohttp
-import json
+
 from api import get_brawlstars_linked_account
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
@@ -11,13 +11,12 @@ from utility import CommandInfo, tanjunEmbed
 async def fetch_player_data(player_tag: str) -> dict[str, Any] | None:
     """Fetch player data directly from Brawl Stars API."""
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    url = f"https://api.brawlstars.com/v1/players"
+    url = "https://api.brawlstars.com/v1/players"
     params = {"tag": player_tag}
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers, params=params) as response:
-            if response.status != 200:
-                return None
-            return await response.json()
+    async with aiohttp.ClientSession() as session, session.get(url, headers=headers, params=params) as response:
+        if response.status != 200:
+            return None
+        return await response.json()
 
 
 async def getAllBrawlers() -> dict[str, Any] | None:
