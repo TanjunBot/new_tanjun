@@ -3,7 +3,6 @@
 # import utility
 # from discord import app_commands
 # from localizer import tanjunLocalizer
-import asyncio
 from datetime import time
 
 import discord
