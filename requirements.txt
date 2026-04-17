@@ -333,7 +333,7 @@ referencing==0.36.2
     #   jsonschema-specifications
     #   tanjun_5.0 (pyproject.toml)
 <<<<<<< HEAD
-requests==2.32.3
+requests==2.33.0
 =======
 requests==2.33.0
 >>>>>>> master
