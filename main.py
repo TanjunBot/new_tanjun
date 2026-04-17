@@ -105,7 +105,9 @@ if __name__ == "__main__":
         for filename in os.listdir("extensions"):
             if filename.endswith(".py") and not filename.startswith("__"):
                 extension = filename.replace(".py", "")
-                await loadextension(bot, extension)
+                # Skip loading extensions.utility to avoid brawlstats import error
+                if extension != "utility":
+                    await loadextension(bot, extension)
 
         # Load translator
         await loadTranslator(bot)
