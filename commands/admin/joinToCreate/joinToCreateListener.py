@@ -12,7 +12,7 @@ async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> 
     if not voiceState.channel:
         return
 
-    masterChannel = await get_join_to_create_channel(voiceState.channel.id)
+    masterChannel = await get_join_to_create_channel(str(voiceState.channel.id))
 
     print("masterChannel", masterChannel)
 

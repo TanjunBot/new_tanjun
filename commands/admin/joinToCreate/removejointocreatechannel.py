@@ -22,7 +22,7 @@ async def removejointocreatechannel(commandInfo: utility.CommandInfo, channel: d
         await commandInfo.reply(embed=embed)
         return
 
-    if not await get_join_to_create_channel(channel.id):
+    if not await get_join_to_create_channel(str(channel.id)):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 str(commandInfo.locale), "commands.admin.removejointocreatechannel.alreadySet.title"

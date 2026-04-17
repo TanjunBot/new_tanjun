@@ -40,7 +40,6 @@ async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextCh
                     self.commandInfo.locale,
                     "commands.admin.embed.setDescription.message",
                 ),
-                embed=None,
                 ephemeral=True,
                 view=discord.ui.View(),
             )
