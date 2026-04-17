@@ -8,12 +8,10 @@ import os
 import random
 import re
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Callable, Coroutine, Mapping
 from difflib import SequenceMatcher
 from typing import (
     Any,
-    Callable,
-    Coroutine,
     Protocol,
     Self,
     # TYPE_CHECKING,
