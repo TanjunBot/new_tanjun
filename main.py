@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import os
 import sys
-from typing import cast
 
 import asyncmy  # type: ignore[import-not-found]
 import discord
@@ -114,6 +113,7 @@ if __name__ == "__main__":
 
         # Create database tables
         from api import create_tables
+
         await create_tables(bot)
 
         # Start the bot

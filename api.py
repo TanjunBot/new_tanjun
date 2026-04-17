@@ -6,15 +6,16 @@ from typing import Any
 # import asyncmy
 from discord import Entitlement
 
-from config import database_ip, database_password, database_schema, database_user
 from utility import get_level_for_xp, get_xp_for_level
 
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
 
 
-async def execute_query(query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None) -> list[tuple[Any, ...]] | None:
-    if bot and hasattr(bot, '_pool'):
+async def execute_query(
+    query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
+) -> list[tuple[Any, ...]] | None:
+    if bot and hasattr(bot, "_pool"):
         pool = bot._pool
     else:
         print(
@@ -24,17 +25,16 @@ async def execute_query(query: str, params: Sequence[Any] | dict[str, Any] | Non
         return
 
     try:
-        async with pool.acquire() as connection:
-            async with connection.cursor() as cursor:
-                await cursor.execute(query, params)
-                result = await cursor.fetchall()
-                return result
+        async with pool.acquire() as connection, connection.cursor() as cursor:
+            await cursor.execute(query, params)
+            result = await cursor.fetchall()
+            return result
     except Exception as e:
         print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
 
 
 async def execute_action(query: str, params: Any = None, bot=None) -> Any:
-    if bot and hasattr(bot, '_pool'):
+    if bot and hasattr(bot, "_pool"):
         pool = bot._pool
     else:
         print(
@@ -43,29 +43,27 @@ async def execute_action(query: str, params: Any = None, bot=None) -> Any:
         )
         return
     try:
-        async with pool.acquire() as connection:
-            async with connection.cursor() as cursor:
-                await cursor.execute(query, params)
-                await connection.commit()
-                return cursor.rowcount
+        async with pool.acquire() as connection, connection.cursor() as cursor:
+            await cursor.execute(query, params)
+            await connection.commit()
+            return cursor.rowcount
 
     except Exception as e:
         print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
 
 
 async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
-    if bot and hasattr(bot, '_pool'):
+    if bot and hasattr(bot, "_pool"):
         pool = bot._pool
     else:
         return None
     try:
-        async with pool.acquire() as connection:
-            async with connection.cursor() as cursor:
-                await cursor.execute(query, params)
-                await connection.commit()
-                await cursor.execute("SELECT LAST_INSERT_ID()")
-                last_id = await cursor.fetchone()
-                return last_id[0] if last_id else None
+        async with pool.acquire() as connection, connection.cursor() as cursor:
+            await cursor.execute(query, params)
+            await connection.commit()
+            await cursor.execute("SELECT LAST_INSERT_ID()")
+            last_id = await cursor.fetchone()
+            return last_id[0] if last_id else None
     except Exception as e:
         print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
     return None
