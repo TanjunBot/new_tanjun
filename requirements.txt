@@ -2,6 +2,7 @@
 asyncmy==0.2.10
 discord.py==2.5.2
 rembg
+brawlstats
 
 # Other dependencies from pyproject.toml
 pywin32==311; sys_platform == 'win32'
