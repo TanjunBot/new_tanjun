@@ -13040,6 +13040,38 @@
         "max_length": null
     },
     {
+        "identifier": "commands.ai.ask.noapi.title",
+        "source_string": "API-Schlüssel nicht verfügbar",
+        "translation": "OpenAI API Key not available",
+        "context": "commands -> ai -> ask -> noapi -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.ai.ask.noapi.description",
+        "source_string": "Die OpenAI API ist derzeit nicht verfügbar. Bitte versuche es später nochmal.",
+        "translation": "OpenAI API is currently unavailable. Please try again later.",
+        "context": "commands -> ai -> ask -> noapi -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.ai.ask.noapi.title",
+        "source_string": "API-Schlüssel nicht verfügbar",
+        "translation": "OpenAI API Key not available",
+        "context": "commands -> ai -> ask -> noapi -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.ai.ask.noapi.description",
+        "source_string": "Die OpenAI API ist derzeit nicht verfügbar. Bitte versuche es später nochmal.",
+        "translation": "OpenAI API is currently unavailable. Please try again later.",
+        "context": "commands -> ai -> ask -> noapi -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
         "identifier": "commands.image.edgeenhance.success.title",
         "source_string": "Kanten verbessert",
         "translation": "Edges improved",

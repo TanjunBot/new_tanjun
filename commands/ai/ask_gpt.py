@@ -1,11 +1,19 @@
 from openai import AsyncOpenAI
+import os
 
 import utility
 from api import getToken, getTokenOverview, includeToToken, useToken
 from config import openAiKey
 from localizer import tanjunLocalizer
 
-client = AsyncOpenAI(api_key=openAiKey)
+# Make OpenAI API key optional
+open_ai_key = openAiKey or os.getenv('OPENAI_API_KEY')
+
+# Initialize client only if API key is available
+if open_ai_key:
+    client = AsyncOpenAI(api_key=open_ai_key)
+else:
+    client = None
 
 
 async def ask_gpt(
@@ -43,6 +51,14 @@ async def ask_gpt(
     """
 
     prompt = additionalPromptInformation + "\n\n" + prompt
+
+    if not client:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.noapi.title"),
+            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.noapi.description"),
+        )
+        await commandInfo.reply(embed=embed)
+        return
 
     response = await client.chat.completions.create(
         model="gpt-4o-mini",
