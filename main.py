@@ -86,21 +86,26 @@ async def create_pool() -> asyncmy.Connection | None:  # type: ignore[no-any-uni
         return None
 
 
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-
-
 @bot.event
-async def on_ready() -> None:
+async def on_ready():
+    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
-    pool = await create_pool()
-    print(pool)
-    if pool:
-        api.set_pool(pool)
-    await api.create_tables()
-    await initTwitch()
-    print("Bot is running!")
 
+if __name__ == "__main__":
+    async def main():
+        print("starting bot...")
+        print("discord.py version: ", discord.__version__)
 
-bot.run(config.token)  # type: ignore[arg-type]
+        # Load all extensions
+        for filename in os.listdir("extensions"):
+            if filename.endswith(".py") and not filename.startswith("__"):
+                extension = filename.replace(".py", "")
+                await loadextension(bot, extension)
+
+        # Load translator
+        await loadTranslator(bot)
+
+        # Start the bot
+        await bot.start(config.token)  # type: ignore[arg-type]
+
+    asyncio.run(main())

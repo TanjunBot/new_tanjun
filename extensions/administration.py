@@ -29,11 +29,13 @@ from localizer import tanjunLocalizer
 from loops.create_database_backup import create_database_backup
 from minigames.addLevelXp import update_user_roles
 from minigames.countingmodes import get_correct_next_number, get_first_number
-from tests import (  # type: ignore[attr-defined]
-    test_commands,
-    test_database,
-    test_ping,
-)
+# Import test functions only if they exist
+try:
+    from tests import test_commands, test_database, test_ping
+    TEST_FUNCTIONS_AVAILABLE = True
+except ImportError:
+    TEST_FUNCTIONS_AVAILABLE = False
+    print("Warning: Test functions not available in tests module")
 from utility import addFeedback, missingLocalization, tanjunEmbed
 
 
@@ -81,6 +83,10 @@ class administrationCog(commands.Cog):
             return
 
         message = await ctx.send("Starting bot tests...")
+
+        if not TEST_FUNCTIONS_AVAILABLE:
+            await message.edit(content="⚠️ Test functions not available. Skipping tests.")
+            return
 
         await message.edit(content="Starting bot tests... \ncurrent Test: `Ping`")
         try:
