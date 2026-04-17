@@ -8,7 +8,7 @@ from config import brawlstarsToken
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
-bs_client = brawlstats.Client(brawlstarsToken, is_async=True)
+# bs_client = brawlstats.Client(brawlstarsToken, is_async=True)
 
 
 async def getAllBrawlers() -> dict[str, Any] | None:
