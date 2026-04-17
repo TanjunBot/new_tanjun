@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands, tasks
 
 from ai.refillToken import refillAiToken
-from api import check_pool_initialized, get_all_twitch_notification_uuids
+from api import get_all_twitch_notification_uuids
 from commands.utility.claimBoosterChannel import (
     remove_claimed_booster_channels_that_are_expired,
 )
@@ -183,9 +183,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        while not check_pool_initialized():
-            await asyncio.sleep(1)
-
+        # The pool is now attached to the bot, so no need to check for initialization
         self.pollTwitchStreams.start()  # type: ignore[unused-awaitable]
         self.sendSendReadyGiveaways.start()  # type: ignore[unused-awaitable]
         self.endGiveawaysLoop.start()  # type: ignore[unused-awaitable]
