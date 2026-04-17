@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import asyncio
 import os
+import sys
 from typing import cast
 
 import asyncmy  # type: ignore[import-not-found]
@@ -15,6 +18,8 @@ from config import (
     prefix,
 )
 from translator import TanjunTranslator
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 
 async def loadextension(bot: commands.AutoShardedBot, extensionname: str) -> None:

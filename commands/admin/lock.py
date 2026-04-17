@@ -1,3 +1,5 @@
+from typing import cast
+
 import discord
 
 import utility
@@ -46,7 +48,7 @@ async def lock_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
         for target, overwrites in channel.overwrites.items():
             if isinstance(target, discord.Role):
                 # Using type-safe access to internal attributes for Zenith level
-                raw_values = cast(dict[str, Optional[bool]], getattr(overwrites, "_values", {}))  # type: ignore[name-defined]
+                raw_values = cast(dict[str, bool | None], getattr(overwrites, "_values", {}))  # type: ignore[name-defined]
                 overwrite_dict: dict[str, bool] = {k: v for k, v in raw_values.items() if v is not None}
                 await save_channel_overwrites(channel.id, target.id, overwrite_dict)  # type: ignore[arg-type]
 
