@@ -1,7 +1,7 @@
 from typing import Any
 
 import aiohttp
-import brawlstats  # type: ignore[import-not-found]
+# import brawlstats  # type: ignore[import-not-found]
 
 from api import get_brawlstars_linked_account
 from config import brawlstarsToken
