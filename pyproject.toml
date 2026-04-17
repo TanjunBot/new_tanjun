@@ -117,7 +117,6 @@ dependencies = [
     "wrapt==1.17.2",
     "yarg==0.1.10",
     "yarl==1.20.0",
-    "brawlstats",
     "rembg",
 ]
 
