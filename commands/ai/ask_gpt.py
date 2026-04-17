@@ -1,5 +1,6 @@
-from openai import AsyncOpenAI
 import os
+
+from openai import AsyncOpenAI
 
 import utility
 from api import getToken, getTokenOverview, includeToToken, useToken
@@ -7,7 +8,7 @@ from config import openAiKey
 from localizer import tanjunLocalizer
 
 # Make OpenAI API key optional
-open_ai_key = openAiKey or os.getenv('OPENAI_API_KEY')
+open_ai_key = openAiKey or os.getenv("OPENAI_API_KEY")
 
 # Initialize client only if API key is available
 if open_ai_key:
