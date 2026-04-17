@@ -5,7 +5,7 @@ import os
 import sys
 from typing import cast
 
-import asyncmy  # type: ignore[import-not-found]
+# import asyncmy  # type: ignore[import-not-found]
 import discord
 from discord.ext import commands
 

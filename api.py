@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import Any
 
-import asyncmy
+# import asyncmy
 from discord import Entitlement
 
 from config import database_ip, database_password, database_schema, database_user
