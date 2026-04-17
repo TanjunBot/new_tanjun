@@ -307,8 +307,10 @@ class tanjunEmbed:
             )
         )
 
-    def __eq__(self, other: discord.Embed) -> bool:
-        return isinstance(other, discord.Embed) and (
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, tanjunEmbed):
+            return NotImplemented
+        return (
             self.type == other.type
             and self.title == other.title
             and self.url == other.url
@@ -725,7 +727,7 @@ class tanjunEmbed:
         field["inline"] = inline
         return self
 
-    def to_dict(self) -> discord.Embed:
+    def to_dict(self) -> dict:
         """Converts this embed object into a dict."""
 
         # add in the raw data into the dict
@@ -784,7 +786,7 @@ class CommandInfo:
         locale: str,
         message: discord.Message,
         permissions: discord.Permissions,
-        reply: Coroutine,
+        reply: Callable[..., Coroutine[Any, Any, Any]],
         client: discord.Client,
     ):
         self.user = user
@@ -915,7 +917,7 @@ class NumericStringParser:
 async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
     async with aiohttp.ClientSession() as session:
 
-        async def fetch(url: str) -> str:
+        async def fetch(url: str) -> dict | None:
             async with session.get(url) as response:
                 if response.status != 200:
                     return None
@@ -1230,7 +1232,7 @@ class MockInteraction(discord.Interaction):
             state=bot._connection,
         )
 
-    async def original_response(self) -> str:
+    async def original_response(self):  # type: ignore[override]
         return self.response.message
 
 

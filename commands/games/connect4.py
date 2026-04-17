@@ -40,28 +40,30 @@ class Connect4:
         if not board:
             board = self.board
 
-        for i, row in enumerate(board):
-            for j, cell in enumerate(row):
-                # Horizontal check
-                if j < self.columns - 3 and cell == row[j + 1] == row[j + 2] == row[j + 3] != self.empty_cell:
-                    return cell
-                # Vertical check
-                if i < self.rows - 3 and cell == board[i + 1][j] == board[i + 2][j] == board[i + 3][j] != self.empty_cell:
-                    return cell
-                # Diagonal check (top-left to bottom-right)
-                if (
-                    i < self.rows - 3
-                    and j < self.columns - 3
-                    and cell == board[i + 1][j + 1] == board[i + 2][j + 2] == board[i + 3][j + 3] != self.empty_cell
-                ):
-                    return cell
-                # Diagonal check (top-right to bottom-left)
-                if (
-                    i < self.rows - 3
-                    and j > 2
-                    and cell == board[i + 1][j - 1] == board[i + 2][j - 2] == board[i + 3][j - 3] != self.empty_cell
-                ):
-                    return cell
+        # Check horizontal wins
+        for row in board:
+            for i in range(self.columns - 3):
+                if row[i] == row[i + 1] == row[i + 2] == row[i + 3] != self.empty_cell:
+                    return row[i]
+
+        # Check vertical wins
+        for i in range(self.rows - 3):
+            for j in range(self.columns):
+                if board[i][j] == board[i + 1][j] == board[i + 2][j] == board[i + 3][j] != self.empty_cell:
+                    return board[i][j]
+
+        # Check diagonal wins (top-left to bottom-right)
+        for i in range(self.rows - 3):
+            for j in range(self.columns - 3):
+                if board[i][j] == board[i + 1][j + 1] == board[i + 2][j + 2] == board[i + 3][j + 3] != self.empty_cell:
+                    return board[i][j]
+
+        # Check diagonal wins (top-right to bottom-left)
+        for i in range(self.rows - 3):
+            for j in range(3, self.columns):
+                if board[i][j] == board[i + 1][j - 1] == board[i + 2][j - 2] == board[i + 3][j - 3] != self.empty_cell:
+                    return board[i][j]
+
         return None
 
     def is_full(self, board: list[list[str]] = None):
@@ -78,22 +80,19 @@ class Connect4:
             board = self.board
 
         available_moves = []
-        available_columns = self.available_columns()
-        for column in available_columns:
-            # Find the lowest empty cell in this column
-            for row in range(self.rows - 1, -1, -1):
-                if board[row][column] == self.empty_cell:
-                    board_index = column + (row * self.columns)  # Convert to board index
-                    available_moves.append(board_index)
+        for row in range(self.rows - 1, -1, -1):
+            for col in range(self.columns):
+                if board[row][col] == self.empty_cell:
+                    available_moves.append((row, col))  # Return as (row, col) tuples
                     break
         return available_moves
 
-    def minimax_make_move(self, board: list[list[str]], move: int, player: str):
+    def minimax_make_move(self, board: list[list[str]], move: tuple, player: str):
         # Create a copy of the board
         new_board = [row[:] for row in board]
 
         # The player parameter is now the actual symbol (X or O), not the player object
-        new_board[move // self.columns][move % self.columns] = player
+        new_board[move[0]][move[1]] = player
         return new_board
 
     def minimax(
@@ -108,14 +107,14 @@ class Connect4:
         if winner:
             # Return higher scores for quicker wins/losses
             if winner == self.player2_move:
-                return 10 + depth, ""  # AI win
+                return (10 + depth, "")  # AI win
             else:
-                return -10 - depth, ""  # Player win
+                return (-10 - depth, "")  # Player win
         if self.is_full(board):
-            return 0, ""
+            return (0, "")
 
         if depth == 0:
-            return 0, ""
+            return (0, "")
 
         scores = []
         moves = []
@@ -130,13 +129,13 @@ class Connect4:
         if maximizing_player:
             best_score = max(scores)
             best_indices = [i for i, score in enumerate(scores) if score == best_score]
-            best_move = moves[random.choice(best_indices)]
+            best_move = moves[random.choice(best_indices)] if best_indices else available_moves[0]
         else:
             best_score = min(scores)
             best_indices = [i for i, score in enumerate(scores) if score == best_score]
-            best_move = moves[random.choice(best_indices)]
+            best_move = moves[random.choice(best_indices)] if best_indices else available_moves[0]
 
-        return best_score, best_move
+        return (best_score, best_move)
 
     async def getBoardString(self):
         board_string = ""
@@ -199,10 +198,12 @@ class Connect4:
 
     async def drop(self, interaction: discord.Interaction):
         drop_column = self.highlighted_column
+        # Find the lowest empty row in this column
         for row in range(self.rows - 1, -1, -1):
             if self.board[row][drop_column] == self.empty_cell:
                 self.board[row][drop_column] = self.player1_move if self.current_player == self.player1 else self.player2_move
                 break
+
         winner = self.check_winner()
         if winner:
             self.game_over = True
@@ -216,8 +217,13 @@ class Connect4:
             await self.bot_move()
         else:
             self.current_player = self.player2 if self.current_player == self.player1 else self.player1
-        if self.highlighted_column not in self.available_columns():
-            self.highlighted_column = self.available_columns()[0]
+
+        # Reset to first available column if not available
+        available = self.available_columns()
+        if not available:
+            self.game_over = True
+        else:
+            self.highlighted_column = available[0]
 
         winner = self.check_winner()
         if winner:
@@ -229,10 +235,12 @@ class Connect4:
         await self.update_board(interaction)
 
     async def bot_move(self):
+        # Get the best move from minimax
         _, move = self.minimax(self.player2_move, int(self.bot_difficulty / 2) + 1, self.board, True)
+        # Apply the move directly
         for row in range(self.rows - 1, -1, -1):
-            if self.board[row][move % self.columns] == self.empty_cell:
-                self.board[row][move % self.columns] = self.player2_move
+            if self.board[row][move[1]] == self.empty_cell:
+                self.board[row][move[1]] = self.player2_move
                 break
 
     def getBoardView(
