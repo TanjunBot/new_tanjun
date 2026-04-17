@@ -13024,6 +13024,22 @@
         "max_length": null
     },
     {
+        "identifier": "commands.image.background.disabled.title",
+        "source_string": "Hintergrundentfernung deaktiviert",
+        "translation": "Background removal is temporarily disabled.",
+        "context": "commands -> image -> background -> disabled -> title",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
+        "identifier": "commands.image.background.disabled.description",
+        "source_string": "Die Hintergrundentfernung ist derzeit nicht verfügbar.",
+        "translation": "Background removal functionality is temporarily unavailable.",
+        "context": "commands -> image -> background -> disabled -> description",
+        "labels": "de.json",
+        "max_length": null
+    },
+    {
         "identifier": "commands.image.edgeenhance.success.title",
         "source_string": "Kanten verbessert",
         "translation": "Edges improved",
