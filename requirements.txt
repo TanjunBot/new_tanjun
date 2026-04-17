@@ -8,14 +8,14 @@ aiohappyeyeballs==2.6.1
     # via
     #   aiohttp
     #   tanjun_5.0 (pyproject.toml)
-aiohttp==3.11.18
+aiohttp==3.13.4
     # via
     #   discord-py
     #   tanjun_5.0 (pyproject.toml)
     #   twitchapi
 aiomysql==0.3.0
     # via tanjun_5.0 (pyproject.toml)
-aiosignal==1.3.2
+aiosignal==1.4.0
     # via
     #   aiohttp
     #   tanjun_5.0 (pyproject.toml)

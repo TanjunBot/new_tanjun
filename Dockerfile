@@ -26,4 +26,5 @@ COPY . .
 RUN useradd -m appuser
 USER appuser
 
+EXPOSE 8080
 CMD ["python", "main.py"]
