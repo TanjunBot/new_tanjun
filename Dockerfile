@@ -23,8 +23,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy the entire application
 COPY . /usr/local/app/
 
-# Ensure scripts have correct permissions
-RUN chmod +x /usr/local/app/main.py
-
 EXPOSE 8080
 CMD ["python", "main.py"]
