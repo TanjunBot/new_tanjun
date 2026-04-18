@@ -41,7 +41,7 @@ async def report(commandInfo: CommandInfo, reason: str, user: discord.Member) ->
         await commandInfo.reply(embed=embed)
         return
 
-    report_channel = commandInfo.guild.get_channel(int(report_channel_info[0]))
+    report_channel = commandInfo.guild.get_channel(int(report_channel_info))
     if not report_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(

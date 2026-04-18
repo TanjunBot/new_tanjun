@@ -59,9 +59,9 @@ async def is_blacklisted(message: discord.Message, guild_id: str) -> bool:
     user_role_ids = {str(role.id) for role in message.author.roles} if hasattr(message.author, "roles") else []
 
     return (
-        channel_id in (channel[0] for channel in blacklist["channels"])
-        or user_id in (user[0] for user in blacklist["users"])
-        or any(role_id in user_role_ids for role_id in (role[0] for role in blacklist["roles"]))
+        channel_id in (channel.entity_id for channel in blacklist["channels"])
+        or user_id in (user.entity_id for user in blacklist["users"])
+        or any(role_id in user_role_ids for role_id in (role.entity_id for role in blacklist["roles"]))
     )
 
 
@@ -87,27 +87,27 @@ async def calculate_xp(message: discord.Message, guild_id: str) -> int:
     if not channel_boost:
         channel_boost = None
 
-    total_additive_boost = sum(boost[0] - 1 for boost in role_boosts if boost[1])
-    total_multiplicative_boost = math.prod(boost[0] for boost in role_boosts if not boost[1])
+    total_additive_boost = sum(boost.boost - 1 for boost in role_boosts if boost.additive)
+    total_multiplicative_boost = math.prod(boost.boost for boost in role_boosts if not boost.additive)
 
     if user_boost:
-        if user_boost[1]:  # if additive
-            total_additive_boost += user_boost[0] - 1
+        if user_boost.additive:  # if additive
+            total_additive_boost += user_boost.boost - 1
         else:
-            total_multiplicative_boost *= user_boost[0]
+            total_multiplicative_boost *= user_boost.boost
 
     if role_boosts:
         for role_boost in role_boosts:
-            if role_boost[1]:  # if additive
-                total_additive_boost += role_boost[0] - 1
+            if role_boost.additive:  # if additive
+                total_additive_boost += role_boost.boost - 1
             else:
-                total_multiplicative_boost *= role_boost[0]
+                total_multiplicative_boost *= role_boost.boost
 
     if channel_boost:
-        if channel_boost[1]:  # if additive
-            total_additive_boost += channel_boost[0] - 1
+        if channel_boost.additive:  # if additive
+            total_additive_boost += channel_boost.boost - 1
         else:
-            total_multiplicative_boost *= channel_boost[0]
+            total_multiplicative_boost *= channel_boost.boost
 
     total_boost = (1 + total_additive_boost) * total_multiplicative_boost
     return int(base_xp * total_boost)
@@ -153,9 +153,9 @@ async def update_user_roles(message: discord.Message, new_level: int, guild_id: 
     if message.guild == None or not isinstance(message.author, discord.Member):
         return
     level_roles = await get_level_roles(guild_id)
-    for level, role_id in level_roles:
-        if level <= new_level:
-            role = message.guild.get_role(int(role_id))
+    for lr in level_roles:
+        if lr.level <= new_level:
+            role = message.guild.get_role(int(lr.role_id))
             if role and role not in message.author.roles:
                 try:
                     await message.author.add_roles(
@@ -163,13 +163,13 @@ async def update_user_roles(message: discord.Message, new_level: int, guild_id: 
                         reason=tanjunLocalizer.localize(
                             (str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"),
                             "commands.level.updateuserroles.reason",
-                            level=level,
+                            level=lr.level,
                         ),
                     )
                 except discord.Forbidden:
                     pass
-        elif level > new_level:
-            role = message.guild.get_role(int(role_id))
+        elif lr.level > new_level:
+            role = message.guild.get_role(int(lr.role_id))
             if role and role in message.author.roles:
                 try:
                     await message.author.remove_roles(role)

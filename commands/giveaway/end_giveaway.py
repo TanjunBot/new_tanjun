@@ -37,7 +37,7 @@ async def end_giveaway(
         await commandInfo.reply(embed=embed)
         return
 
-    if giveaway[1] != str(commandInfo.guild.id):  # type: ignore[union-attr]
+    if giveaway.guild_id != str(commandInfo.guild.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -51,7 +51,7 @@ async def end_giveaway(
         await commandInfo.reply(embed=embed)
         return
 
-    if giveaway[13]:
+    if giveaway.ended:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -65,7 +65,7 @@ async def end_giveaway(
         await commandInfo.reply(embed=embed)
         return
 
-    if not giveaway[12]:
+    if not giveaway.started:
         await delete_giveaway(giveawayId)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

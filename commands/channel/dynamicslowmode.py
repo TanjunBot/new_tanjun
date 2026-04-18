@@ -172,10 +172,10 @@ async def getDynamicslowmodeChannels(commandInfo: utility.CommandInfo) -> None:
         description += tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.channel.dynamicslowmode.channels.description",
-            channel_id=channel[1],
-            messages=channel[2],
-            per=channel[3],
-            resetafter=channel[4],
+            channel_id=channel.channel_id,
+            messages=channel.messages,
+            per=channel.per,
+            resetafter=channel.reset_after,
         )
 
     embed = utility.tanjunEmbed(
@@ -193,7 +193,7 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
     if not dynamicSlowmodeChannel:
         return
 
-    cashed_slowmode_delay = dynamicSlowmodeChannel[5]
+    cashed_slowmode_delay = dynamicSlowmodeChannel.cached_slowmode
 
     if not cashed_slowmode_delay:
         await cash_slowmode_delay(message.channel.id, message.channel.slowmode_delay)  # type: ignore[union-attr, arg-type]
@@ -204,11 +204,11 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
 
     dynamicSlowmodeMessages = await get_dynamicslowmode_messages(message.channel.id)
 
-    minTime = message_time - timedelta(seconds=dynamicSlowmodeChannel[4])
+    minTime = message_time - timedelta(seconds=dynamicSlowmodeChannel.reset_after)
 
     messages = 1
     for dynamicSlowmodeMessage in dynamicSlowmodeMessages:  # type: ignore[union-attr]
-        if dynamicSlowmodeMessage[3] < minTime:
+        if dynamicSlowmodeMessage.send_time < minTime:
             messages += 1
 
     await clear_old_dynamicslowmode_messages(message.channel.id, minTime)
@@ -217,13 +217,13 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
         (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]
         "commands.channel.dynamicslowmode.reason",
         messages=messages,
-        per=dynamicSlowmodeChannel[3],
+        per=dynamicSlowmodeChannel.per,
     )
     resetReasonLocale = tanjunLocalizer.localize(
         (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]
         "commands.channel.dynamicslowmode.resetReason",
     )
-    newSlowmode = int(messages / dynamicSlowmodeChannel[3])
+    newSlowmode = int(messages / dynamicSlowmodeChannel.per)
     if newSlowmode != message.channel.slowmode_delay and newSlowmode > cashed_slowmode_delay:  # type: ignore[union-attr]
         await message.channel.edit(slowmode_delay=newSlowmode, reason=reasonLocale)  # type: ignore[union-attr]
     elif newSlowmode < cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
