@@ -919,8 +919,7 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
                 return await response.json()
 
         r = await fetch(
-            "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg"
-            % (giphyAPIKey, query, limit)
+            "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg" % (giphyAPIKey, query, limit)
         )
 
         if r is None:
