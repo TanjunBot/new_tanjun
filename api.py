@@ -69,7 +69,7 @@ async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) ->
     return None
 
 
-async def create_tables() -> None:
+async def create_tables(bot=None) -> None:
     tables = {}
     tables["warnings"] = (
         "CREATE TABLE IF NOT EXISTS `warnings` ("
