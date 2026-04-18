@@ -645,7 +645,17 @@ async def create_tables(bot=None) -> None:
     ) ENGINE=InnoDB;
     """
 
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        return
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute("SHOW TABLES")
+            existing = {row[0] for row in await cursor.fetchall()}
+
     for table_name in tables:
+        if table_name in existing:
+            continue
         table_query = tables[table_name]
         await execute_action(table_query, bot=bot)
 

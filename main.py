@@ -56,67 +56,54 @@ intents.presences = False
 bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)  # type: ignore[arg-type]
 
 
-async def main() -> None:
-    print("starting bot...")
-    print("discord.py version: ", discord.__version__)
-    for filename in os.listdir("extensions"):
-        if filename.endswith(".py") and not filename.startswith("__"):
-            extension = filename.replace(".py", "")
-            await loadextension(bot, extension)
-    await loadTranslator(bot)
-
-
-# Removed unused create_pool function as the pool is now created directly in main()
-
-
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user} (ID: {bot.user.id})")
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
 
 
+async def main():
+    print("starting bot...")
+    print("discord.py version: ", discord.__version__)
+
+    # Load all extensions
+    for filename in os.listdir("extensions"):
+        if filename.endswith(".py") and not filename.startswith("__"):
+            extension = filename.replace(".py", "")
+            await loadextension(bot, extension)
+
+    # Load translator
+    await loadTranslator(bot)
+
+    # Initialize the database pool
+    try:
+        pool = await asyncmy.create_pool(
+            host=database_ip,
+            port=database_port,
+            user=database_user,
+            password=database_password,
+            db=database_schema,
+            maxsize=10,
+            minsize=1,
+        )
+        bot._pool = pool
+        print("Database pool initialized successfully!")
+    except Exception as e:
+        print(f"Failed to initialize database pool: {e}")
+        raise
+
+    from api import set_bot
+
+    set_bot(bot)
+
+    # Create database tables
+    from api import create_tables
+
+    await create_tables(bot)
+
+    # Start the bot
+    await bot.start(config.token)  # type: ignore[arg-type]
+
+
 if __name__ == "__main__":
-
-    async def main():
-        print("starting bot...")
-        print("discord.py version: ", discord.__version__)
-
-        # Load all extensions
-        for filename in os.listdir("extensions"):
-            if filename.endswith(".py") and not filename.startswith("__"):
-                extension = filename.replace(".py", "")
-                await loadextension(bot, extension)
-
-        # Load translator
-        await loadTranslator(bot)
-
-        # Initialize the database pool
-        try:
-            pool = await asyncmy.create_pool(
-                host=database_ip,
-                port=database_port,
-                user=database_user,
-                password=database_password,
-                db=database_schema,
-                maxsize=10,
-                minsize=1,
-            )
-            bot._pool = pool
-            print("Database pool initialized successfully!")
-        except Exception as e:
-            print(f"Failed to initialize database pool: {e}")
-            raise
-
-        from api import set_bot
-
-        set_bot(bot)
-
-        # Create database tables
-        from api import create_tables
-
-        await create_tables(bot)
-
-        # Start the bot
-        await bot.start(config.token)  # type: ignore[arg-type]
-
     asyncio.run(main())
