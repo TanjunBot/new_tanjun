@@ -573,6 +573,10 @@ Das Tanjun-Team
         backup_file = "current_db_backup.sql"
         dump_command = [
             "mysqldump",
+            "-h",
+            config.database_ip,
+            "-P",
+            str(config.database_port),
             "-u",
             config.database_user,
             f"--password={config.database_password}",
@@ -631,13 +635,13 @@ Das Tanjun-Team
         db_recreate_cmd = f"DROP DATABASE IF EXISTS `{config.database_schema}`; CREATE DATABASE `{config.database_schema}`;"
         try:
             subprocess.run(
-                ["mysql", "-u", config.database_user, f"--password={config.database_password}", "-e", db_recreate_cmd],
+                ["mysql", "-h", config.database_ip, "-P", str(config.database_port), "-u", config.database_user, f"--password={config.database_password}", "-e", db_recreate_cmd],
                 check=True,
             )
 
             with open(filtered_sql_file) as f:
                 subprocess.run(
-                    ["mysql", "-u", config.database_user, f"--password={config.database_password}", config.database_schema],
+                    ["mysql", "-h", config.database_ip, "-P", str(config.database_port), "-u", config.database_user, f"--password={config.database_password}", config.database_schema],
                     stdin=f,
                     check=True,
                 )
