@@ -91,16 +91,21 @@ if __name__ == "__main__":
         await loadTranslator(bot)
 
         # Initialize the database pool
-        pool = await asyncmy.create_pool(
-            host=database_ip,
-            port=database_port,
-            user=database_user,
-            password=database_password,
-            db=database_schema,
-            maxsize=10,
-            minsize=1,
-        )
-        bot._pool = pool  # Attach the pool to the bot for use in extensions
+        try:
+            pool = await asyncmy.create_pool(
+                host=database_ip,
+                port=database_port,
+                user=database_user,
+                password=database_password,
+                db=database_schema,
+                maxsize=10,
+                minsize=1,
+            )
+            bot._pool = pool
+            print("Database pool initialized successfully!")
+        except Exception as e:
+            print(f"Failed to initialize database pool: {e}")
+            raise
 
         # Create database tables
         from api import create_tables
