@@ -13,6 +13,7 @@ adminIds: list[int] = [int(id) for id in admin_ids_str.split(",")] if admin_ids_
 
 activity = "Tanjun {version}"
 database_ip = os.environ.get("database_ip")
+database_port = int(os.environ.get("database_port", 3306))
 database_password = os.environ.get("database_password")
 database_user = os.environ.get("database_user")
 database_schema = os.environ.get("database_schema")

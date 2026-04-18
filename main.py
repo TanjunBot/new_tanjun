@@ -12,6 +12,7 @@ import config
 from config import (
     database_ip,
     database_password,
+    database_port,
     database_schema,
     database_user,
     prefix,
@@ -92,17 +93,7 @@ if __name__ == "__main__":
         # Initialize the database pool
         pool = await asyncmy.create_pool(
             host=database_ip,
-            user=database_user,
-            password=database_password,
-            db=database_schema,
-            maxsize=10,
-            minsize=1,
-        )
-        bot._pool = pool  # Attach the pool to the bot for use in extensions
-
-        # Initialize the database pool
-        pool = await asyncmy.create_pool(
-            host=database_ip,
+            port=database_port,
             user=database_user,
             password=database_password,
             db=database_schema,

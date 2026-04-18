@@ -12,6 +12,7 @@ def patch_config_module() -> MagicMock:
     mock_config_module_instance.adminIds = [1001, 1002, 1003]
     mock_config_module_instance.activity = "Testing Tanjun {version}"
     mock_config_module_instance.database_ip = "mock.db.ip.here"
+    mock_config_module_instance.database_port = 3306
     mock_config_module_instance.database_password = "mock_db_password"
     mock_config_module_instance.database_user = "mock_db_user"
     mock_config_module_instance.database_schema = "mock_db_schema"
@@ -33,6 +34,7 @@ def patch_config_module() -> MagicMock:
         "applicationId": mock_config_module_instance.applicationId,
         "adminIds": ",".join(map(str, mock_config_module_instance.adminIds)),
         "database_ip": mock_config_module_instance.database_ip,
+        "database_port": str(mock_config_module_instance.database_port),
         "database_password": mock_config_module_instance.database_password,
         "database_user": mock_config_module_instance.database_user,
         "database_schema": mock_config_module_instance.database_schema,
