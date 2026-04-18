@@ -3,6 +3,7 @@
 # import utility
 # from discord import app_commands
 # from localizer import tanjunLocalizer
+import asyncio
 from datetime import time
 
 import discord
@@ -182,7 +183,10 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        # The pool is now attached to the bot, so no need to check for initialization
+        # Wait until the database pool is initialized
+        while not hasattr(self.bot, "_pool") or self.bot._pool is None:
+            await asyncio.sleep(1)
+
         self.pollTwitchStreams.start()  # type: ignore[unused-awaitable]
         self.sendSendReadyGiveaways.start()  # type: ignore[unused-awaitable]
         self.endGiveawaysLoop.start()  # type: ignore[unused-awaitable]
