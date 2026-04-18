@@ -37,8 +37,7 @@ from config import (
     bytebin_password,
     bytebin_url,
     bytebin_username,
-    tenorAPIKey,
-    tenorCKey,
+    giphyAPIKey,
 )
 
 
@@ -920,16 +919,17 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
                 return await response.json()
 
         r = await fetch(
-            "https://tenor.googleapis.com/v2/search?q=%s&key=%s&client_key=%s&limit=%s"
-            % (query, tenorAPIKey, tenorCKey, limit)
+            "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg"
+            % (giphyAPIKey, query, limit)
         )
 
         if r is None:
             return []
+        results = r.get("data", [])
         # nosec: B311
-        random.shuffle(r["results"])
+        random.shuffle(results)
 
-        return [r["results"][i]["media_formats"]["mediumgif"]["url"] for i in range(amount)]
+        return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
 
 
 def get_highest_exponent(polynomial: str) -> int:
