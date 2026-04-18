@@ -3,7 +3,6 @@ from typing import Any
 import discord
 
 from api import get_twitch_notification_by_guild_id, remove_twitch_online_notification
-from models import TwitchOnlineNotificationModel
 from commands.utility.twitch.twitchApi import (
     parse_twitch_notification_message,
 )

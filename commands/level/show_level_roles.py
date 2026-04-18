@@ -4,7 +4,6 @@ import discord
 from discord.ui import Button, Modal, Select, TextInput, View
 
 from api import add_level_role, get_all_level_roles, remove_level_role
-from models import LevelRolesGroupModel
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 

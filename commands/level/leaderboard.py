@@ -2,7 +2,6 @@ import discord
 
 import utility
 from api import get_custom_formula, get_xp_scaling, getLevelLeaderboard
-from models import LevelLeaderboardEntryModel
 from localizer import tanjunLocalizer
 
 

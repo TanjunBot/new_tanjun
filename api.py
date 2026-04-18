@@ -24,7 +24,6 @@ from models import (
     LevelLeaderboardEntryModel,
     LevelRoleModel,
     LevelRolesGroupModel,
-    LogBlacklistEntryModel,
     LogEnableModel,
     ReportModel,
     ScheduledMessageModel,
@@ -35,8 +34,8 @@ from models import (
     TriggerMessageModel,
     TwitchOnlineNotificationModel,
     UserLevelInfoModel,
-    WarningModel,
     WarnConfigModel,
+    WarningModel,
     WelcomeChannelModel,
     XpBoostModel,
 )
@@ -2073,7 +2072,9 @@ async def remove_claimed_booster_channel(user_id: str, guild_id: str) -> None:
     await execute_action(query, params)
 
 
-async def get_claimed_booster_channel(user_id: str | None = None, guild_id: str | None = None) -> str | list[ClaimedBoosterChannelModel] | None:
+async def get_claimed_booster_channel(
+    user_id: str | None = None, guild_id: str | None = None
+) -> str | list[ClaimedBoosterChannelModel] | None:
     if user_id:
         query = (
             "SELECT channelId FROM claimedBoosterChannel WHERE userId = %s AND guildId = %s"
@@ -2122,7 +2123,9 @@ async def remove_claimed_booster_role(user_id: str, guild_id: str) -> None:
     await execute_action(query, params)
 
 
-async def get_claimed_booster_role(user_id: str | None = None, guild_id: str | None = None) -> str | list[ClaimedBoosterRoleModel] | None:
+async def get_claimed_booster_role(
+    user_id: str | None = None, guild_id: str | None = None
+) -> str | list[ClaimedBoosterRoleModel] | None:
     if user_id:
         query = (
             "SELECT roleId FROM claimedBoosterRole WHERE userId = %s AND guildId = %s"
@@ -2270,13 +2273,30 @@ async def get_log_enable(guild_id: str | int) -> LogEnableModel:
         return LogEnableModel.from_row(result[0])
     return LogEnableModel(
         guild_id=str(guild_id),
-        automod_rule_create=True, automod_rule_update=True, automod_rule_delete=True,
-        automod_action=False, guild_channel_delete=True, guild_channel_create=True,
-        guild_channel_update=True, guild_update=True, invite_create=True, invite_delete=False,
-        member_join=True, member_leave=True, member_update=True, user_update=True,
-        member_ban=True, member_unban=True, presence_update=True, message_edit=True,
-        message_delete=True, reaction_add=False, reaction_remove=False,
-        guild_role_create=True, guild_role_delete=True, guild_role_update=True,
+        automod_rule_create=True,
+        automod_rule_update=True,
+        automod_rule_delete=True,
+        automod_action=False,
+        guild_channel_delete=True,
+        guild_channel_create=True,
+        guild_channel_update=True,
+        guild_update=True,
+        invite_create=True,
+        invite_delete=False,
+        member_join=True,
+        member_leave=True,
+        member_update=True,
+        user_update=True,
+        member_ban=True,
+        member_unban=True,
+        presence_update=True,
+        message_edit=True,
+        message_delete=True,
+        reaction_add=False,
+        reaction_remove=False,
+        guild_role_create=True,
+        guild_role_delete=True,
+        guild_role_update=True,
     )
 
 
@@ -2603,7 +2623,10 @@ async def get_ticket_messages(guild_id: str) -> list[TicketMessageModel]:
 
 
 async def get_ticket_messages_by_id(ticket_message_id: str) -> TicketMessageModel | None:
-    result = await execute_query("SELECT id, guildId, channelId, introduction, pingRole, name, description, summaryChannelId FROM ticketMessages WHERE id = %s", (ticket_message_id,))
+    result = await execute_query(
+        "SELECT id, guildId, channelId, introduction, pingRole, name, description, summaryChannelId FROM ticketMessages WHERE id = %s",
+        (ticket_message_id,),
+    )
     return TicketMessageModel.from_row(result[0]) if result else None
 
 

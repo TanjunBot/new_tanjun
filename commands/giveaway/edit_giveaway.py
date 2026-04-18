@@ -757,7 +757,9 @@ class GiveawayEditor(ui.View):
             price=self.giveaway_data.get("price"),
             message=self.giveaway_data.get("message"),
             end_time=relativeTimeStrToDate(self.giveaway_data["end_time"]) if self.giveaway_data.get("end_time") else None,
-            start_time=relativeTimeStrToDate(self.giveaway_data["start_time"]) if self.giveaway_data.get("start_time") else None,
+            start_time=relativeTimeStrToDate(self.giveaway_data["start_time"])
+            if self.giveaway_data.get("start_time")
+            else None,
             started=False,
             ended=False,
             new_message_requirement=self.giveaway_data.get("new_message_requirement"),
@@ -772,7 +774,9 @@ class GiveawayEditor(ui.View):
             GiveawayChannelRequirementModel(channel_id=k, amount=v)
             for k, v in self.giveaway_data.get("channel_requirements", {}).items()
         ]
-        embed = await generateGiveawayEmbed(preview_giveaway, self.commandInfo.locale, self.giveaway_data.get("role_requirement", []), channel_reqs)
+        embed = await generateGiveawayEmbed(
+            preview_giveaway, self.commandInfo.locale, self.giveaway_data.get("role_requirement", []), channel_reqs
+        )
         await interaction.response.send_message(  # type: ignore[call-overload]
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.preview"),
             embed=embed,

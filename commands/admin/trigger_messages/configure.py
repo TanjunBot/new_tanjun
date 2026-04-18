@@ -12,7 +12,6 @@ from api import (
     remove_trigger_message_channel,
 )
 from localizer import tanjunLocalizer
-from models import TriggerMessageChannelModel, TriggerMessageModel
 
 
 async def configure_trigger_messages(  # type: ignore[no-untyped-def]

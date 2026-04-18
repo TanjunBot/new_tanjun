@@ -20,7 +20,6 @@ from api import (
     update_user_xp,
 )
 from localizer import tanjunLocalizer
-from models import BlacklistEntryModel, LevelRoleModel, XpBoostModel
 from utility import get_level_for_xp  # , checkIfHasPro
 
 notifiedUsers: list[int] = []

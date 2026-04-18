@@ -1,7 +1,6 @@
 import discord
 
 from api import check_if_opted_out, is_trigger_message
-from models import TriggerMessageModel
 
 
 async def send_trigger_message(message: discord.Message) -> None:

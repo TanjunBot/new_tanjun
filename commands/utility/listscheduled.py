@@ -67,7 +67,9 @@ async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
                 content = self.truncate_content(msg.content)
 
                 # Calculate field lengths
-                field_name = tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.message_id", id=msg.message_id)
+                field_name = tanjunLocalizer.localize(
+                    self.locale, "commands.utility.listscheduled.message_id", id=msg.message_id
+                )
 
                 field_value = tanjunLocalizer.localize(
                     self.locale,
@@ -79,7 +81,8 @@ async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
                         if msg.channel_id
                         else tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.direct_message")
                     ),
-                    repeat=msg.repeat_interval or tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.no_repeat"),
+                    repeat=msg.repeat_interval
+                    or tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.no_repeat"),
                 )
 
                 # Check if adding this field would exceed the limit

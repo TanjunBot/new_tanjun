@@ -2,7 +2,6 @@ import discord
 
 import utility
 from api import clear_channel_overwrites, get_channel_overwrites
-from models import ChannelOverwriteModel
 from localizer import tanjunLocalizer
 
 

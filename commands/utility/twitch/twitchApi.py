@@ -5,7 +5,6 @@ import aiohttp
 import discord
 
 from api import get_twitch_online_notification_by_twitch_uuid
-from models import TwitchOnlineNotificationModel
 from config import twitchId, twitchSecret
 from localizer import tanjunLocalizer
 from utility import tanjunEmbed

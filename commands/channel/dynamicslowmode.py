@@ -14,7 +14,6 @@ from api import (
     remove_cashed_slowmode_delay,
     remove_dynamicslowmode,
 )
-from models import DynamicSlowmodeModel
 from localizer import tanjunLocalizer
 
 

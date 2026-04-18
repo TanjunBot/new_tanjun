@@ -4,7 +4,6 @@ import discord
 
 import utility
 from api import check_if_opted_out, get_ticket_messages_by_id, open_ticket
-from models import TicketMessageModel
 from localizer import tanjunLocalizer
 
 

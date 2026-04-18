@@ -11,7 +11,6 @@ from api import (
     update_scheduled_message_repeat_amount,
 )
 from localizer import tanjunLocalizer
-from models import ScheduledMessageModel
 
 
 async def schedule_message(

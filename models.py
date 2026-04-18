@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import ClassVar
-from datetime import datetime
-from typing import Any
+from typing import Any, ClassVar
 
 
 @dataclass
@@ -370,13 +368,30 @@ class LogEnableModel:
 
     # Ordered list matching LOG_OPTIONS order (skipping guild_id)
     _OPTION_KEYS: ClassVar[list[str]] = [
-        "automod_rule_create", "automod_rule_update", "automod_rule_delete",
-        "automod_action", "guild_channel_delete", "guild_channel_create",
-        "guild_channel_update", "guild_update", "invite_create", "invite_delete",
-        "member_join", "member_leave", "member_update", "user_update",
-        "member_ban", "member_unban", "presence_update", "message_edit",
-        "message_delete", "reaction_add", "reaction_remove",
-        "guild_role_create", "guild_role_delete", "guild_role_update",
+        "automod_rule_create",
+        "automod_rule_update",
+        "automod_rule_delete",
+        "automod_action",
+        "guild_channel_delete",
+        "guild_channel_create",
+        "guild_channel_update",
+        "guild_update",
+        "invite_create",
+        "invite_delete",
+        "member_join",
+        "member_leave",
+        "member_update",
+        "user_update",
+        "member_ban",
+        "member_unban",
+        "presence_update",
+        "message_edit",
+        "message_delete",
+        "reaction_add",
+        "reaction_remove",
+        "guild_role_create",
+        "guild_role_delete",
+        "guild_role_update",
     ]
 
     @classmethod

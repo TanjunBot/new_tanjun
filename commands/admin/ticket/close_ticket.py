@@ -5,7 +5,6 @@ import discord
 
 import utility
 from api import get_ticket_by_id, get_ticket_messages_by_id
-from models import TicketModel, TicketMessageModel
 from localizer import tanjunLocalizer
 
 

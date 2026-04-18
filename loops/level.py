@@ -14,7 +14,6 @@ from api import (
     get_xp_scaling,
     update_user_xp_from_voice,
 )
-from models import XpBoostModel
 from minigames.addLevelXp import is_blacklisted  # , fetch_xp_details
 
 voiceUsers: list[discord.Member] = []

@@ -137,7 +137,9 @@ async def configure_logs(commandInfo: utility.commandInfo):
                 description=description,
             )
             self.children[0].disabled = log_enabled.get_option(self.selectedIndex) if log_enabled else True  # Activate button
-            self.children[3].disabled = not (log_enabled.get_option(self.selectedIndex)) if log_enabled else True  # Deactivate button
+            self.children[3].disabled = (
+                not (log_enabled.get_option(self.selectedIndex)) if log_enabled else True
+            )  # Deactivate button
             await interaction.response.edit_message(embed=self.embed, view=self)
 
         async def enable_disable_by_id(self, id: int, enable: bool):

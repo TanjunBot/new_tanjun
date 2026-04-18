@@ -4,7 +4,6 @@ from discord.ext import commands
 
 import utility
 from api import getCustomSituation, getCustomSituations
-from models import AISituationModel
 from commands.ai.add_custom_situation import add_custom_situation
 from commands.ai.ask_gpt import ask_gpt
 from commands.ai.delete_custom_situation import delete_custom_situation
