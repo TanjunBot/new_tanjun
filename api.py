@@ -11,13 +11,25 @@ from utility import get_level_for_xp, get_xp_for_level
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
 
+_bot = None
+
+
+def set_bot(bot) -> None:
+    global _bot
+    _bot = bot
+
+
+def _get_pool():
+    if _bot and hasattr(_bot, "_pool") and _bot._pool is not None:
+        return _bot._pool
+    return None
+
 
 async def execute_query(
     query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
 ) -> list[tuple[Any, ...]] | None:
-    if bot and hasattr(bot, "_pool"):
-        pool = bot._pool
-    else:
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
         print(
             "Tried to execute action without pool. Pool is not yet initialized.Returning...\nquery: ",
             query,
@@ -34,9 +46,8 @@ async def execute_query(
 
 
 async def execute_action(query: str, params: Any = None, bot=None) -> Any:
-    if bot and hasattr(bot, "_pool"):
-        pool = bot._pool
-    else:
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
         print(
             ("Tried to execute action without pool. Pool is not yet initialized. Returning...\nquery: "),
             query,
@@ -53,9 +64,8 @@ async def execute_action(query: str, params: Any = None, bot=None) -> Any:
 
 
 async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
-    if bot and hasattr(bot, "_pool"):
-        pool = bot._pool
-    else:
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
         return None
     try:
         async with pool.acquire() as connection, connection.cursor() as cursor:

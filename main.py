@@ -107,6 +107,9 @@ if __name__ == "__main__":
             print(f"Failed to initialize database pool: {e}")
             raise
 
+        from api import set_bot
+        set_bot(bot)
+
         # Create database tables
         from api import create_tables
 
