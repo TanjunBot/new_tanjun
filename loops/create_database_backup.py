@@ -4,16 +4,20 @@ from typing import cast
 
 from discord import Client, File, TextChannel
 
-from config import database_password, database_user
+from config import database_ip, database_password, database_port, database_user
 
 
-def dump_database_schema(user: str, password: str, output_file: str) -> None:
+def dump_database_schema(user: str, password: str, host: str, port: int, output_file: str) -> None:
     if platform.system() != "Linux":
         print("Tried to create Database backup on a non Linux system. This is not supported. Abording..")
         return
 
     dump_command = [
         "mysqldump",
+        "-h",
+        host,
+        "-P",
+        str(port),
         "-u",
         user,
         f"--password={password}",
@@ -34,7 +38,7 @@ def dump_database_schema(user: str, password: str, output_file: str) -> None:
 async def create_database_backup(client: Client) -> None:
     assert database_user is not None
     assert database_password is not None
-    dump_database_schema(database_user, database_password, "backup.sql")
+    dump_database_schema(database_user, database_password, database_ip, database_port, "backup.sql")
 
     channel = cast(TextChannel, client.get_channel(1259573137108893766))
 

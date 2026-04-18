@@ -6,7 +6,8 @@ WORKDIR /usr/local/app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
-    python3-dev && \
+    python3-dev \
+    default-mysql-client && \
     rm -rf /var/lib/apt/lists/*
 
 # Create app user
