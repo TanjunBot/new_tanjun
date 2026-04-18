@@ -108,6 +108,7 @@ if __name__ == "__main__":
             raise
 
         from api import set_bot
+
         set_bot(bot)
 
         # Create database tables
