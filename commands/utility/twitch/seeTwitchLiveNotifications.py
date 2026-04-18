@@ -3,6 +3,7 @@ from typing import Any
 import discord
 
 from api import get_twitch_notification_by_guild_id, remove_twitch_online_notification
+from models import TwitchOnlineNotificationModel
 from commands.utility.twitch.twitchApi import (
     parse_twitch_notification_message,
 )
@@ -79,7 +80,7 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
                 )
                 return
             global notifications
-            await remove_twitch_online_notification(self.notifications[self.current_page][0])
+            await remove_twitch_online_notification(self.notifications[self.current_page].id)
             self.notifications = await get_twitch_notification_by_guild_id(commandInfo.guild.id)  # type: ignore[assignment, union-attr]
             if not self.notifications:
                 embed = tanjunEmbed(
@@ -116,9 +117,9 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
 
         async def update_message(self, interaction: discord.Interaction) -> None:
             notification = parse_twitch_notification_message(
-                notifications[self.current_page][5],  # type: ignore[index]
+                notifications[self.current_page].notification_message,
                 CommandInfo.locale,  # type: ignore[misc]
-                notifications[self.current_page][4],  # type: ignore[index]
+                notifications[self.current_page].twitch_name,
             )
             if len(self.notifications) > 1:
                 title = tanjunLocalizer.localize(
@@ -137,8 +138,8 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.utility.twitch.listTwitchLiveNotifications.description",
-                    channel=self.notifications[self.current_page][0],
-                    twitch_name=self.notifications[self.current_page][4],
+                    channel=self.notifications[self.current_page].id,
+                    twitch_name=self.notifications[self.current_page].twitch_name,
                     message=notification,
                 ),
             )
@@ -150,9 +151,9 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
 
     view = TwitchLiveNotification(0, notifications)
     notification = parse_twitch_notification_message(
-        notifications[0][5],
+        notifications[0].notification_message,
         CommandInfo.locale,  # type: ignore[misc]
-        notifications[0][4],
+        notifications[0].twitch_name,
     )
     if len(notifications) > 1:
         title = tanjunLocalizer.localize(
@@ -171,8 +172,8 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.utility.twitch.listTwitchLiveNotifications.description",
-            channel=notifications[0][0],
-            twitch_name=notifications[0][4],
+            channel=notifications[0].id,
+            twitch_name=notifications[0].twitch_name,
             message=notification,
         ),
     )

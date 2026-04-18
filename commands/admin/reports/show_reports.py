@@ -1,5 +1,3 @@
-from typing import Any, cast
-
 import discord
 
 import utility
@@ -11,6 +9,7 @@ from api import (
     unblock_reporter,
 )
 from localizer import tanjunLocalizer
+from models import ReportModel
 from utility import CommandInfo
 
 
@@ -34,7 +33,7 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
         return
 
     assert commandInfo.guild is not None
-    reports = cast(list[tuple[Any, ...]], await get_reports(commandInfo.guild.id, user.id if user else None))  # type: ignore[redundant-cast]
+    reports = await get_reports(commandInfo.guild.id, user.id if user else None)
 
     if not reports:
         embed = utility.tanjunEmbed(
@@ -50,14 +49,14 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
         await commandInfo.reply(embed=embed)
         return
 
-    async def checkIfCurrentReporterIsBlocked(reports: list[tuple[Any, ...]], page: int) -> bool:
+    async def checkIfCurrentReporterIsBlocked(reports: list[ReportModel], page: int) -> bool:
         assert commandInfo.guild is not None
-        return bool(await check_if_reporter_is_blocked(commandInfo.guild.id, str(reports[page][3])))
+        return bool(await check_if_reporter_is_blocked(commandInfo.guild.id, str(reports[page].reporter_id)))
 
     currentReporterIsBlocked = await checkIfCurrentReporterIsBlocked(reports, 0)
 
     class reportsView(discord.ui.View):
-        def __init__(self, reports: list[tuple[Any, ...]], page: int = 0) -> None:
+        def __init__(self, reports: list[ReportModel], page: int = 0) -> None:
             super().__init__()
             self.reports = reports
             self.page = page
@@ -112,7 +111,7 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
                 )
                 return
 
-            await delete_report(commandInfo.guild.id, self.reports[self.page][0])  # type: ignore[union-attr]
+            await delete_report(commandInfo.guild.id, self.reports[self.page].id)  # type: ignore[union-attr]
             self.reports.pop(self.page)
             if len(self.reports) == 0:
                 embed = utility.tanjunEmbed(
@@ -156,7 +155,7 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
                         ephemeral=True,
                     )
                     return
-                await block_reporter(commandInfo.guild.id, self.reports[self.page][3])  # type: ignore[union-attr]
+                await block_reporter(commandInfo.guild.id, self.reports[self.page].reporter_id)  # type: ignore[union-attr]
                 await interaction.response.edit_message(view=reportsView(reports, self.page), embed=self.get_embed())
 
         else:
@@ -183,7 +182,7 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
                         ephemeral=True,
                     )
                     return
-                await unblock_reporter(commandInfo.guild.id, self.reports[self.page][3])  # type: ignore[union-attr]
+                await unblock_reporter(commandInfo.guild.id, self.reports[self.page].reporter_id)  # type: ignore[union-attr]
                 nonlocal currentReporterIsBlocked
                 currentReporterIsBlocked = await checkIfCurrentReporterIsBlocked(reports, self.page)
                 await interaction.response.edit_message(view=reportsView(reports, self.page), embed=self.get_embed())
@@ -215,14 +214,14 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
 
         def get_embed(self) -> discord.Embed:
             report = self.reports[self.page]
-            user_str = str(report[2])
-            reporter_str = str(report[3])
-            reason = str(report[4])
-            createdAt = str(report[5])
-            accepted = bool(report[6])
-            acceptedAt = str(report[7])
-            resolved = bool(report[9])
-            resolvedAt = str(report[10])
+            user_str = str(report.user_id)
+            reporter_str = str(report.reporter_id)
+            reason = str(report.reason)
+            createdAt = str(report.created_at)
+            accepted = bool(report.accepted)
+            acceptedAt = str(report.accepted_at)
+            resolved = bool(report.resolved)
+            resolvedAt = str(report.resolved_at)
 
             locale = str(commandInfo.locale)
 

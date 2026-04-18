@@ -2,6 +2,7 @@ import discord
 
 import utility
 from api import get_custom_formula, get_xp_scaling, getLevelLeaderboard
+from models import LevelLeaderboardEntryModel
 from localizer import tanjunLocalizer
 
 
@@ -29,8 +30,8 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
         for i in range(10):
             try:
                 placeData = leaderboard[i + (page_number - 1) * 10]
-                user = placeData[0]
-                xp = placeData[1]
+                user = placeData.user_id
+                xp = placeData.xp
                 level = utility.get_level_for_xp(xp, scaling, custom_formula)
                 xp_from_last_level = xp - utility.get_xp_for_level(level - 1, scaling, custom_formula)
                 xp_till_next_level = utility.get_xp_for_level(level, scaling, custom_formula)

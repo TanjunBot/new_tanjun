@@ -5,6 +5,7 @@ import discord
 import utility
 from api import add_warning, get_warn_config, get_warnings
 from localizer import tanjunLocalizer
+from models import WarnConfigModel
 from utility import CommandInfo
 
 
@@ -35,7 +36,7 @@ async def warn_user(commandInfo: utility.CommandInfo, member: discord.Member, re
 
     warn_config = await get_warn_config(guild_id)
 
-    expireDate = datetime.now(UTC) + timedelta(days=warn_config["expiration_days"])  # type: ignore[index]
+    expireDate = datetime.now(UTC) + timedelta(days=warn_config.expiration_days)
 
     await add_warning(guild_id, user_id, reason, expireDate, commandInfo.user.id)  # type: ignore[arg-type]
     warn_count = len(await get_warnings(guild_id, user_id))  # type: ignore[arg-type]
@@ -56,15 +57,15 @@ async def warn_user(commandInfo: utility.CommandInfo, member: discord.Member, re
 
     # Check for escalated actions based on warn count
     if warn_config:
-        if warn_count >= warn_config["ban_threshold"]:
+        if warn_count >= warn_config.ban_threshold:
             # Ban the user
             await member.ban(reason=f"Reached {warn_count} warnings")
-        elif warn_count >= warn_config["kick_threshold"]:
+        elif warn_count >= warn_config.kick_threshold:
             # Kick the user
             await member.kick(reason=f"Reached {warn_count} warnings")
-        elif warn_count >= warn_config["timeout_threshold"]:
+        elif warn_count >= warn_config.timeout_threshold:
             # Timeout the user
-            timeout_duration = warn_config["timeout_duration"]
+            timeout_duration = warn_config.timeout_duration
             duration = timedelta(minutes=timeout_duration)
             until = discord.utils.utcnow() + duration
             await member.timeout(until, reason=f"Reached {warn_count} warnings")

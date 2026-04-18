@@ -40,7 +40,7 @@ async def reroll_giveaway(
         await commandInfo.reply(embed=embed)
         return
 
-    if giveaway[1] != str(commandInfo.guild.id):
+    if giveaway.guild_id != str(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -54,7 +54,7 @@ async def reroll_giveaway(
         await commandInfo.reply(embed=embed)
         return
 
-    if not giveaway[13]:
+    if not giveaway.ended:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -90,7 +90,7 @@ async def reroll_giveaway(
         async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
             giveaway = await get_giveaway(self.giveawayId)
-            await perform_reroll(self.commandInfo, self.giveawayId, giveaway[4])
+            await perform_reroll(self.commandInfo, self.giveawayId, giveaway.winners)
             self.stop()
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
@@ -105,7 +105,7 @@ async def reroll_giveaway(
                 return False
             return True
 
-    winners_count = giveaway[4]
+    winners_count = giveaway.winners
     if winners_count > 1:
         view = RerollOptionsView(commandInfo, giveawayId)
         embed = utility.tanjunEmbed(

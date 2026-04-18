@@ -4,6 +4,7 @@ import discord
 from discord.ui import Button, Modal, Select, TextInput, View
 
 from api import add_level_role, get_all_level_roles, remove_level_role
+from models import LevelRolesGroupModel
 from localizer import tanjunLocalizer
 from utility import commandInfo, tanjunEmbed
 
@@ -40,11 +41,11 @@ async def show_level_roles_command(commandInfo: commandInfo):
                     label=tanjunLocalizer.localize(
                         self.commandInfo.locale,
                         "commands.level.showlevelroles.data",
-                        level=level,
+                        level=group.level,
                     ),
-                    value=f"{level}|{','.join(roles)}",
+                    value=f"{group.level}|{','.join(group.role_ids)}",
                 )
-                for level, roles in self.level_roles.items()
+                for group in self.level_roles
             ]
 
             start = self.current_page * 25
@@ -253,14 +254,14 @@ async def show_level_roles_command(commandInfo: commandInfo):
         def update_options(self):
             self.clear_items()
             options = []
-            for level, roles in self.level_roles.items():
-                for role_id in roles:
+            for group in self.level_roles:
+                for role_id in group.role_ids:
                     options.append(
                         discord.SelectOption(
                             label=tanjunLocalizer.localize(
                                 self.commandInfo.locale,
                                 "commands.level.showlevelroles.remove_role_data",
-                                level=level,
+                                level=group.level,
                                 role=f"{role_id}",
                             ),
                             value=f"{level}|{role_id}",
@@ -321,7 +322,7 @@ async def show_level_roles_command(commandInfo: commandInfo):
             await interaction.response.edit_message(view=self)
 
         async def next_page(self, interaction: discord.Interaction):
-            max_pages = math.ceil(sum(len(roles) for roles in self.level_roles.values()) / 25)
+            max_pages = math.ceil(sum(len(group.role_ids) for group in self.level_roles) / 25)
             self.current_page = min(max_pages - 1, self.current_page + 1)
             self.update_options()
             await interaction.response.edit_message(view=self)
@@ -382,10 +383,10 @@ async def show_level_roles_command(commandInfo: commandInfo):
         description=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.description"),
     )
 
-    for level, roles in level_roles.items():
+    for group in level_roles:
         embed.add_field(
-            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.level", level=level),
-            value=", ".join([f"<@&{role}>" for role in roles]),
+            name=tanjunLocalizer.localize(commandInfo.locale, "commands.level.showlevelroles.level", level=group.level),
+            value=", ".join([f"<@&{role}>" for role in group.role_ids]),
             inline=False,
         )
 

@@ -1,6 +1,7 @@
 import discord
 
 from api import check_if_opted_out, is_trigger_message
+from models import TriggerMessageModel
 
 
 async def send_trigger_message(message: discord.Message) -> None:
@@ -22,5 +23,5 @@ async def send_trigger_message(message: discord.Message) -> None:
 
     if await check_if_opted_out(message.author.id):
         return
-    response = trigger_message[3]
+    response = trigger_message.response
     await message.reply(response)

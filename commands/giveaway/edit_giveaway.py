@@ -37,22 +37,22 @@ class GiveawayEditor(ui.View):
         channel_requirements = await get_giveaway_channel_requirements(self.giveawayId)
 
         self.giveaway_data = {
-            "title": giveaway[2],
-            "description": giveaway[3],
-            "winners": giveaway[4],
-            "with_button": giveaway[5],
-            "custom_name": giveaway[6],
-            "sponsor": giveaway[7],
-            "price": giveaway[8],
-            "message": giveaway[9],
-            "end_time": dateToRelativeTimeStr(giveaway[10]),
-            "start_time": dateToRelativeTimeStr(giveaway[11]),
-            "new_message_requirement": giveaway[14],
-            "day_requirement": giveaway[15],
+            "title": giveaway.title,
+            "description": giveaway.description,
+            "winners": giveaway.winners,
+            "with_button": giveaway.with_button,
+            "custom_name": giveaway.custom_name,
+            "sponsor": giveaway.sponsor,
+            "price": giveaway.price,
+            "message": giveaway.message,
+            "end_time": dateToRelativeTimeStr(giveaway.end_time),
+            "start_time": dateToRelativeTimeStr(giveaway.start_time),
+            "new_message_requirement": giveaway.new_message_requirement,
+            "day_requirement": giveaway.day_requirement,
             "role_requirement": role_requirements,
-            "voice_requirement": giveaway[16],
+            "voice_requirement": giveaway.voice_requirement,
             "channel_requirements": channel_requirements,
-            "target_channel": self.commandInfo.guild.get_channel(int(giveaway[18])),  # type: ignore[union-attr]
+            "target_channel": self.commandInfo.guild.get_channel(int(giveaway.channel_id)),  # type: ignore[union-attr]
         }
         return True  # type: ignore[return-value]
 
@@ -741,7 +741,38 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        embed = await generateGiveawayEmbed(self.giveaway_data, self.commandInfo.locale)  # type: ignore[func-returns-value]
+        # Build a temporary GiveawayModel-like dict for the embed preview
+        # since the editor uses its own internal dict format
+        from models import GiveawayChannelRequirementModel, GiveawayModel
+
+        preview_giveaway = GiveawayModel(
+            giveaway_id=0,
+            guild_id="",
+            title=self.giveaway_data.get("title", ""),
+            description=self.giveaway_data.get("description"),
+            winners=self.giveaway_data.get("winners", 1),
+            with_button=self.giveaway_data.get("with_button", True),
+            custom_name=self.giveaway_data.get("custom_name"),
+            sponsor=self.giveaway_data.get("sponsor"),
+            price=self.giveaway_data.get("price"),
+            message=self.giveaway_data.get("message"),
+            end_time=relativeTimeStrToDate(self.giveaway_data["end_time"]) if self.giveaway_data.get("end_time") else None,
+            start_time=relativeTimeStrToDate(self.giveaway_data["start_time"]) if self.giveaway_data.get("start_time") else None,
+            started=False,
+            ended=False,
+            new_message_requirement=self.giveaway_data.get("new_message_requirement"),
+            day_requirement=self.giveaway_data.get("day_requirement"),
+            voice_requirement=self.giveaway_data.get("voice_requirement"),
+            send_failed=False,
+            channel_id="",
+            message_id="",
+            created_at=None,
+        )
+        channel_reqs = [
+            GiveawayChannelRequirementModel(channel_id=k, amount=v)
+            for k, v in self.giveaway_data.get("channel_requirements", {}).items()
+        ]
+        embed = await generateGiveawayEmbed(preview_giveaway, self.commandInfo.locale, self.giveaway_data.get("role_requirement", []), channel_reqs)
         await interaction.response.send_message(  # type: ignore[call-overload]
             content=tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.preview"),
             embed=embed,

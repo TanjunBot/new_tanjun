@@ -120,8 +120,8 @@ class LoopCog(commands.Cog):
             if not uuids:
                 return
 
-            # Convert list of tuples to list of strings
-            user_ids = [str(uuid[0]) for uuid in uuids]
+            # uuids is already a list of strings
+            user_ids = [str(uuid) for uuid in uuids]
 
             # Initialize stream status on first run
             if not twitch_api.initial_check_done:

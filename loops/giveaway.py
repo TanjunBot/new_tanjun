@@ -7,8 +7,8 @@ voiceUsers = []  # type: ignore[var-annotated]
 async def sendReadyGiveaways(client):  # type: ignore[no-untyped-def]
     ready_giveaways = await get_send_ready_giveaways()
     if ready_giveaways:
-        for giveaway in ready_giveaways:
-            await sendGiveaway(giveawayid=giveaway[0], client=client)
+        for giveaway_id in ready_giveaways:
+            await sendGiveaway(giveawayid=giveaway_id, client=client)
 
 
 async def checkVoiceUsers(client):  # type: ignore[no-untyped-def]
@@ -57,5 +57,5 @@ def removeVoiceUser(user) -> None:  # type: ignore[no-untyped-def]
 async def endGiveaways(client):  # type: ignore[no-untyped-def]
     ready_giveaways = await get_end_ready_giveaways()
     if ready_giveaways:
-        for giveaway in ready_giveaways:
-            await endGiveaway(giveaway_id=giveaway[0], client=client)
+        for giveaway_id in ready_giveaways:
+            await endGiveaway(giveaway_id=giveaway_id, client=client)

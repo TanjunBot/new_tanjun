@@ -11,6 +11,7 @@ from api import (
     update_scheduled_message_repeat_amount,
 )
 from localizer import tanjunLocalizer
+from models import ScheduledMessageModel
 
 
 async def schedule_message(
@@ -181,13 +182,13 @@ async def send_scheduled_messages(client: discord.Client) -> None:
     for msg in ready_messages:
         try:
             # Extract message details
-            message_id = msg[0]
-            guild_id = int(msg[1]) if msg[1] else None
-            channel_id = int(msg[2]) if msg[2] else None
-            user_id = int(msg[3])
-            content = msg[4]
-            repeat_interval = msg[6]
-            repeat_amount = msg[7]
+            message_id = msg.message_id
+            guild_id = int(msg.guild_id) if msg.guild_id else None
+            channel_id = int(msg.channel_id) if msg.channel_id else None
+            user_id = int(msg.user_id)
+            content = msg.content
+            repeat_interval = msg.repeat_interval
+            repeat_amount = msg.repeat_amount
 
             target: (
                 discord.VoiceChannel

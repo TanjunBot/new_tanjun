@@ -6,6 +6,7 @@ from discord.ui import Button, View
 import utility
 from api import get_scheduled_messages
 from localizer import tanjunLocalizer
+from models import ScheduledMessageModel
 
 MESSAGES_PER_PAGE = 1
 MAX_CONTENT_LENGTH = 1000  # Maximum length for message content preview
@@ -14,7 +15,7 @@ MAX_EMBED_LENGTH = 6000  # Discord's maximum embed length
 
 async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
     class PaginationView(View):
-        def __init__(self, messages: list[tuple[Any, ...]], locale: str, page: int = 0) -> None:
+        def __init__(self, messages: list[ScheduledMessageModel], locale: str, page: int = 0) -> None:
             super().__init__(timeout=300)  # 5 minute timeout
             self.messages = messages
             self.page = page
@@ -63,22 +64,22 @@ async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
 
             for msg in page_messages:
                 # Truncate content
-                content = self.truncate_content(msg[4])
+                content = self.truncate_content(msg.content)
 
                 # Calculate field lengths
-                field_name = tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.message_id", id=msg[0])
+                field_name = tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.message_id", id=msg.message_id)
 
                 field_value = tanjunLocalizer.localize(
                     self.locale,
                     "commands.utility.listscheduled.message_details",
                     content=content,
-                    time=utility.date_time_to_timestamp(msg[5]),
+                    time=utility.date_time_to_timestamp(msg.send_time),
                     channel=(
-                        "<#" + str(msg[2]) + ">"
-                        if msg[2]
+                        "<#" + str(msg.channel_id) + ">"
+                        if msg.channel_id
                         else tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.direct_message")
                     ),
-                    repeat=msg[6] or tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.no_repeat"),
+                    repeat=msg.repeat_interval or tanjunLocalizer.localize(self.locale, "commands.utility.listscheduled.no_repeat"),
                 )
 
                 # Check if adding this field would exceed the limit

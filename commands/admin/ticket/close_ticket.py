@@ -5,6 +5,7 @@ import discord
 
 import utility
 from api import get_ticket_by_id, get_ticket_messages_by_id
+from models import TicketModel, TicketMessageModel
 from localizer import tanjunLocalizer
 
 
@@ -47,7 +48,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
 
     ticket_channel = channel
 
-    if not hasattr(ticket_channel, "id") or not ticket_channel.id == int(ticket[6]):
+    if not hasattr(ticket_channel, "id") or not ticket_channel.id == int(ticket.channel_id):
         await interaction.followup.send(
             tanjunLocalizer.localize(
                 str(interaction.locale),
@@ -56,12 +57,12 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         )
         return
 
-    ticket_opener = ticket[1]
+    ticket_opener = ticket.opener_id
     ticket_opener_user = await guild.fetch_member(ticket_opener)
 
-    ticket_open_time = ticket[2]
+    ticket_open_time = ticket.opened_at
 
-    summary_channel_id = int(ticket_message[7]) if ticket_message[7] else None
+    summary_channel_id = int(ticket_message.summary_channel_id) if ticket_message.summary_channel_id else None
     summary_channel = guild.get_channel(summary_channel_id)  # type: ignore[arg-type]
 
     if not summary_channel:

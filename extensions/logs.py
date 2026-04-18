@@ -347,11 +347,11 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_automod_rule_create(self, rule: discord.AutoModRule) -> None:
-        logEnable = rule.guild and (await get_log_enable(rule.guild.id))[1]  # type: ignore[truthy-bool]
+        logEnable = rule.guild and (await get_log_enable(rule.guild.id)).automod_rule_create
         if not logEnable:
             return
 
-        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):  # type: ignore[attr-defined]
+        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -513,11 +513,11 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_automod_rule_update(self, rule: discord.AutoModRule) -> None:
-        logEnable = rule.guild and (await get_log_enable(rule.guild.id))[2]  # type: ignore[truthy-bool]
+        logEnable = rule.guild and (await get_log_enable(rule.guild.id)).automod_rule_update
         if not logEnable:
             return
 
-        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):  # type: ignore[attr-defined]
+        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -681,11 +681,11 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_automod_rule_delete(self, rule: discord.AutoModRule) -> None:
-        logEnable = rule.guild and (await get_log_enable(rule.guild.id))[3]  # type: ignore[truthy-bool]
+        logEnable = rule.guild and (await get_log_enable(rule.guild.id)).automod_rule_delete
         if not logEnable:
             return
 
-        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):  # type: ignore[attr-defined]
+        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -848,7 +848,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_automod_action(self, execution: discord.AutoModAction) -> None:
-        logEnable = execution.guild and (await get_log_enable(execution.guild.id))[4]  # type: ignore[truthy-bool]
+        logEnable = execution.guild and (await get_log_enable(execution.guild.id)).automod_action
         if not logEnable:
             return
 
@@ -914,9 +914,9 @@ class LogsCog(commands.Cog):
                 locale,
                 "logs.automodAction.message",
                 message=(
-                    execution.action.content[0:1000] + "..."  # type: ignore[attr-defined]
-                    if len(execution.action.content) > 1000  # type: ignore[attr-defined]
-                    else execution.action.content  # type: ignore[attr-defined]
+                    execution.action.content[0:1000] + "..."
+                    if len(execution.action.content) > 1000
+                    else execution.action.content
                 ),
             )
         )
@@ -932,7 +932,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel) -> None:
-        logEnable = channel.guild and (await get_log_enable(channel.guild.id))[5]  # type: ignore[truthy-bool]
+        logEnable = channel.guild and (await get_log_enable(channel.guild.id)).guild_channel_delete
         if not logEnable:
             return
 
@@ -974,8 +974,8 @@ class LogsCog(commands.Cog):
                 )
             )
 
-        if channel.topic:  # type: ignore[attr-defined]
-            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelDelete.topic", topic=channel.topic))  # type: ignore[attr-defined]
+        if channel.topic:
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelDelete.topic", topic=channel.topic))
 
         if len(channel.overwrites.keys()) > 0:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelDelete.permissionOverwrites"))
@@ -989,7 +989,7 @@ class LogsCog(commands.Cog):
                     elif value is False:
                         denied.append(f"`{localPerm}`")
 
-                target_str = target.mention if hasattr(target, "mention") else target.name  # type: ignore[attr-defined]
+                target_str = target.mention if hasattr(target, "mention") else target.name
                 description_parts.append(
                     tanjunLocalizer.localize(
                         locale,
@@ -1026,7 +1026,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: discord.abc.GuildChannel) -> None:
-        logEnable = channel.guild and (await get_log_enable(channel.guild.id))[6]  # type: ignore[truthy-bool]
+        logEnable = channel.guild and (await get_log_enable(channel.guild.id)).guild_channel_create
         if not logEnable:
             return
 
@@ -1067,8 +1067,8 @@ class LogsCog(commands.Cog):
                 )
             )
 
-        if channel.topic:  # type: ignore[attr-defined]
-            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.topic", topic=channel.topic))  # type: ignore[attr-defined]
+        if channel.topic:
+            description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.topic", topic=channel.topic))
 
         if len(channel.overwrites.keys()) > 0:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildChannelCreate.permissionOverwrites"))
@@ -1082,7 +1082,7 @@ class LogsCog(commands.Cog):
                     elif value is False:
                         denied.append(f"`{localPerm}`")
 
-                target_str = target.mention if hasattr(target, "mention") else target.name  # type: ignore[attr-defined]
+                target_str = target.mention if hasattr(target, "mention") else target.name
                 description_parts.append(f"### {target_str}")
                 if allowed:
                     description_parts.append("✅ " + ", ".join(allowed))
@@ -1101,7 +1101,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel) -> None:
-        logEnable = after.guild and (await get_log_enable(after.guild.id))[7]  # type: ignore[truthy-bool]
+        logEnable = after.guild and (await get_log_enable(after.guild.id)).guild_channel_update
         if not logEnable:
             return
 
@@ -1151,13 +1151,13 @@ class LogsCog(commands.Cog):
                 )
             )
 
-        if hasattr(before, "topic") and before.topic != after.topic:  # type: ignore[attr-defined]
+        if hasattr(before, "topic") and before.topic != after.topic:
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildChannelUpdate.topic",
                     before=before.topic,
-                    after=after.topic,  # type: ignore[attr-defined]
+                    after=after.topic,
                 )
             )
 
@@ -1165,7 +1165,7 @@ class LogsCog(commands.Cog):
             # Track removed targets
             for target in before.overwrites:
                 if target not in after.overwrites:
-                    target_str = target.mention if hasattr(target, "mention") else target.name  # type: ignore[attr-defined]
+                    target_str = target.mention if hasattr(target, "mention") else target.name
                     description_parts.append(
                         tanjunLocalizer.localize(
                             locale,
@@ -1177,7 +1177,7 @@ class LogsCog(commands.Cog):
             # Track added/modified targets
             for target, new_overwrite in after.overwrites.items():
                 old_overwrite = before.overwrites.get(target, None)
-                target_str = target.mention if hasattr(target, "mention") else target.name  # type: ignore[attr-defined]
+                target_str = target.mention if hasattr(target, "mention") else target.name
 
                 if old_overwrite is None:
                     # New target - show all permissions
@@ -1319,38 +1319,38 @@ class LogsCog(commands.Cog):
 
         if (
             hasattr(after, "default_auto_archive_duration")
-            and after.default_auto_archive_duration != before.default_auto_archive_duration  # type: ignore[attr-defined]
+            and after.default_auto_archive_duration != before.default_auto_archive_duration
         ):
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildChannelUpdate.defaultAutoArchiveDuration",
-                    before=before.default_auto_archive_duration,  # type: ignore[attr-defined]
+                    before=before.default_auto_archive_duration,
                     after=after.default_auto_archive_duration,
                 )
             )
 
         if (
             hasattr(after, "default_thread_auto_archive_duration")
-            and after.default_thread_auto_archive_duration != before.default_thread_auto_archive_duration  # type: ignore[attr-defined]
+            and after.default_thread_auto_archive_duration != before.default_thread_auto_archive_duration
         ):
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildChannelUpdate.defaultThreadAutoArchiveDuration",
-                    before=before.default_thread_auto_archive_duration,  # type: ignore[attr-defined]
+                    before=before.default_thread_auto_archive_duration,
                     after=after.default_thread_auto_archive_duration,
                 )
             )
 
-        if hasattr(after, "nsfw") and after.nsfw != before.nsfw:  # type: ignore[attr-defined]
+        if hasattr(after, "nsfw") and after.nsfw != before.nsfw:
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildChannelUpdate.nsfw",
                     before=(
                         str(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.yes"))
-                        if before.nsfw  # type: ignore[attr-defined]
+                        if before.nsfw
                         else str(tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.no"))
                     ),
                     after=(
@@ -1361,12 +1361,12 @@ class LogsCog(commands.Cog):
                 )
             )
 
-        if hasattr(after, "slowmode_delay") and after.slowmode_delay != before.slowmode_delay:  # type: ignore[attr-defined]
+        if hasattr(after, "slowmode_delay") and after.slowmode_delay != before.slowmode_delay:
             description_parts.append(
                 tanjunLocalizer.localize(
                     locale,
                     "logs.guildChannelUpdate.slowmodeDelay",
-                    before=before.slowmode_delay,  # type: ignore[attr-defined]
+                    before=before.slowmode_delay,
                     after=after.slowmode_delay,
                 )
             )
@@ -1386,11 +1386,11 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_update(self, before: discord.Guild, after: discord.Guild) -> None:
-        logEnable = after.guild and (await get_log_enable(after.guild.id))[8]  # type: ignore[attr-defined]
+        logEnable = after.guild and (await get_log_enable(after.guild.id)).guild_update
         if not logEnable:
             return
 
-        locale = after.locale if hasattr(after, "preferred_locale") else "en_US"  # type: ignore[attr-defined]
+        locale = after.locale if hasattr(after, "preferred_locale") else "en_US"
         description_parts = []
 
         keinerLocale = tanjunLocalizer.localize(locale, "logs.guildUpdate.none")
@@ -1812,7 +1812,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_invite_create(self, invite: discord.Invite) -> None:
-        logEnable = invite.guild and (await get_log_enable(invite.guild.id))[9]
+        logEnable = invite.guild and (await get_log_enable(invite.guild.id)).invite_create
         if not logEnable:
             return
 
@@ -1907,7 +1907,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_invite_delete(self, invite: discord.Invite) -> None:
-        logEnable = invite.guild and (await get_log_enable(invite.guild.id))[10]
+        logEnable = invite.guild and (await get_log_enable(invite.guild.id)).invite_delete
         if not logEnable:
             return
 
@@ -1999,7 +1999,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:
-        logEnable = member.guild and (await get_log_enable(member.guild.id))[11]  # type: ignore[truthy-bool]
+        logEnable = member.guild and (await get_log_enable(member.guild.id)).member_join
         if not logEnable:
             return
 
@@ -2028,7 +2028,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member) -> None:
-        logEnable = member.guild and (await get_log_enable(member.guild.id))[12]  # type: ignore[truthy-bool]
+        logEnable = member.guild and (await get_log_enable(member.guild.id)).member_leave
         if not logEnable:
             return
 
@@ -2064,7 +2064,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
-        logEnable = after.guild and (await get_log_enable(after.guild.id))[13]  # type: ignore[truthy-bool]
+        logEnable = after.guild and (await get_log_enable(after.guild.id)).member_update
         if not logEnable:
             return
 
@@ -2203,7 +2203,7 @@ class LogsCog(commands.Cog):
             if not user:
                 continue
 
-            logEnable = guild and (await get_log_enable(guild.id))[14]
+            logEnable = guild and (await get_log_enable(guild.id)).user_update
             if not logEnable:
                 continue
 
@@ -2306,7 +2306,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_ban(self, user: discord.Member) -> None:
-        logEnable = user.guild and (await get_log_enable(user.guild.id))[15]  # type: ignore[truthy-bool]
+        logEnable = user.guild and (await get_log_enable(user.guild.id)).member_ban
         if not logEnable:
             return
 
@@ -2325,7 +2325,7 @@ class LogsCog(commands.Cog):
 
         banner = None
         async for log in user.guild.audit_logs(limit=1, user=user):
-            banner = log.banner  # type: ignore[attr-defined]
+            banner = log.banner
 
         if banner:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.memberBan.banned_by", banner=banner.mention))
@@ -2342,7 +2342,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_unban(self, guild: discord.Guild, user: discord.User) -> None:
-        logEnable = guild and (await get_log_enable(guild.id))[16]  # type: ignore[truthy-bool]
+        logEnable = guild and (await get_log_enable(guild.id)).member_unban
         if not logEnable:
             return
 
@@ -2379,7 +2379,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_presence_update(self, before: discord.Member, after: discord.Member) -> None:
-        logEnable = after.guild and (await get_log_enable(after.guild.id))[17]  # type: ignore[truthy-bool]
+        logEnable = after.guild and (await get_log_enable(after.guild.id)).presence_update
         if not logEnable:
             return
 
@@ -2421,7 +2421,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
-        logEnable = after.guild and (await get_log_enable(after.guild.id))[18]
+        logEnable = after.guild and (await get_log_enable(after.guild.id)).message_edit
         if not logEnable:
             return
 
@@ -2573,7 +2573,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message) -> None:
-        logEnable = message.guild and (await get_log_enable(message.guild.id))[19]
+        logEnable = message.guild and (await get_log_enable(message.guild.id)).message_delete
         if not logEnable:
             return
 
@@ -2663,22 +2663,22 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User) -> None:
-        logEnable = reaction.guild and (await get_log_enable(reaction.guild.id))[20]  # type: ignore[attr-defined]
+        logEnable = reaction.guild and (await get_log_enable(reaction.guild.id)).reaction_add
         if not logEnable:
             return
 
-        if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):  # type: ignore[attr-defined]
+        if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):
             return
 
-        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):  # type: ignore[attr-defined]
+        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
             return
 
-        blacklistedRoles = await get_log_role_blacklist(reaction.guild.id)  # type: ignore[attr-defined]
+        blacklistedRoles = await get_log_role_blacklist(reaction.guild.id)
         for blacklistedRole in blacklistedRoles:
-            if blacklistedRole in user.roles:  # type: ignore[attr-defined]
+            if blacklistedRole in user.roles:
                 return
 
-        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"  # type: ignore[attr-defined]
+        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         description_parts.append(
@@ -2699,26 +2699,26 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionAdd.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(reaction.guild.id), embed)  # type: ignore[attr-defined]
+        log_embeds_manager.add_embed(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User) -> None:
-        logEnable = reaction.guild and (await get_log_enable(reaction.guild.id))[21]  # type: ignore[attr-defined]
+        logEnable = reaction.guild and (await get_log_enable(reaction.guild.id)).reaction_remove
         if not logEnable:
             return
 
-        if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):  # type: ignore[attr-defined]
+        if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):
             return
 
-        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):  # type: ignore[attr-defined]
+        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
             return
 
-        blacklistedRoles = await get_log_role_blacklist(reaction.guild.id)  # type: ignore[attr-defined]
+        blacklistedRoles = await get_log_role_blacklist(reaction.guild.id)
         for blacklistedRole in blacklistedRoles:
-            if blacklistedRole in user.roles:  # type: ignore[attr-defined]
+            if blacklistedRole in user.roles:
                 return
 
-        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"  # type: ignore[attr-defined]
+        locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
         description_parts = []
 
         description_parts.append(
@@ -2739,11 +2739,11 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionRemove.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(reaction.guild.id), embed)  # type: ignore[attr-defined]
+        log_embeds_manager.add_embed(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_create(self, role: discord.Role) -> None:
-        logEnable = role.guild and (await get_log_enable(role.guild.id))[22]  # type: ignore[truthy-bool]
+        logEnable = role.guild and (await get_log_enable(role.guild.id)).guild_role_create
         if not logEnable:
             return
 
@@ -2764,7 +2764,7 @@ class LogsCog(commands.Cog):
                 )
             )
 
-        if role.color:  # type: ignore[truthy-bool]
+        if role.color:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.color", color=role.color))
 
         if role.display_icon:
@@ -2821,7 +2821,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role: discord.Role) -> None:
-        logEnable = role.guild and (await get_log_enable(role.guild.id))[23]  # type: ignore[truthy-bool]
+        logEnable = role.guild and (await get_log_enable(role.guild.id)).guild_role_delete
         if not logEnable:
             return
 
@@ -2842,7 +2842,7 @@ class LogsCog(commands.Cog):
                 )
             )
 
-        if role.color:  # type: ignore[truthy-bool]
+        if role.color:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.color", color=role.color))
 
         if role.display_icon:
@@ -2900,7 +2900,7 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_role_update(self, before: discord.Role, after: discord.Role) -> None:
-        logEnable = after.guild and (await get_log_enable(after.guild.id))[24]  # type: ignore[truthy-bool]
+        logEnable = after.guild and (await get_log_enable(after.guild.id)).guild_role_update
         if not logEnable:
             return
 

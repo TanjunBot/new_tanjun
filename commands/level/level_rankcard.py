@@ -8,6 +8,7 @@ import discord
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 from api import get_user_level_info, set_custom_background
+from models import UserLevelInfoModel
 from localizer import tanjunLocalizer
 from utility import CommandInfo, checkIfhasPlus, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
 
@@ -144,7 +145,7 @@ def process_image(
     avatar_frames: list[Image.Image],
     avatar_decoration_frames: list[Image.Image] | None,
     user: discord.Member,
-    user_info: dict[str, Any],
+    user_info: UserLevelInfoModel,
     commandInfo: CommandInfo,
 ) -> io.BytesIO:
     DECORATION_SIZE_MULTIPLIER = 1.2
@@ -213,7 +214,7 @@ def process_image(
         draw_text_with_outline(
             draw,
             (250, 105),
-            tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.data.level", level=user_info["level"]),
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.data.level", level=user_info.level),
             info_font,
             (255, 255, 255, 255),
             (0, 0, 0, 255),
@@ -224,8 +225,8 @@ def process_image(
             tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.level.rank.data.xp",
-                xp=user_info["xp"],
-                xp_needed=user_info["xp_needed"],
+                xp=user_info.xp,
+                xp_needed=user_info.xp_needed,
             ),
             info_font,
             (255, 255, 255, 255),
@@ -234,7 +235,7 @@ def process_image(
 
         bar_width = 700
         bar_height = 30
-        xp_percentage = user_info["xp"] / (user_info["xp_needed"] if user_info["xp_needed"] > 0 else 1)
+        xp_percentage = user_info.xp / (user_info.xp_needed if user_info.xp_needed > 0 else 1)
         filled_width = int(bar_width * xp_percentage)
         radius = bar_height // 4  # Slightly rounded corners
 
@@ -296,7 +297,7 @@ def process_image(
 
 async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], commandInfo: CommandInfo) -> io.BytesIO:
     # Load background image or frames
-    custom_bg = user_info.get("customBackground")
+    custom_bg = user_info.custom_background
     if custom_bg:
         background_frames, _ = await get_image_or_gif_frames(str(custom_bg))
     else:
