@@ -1,6 +1,5 @@
 # Unused imports:
 # from typing import List, Optional
-from typing import Any
 
 import discord
 from discord import app_commands
@@ -764,10 +763,22 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        attachments = [a for a in [
-            attachment1, attachment2, attachment3, attachment4, attachment5,
-            attachment6, attachment7, attachment8, attachment9, attachment10,
-        ] if a is not None]
+        attachments = [
+            a
+            for a in [
+                attachment1,
+                attachment2,
+                attachment3,
+                attachment4,
+                attachment5,
+                attachment6,
+                attachment7,
+                attachment8,
+                attachment9,
+                attachment10,
+            ]
+            if a is not None
+        ]
 
         await scheduleMessageCommand(
             commandInfo=commandInfo,
