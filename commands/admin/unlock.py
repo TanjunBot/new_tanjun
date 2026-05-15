@@ -1,4 +1,5 @@
 import discord
+from typing import cast
 
 import utility
 from api import clear_channel_overwrites, get_channel_overwrites
@@ -8,7 +9,7 @@ from localizer import tanjunLocalizer
 async def unlock_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel | None = None) -> None:
     if channel is None:
         assert commandInfo.channel is not None
-        channel = cast(discord.TextChannel, commandInfo.channel)  # type: ignore[name-defined]
+        channel = cast(discord.TextChannel, commandInfo.channel)
 
     if (
         isinstance(commandInfo.user, discord.Member)
