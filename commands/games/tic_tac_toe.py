@@ -476,7 +476,7 @@ class TicTacToe:
                 )
                 self.toggle_turn()
 
-                if self.check_winners():  # type: ignore[no-untyped-call, unused-ignore, func-returns-value]  # type: ignore[func-returns-value]  # type: ignore[func-returns-value]
+                if self.check_winners():  # type: ignore[no-untyped-call, unused-ignore, func-returns-value]
                     await self.update_board(interaction)  # type: ignore[unreachable]
                     return
 
