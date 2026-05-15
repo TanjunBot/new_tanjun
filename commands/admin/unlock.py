@@ -1,5 +1,6 @@
-import discord
 from typing import cast
+
+import discord
 
 import utility
 from api import clear_channel_overwrites, get_channel_overwrites

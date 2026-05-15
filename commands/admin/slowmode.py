@@ -1,5 +1,6 @@
-import discord
 from typing import cast
+
+import discord
 
 import utility
 from localizer import tanjunLocalizer
