@@ -66,7 +66,7 @@ class WarnCommands(discord.app_commands.Group):
     )
     async def add(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         user: discord.Member,
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
@@ -202,7 +202,7 @@ class RoleCommands(discord.app_commands.Group):
     )
     async def createrole(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         name: app_commands.Range[str, 1, 100],
         color: app_commands.Range[str, 6, 7] = None,  # type: ignore[assignment]
         display_icon: discord.Attachment = None,  # type: ignore[assignment]
@@ -288,7 +288,7 @@ class RoleCommands(discord.app_commands.Group):
     )
     async def moverole(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         role: discord.Role,
         target_role: discord.Role,
         position: app_commands.Choice[str],
@@ -380,7 +380,7 @@ class ReportCommands(discord.app_commands.Group):
         )
 
         if not channel:  # type: ignore[truthy-bool]
-            channel = ctx.channel  # type: ignore[name-defined]
+            channel = interaction.channel  # type: ignore[name-defined]
 
         await setReportChannelCommand(commandInfo=commandInfo, channel=channel)
         return
@@ -500,7 +500,7 @@ class TriggerMessagesCommands(discord.app_commands.Group):
     )
     async def add(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         trigger: app_commands.Range[str, 1, 128],
         response: app_commands.Range[str, 1, 1024],
         casesensitive: app_commands.Choice[str] = None,  # type: ignore[assignment]
@@ -619,7 +619,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def ban(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         user: discord.Member,
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
         delete_message_days: app_commands.Range[int, 0, 7] = 0,
@@ -655,7 +655,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def unban(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         username: app_commands.Range[str, 1, 100],
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
@@ -686,7 +686,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def timeout(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         user: discord.Member,
         duration: app_commands.Range[int, 1, 40320],
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
@@ -717,7 +717,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def removetimeout(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         user: discord.Member,
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
@@ -796,7 +796,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def purge(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         limit: app_commands.Range[int, 1, 1000],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
         setting: app_commands.Choice[str] = "all",  # type: ignore[assignment]
@@ -832,7 +832,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def nickname(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         user: discord.Member,
         nickname: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
@@ -862,7 +862,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def slowmode(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         seconds: app_commands.Range[int, 1, 21600],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
@@ -952,7 +952,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         if not channel:  # type: ignore[truthy-bool]
-            channel = ctx.channel  # type: ignore[name-defined]
+            channel = interaction.channel  # type: ignore[name-defined]
 
         await nukeChannelCommand(commandInfo=commandInfo, channel=channel)
         return
@@ -967,7 +967,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def say(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         message: app_commands.Range[str, 1, 2000],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
@@ -985,7 +985,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         if not channel:  # type: ignore[truthy-bool]
-            channel = ctx.channel
+            channel = interaction.channel
 
         await sayCommand(commandInfo=commandInfo, channel=channel, message=message)
         return
@@ -1000,7 +1000,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def embed(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         title: app_commands.Range[str, 1, 256],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
@@ -1018,7 +1018,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         if channel is None:
-            channel = ctx.channel  # type: ignore[unreachable]
+            channel = interaction.channel  # type: ignore[unreachable]
 
         await createEmbedCommand(commandInfo=commandInfo, channel=channel, title=title)
         return
@@ -1047,22 +1047,22 @@ class administrationCommands(discord.app_commands.Group):
 
         view = discord.ui.View()
         role_select = discord.ui.RoleSelect(  # type: ignore[var-annotated]
-            placeholder=tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelectPlaceholder"),  # type: ignore[name-defined]
-            default_values=[ctx.guild.default_role],  # type: ignore[name-defined]
+            placeholder=tanjunLocalizer.localize(interaction.locale, "commands.admin.createEmoji.roleSelectPlaceholder"),  # type: ignore[name-defined]
+            default_values=[interaction.guild.default_role],  # type: ignore[name-defined]
             min_values=1,
             max_values=25,
         )
 
         async def role_select_callback(interaction: discord.Interaction) -> None:
-            roles = [ctx.guild.get_role(int(r)) for r in interaction.data["values"]]  # type: ignore[typeddict-item, name-defined, index]
+            roles = [interaction.guild.get_role(int(r)) for r in interaction.data["values"]]  # type: ignore[typeddict-item, name-defined, index]
             commandInfo.message = interaction.message
             commandInfo.reply = interaction.response.send_message  # type: ignore[assignment]
             await createEmojiCommand(commandInfo=commandInfo, name=name, image_url=imageurl, roles=roles)
 
         role_select.callback = role_select_callback  # type: ignore[method-assign]
         view.add_item(role_select)
-        await ctx.followup.send(  # type: ignore[name-defined]
-            tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelect"),  # type: ignore[name-defined]
+        await interaction.followup.send(  # type: ignore[name-defined]
+            tanjunLocalizer.localize(interaction.locale, "commands.admin.createEmoji.roleSelect"),  # type: ignore[name-defined]
             view=view,
         )
 
@@ -1102,7 +1102,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def create_ticket(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         name: app_commands.Range[str, 1, 128],
         description: app_commands.Range[str, 1, 1024],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
@@ -1124,7 +1124,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         if not channel:  # type: ignore[truthy-bool]
-            channel = ctx.channel
+            channel = interaction.channel
 
         await createTicketCommand(
             commandInfo=commandInfo,

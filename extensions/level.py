@@ -1,6 +1,8 @@
 # Unused imports:
 # from localizer import tanjunLocalizer
 
+from typing import cast
+
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -79,7 +81,7 @@ class BlacklistCommands(discord.app_commands.Group):
         from typing import cast
 
         await interaction.response.defer()
-        CommandInfo = utility.CommandInfo(
+        commandInfo = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,

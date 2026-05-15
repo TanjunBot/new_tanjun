@@ -48,7 +48,7 @@ class WelcomeCommands(discord.app_commands.Group):
     )
     async def welcome(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         channel: discord.TextChannel = None,  # type: ignore[assignment]
         message: app_commands.Range[str, 0, 1024] = None,  # type: ignore[assignment]
         background: discord.Attachment = None,  # type: ignore[assignment]
@@ -108,7 +108,7 @@ class FarewellCommands(discord.app_commands.Group):
     )
     async def set_farewell_channel(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         channel: discord.TextChannel = None,  # type: ignore[assignment]
         message: app_commands.Range[str, 0, 1024] = None,  # type: ignore[assignment]
         background: discord.Attachment = None,  # type: ignore[assignment]
@@ -214,7 +214,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
     )
     async def add_dynamicslowmode(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         channel: discord.TextChannel,
         messages: app_commands.Range[int, 1, 2147483647],
         per: app_commands.Range[int, 1, 2147483647],
