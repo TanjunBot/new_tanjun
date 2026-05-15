@@ -346,6 +346,15 @@ class LogsCog(commands.Cog):
     def __init__(self, bot) -> None:  # type: ignore[no-untyped-def]
         self.bot = bot
 
+    @staticmethod
+    async def _get_audit_log_performer(
+        guild: discord.Guild, action: discord.AuditLogAction, target_id: int
+    ) -> discord.User | None:
+        async for log in guild.audit_logs(limit=5, action=action):
+            if log.target.id == target_id:
+                return log.user
+        return None
+
     @commands.Cog.listener()
     async def on_automod_rule_create(self, rule: discord.AutoModRule) -> None:
         logEnable = rule.guild and (await get_log_enable(rule.guild.id)).automod_rule_create
@@ -2324,11 +2333,7 @@ class LogsCog(commands.Cog):
 
         description_parts.append(tanjunLocalizer.localize(locale, "logs.memberBan.name", user=user.mention))
 
-        banner = None
-        async for log in user.guild.audit_logs(limit=5, action=discord.AuditLogAction.ban):
-            if log.target.id == user.id:
-                banner = log.user
-                break
+        banner = await self._get_audit_log_performer(user.guild, discord.AuditLogAction.ban, user.id)
 
         if banner:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.memberBan.banned_by", banner=banner.mention))
@@ -2357,11 +2362,7 @@ class LogsCog(commands.Cog):
 
         description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUnban.name", user=user.mention))
 
-        unbanned_by = None
-        async for log in guild.audit_logs(limit=5, action=discord.AuditLogAction.unban):
-            if log.target.id == user.id:
-                unbanned_by = log.user
-                break
+        unbanned_by = await self._get_audit_log_performer(guild, discord.AuditLogAction.unban, user.id)
 
         if unbanned_by:
             description_parts.append(
@@ -2608,10 +2609,8 @@ class LogsCog(commands.Cog):
 
         sendLog = False
 
-        async for log in message.guild.audit_logs(limit=5, action=discord.AuditLogAction.message_delete):  # type: ignore[union-attr]
-            if log.target.id == message.author.id:
-                deleted_by = log.user
-                break
+        if message.guild:
+            deleted_by = await self._get_audit_log_performer(message.guild, discord.AuditLogAction.message_delete, message.author.id)
         if deleted_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2759,11 +2758,7 @@ class LogsCog(commands.Cog):
 
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.name", role=role.mention))
 
-        created_by = None
-        async for log in role.guild.audit_logs(limit=5, action=discord.AuditLogAction.role_create):  # type: ignore[arg-type]
-            if log.target.id == role.id:
-                created_by = log.user
-                break
+        created_by = await self._get_audit_log_performer(role.guild, discord.AuditLogAction.role_create, role.id)
         if created_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2839,11 +2834,7 @@ class LogsCog(commands.Cog):
 
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleDelete.name", role=role.name))
 
-        deleted_by = None
-        async for log in role.guild.audit_logs(limit=5, action=discord.AuditLogAction.role_delete):  # type: ignore[arg-type]
-            if log.target.id == role.id:
-                deleted_by = log.user
-                break
+        deleted_by = await self._get_audit_log_performer(role.guild, discord.AuditLogAction.role_delete, role.id)
         if deleted_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2922,11 +2913,7 @@ class LogsCog(commands.Cog):
         if before.name != after.name:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.name", role=after.name))
 
-        updated_by = None
-        async for log in after.guild.audit_logs(limit=5, action=discord.AuditLogAction.role_update):  # type: ignore[arg-type]
-            if log.target.id == after.id:
-                updated_by = log.user
-                break
+        updated_by = await self._get_audit_log_performer(after.guild, discord.AuditLogAction.role_update, after.id)
         if updated_by:
             description_parts.append(
                 tanjunLocalizer.localize(

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import io
+import math
 from concurrent.futures import ThreadPoolExecutor
 
 import aiohttp
@@ -175,19 +176,16 @@ async def get_image_or_gif_frames(url) -> None:  # type: ignore[no-untyped-def]
 
 
 def process_image(background_frames, avatar_frames, user, duration=100):  # type: ignore[no-untyped-def]
-    # Cap frames to avoid excessive processing on large GIFs
     max_frames = 50
     num_frames = max(len(background_frames), len(avatar_frames))
     if num_frames > max_frames:
-        step = num_frames // max_frames
+        step = max(1, math.ceil(num_frames / max_frames))
         background_frames = background_frames[::step]
         avatar_frames = avatar_frames[::step]
         num_frames = max(len(background_frames), len(avatar_frames))
 
-    background_frames *= (num_frames // len(background_frames)) + 1
-    avatar_frames *= (num_frames // len(avatar_frames)) + 1
-    background_frames = background_frames[:num_frames]
-    avatar_frames = avatar_frames[:num_frames]
+    background_frames = (background_frames * ((num_frames // len(background_frames)) + 1))[:num_frames]
+    avatar_frames = (avatar_frames * ((num_frames // len(avatar_frames)) + 1))[:num_frames]
     member_number_locale = tanjunLocalizer.localize(
         (user.guild.preferred_locale if hasattr(user.guild, "preferred_locale") else "en"),
         "commands.admin.channel.welcome.memberNumber",
@@ -278,10 +276,11 @@ async def welcomeNewUser(member: discord.Member) -> None:
     if welcomeChannel is None:
         return
 
-    background_frames, bg_duration = await get_image_or_gif_frames(welcomeChannel.image_background)
-
     avatar_url = str(member.display_avatar.url)
-    avatar_frames, _ = await get_image_or_gif_frames(avatar_url)  # type: ignore[func-returns-value, misc]
+    (background_frames, bg_duration), (avatar_frames, _) = await asyncio.gather(
+        get_image_or_gif_frames(welcomeChannel.image_background),
+        get_image_or_gif_frames(avatar_url),  # type: ignore[func-returns-value, misc]
+    )
 
     loop = asyncio.get_running_loop()
     img_byte_arr = await loop.run_in_executor(  # type: ignore[func-returns-value]

@@ -995,41 +995,35 @@ def log_n(x: float, base: float = math.e) -> float:
     return math.log(x, base)
 
 
+# Pre-compiled regex patterns for eval_expr to avoid re-parsing on every call
+_EVAL_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    (re.compile(r"\bpi\b"), str(math.pi)),
+    (re.compile(r"\be\b"), str(math.e)),
+    (re.compile(r"(?<![\w.])log\[(\d+)\]\((.*?)\)"), r"log_n(\2,\1)"),
+    (re.compile(r"(?<![\w.])sqrt\[(\d+)\]\((.*?)\)"), r"sqrt_n(\2,\1)"),
+    (re.compile(r"(?<![\w.])sqrt\((.*?)\)"), r"sqrt_n(\1)"),
+    (re.compile(r"(?<![\w.])nthroot\[(\d+)\]\((.*?)\)"), r"sqrt_n(\2,\1)"),
+    (re.compile(r"(?<![\w.])log2\((.*?)\)"), r"log_n(\1,2)"),
+    (re.compile(r"(?<![\w.])log10\((.*?)\)"), r"log_n(\1,10)"),
+    (re.compile(r"(?<![\w.])ln\((.*?)\)"), r"log_n(\1)"),
+    (re.compile(r"(?<![\w.])asin\((.*?)\)"), r"math.asin(\1)"),
+    (re.compile(r"(?<![\w.])acos\((.*?)\)"), r"math.acos(\1)"),
+    (re.compile(r"(?<![\w.])atan\((.*?)\)"), r"math.atan(\1)"),
+    (re.compile(r"(?<![\w.])sin\((.*?)\)"), r"math.sin(\1)"),
+    (re.compile(r"(?<![\w.])cos\((.*?)\)"), r"math.cos(\1)"),
+    (re.compile(r"(?<![\w.])tan\((.*?)\)"), r"math.tan(\1)"),
+    (re.compile(r"(?<![\w.])floor\((.*?)\)"), r"math.floor(\1)"),
+    (re.compile(r"(?<![\w.])ceil\((.*?)\)"), r"math.ceil(\1)"),
+    (re.compile(r"(?<![\w.])abs\((.*?)\)"), r"abs(\1)"),
+]
+
+
 def eval_expr(expr: str, variables=None) -> float:
     if variables is None:
         variables = {}
 
-    # Replace mathematical constants
-    expr = re.sub(r"\bpi\b", str(math.pi), expr)
-    expr = re.sub(r"\be\b", str(math.e), expr)
-
-    # Handle special functions with base notation
-    expr = re.sub(r"(?<![\w.])log\[(\d+)\]\((.*?)\)", r"log_n(\2,\1)", expr)
-
-    # Handle special functions
-    expr = re.sub(r"(?<![\w.])sqrt\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
-    expr = re.sub(r"(?<![\w.])sqrt\((.*?)\)", r"sqrt_n(\1)", expr)
-    expr = re.sub(r"(?<![\w.])nthroot\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
-
-    # Handle logarithms
-    expr = re.sub(r"(?<![\w.])log2\((.*?)\)", r"log_n(\1,2)", expr)
-    expr = re.sub(r"(?<![\w.])log10\((.*?)\)", r"log_n(\1,10)", expr)
-    expr = re.sub(r"(?<![\w.])ln\((.*?)\)", r"log_n(\1)", expr)
-
-    # Handle trigonometric functions (inverse first to avoid partial matches)
-    expr = re.sub(r"(?<![\w.])asin\((.*?)\)", r"math.asin(\1)", expr)
-    expr = re.sub(r"(?<![\w.])acos\((.*?)\)", r"math.acos(\1)", expr)
-    expr = re.sub(r"(?<![\w.])atan\((.*?)\)", r"math.atan(\1)", expr)
-    expr = re.sub(r"(?<![\w.])sin\((.*?)\)", r"math.sin(\1)", expr)
-    expr = re.sub(r"(?<![\w.])cos\((.*?)\)", r"math.cos(\1)", expr)
-    expr = re.sub(r"(?<![\w.])tan\((.*?)\)", r"math.tan(\1)", expr)
-
-    # Handle floor and ceiling
-    expr = re.sub(r"(?<![\w.])floor\((.*?)\)", r"math.floor(\1)", expr)
-    expr = re.sub(r"(?<![\w.])ceil\((.*?)\)", r"math.ceil(\1)", expr)
-
-    # Handle absolute value
-    expr = re.sub(r"(?<![\w.])abs\((.*?)\)", r"abs(\1)", expr)
+    for pattern, replacement in _EVAL_PATTERNS:
+        expr = pattern.sub(replacement, expr)
 
     return eval_(ast.parse(expr, mode="eval").body, variables)
 
