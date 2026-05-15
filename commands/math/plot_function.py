@@ -163,7 +163,7 @@ async def plot_function_command(
                 ),
             )
 
-            for i, (func_str, func, name) in enumerate(self.functions):
+            for _i, (func_str, _func, name) in enumerate(self.functions):
                 embed.add_field(name=f"{name}(x)", value=func_str, inline=False)
 
             embed.set_image(url="attachment://function_plot.png")

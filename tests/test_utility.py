@@ -780,13 +780,13 @@ class TestNumericStringParser:
         """PI and E are handled in evaluateStack but not recognized by the parser grammar."""
         parser = NumericStringParser()
         # PI/E are known parser limitations — they exist in evaluateStack but can't be parsed
-        with pytest.raises(Exception):
+        with pytest.raises(Exception):  # noqa: B017
             parser.eval("PI")
 
     def test_e_constant(self) -> None:
         """PI and E are handled in evaluateStack but not recognized by the parser grammar."""
         parser = NumericStringParser()
-        with pytest.raises(Exception):
+        with pytest.raises(Exception):  # noqa: B017
             parser.eval("E")
 
     def test_nested_functions(self) -> None:
@@ -1514,13 +1514,13 @@ class TestNumericStringParserDeepEdgeCases:
     def test_pi_constant(self) -> None:
         """PI and E are handled in evaluateStack but not recognized by the parser grammar."""
         parser = NumericStringParser()
-        with pytest.raises(Exception):
+        with pytest.raises(Exception):  # noqa: B017
             parser.eval("PI")
 
     def test_e_constant(self) -> None:
         """PI and E are handled in evaluateStack but not recognized by the parser grammar."""
         parser = NumericStringParser()
-        with pytest.raises(Exception):
+        with pytest.raises(Exception):  # noqa: B017
             parser.eval("E")
 
     def test_nested_functions(self) -> None:
@@ -1606,7 +1606,7 @@ class TestEvalExprEdgeCases:
         assert result == 500
 
     def test_invalid_expression(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(SyntaxError):
             eval_expr("invalid!!expr")
 
     def test_custom_formula(self) -> None:

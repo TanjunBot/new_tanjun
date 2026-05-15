@@ -42,7 +42,7 @@ class TestModeMap:
         assert modeMap == expected_modes
 
     def test_mode_map_values_are_strings(self) -> None:
-        for key, value in modeMap.items():
+        for _key, value in modeMap.items():
             assert isinstance(value, str)
 
     def test_mode_map_keys_are_consecutive(self) -> None:

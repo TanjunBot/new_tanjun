@@ -568,7 +568,7 @@ async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-d
     if giveaway.winners > participantAmount:
         winners = participants
     else:
-        for i in range(giveaway.winners):
+        for _i in range(giveaway.winners):
             # nosec: B311
             winner = random.choice(participants)
             participants.remove(winner)
