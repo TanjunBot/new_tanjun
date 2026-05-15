@@ -147,8 +147,7 @@ class LoopCog(commands.Cog):
 
     @tasks.loop(time=[time(hour=2), time(hour=8), time(hour=14), time(hour=20)])
     async def sendPokemonWerbung(self) -> None:
-        try:
-            message = """
+        message = """
 👋 Heyo! 👋
 Wir sind ein netter, aktiver und nicer Community-Server, der mit Pokémonfans bereichert ist! Man muss hier aber nicht unbedingt Pokémon gespielt haben oder gar kennen. Inzwischen haben wir uns zu einem relativ "normalen" Community-Server entwickelt, denn wir reden auch über viele andere Themen! Über alle, die uns eben einfallen! <:P_crazy_evoli:905008625892855820>
 **Schau doch mal bei uns vorbei und mach dir selbst ein Bild! Wir würden uns freuen, wenn du joinst :D**
@@ -171,15 +170,13 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
 
 **➡️ Klick hier zum Joinen! ⬅️**
 <https://discord.gg/D3UVPKseD8>
-            """
-            channel = self.bot.get_channel(923337160600477777)
-            if isinstance(channel, discord.TextChannel):
-                embed = discord.Embed(description=message, color=0xCB33F5, title="🐾Pokémon🐾")
-                sent_message = await channel.send(embed=embed)
-                if sent_message.guild:
-                    await sent_message.publish()
-        except Exception:
-            raise
+        """
+        channel = self.bot.get_channel(923337160600477777)
+        if isinstance(channel, discord.TextChannel):
+            embed = discord.Embed(description=message, color=0xCB33F5, title="🐾Pokémon🐾")
+            sent_message = await channel.send(embed=embed)
+            if sent_message.guild:
+                await sent_message.publish()
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
