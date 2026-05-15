@@ -1,5 +1,6 @@
-import discord
 from typing import Any
+
+import discord
 
 import utility
 from api import (
