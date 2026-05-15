@@ -1,4 +1,5 @@
 import discord
+from typing import cast
 
 import utility
 from localizer import tanjunLocalizer
@@ -12,7 +13,7 @@ async def purge(
 ) -> None:
     if channel is None:
         assert commandInfo.channel is not None
-        channel = cast(discord.TextChannel, commandInfo.channel)  # type: ignore[name-defined]
+        channel = cast(discord.TextChannel, commandInfo.channel)
 
     if (
         isinstance(commandInfo.user, discord.Member)
