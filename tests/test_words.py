@@ -1,5 +1,7 @@
 """Tests for hangman_words/words.py and wordle_words/words.py — comprehensive."""
+
 import os
+
 import pytest
 
 from tests.mock_config import patch_config_module
@@ -10,12 +12,14 @@ patch_config_module()
 class TestHangmanWordsExistence:
     def test_english_words_exist(self):
         from commands.games.hangman_words.words import words
+
         result = words("en")
         assert isinstance(result, list)
         assert len(result) > 0
 
     def test_german_words_exist(self):
         from commands.games.hangman_words.words import words
+
         try:
             result = words("de")
             assert isinstance(result, list)
@@ -25,6 +29,7 @@ class TestHangmanWordsExistence:
 
     def test_french_words_exist(self):
         from commands.games.hangman_words.words import words
+
         try:
             result = words("fr")
             assert isinstance(result, list)
@@ -34,6 +39,7 @@ class TestHangmanWordsExistence:
 
     def test_spanish_words_exist(self):
         from commands.games.hangman_words.words import words
+
         try:
             result = words("es")
             assert isinstance(result, list)
@@ -43,6 +49,7 @@ class TestHangmanWordsExistence:
 
     def test_dutch_words_exist(self):
         from commands.games.hangman_words.words import words
+
         try:
             result = words("nl")
             assert isinstance(result, list)
@@ -52,6 +59,7 @@ class TestHangmanWordsExistence:
 
     def test_polish_words_exist(self):
         from commands.games.hangman_words.words import words
+
         try:
             result = words("pl")
             assert isinstance(result, list)
@@ -63,6 +71,7 @@ class TestHangmanWordsExistence:
 class TestHangmanWordsQuality:
     def test_english_words_are_strings(self):
         from commands.games.hangman_words.words import words
+
         result = words("en")
         for word in result[:10]:
             assert isinstance(word, str)
@@ -70,6 +79,7 @@ class TestHangmanWordsQuality:
     def test_english_words_are_lowercase(self):
         """All hangman words should be lowercase for case-insensitive comparison."""
         from commands.games.hangman_words.words import words
+
         result = words("en")
         for word in result[:100]:
             assert word == word.lower(), f"Word not lowercase: {word}"
@@ -77,30 +87,35 @@ class TestHangmanWordsQuality:
     def test_english_words_are_unique(self):
         """Check that word list doesn't have duplicates."""
         from commands.games.hangman_words.words import words
+
         result = words("en")
         assert len(result) == len(set(result)), "Duplicate words found in hangman word list"
 
     def test_english_words_have_reasonable_length(self):
         """Words should be at least 2 characters."""
         from commands.games.hangman_words.words import words
+
         result = words("en")
         for word in result[:100]:
             assert len(word) >= 2, f"Word too short: {word}"
 
     def test_english_words_no_empty_strings(self):
         from commands.games.hangman_words.words import words
+
         result = words("en")
         for word in result:
             assert len(word) > 0, "Empty string in word list"
 
     def test_english_words_no_whitespace(self):
         from commands.games.hangman_words.words import words
+
         result = words("en")
         for word in result[:100]:
             assert word == word.strip(), f"Word has whitespace: '{word}'"
 
     def test_german_words_quality(self):
         from commands.games.hangman_words.words import words
+
         try:
             result = words("de")
             for word in result[:50]:
@@ -111,6 +126,7 @@ class TestHangmanWordsQuality:
 
     def test_french_words_quality(self):
         from commands.games.hangman_words.words import words
+
         try:
             result = words("fr")
             for word in result[:50]:
@@ -123,16 +139,19 @@ class TestHangmanWordsQuality:
 class TestHangmanWordsNonexistentLocale:
     def test_nonexistent_locale_raises(self):
         from commands.games.hangman_words.words import words
+
         with pytest.raises(FileNotFoundError):
             words("xx_ZZ_nonexistent")
 
     def test_random_string_raises(self):
         from commands.games.hangman_words.words import words
+
         with pytest.raises(FileNotFoundError):
             words("not_a_locale")
 
     def test_empty_string_raises(self):
         from commands.games.hangman_words.words import words
+
         with pytest.raises(FileNotFoundError):
             words("")
 
@@ -154,6 +173,7 @@ class TestHangmanWordsAllLocales:
 
     def test_each_locale_loads_successfully(self, locale_dirs):
         from commands.games.hangman_words.words import words
+
         for locale in locale_dirs:
             result = words(locale)
             assert isinstance(result, list)
@@ -161,6 +181,7 @@ class TestHangmanWordsAllLocales:
 
     def test_each_locale_words_are_strings(self, locale_dirs):
         from commands.games.hangman_words.words import words
+
         for locale in locale_dirs:
             result = words(locale)
             for word in result[:10]:
@@ -170,12 +191,14 @@ class TestHangmanWordsAllLocales:
 class TestWordleAllowedWords:
     def test_english_allowed_words_exist(self):
         from commands.games.wordle_words.words import allowed_words
+
         result = allowed_words("en")
         assert isinstance(result, list)
         assert len(result) > 0
 
     def test_german_allowed_words_exist(self):
         from commands.games.wordle_words.words import allowed_words
+
         try:
             result = allowed_words("de")
             assert isinstance(result, list)
@@ -185,17 +208,20 @@ class TestWordleAllowedWords:
 
     def test_english_allowed_words_are_strings(self):
         from commands.games.wordle_words.words import allowed_words
+
         result = allowed_words("en")
         for word in result[:10]:
             assert isinstance(word, str)
 
     def test_english_allowed_words_are_unique(self):
         from commands.games.wordle_words.words import allowed_words
+
         result = allowed_words("en")
         assert len(result) == len(set(result)), "Duplicate words in allowed list"
 
     def test_nonexistent_locale_raises(self):
         from commands.games.wordle_words.words import allowed_words
+
         with pytest.raises(FileNotFoundError):
             allowed_words("xx_ZZ_nonexistent")
 
@@ -203,12 +229,14 @@ class TestWordleAllowedWords:
 class TestWordlePossibleWords:
     def test_english_possible_words_exist(self):
         from commands.games.wordle_words.words import possible_words
+
         result = possible_words("en")
         assert isinstance(result, list)
         assert len(result) > 0
 
     def test_english_possible_words_are_strings(self):
         from commands.games.wordle_words.words import possible_words
+
         result = possible_words("en")
         for word in result[:10]:
             assert isinstance(word, str)
@@ -216,6 +244,7 @@ class TestWordlePossibleWords:
     def test_possible_words_subset_of_allowed(self):
         """Possible (answer) words should be a subset of allowed words."""
         from commands.games.wordle_words.words import allowed_words, possible_words
+
         allowed = set(allowed_words("en"))
         possible = possible_words("en")
         for word in possible[:50]:
@@ -224,24 +253,28 @@ class TestWordlePossibleWords:
     def test_english_possible_words_are_five_letters(self):
         """Wordle words should be 5 letters."""
         from commands.games.wordle_words.words import possible_words
+
         result = possible_words("en")
         for word in result[:50]:
             assert len(word) == 5, f"Word not 5 letters: {word}"
 
     def test_english_possible_words_are_lowercase(self):
         from commands.games.wordle_words.words import possible_words
+
         result = possible_words("en")
         for word in result[:50]:
             assert word == word.lower(), f"Word not lowercase: {word}"
 
     def test_english_possible_words_no_empty(self):
         from commands.games.wordle_words.words import possible_words
+
         result = possible_words("en")
         for word in result:
             assert len(word) > 0, "Empty string in possible words"
 
     def test_possible_words_are_unique(self):
         from commands.games.wordle_words.words import possible_words
+
         result = possible_words("en")
         assert len(result) == len(set(result)), "Duplicate words in possible list"
 
@@ -249,6 +282,7 @@ class TestWordlePossibleWords:
 class TestWordleMultiLocale:
     def test_german_possible_words(self):
         from commands.games.wordle_words.words import possible_words
+
         try:
             result = possible_words("de")
             assert isinstance(result, list)
@@ -260,6 +294,7 @@ class TestWordleMultiLocale:
 
     def test_french_possible_words(self):
         from commands.games.wordle_words.words import possible_words
+
         try:
             result = possible_words("fr")
             assert isinstance(result, list)
@@ -271,6 +306,7 @@ class TestWordleMultiLocale:
 
     def test_spanish_possible_words(self):
         from commands.games.wordle_words.words import possible_words
+
         try:
             result = possible_words("es")
             assert isinstance(result, list)
@@ -301,6 +337,7 @@ class TestWordleAllLocales:
 
     def test_each_locale_possible_subset_of_allowed(self, locale_dirs):
         from commands.games.wordle_words.words import allowed_words, possible_words
+
         for locale in locale_dirs:
             try:
                 allowed = set(allowed_words(locale))

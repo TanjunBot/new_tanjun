@@ -1,7 +1,6 @@
 """Tests for minigames logic — comprehensive."""
-import math
 
-import pytest
+import math
 
 from tests.mock_config import patch_config_module
 
@@ -24,7 +23,22 @@ class TestModeMap:
         assert len(modeMap) == 14
 
     def test_mode_map_keys(self):
-        expected_modes = {1: "normal", 2: "negative", 3: "reverse", 4: "prime", 5: "even", 6: "odd", 7: "fibonacci", 8: "double", 9: "triple", 10: "houndreds", 11: "binary", 12: "romean", 13: "square", 14: "cube"}
+        expected_modes = {
+            1: "normal",
+            2: "negative",
+            3: "reverse",
+            4: "prime",
+            5: "even",
+            6: "odd",
+            7: "fibonacci",
+            8: "double",
+            9: "triple",
+            10: "houndreds",
+            11: "binary",
+            12: "romean",
+            13: "square",
+            14: "cube",
+        }
         assert modeMap == expected_modes
 
     def test_mode_map_values_are_strings(self):

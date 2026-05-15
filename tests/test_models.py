@@ -1,4 +1,5 @@
 """Tests for all dataclass models in models.py — comprehensive."""
+
 import json
 from dataclasses import fields as dataclass_fields
 from datetime import datetime
@@ -40,13 +41,35 @@ from models import (
     XpBoostModel,
 )
 
-
 # ==================== GiveawayModel ====================
+
 
 class TestGiveawayModel:
     def test_from_row_all_fields(self):
         now = datetime.now()
-        row = (1, "guild1", "Title", "Desc", 3, True, "custom", "sponsor", "price", "msg", now, None, False, False, None, None, None, False, None, "pending", now)
+        row = (
+            1,
+            "guild1",
+            "Title",
+            "Desc",
+            3,
+            True,
+            "custom",
+            "sponsor",
+            "price",
+            "msg",
+            now,
+            None,
+            False,
+            False,
+            None,
+            None,
+            None,
+            False,
+            None,
+            "pending",
+            now,
+        )
         model = GiveawayModel.from_row(row)
         assert model.giveaway_id == 1
         assert model.guild_id == "guild1"
@@ -72,7 +95,29 @@ class TestGiveawayModel:
 
     def test_from_row_with_none_fields(self):
         now = datetime.now()
-        row = (2, "guild2", "Title2", None, 1, False, None, None, None, None, now, None, False, False, None, None, None, False, None, "pending", now)
+        row = (
+            2,
+            "guild2",
+            "Title2",
+            None,
+            1,
+            False,
+            None,
+            None,
+            None,
+            None,
+            now,
+            None,
+            False,
+            False,
+            None,
+            None,
+            None,
+            False,
+            None,
+            "pending",
+            now,
+        )
         model = GiveawayModel.from_row(row)
         assert model.description is None
         assert model.custom_name is None
@@ -86,7 +131,30 @@ class TestGiveawayModel:
 
     def test_from_row_too_many_fields_raises(self):
         now = datetime.now()
-        row = (1, "g", "t", "d", 1, True, None, None, None, None, now, None, False, False, None, None, None, False, None, "m", now, "extra")
+        row = (
+            1,
+            "g",
+            "t",
+            "d",
+            1,
+            True,
+            None,
+            None,
+            None,
+            None,
+            now,
+            None,
+            False,
+            False,
+            None,
+            None,
+            None,
+            False,
+            None,
+            "m",
+            now,
+            "extra",
+        )
         with pytest.raises(TypeError):
             GiveawayModel.from_row(row)
 
@@ -96,7 +164,29 @@ class TestGiveawayModel:
     def test_from_row_preserves_types(self):
         """Dataclasses don't coerce types — int 1 stays int 1, not bool True."""
         now = datetime.now()
-        row = (1, "guild1", "Title", "Desc", 3, 1, "custom", "sponsor", "price", "msg", now, None, 1, 0, None, None, None, 1, None, "pending", now)
+        row = (
+            1,
+            "guild1",
+            "Title",
+            "Desc",
+            3,
+            1,
+            "custom",
+            "sponsor",
+            "price",
+            "msg",
+            now,
+            None,
+            1,
+            0,
+            None,
+            None,
+            None,
+            1,
+            None,
+            "pending",
+            now,
+        )
         model = GiveawayModel.from_row(row)
         # Dataclass stores the exact types from the row — int stays int
         assert model.with_button == 1
@@ -105,21 +195,88 @@ class TestGiveawayModel:
 
     def test_equality(self):
         now = datetime.now()
-        row = (1, "g", "t", None, 1, False, None, None, None, None, now, None, False, False, None, None, None, False, None, "m", now)
+        row = (
+            1,
+            "g",
+            "t",
+            None,
+            1,
+            False,
+            None,
+            None,
+            None,
+            None,
+            now,
+            None,
+            False,
+            False,
+            None,
+            None,
+            None,
+            False,
+            None,
+            "m",
+            now,
+        )
         m1 = GiveawayModel.from_row(row)
         m2 = GiveawayModel.from_row(row)
         assert m1 == m2
 
     def test_inequality(self):
         now = datetime.now()
-        row1 = (1, "g", "t", None, 1, False, None, None, None, None, now, None, False, False, None, None, None, False, None, "m", now)
-        row2 = (2, "g", "t", None, 1, False, None, None, None, None, now, None, False, False, None, None, None, False, None, "m", now)
+        row1 = (
+            1,
+            "g",
+            "t",
+            None,
+            1,
+            False,
+            None,
+            None,
+            None,
+            None,
+            now,
+            None,
+            False,
+            False,
+            None,
+            None,
+            None,
+            False,
+            None,
+            "m",
+            now,
+        )
+        row2 = (
+            2,
+            "g",
+            "t",
+            None,
+            1,
+            False,
+            None,
+            None,
+            None,
+            None,
+            now,
+            None,
+            False,
+            False,
+            None,
+            None,
+            None,
+            False,
+            None,
+            "m",
+            now,
+        )
         m1 = GiveawayModel.from_row(row1)
         m2 = GiveawayModel.from_row(row2)
         assert m1 != m2
 
 
 # ==================== GiveawayChannelRequirementModel ====================
+
 
 class TestGiveawayChannelRequirementModel:
     def test_from_row(self):
@@ -141,6 +298,7 @@ class TestGiveawayChannelRequirementModel:
 
 
 # ==================== GiveawayBlacklistEntryModel ====================
+
 
 class TestGiveawayBlacklistEntryModel:
     def test_from_row_with_reason(self):
@@ -168,6 +326,7 @@ class TestGiveawayBlacklistEntryModel:
 
 
 # ==================== ReportModel ====================
+
 
 class TestReportModel:
     def test_from_row_all_fields(self):
@@ -202,6 +361,7 @@ class TestReportModel:
 
 # ==================== ScheduledMessageModel ====================
 
+
 class TestScheduledMessageModel:
     def test_from_row_with_repeat(self):
         now = datetime.now()
@@ -224,6 +384,7 @@ class TestScheduledMessageModel:
 
 # ==================== TriggerMessageModel ====================
 
+
 class TestTriggerMessageModel:
     def test_from_row_case_sensitive_true(self):
         model = TriggerMessageModel.from_row((1, "g1", "hello", "world", True))
@@ -239,6 +400,7 @@ class TestTriggerMessageModel:
 
 
 # ==================== TicketMessageModel ====================
+
 
 class TestTicketMessageModel:
     def test_from_row_all_fields(self):
@@ -258,6 +420,7 @@ class TestTicketMessageModel:
 
 # ==================== TicketModel ====================
 
+
 class TestTicketModel:
     def test_from_row_open_ticket(self):
         model = TicketModel.from_row(("g1", "u1", 1700000000, False, None, None, "c1", 1))
@@ -274,6 +437,7 @@ class TestTicketModel:
 
 
 # ==================== AISituationModel ====================
+
 
 class TestAISituationModel:
     def test_from_row_with_all_fields(self):
@@ -305,6 +469,7 @@ class TestAISituationModel:
 
 
 # ==================== WarningModel / DetailedWarningModel ====================
+
 
 class TestWarningModel:
     def test_from_row_with_expiration(self):
@@ -341,6 +506,7 @@ class TestDetailedWarningModel:
 
 
 # ==================== WarnConfigModel ====================
+
 
 class TestWarnConfigModel:
     def test_from_row(self):
@@ -387,6 +553,7 @@ class TestWarnConfigModel:
 
 # ==================== XpBoostModel ====================
 
+
 class TestXpBoostModel:
     def test_from_row_multiplicative(self):
         model = XpBoostModel.from_row((1.5, False))
@@ -415,6 +582,7 @@ class TestXpBoostModel:
 
 # ==================== BlacklistEntryModel ====================
 
+
 class TestBlacklistEntryModel:
     def test_from_row_with_reason(self):
         model = BlacklistEntryModel.from_row(("12345", "spam"))
@@ -442,9 +610,36 @@ class TestBlacklistEntryModel:
 
 # ==================== LogEnableModel ====================
 
+
 class TestLogEnableModel:
     def test_from_row(self):
-        row = ("guild1", True, False, True, False, True, False, True, False, True, True, False, True, False, True, False, True, False, True, False, True, False, True, False, True)
+        row = (
+            "guild1",
+            True,
+            False,
+            True,
+            False,
+            True,
+            False,
+            True,
+            False,
+            True,
+            True,
+            False,
+            True,
+            False,
+            True,
+            False,
+            True,
+            False,
+            True,
+            False,
+            True,
+            False,
+            True,
+            False,
+            True,
+        )
         model = LogEnableModel.from_row(row)
         assert model.guild_id == "guild1"
         assert model.automod_rule_create is True
@@ -550,6 +745,7 @@ class TestLogEnableModel:
 
 # ==================== ChannelOverwriteModel ====================
 
+
 class TestChannelOverwriteModel:
     def test_from_row_parses_json(self):
         overwrites_dict = {"send_messages": False, "read_messages": True}
@@ -597,13 +793,14 @@ class TestChannelOverwriteModel:
 
     def test_from_row_list_json(self):
         """json.loads can return a list — overwrites would be a list, not dict."""
-        row = ("role7", '[1, 2, 3]')
+        row = ("role7", "[1, 2, 3]")
         model = ChannelOverwriteModel.from_row(row)
         assert isinstance(model.overwrites, list)
         assert model.overwrites == [1, 2, 3]
 
 
 # ==================== DynamicSlowmodeModel ====================
+
 
 class TestDynamicSlowmodeModel:
     def test_from_row_without_cached_slowmode(self):
@@ -623,6 +820,7 @@ class TestDynamicSlowmodeModel:
 
 
 # ==================== WelcomeChannelModel / LeaveChannelModel ====================
+
 
 class TestWelcomeChannelModel:
     def test_from_row_all_fields(self):
@@ -669,6 +867,7 @@ class TestLeaveChannelModel:
 
 # ==================== TokenOverviewModel ====================
 
+
 class TestTokenOverviewModel:
     def test_from_row(self):
         model = TokenOverviewModel.from_row((100, 50, 25, 75))
@@ -689,6 +888,7 @@ class TestTokenOverviewModel:
 
 # ==================== LogBlacklistEntryModel ====================
 
+
 class TestLogBlacklistEntryModel:
     def test_from_row(self):
         model = LogBlacklistEntryModel.from_row(("guild1", "entity1"))
@@ -702,6 +902,7 @@ class TestLogBlacklistEntryModel:
 
 # ==================== AfkMessageModel ====================
 
+
 class TestAfkMessageModel:
     def test_from_row(self):
         model = AfkMessageModel.from_row(("msg1", "chan1"))
@@ -714,6 +915,7 @@ class TestAfkMessageModel:
 
 
 # ==================== DynamicSlowmodeMessageModel ====================
+
 
 class TestDynamicSlowmodeMessageModel:
     def test_from_row(self):
@@ -730,6 +932,7 @@ class TestDynamicSlowmodeMessageModel:
 
 
 # ==================== LevelRoleModel / LevelRolesGroupModel ====================
+
 
 class TestLevelRoleModel:
     def test_from_row(self):
@@ -766,6 +969,7 @@ class TestLevelRolesGroupModel:
 
 # ==================== ClaimedBoosterChannelModel / ClaimedBoosterRoleModel ====================
 
+
 class TestClaimedBoosterChannelModel:
     def test_from_row(self):
         model = ClaimedBoosterChannelModel.from_row(("u1", "c1", "g1"))
@@ -792,6 +996,7 @@ class TestClaimedBoosterRoleModel:
 
 # ==================== BlockedReporterModel ====================
 
+
 class TestBlockedReporterModel:
     def test_from_row(self):
         model = BlockedReporterModel.from_row(("guild1", "user1"))
@@ -804,6 +1009,7 @@ class TestBlockedReporterModel:
 
 
 # ==================== LevelLeaderboardEntryModel ====================
+
 
 class TestLevelLeaderboardEntryModel:
     def test_from_row(self):
@@ -821,6 +1027,7 @@ class TestLevelLeaderboardEntryModel:
 
 
 # ==================== UserLevelInfoModel ====================
+
 
 class TestUserLevelInfoModel:
     def test_fields(self):
@@ -840,6 +1047,7 @@ class TestUserLevelInfoModel:
 
 # ==================== TwitchOnlineNotificationModel ====================
 
+
 class TestTwitchOnlineNotificationModel:
     def test_from_row_with_message(self):
         model = TwitchOnlineNotificationModel.from_row((1, "c1", "g1", "uuid1", "streamer", "going live!"))
@@ -856,6 +1064,7 @@ class TestTwitchOnlineNotificationModel:
 
 
 # ==================== TriggerMessageChannelModel ====================
+
 
 class TestTriggerMessageChannelModel:
     def test_from_row(self):

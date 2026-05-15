@@ -1,11 +1,10 @@
 """Tests for hangman.py pure functions — comprehensive."""
-import pytest
 
 from tests.mock_config import patch_config_module
 
 patch_config_module()
 
-from commands.games.hangman import get_guessed_letters, wrong_letters, hangmanSteps
+from commands.games.hangman import get_guessed_letters, hangmanSteps, wrong_letters
 
 
 class TestHangmanSteps:

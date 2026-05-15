@@ -1,13 +1,11 @@
 """Tests for TicTacToe and Connect4 pure game logic — comprehensive."""
-import pytest
 
 from tests.mock_config import patch_config_module
 
 patch_config_module()
 
-from commands.games.tic_tac_toe import TicTacToe
 from commands.games.connect4 import Connect4
-
+from commands.games.tic_tac_toe import TicTacToe
 
 # ==================== TicTacToe ====================
 

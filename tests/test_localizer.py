@@ -1,10 +1,8 @@
 """Tests for localizer.py — comprehensive."""
-import json
+
 import os
 import tempfile
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from tests.mock_config import patch_config_module
 
@@ -197,6 +195,7 @@ class TestLocalizerMalformedJson:
 class TestReportedLocales:
     def test_reported_locales_is_list(self):
         from localizer import reported_locales
+
         assert isinstance(reported_locales, list)
 
 
@@ -260,4 +259,5 @@ class TestLocalizerEdgeCases:
     def test_reported_locales_starts_empty(self):
         """The module-level reported_locales list tracks locales already reported."""
         from localizer import reported_locales
+
         assert isinstance(reported_locales, list)

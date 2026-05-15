@@ -1,4 +1,5 @@
 """Tests for utility.py functions and classes — comprehensive."""
+
 import datetime
 import math
 
@@ -31,6 +32,7 @@ from utility import (
 )
 
 # ==================== EmbedProxy ====================
+
 
 class TestEmbedProxy:
     def test_init(self):
@@ -89,6 +91,7 @@ class TestEmbedProxy:
 
 
 # ==================== tanjunEmbed ====================
+
 
 class TestTanjunEmbedConstruction:
     def test_default_construction(self):
@@ -154,6 +157,7 @@ class TestTanjunEmbedConstruction:
 
     def test_colour_discord_colour_object(self):
         import discord
+
         embed = tanjunEmbed()
         embed.colour = discord.Colour.red()
         assert embed.colour.value == 0xE74C3C or embed.colour.value == discord.Colour.red().value
@@ -553,11 +557,18 @@ class TestTanjunEmbedCopy:
 class TestTanjunEmbedChaining:
     def test_chaining(self):
         embed = tanjunEmbed()
-        result = embed.set_footer(text="f").set_image(url="http://x").set_thumbnail(url="http://y").set_author(name="a").add_field(name="n", value="v")
+        result = (
+            embed.set_footer(text="f")
+            .set_image(url="http://x")
+            .set_thumbnail(url="http://y")
+            .set_author(name="a")
+            .add_field(name="n", value="v")
+        )
         assert result is embed
 
 
 # ==================== XP and Level Functions ====================
+
 
 class TestGetXpForLevel:
     def test_easy_scaling(self):
@@ -623,6 +634,7 @@ class TestGetLevelForXp:
 
 
 # ==================== Math / Eval Functions ====================
+
 
 class TestEvalExpr:
     """Tests for eval_expr math expression evaluator."""
@@ -813,6 +825,7 @@ class TestNumericStringParser:
 
 # ==================== Time Utility Functions ====================
 
+
 class TestRelativeTimeStrToDate:
     def test_seconds(self):
         result = relativeTimeStrToDate("30s")
@@ -939,6 +952,7 @@ class TestIsoTimeToDate:
 
 
 # ==================== Other Utility Functions ====================
+
 
 class TestCmp:
     def test_greater(self):
@@ -1087,28 +1101,34 @@ class TestGetHighestExponent:
 class TestCheckIfHasPro:
     def test_zero_returns_false(self):
         from utility import checkIfHasPro
+
         assert checkIfHasPro(0) is False
 
     def test_nonzero_returns_true(self):
         from utility import checkIfHasPro
+
         assert checkIfHasPro(123) is True
 
     def test_negative_returns_true(self):
         from utility import checkIfHasPro
+
         assert checkIfHasPro(-1) is True
 
 
 class TestCheckIfHasPlus:
     def test_zero_returns_false(self):
         from utility import checkIfhasPlus
+
         assert checkIfhasPlus(0) is False
 
     def test_nonzero_returns_true(self):
         from utility import checkIfhasPlus
+
         assert checkIfhasPlus(123) is True
 
     def test_negative_returns_true(self):
         from utility import checkIfhasPlus
+
         assert checkIfhasPlus(-1) is True
 
 
@@ -1546,7 +1566,24 @@ class TestNumericStringParserDeepEdgeCases:
 
     def test_fn_dict_has_expected_functions(self):
         parser = NumericStringParser()
-        expected = ["sin", "cos", "tan", "asin", "acos", "atan", "sqrt", "log", "log10", "log2", "exp", "trunc", "floor", "ceil", "degrees", "radians"]
+        expected = [
+            "sin",
+            "cos",
+            "tan",
+            "asin",
+            "acos",
+            "atan",
+            "sqrt",
+            "log",
+            "log10",
+            "log2",
+            "exp",
+            "trunc",
+            "floor",
+            "ceil",
+            "degrees",
+            "radians",
+        ]
         for fn in expected:
             assert fn in parser.fn, f"Missing function: {fn}"
 
@@ -1628,6 +1665,7 @@ class TestTanjunEmbedDeep:
 
     def test_colour_setter_with_discord_colour(self):
         import discord
+
         embed = tanjunEmbed()
         embed.colour = discord.Colour.red()
         assert embed.colour == discord.Colour.red()
@@ -1819,11 +1857,33 @@ class TestNumericStringParserFnDict:
     def test_all_expected_functions_present(self):
         parser = NumericStringParser()
         expected = [
-            "sin", "cos", "tan", "asin", "acos", "atan",
-            "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
-            "log", "log10", "log2", "exp", "abs", "trunc",
-            "round", "sgn", "sqrt", "factorial", "fac",
-            "degrees", "radians", "ceil", "floor",
+            "sin",
+            "cos",
+            "tan",
+            "asin",
+            "acos",
+            "atan",
+            "sinh",
+            "cosh",
+            "tanh",
+            "asinh",
+            "acosh",
+            "atanh",
+            "log",
+            "log10",
+            "log2",
+            "exp",
+            "abs",
+            "trunc",
+            "round",
+            "sgn",
+            "sqrt",
+            "factorial",
+            "fac",
+            "degrees",
+            "radians",
+            "ceil",
+            "floor",
         ]
         for name in expected:
             assert name in parser.fn, f"Missing function: {name}"

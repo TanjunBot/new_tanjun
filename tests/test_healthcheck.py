@@ -1,4 +1,5 @@
 """Tests for healthcheck.py — comprehensive."""
+
 from pathlib import Path
 from unittest.mock import patch
 
@@ -8,7 +9,7 @@ from tests.mock_config import patch_config_module
 
 patch_config_module()
 
-from healthcheck import main, READY_FILE
+from healthcheck import READY_FILE, main
 
 
 class TestHealthcheckMain:
@@ -25,7 +26,7 @@ class TestHealthcheckMain:
         assert exc_info.value.code == 1
 
     def test_ready_file_constant(self):
-        assert READY_FILE == Path("/tmp/bot_ready")
+        assert Path("/tmp/bot_ready") == READY_FILE
 
     def test_ready_file_is_absolute_path(self):
         assert READY_FILE.is_absolute()
