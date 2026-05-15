@@ -2575,11 +2575,10 @@ async def is_trigger_message(guild_id: str, trigger: str, channel_id: str) -> Tr
         AND (tc.channelId = %s)
     """
     params = (guild_id, trigger, channel_id)
-    result = await execute_query(query, params)
-    result = result[0] if result and result[0] else None
-    if not result:
+    rows = await execute_query(query, params)
+    if not rows:
         return None
-    trigger_message = TriggerMessageModel.from_row(result)
+    trigger_message = TriggerMessageModel.from_row(rows[0])
     if trigger_message.case_sensitive:
         if trigger != trigger_message.trigger:
             return None

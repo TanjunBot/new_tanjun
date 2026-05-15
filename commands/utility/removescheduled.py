@@ -39,7 +39,7 @@ class MessageSelectView(View):
                 ephemeral=True,
             )
             return
-        selected = interaction.data["values"][0]  # type: ignore[index]
+        selected = interaction.data["values"][0]  # type: ignore[index, typeddict-item]
         await remove_message(int(selected))
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(self.locale), "commands.utility.removescheduled.success.title"),
