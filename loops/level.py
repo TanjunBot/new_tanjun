@@ -85,10 +85,10 @@ async def calculate_xp(user) -> int:  # type: ignore[no-untyped-def]
 async def addXpToVoiceUsers(client):  # type: ignore[no-untyped-def]
     for user in voiceUsers:
         if not await get_level_system_status(user.guild.id):
-            return
+            continue
 
         if await is_blacklisted(user):
-            return
+            continue
 
         scaling, custom_formula, xp_to_add = await fetch_xp_details(user)
         await update_user_xp_from_voice(user.guild.id, user.id, xp_to_add, True)
