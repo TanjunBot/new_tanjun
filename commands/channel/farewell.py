@@ -286,7 +286,7 @@ async def farewellUser(member: discord.Member) -> None:
     avatar_url = str(member.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)  # type: ignore[func-returns-value, misc]
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     img_byte_arr = await loop.run_in_executor(  # type: ignore[func-returns-value]
         executor,
         process_image,

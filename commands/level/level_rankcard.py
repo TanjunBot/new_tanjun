@@ -312,7 +312,7 @@ async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], com
         avatar_decoration_frames, _ = await get_image_or_gif_frames(avatar_decoration_url)
 
     # Process image in executor
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     img_byte_arr = await loop.run_in_executor(
         executor,
         process_image,
