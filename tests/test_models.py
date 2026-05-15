@@ -719,7 +719,7 @@ class TestLogEnableModel:
         """Dataclass fields have no type enforcement — any value can be stored."""
         row = ("guild1",) + tuple([True] * 24)
         model = LogEnableModel.from_row(row)
-        model.set_option(0, "not_a_bool")
+        model.set_option(0, "not_a_bool")  # type: ignore[arg-type]
         assert model.automod_rule_create == "not_a_bool"
 
     def test_option_keys_match_field_names(self) -> None:

@@ -22,61 +22,61 @@ class TicTacToe:
         self.bot_difficulty = random.randint(1, 5)
         self.message = None
 
-    def check_winner(self, board: list[list[str]] | None = None) -> None:
+    def check_winner(self, board: list[list[str]] | None = None) -> str | None:
         if not board:
             board = self.board
         for i in range(3):
             if board[i][0] == board[i][1] == board[i][2] and board[i][0] != "-":
-                return board[i][0]  # type: ignore[return-value]
+                return board[i][0]
             if board[0][i] == board[1][i] == board[2][i] and board[0][i] != "-":
-                return board[0][i]  # type: ignore[return-value]
+                return board[0][i]
         if board[0][0] == board[1][1] == board[2][2] and board[0][0] != "-":
-            return board[0][0]  # type: ignore[return-value]
+            return board[0][0]
         if board[0][2] == board[1][1] == board[2][0] and board[0][2] != "-":
-            return board[0][2]  # type: ignore[return-value]
+            return board[0][2]
         return None
 
-    def is_full(self, board: list[list[str]] | None = None) -> None:
+    def is_full(self, board: list[list[str]] | None = None) -> bool:
         if not board:
             board = self.board
         for row in board:
             for cell in row:
                 if cell == "-":
-                    return False  # type: ignore[return-value]
-        return True  # type: ignore[return-value]
+                    return False
+        return True
 
-    def evaluate_board(self, board: list[list[str]]) -> None:
-        winner = self.check_winner(board)  # type: ignore[func-returns-value]
+    def evaluate_board(self, board: list[list[str]]) -> int:
+        winner = self.check_winner(board)
         if winner == self.player1_move:
-            return -1  # type: ignore[unreachable]
+            return -1
         elif winner == self.player2_move:
-            return 1  # type: ignore[unreachable]
-        return 0  # type: ignore[return-value]
+            return 1
+        return 0
 
-    def get_available_moves(self, board: list[list[str]]) -> None:
+    def get_available_moves(self, board: list[list[str]]) -> list[int]:
         moves = []
         for i in range(9):
             if board[i // 3][i % 3] == "-":
                 moves.append(i)
-        return moves  # type: ignore[return-value]
+        return moves
 
-    def minimax(  # type: ignore[no-untyped-def]
+    def minimax(
         self,
         current_player: str,
         depth: int,
         board: list[list[str]],
         maximizing_player: bool,
-    ):
+    ) -> tuple[int, int | str]:
         # Check terminal states first
-        winner = self.check_winner(board)  # type: ignore[func-returns-value]
+        winner = self.check_winner(board)
         if winner:
             # Return higher scores for quicker wins/losses
-            if winner == self.player2_move:  # type: ignore[unreachable]
+            if winner == self.player2_move:
                 return 10 + depth, ""  # AI win
             else:
                 return -10 - depth, ""  # Player win
-        if self.is_full(board):  # type: ignore[func-returns-value]
-            return 0, ""  # type: ignore[unreachable]
+        if self.is_full(board):
+            return 0, ""
 
         if depth == 0:
             return 0, ""
@@ -85,9 +85,9 @@ class TicTacToe:
         moves = []
         current_move = self.player2_move if maximizing_player else self.player1_move
 
-        for move in self.get_available_moves(board):  # type: ignore[func-returns-value, attr-defined]
-            new_board = self.minimax_make_move(board, move, current_move)  # type: ignore[func-returns-value]
-            score, _ = self.minimax(current_player, depth - 1, new_board, not maximizing_player)  # type: ignore[arg-type]
+        for move in self.get_available_moves(board):
+            new_board = self.minimax_make_move(board, move, current_move)
+            score, _ = self.minimax(current_player, depth - 1, new_board, not maximizing_player)
             scores.append(score)
             moves.append(move)
 
@@ -102,14 +102,14 @@ class TicTacToe:
 
         return best_score, best_move
 
-    def minimax_make_move(self, board: list[list[str]], move: int, player: str) -> None:
+    def minimax_make_move(self, board: list[list[str]], move: int, player: str) -> list[list[str]]:
         # Create a copy of the board
         new_board = [row[:] for row in board]
 
         # The player parameter is now the actual symbol (X or O), not the player object
         new_board[move // 3][move % 3] = player
 
-        return new_board  # type: ignore[return-value]
+        return new_board
 
     async def update_board(  # type: ignore[no-untyped-def]
         self,

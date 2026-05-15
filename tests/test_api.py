@@ -486,7 +486,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_wordchain_functions_exist(self) -> None:
+    def test_wordchain_functions_exist_again(self) -> None:
         import api
 
         async_functions = [

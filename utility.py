@@ -789,7 +789,7 @@ class CommandInfo:
 commandInfo = CommandInfo
 
 
-def cmp(a: int, b: int) -> int:
+def cmp(a: float, b: float) -> int:
     return (a > b) - (a < b)
 
 

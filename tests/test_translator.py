@@ -59,7 +59,7 @@ class TestTanjunTranslatorTranslate:
     async def test_translate_rejects_unsupported_locale(self) -> None:
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "test_key"
+        locale_str.__str__ = MagicMock(return_value="test_key")
         locale_str.message = "test_key"
         mock_locale = MagicMock()
         mock_locale.value = "fr"
@@ -71,7 +71,7 @@ class TestTanjunTranslatorTranslate:
     async def test_translate_rejects_french_locale(self) -> None:
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "test_key"
+        locale_str.__str__ = MagicMock(return_value="test_key")
         locale_str.message = "test_key"
         mock_locale = MagicMock()
         mock_locale.value = "fr"
@@ -83,7 +83,7 @@ class TestTanjunTranslatorTranslate:
     async def test_translate_rejects_japanese_locale(self) -> None:
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "test_key"
+        locale_str.__str__ = MagicMock(return_value="test_key")
         locale_str.message = "test_key"
         mock_locale = MagicMock()
         mock_locale.value = "ja"
@@ -95,7 +95,7 @@ class TestTanjunTranslatorTranslate:
     async def test_translate_rejects_spanish_locale(self) -> None:
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "test_key"
+        locale_str.__str__ = MagicMock(return_value="test_key")
         locale_str.message = "test_key"
         mock_locale = MagicMock()
         mock_locale.value = "es"
@@ -107,7 +107,7 @@ class TestTanjunTranslatorTranslate:
     async def test_translate_normalizes_en_us_to_en(self) -> None:
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "commands.help.select.title"
+        locale_str.__str__ = MagicMock(return_value="commands.help.select.title")
         locale_str.message = "commands.help.select.title"
         locale_str.replace = lambda s, r: s
         mock_locale = MagicMock()
@@ -120,7 +120,7 @@ class TestTanjunTranslatorTranslate:
     async def test_translate_normalizes_en_gb_to_en(self) -> None:
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "commands.help.select.title"
+        locale_str.__str__ = MagicMock(return_value="commands.help.select.title")
         locale_str.message = "commands.help.select.title"
         locale_str.replace = lambda s, r: s
         mock_locale = MagicMock()
@@ -133,7 +133,7 @@ class TestTanjunTranslatorTranslate:
     async def test_translate_de_locale(self) -> None:
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "commands.help.select.title"
+        locale_str.__str__ = MagicMock(return_value="commands.help.select.title")
         locale_str.message = "commands.help.select.title"
         locale_str.replace = lambda s, r: s
         mock_locale = MagicMock()
@@ -147,7 +147,7 @@ class TestTanjunTranslatorTranslate:
         """de-DE is NOT normalized to 'de' in translate — it's passed as-is."""
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "commands.help.select.title"
+        locale_str.__str__ = MagicMock(return_value="commands.help.select.title")
         locale_str.message = "commands.help.select.title"
         locale_str.replace = lambda s, r: s
         mock_locale = MagicMock()
@@ -160,7 +160,7 @@ class TestTanjunTranslatorTranslate:
     async def test_translate_en_locale(self) -> None:
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "commands.help.select.title"
+        locale_str.__str__ = MagicMock(return_value="commands.help.select.title")
         locale_str.message = "commands.help.select.title"
         locale_str.replace = lambda s, r: s
         mock_locale = MagicMock()
@@ -174,7 +174,7 @@ class TestTanjunTranslatorTranslate:
         """If localizer returns 'err: no translation found.', translate should return None."""
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "nonexistent_key"
+        locale_str.__str__ = MagicMock(return_value="nonexistent_key")
         locale_str.message = "nonexistent_key"
         locale_str.replace = lambda s, r: s
         mock_locale = MagicMock()
@@ -189,7 +189,7 @@ class TestTanjunTranslatorTranslate:
         """translate should convert underscores to dots in locale_str."""
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "commands_help_select_title"
+        locale_str.__str__ = MagicMock(return_value="commands.help.select.title")
         locale_str.message = "commands_help_select_title"
         # Mock replace to verify it converts underscores to dots
         locale_str.replace = lambda old, new: locale_str.message.replace(old, new)
@@ -208,7 +208,7 @@ class TestTanjunTranslatorTranslate:
         supported = ["de", "de-DE", "en", "en-US", "en-GB"]
         for locale_val in supported:
             locale_str = MagicMock()
-            locale_str.__str__ = lambda s: "commands.help.select.title"
+            locale_str.__str__ = MagicMock(return_value="commands.help.select.title")
             locale_str.message = "commands.help.select.title"
             locale_str.replace = lambda s, r: s
             mock_locale = MagicMock()
@@ -223,7 +223,7 @@ class TestTanjunTranslatorTranslate:
         """The context parameter is passed but not used in translate."""
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "commands.help.select.title"
+        locale_str.__str__ = MagicMock(return_value="commands.help.select.title")
         locale_str.message = "commands.help.select.title"
         locale_str.replace = lambda s, r: s
         mock_locale = MagicMock()
@@ -237,7 +237,7 @@ class TestTanjunTranslatorTranslate:
         """If localize returns a non-string, translate should return None."""
         t = TanjunTranslator()
         locale_str = MagicMock()
-        locale_str.__str__ = lambda s: "some_key"
+        locale_str.__str__ = MagicMock(return_value="some_key")
         locale_str.message = "some_key"
         locale_str.replace = lambda s, r: s
         mock_locale = MagicMock()
