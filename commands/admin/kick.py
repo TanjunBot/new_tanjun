@@ -2,7 +2,6 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def kick(commandInfo: utility.CommandInfo, target: discord.Member, reason: str | None = None) -> None:

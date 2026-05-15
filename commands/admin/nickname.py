@@ -2,7 +2,6 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def change_nickname(commandInfo: utility.CommandInfo, member: discord.Member, nickname: str | None = None) -> None:

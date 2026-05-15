@@ -2,7 +2,6 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def remove_timeout(commandInfo: utility.CommandInfo, member: discord.Member, reason: str | None = None) -> None:

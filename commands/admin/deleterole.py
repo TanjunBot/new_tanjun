@@ -2,7 +2,6 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def deleterole(commandInfo: utility.CommandInfo, role: discord.Role, reason: str | None = None) -> None:

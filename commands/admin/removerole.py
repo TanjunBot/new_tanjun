@@ -4,7 +4,6 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def removerole(

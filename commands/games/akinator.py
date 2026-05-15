@@ -5,7 +5,6 @@ from akinator_python import Akinator  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 # Valid Themes: "Characters"; "Animals", "Objects"

@@ -5,7 +5,6 @@ import discord
 import utility
 from api import add_warning, get_warn_config, get_warnings
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def warn_user(commandInfo: utility.CommandInfo, member: discord.Member, reason: str | None = None) -> None:

@@ -2,7 +2,6 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def copyrole(commandInfo: utility.CommandInfo, role: discord.Role, copy_members: bool = False) -> None:

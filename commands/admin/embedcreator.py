@@ -6,7 +6,6 @@ from discord.ui import Modal, Select, TextInput, View
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextChannel, title: str) -> None:
