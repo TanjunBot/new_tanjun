@@ -32,7 +32,7 @@ async def createrole(
 
     assert commandInfo.guild is not None
     assert commandInfo.client.user is not None
-    bot_member = CommandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[misc, union-attr]
+    bot_member = commandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[misc, union-attr]
     if not bot_member or not bot_member.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(

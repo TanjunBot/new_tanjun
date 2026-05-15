@@ -38,7 +38,7 @@ async def moverole(
         await commandInfo.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and role.position >= CommandInfo.user.top_role.position:  # type: ignore[misc, union-attr]
+    if isinstance(commandInfo.user, discord.Member) and role.position >= commandInfo.user.top_role.position:  # type: ignore[misc, union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.roleTooHigh.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.roleTooHigh.description"),

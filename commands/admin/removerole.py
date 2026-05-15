@@ -50,7 +50,7 @@ async def removerole(
     class RoleManagementView(discord.ui.View):
         def __init__(self, commandInfo: utility.CommandInfo, action: str = "remove") -> None:
             super().__init__(timeout=300)
-            self.commandInfo: utility.CommandInfo = CommandInfo  # type: ignore[assignment]
+            self.commandInfo = commandInfo  # type: ignore[assignment]
             self.action: str = action
             self.selected_roles: list[discord.Role] = []
             self.selected_users: list[discord.Member] = []

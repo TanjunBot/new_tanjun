@@ -76,7 +76,7 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
             interaction: discord.Interaction,
             button: discord.ui.Button[Any],
         ) -> None:
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != commandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -101,7 +101,7 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
             interaction: discord.Interaction,
             button: discord.ui.Button[Any],
         ) -> None:
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != commandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,
@@ -146,7 +146,7 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
                 interaction: discord.Interaction,
                 button: discord.ui.Button[Any],
             ) -> None:
-                if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+                if interaction.user.id != commandInfo.user.id:  # type: ignore[misc]
                     await interaction.response.send_message(
                         tanjunLocalizer.localize(
                             commandInfo.locale,
@@ -173,7 +173,7 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
                 interaction: discord.Interaction,
                 button: discord.ui.Button[Any],
             ) -> None:
-                if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+                if interaction.user.id != commandInfo.user.id:  # type: ignore[misc]
                     await interaction.response.send_message(
                         tanjunLocalizer.localize(
                             commandInfo.locale,
@@ -197,7 +197,7 @@ async def show_reports(commandInfo: utility.CommandInfo, user: discord.Member | 
             interaction: discord.Interaction,
             button: discord.ui.Button[Any],
         ) -> None:
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != commandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         commandInfo.locale,

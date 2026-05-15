@@ -12,7 +12,7 @@ async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
     class ConfirmView(View):
         def __init__(self, commandInfo: utility.CommandInfo) -> None:
             super().__init__(timeout=60)
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
             self.value = None
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
@@ -74,7 +74,7 @@ async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
         return
 
     if channel is None:
-        channel = CommandInfo.channel  # type: ignore[misc, assignment]
+        channel = commandInfo.channel  # type: ignore[misc, assignment]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.confirmationTitle"),
@@ -96,7 +96,7 @@ async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
         return
 
     def check(m: discord.Message) -> bool:  # type: ignore[unreachable]
-        return m.author == CommandInfo.user and m.channel == CommandInfo.channel
+        return m.author == commandInfo.user and m.channel == commandInfo.channel
 
     try:
         confirmation_message = await commandInfo.client.wait_for("message", check=check, timeout=30.0)
