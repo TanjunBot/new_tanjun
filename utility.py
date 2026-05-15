@@ -1,4 +1,5 @@
 import ast
+import contextlib
 import datetime
 import gzip
 import math
@@ -231,15 +232,11 @@ class tanjunEmbed:
 
         # try to fill in the more rich fields
 
-        try:
+        with contextlib.suppress(KeyError):
             self._colour = discord.Colour(value=data["color"])
-        except KeyError:
-            pass
 
-        try:
+        with contextlib.suppress(KeyError):
             self._timestamp = discord.utils.parse_time(data["timestamp"])
-        except KeyError:
-            pass
 
         for attr in (
             "thumbnail",
@@ -396,10 +393,8 @@ class tanjunEmbed:
 
         .. versionadded:: 2.0
         """
-        try:
+        with contextlib.suppress(AttributeError):
             del self._footer
-        except AttributeError:
-            pass
 
         return self
 
@@ -562,10 +557,8 @@ class tanjunEmbed:
 
         .. versionadded:: 1.4
         """
-        try:
+        with contextlib.suppress(AttributeError):
             del self._author
-        except AttributeError:
-            pass
 
         return self
 
@@ -680,10 +673,8 @@ class tanjunEmbed:
         index: :class:`int`
             The index of the field to remove.
         """
-        try:
+        with contextlib.suppress(AttributeError, IndexError):
             del self._fields[index]
-        except (AttributeError, IndexError):
-            pass
 
         return self
 
@@ -919,7 +910,7 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
                 return await response.json()
 
         r = await fetch(
-            "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg" % (giphyAPIKey, query, limit)
+            f"https://api.giphy.com/v1/gifs/search?api_key={giphyAPIKey}&q={query}&limit={limit}&rating=pg"
         )
 
         if r is None:
@@ -944,24 +935,17 @@ def get_highest_exponent(polynomial: str) -> int:
         coefficient, variable, _, exponent = term
 
         if variable:
-            if exponent:
-                highest_exponent = max(highest_exponent, int(exponent))
-            else:
-                highest_exponent = max(highest_exponent, 1)
+            highest_exponent = max(highest_exponent, int(exponent)) if exponent else max(highest_exponent, 1)
 
     return highest_exponent
 
 
 def checkIfHasPro(guildid: int) -> bool:
-    if guildid == 0:
-        return False
-    return True
+    return guildid != 0
 
 
 def checkIfhasPlus(userid: int) -> bool:
-    if userid == 0:
-        return False
-    return True
+    return userid != 0
 
 
 def missingLocalization(locale: str) -> None:
@@ -1018,43 +1002,45 @@ def eval_expr(expr: str, variables=None) -> float:
         variables = {}
 
     # Replace mathematical constants
-    expr = expr.replace("pi", str(math.pi))
-    expr = expr.replace("e", str(math.e))
+    expr = re.sub(r"\bpi\b", str(math.pi), expr)
+    expr = re.sub(r"\be\b", str(math.e), expr)
 
     # Handle special functions with base notation
-    expr = re.sub(r"log\[(\d+)\]\((.*?)\)", r"log_n(\2,\1)", expr)
+    expr = re.sub(r"(?<![\w.])log\[(\d+)\]\((.*?)\)", r"log_n(\2,\1)", expr)
 
     # Handle special functions
-    expr = re.sub(r"sqrt\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
-    expr = re.sub(r"sqrt\((.*?)\)", r"sqrt_n(\1)", expr)
-    expr = re.sub(r"nthroot\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
+    expr = re.sub(r"(?<![\w.])sqrt\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
+    expr = re.sub(r"(?<![\w.])sqrt\((.*?)\)", r"sqrt_n(\1)", expr)
+    expr = re.sub(r"(?<![\w.])nthroot\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
 
     # Handle logarithms
-    expr = re.sub(r"log2\((.*?)\)", r"log_n(\1,2)", expr)
-    expr = re.sub(r"log10\((.*?)\)", r"log_n(\1,10)", expr)
-    expr = re.sub(r"ln\((.*?)\)", r"log_n(\1)", expr)
+    expr = re.sub(r"(?<![\w.])log2\((.*?)\)", r"log_n(\1,2)", expr)
+    expr = re.sub(r"(?<![\w.])log10\((.*?)\)", r"log_n(\1,10)", expr)
+    expr = re.sub(r"(?<![\w.])ln\((.*?)\)", r"log_n(\1)", expr)
 
-    # Handle trigonometric functions
-    expr = re.sub(r"sin\((.*?)\)", r"math.sin(\1)", expr)
-    expr = re.sub(r"cos\((.*?)\)", r"math.cos(\1)", expr)
-    expr = re.sub(r"tan\((.*?)\)", r"math.tan(\1)", expr)
-    expr = re.sub(r"asin\((.*?)\)", r"math.asin(\1)", expr)
-    expr = re.sub(r"acos\((.*?)\)", r"math.acos(\1)", expr)
-    expr = re.sub(r"atan\((.*?)\)", r"math.atan(\1)", expr)
+    # Handle trigonometric functions (inverse first to avoid partial matches)
+    expr = re.sub(r"(?<![\w.])asin\((.*?)\)", r"math.asin(\1)", expr)
+    expr = re.sub(r"(?<![\w.])acos\((.*?)\)", r"math.acos(\1)", expr)
+    expr = re.sub(r"(?<![\w.])atan\((.*?)\)", r"math.atan(\1)", expr)
+    expr = re.sub(r"(?<![\w.])sin\((.*?)\)", r"math.sin(\1)", expr)
+    expr = re.sub(r"(?<![\w.])cos\((.*?)\)", r"math.cos(\1)", expr)
+    expr = re.sub(r"(?<![\w.])tan\((.*?)\)", r"math.tan(\1)", expr)
 
     # Handle floor and ceiling
-    expr = re.sub(r"floor\((.*?)\)", r"math.floor(\1)", expr)
-    expr = re.sub(r"ceil\((.*?)\)", r"math.ceil(\1)", expr)
+    expr = re.sub(r"(?<![\w.])floor\((.*?)\)", r"math.floor(\1)", expr)
+    expr = re.sub(r"(?<![\w.])ceil\((.*?)\)", r"math.ceil(\1)", expr)
 
     # Handle absolute value
-    expr = re.sub(r"abs\((.*?)\)", r"abs(\1)", expr)
+    expr = re.sub(r"(?<![\w.])abs\((.*?)\)", r"abs(\1)", expr)
 
     return eval_(ast.parse(expr, mode="eval").body, variables)
 
 
 def eval_(node, variables):
-    if isinstance(node, ast.Num):
-        return node.n
+    if isinstance(node, ast.Constant):
+        if isinstance(node.value, (int, float)):
+            return node.value
+        raise TypeError(f"Unsupported constant: {node.value}")
     elif isinstance(node, ast.BinOp):
         return operators[type(node.op)](eval_(node.left, variables), eval_(node.right, variables))
     elif isinstance(node, ast.UnaryOp):

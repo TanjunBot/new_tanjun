@@ -222,3 +222,8 @@ exclude = [
     '^\\.mypy_cache/',
     '^\\.github/'
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"

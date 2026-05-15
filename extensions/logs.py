@@ -1,6 +1,7 @@
 # Unused imports:
 # from typing import List
 # import os
+import contextlib
 import difflib
 
 import discord
@@ -2324,8 +2325,10 @@ class LogsCog(commands.Cog):
         description_parts.append(tanjunLocalizer.localize(locale, "logs.memberBan.name", user=user.mention))
 
         banner = None
-        async for log in user.guild.audit_logs(limit=1, user=user):
-            banner = log.banner
+        async for log in user.guild.audit_logs(limit=5, action=discord.AuditLogAction.ban):
+            if log.target.id == user.id:
+                banner = log.user
+                break
 
         if banner:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.memberBan.banned_by", banner=banner.mention))
@@ -2355,8 +2358,10 @@ class LogsCog(commands.Cog):
         description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUnban.name", user=user.mention))
 
         unbanned_by = None
-        async for log in guild.audit_logs(limit=1, user=user):
-            unbanned_by = log.user
+        async for log in guild.audit_logs(limit=5, action=discord.AuditLogAction.unban):
+            if log.target.id == user.id:
+                unbanned_by = log.user
+                break
 
         if unbanned_by:
             description_parts.append(
@@ -2603,8 +2608,10 @@ class LogsCog(commands.Cog):
 
         sendLog = False
 
-        async for log in message.guild.audit_logs(limit=1, user=message.author):  # type: ignore[union-attr]
-            deleted_by = log.user
+        async for log in message.guild.audit_logs(limit=5, action=discord.AuditLogAction.message_delete):  # type: ignore[union-attr]
+            if log.target.id == message.author.id:
+                deleted_by = log.user
+                break
         if deleted_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2753,8 +2760,10 @@ class LogsCog(commands.Cog):
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.name", role=role.mention))
 
         created_by = None
-        async for log in role.guild.audit_logs(limit=1, user=role.guild.owner):  # type: ignore[arg-type]
-            created_by = log.user
+        async for log in role.guild.audit_logs(limit=5, action=discord.AuditLogAction.role_create):  # type: ignore[arg-type]
+            if log.target.id == role.id:
+                created_by = log.user
+                break
         if created_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2831,8 +2840,10 @@ class LogsCog(commands.Cog):
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleDelete.name", role=role.name))
 
         deleted_by = None
-        async for log in role.guild.audit_logs(limit=1, user=role.guild.owner):  # type: ignore[arg-type]
-            deleted_by = log.user
+        async for log in role.guild.audit_logs(limit=5, action=discord.AuditLogAction.role_delete):  # type: ignore[arg-type]
+            if log.target.id == role.id:
+                deleted_by = log.user
+                break
         if deleted_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2912,8 +2923,10 @@ class LogsCog(commands.Cog):
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.name", role=after.name))
 
         updated_by = None
-        async for log in after.guild.audit_logs(limit=1, user=after.guild.owner):  # type: ignore[arg-type]
-            updated_by = log.user
+        async for log in after.guild.audit_logs(limit=5, action=discord.AuditLogAction.role_update):  # type: ignore[arg-type]
+            if log.target.id == after.id:
+                updated_by = log.user
+                break
         if updated_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -3029,10 +3042,8 @@ class LogsCog(commands.Cog):
 
     @tasks.loop(seconds=10)
     async def sendLogEmbeds(self) -> None:
-        try:
+        with contextlib.suppress(Exception):
             await sendLogEmbeds(self.bot)
-        except Exception:
-            pass
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:

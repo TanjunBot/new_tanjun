@@ -1,7 +1,7 @@
 """Tests for addLevelXp helper functions — comprehensive."""
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 import math
+
+import pytest
 
 from tests.mock_config import patch_config_module
 
@@ -118,31 +118,24 @@ class TestXpScalingFunctions:
 
     def test_unknown_scaling_returns_medium(self):
         """get_xp_for_level with unknown scaling defaults to medium."""
-        from utility import get_xp_for_level
         import math
+
+        from utility import get_xp_for_level
         result = get_xp_for_level(5, "nonexistent")
         expected = math.floor(100 * (5 ** 1.5))
         assert result == expected
 
-    def test_custom_formula_returns_zero_on_python312_plus(self):
-        """Custom formulas use eval_expr which is broken on Python 3.12+ (ast.Num removed)."""
-        import sys
+    def test_custom_formula(self):
+        """Custom formulas use eval_expr for XP calculation."""
         from utility import get_xp_for_level
         result = get_xp_for_level(5, "custom", custom_formula="100*5")
-        if sys.version_info >= (3, 12):
-            assert result == 0  # eval_expr is broken on 3.12+
-        else:
-            assert result == 500
+        assert result == 500
 
-    def test_custom_formula_with_level_var_on_python312_plus(self):
-        """Custom formulas with level variable are also broken on Python 3.12+."""
-        import sys
+    def test_custom_formula_with_level_var(self):
+        """Custom formulas with level variable use eval_expr for XP calculation."""
         from utility import get_xp_for_level
         result = get_xp_for_level(10, "custom", custom_formula="100*level")
-        if sys.version_info >= (3, 12):
-            assert result == 0
-        else:
-            assert result == 1000
+        assert result == 1000
 
     def test_custom_formula_invalid_returns_zero(self):
         from utility import get_xp_for_level

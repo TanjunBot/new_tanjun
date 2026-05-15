@@ -1,7 +1,6 @@
 """Tests for utility.py functions and classes — comprehensive."""
 import datetime
 import math
-import sys
 
 import pytest
 
@@ -10,8 +9,8 @@ from tests.mock_config import patch_config_module
 patch_config_module()
 
 from utility import (
-    EmbedProxy,
     LEVEL_SCALINGS,
+    EmbedProxy,
     NumericStringParser,
     addThousandsSeparator,
     check_if_str_is_hex_color,
@@ -23,14 +22,13 @@ from utility import (
     get_level_for_xp,
     get_xp_for_level,
     isoTimeToDate,
+    log_n,
     relativeTimeStrToDate,
     relativeTimeToSeconds,
     similar,
     sqrt_n,
-    log_n,
     tanjunEmbed,
 )
-
 
 # ==================== EmbedProxy ====================
 
@@ -174,7 +172,7 @@ class TestTanjunEmbedConstruction:
 
 class TestTanjunEmbedTimestamp:
     def test_timestamp_set(self):
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.datetime.now(datetime.UTC)
         embed = tanjunEmbed(timestamp=now)
         assert embed.timestamp is not None
 
@@ -185,7 +183,7 @@ class TestTanjunEmbedTimestamp:
         assert embed.timestamp.tzinfo is not None
 
     def test_timestamp_set_to_none(self):
-        embed = tanjunEmbed(timestamp=datetime.datetime.now(datetime.timezone.utc))
+        embed = tanjunEmbed(timestamp=datetime.datetime.now(datetime.UTC))
         embed.timestamp = None
         assert embed.timestamp is None
 
@@ -195,7 +193,7 @@ class TestTanjunEmbedTimestamp:
             embed.timestamp = "invalid"
 
     def test_timestamp_to_dict_with_aware(self):
-        now = datetime.datetime(2024, 6, 15, 12, 30, 0, tzinfo=datetime.timezone.utc)
+        now = datetime.datetime(2024, 6, 15, 12, 30, 0, tzinfo=datetime.UTC)
         embed = tanjunEmbed(timestamp=now)
         d = embed.to_dict()
         assert "timestamp" in d
@@ -428,7 +426,7 @@ class TestTanjunEmbedLenAndBool:
         assert bool(embed) is True
 
     def test_bool_with_timestamp_is_truthy(self):
-        embed = tanjunEmbed(colour=None, timestamp=datetime.datetime.now(datetime.timezone.utc))
+        embed = tanjunEmbed(colour=None, timestamp=datetime.datetime.now(datetime.UTC))
         assert bool(embed) is True
 
 
@@ -527,7 +525,7 @@ class TestTanjunEmbedToDict:
         assert d["url"] == "http://example.com"
 
     def test_to_dict_with_timestamp(self):
-        now = datetime.datetime(2024, 6, 15, 12, 30, 0, tzinfo=datetime.timezone.utc)
+        now = datetime.datetime(2024, 6, 15, 12, 30, 0, tzinfo=datetime.UTC)
         embed = tanjunEmbed(timestamp=now)
         d = embed.to_dict()
         assert "timestamp" in d
@@ -627,42 +625,32 @@ class TestGetLevelForXp:
 # ==================== Math / Eval Functions ====================
 
 class TestEvalExpr:
-    """eval_expr uses ast.Num which was removed in Python 3.12+.
-    These tests are skipped on Python 3.12+ where the function is broken."""
+    """Tests for eval_expr math expression evaluator."""
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+; eval_expr is broken on 3.12+")
     def test_simple_addition(self):
         assert eval_expr("2 + 3") == 5
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_simple_subtraction(self):
         assert eval_expr("10 - 4") == 6
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_simple_multiplication(self):
         assert eval_expr("3 * 7") == 21
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_simple_division(self):
         assert eval_expr("10 / 2") == 5.0
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_power(self):
         assert eval_expr("2 ** 3") == 8
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_modulo(self):
         assert eval_expr("10 % 3") == 1
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_negative_numbers(self):
         assert eval_expr("-5 + 10") == 5
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_complex_expression(self):
         assert eval_expr("2 + 3 * 4") == 14
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_parentheses(self):
         assert eval_expr("(2 + 3) * 4") == 20
 
@@ -926,14 +914,14 @@ class TestDateToRelativeTimeStr:
 
 class TestDateTimeToTimestamp:
     def test_converts_to_int(self):
-        dt = datetime.datetime(2024, 1, 1, 0, 0, 0, tzinfo=datetime.timezone.utc)
+        dt = datetime.datetime(2024, 1, 1, 0, 0, 0, tzinfo=datetime.UTC)
         ts = date_time_to_timestamp(dt)
         assert isinstance(ts, int)
 
     def test_round_trip(self):
-        dt = datetime.datetime(2024, 6, 15, 12, 30, 0, tzinfo=datetime.timezone.utc)
+        dt = datetime.datetime(2024, 6, 15, 12, 30, 0, tzinfo=datetime.UTC)
         ts = date_time_to_timestamp(dt)
-        assert datetime.datetime.fromtimestamp(ts, tz=datetime.timezone.utc) == dt
+        assert datetime.datetime.fromtimestamp(ts, tz=datetime.UTC) == dt
 
 
 class TestIsoTimeToDate:
@@ -1152,7 +1140,6 @@ class TestCommandInfo:
 # Import needed for CommandInfo test
 from unittest.mock import AsyncMock, MagicMock
 
-
 # ==================== Deep Additional Tests ====================
 
 
@@ -1339,7 +1326,7 @@ class TestRelativeTimeToSecondsEdgeCases:
 
 class TestDateTimeToTimestampEdgeCases:
     def test_utc_epoch(self):
-        dt = datetime.datetime(2024, 1, 1, 0, 0, 0, tzinfo=datetime.timezone.utc)
+        dt = datetime.datetime(2024, 1, 1, 0, 0, 0, tzinfo=datetime.UTC)
         ts = date_time_to_timestamp(dt)
         assert isinstance(ts, int)
         assert ts > 0
@@ -1573,22 +1560,18 @@ class TestNumericStringParserDeepEdgeCases:
 
 
 class TestEvalExprEdgeCases:
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_simple_addition(self):
         result = eval_expr("2+3")
         assert result == 5
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_with_level_variable(self):
         result = eval_expr("100*level", variables={"level": 5})
         assert result == 500
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_invalid_expression(self):
         with pytest.raises(Exception):
             eval_expr("invalid!!expr")
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_custom_formula(self):
         result = eval_expr("100*5")
         assert result == 500
@@ -1746,8 +1729,7 @@ class TestTanjunEmbedDeep:
         assert embed2.title == "Test"
 
     def test_timestamp_property(self):
-        import discord
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.datetime.now(datetime.UTC)
         embed = tanjunEmbed(timestamp=now)
         assert embed.timestamp == now
 
@@ -1954,114 +1936,90 @@ class TestNumericStringParserEvalAdditional:
 class TestEvalExprSubstitutions:
     """Test eval_expr regex substitution paths — skipped on Python 3.12+."""
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_pi_substitution(self):
         result = eval_expr("pi")
         assert abs(result - math.pi) < 0.001
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_e_substitution(self):
         result = eval_expr("e")
         assert abs(result - math.e) < 0.001
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_sqrt_substitution(self):
         result = eval_expr("sqrt(16)")
         assert abs(result - 4.0) < 0.001
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_sqrt_n_substitution(self):
         result = eval_expr("sqrt[3](27)")
         assert abs(result - 3.0) < 0.01
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_nthroot_substitution(self):
         result = eval_expr("nthroot[3](27)")
         assert abs(result - 3.0) < 0.01
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_log2_substitution(self):
         result = eval_expr("log2(8)")
         assert abs(result - 3.0) < 0.01
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_log10_substitution(self):
         result = eval_expr("log10(100)")
         assert abs(result - 2.0) < 0.01
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_ln_substitution(self):
         result = eval_expr("ln(2.718281828)")
         assert abs(result - 1.0) < 0.01
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_log_n_substitution(self):
         result = eval_expr("log[10](100)")
         assert abs(result - 2.0) < 0.01
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_sin_substitution(self):
         result = eval_expr("sin(0)")
         assert abs(result) < 0.001
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_cos_substitution(self):
         result = eval_expr("cos(0)")
         assert abs(result - 1.0) < 0.001
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_tan_substitution(self):
         result = eval_expr("tan(0)")
         assert abs(result) < 0.001
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_asin_substitution(self):
         result = eval_expr("asin(0)")
         assert abs(result) < 0.001
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_acos_substitution(self):
         result = eval_expr("acos(1)")
         assert abs(result) < 0.001
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_atan_substitution(self):
         result = eval_expr("atan(0)")
         assert abs(result) < 0.001
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_floor_substitution(self):
         result = eval_expr("floor(3.7)")
         assert result == 3
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_ceil_substitution(self):
         result = eval_expr("ceil(3.2)")
         assert result == 4
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_abs_substitution(self):
         result = eval_expr("abs(0-5)")
         assert result == 5
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_variables(self):
         result = eval_expr("x + y", variables={"x": 3, "y": 7})
         assert result == 10
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_undefined_variable_raises(self):
         with pytest.raises(NameError):
             eval_expr("x + 1")
 
-    @pytest.mark.skipif(sys.version_info >= (3, 12), reason="ast.Num removed in Python 3.12+")
     def test_custom_formula_in_get_xp_for_level(self):
         """Custom formula replaces 'level' with the level number."""
         xp = get_xp_for_level(3, "custom", custom_formula="100*level")
-        if sys.version_info >= (3, 12):
-            assert xp == 0
-        else:
-            assert xp == 300
+        assert xp == 300
 
 
 # ==================== tanjunEmbed Deep Edge Cases ====================
@@ -2149,7 +2107,7 @@ class TestTanjunEmbedBoolDeep:
         assert bool(embed) is False
 
     def test_bool_after_removing_all_content(self):
-        embed = tanjunEmbed(title="Hello")
+        tanjunEmbed(title="Hello")
         # Setting title via constructor, then checking
         embed2 = tanjunEmbed(colour=None, color=None)
         assert bool(embed2) is False
