@@ -9,11 +9,13 @@ from models import ScheduledMessageModel
 
 
 class MessageSelectView(View):
-    def __init__(self, messages: list[ScheduledMessageModel], locale: str) -> None:
+    def __init__(self, messages: list[ScheduledMessageModel], locale: str, command_info: utility.CommandInfo) -> None:
         super().__init__(timeout=300)  # 5 minute timeout
         self.locale = locale
+        self.command_info = command_info
+        self.messages = messages
 
-        Select(
+        select = Select(
             placeholder=tanjunLocalizer.localize(locale, "commands.utility.removescheduled.select.placeholder"),
             options=[
                 discord.SelectOption(
@@ -24,6 +26,30 @@ class MessageSelectView(View):
                 for msg in messages
             ][:25],
         )
+        select.callback = self.select_callback  # type: ignore[method-assign]
+        self.add_item(select)
+
+    async def select_callback(self, interaction: discord.Interaction) -> None:
+        if interaction.user != self.command_info.user:
+            await interaction.response.send_message(
+                tanjunLocalizer.localize(
+                    self.locale,
+                    "commands.utility.removescheduled.error.not_authorized",
+                ),
+                ephemeral=True,
+            )
+            return
+        selected = interaction.data["values"][0]  # type: ignore[index]
+        await remove_message(int(selected))
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(self.locale), "commands.utility.removescheduled.success.title"),
+            description=tanjunLocalizer.localize(
+                self.locale,
+                "commands.utility.removescheduled.success.description",
+                id=selected,
+            ),
+        )
+        await interaction.response.edit_message(embed=embed, view=None)
 
     def set_message(self, message: discord.Message) -> None:
         self.message = message
@@ -65,7 +91,7 @@ async def remove_scheduled_message(commandInfo: utility.CommandInfo, message_id:
                 "commands.utility.removescheduled.select.description",
             ),
         )
-        view = MessageSelectView(messages, commandInfo.locale)
+        view = MessageSelectView(messages, commandInfo.locale, commandInfo)
         view.set_message(await commandInfo.reply(embed=embed, view=view))
         return
 

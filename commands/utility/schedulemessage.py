@@ -1,5 +1,8 @@
+import io
+import json
 from datetime import datetime, timedelta
 
+import aiohttp
 import discord
 
 import utility
@@ -11,6 +14,16 @@ from api import (
     update_scheduled_message_repeat_amount,
 )
 from localizer import tanjunLocalizer
+
+
+async def fetch_attachment(url: str) -> io.BytesIO | None:
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(url) as response,
+    ):
+        if response.status != 200:
+            return None
+        return io.BytesIO(await response.read())
 
 
 async def schedule_message(
@@ -149,6 +162,8 @@ async def schedule_message(
             await commandInfo.reply(embed=embed)
             return
 
+    attachment_urls = [att.url for att in attachments] if attachments else None
+
     await add_scheduled_message(
         guild_id=commandInfo.guild.id if channel and commandInfo.guild else None,
         channel_id=channel.id if channel else None,
@@ -157,6 +172,7 @@ async def schedule_message(
         send_time=send_time,
         repeat_interval=utility.relativeTimeToSeconds(repeat) if repeat else None,
         repeat_amount=repeat_amount,
+        attachments=json.dumps(attachment_urls) if attachment_urls else None,
     )
 
     embed = utility.tanjunEmbed(
@@ -201,10 +217,12 @@ async def send_scheduled_messages(client: discord.Client) -> None:
             if channel_id and guild_id:
                 guild = client.get_guild(guild_id)
                 if not guild:
+                    await remove_scheduled_message(message_id)
                     continue
 
                 channel = guild.get_channel(channel_id)
                 if not channel:
+                    await remove_scheduled_message(message_id)
                     continue
 
                 target = channel
@@ -212,25 +230,42 @@ async def send_scheduled_messages(client: discord.Client) -> None:
                 try:
                     user = await client.fetch_user(user_id)
                 except discord.NotFound:
+                    await remove_scheduled_message(message_id)
                     continue
 
                 target = user.dm_channel if user.dm_channel else await user.create_dm()
 
             if isinstance(target, discord.CategoryChannel) or isinstance(target, discord.ForumChannel):
-                return
+                await remove_scheduled_message(message_id)
+                continue
+
+            # Fetch attachments if any
+            files: list[discord.File] = []
+            if msg.attachments:
+                try:
+                    urls = json.loads(msg.attachments)
+                    for url in urls:
+                        data = await fetch_attachment(url)
+                        if data:
+                            files.append(discord.File(data, filename="attachment"))
+                except (json.JSONDecodeError, TypeError):
+                    pass
 
             embed = utility.tanjunEmbed(description=content)
-            await target.send(content=content, embed=embed)
+            await target.send(content=content, embed=embed, files=files or discord.utils.MISSING)
 
-            if repeat_amount and repeat_amount != 0:
-                repeat_amount -= 1
-                if repeat_amount == 0:
-                    await remove_scheduled_message(message_id)
-                else:
-                    await update_scheduled_message_repeat_amount(message_id, repeat_amount)
-
-            if not repeat_interval or not repeat_amount:
+            if repeat_interval:
+                if repeat_amount is not None:
+                    new_amount = repeat_amount - 1
+                    if new_amount <= 0:
+                        await remove_scheduled_message(message_id)
+                    else:
+                        await update_scheduled_message_repeat_amount(message_id, new_amount)
+                # If repeat_amount is None, infinite repeat — do nothing
+            else:
                 await remove_scheduled_message(message_id)
 
+        except (discord.NotFound, discord.Forbidden, discord.HTTPException):
+            pass
         except Exception:
             pass

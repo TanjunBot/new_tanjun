@@ -365,19 +365,19 @@ class TestReportModel:
 class TestScheduledMessageModel:
     def test_from_row_with_repeat(self):
         now = datetime.now()
-        model = ScheduledMessageModel.from_row((1, "g1", "c1", "u1", "hello", now, 60, 3, now))
+        model = ScheduledMessageModel.from_row((1, "g1", "c1", "u1", "hello", now, 60, 3, None, now))
         assert model.repeat_interval == 60
         assert model.repeat_amount == 3
 
     def test_from_row_no_repeat(self):
         now = datetime.now()
-        model = ScheduledMessageModel.from_row((2, "g1", "c1", "u1", "hello", now, None, None, now))
+        model = ScheduledMessageModel.from_row((2, "g1", "c1", "u1", "hello", now, None, None, None, now))
         assert model.repeat_interval is None
         assert model.repeat_amount is None
 
     def test_from_row_none_guild_and_channel(self):
         now = datetime.now()
-        model = ScheduledMessageModel.from_row((3, None, None, "u1", "dm", now, None, None, now))
+        model = ScheduledMessageModel.from_row((3, None, None, "u1", "dm", now, None, None, None, now))
         assert model.guild_id is None
         assert model.channel_id is None
 

@@ -86,6 +86,7 @@ class ScheduledMessageModel:
     send_time: Any  # datetime
     repeat_interval: int | None
     repeat_amount: int | None
+    attachments: str | None
     created_at: Any  # datetime
 
     @classmethod

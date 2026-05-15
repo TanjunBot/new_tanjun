@@ -510,6 +510,7 @@ async def create_tables(bot=None) -> None:
         `sendTime` DATETIME NOT NULL,
         `repeatInterval` MEDIUMINT UNSIGNED,
         `repeatAmount` MEDIUMINT UNSIGNED,
+        `attachments` VARCHAR(2048),
         `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX `idx_sendtime` (sendTime),
         INDEX `idx_user` (userId),
@@ -2319,19 +2320,20 @@ async def add_scheduled_message(
     send_time: datetime,
     repeat_interval: int | None = None,
     repeat_amount: int | None = None,
+    attachments: str | None = None,
 ) -> None:
     query = """
     INSERT INTO scheduledMessages
-    (guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    (guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount, attachments)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
-    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval, repeat_amount)
+    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval, repeat_amount, attachments)
     await execute_action(query, params)
 
 
 async def get_scheduled_messages(user_id: str) -> list[ScheduledMessageModel]:
     query = """
-    SELECT messageId, guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount, createdAt
+    SELECT messageId, guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount, attachments, createdAt
     FROM scheduledMessages
     WHERE userId = %s
     ORDER BY sendTime ASC
@@ -2354,7 +2356,7 @@ async def get_user_scheduled_messages_in_timeframe(
     guild_id: str | None = None,
 ) -> list[ScheduledMessageModel]:
     query = """
-    SELECT messageId, guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount, createdAt
+    SELECT messageId, guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount, attachments, createdAt
     FROM scheduledMessages
     WHERE userId = %s
     AND sendTime BETWEEN %s AND %s
@@ -2370,20 +2372,20 @@ async def get_user_scheduled_messages_in_timeframe(
 
 
 async def update_scheduled_message_content(message_id: int, new_content: str) -> None:
-    query = "UPDATE scheduledMessages SET content = %s WHERE referenceMessageId = %s"
+    query = "UPDATE scheduledMessages SET content = %s WHERE messageId = %s"
     params = (new_content, message_id)
     await execute_action(query, params)
 
 
 async def update_scheduled_message_repeat_amount(message_id: int, repeat_amount: int) -> None:
-    query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE referenceMessageId = %s"
+    query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE messageId = %s"
     params = (repeat_amount, message_id)
     await execute_action(query, params)
 
 
 async def get_ready_scheduled_messages() -> list[ScheduledMessageModel]:
     query = """
-    SELECT messageId, guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount, createdAt
+    SELECT messageId, guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount, attachments, createdAt
     FROM scheduledMessages WHERE sendTime <= NOW()
     """
     res = await execute_query(query)
