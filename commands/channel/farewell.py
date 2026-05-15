@@ -96,7 +96,8 @@ async def setFarewellChannel(
     if image_background is not None:
         imgUrl = (
             await utility.upload_image_to_imgbb(
-                image_background, image_background.filename.split(".")[-1]  # type: ignore[arg-type, call-overload, name-defined]
+                image_background,
+                image_background.filename.split(".")[-1],  # type: ignore[arg-type, call-overload, name-defined]
             )
         )["data"]["url"]  # type: ignore[index, arg-type, call-overload, name-defined]
     else:
@@ -137,7 +138,9 @@ async def removeFarewellChannel(commandInfo: utility.CommandInfo) -> None:
     if not await get_leave_channel(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.notSet.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.notSet.description"),
+            description=tanjunLocalizer.localize(
+                str(commandInfo.locale), "commands.admin.channel.farewell.notSet.description"
+            ),
         )
         await commandInfo.reply(embed=embed)
         return

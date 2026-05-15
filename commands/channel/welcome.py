@@ -96,7 +96,8 @@ async def setWelcomeChannel(
     if image_background is not None:
         imgUrl = (
             await utility.upload_image_to_imgbb(
-                image_background, image_background.filename.split(".")[-1]  # type: ignore[arg-type, call-overload, name-defined]
+                image_background,
+                image_background.filename.split(".")[-1],  # type: ignore[arg-type, call-overload, name-defined]
             )
         )["data"]["url"]  # type: ignore[index, arg-type, call-overload, name-defined]
     else:
