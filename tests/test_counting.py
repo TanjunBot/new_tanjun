@@ -10,65 +10,65 @@ patch_config_module()
 
 
 class TestCountingModuleImport:
-    def test_counting_function_exists(self):
+    def test_counting_function_exists(self) -> None:
         from minigames.counting import counting
 
         assert callable(counting)
 
 
 class TestCountingChallengeModuleImport:
-    def test_challenge_function_exists(self):
+    def test_challenge_function_exists(self) -> None:
         from minigames.countingChallenge import counting
 
         assert callable(counting)
 
 
 class TestWordchainModuleImport:
-    def test_wordchain_function_exists(self):
+    def test_wordchain_function_exists(self) -> None:
         from minigames.wordchain import wordchain
 
         assert callable(wordchain)
 
 
 class TestAddLevelXpModuleImport:
-    def test_addLevelXp_function_exists(self):
+    def test_addLevelXp_function_exists(self) -> None:
         from minigames.addLevelXp import addLevelXp
 
         assert callable(addLevelXp)
 
-    def test_clearNotifiedUsers_function_exists(self):
+    def test_clearNotifiedUsers_function_exists(self) -> None:
         from minigames.addLevelXp import clearNotifiedUsers
 
         assert callable(clearNotifiedUsers)
 
-    def test_calculate_xp_function_exists(self):
+    def test_calculate_xp_function_exists(self) -> None:
         from minigames.addLevelXp import calculate_xp
 
         assert callable(calculate_xp)
 
-    def test_is_blacklisted_function_exists(self):
+    def test_is_blacklisted_function_exists(self) -> None:
         from minigames.addLevelXp import is_blacklisted
 
         assert callable(is_blacklisted)
 
-    def test_fetch_xp_details_function_exists(self):
+    def test_fetch_xp_details_function_exists(self) -> None:
         from minigames.addLevelXp import fetch_xp_details
 
         assert callable(fetch_xp_details)
 
-    def test_handle_level_up_function_exists(self):
+    def test_handle_level_up_function_exists(self) -> None:
         from minigames.addLevelXp import handle_level_up
 
         assert callable(handle_level_up)
 
-    def test_notifiedUsers_is_list(self):
+    def test_notifiedUsers_is_list(self) -> None:
         from minigames.addLevelXp import notifiedUsers
 
         assert isinstance(notifiedUsers, list)
 
 
 class TestAddLevelXpClearNotifiedUsers:
-    def test_clear_resets_list(self):
+    def test_clear_resets_list(self) -> None:
         from minigames.addLevelXp import clearNotifiedUsers, notifiedUsers
 
         notifiedUsers.append(12345)
@@ -79,12 +79,12 @@ class TestAddLevelXpClearNotifiedUsers:
         # After clear, list should be empty
         assert len(fresh) == 0
 
-    def test_clear_on_empty_list(self):
+    def test_clear_on_empty_list(self) -> None:
         from minigames.addLevelXp import clearNotifiedUsers
 
         clearNotifiedUsers()  # Should not raise
 
-    def test_clear_multiple_times(self):
+    def test_clear_multiple_times(self) -> None:
         from minigames.addLevelXp import clearNotifiedUsers
 
         clearNotifiedUsers()
@@ -96,7 +96,7 @@ class TestAddLevelXpCalculateXp:
     """Test calculate_xp with mocked Discord objects."""
 
     @pytest.mark.asyncio
-    async def test_calculate_xp_returns_int(self):
+    async def test_calculate_xp_returns_int(self) -> None:
         from minigames.addLevelXp import calculate_xp
 
         mock_message = MagicMock()
@@ -118,7 +118,7 @@ class TestAddLevelXpCalculateXp:
             assert 1 <= result <= 3  # base_xp is randint(1,3) with no boosts
 
     @pytest.mark.asyncio
-    async def test_calculate_xp_with_additive_user_boost(self):
+    async def test_calculate_xp_with_additive_user_boost(self) -> None:
         from minigames.addLevelXp import calculate_xp
         from models import XpBoostModel
 
@@ -144,7 +144,7 @@ class TestAddLevelXpCalculateXp:
             assert result in [2, 4, 6]
 
     @pytest.mark.asyncio
-    async def test_calculate_xp_with_multiplicative_user_boost(self):
+    async def test_calculate_xp_with_multiplicative_user_boost(self) -> None:
         from minigames.addLevelXp import calculate_xp
         from models import XpBoostModel
 
@@ -171,7 +171,7 @@ class TestAddLevelXpCalculateXp:
 
 class TestAddLevelXpIsBlacklisted:
     @pytest.mark.asyncio
-    async def test_not_blacklisted(self):
+    async def test_not_blacklisted(self) -> None:
         from minigames.addLevelXp import is_blacklisted
 
         mock_message = MagicMock()
@@ -190,7 +190,7 @@ class TestAddLevelXpIsBlacklisted:
             assert result is False
 
     @pytest.mark.asyncio
-    async def test_blacklisted_user(self):
+    async def test_blacklisted_user(self) -> None:
         from minigames.addLevelXp import is_blacklisted
         from models import BlacklistEntryModel
 
@@ -207,7 +207,7 @@ class TestAddLevelXpIsBlacklisted:
             assert result is True
 
     @pytest.mark.asyncio
-    async def test_blacklisted_channel(self):
+    async def test_blacklisted_channel(self) -> None:
         from minigames.addLevelXp import is_blacklisted
         from models import BlacklistEntryModel
 
@@ -224,7 +224,7 @@ class TestAddLevelXpIsBlacklisted:
             assert result is True
 
     @pytest.mark.asyncio
-    async def test_blacklisted_role(self):
+    async def test_blacklisted_role(self) -> None:
         from minigames.addLevelXp import is_blacklisted
         from models import BlacklistEntryModel
 

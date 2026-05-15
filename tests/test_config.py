@@ -6,46 +6,46 @@ patch_config_module()
 
 
 class TestConfigVariables:
-    def test_version_is_string(self):
+    def test_version_is_string(self) -> None:
         from config import version
 
         assert isinstance(version, str)
         assert len(version) > 0
 
-    def test_version_format(self):
+    def test_version_format(self) -> None:
         from config import version
 
         parts = version.split(".")
         assert len(parts) >= 2  # At least major.minor
 
-    def test_adminIds_is_list(self):
+    def test_adminIds_is_list(self) -> None:
         from config import adminIds
 
         assert isinstance(adminIds, list)
 
-    def test_database_port_is_int(self):
+    def test_database_port_is_int(self) -> None:
         from config import database_port
 
         assert isinstance(database_port, int)
         assert database_port > 0
 
-    def test_database_port_default(self):
+    def test_database_port_default(self) -> None:
         """Default port should be 3306 if not set in env."""
         from config import database_port
 
         assert database_port == 3306 or isinstance(database_port, int)
 
-    def test_activity_is_string(self):
+    def test_activity_is_string(self) -> None:
         from config import activity
 
         assert isinstance(activity, str)
 
-    def test_activity_contains_tanjun(self):
+    def test_activity_contains_tanjun(self) -> None:
         from config import activity
 
         assert "Tanjun" in activity or "tanjun" in activity.lower()
 
-    def test_env_vars_are_strings_or_none(self):
+    def test_env_vars_are_strings_or_none(self) -> None:
         from config import applicationId, database_ip, database_password, token
 
         # These can be None if not set in env
@@ -54,7 +54,7 @@ class TestConfigVariables:
 
 
 class TestConfigModuleImport:
-    def test_config_imports_successfully(self):
+    def test_config_imports_successfully(self) -> None:
         import config
 
         assert hasattr(config, "version")
@@ -62,7 +62,7 @@ class TestConfigModuleImport:
         assert hasattr(config, "database_ip")
         assert hasattr(config, "adminIds")
 
-    def test_all_expected_attributes(self):
+    def test_all_expected_attributes(self) -> None:
         import config
 
         expected_attrs = [

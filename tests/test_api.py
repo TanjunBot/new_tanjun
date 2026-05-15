@@ -11,7 +11,7 @@ patch_config_module()
 
 
 class TestApiModuleImport:
-    def test_import_api(self):
+    def test_import_api(self) -> None:
         import api
 
         assert hasattr(api, "execute_query")
@@ -21,7 +21,7 @@ class TestApiModuleImport:
         assert hasattr(api, "set_bot")
         assert hasattr(api, "_get_pool")
 
-    def test_set_bot(self):
+    def test_set_bot(self) -> None:
         import api
 
         mock_bot = MagicMock()
@@ -30,7 +30,7 @@ class TestApiModuleImport:
         # Reset
         api._bot = None
 
-    def test_set_bot_none(self):
+    def test_set_bot_none(self) -> None:
         import api
 
         api.set_bot(None)
@@ -39,7 +39,7 @@ class TestApiModuleImport:
 
 class TestApiPoolAccess:
     @pytest.mark.asyncio
-    async def test_execute_query_returns_none_without_pool(self):
+    async def test_execute_query_returns_none_without_pool(self) -> None:
         import api
 
         api._bot = None
@@ -47,7 +47,7 @@ class TestApiPoolAccess:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_execute_query_returns_none_with_none_pool(self):
+    async def test_execute_query_returns_none_with_none_pool(self) -> None:
         import api
 
         mock_bot = MagicMock()
@@ -57,7 +57,7 @@ class TestApiPoolAccess:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_execute_action_returns_none_without_pool(self):
+    async def test_execute_action_returns_none_without_pool(self) -> None:
         import api
 
         api._bot = None
@@ -65,7 +65,7 @@ class TestApiPoolAccess:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_execute_action_returns_none_with_none_pool(self):
+    async def test_execute_action_returns_none_with_none_pool(self) -> None:
         import api
 
         mock_bot = MagicMock()
@@ -75,7 +75,7 @@ class TestApiPoolAccess:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_execute_insert_and_get_id_returns_none_without_pool(self):
+    async def test_execute_insert_and_get_id_returns_none_without_pool(self) -> None:
         import api
 
         api._bot = None
@@ -83,7 +83,7 @@ class TestApiPoolAccess:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_execute_insert_and_get_id_returns_none_with_none_pool(self):
+    async def test_execute_insert_and_get_id_returns_none_with_none_pool(self) -> None:
         import api
 
         mock_bot = MagicMock()
@@ -93,7 +93,7 @@ class TestApiPoolAccess:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_create_tables_is_coroutine(self):
+    async def test_create_tables_is_coroutine(self) -> None:
         import api
 
         assert inspect.iscoroutinefunction(api.create_tables)
@@ -102,7 +102,7 @@ class TestApiPoolAccess:
 class TestApiAsyncFunctionSignatures:
     """Verify all async database functions exist and have correct signatures."""
 
-    def test_warning_functions_exist(self):
+    def test_warning_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -117,7 +117,7 @@ class TestApiAsyncFunctionSignatures:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
             assert inspect.iscoroutinefunction(getattr(api, fn_name)), f"{fn_name} is not async"
 
-    def test_counting_functions_exist(self):
+    def test_counting_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -133,7 +133,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_counting_challenge_functions_exist(self):
+    def test_counting_challenge_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -146,7 +146,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_counting_mode_functions_exist(self):
+    def test_counting_mode_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -161,7 +161,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_wordchain_functions_exist(self):
+    def test_wordchain_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -173,7 +173,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_level_functions_exist(self):
+    def test_level_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -194,7 +194,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_giveaway_functions_exist(self):
+    def test_giveaway_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -214,7 +214,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_report_functions_exist(self):
+    def test_report_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -230,7 +230,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_ticket_functions_exist(self):
+    def test_ticket_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -242,7 +242,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_trigger_functions_exist(self):
+    def test_trigger_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -256,7 +256,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_log_functions_exist(self):
+    def test_log_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -274,7 +274,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_afk_functions_exist(self):
+    def test_afk_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -285,7 +285,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_scheduled_message_functions_exist(self):
+    def test_scheduled_message_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -296,7 +296,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_booster_functions_exist(self):
+    def test_booster_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -310,7 +310,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_dynamic_slowmode_functions_exist(self):
+    def test_dynamic_slowmode_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -324,7 +324,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_channel_overwrite_functions_exist(self):
+    def test_channel_overwrite_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -335,7 +335,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_xp_boost_functions_exist(self):
+    def test_xp_boost_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -353,7 +353,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_blacklist_functions_exist(self):
+    def test_blacklist_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -367,7 +367,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_level_config_functions_exist(self):
+    def test_level_config_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -393,7 +393,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_ai_functions_exist(self):
+    def test_ai_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -405,7 +405,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_token_functions_exist(self):
+    def test_token_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -419,7 +419,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_twitch_functions_exist(self):
+    def test_twitch_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -432,7 +432,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_giveaway_extra_functions_exist(self):
+    def test_giveaway_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -450,7 +450,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_level_extra_functions_exist(self):
+    def test_level_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -463,7 +463,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_blacklist_query_functions_exist(self):
+    def test_blacklist_query_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -474,7 +474,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_counting_extra_functions_exist(self):
+    def test_counting_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -486,7 +486,7 @@ class TestApiAsyncFunctionSignatures:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_wordchain_functions_exist(self):
+    def test_wordchain_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -503,7 +503,7 @@ class TestApiAsyncPoolAccess:
     """Test that async database functions handle missing pool gracefully."""
 
     @pytest.mark.asyncio
-    async def test_execute_query_with_mock_pool(self):
+    async def test_execute_query_with_mock_pool(self) -> None:
         import api
 
         mock_pool = AsyncMock()
@@ -520,7 +520,7 @@ class TestApiAsyncPoolAccess:
         api.set_bot(None)  # Reset
 
     @pytest.mark.asyncio
-    async def test_execute_action_no_pool_returns_none(self):
+    async def test_execute_action_no_pool_returns_none(self) -> None:
         import api
 
         api._bot = None
@@ -528,7 +528,7 @@ class TestApiAsyncPoolAccess:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_execute_insert_no_pool_returns_none(self):
+    async def test_execute_insert_no_pool_returns_none(self) -> None:
         import api
 
         api._bot = None
@@ -536,7 +536,7 @@ class TestApiAsyncPoolAccess:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_create_tables_is_coroutine(self):
+    async def test_create_tables_is_coroutine(self) -> None:
         import api
 
         assert inspect.iscoroutinefunction(api.create_tables)
@@ -548,7 +548,7 @@ class TestApiAsyncPoolAccess:
 class TestApiAsyncDeepFunctions:
     """Deep test of API function existence covering all module functions."""
 
-    def test_report_extra_functions_exist(self):
+    def test_report_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -570,7 +570,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_ticket_extra_functions_exist(self):
+    def test_ticket_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -587,7 +587,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_scheduled_message_extra_functions_exist(self):
+    def test_scheduled_message_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -602,7 +602,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_booster_extra_functions_exist(self):
+    def test_booster_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -622,7 +622,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_channel_extra_functions_exist(self):
+    def test_channel_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -636,7 +636,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_cooldown_functions_exist(self):
+    def test_cooldown_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -648,7 +648,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_brawlstars_functions_exist(self):
+    def test_brawlstars_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -659,7 +659,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_feedback_functions_exist(self):
+    def test_feedback_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -670,7 +670,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_welcome_leave_functions_exist(self):
+    def test_welcome_leave_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -684,7 +684,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_autopublish_functions_exist(self):
+    def test_autopublish_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -695,7 +695,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_slowmode_extra_functions_exist(self):
+    def test_slowmode_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -708,7 +708,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_counting_challenge_functions_exist(self):
+    def test_counting_challenge_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -722,7 +722,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_counting_mode_functions_exist(self):
+    def test_counting_mode_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -737,7 +737,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_afk_extra_functions_exist(self):
+    def test_afk_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -751,7 +751,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_user_xp_functions_exist(self):
+    def test_user_xp_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -765,7 +765,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_log_extra_functions_exist(self):
+    def test_log_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -790,7 +790,7 @@ class TestApiAsyncDeepFunctions:
         for fn_name in async_functions:
             assert hasattr(api, fn_name), f"Missing function: {fn_name}"
 
-    def test_token_extra_functions_exist(self):
+    def test_token_extra_functions_exist(self) -> None:
         import api
 
         async_functions = [
@@ -809,7 +809,7 @@ class TestApiAsyncDeepFunctions:
 class TestApiModelImports:
     """Verify all model classes are importable from api."""
 
-    def test_all_models_importable(self):
+    def test_all_models_importable(self) -> None:
         import api
 
         model_names = [

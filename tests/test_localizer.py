@@ -12,44 +12,44 @@ from localizer import Localizer, tanjunLocalizer
 
 
 class TestLocalizerInit:
-    def test_init_empty_translations(self):
+    def test_init_empty_translations(self) -> None:
         loc = Localizer()
         assert loc.translations == {}
 
 
 class TestLocalizerLoadTranslations:
-    def test_load_english(self):
+    def test_load_english(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         assert isinstance(translations, list)
         assert len(translations) > 0
 
-    def test_load_german(self):
+    def test_load_german(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("de")
         assert isinstance(translations, list)
         assert len(translations) > 0
 
-    def test_load_nonexistent_locale_falls_back_to_english(self):
+    def test_load_nonexistent_locale_falls_back_to_english(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("xx")
         assert isinstance(translations, list)
         assert len(translations) > 0  # Falls back to en.json
 
-    def test_load_translations_structure(self):
+    def test_load_translations_structure(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         for entry in translations:
             assert "identifier" in entry
             assert "translation" in entry
 
-    def test_load_translations_has_identifier_key(self):
+    def test_load_translations_has_identifier_key(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         identifiers = [str(t.get("identifier", "")) for t in translations]
         assert "commands.help.select.title" in identifiers
 
-    def test_load_translations_caches(self):
+    def test_load_translations_caches(self) -> None:
         """load_translations is called each time but should return consistent data."""
         loc = Localizer()
         t1 = loc.load_translations("en")
@@ -58,7 +58,7 @@ class TestLocalizerLoadTranslations:
 
 
 class TestLocalizerGetTranslation:
-    def test_get_existing_translation(self):
+    def test_get_existing_translation(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         key = str(translations[0].get("identifier", "")).lower()
@@ -66,13 +66,13 @@ class TestLocalizerGetTranslation:
         assert result is not None
         assert "translation" in result
 
-    def test_get_nonexistent_translation(self):
+    def test_get_nonexistent_translation(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         result = loc.get_translation(translations, "nonexistent.key.that.does.not.exist")
         assert result is None
 
-    def test_get_translation_case_insensitive(self):
+    def test_get_translation_case_insensitive(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         key_upper = str(translations[0].get("identifier", "")).upper()
@@ -81,12 +81,12 @@ class TestLocalizerGetTranslation:
         result_lower = loc.get_translation(translations, key_lower)
         assert result_upper == result_lower
 
-    def test_get_translation_with_empty_list(self):
+    def test_get_translation_with_empty_list(self) -> None:
         loc = Localizer()
         result = loc.get_translation([], "any.key")
         assert result is None
 
-    def test_get_translation_returns_dict_with_translation_key(self):
+    def test_get_translation_returns_dict_with_translation_key(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         key = str(translations[0].get("identifier", "")).lower()
@@ -95,12 +95,12 @@ class TestLocalizerGetTranslation:
 
 
 class TestLocalizerLocalize:
-    def test_localize_english(self):
+    def test_localize_english(self) -> None:
         result = tanjunLocalizer.localize("en", "commands.help.select.title")
         assert result != "err: no translation found."
         assert isinstance(result, str)
 
-    def test_localize_with_params(self):
+    def test_localize_with_params(self) -> None:
         """Test that template substitution works."""
         # Find a translation with parameters
         loc = Localizer()
@@ -115,25 +115,25 @@ class TestLocalizerLocalize:
                 break
 
     @patch("localizer.missingLocalization")
-    def test_localize_nonexistent_key(self, mock_missing):
+    def test_localize_nonexistent_key(self, mock_missing) -> None:
         mock_missing.return_value = None
         result = tanjunLocalizer.localize("en", "completely.nonexistent.key.xyz123")
         assert "err" in result
         mock_missing.assert_called_once_with("completely.nonexistent.key.xyz123")
 
-    def test_localize_normalizes_locale_en_us(self):
+    def test_localize_normalizes_locale_en_us(self) -> None:
         result = tanjunLocalizer.localize("en-US", "commands.help.select.title")
         assert isinstance(result, str)
 
-    def test_localize_normalizes_locale_en_gb(self):
+    def test_localize_normalizes_locale_en_gb(self) -> None:
         result = tanjunLocalizer.localize("en-GB", "commands.help.select.title")
         assert isinstance(result, str)
 
-    def test_localize_normalizes_locale_en(self):
+    def test_localize_normalizes_locale_en(self) -> None:
         result = tanjunLocalizer.localize("en", "commands.help.select.title")
         assert isinstance(result, str)
 
-    def test_localize_all_normalized_same(self):
+    def test_localize_all_normalized_same(self) -> None:
         r1 = tanjunLocalizer.localize("en", "commands.help.select.title")
         r2 = tanjunLocalizer.localize("en-US", "commands.help.select.title")
         r3 = tanjunLocalizer.localize("en-GB", "commands.help.select.title")
@@ -141,17 +141,17 @@ class TestLocalizerLocalize:
 
 
 class TestLocalizerTestLocalize:
-    def test_test_localize_fallback(self):
+    def test_test_localize_fallback(self) -> None:
         loc = Localizer()
         result = loc.test_localize("de", "commands.help.select.title")
         assert isinstance(result, str)
 
-    def test_test_localize_no_translation_found(self):
+    def test_test_localize_no_translation_found(self) -> None:
         loc = Localizer()
         result = loc.test_localize("de", "nonexistent.key.xyz")
         assert "No translation found" in result or isinstance(result, str)
 
-    def test_test_localize_with_params(self):
+    def test_test_localize_with_params(self) -> None:
         """test_localize should pass parameters through Template.safe_substitute."""
         loc = Localizer()
         result = loc.test_localize("en", "commands.help.select.title")
@@ -159,7 +159,7 @@ class TestLocalizerTestLocalize:
 
 
 class TestLocalizerMalformedJson:
-    def test_malformed_json_returns_empty(self):
+    def test_malformed_json_returns_empty(self) -> None:
         loc = Localizer()
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", dir="locales", delete=False) as f:
             f.write("{invalid json")
@@ -169,7 +169,7 @@ class TestLocalizerMalformedJson:
             assert result == []
             os.unlink(f.name)
 
-    def test_empty_json_array(self):
+    def test_empty_json_array(self) -> None:
         loc = Localizer()
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", dir="locales", delete=False) as f:
             f.write("[]")
@@ -179,7 +179,7 @@ class TestLocalizerMalformedJson:
             assert result == []
             os.unlink(f.name)
 
-    def test_valid_json_but_wrong_structure(self):
+    def test_valid_json_but_wrong_structure(self) -> None:
         """JSON that is valid but not a list of dicts."""
         loc = Localizer()
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", dir="locales", delete=False) as f:
@@ -193,70 +193,70 @@ class TestLocalizerMalformedJson:
 
 
 class TestReportedLocales:
-    def test_reported_locales_is_list(self):
+    def test_reported_locales_is_list(self) -> None:
         from localizer import reported_locales
 
         assert isinstance(reported_locales, list)
 
 
 class TestTanjunLocalizerSingleton:
-    def test_singleton_exists(self):
+    def test_singleton_exists(self) -> None:
         assert tanjunLocalizer is not None
         assert isinstance(tanjunLocalizer, Localizer)
 
 
 class TestLocalizerEdgeCases:
-    def test_load_translations_english_has_many_entries(self):
+    def test_load_translations_english_has_many_entries(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         assert len(translations) > 100
 
-    def test_load_translations_german_has_entries(self):
+    def test_load_translations_german_has_entries(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("de")
         assert len(translations) > 50
 
-    def test_get_translation_case_insensitive(self):
+    def test_get_translation_case_insensitive(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         # Exact match
         result = loc.get_translation(translations, "commands.help.select.title")
         assert result is not None
 
-    def test_get_translation_with_uppercase_key(self):
+    def test_get_translation_with_uppercase_key(self) -> None:
         loc = Localizer()
         translations = loc.load_translations("en")
         result_lower = loc.get_translation(translations, "commands.help.select.title")
         result_upper = loc.get_translation(translations, "COMMANDS.HELP.SELECT.TITLE")
         assert result_lower == result_upper
 
-    def test_get_translation_empty_list(self):
+    def test_get_translation_empty_list(self) -> None:
         loc = Localizer()
         result = loc.get_translation([], "any.key")
         assert result is None
 
-    def test_localize_with_params(self):
+    def test_localize_with_params(self) -> None:
         """Test that Template.safe_substitute works for translations with parameters."""
         result = tanjunLocalizer.localize("en", "commands.help.select.title")
         assert isinstance(result, str)
 
     @patch("localizer.missingLocalization")
-    def test_localize_nonexistent_key_returns_error(self, mock_missing):
+    def test_localize_nonexistent_key_returns_error(self, mock_missing) -> None:
         mock_missing.return_value = None
         result = tanjunLocalizer.localize("en", "completely.nonexistent.key.xyz123")
         assert "err" in result
 
-    def test_test_localize_german(self):
+    def test_test_localize_german(self) -> None:
         loc = Localizer()
         result = loc.test_localize("de", "commands.help.select.title")
         assert isinstance(result, str)
 
-    def test_test_localize_nonexistent(self):
+    def test_test_localize_nonexistent(self) -> None:
         loc = Localizer()
         result = loc.test_localize("de", "nonexistent.key.xyz")
         assert isinstance(result, str)
 
-    def test_reported_locales_starts_empty(self):
+    def test_reported_locales_starts_empty(self) -> None:
         """The module-level reported_locales list tracks locales already reported."""
         from localizer import reported_locales
 

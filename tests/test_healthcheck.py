@@ -14,51 +14,51 @@ from healthcheck import READY_FILE, main
 
 class TestHealthcheckMain:
     @patch.object(Path, "exists", return_value=True)
-    def test_exits_0_when_ready_file_exists(self, mock_exists):
+    def test_exits_0_when_ready_file_exists(self, mock_exists) -> None:
         with pytest.raises(SystemExit) as exc_info:
             main()
         assert exc_info.value.code == 0
 
     @patch.object(Path, "exists", return_value=False)
-    def test_exits_1_when_ready_file_missing(self, mock_exists):
+    def test_exits_1_when_ready_file_missing(self, mock_exists) -> None:
         with pytest.raises(SystemExit) as exc_info:
             main()
         assert exc_info.value.code == 1
 
-    def test_ready_file_constant(self):
+    def test_ready_file_constant(self) -> None:
         assert Path("/tmp/bot_ready") == READY_FILE
 
-    def test_ready_file_is_absolute_path(self):
+    def test_ready_file_is_absolute_path(self) -> None:
         assert READY_FILE.is_absolute()
 
-    def test_ready_file_str_representation(self):
+    def test_ready_file_str_representation(self) -> None:
         assert str(READY_FILE) == "/tmp/bot_ready"
 
     @patch.object(Path, "exists", return_value=True)
-    def test_healthy_exit_code_is_zero(self, mock_exists):
+    def test_healthy_exit_code_is_zero(self, mock_exists) -> None:
         with pytest.raises(SystemExit) as exc_info:
             main()
         assert exc_info.value.code == 0
 
     @patch.object(Path, "exists", return_value=False)
-    def test_unhealthy_exit_code_is_one(self, mock_exists):
+    def test_unhealthy_exit_code_is_one(self, mock_exists) -> None:
         with pytest.raises(SystemExit) as exc_info:
             main()
         assert exc_info.value.code == 1
 
     @patch.object(Path, "exists", return_value=True)
-    def test_healthy_does_not_return_normally(self, mock_exists):
+    def test_healthy_does_not_return_normally(self, mock_exists) -> None:
         """main() should sys.exit, not return normally."""
         with pytest.raises(SystemExit):
             main()
 
     @patch.object(Path, "exists", return_value=False)
-    def test_unhealthy_does_not_return_normally(self, mock_exists):
+    def test_unhealthy_does_not_return_normally(self, mock_exists) -> None:
         with pytest.raises(SystemExit):
             main()
 
     @patch.object(Path, "exists", return_value=True)
-    def test_multiple_consecutive_checks(self, mock_exists):
+    def test_multiple_consecutive_checks(self, mock_exists) -> None:
         """Health check should work consistently across multiple calls."""
         for _ in range(5):
             with pytest.raises(SystemExit) as exc_info:

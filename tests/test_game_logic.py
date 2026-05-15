@@ -11,88 +11,88 @@ from commands.games.tic_tac_toe import TicTacToe
 
 
 class TestTicTacToeCheckWinner:
-    def test_empty_board_no_winner(self):
+    def test_empty_board_no_winner(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         result = ttt.check_winner()
         assert result is None
 
-    def test_row_win_first_row(self):
+    def test_row_win_first_row(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["⭕", "⭕", "⭕"], ["-", "-", "-"], ["-", "-", "-"]]
         ttt.player1_move = "⭕"
         result = ttt.check_winner()
         assert result == "⭕"
 
-    def test_row_win_second_row(self):
+    def test_row_win_second_row(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["-", "-", "-"], ["❌", "❌", "❌"], ["-", "-", "-"]]
         ttt.player2_move = "❌"
         result = ttt.check_winner()
         assert result == "❌"
 
-    def test_row_win_third_row(self):
+    def test_row_win_third_row(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["-", "-", "-"], ["-", "-", "-"], ["⭕", "⭕", "⭕"]]
         result = ttt.check_winner()
         assert result == "⭕"
 
-    def test_col_win_first_col(self):
+    def test_col_win_first_col(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["⭕", "-", "-"], ["⭕", "-", "-"], ["⭕", "-", "-"]]
         result = ttt.check_winner()
         assert result == "⭕"
 
-    def test_col_win_second_col(self):
+    def test_col_win_second_col(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["-", "❌", "-"], ["-", "❌", "-"], ["-", "❌", "-"]]
         result = ttt.check_winner()
         assert result == "❌"
 
-    def test_col_win_third_col(self):
+    def test_col_win_third_col(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["-", "-", "⭕"], ["-", "-", "⭕"], ["-", "-", "⭕"]]
         result = ttt.check_winner()
         assert result == "⭕"
 
-    def test_diagonal_top_left_to_bottom_right(self):
+    def test_diagonal_top_left_to_bottom_right(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["⭕", "-", "-"], ["-", "⭕", "-"], ["-", "-", "⭕"]]
         result = ttt.check_winner()
         assert result == "⭕"
 
-    def test_diagonal_top_right_to_bottom_left(self):
+    def test_diagonal_top_right_to_bottom_left(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["-", "-", "❌"], ["-", "❌", "-"], ["❌", "-", "-"]]
         result = ttt.check_winner()
         assert result == "❌"
 
-    def test_no_winner_mixed_board(self):
+    def test_no_winner_mixed_board(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["⭕", "❌", "⭕"], ["❌", "⭕", "❌"], ["❌", "⭕", "❌"]]
         result = ttt.check_winner()
         assert result is None
 
-    def test_partial_row_not_winner(self):
+    def test_partial_row_not_winner(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["⭕", "⭕", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         result = ttt.check_winner()
         assert result is None
 
-    def test_partial_col_not_winner(self):
+    def test_partial_col_not_winner(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["⭕", "-", "-"], ["⭕", "-", "-"], ["-", "-", "-"]]
         result = ttt.check_winner()
         assert result is None
 
-    def test_custom_board_parameter(self):
+    def test_custom_board_parameter(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         custom = [["⭕", "⭕", "⭕"], ["-", "-", "-"], ["-", "-", "-"]]
         result = ttt.check_winner(custom)
         assert result == "⭕"
 
-    def test_default_board_parameter_none_uses_self(self):
+    def test_default_board_parameter_none_uses_self(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["❌", "❌", "❌"], ["-", "-", "-"], ["-", "-", "-"]]
         result = ttt.check_winner(None)
@@ -100,7 +100,7 @@ class TestTicTacToeCheckWinner:
 
 
 class TestTicTacToeEvaluateBoard:
-    def test_player1_winning_board(self):
+    def test_player1_winning_board(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.player1_move = "⭕"
         ttt.player2_move = "❌"
@@ -109,7 +109,7 @@ class TestTicTacToeEvaluateBoard:
         # player1 wins → returns -1 (note: type annotation says None but actually returns int)
         assert result == -1
 
-    def test_player2_winning_board(self):
+    def test_player2_winning_board(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.player1_move = "⭕"
         ttt.player2_move = "❌"
@@ -118,7 +118,7 @@ class TestTicTacToeEvaluateBoard:
         # player2 wins → returns 1
         assert result == 1
 
-    def test_empty_board_returns_zero(self):
+    def test_empty_board_returns_zero(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.player1_move = "⭕"
         ttt.player2_move = "❌"
@@ -126,7 +126,7 @@ class TestTicTacToeEvaluateBoard:
         result = ttt.evaluate_board(board)
         assert result == 0
 
-    def test_draw_board_returns_zero(self):
+    def test_draw_board_returns_zero(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.player1_move = "⭕"
         ttt.player2_move = "❌"
@@ -134,7 +134,7 @@ class TestTicTacToeEvaluateBoard:
         result = ttt.evaluate_board(board)
         assert result == 0
 
-    def test_partial_board_no_winner(self):
+    def test_partial_board_no_winner(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.player1_move = "⭕"
         ttt.player2_move = "❌"
@@ -144,22 +144,22 @@ class TestTicTacToeEvaluateBoard:
 
 
 class TestTicTacToeIsFull:
-    def test_empty_board_not_full(self):
+    def test_empty_board_not_full(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         assert ttt.is_full() is False
 
-    def test_full_board(self):
+    def test_full_board(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["⭕", "❌", "⭕"], ["❌", "⭕", "❌"], ["❌", "⭕", "❌"]]
         assert ttt.is_full() is True
 
-    def test_one_empty_cell(self):
+    def test_one_empty_cell(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["⭕", "❌", "⭕"], ["❌", "⭕", "❌"], ["❌", "⭕", "-"]]
         assert ttt.is_full() is False
 
-    def test_custom_board_parameter(self):
+    def test_custom_board_parameter(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         ttt.board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         custom = [["⭕", "❌", "⭕"], ["❌", "⭕", "❌"], ["❌", "⭕", "❌"]]
@@ -167,37 +167,37 @@ class TestTicTacToeIsFull:
 
 
 class TestTicTacToeGetAvailableMoves:
-    def test_empty_board_all_moves(self):
+    def test_empty_board_all_moves(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         moves = ttt.get_available_moves(board)
         assert len(moves) == 9
 
-    def test_full_board_no_moves(self):
+    def test_full_board_no_moves(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["⭕", "❌", "⭕"], ["❌", "⭕", "❌"], ["❌", "⭕", "❌"]]
         moves = ttt.get_available_moves(board)
         assert len(moves) == 0
 
-    def test_one_move_available(self):
+    def test_one_move_available(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["⭕", "❌", "⭕"], ["❌", "⭕", "❌"], ["❌", "⭕", "-"]]
         moves = ttt.get_available_moves(board)
         assert moves == [8]
 
-    def test_center_available(self):
+    def test_center_available(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["⭕", "❌", "⭕"], ["❌", "-", "❌"], ["❌", "⭕", "❌"]]
         moves = ttt.get_available_moves(board)
         assert moves == [4]
 
-    def test_corners_available(self):
+    def test_corners_available(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["-", "❌", "-"], ["❌", "⭕", "❌"], ["-", "❌", "-"]]
         moves = ttt.get_available_moves(board)
         assert sorted(moves) == [0, 2, 6, 8]
 
-    def test_move_indices_map_correctly(self):
+    def test_move_indices_map_correctly(self) -> None:
         """Index i maps to row i//3 and column i%3."""
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
@@ -208,27 +208,27 @@ class TestTicTacToeGetAvailableMoves:
 
 
 class TestTicTacToeMinimaxMakeMove:
-    def test_creates_new_board(self):
+    def test_creates_new_board(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         new_board = ttt.minimax_make_move(board, 0, "⭕")
         assert new_board[0][0] == "⭕"
         assert board[0][0] == "-"  # Original unchanged
 
-    def test_does_not_modify_original(self):
+    def test_does_not_modify_original(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         new_board = ttt.minimax_make_move(board, 4, "❌")
         assert board[1][1] == "-"
         assert new_board[1][1] == "❌"
 
-    def test_center_move(self):
+    def test_center_move(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         new_board = ttt.minimax_make_move(board, 4, "⭕")
         assert new_board[1][1] == "⭕"
 
-    def test_corner_move(self):
+    def test_corner_move(self) -> None:
         ttt = TicTacToe.__new__(TicTacToe)
         board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
         new_board = ttt.minimax_make_move(board, 8, "❌")
@@ -236,7 +236,7 @@ class TestTicTacToeMinimaxMakeMove:
 
 
 class TestTicTacToeInit:
-    def test_default_board(self):
+    def test_default_board(self) -> None:
         player = type("FakePlayer", (), {"id": 1, "mention": "<@1>", "bot": False})()
         ttt = TicTacToe(player)
         assert ttt.board == [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
@@ -245,12 +245,12 @@ class TestTicTacToeInit:
         assert ttt.player1_move == "⭕"
         assert ttt.player2_move == "❌"
 
-    def test_default_player2_is_tanjun(self):
+    def test_default_player2_is_tanjun(self) -> None:
         player = type("FakePlayer", (), {"id": 1, "mention": "<@1>", "bot": False})()
         ttt = TicTacToe(player)
         assert ttt.player2 == "tanjun"
 
-    def test_bot_difficulty_range(self):
+    def test_bot_difficulty_range(self) -> None:
         player = type("FakePlayer", (), {"id": 1, "mention": "<@1>", "bot": False})()
         ttt = TicTacToe(player)
         assert 1 <= ttt.bot_difficulty <= 5
@@ -260,7 +260,7 @@ class TestTicTacToeInit:
 
 
 class TestConnect4CheckWinner:
-    def test_empty_board_no_winner(self):
+    def test_empty_board_no_winner(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -268,7 +268,7 @@ class TestConnect4CheckWinner:
         c4.board = [["⚫"] * 7 for _ in range(6)]
         assert c4.check_winner() is None
 
-    def test_horizontal_win(self):
+    def test_horizontal_win(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -280,7 +280,7 @@ class TestConnect4CheckWinner:
         c4.board[5][3] = "🔴"
         assert c4.check_winner() == "🔴"
 
-    def test_horizontal_win_yellow(self):
+    def test_horizontal_win_yellow(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -292,7 +292,7 @@ class TestConnect4CheckWinner:
         c4.board[4][4] = "🟡"
         assert c4.check_winner() == "🟡"
 
-    def test_vertical_win(self):
+    def test_vertical_win(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -304,7 +304,7 @@ class TestConnect4CheckWinner:
         c4.board[5][3] = "🔴"
         assert c4.check_winner() == "🔴"
 
-    def test_diagonal_top_left_to_bottom_right(self):
+    def test_diagonal_top_left_to_bottom_right(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -316,7 +316,7 @@ class TestConnect4CheckWinner:
         c4.board[5][3] = "🔴"
         assert c4.check_winner() == "🔴"
 
-    def test_diagonal_top_right_to_bottom_left(self):
+    def test_diagonal_top_right_to_bottom_left(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -328,7 +328,7 @@ class TestConnect4CheckWinner:
         c4.board[5][3] = "🟡"
         assert c4.check_winner() == "🟡"
 
-    def test_no_winner_mixed(self):
+    def test_no_winner_mixed(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -340,7 +340,7 @@ class TestConnect4CheckWinner:
         c4.board[5][3] = "🟡"
         assert c4.check_winner() is None
 
-    def test_three_in_a_row_not_winner(self):
+    def test_three_in_a_row_not_winner(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -354,7 +354,7 @@ class TestConnect4CheckWinner:
 
 
 class TestConnect4IsFull:
-    def test_empty_board_not_full(self):
+    def test_empty_board_not_full(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -362,7 +362,7 @@ class TestConnect4IsFull:
         c4.board = [["⚫"] * 7 for _ in range(6)]
         assert c4.is_full() is False
 
-    def test_full_board(self):
+    def test_full_board(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -370,7 +370,7 @@ class TestConnect4IsFull:
         c4.board = [["🔴" if (r + c) % 2 == 0 else "🟡" for c in range(7)] for r in range(6)]
         assert c4.is_full() is True
 
-    def test_one_empty_cell(self):
+    def test_one_empty_cell(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -381,7 +381,7 @@ class TestConnect4IsFull:
 
 
 class TestConnect4GetAvailableMoves:
-    def test_empty_board_has_moves(self):
+    def test_empty_board_has_moves(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -391,7 +391,7 @@ class TestConnect4GetAvailableMoves:
         # get_available_moves returns bottom-most empty cell per column
         assert len(moves) > 0
 
-    def test_full_board_no_moves(self):
+    def test_full_board_no_moves(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -400,7 +400,7 @@ class TestConnect4GetAvailableMoves:
         moves = c4.get_available_moves()
         assert len(moves) == 0
 
-    def test_moves_are_row_col_tuples(self):
+    def test_moves_are_row_col_tuples(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -415,7 +415,7 @@ class TestConnect4GetAvailableMoves:
 
 
 class TestConnect4AvailableColumns:
-    def test_empty_board_all_columns(self):
+    def test_empty_board_all_columns(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -424,7 +424,7 @@ class TestConnect4AvailableColumns:
         cols = c4.available_columns()
         assert cols == [0, 1, 2, 3, 4, 5, 6]
 
-    def test_first_row_filled(self):
+    def test_first_row_filled(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -434,7 +434,7 @@ class TestConnect4AvailableColumns:
         cols = c4.available_columns()
         assert cols == []
 
-    def test_partial_fill(self):
+    def test_partial_fill(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -447,7 +447,7 @@ class TestConnect4AvailableColumns:
 
 
 class TestConnect4MinimaxMakeMove:
-    def test_creates_new_board(self):
+    def test_creates_new_board(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -457,7 +457,7 @@ class TestConnect4MinimaxMakeMove:
         assert new_board[5][3] == "🔴"
         assert board[5][3] == "⚫"
 
-    def test_does_not_modify_original(self):
+    def test_does_not_modify_original(self) -> None:
         c4 = Connect4.__new__(Connect4)
         c4.rows = 6
         c4.columns = 7
@@ -469,7 +469,7 @@ class TestConnect4MinimaxMakeMove:
 
 
 class TestConnect4Init:
-    def test_default_board_size(self):
+    def test_default_board_size(self) -> None:
         player = type("FakePlayer", (), {"id": 1, "mention": "<@1>"})()
         c4 = Connect4(player)
         assert len(c4.board) == 6
@@ -477,26 +477,26 @@ class TestConnect4Init:
         assert c4.game_over is False
         assert c4.winner is None
 
-    def test_default_player2_is_tanjun(self):
+    def test_default_player2_is_tanjun(self) -> None:
         player = type("FakePlayer", (), {"id": 1, "mention": "<@1>"})()
         c4 = Connect4(player)
         assert c4.player2 == "tanjun"
 
-    def test_default_pieces(self):
+    def test_default_pieces(self) -> None:
         player = type("FakePlayer", (), {"id": 1, "mention": "<@1>"})()
         c4 = Connect4(player)
         assert c4.player1_move == "🔴"
         assert c4.player2_move == "🟡"
         assert c4.empty_cell == "⚫"
 
-    def test_empty_board(self):
+    def test_empty_board(self) -> None:
         player = type("FakePlayer", (), {"id": 1, "mention": "<@1>"})()
         c4 = Connect4(player)
         for row in c4.board:
             for cell in row:
                 assert cell == "⚫"
 
-    def test_bot_difficulty_range(self):
+    def test_bot_difficulty_range(self) -> None:
         player = type("FakePlayer", (), {"id": 1, "mention": "<@1>"})()
         c4 = Connect4(player)
         assert 1 <= c4.bot_difficulty <= 5
