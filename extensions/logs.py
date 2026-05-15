@@ -2610,7 +2610,9 @@ class LogsCog(commands.Cog):
         sendLog = False
 
         if message.guild:
-            deleted_by = await self._get_audit_log_performer(message.guild, discord.AuditLogAction.message_delete, message.author.id)
+            deleted_by = await self._get_audit_log_performer(
+                message.guild, discord.AuditLogAction.message_delete, message.author.id
+            )
         if deleted_by:
             description_parts.append(
                 tanjunLocalizer.localize(
