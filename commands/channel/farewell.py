@@ -177,8 +177,16 @@ async def get_image_or_gif_frames(url) -> None:  # type: ignore[no-untyped-def]
     return frames, duration  # type: ignore[return-value]
 
 
-def process_image(background_frames, avatar_frames, user) -> None:  # type: ignore[no-untyped-def]
+def process_image(background_frames, avatar_frames, user, duration=100):  # type: ignore[no-untyped-def]
+    # Cap frames to avoid excessive processing on large GIFs
+    max_frames = 50
     num_frames = max(len(background_frames), len(avatar_frames))
+    if num_frames > max_frames:
+        step = num_frames // max_frames
+        background_frames = background_frames[::step]
+        avatar_frames = avatar_frames[::step]
+        num_frames = max(len(background_frames), len(avatar_frames))
+
     background_frames *= (num_frames // len(background_frames)) + 1
     avatar_frames *= (num_frames // len(avatar_frames)) + 1
     background_frames = background_frames[:num_frames]
@@ -199,6 +207,10 @@ def process_image(background_frames, avatar_frames, user) -> None:  # type: igno
     mask_draw = ImageDraw.Draw(mask)
     mask_draw.ellipse((0, 0, 150, 150), fill=255)
 
+    # Load fonts once outside the loop
+    username_font = ImageFont.truetype("assets/fonts/Arial.ttf", 36)
+    info_font = ImageFont.truetype("assets/fonts/Arial.ttf", 24)
+
     result_frames = []
 
     for frame_index in range(num_frames):
@@ -212,9 +224,6 @@ def process_image(background_frames, avatar_frames, user) -> None:  # type: igno
         overlay_draw = ImageDraw.Draw(overlay)
         overlay_draw.rectangle([0, 0, 600, 400], fill=(0, 0, 0, 100))
         frame = Image.alpha_composite(frame, overlay)
-
-        username_font = ImageFont.truetype("assets/fonts/Arial.ttf", 36)
-        info_font = ImageFont.truetype("assets/fonts/Arial.ttf", 24)
 
         draw = ImageDraw.Draw(frame)
 
@@ -258,7 +267,9 @@ def process_image(background_frames, avatar_frames, user) -> None:  # type: igno
         save_all=True,
         append_images=result_frames[1:],
         loop=0,
-        duration=background_frames[0].info.get("duration", 100),
+        duration=duration,
+        optimize=True,
+        disposal=2,
     )
     img_byte_arr.seek(0)
 
@@ -270,7 +281,7 @@ async def farewellUser(member: discord.Member) -> None:
     if farewellChannel is None:
         return
 
-    background_frames, _ = await get_image_or_gif_frames(farewellChannel.image_background)  # type: ignore[func-returns-value, misc, call-overload, name-defined]
+    background_frames, bg_duration = await get_image_or_gif_frames(farewellChannel.image_background)  # type: ignore[func-returns-value, misc, call-overload, name-defined]
 
     avatar_url = str(member.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)  # type: ignore[func-returns-value, misc]
@@ -282,6 +293,7 @@ async def farewellUser(member: discord.Member) -> None:
         background_frames,  # type: ignore[has-type]
         avatar_frames,  # type: ignore[has-type]
         member,
+        bg_duration,
     )
 
     file = discord.File(img_byte_arr, filename="bg.gif")  # type: ignore[arg-type]
