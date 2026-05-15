@@ -828,15 +828,15 @@ class NumericStringParser:
         expop = Literal("^")
 
         expr = Forward()
-        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(self.pushFirst) | (
+        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).set_parse_action(self.pushFirst) | (
             lpar + expr.suppress() + rpar
-        ).setParseAction(self.pushUMinus)
+        ).set_parse_action(self.pushUMinus)
 
         factor = Forward()
-        factor << atom + ZeroOrMore((expop + factor).setParseAction(self.pushFirst))
+        factor << atom + ZeroOrMore((expop + factor).set_parse_action(self.pushFirst))
 
-        term = factor + ZeroOrMore((multop + factor).setParseAction(self.pushFirst))
-        expr << term + ZeroOrMore((addop + term).setParseAction(self.pushFirst))
+        term = factor + ZeroOrMore((multop + factor).set_parse_action(self.pushFirst))
+        expr << term + ZeroOrMore((addop + term).set_parse_action(self.pushFirst))
 
         self.bnf = expr
         self.exprStack = []
@@ -904,7 +904,7 @@ class NumericStringParser:
 
     def eval(self, num_string, parseAll=True):
         self.exprStack = []
-        self.bnf.parseString(num_string, parseAll)
+        self.bnf.parse_string(num_string, parseAll)
         val = self.evaluateStack(self.exprStack[:])
         return val
 
