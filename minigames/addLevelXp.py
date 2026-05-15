@@ -29,7 +29,7 @@ async def addLevelXp(message: discord.Message) -> None:
     if message.author.bot or await check_if_opted_out(str(message.author.id)):
         return
 
-    if message.guild == None:
+    if message.guild is None:
         return
 
     guild_id = str(message.guild.id)
@@ -114,7 +114,7 @@ async def calculate_xp(message: discord.Message, guild_id: str) -> int:
 
 
 async def handle_level_up(message: discord.Message, new_level: int) -> None:
-    if message.guild == None:
+    if message.guild is None:
         return
     guild_id = str(message.guild.id)
     if await get_levelup_message_status(guild_id) and message.author.id not in notifiedUsers:
@@ -150,7 +150,7 @@ async def format_level_up_message(guild_id: str, user_mention: str, new_level: i
 
 
 async def update_user_roles(message: discord.Message, new_level: int, guild_id: str) -> None:
-    if message.guild == None or not isinstance(message.author, discord.Member):
+    if message.guild is None or not isinstance(message.author, discord.Member):
         return
     level_roles = await get_level_roles(guild_id)
     for lr in level_roles:

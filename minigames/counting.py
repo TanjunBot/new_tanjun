@@ -11,7 +11,7 @@ async def counting(message: discord.Message) -> None:
     if message.author.bot:
         return
 
-    if message.guild == None:
+    if message.guild is None:
         embed: discord.Embed = tanjunEmbed(
             title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
             description=tanjunLocalizer.localize(
