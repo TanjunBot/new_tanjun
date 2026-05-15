@@ -145,7 +145,7 @@ async def schedule_message(
         start_time = send_time - timedelta(hours=1)
         end_time = send_time + timedelta(hours=1)
         existing_messages = await get_user_scheduled_messages_in_timeframe(
-            commandInfo.user.id, start_time, end_time, commandInfo.guild.id
+            str(commandInfo.user.id), start_time, end_time, str(commandInfo.guild.id)
         )
 
         if existing_messages:
@@ -165,9 +165,9 @@ async def schedule_message(
     attachment_urls = [att.url for att in attachments] if attachments else None
 
     await add_scheduled_message(
-        guild_id=commandInfo.guild.id if channel and commandInfo.guild else None,
-        channel_id=channel.id if channel else None,
-        user_id=commandInfo.user.id,
+        guild_id=str(commandInfo.guild.id) if channel and commandInfo.guild else None,
+        channel_id=str(channel.id) if channel else None,
+        user_id=str(commandInfo.user.id),
         content=content,
         send_time=send_time,
         repeat_interval=utility.relativeTimeToSeconds(repeat) if repeat else None,

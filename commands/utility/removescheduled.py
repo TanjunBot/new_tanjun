@@ -67,7 +67,7 @@ class MessageSelectView(View):
 
 
 async def remove_scheduled_message(commandInfo: utility.CommandInfo, message_id: int | None = None) -> None:
-    messages = await get_scheduled_messages(commandInfo.user.id)
+    messages = await get_scheduled_messages(str(commandInfo.user.id))
 
     if not messages:
         embed = utility.tanjunEmbed(
