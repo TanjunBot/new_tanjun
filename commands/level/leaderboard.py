@@ -16,11 +16,6 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
             tanjunLocalizer.localize(commandInfo.locale, "commands.level.leaderboard.no_data")
         )
         return
-    if len(leaderboard) == 0:
-        await commandInfo.message.channel.send(
-            tanjunLocalizer.localize(commandInfo.locale, "commands.level.leaderboard.no_data")
-        )
-        return
     if page > len(leaderboard) / 10 + 1:
         page = int(len(leaderboard) / 10 + 1)
 
