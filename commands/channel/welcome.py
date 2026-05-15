@@ -77,7 +77,7 @@ async def setWelcomeChannel(
         await commandInfo.reply(embed=embed)
         return
 
-    if image_background and not checkIfHasPro(commandInfo.user):  # type: ignore[truthy-bool, arg-type]
+    if image_background and not checkIfHasPro(commandInfo.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 commandInfo.locale,

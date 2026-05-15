@@ -507,7 +507,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
+        if not utility.checkIfHasPro(self.commandInfo.guild.id):  # type: ignore[arg-type]
             await self.pro_required_error(interaction)
             return
         modal = start_giveaway.CustomNameModal(
@@ -614,7 +614,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
+        if not utility.checkIfHasPro(self.commandInfo.guild.id):  # type: ignore[arg-type]
             await self.pro_required_error(interaction)
             return
         modal = start_giveaway.StartTimeModal(
@@ -652,7 +652,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
+        if not utility.checkIfHasPro(self.commandInfo.guild.id):  # type: ignore[arg-type]
             await self.pro_required_error(interaction)
             return
         modal = start_giveaway.DayRequirementModal(
@@ -700,7 +700,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
+        if not utility.checkIfHasPro(self.commandInfo.guild.id):  # type: ignore[arg-type]
             await self.pro_required_error(interaction)
             return
         modal = start_giveaway.VoiceRequirementModal(
@@ -722,7 +722,7 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
+        if not utility.checkIfHasPro(self.commandInfo.guild.id):  # type: ignore[arg-type]
             await self.pro_required_error(interaction)
             return
         view = start_giveaway.AddChannelRequirementView(self.commandInfo, self)
