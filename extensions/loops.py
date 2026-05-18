@@ -9,7 +9,7 @@ from datetime import time
 import discord
 from discord.ext import commands, tasks
 
-from ai.refill_token import refillAiToken
+from ai.refill_token import refill_ai_token
 from api import get_all_twitch_notification_uuids
 from commands.utility.claimBoosterChannel import (
     remove_claimed_booster_channels_that_are_expired,
@@ -70,7 +70,7 @@ class LoopCog(commands.Cog):
     @tasks.loop(seconds=60)
     async def refillAiTokenLoop(self) -> None:
         try:
-            await refillAiToken(self.bot)
+            await refill_ai_token(self.bot)
         except Exception:
             pass
 
