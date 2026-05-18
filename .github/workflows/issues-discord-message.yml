@@ -18,31 +18,24 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           JSON_PAYLOAD=$(jq -n \
-            --arg title "[Fertiggestellt]: $TITLE" \
-            --arg description "$BODY" \
             --arg color "5763719" \
-            --arg author_name "$AUTHOR_NAME" \
-            --arg author_url "$AUTHOR_URL" \
-            --arg author_icon "$AUTHOR_ICON" \
-            --arg footer_text "Issue #$ISSUE_NUMBER" \
-            --arg timestamp "$TIMESTAMP" \
             --arg username "Tanjun Issue Tracker" \
           '{
             "content": null,
             "embeds": [
               {
-                "title": $title,
-                "description": $description,
+                "title": ("[Closed]: " + env.TITLE),
+                "description": env.BODY,
                 "color": ($color | tonumber),
                 "author": {
-                  "name": $author_name,
-                  "url": $author_url,
-                  "icon_url": $author_icon
+                  "name": env.AUTHOR_NAME,
+                  "url": env.AUTHOR_URL,
+                  "icon_url": env.AUTHOR_ICON
                 },
                 "footer": {
-                  "text": $footer_text
+                  "text": ("Issue #" + env.ISSUE_NUMBER)
                 },
-                "timestamp": $timestamp
+                "timestamp": env.TIMESTAMP
               }
             ],
             "username": $username,
