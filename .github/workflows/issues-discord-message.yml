@@ -6,50 +6,46 @@ jobs:
   notify_discord:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@main
-      - name: Extract event information
-        id: event_info
-        run: |
-          echo "title=[Fertiggestellt]: ${{ github.event.issue.title }}" >> $GITHUB_ENV
-          # Store the issue body in a variable with backticks replaced
-          description_raw=$(echo "${{ github.event.issue.body }}" | sed 's/`/\\/g')
-          # Convert the modified body to JSON format
-          description=$(echo "$description_raw" | jq -sRr @json)
-          echo "description=$description" >> $GITHUB_ENV
-          echo "author_name=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-          echo "author_url=https://github.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-          echo "author_profileicon=https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}" >> $GITHUB_ENV
-          echo "timestamp=${{ github.event.issue.closed_at }}" >> $GITHUB_ENV
-          echo "footer_text=Issue #${{ github.event.issue.number }}" >> $GITHUB_ENV
-          echo "color=5763719" >> $GITHUB_ENV
-          echo "username=Tanjun Issue Tracker" >> $GITHUB_ENV
       - name: Post update on Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          TITLE: ${{ github.event.issue.title }}
+          BODY: ${{ github.event.issue.body }}
+          AUTHOR_NAME: ${{ github.event.issue.user.login }}
+          AUTHOR_URL: https://github.com/${{ github.event.issue.user.login }}
+          AUTHOR_ICON: https://avatars.githubusercontent.com/${{ github.event.issue.user.login }}
+          TIMESTAMP: ${{ github.event.issue.closed_at }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          payload=$(cat <<EOF
-          {
+          JSON_PAYLOAD=$(jq -n \
+            --arg title "[Fertiggestellt]: $TITLE" \
+            --arg description "$BODY" \
+            --arg color "5763719" \
+            --arg author_name "$AUTHOR_NAME" \
+            --arg author_url "$AUTHOR_URL" \
+            --arg author_icon "$AUTHOR_ICON" \
+            --arg footer_text "Issue #$ISSUE_NUMBER" \
+            --arg timestamp "$TIMESTAMP" \
+            --arg username "Tanjun Issue Tracker" \
+          '{
             "content": null,
             "embeds": [
               {
-                "title": "${{ env.title }}",
-                "description": ${{ env.description }},
-                "color": ${{ env.color }},
+                "title": $title,
+                "description": $description,
+                "color": ($color | tonumber),
                 "author": {
-                  "name": "${{ env.author_name }}",
-                  "url": "${{ env.author_url }}",
-                  "icon_url": "${{ env.author_profileicon }}"
+                  "name": $author_name,
+                  "url": $author_url,
+                  "icon_url": $author_icon
                 },
                 "footer": {
-                  "text": "${{ env.footer_text }}"
+                  "text": $footer_text
                 },
-                "timestamp": "${{ env.timestamp }}"
+                "timestamp": $timestamp
               }
             ],
-            "username": "${{ env.username }}",
+            "username": $username,
             "attachments": []
-          }
-          EOF
-          )
-          curl -X POST -H 'Content-Type: application/json' -d "$payload" $DISCORD_WEBHOOK_URL
+          }')
+          curl -X POST -H 'Content-Type: application/json' -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_URL"
