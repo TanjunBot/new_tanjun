@@ -129,6 +129,12 @@ class AiCommands(discord.app_commands.Group):
         )
 
         situation = await getCustomSituation(personality)
+        if situation is None:
+            await interaction.followup.send(
+                "This custom situation no longer exists.",
+                ephemeral=True,
+            )
+            return
 
         await ask_gpt(
             commandInfo,

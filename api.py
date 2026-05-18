@@ -692,6 +692,13 @@ async def create_tables(bot=None) -> None:
         table_query = tables[table_name]
         await execute_action(table_query, bot=bot)
 
+    # Migration: add attachments column to existing scheduledMessages tables
+    await execute_action(
+        "ALTER TABLE scheduledMessages "
+        "ADD COLUMN IF NOT EXISTS attachments VARCHAR(2048)",
+        bot=bot,
+    )
+
 
 async def add_warning(
     guild_id: str | int, user_id: str | int, reason: str, expiration_date: datetime, created_by: str | int
@@ -2506,7 +2513,7 @@ async def check_if_reporter_is_blocked(guild_id: str, reporter_id: str) -> bool:
 
 async def get_report_channel(guild_id: str) -> str | None:
     result = await execute_query("SELECT channelId FROM reportchannel WHERE guildId = %s", (guild_id,))
-    return result[0] if result else None
+    return result[0][0] if result else None
 
 
 async def set_report_channel(guild_id: str, channel_id: str) -> None:

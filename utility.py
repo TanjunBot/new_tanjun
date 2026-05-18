@@ -903,13 +903,16 @@ class NumericStringParser:
 async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
     async with aiohttp.ClientSession() as session:
 
-        async def fetch(url: str) -> dict | None:
-            async with session.get(url) as response:
+        async def fetch(url: str, params: dict[str, str | int]) -> dict | None:
+            async with session.get(url, params=params) as response:
                 if response.status != 200:
                     return None
                 return await response.json()
 
-        r = await fetch(f"https://api.giphy.com/v1/gifs/search?api_key={giphyAPIKey}&q={query}&limit={limit}&rating=pg")
+        r = await fetch(
+            "https://api.giphy.com/v1/gifs/search",
+            {"api_key": giphyAPIKey, "q": query, "limit": limit, "rating": "pg"},
+        )
 
         if r is None:
             return []
@@ -917,7 +920,13 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
         # nosec: B311
         random.shuffle(results)
 
-        return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
+        urls: list[str] = []
+        for item in results:
+            url = item.get("images", {}).get("downsized_medium", {}).get("url")
+            if url:
+                urls.append(url)
+
+        return urls[:amount]
 
 
 def get_highest_exponent(polynomial: str) -> int:

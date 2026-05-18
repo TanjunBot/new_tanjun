@@ -58,6 +58,12 @@ async def akinator(commandInfo: utility.CommandInfo, theme: str | None = None) -
         )
         async def akinator_yes(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
+            if interaction.user.id != commandInfo.user.id:  # type: ignore[misc]
+                await interaction.followup.send(
+                    tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.akinator.notYourGame"),
+                    ephemeral=True,
+                )
+                return
             await update_embed(interaction, "y")
 
         @discord.ui.button(

@@ -259,15 +259,26 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         )
         async def remove(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             nonlocal trigger_messages
+            nonlocal page
+            nonlocal selected_channel
             await remove_trigger_message(
                 commandInfo.guild.id,
                 trigger_messages[page].id,
             )
             trigger_messages = await get_trigger_messages(commandInfo.guild.id)  # type: ignore[union-attr]
             nonlocal channels
+            if not trigger_messages:
+                channels = []
+                page = 0
+                selected_channel = 0
+                await self.update_message(interaction)
+                return
+
+            page = min(page, len(trigger_messages) - 1)
+            selected_channel = 0
             channels = await get_trigger_message_channels(
                 commandInfo.guild.id,
-                trigger_messages[0].id,
+                trigger_messages[page].id,
             )
             await self.update_message(interaction)
 
