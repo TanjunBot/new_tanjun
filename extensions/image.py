@@ -34,11 +34,11 @@ class ImageCommands(discord.app_commands.Group):
         type=[
             app_commands.Choice(
                 name=app_commands.locale_str("image_blur_params_type_gaussian"),
-                value="gussian",
+                value="gaussian",
             ),
             app_commands.Choice(
                 name=app_commands.locale_str("image_blur_params_type_boxblurr"),
-                value="boxblurr",
+                value="boxblur",
             ),
         ]
     )

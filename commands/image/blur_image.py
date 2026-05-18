@@ -38,7 +38,7 @@ async def blur_image(  # type: ignore[no-untyped-def]
     image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
     if type == "gaussian":
         image = image.filter(ImageFilter.GaussianBlur(radius))  # type: ignore[attr-defined]
-    elif type == "boxblurr":
+    elif type == "boxblur":
         image = image.filter(ImageFilter.BoxBlur(radius))  # type: ignore[attr-defined]
 
     buffer = BytesIO()
