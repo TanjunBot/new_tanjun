@@ -79,7 +79,9 @@ async def apply_filter(
         if filter_func is None:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.error.unknown_filter.title"),
-                description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.error.unknown_filter.description"),
+                description=tanjunLocalizer.localize(
+                    str(commandInfo.locale), "commands.image.error.unknown_filter.description"
+                ),
             )
             await commandInfo.reply(embed=embed)
             return
