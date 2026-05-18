@@ -2603,7 +2603,7 @@ class LogsCog(commands.Cog):
 
         sendLog = False
 
-        async for log in message.guild.audit_logs(limit=1, user=message.author):  # type: ignore[union-attr]
+        async for log in message.guild.audit_logs(limit=1, action=discord.AuditLogAction.message_delete):  # type: ignore[union-attr]
             deleted_by = log.user
         if deleted_by:
             description_parts.append(
@@ -2753,7 +2753,7 @@ class LogsCog(commands.Cog):
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.name", role=role.mention))
 
         created_by = None
-        async for log in role.guild.audit_logs(limit=1, user=role.guild.owner):  # type: ignore[arg-type]
+        async for log in role.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_create):
             created_by = log.user
         if created_by:
             description_parts.append(
@@ -2831,7 +2831,7 @@ class LogsCog(commands.Cog):
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleDelete.name", role=role.name))
 
         deleted_by = None
-        async for log in role.guild.audit_logs(limit=1, user=role.guild.owner):  # type: ignore[arg-type]
+        async for log in role.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_delete):
             deleted_by = log.user
         if deleted_by:
             description_parts.append(
@@ -2912,7 +2912,7 @@ class LogsCog(commands.Cog):
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.name", role=after.name))
 
         updated_by = None
-        async for log in after.guild.audit_logs(limit=1, user=after.guild.owner):  # type: ignore[arg-type]
+        async for log in after.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_update):
             updated_by = log.user
         if updated_by:
             description_parts.append(
