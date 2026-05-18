@@ -11,6 +11,7 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 from typing import Any
 
 import aiohttp
@@ -41,6 +42,21 @@ except ImportError:
 from utility import addFeedback, missingLocalization, tanjunEmbed
 
 
+def _mysql_defaults_file(user: str, password: str, host: str, port: int) -> str:
+    """Create a temporary MySQL defaults file with credentials. Returns the file path."""
+    content = (
+        "[client]\n"
+        f"user={user}\n"
+        f"password={password}\n"
+        f"host={host}\n"
+        f"port={port}\n"
+    )
+    fd, path = tempfile.mkstemp(prefix="mysql_", suffix=".cnf", text=True)
+    with os.fdopen(fd, "w") as f:
+        f.write(content)
+    return path
+
+
 class administrationCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
@@ -56,11 +72,7 @@ class administrationCog(commands.Cog):
 
     @commands.command()
     async def feedback(self, ctx: commands.Context, *, content: str) -> None:  # type: ignore[type-arg]
-        if ctx.author.id not in [
-            689755528947433555,
-            892113092387942420,
-            806086469268668437,
-        ]:
+        if ctx.author.id not in config.adminIds:
             return
         addFeedback(content, ctx.author.name)
         await ctx.send("Feedback wurde hinzugefügt. Vielen dank!")
@@ -571,15 +583,12 @@ Das Tanjun-Team
 
         # Backup current database
         backup_file = "current_db_backup.sql"
+        defaults_file = _mysql_defaults_file(
+            config.database_user, config.database_password, config.database_ip, config.database_port
+        )
         dump_command = [
             "mysqldump",
-            "-h",
-            config.database_ip,
-            "-P",
-            str(config.database_port),
-            "-u",
-            config.database_user,
-            f"--password={config.database_password}",
+            f"--defaults-extra-file={defaults_file}",
             config.database_schema,
         ]
 
@@ -590,6 +599,11 @@ Das Tanjun-Team
         except Exception as e:
             await ctx.channel.send(f"Fehler beim Erstellen des Backups: {e}\nAbbruch aus Sicherheitsgründen.")
             return
+        finally:
+            try:
+                os.unlink(defaults_file)
+            except OSError:
+                pass
 
         # Prepare filtered sql
         filtered_sql_file = "filtered_import.sql"

@@ -2246,13 +2246,23 @@ async def get_log_channel(guild_id: str) -> str | None:
     return result[0][0] if result else None
 
 
+_LOG_ENABLE_COLUMNS = frozenset({
+    "guildId", "automodRuleCreate", "automodRuleUpdate", "automodRuleDelete",
+    "automodAction", "guildChannelDelete", "guildChannelCreate", "guildChannelUpdate",
+    "guildUpdate", "inviteCreate", "inviteDelete", "memberJoin", "memberLeave",
+    "memberUpdate", "userUpdate", "memberBan", "memberUnban", "presenceUpdate",
+    "messageEdit", "messageDelete", "reactionAdd", "reactionRemove",
+    "guildRoleCreate", "guildRoleDelete", "guildRoleUpdate",
+})
+
+
 async def set_log_enable(guild_id: str, **kwargs: Any) -> None:
     query = "UPDATE logEnables SET "
     end_query = " WHERE guildId = %s"
-    params = []
+    params: list[Any] = []
 
     for key, value in kwargs.items():
-        if value is not None:
+        if value is not None and key in _LOG_ENABLE_COLUMNS:
             query += f"{key} = %s, "
             params.append(value)
 
@@ -2298,17 +2308,6 @@ async def get_log_enable(guild_id: str | int) -> LogEnableModel:
         guild_role_delete=True,
         guild_role_update=True,
     )
-
-
-async def test_log_enable() -> None:
-    query = "UPDATE logEnables SET automodRuleCreate = %s WHERE guildId = %s"
-    params = (False, str(947219439764521060))
-    await execute_action(query, params)
-
-
-async def test_log_enable_2() -> None:
-    result = await get_log_enable(947219439764521060)
-    print(result)
 
 
 async def add_scheduled_message(

@@ -2,6 +2,7 @@ import random
 
 import discord
 
+import config
 import utility
 from api import addCustomSituation, getCustomSituation, getCustomSituationFromUser
 from localizer import tanjunLocalizer
@@ -105,7 +106,9 @@ async def add_custom_situation(  # type: ignore[no-untyped-def]
 
     customSituation = await getCustomSituation(name=name)
 
-    if customSituation and commandInfo.user.id != 689755528947433555:
+    is_admin = commandInfo.user.id in config.adminIds
+
+    if customSituation and not is_admin:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.namealreadyexists.title"),
             description=tanjunLocalizer.localize(
@@ -118,7 +121,7 @@ async def add_custom_situation(  # type: ignore[no-untyped-def]
 
     userCustomSituation = await getCustomSituationFromUser(commandInfo.user.id)
 
-    if userCustomSituation and commandInfo.user.id != 689755528947433555:
+    if userCustomSituation and not is_admin:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.alreadyexists.title"),
             description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.addcustom.alreadyexists.description"),
@@ -130,7 +133,7 @@ async def add_custom_situation(  # type: ignore[no-untyped-def]
         name=name,
         user_id=(
             commandInfo.user.id
-            if commandInfo.user.id != 689755528947433555
+            if not is_admin
             else random.randint(100000000000000000, 999999999999999999)
         ),
         situation=situation,
