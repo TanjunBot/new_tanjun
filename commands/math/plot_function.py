@@ -78,6 +78,13 @@ def _safe_eval_node(node: ast.AST, x_val: np.ndarray | float) -> np.ndarray | fl
         if isinstance(node.op, ast.USub):
             return -operand
         raise TypeError(f"Unsupported unary operator: {type(node.op).__name__}")
+    if isinstance(node, ast.Attribute):
+        if isinstance(node.value, ast.Name) and node.value.id == "np":
+            attr_name = node.attr
+            if attr_name in _ALLOWED_NP_FUNCTIONS:
+                return getattr(np, attr_name)
+            raise ValueError(f"np.{attr_name} is not allowed")
+        raise TypeError(f"Unsupported attribute: {ast.dump(node)}")
     if isinstance(node, ast.Call):
         if isinstance(node.func, ast.Attribute):
             if isinstance(node.func.value, ast.Name) and node.func.value.id == "np":

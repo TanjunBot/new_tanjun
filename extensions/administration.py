@@ -645,13 +645,7 @@ Das Tanjun-Team
             subprocess.run(
                 [
                     "mysql",
-                    "-h",
-                    config.database_ip,
-                    "-P",
-                    str(config.database_port),
-                    "-u",
-                    config.database_user,
-                    f"--password={config.database_password}",
+                    f"--defaults-extra-file={defaults_file}",
                     "-e",
                     db_recreate_cmd,
                 ],
@@ -662,13 +656,7 @@ Das Tanjun-Team
                 subprocess.run(
                     [
                         "mysql",
-                        "-h",
-                        config.database_ip,
-                        "-P",
-                        str(config.database_port),
-                        "-u",
-                        config.database_user,
-                        f"--password={config.database_password}",
+                        f"--defaults-extra-file={defaults_file}",
                         config.database_schema,
                     ],
                     stdin=f,
