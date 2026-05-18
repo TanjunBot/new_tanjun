@@ -56,7 +56,7 @@ class LoopCog(commands.Cog):
     @tasks.loop(seconds=5)
     async def clearNotifiedUsersLoop(self) -> None:
         try:
-            await clearNotifiedUsers(self.bot)  # type: ignore[misc, call-arg, func-returns-value]  # type: ignore[func-returns-value]  # type: ignore[func-returns-value]  # type: ignore[func-returns-value]
+            await clearNotifiedUsers(self.bot)
         except Exception:
             pass
 

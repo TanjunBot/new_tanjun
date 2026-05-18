@@ -22,7 +22,8 @@ from api import (
 from localizer import tanjunLocalizer
 from utility import get_level_for_xp  # , checkIfHasPro
 
-notifiedUsers: list[int] = []
+notifiedUsers: set[int] = set()
+_MAX_NOTIFIED_USERS = 10_000
 
 
 async def addLevelXp(message: discord.Message) -> None:
@@ -120,14 +121,16 @@ async def handle_level_up(message: discord.Message, new_level: int) -> None:
     if await get_levelup_message_status(guild_id) and message.author.id not in notifiedUsers:
         channel = await determine_levelup_channel(message, guild_id)
         await channel.send(await format_level_up_message(guild_id, message.author.mention, new_level, message.guild))
-        notifiedUsers.append(message.author.id)
+        notifiedUsers.add(message.author.id)
+        if len(notifiedUsers) > _MAX_NOTIFIED_USERS:
+            notifiedUsers.pop()
 
     await update_user_roles(message, new_level, guild_id)
 
 
-def clearNotifiedUsers() -> None:
+def clearNotifiedUsers(*args: object, **kwargs: object) -> None:
     global notifiedUsers
-    notifiedUsers = []
+    notifiedUsers.clear()
 
 
 async def determine_levelup_channel(message: discord.Message, guild_id: str) -> discord.abc.Messageable:

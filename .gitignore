@@ -171,6 +171,9 @@ share/
 pyvenv.cfg
 lib64
 
+# Debug / temporary files
+tmp.py
+
 # Mypy Logs
 current_mypy.txt
 mypy_errors.txt
