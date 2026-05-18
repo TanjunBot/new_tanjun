@@ -1,26 +1,20 @@
-import math
-import random
-
 import discord
 
 from api import (
     check_if_opted_out,
-    get_blacklist,
-    get_channel_boost,
     get_custom_formula,
     get_level_roles,
     get_level_system_status,
     get_levelup_channel,
     get_levelup_message,
     get_levelup_message_status,
-    get_user_boost,
-    get_user_roles_boosts,
     get_user_xp,
     get_xp_scaling,
     update_user_xp,
 )
 from localizer import tanjunLocalizer
-from utility import get_level_for_xp  # , checkIfHasPro
+from minigames._xp_core import calculate_xp, is_entity_blacklisted
+from utility import get_level_for_xp
 
 notifiedUsers: set[int] = set()
 _MAX_NOTIFIED_USERS = 10_000
@@ -30,14 +24,15 @@ async def addLevelXp(message: discord.Message) -> None:
     if message.author.bot or await check_if_opted_out(str(message.author.id)):
         return
 
-    if message.guild == None:
+    if message.guild is None:
         return
 
     guild_id = str(message.guild.id)
     if not await get_level_system_status(guild_id):
         return
 
-    if await is_blacklisted(message, guild_id):
+    role_ids = {str(role.id) for role in message.author.roles} if hasattr(message.author, "roles") else set()
+    if await is_entity_blacklisted(guild_id, str(message.author.id), str(message.channel.id), role_ids):
         return
 
     scaling, custom_formula, xp_to_add = await fetch_xp_details(message, guild_id)
@@ -53,62 +48,20 @@ async def addLevelXp(message: discord.Message) -> None:
         await handle_level_up(message, new_level)
 
 
-async def is_blacklisted(message: discord.Message, guild_id: str) -> bool:
-    blacklist = await get_blacklist(guild_id)
-    user_id = str(message.author.id)
-    channel_id = str(message.channel.id)
-    user_role_ids = {str(role.id) for role in message.author.roles} if hasattr(message.author, "roles") else []
-
-    return (
-        channel_id in (channel.entity_id for channel in blacklist["channels"])
-        or user_id in (user.entity_id for user in blacklist["users"])
-        or any(role_id in user_role_ids for role_id in (role.entity_id for role in blacklist["roles"]))
-    )
-
-
 async def fetch_xp_details(message: discord.Message, guild_id: str) -> tuple[str, str | None, int]:
     scaling = await get_xp_scaling(guild_id)
     custom_formula = await get_custom_formula(guild_id)
-    xp_to_add = await calculate_xp(message, guild_id)
+    xp_to_add = await calculate_xp(
+        guild_id,
+        str(message.author.id),
+        str(message.channel.id),
+        [str(role.id) for role in (message.author.roles if hasattr(message.author, "roles") else [])],
+    )
     return scaling, custom_formula, xp_to_add
 
 
-async def calculate_xp(message: discord.Message, guild_id: str) -> int:
-    # nosec: B311
-    base_xp = random.randint(1, 3)
-    user_boost = await get_user_boost(guild_id, str(message.author.id))
-    if not user_boost:
-        user_boost = None
-    role_boosts = await get_user_roles_boosts(
-        guild_id, [str(role.id) for role in (message.author.roles if hasattr(message.author, "roles") else [])]
-    )
-    if not role_boosts:
-        role_boosts = []
-    channel_boost = await get_channel_boost(guild_id, str(message.channel.id))
-    if not channel_boost:
-        channel_boost = None
-
-    total_additive_boost = sum(boost.boost - 1 for boost in role_boosts if boost.additive)
-    total_multiplicative_boost = math.prod(boost.boost for boost in role_boosts if not boost.additive)
-
-    if user_boost:
-        if user_boost.additive:  # if additive
-            total_additive_boost += user_boost.boost - 1
-        else:
-            total_multiplicative_boost *= user_boost.boost
-
-    if channel_boost:
-        if channel_boost.additive:  # if additive
-            total_additive_boost += channel_boost.boost - 1
-        else:
-            total_multiplicative_boost *= channel_boost.boost
-
-    total_boost = (1 + total_additive_boost) * total_multiplicative_boost
-    return int(base_xp * total_boost)
-
-
 async def handle_level_up(message: discord.Message, new_level: int) -> None:
-    if message.guild == None:
+    if message.guild is None:
         return
     guild_id = str(message.guild.id)
     if await get_levelup_message_status(guild_id) and message.author.id not in notifiedUsers:
@@ -146,7 +99,7 @@ async def format_level_up_message(guild_id: str, user_mention: str, new_level: i
 
 
 async def update_user_roles(message: discord.Message, new_level: int, guild_id: str) -> None:
-    if message.guild == None or not isinstance(message.author, discord.Member):
+    if message.guild is None or not isinstance(message.author, discord.Member):
         return
     level_roles = await get_level_roles(guild_id)
     for lr in level_roles:
