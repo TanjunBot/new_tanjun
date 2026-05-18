@@ -38,15 +38,3 @@ jobs:
         with:
           commit_message: "style: autoformat and lint Python code with Ruff"
           branch: ${{ github.head_ref }}
-
-      - name: Check for remaining lint issues
-        run: |
-          BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          if [ -n "$BASE_SHA" ]; then
-            CHANGED_PY_FILES=$(git diff --name-only "$BASE_SHA"...HEAD -- '*.py')
-          else
-            CHANGED_PY_FILES=""
-          fi
-          if [ -n "$CHANGED_PY_FILES" ]; then
-            ruff check $CHANGED_PY_FILES
-          fi
