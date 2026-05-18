@@ -13,7 +13,6 @@ from sympy import Symbol, diff, parse_expr
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def plot_function_command(

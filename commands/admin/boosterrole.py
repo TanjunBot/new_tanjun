@@ -3,7 +3,6 @@ import discord
 import utility
 from api import add_booster_role, delete_booster_role
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def create_booster_role(commandInfo: utility.CommandInfo, role: discord.Role) -> None:
