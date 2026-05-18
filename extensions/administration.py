@@ -44,13 +44,7 @@ from utility import addFeedback, missingLocalization, tanjunEmbed
 
 def _mysql_defaults_file(user: str, password: str, host: str, port: int) -> str:
     """Create a temporary MySQL defaults file with credentials. Returns the file path."""
-    content = (
-        "[client]\n"
-        f"user={user}\n"
-        f"password={password}\n"
-        f"host={host}\n"
-        f"port={port}\n"
-    )
+    content = f"[client]\nuser={user}\npassword={password}\nhost={host}\nport={port}\n"
     fd, path = tempfile.mkstemp(prefix="mysql_", suffix=".cnf", text=True)
     with os.fdopen(fd, "w") as f:
         f.write(content)

@@ -13,16 +13,35 @@ from sympy import Symbol, diff, parse_expr
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
-
 
 _ALLOWED_NP_FUNCTIONS = {
-    "sin", "cos", "tan", "exp", "log", "sqrt",
-    "arcsin", "arccos", "arctan", "arctan2",
-    "sinh", "cosh", "tanh", "arcsinh", "arccosh", "arctanh",
-    "radians", "degrees", "abs",
-    "minimum", "maximum", "clip", "round", "floor", "ceil",
-    "pi", "e",
+    "sin",
+    "cos",
+    "tan",
+    "exp",
+    "log",
+    "sqrt",
+    "arcsin",
+    "arccos",
+    "arctan",
+    "arctan2",
+    "sinh",
+    "cosh",
+    "tanh",
+    "arcsinh",
+    "arccosh",
+    "arctanh",
+    "radians",
+    "degrees",
+    "abs",
+    "minimum",
+    "maximum",
+    "clip",
+    "round",
+    "floor",
+    "ceil",
+    "pi",
+    "e",
 }
 
 
@@ -46,7 +65,7 @@ def _safe_eval_node(node: ast.AST, x_val: np.ndarray | float) -> np.ndarray | fl
         if isinstance(node.op, ast.Div):
             return left / right
         if isinstance(node.op, ast.Pow):
-            return left ** right
+            return left**right
         if isinstance(node.op, ast.FloorDiv):
             return left // right
         if isinstance(node.op, ast.Mod):

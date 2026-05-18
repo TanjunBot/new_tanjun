@@ -131,11 +131,7 @@ async def add_custom_situation(  # type: ignore[no-untyped-def]
 
     await addCustomSituation(
         name=name,
-        user_id=(
-            commandInfo.user.id
-            if not is_admin
-            else random.randint(100000000000000000, 999999999999999999)
-        ),
+        user_id=(commandInfo.user.id if not is_admin else random.randint(100000000000000000, 999999999999999999)),
         situation=situation,
         temperature=temperature,
         top_p=top_p,

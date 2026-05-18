@@ -2246,14 +2246,35 @@ async def get_log_channel(guild_id: str) -> str | None:
     return result[0][0] if result else None
 
 
-_LOG_ENABLE_COLUMNS = frozenset({
-    "guildId", "automodRuleCreate", "automodRuleUpdate", "automodRuleDelete",
-    "automodAction", "guildChannelDelete", "guildChannelCreate", "guildChannelUpdate",
-    "guildUpdate", "inviteCreate", "inviteDelete", "memberJoin", "memberLeave",
-    "memberUpdate", "userUpdate", "memberBan", "memberUnban", "presenceUpdate",
-    "messageEdit", "messageDelete", "reactionAdd", "reactionRemove",
-    "guildRoleCreate", "guildRoleDelete", "guildRoleUpdate",
-})
+_LOG_ENABLE_COLUMNS = frozenset(
+    {
+        "guildId",
+        "automodRuleCreate",
+        "automodRuleUpdate",
+        "automodRuleDelete",
+        "automodAction",
+        "guildChannelDelete",
+        "guildChannelCreate",
+        "guildChannelUpdate",
+        "guildUpdate",
+        "inviteCreate",
+        "inviteDelete",
+        "memberJoin",
+        "memberLeave",
+        "memberUpdate",
+        "userUpdate",
+        "memberBan",
+        "memberUnban",
+        "presenceUpdate",
+        "messageEdit",
+        "messageDelete",
+        "reactionAdd",
+        "reactionRemove",
+        "guildRoleCreate",
+        "guildRoleDelete",
+        "guildRoleUpdate",
+    }
+)
 
 
 async def set_log_enable(guild_id: str, **kwargs: Any) -> None:
