@@ -16,9 +16,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
           ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -42,10 +41,11 @@ jobs:
 
       - name: Check for remaining lint issues
         run: |
-          if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
-            CHANGED_PY_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...HEAD -- '*.py')
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          if [ -n "$BASE_SHA" ]; then
+            CHANGED_PY_FILES=$(git diff --name-only "$BASE_SHA"...HEAD -- '*.py')
           else
-            CHANGED_PY_FILES=$(git diff --name-only $(git merge-base HEAD origin/development 2>/dev/null || echo HEAD~1)...HEAD -- '*.py' 2>/dev/null || echo "")
+            CHANGED_PY_FILES=""
           fi
           if [ -n "$CHANGED_PY_FILES" ]; then
             ruff check $CHANGED_PY_FILES
