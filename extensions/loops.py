@@ -9,7 +9,7 @@ from datetime import time
 import discord
 from discord.ext import commands, tasks
 
-from ai.refillToken import refillAiToken
+from ai.refill_token import refillAiToken
 from api import get_all_twitch_notification_uuids
 from commands.utility.claimBoosterChannel import (
     remove_claimed_booster_channels_that_are_expired,
