@@ -8,7 +8,6 @@ from PIL import Image, ImageDraw, ImageFont
 import commands.games.wordle_words.words as words
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 def generate_wordle_background() -> None:

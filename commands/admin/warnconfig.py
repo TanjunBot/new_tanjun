@@ -4,7 +4,6 @@ import utility
 from api import get_warn_config, set_warn_config
 from localizer import tanjunLocalizer
 from models import WarnConfigModel
-from utility import CommandInfo
 
 
 async def warn_config(commandInfo: utility.CommandInfo) -> None:
