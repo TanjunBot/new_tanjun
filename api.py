@@ -824,7 +824,7 @@ async def get_counting_channel_amount(guild_id: str | int) -> int:
     query = "SELECT COUNT(progress) FROM counting WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return len(result) if result is not None else 0
+    return result[0][0] if result else 0
 
 
 async def get_counting_progress(channel_id: str | int) -> int | None:
@@ -889,7 +889,7 @@ async def get_counting_challenge_channel_amount(guild_id: Any) -> int:
     query = "SELECT COUNT(progress) FROM counting_challenge WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return len(result) if result is not None else 0
+    return result[0][0] if result else 0
 
 
 async def set_counting_mode(channel_id: Any, progress: Any, mode: Any, guild_id: Any) -> None:
@@ -1214,6 +1214,8 @@ async def get_user_boost(guild_id: str, user_id: str) -> XpBoostModel | None:
 
 
 async def get_user_roles_boosts(guild_id: str, role_ids: list[str]) -> list[XpBoostModel]:
+    if not role_ids:
+        return []
     query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
     params = (guild_id, tuple(role_ids))
     result = await execute_query(query, params)
@@ -1925,7 +1927,7 @@ async def addCustomSituation(
 async def getCustomSituations() -> list[str]:
     query = "SELECT name FROM aiSituations where unlocked = 1"
     result = await execute_query(query)
-    return result if result else []
+    return [row[0] for row in result] if result else []
 
 
 async def getCustomSituation(name: str) -> AISituationModel | None:
@@ -2145,13 +2147,10 @@ async def get_claimed_booster_role(
 
 
 async def set_log_channel(guild_id: str, channel_id: str) -> None:
-    query = "INSERT INTO logChannel (guildId, channelId) VALUES (%s, %s)"
-    params: Any = (guild_id, channel_id)
     existing = await execute_query("SELECT 1 FROM logEnables WHERE guildId = %s", (guild_id,))
     if not existing:
-        query = "REPLACE INTO logEnables (guildId) VALUES (%s)"
-        params = (guild_id,)
-    await execute_action(query, params)
+        await execute_action("REPLACE INTO logEnables (guildId) VALUES (%s)", (guild_id,))
+    await execute_action("INSERT INTO logChannel (guildId, channelId) VALUES (%s, %s)", (guild_id, channel_id))
 
 
 async def remove_log_channel(guild_id: str) -> None:
