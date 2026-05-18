@@ -61,6 +61,9 @@ async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
         await commandInfo.reply(embed=embed)
         return
 
+    if channel is None:
+        channel = commandInfo.channel  # type: ignore[misc, assignment]
+
     if not channel.guild.me.guild_permissions.manage_channels:  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.missingPermissionBot.title"),
@@ -71,9 +74,6 @@ async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
         )
         await commandInfo.reply(embed=embed)
         return
-
-    if channel is None:
-        channel = commandInfo.channel  # type: ignore[misc, assignment]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.confirmationTitle"),

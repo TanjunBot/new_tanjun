@@ -823,7 +823,7 @@ async def get_counting_channel_amount(guild_id: str | int) -> int:
     query = "SELECT COUNT(progress) FROM counting WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return len(result) if result is not None else 0
+    return result[0][0] if result else 0
 
 
 async def get_counting_progress(channel_id: str | int) -> int | None:
@@ -888,7 +888,7 @@ async def get_counting_challenge_channel_amount(guild_id: Any) -> int:
     query = "SELECT COUNT(progress) FROM counting_challenge WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return len(result) if result is not None else 0
+    return result[0][0] if result else 0
 
 
 async def set_counting_mode(channel_id: Any, progress: Any, mode: Any, guild_id: Any) -> None:
@@ -1570,39 +1570,33 @@ async def get_send_ready_giveaways() -> list[int]:
 
 
 async def add_giveaway_voice_minutes_if_needed(user_id: Any, guild_id: Any) -> None:
-    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND voiceRequirement IS NOT NULL"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    if result is None:
-        return
-    for giveaway_id in result:
-        query2 = "INSERT INTO giveawayVoiceTime (giveawayId, userId, voiceMinutes) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE voiceMinutes = voiceMinutes + 1"
-        params2 = (giveaway_id, user_id)
-        await execute_action(query2, params2)
+    query = """
+        INSERT INTO giveawayVoiceTime (giveawayId, userId, voiceMinutes)
+        SELECT giveawayId, %s, 1 FROM giveaway
+        WHERE guildId = %s AND voiceRequirement IS NOT NULL
+        ON DUPLICATE KEY UPDATE voiceMinutes = voiceMinutes + 1
+    """
+    await execute_action(query, (user_id, guild_id))
 
 
 async def add_giveaway_new_message_if_needed(user_id: Any, guild_id: Any) -> None:
-    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND newMessageRequirement IS NOT NULL"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    if result is None:
-        return
-    for giveaway_id in result:
-        query2 = "INSERT INTO giveawayNewMessage (giveawayId, userId, messages) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE messages = messages + 1"
-        params2 = (giveaway_id, user_id)
-        await execute_action(query2, params2)
+    query = """
+        INSERT INTO giveawayNewMessage (giveawayId, userId, messages)
+        SELECT giveawayId, %s, 1 FROM giveaway
+        WHERE guildId = %s AND newMessageRequirement IS NOT NULL
+        ON DUPLICATE KEY UPDATE messages = messages + 1
+    """
+    await execute_action(query, (user_id, guild_id))
 
 
 async def add_giveaway_new_message_channel_if_needed(user_id: Any, guild_id: Any, channel_id: Any) -> None:
-    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND newMessageRequirement IS NOT NULL"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    if result is None:
-        return
-    for giveaway_id in result:
-        query2 = "INSERT INTO giveawayChannelMessages (giveawayId, channelId, userId, amount) VALUES (%s, %s, %s, 0) ON DUPLICATE KEY UPDATE amount = amount + 1"
-        params2 = (giveaway_id, channel_id, user_id)
-        await execute_action(query2, params2)
+    query = """
+        INSERT INTO giveawayChannelMessages (giveawayId, channelId, userId, amount)
+        SELECT giveawayId, %s, %s, 1 FROM giveaway
+        WHERE guildId = %s AND newMessageRequirement IS NOT NULL
+        ON DUPLICATE KEY UPDATE amount = amount + 1
+    """
+    await execute_action(query, (channel_id, user_id, guild_id))
 
 
 async def get_end_ready_giveaways() -> list[int]:
@@ -2246,13 +2240,44 @@ async def get_log_channel(guild_id: str) -> str | None:
     return result[0][0] if result else None
 
 
+_LOG_ENABLE_COLUMNS = frozenset(
+    {
+        "guildId",
+        "automodRuleCreate",
+        "automodRuleUpdate",
+        "automodRuleDelete",
+        "automodAction",
+        "guildChannelDelete",
+        "guildChannelCreate",
+        "guildChannelUpdate",
+        "guildUpdate",
+        "inviteCreate",
+        "inviteDelete",
+        "memberJoin",
+        "memberLeave",
+        "memberUpdate",
+        "userUpdate",
+        "memberBan",
+        "memberUnban",
+        "presenceUpdate",
+        "messageEdit",
+        "messageDelete",
+        "reactionAdd",
+        "reactionRemove",
+        "guildRoleCreate",
+        "guildRoleDelete",
+        "guildRoleUpdate",
+    }
+)
+
+
 async def set_log_enable(guild_id: str, **kwargs: Any) -> None:
     query = "UPDATE logEnables SET "
     end_query = " WHERE guildId = %s"
-    params = []
+    params: list[Any] = []
 
     for key, value in kwargs.items():
-        if value is not None:
+        if value is not None and key in _LOG_ENABLE_COLUMNS:
             query += f"{key} = %s, "
             params.append(value)
 
@@ -2298,17 +2323,6 @@ async def get_log_enable(guild_id: str | int) -> LogEnableModel:
         guild_role_delete=True,
         guild_role_update=True,
     )
-
-
-async def test_log_enable() -> None:
-    query = "UPDATE logEnables SET automodRuleCreate = %s WHERE guildId = %s"
-    params = (False, str(947219439764521060))
-    await execute_action(query, params)
-
-
-async def test_log_enable_2() -> None:
-    result = await get_log_enable(947219439764521060)
-    print(result)
 
 
 async def add_scheduled_message(
@@ -2370,13 +2384,13 @@ async def get_user_scheduled_messages_in_timeframe(
 
 
 async def update_scheduled_message_content(message_id: int, new_content: str) -> None:
-    query = "UPDATE scheduledMessages SET content = %s WHERE referenceMessageId = %s"
+    query = "UPDATE scheduledMessages SET content = %s WHERE messageId = %s"
     params = (new_content, message_id)
     await execute_action(query, params)
 
 
 async def update_scheduled_message_repeat_amount(message_id: int, repeat_amount: int) -> None:
-    query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE referenceMessageId = %s"
+    query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE messageId = %s"
     params = (repeat_amount, message_id)
     await execute_action(query, params)
 

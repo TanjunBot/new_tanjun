@@ -60,7 +60,7 @@ bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.app
 
 @bot.event
 async def on_ready():
-    Path(os.path.join(tempfile.gettempdir(), "bot_ready")).touch()
+    Path(tempfile.gettempdir(), "bot_ready").touch()
     print(f"Logged in as {bot.user} (ID: {bot.user.id})")
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
 

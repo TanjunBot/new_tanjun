@@ -35,7 +35,7 @@ class gameCommands(discord.app_commands.Group):
             reply=interaction.followup.send,
             client=interaction.client,
         )
-        await tic_tac_toe(commandInfo, ctx.user, user)  # type: ignore[name-defined]
+        await tic_tac_toe(commandInfo, interaction.user, user)  # type: ignore[name-defined]
 
     @app_commands.command(
         name=app_commands.locale_str("games_connect4_name"),

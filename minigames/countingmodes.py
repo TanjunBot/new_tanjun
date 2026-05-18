@@ -214,7 +214,7 @@ def get_correct_next_number(mode: int, number: int):
     if mode == 10:
         return number + 100
     if mode == 11:
-        return int(bin(number + 1)[2:])
+        return number + 1
     if mode == 12:
         return number_to_romeal(number + 1) if number != 0 else "I"
     if mode == 13:
@@ -374,7 +374,7 @@ async def counting(message: discord.Message):
         return
 
     try:
-        number = int(content) if mode != 12 else content
+        number = int(content, 2) if mode == 11 else (int(content) if mode != 12 else content)
     except ValueError:
         await message.add_reaction("💀")
         # nosec: B311
