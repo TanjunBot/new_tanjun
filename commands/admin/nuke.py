@@ -5,7 +5,6 @@ from discord.ui import View
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel | None = None) -> None:
