@@ -1570,27 +1570,21 @@ async def get_send_ready_giveaways() -> list[int]:
 
 
 async def add_giveaway_voice_minutes_if_needed(user_id: Any, guild_id: Any) -> None:
-    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND voiceRequirement IS NOT NULL"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    if result is None:
-        return
-    for giveaway_id in result:
-        query2 = "INSERT INTO giveawayVoiceTime (giveawayId, userId, voiceMinutes) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE voiceMinutes = voiceMinutes + 1"
-        params2 = (giveaway_id, user_id)
-        await execute_action(query2, params2)
+    query = """INSERT INTO giveawayVoiceTime (giveawayId, userId, voiceMinutes)
+               SELECT giveawayId, %s, 0 FROM giveaway
+               WHERE guildId = %s AND voiceRequirement IS NOT NULL
+               ON DUPLICATE KEY UPDATE voiceMinutes = voiceMinutes + 1"""
+    params = (user_id, guild_id)
+    await execute_action(query, params)
 
 
 async def add_giveaway_new_message_if_needed(user_id: Any, guild_id: Any) -> None:
-    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND newMessageRequirement IS NOT NULL"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    if result is None:
-        return
-    for giveaway_id in result:
-        query2 = "INSERT INTO giveawayNewMessage (giveawayId, userId, messages) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE messages = messages + 1"
-        params2 = (giveaway_id, user_id)
-        await execute_action(query2, params2)
+    query = """INSERT INTO giveawayNewMessage (giveawayId, userId, messages)
+               SELECT giveawayId, %s, 0 FROM giveaway
+               WHERE guildId = %s AND newMessageRequirement IS NOT NULL
+               ON DUPLICATE KEY UPDATE messages = messages + 1"""
+    params = (user_id, guild_id)
+    await execute_action(query, params)
 
 
 async def add_giveaway_new_message_channel_if_needed(user_id: Any, guild_id: Any, channel_id: Any) -> None:
