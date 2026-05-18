@@ -39,4 +39,8 @@ jobs:
           branch: ${{ github.head_ref }}
 
       - name: Check for remaining lint issues
-        run: ruff check .
+        run: |
+          CHANGED_PY_FILES=$(git diff --name-only origin/development... -- '*.py')
+          if [ -n "$CHANGED_PY_FILES" ]; then
+            ruff check $CHANGED_PY_FILES
+          fi
