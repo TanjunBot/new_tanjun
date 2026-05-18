@@ -99,7 +99,7 @@ class gameCommands(discord.app_commands.Group):
             client=interaction.client,
         )
         size = size.value.split(",") if size != "7,6" else ["7", "6"]  # type: ignore[assignment]
-        await connect4(commandInfo, ctx.user, user, int(size[0, index]), int(size[1, index]))  # type: ignore[name-defined, index]
+        await connect4(commandInfo, ctx.user, user, int(size[0]), int(size[1]))  # type: ignore[name-defined]
 
     @app_commands.command(
         name=app_commands.locale_str("games_akinator_name"),
