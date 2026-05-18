@@ -214,7 +214,7 @@ def get_correct_next_number(mode: int, number: int):
     if mode == 10:
         return number + 100
     if mode == 11:
-        return int(str(bin(int(bin(number)[2:], 2) + 1))[2:])
+        return int(bin(number + 1)[2:])
     if mode == 12:
         return number_to_romeal(number + 1) if number != 0 else "I"
     if mode == 13:

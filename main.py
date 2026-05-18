@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import os
 import sys
+import tempfile
 from pathlib import Path
 
 import asyncmy  # type: ignore[import-not-found]
@@ -59,7 +60,7 @@ bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.app
 
 @bot.event
 async def on_ready():
-    Path("/tmp/bot_ready").touch()
+    Path(os.path.join(tempfile.gettempdir(), "bot_ready")).touch()
     print(f"Logged in as {bot.user} (ID: {bot.user.id})")
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
 

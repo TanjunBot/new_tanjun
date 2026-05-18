@@ -4,10 +4,12 @@ Verifies the bot process is alive and has connected to Discord
 by checking for the ready flag file written by on_ready().
 """
 
+import os
 import sys
+import tempfile
 from pathlib import Path
 
-READY_FILE = Path("/tmp/bot_ready")
+READY_FILE = Path(os.path.join(tempfile.gettempdir(), "bot_ready"))
 
 
 def main() -> None:

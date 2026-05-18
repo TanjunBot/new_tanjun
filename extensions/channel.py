@@ -289,8 +289,8 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
 
 
 class ChannelCommands(discord.app_commands.Group):
-    def _init_(self) -> None:
-        super()._init_(  # type: ignore[misc]
+    def __init__(self) -> None:
+        super().__init__(  # type: ignore[misc]
             name=app_commands.locale_str("channel_name"),
             description=app_commands.locale_str("channel_description"),
         )

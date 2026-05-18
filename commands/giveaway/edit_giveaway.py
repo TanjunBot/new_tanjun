@@ -190,7 +190,7 @@ class GiveawayEditor(ui.View):
                 style=discord.ButtonStyle.primary,
             )
         )
-        if "self.giveaway_data" in self.giveaway_data and self.giveaway_data["channel_requirements"]:
+        if self.giveaway_data.get("channel_requirements"):
             self.add_item(
                 start_giveaway.GiveawayBuilderButton(
                     label=tanjunLocalizer.localize(
@@ -500,7 +500,10 @@ class GiveawayEditor(ui.View):
         await self.update_embed(interaction.response.edit_message)
 
     async def pro_required_error(self, interaction: discord.Interaction) -> None:
-        await self.pro_required_error(interaction)
+        await interaction.response.send_message(
+            tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.editor.pro_required"),
+            ephemeral=True,
+        )
 
     async def custom_name(  # type: ignore[no-untyped-def]
         self,
