@@ -823,7 +823,7 @@ async def get_counting_channel_amount(guild_id: str | int) -> int:
     query = "SELECT COUNT(progress) FROM counting WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return len(result) if result is not None else 0
+    return result[0][0] if result else 0
 
 
 async def get_counting_progress(channel_id: str | int) -> int | None:
@@ -888,7 +888,7 @@ async def get_counting_challenge_channel_amount(guild_id: Any) -> int:
     query = "SELECT COUNT(progress) FROM counting_challenge WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
-    return len(result) if result is not None else 0
+    return result[0][0] if result else 0
 
 
 async def set_counting_mode(channel_id: Any, progress: Any, mode: Any, guild_id: Any) -> None:
@@ -2390,13 +2390,13 @@ async def get_user_scheduled_messages_in_timeframe(
 
 
 async def update_scheduled_message_content(message_id: int, new_content: str) -> None:
-    query = "UPDATE scheduledMessages SET content = %s WHERE referenceMessageId = %s"
+    query = "UPDATE scheduledMessages SET content = %s WHERE messageId = %s"
     params = (new_content, message_id)
     await execute_action(query, params)
 
 
 async def update_scheduled_message_repeat_amount(message_id: int, repeat_amount: int) -> None:
-    query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE referenceMessageId = %s"
+    query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE messageId = %s"
     params = (repeat_amount, message_id)
     await execute_action(query, params)
 

@@ -12,7 +12,7 @@ async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
     class ConfirmView(View):
         def __init__(self, commandInfo: utility.CommandInfo) -> None:
             super().__init__(timeout=60)
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
             self.value = None
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:

@@ -35,7 +35,7 @@ class gameCommands(discord.app_commands.Group):
             reply=interaction.followup.send,
             client=interaction.client,
         )
-        await tic_tac_toe(commandInfo, ctx.user, user)  # type: ignore[name-defined]
+        await tic_tac_toe(commandInfo, interaction.user, user)  # type: ignore[name-defined]
 
     @app_commands.command(
         name=app_commands.locale_str("games_connect4_name"),
@@ -99,7 +99,7 @@ class gameCommands(discord.app_commands.Group):
             client=interaction.client,
         )
         size = size.value.split(",") if size != "7,6" else ["7", "6"]  # type: ignore[assignment]
-        await connect4(commandInfo, ctx.user, user, int(size[0, index]), int(size[1, index]))  # type: ignore[name-defined, index]
+        await connect4(commandInfo, interaction.user, user, int(size[0][index]), int(size[1][index]))  # type: ignore[name-defined, index]
 
     @app_commands.command(
         name=app_commands.locale_str("games_akinator_name"),
