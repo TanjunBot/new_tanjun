@@ -694,8 +694,7 @@ async def create_tables(bot=None) -> None:
 
     # Migration: add attachments column to existing scheduledMessages tables
     await execute_action(
-        "ALTER TABLE scheduledMessages "
-        "ADD COLUMN IF NOT EXISTS attachments VARCHAR(2048)",
+        "ALTER TABLE scheduledMessages ADD COLUMN IF NOT EXISTS attachments VARCHAR(2048)",
         bot=bot,
     )
 
