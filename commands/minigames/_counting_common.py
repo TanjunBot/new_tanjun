@@ -28,9 +28,7 @@ async def require_moderate_members(commandInfo: CommandInfo, locale_key_prefix: 
     return False
 
 
-async def require_bot_permissions(
-    commandInfo: CommandInfo, channel: discord.TextChannel
-) -> bool:
+async def require_bot_permissions(commandInfo: CommandInfo, channel: discord.TextChannel) -> bool:
     """Check bot permissions for counting. Returns True if any check failed (should return)."""
     if commandInfo.client.user is None:
         return True
@@ -118,9 +116,7 @@ async def require_counting_channel(
     return current_progress
 
 
-async def require_valid_progress(
-    commandInfo: CommandInfo, progress: int, locale_key_prefix: str
-) -> bool:
+async def require_valid_progress(commandInfo: CommandInfo, progress: int, locale_key_prefix: str) -> bool:
     """Check progress bounds. Returns True if invalid (should return)."""
     if progress < 0:
         embed = tanjunEmbed(

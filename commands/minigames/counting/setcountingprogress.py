@@ -35,6 +35,8 @@ async def setCountingProgress(commandInfo: CommandInfo, channel: discord.TextCha
 
     info_embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), f"{LOCALE_KEY}.channel_message.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, f"{LOCALE_KEY}.channel_message.description").format(progress=progress),
+        description=tanjunLocalizer.localize(commandInfo.locale, f"{LOCALE_KEY}.channel_message.description").format(
+            progress=progress
+        ),
     )
     await channel.send(embed=info_embed)
