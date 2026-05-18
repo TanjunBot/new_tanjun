@@ -45,7 +45,7 @@ class ImageCommands(discord.app_commands.Group):
             ),
             app_commands.Choice(
                 name=app_commands.locale_str("image_blur_params_type_boxblurr"),
-                value="boxblur",
+                value="box_blur",
             ),
         ]
     )

@@ -5,7 +5,6 @@ from discord.ui import View
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel | None = None) -> None:
@@ -62,6 +61,9 @@ async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
         await commandInfo.reply(embed=embed)
         return
 
+    if channel is None:
+        channel = commandInfo.channel  # type: ignore[misc, assignment]
+
     if not channel.guild.me.guild_permissions.manage_channels:  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.missingPermissionBot.title"),
@@ -72,9 +74,6 @@ async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
         )
         await commandInfo.reply(embed=embed)
         return
-
-    if channel is None:
-        channel = CommandInfo.channel  # type: ignore[misc, assignment]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.nuke.confirmationTitle"),
@@ -96,7 +95,7 @@ async def nuke_channel(commandInfo: utility.CommandInfo, channel: discord.TextCh
         return
 
     def check(m: discord.Message) -> bool:  # type: ignore[unreachable]
-        return m.author == CommandInfo.user and m.channel == CommandInfo.channel
+        return m.author == commandInfo.user and m.channel == commandInfo.channel
 
     try:
         confirmation_message = await commandInfo.client.wait_for("message", check=check, timeout=30.0)
