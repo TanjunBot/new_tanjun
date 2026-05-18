@@ -24,7 +24,7 @@ async def plot_function_command(
 ) -> None:
     class FunctionPlotter:
         def __init__(self, commandInfo: utility.CommandInfo, author_id: int) -> None:
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
             self.author_id = author_id
             self.functions: list[tuple[str, Callable, str]] = []  # type: ignore[type-arg]
             self.x_min = -10

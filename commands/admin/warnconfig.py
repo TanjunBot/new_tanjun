@@ -14,7 +14,7 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
     class WarnConfigModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.CommandInfo, config: WarnConfigModel | None) -> None:
             super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.modal.title"))
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
 
             # Provide default values from the current configuration
             self.add_item(
