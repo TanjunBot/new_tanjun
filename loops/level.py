@@ -28,7 +28,11 @@ async def addXpToVoiceUsers(client):
             continue
 
         role_ids = {str(role.id) for role in user.roles}
-        if await is_entity_blacklisted(str(user.guild.id), str(user.id), str(user.voice.channel.id), role_ids):
+        if await is_entity_blacklisted(
+            str(user.guild.id), str(user.id),
+            str(user.voice.channel.id) if user.voice and user.voice.channel else "0",
+            role_ids,
+        ):
             continue
 
         scaling, custom_formula, xp_to_add = await fetch_xp_details(user)
