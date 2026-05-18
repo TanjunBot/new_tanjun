@@ -1,3 +1,5 @@
+import logging
+
 import discord
 from discord.ext import commands
 
@@ -82,7 +84,7 @@ class ListenerCog(commands.Cog):
                 await closeTicketListener(interaction)
                 return
         except Exception:
-            pass
+            logging.exception("Error in on_interaction listener")
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
