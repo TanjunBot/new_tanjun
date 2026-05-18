@@ -1,14 +1,15 @@
 import discord
 from discord import ui
 
+import config
 import utility
 from localizer import tanjunLocalizer
 
-ADDEMOJI = "math_add:1254372629456883793"
-SUBSTRACTEMOJI = "math_substract:1254372627766837248"
-MULTIPLYEMOJI = "math_multiply:1254372798319558768"
-DIVIDEEMOJI = "math_divide:1254373636224323644"
-BACKSPACEEMOJI = "math_backspace:1254371946695757854"
+ADDEMOJI = config.CALC_ADD
+SUBSTRACTEMOJI = config.CALC_SUBTRACT
+MULTIPLYEMOJI = config.CALC_MULTIPLY
+DIVIDEEMOJI = config.CALC_DIVIDE
+BACKSPACEEMOJI = config.CALC_BACKSPACE
 
 
 from typing import Any

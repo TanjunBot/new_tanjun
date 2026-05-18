@@ -4,6 +4,7 @@
 # from discord import app_commands
 # from localizer import tanjunLocalizer
 import asyncio
+import logging
 from datetime import time
 
 import discord
@@ -37,77 +38,77 @@ class LoopCog(commands.Cog):
         try:
             await sendReadyGiveaways(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=10)
     async def endGiveawaysLoop(self) -> None:
         try:
             await endGiveaways(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=60)
     async def checkVoiceUsers(self) -> None:
         try:
             await checkVoiceUsers(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=5)
     async def clearNotifiedUsersLoop(self) -> None:
         try:
             clearNotifiedUsers(self.bot)
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=5)
     async def addVoiceUserLoop(self) -> None:
         try:
             await addXpToVoiceUsers(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=60)
     async def refillAiTokenLoop(self) -> None:
         try:
             await refill_ai_token(self.bot)
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=5)
     async def pingServerLoop(self) -> None:
         try:
             await ping_server(self.bot)
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(hours=1)
     async def backupDatabaseLoop(self) -> None:
         try:
             await create_database_backup(self.bot)
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=10)
     async def removeExpiredClaimedBoosterRoles(self) -> None:
         try:
             await remove_claimed_booster_roles_that_are_expired(self.bot)
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=10)
     async def removeExpiredClaimedBoosterChannels(self) -> None:
         try:
             await remove_claimed_booster_channels_that_are_expired(self.bot)
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=10)
     async def sendScheduledMessages(self) -> None:
         try:
             await send_scheduled_messages(self.bot)
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(seconds=10)
     async def pollTwitchStreams(self) -> None:
@@ -143,7 +144,7 @@ class LoopCog(commands.Cog):
                 twitch_api.stream_status[uuid] = is_live
 
         except Exception:
-            pass
+            logging.exception("Error in loop")
 
     @tasks.loop(time=[time(hour=2), time(hour=8), time(hour=14), time(hour=20)])
     async def sendPokemonWerbung(self) -> None:

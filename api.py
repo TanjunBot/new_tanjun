@@ -1570,39 +1570,33 @@ async def get_send_ready_giveaways() -> list[int]:
 
 
 async def add_giveaway_voice_minutes_if_needed(user_id: Any, guild_id: Any) -> None:
-    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND voiceRequirement IS NOT NULL"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    if result is None:
-        return
-    for giveaway_id in result:
-        query2 = "INSERT INTO giveawayVoiceTime (giveawayId, userId, voiceMinutes) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE voiceMinutes = voiceMinutes + 1"
-        params2 = (giveaway_id, user_id)
-        await execute_action(query2, params2)
+    query = """
+        INSERT INTO giveawayVoiceTime (giveawayId, userId, voiceMinutes)
+        SELECT giveawayId, %s, 1 FROM giveaway
+        WHERE guildId = %s AND voiceRequirement IS NOT NULL
+        ON DUPLICATE KEY UPDATE voiceMinutes = voiceMinutes + 1
+    """
+    await execute_action(query, (user_id, guild_id))
 
 
 async def add_giveaway_new_message_if_needed(user_id: Any, guild_id: Any) -> None:
-    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND newMessageRequirement IS NOT NULL"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    if result is None:
-        return
-    for giveaway_id in result:
-        query2 = "INSERT INTO giveawayNewMessage (giveawayId, userId, messages) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE messages = messages + 1"
-        params2 = (giveaway_id, user_id)
-        await execute_action(query2, params2)
+    query = """
+        INSERT INTO giveawayNewMessage (giveawayId, userId, messages)
+        SELECT giveawayId, %s, 1 FROM giveaway
+        WHERE guildId = %s AND newMessageRequirement IS NOT NULL
+        ON DUPLICATE KEY UPDATE messages = messages + 1
+    """
+    await execute_action(query, (user_id, guild_id))
 
 
 async def add_giveaway_new_message_channel_if_needed(user_id: Any, guild_id: Any, channel_id: Any) -> None:
-    query = "SELECT giveawayId FROM giveaway WHERE guildId = %s AND newMessageRequirement IS NOT NULL"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    if result is None:
-        return
-    for giveaway_id in result:
-        query2 = "INSERT INTO giveawayChannelMessages (giveawayId, channelId, userId, amount) VALUES (%s, %s, %s, 0) ON DUPLICATE KEY UPDATE amount = amount + 1"
-        params2 = (giveaway_id, channel_id, user_id)
-        await execute_action(query2, params2)
+    query = """
+        INSERT INTO giveawayChannelMessages (giveawayId, channelId, userId, amount)
+        SELECT giveawayId, %s, %s, 1 FROM giveaway
+        WHERE guildId = %s AND newMessageRequirement IS NOT NULL
+        ON DUPLICATE KEY UPDATE amount = amount + 1
+    """
+    await execute_action(query, (channel_id, user_id, guild_id))
 
 
 async def get_end_ready_giveaways() -> list[int]:
