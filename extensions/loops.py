@@ -56,7 +56,7 @@ class LoopCog(commands.Cog):
     @tasks.loop(seconds=5)
     async def clearNotifiedUsersLoop(self) -> None:
         try:
-            await clearNotifiedUsers(self.bot)
+            clearNotifiedUsers(self.bot)
         except Exception:
             pass
 
