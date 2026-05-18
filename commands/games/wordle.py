@@ -185,7 +185,7 @@ async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> Non
     class WordleInputModal(discord.ui.Modal):
         def __init__(self, commandInfo: utility.CommandInfo, config) -> None:  # type: ignore[no-untyped-def]
             super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.modal.title"))
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
 
             self.add_item(
                 discord.ui.TextInput(
@@ -232,7 +232,7 @@ async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> Non
     class WordleView(discord.ui.View):
         def __init__(self, commandInfo: utility.CommandInfo) -> None:
             super().__init__(timeout=3600)
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.buttons.guess"),

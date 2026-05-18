@@ -48,7 +48,7 @@ async def addrole(
             role: discord.Role | None = None,
         ) -> None:
             super().__init__(timeout=300)
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
             self.action = action
             self.selected_roles: list[discord.Role] = [role] if role else []
             self.selected_users: list[discord.Member] = [user] if user else []
