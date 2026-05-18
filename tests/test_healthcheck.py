@@ -1,7 +1,5 @@
 """Tests for the Docker healthcheck script (healthcheck.py)."""
 
-import os
-import sys
 import tempfile
 from pathlib import Path
 

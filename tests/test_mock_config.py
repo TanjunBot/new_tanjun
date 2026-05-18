@@ -1,9 +1,6 @@
 """Tests for the mock_config module."""
 
 import sys
-from unittest.mock import MagicMock
-
-import pytest
 
 from tests.mock_config import patch_config_module
 

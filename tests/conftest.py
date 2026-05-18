@@ -1,8 +1,7 @@
 """Pytest configuration and fixtures for Tanjun bot tests."""
 
 import sys
-from collections.abc import AsyncGenerator
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -28,17 +27,17 @@ _discord_mock.ext.commands.Cog = type("Cog", (), {})
 _discord_mock.ext.commands.Context = MagicMock()
 _discord_mock.ext.commands.Bot = MagicMock()
 _discord_mock.ext.commands.AutoShardedBot = MagicMock()
-_discord_mock.ext.commands.command = lambda *a, **kw: (lambda f: f)
-_discord_mock.ext.commands.hybrid_command = lambda *a, **kw: (lambda f: f)
+_discord_mock.ext.commands.command = lambda *a, **kw: lambda f: f
+_discord_mock.ext.commands.hybrid_command = lambda *a, **kw: lambda f: f
 _discord_mock.ext.commands.is_owner = lambda f: f
-_discord_mock.ext.commands.cooldown = lambda *a, **kw: (lambda f: f)
+_discord_mock.ext.commands.cooldown = lambda *a, **kw: lambda f: f
 _discord_mock.ext.commands.Command = type("Command", (), {})
 _discord_mock.app_commands = MagicMock()
 _discord_mock.app_commands.Command = type("AppCommand", (), {})
 _discord_mock.app_commands.Group = type("Group", (), {})
 _discord_mock.app_commands.locale_str = lambda s: s
-_discord_mock.app_commands.describe = lambda **kw: (lambda f: f)
-_discord_mock.app_commands.choices = lambda *a, **kw: (lambda f: f)
+_discord_mock.app_commands.describe = lambda **kw: lambda f: f
+_discord_mock.app_commands.choices = lambda *a, **kw: lambda f: f
 _discord_mock.app_commands.Range = lambda *a, **kw: int
 _discord_mock.app_commands.Choice = lambda **kw: type("Choice", (), kw)
 _discord_mock.Interaction = MagicMock()

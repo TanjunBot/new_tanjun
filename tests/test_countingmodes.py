@@ -7,8 +7,6 @@ import math
 import sys
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 # Mock discord module before importing countingmodes
 discord_mock = MagicMock()
 discord_mock.User = type("User", (), {})
@@ -33,8 +31,8 @@ from minigames.countingmodes import (
     get_first_number,
     get_goal,
     modeMap,
-    romeal_to_number,
     number_to_romeal,
+    romeal_to_number,
 )
 
 
