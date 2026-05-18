@@ -92,7 +92,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_edgeenhance_params_image_description"))
     async def edgeenhance(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        await apply_filter(_make_command_info(interaction), image, "edge_enhance")
+        await apply_filter(_make_command_info(interaction), image, "edge_enhance", success_locale_key="image.edgeenhance")
 
     @app_commands.command(
         name=app_commands.locale_str("image_emboss_name"),
@@ -110,7 +110,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_findedges_params_image_description"))
     async def findedges(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        await apply_filter(_make_command_info(interaction), image, "find_edges")
+        await apply_filter(_make_command_info(interaction), image, "find_edges", success_locale_key="image.findedges")
 
     @app_commands.command(
         name=app_commands.locale_str("image_sharpen_name"),
