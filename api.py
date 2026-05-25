@@ -227,13 +227,12 @@ async def bulk_update_user_xp(
 ) -> None:
     """Update XP for multiple users in a single transaction."""
     try:
-        async with transaction(bot) as conn:
-            async with conn.cursor() as cursor:
-                for user_id, xp_to_add in updates:
-                    await cursor.execute(
-                        "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s",
-                        (user_id, guild_id, xp_to_add, xp_to_add),
-                    )
+        async with transaction(bot) as conn, conn.cursor() as cursor:
+            for user_id, xp_to_add in updates:
+                await cursor.execute(
+                    "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s",
+                    (user_id, guild_id, xp_to_add, xp_to_add),
+                )
     except Exception as e:
         safe_id = _query_safe_id("bulk_update_user_xp")
         print(f"Error during bulk XP update: {e} — {safe_id}")
@@ -1560,18 +1559,17 @@ async def add_giveaway(
         return None
 
     try:
-        async with transaction() as conn:
-            async with conn.cursor() as cursor:
-                for ch_id, amount in channel_requirements.items():
-                    await cursor.execute(
-                        "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
-                        (giveawayId, ch_id, amount),
-                    )
-                for role_id in role_requirement:
-                    await cursor.execute(
-                        "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
-                        (role_id, giveawayId),
-                    )
+        async with transaction() as conn, conn.cursor() as cursor:
+            for ch_id, amount in channel_requirements.items():
+                await cursor.execute(
+                    "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
+                    (giveawayId, ch_id, amount),
+                )
+            for role_id in role_requirement:
+                await cursor.execute(
+                    "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
+                    (role_id, giveawayId),
+                )
     except Exception as e:
         print(f"Error inserting giveaway requirements for giveaway {giveawayId}: {e}")
         return None
@@ -1844,28 +1842,27 @@ async def update_giveaway(
         giveaway_id,
     )
     try:
-        async with transaction() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(query, params)
-                await cursor.execute(
-                    "DELETE FROM giveawayChannelRequirement WHERE giveawayId = %s",
-                    (giveaway_id,),
-                )
-                if channel_requirements is not None and len(channel_requirements) > 0 and channel_requirements != {}:
-                    for ch_id, amount in channel_requirements.items():
-                        await cursor.execute(
-                            "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
-                            (giveaway_id, ch_id, amount),
-                        )
-                await cursor.execute(
-                    "DELETE FROM giveawayRoleRequirement WHERE giveawayId = %s",
-                    (giveaway_id,),
-                )
-                for role_id in role_requirement:
+        async with transaction() as conn, conn.cursor() as cursor:
+            await cursor.execute(query, params)
+            await cursor.execute(
+                "DELETE FROM giveawayChannelRequirement WHERE giveawayId = %s",
+                (giveaway_id,),
+            )
+            if channel_requirements is not None and len(channel_requirements) > 0 and channel_requirements != {}:
+                for ch_id, amount in channel_requirements.items():
                     await cursor.execute(
-                        "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
-                        (role_id, giveaway_id),
+                        "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
+                        (giveaway_id, ch_id, amount),
                     )
+            await cursor.execute(
+                "DELETE FROM giveawayRoleRequirement WHERE giveawayId = %s",
+                (giveaway_id,),
+            )
+            for role_id in role_requirement:
+                await cursor.execute(
+                    "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
+                    (role_id, giveaway_id),
+                )
     except Exception as e:
         print(f"Error during giveaway update for {giveaway_id}: {e}")
 
