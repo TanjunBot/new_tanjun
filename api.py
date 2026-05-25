@@ -1,5 +1,7 @@
+import asyncio
 import json
-from collections.abc import Sequence
+from collections.abc import AsyncIterator, Sequence
+from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any
 
@@ -58,58 +60,162 @@ def _get_pool():
     return None
 
 
+# Max retries for transient DB failures
+_MAX_DB_RETRIES = 3
+# Pool acquire timeout in seconds
+_POOL_ACQUIRE_TIMEOUT = 10
+# Query execution timeout in seconds
+_QUERY_TIMEOUT = 30
+
+
+async def _execute_with_retry(
+    operation: str,
+    callback,
+    query: str,
+    params: Any = None,
+    bot=None,
+) -> Any:
+    """Execute a DB operation with retry logic for transient failures."""
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        print(f"Tried to execute {operation} without pool. Pool is not yet initialized.\nquery: {query}")
+        return None
+
+    last_exception = None
+    for attempt in range(_MAX_DB_RETRIES):
+        try:
+            async with pool.acquire(timeout=_POOL_ACQUIRE_TIMEOUT) as connection, connection.cursor() as cursor:
+                await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
+                return await callback(cursor, connection)
+        except asyncio.TimeoutError:
+            msg = f"Timeout on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {query[:80]}..."
+            print(msg)
+            last_exception = asyncio.TimeoutError(msg)
+            if attempt < _MAX_DB_RETRIES - 1:
+                await asyncio.sleep(0.5 * (attempt + 1))
+            continue
+        except Exception as e:
+            err_str = str(e).lower()
+            if attempt < _MAX_DB_RETRIES - 1 and ("deadlock" in err_str or "timeout" in err_str or "connection" in err_str):
+                print(f"Transient error on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {e}")
+                await asyncio.sleep(0.5 * (attempt + 1))
+                last_exception = e
+                continue
+            print(f"Error during {operation}: {e}\nquery: {query}\nparams: {params}")
+            return None
+
+    if last_exception:
+        print(f"All retries exhausted for {operation}: {last_exception}")
+    return None
+
+
 async def execute_query(
     query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
 ) -> list[tuple[Any, ...]] | None:
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
-    if pool is None:
-        print(
-            "Tried to execute action without pool. Pool is not yet initialized.Returning...\nquery: ",
-            query,
-        )
-        return
+    async def _callback(cursor, connection):
+        result = await cursor.fetchall()
+        return result
 
-    try:
-        async with pool.acquire() as connection, connection.cursor() as cursor:
-            await cursor.execute(query, params)
-            result = await cursor.fetchall()
-            return result
-    except Exception as e:
-        print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
+    return await _execute_with_retry("execute_query", _callback, query, params, bot)
 
 
 async def execute_action(query: str, params: Any = None, bot=None) -> Any:
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
-    if pool is None:
-        print(
-            ("Tried to execute action without pool. Pool is not yet initialized. Returning...\nquery: "),
-            query,
-        )
-        return
-    try:
-        async with pool.acquire() as connection, connection.cursor() as cursor:
-            await cursor.execute(query, params)
-            await connection.commit()
-            return cursor.rowcount
+    async def _callback(cursor, connection):
+        await connection.commit()
+        return cursor.rowcount
 
-    except Exception as e:
-        print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
+    return await _execute_with_retry("execute_action", _callback, query, params, bot)
 
 
 async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
+    async def _callback(cursor, connection):
+        await connection.commit()
+        await cursor.execute("SELECT LAST_INSERT_ID()")
+        last_id = await cursor.fetchone()
+        return last_id[0] if last_id else None
+
+    return await _execute_with_retry("execute_insert_and_get_id", _callback, query, params, bot)
+
+
+async def execute_query_iter(
+    query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
+) -> AsyncIterator[tuple[Any, ...]]:
+    """Async generator that yields rows one at a time for large result sets."""
     pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
     if pool is None:
-        return None
+        print(f"Tried to execute_query_iter without pool.\nquery: {query}")
+        return
+
     try:
-        async with pool.acquire() as connection, connection.cursor() as cursor:
-            await cursor.execute(query, params)
-            await connection.commit()
-            await cursor.execute("SELECT LAST_INSERT_ID()")
-            last_id = await cursor.fetchone()
-            return last_id[0] if last_id else None
+        async with pool.acquire(timeout=_POOL_ACQUIRE_TIMEOUT) as connection, connection.cursor() as cursor:
+            await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
+            async for row in cursor:
+                yield row
     except Exception as e:
-        print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
-    return None
+        print(f"Error during query iteration: {e}\nquery: {query}")
+
+
+async def safe_execute_query(
+    query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
+) -> list[tuple[Any, ...]]:
+    """Like execute_query but always returns a list (empty on error)."""
+    result = await execute_query(query, params, bot)
+    return result if result is not None else []
+
+
+@asynccontextmanager
+async def transaction(bot=None):
+    """Async context manager for DB transactions with automatic rollback on error."""
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        raise RuntimeError("Database pool is not initialized")
+
+    async with pool.acquire(timeout=_POOL_ACQUIRE_TIMEOUT) as conn:
+        try:
+            yield conn
+            await conn.commit()
+        except Exception:
+            await conn.rollback()
+            raise
+
+
+async def check_pool_health(bot=None) -> bool:
+    """Check if the database pool is healthy by running SELECT 1."""
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        return False
+    try:
+        async with pool.acquire(timeout=5) as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute("SELECT 1")
+        return True
+    except Exception:
+        return False
+
+
+async def bulk_update_user_xp(
+    guild_id: str,
+    updates: list[tuple[str, int]],
+    bot=None,
+) -> None:
+    """Update XP for multiple users in a single transaction."""
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        print("Tried to bulk_update_user_xp without pool.")
+        return
+    try:
+        async with pool.acquire(timeout=_POOL_ACQUIRE_TIMEOUT) as conn:
+            async with conn.cursor() as cursor:
+                for user_id, xp_to_add in updates:
+                    await cursor.execute(
+                        "INSERT INTO level (user_id, guild_id, xp) "
+                        "VALUES (%s, %s, %s) "
+                        "ON DUPLICATE KEY UPDATE xp = xp + %s",
+                        (user_id, guild_id, xp_to_add, xp_to_add),
+                    )
+                await conn.commit()
+    except Exception as e:
+        print(f"Error during bulk XP update: {e}")
 
 
 async def create_tables(bot=None) -> None:
