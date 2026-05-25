@@ -167,7 +167,7 @@ async def execute_query_iter(
     """Async generator that yields rows one at a time for large result sets."""
     pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
     if pool is None:
-        print(f"Tried to execute_query_iter without pool.\nquery: {query}")
+        print(f"Tried to execute_query_iter without pool. {_sanitize_for_log(query)}")
         return
 
     try:
@@ -1554,24 +1554,28 @@ async def add_giveaway(
         voice_requirement,
         channel_id,
     )
-    giveawayId = await execute_insert_and_get_id(query, params)
-    if giveawayId is None:
-        return None
-
     try:
-        async with transaction() as conn, conn.cursor() as cursor:
-            for ch_id, amount in channel_requirements.items():
-                await cursor.execute(
-                    "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
-                    (giveawayId, ch_id, amount),
-                )
-            for role_id in role_requirement:
-                await cursor.execute(
-                    "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
-                    (role_id, giveawayId),
-                )
+        async with transaction() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(query, params)
+                await cursor.execute("SELECT LAST_INSERT_ID()")
+                last_id = await cursor.fetchone()
+                giveawayId = last_id[0] if last_id else None
+                if giveawayId is None:
+                    raise RuntimeError("Failed to get last insert ID for giveaway")
+
+                for ch_id, amount in channel_requirements.items():
+                    await cursor.execute(
+                        "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
+                        (giveawayId, ch_id, amount),
+                    )
+                for role_id in role_requirement:
+                    await cursor.execute(
+                        "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
+                        (role_id, giveawayId),
+                    )
     except Exception as e:
-        print(f"Error inserting giveaway requirements for giveaway {giveawayId}: {e}")
+        print(f"Error creating giveaway: {e}")
         return None
 
     return giveawayId
