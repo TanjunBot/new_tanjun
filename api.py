@@ -1,6 +1,9 @@
+import asyncio
+import hashlib
 import json
+from collections.abc import AsyncIterator, Sequence
+from contextlib import asynccontextmanager
 import time
-from collections.abc import Sequence
 from datetime import datetime
 from typing import Any
 
@@ -58,6 +61,77 @@ def _get_pool():
         return _bot._pool
     return None
 
+
+# Max retries for transient DB failures
+_MAX_DB_RETRIES = 3
+# Pool acquire timeout in seconds
+_POOL_ACQUIRE_TIMEOUT = 10
+# Query execution timeout in seconds
+_QUERY_TIMEOUT = 30
+
+
+def _query_safe_id(query: str) -> str:
+    """Return a deterministic opaque hash of a query for logging (no SQL/params leaked)."""
+    return hashlib.sha256(query.encode()).hexdigest()[:12]
+
+
+def _sanitize_for_log(query: str, params: Any = None) -> str:
+    """Log a safe query identifier without exposing raw SQL or parameters."""
+    return f"q={_query_safe_id(query)}"
+
+
+async def _execute_with_retry(
+    operation: str,
+    callback,
+    query: str,
+    params: Any = None,
+    bot=None,
+    *,
+    is_write: bool = False,
+) -> Any:
+    """Execute a DB operation with retry logic for transient failures.
+
+    For write operations (is_write=True), only retries on deadlock/server-abort
+    signals that are safe to replay.  Reads retry on connection/timeout/deadlock.
+    """
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        print(f"Tried to execute {operation} without pool. Pool is not yet initialized. {_sanitize_for_log(query)}")
+        return None
+
+    last_exception = None
+    safe_id = _sanitize_for_log(query)
+    for attempt in range(_MAX_DB_RETRIES):
+        try:
+            conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+            async with conn, conn.cursor() as cursor:
+                await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
+                return await callback(cursor, conn)
+        except TimeoutError:
+            msg = f"Timeout on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}"
+            print(msg)
+            last_exception = TimeoutError(msg)
+            if attempt < _MAX_DB_RETRIES - 1:
+                await asyncio.sleep(0.5 * (attempt + 1))
+            continue
+        except Exception as e:
+            err_str = str(e).lower()
+            # Determine which errors are safe to retry
+            retryable = "deadlock" in err_str or "duplicate" in err_str or "abort" in err_str
+            if not is_write:
+                # Reads can also retry on connection/timeout issues
+                retryable = retryable or "connection" in err_str or "timeout" in err_str
+            if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                print(f"Transient error on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
+                await asyncio.sleep(0.5 * (attempt + 1))
+                last_exception = e
+                continue
+            print(f"Error during {operation}: {e} — {safe_id}")
+            return None
+
+    if last_exception:
+        print(f"All retries exhausted for {operation}: {safe_id}")
+    return None
 
 # ── Cache System ──────────────────────────────────────────────────────────────
 
@@ -167,55 +241,106 @@ async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> An
 async def execute_query(
     query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
 ) -> list[tuple[Any, ...]] | None:
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
-    if pool is None:
-        print(
-            "Tried to execute action without pool. Pool is not yet initialized.Returning...\nquery: ",
-            query,
-        )
-        return
+    async def _callback(cursor, connection):
+        result = await cursor.fetchall()
+        return result
 
-    try:
-        async with pool.acquire() as connection, connection.cursor() as cursor:
-            await cursor.execute(query, params)
-            result = await cursor.fetchall()
-            return result
-    except Exception as e:
-        print(f"An error occurred during query execution: {e}\nquery: {query}\nparams: {params}")
+    return await _execute_with_retry("execute_query", _callback, query, params, bot)
 
 
 async def execute_action(query: str, params: Any = None, bot=None) -> Any:
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
-    if pool is None:
-        print(
-            ("Tried to execute action without pool. Pool is not yet initialized. Returning...\nquery: "),
-            query,
-        )
-        return
-    try:
-        async with pool.acquire() as connection, connection.cursor() as cursor:
-            await cursor.execute(query, params)
-            await connection.commit()
-            return cursor.rowcount
+    async def _callback(cursor, connection):
+        await connection.commit()
+        return cursor.rowcount
 
-    except Exception as e:
-        print(f"An error occurred during action execution: {e}\nquery: {query}\nparams: {params}")
+    return await _execute_with_retry("execute_action", _callback, query, params, bot, is_write=True)
 
 
 async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
+    async def _callback(cursor, connection):
+        await connection.commit()
+        await cursor.execute("SELECT LAST_INSERT_ID()")
+        last_id = await cursor.fetchone()
+        return last_id[0] if last_id else None
+
+    return await _execute_with_retry("execute_insert_and_get_id", _callback, query, params, bot, is_write=True)
+
+
+async def execute_query_iter(
+    query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
+) -> AsyncIterator[tuple[Any, ...]]:
+    """Async generator that yields rows one at a time for large result sets."""
     pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
     if pool is None:
-        return None
+        print(f"Tried to execute_query_iter without pool. {_sanitize_for_log(query)}")
+        return
+
     try:
-        async with pool.acquire() as connection, connection.cursor() as cursor:
-            await cursor.execute(query, params)
-            await connection.commit()
-            await cursor.execute("SELECT LAST_INSERT_ID()")
-            last_id = await cursor.fetchone()
-            return last_id[0] if last_id else None
+        conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+        async with conn, conn.cursor() as cursor:
+            await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
+            async for row in cursor:
+                yield row
     except Exception as e:
-        print(f"An error occurred during insert: {e}\nquery: {query}\nparams: {params}")
-    return None
+        safe_id = _query_safe_id(query)
+        print(f"Error during query iteration: {e} — q={safe_id}")
+
+
+async def safe_execute_query(
+    query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
+) -> list[tuple[Any, ...]]:
+    """Like execute_query but always returns a list (empty on error)."""
+    result = await execute_query(query, params, bot)
+    return result if result is not None else []
+
+
+@asynccontextmanager
+async def transaction(bot=None):
+    """Async context manager for DB transactions with automatic rollback on error."""
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        raise RuntimeError("Database pool is not initialized")
+
+    conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+    async with conn:
+        try:
+            yield conn
+            await conn.commit()
+        except Exception:
+            await conn.rollback()
+            raise
+
+
+async def check_pool_health(bot=None) -> bool:
+    """Check if the database pool is healthy by running SELECT 1."""
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        return False
+    try:
+        conn = await asyncio.wait_for(pool.acquire(), timeout=5)
+        async with conn, conn.cursor() as cursor:
+            await cursor.execute("SELECT 1")
+        return True
+    except Exception:
+        return False
+
+
+async def bulk_update_user_xp(
+    guild_id: str,
+    updates: list[tuple[str, int]],
+    bot=None,
+) -> None:
+    """Update XP for multiple users in a single transaction."""
+    try:
+        async with transaction(bot) as conn, conn.cursor() as cursor:
+            for user_id, xp_to_add in updates:
+                await cursor.execute(
+                    "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s",
+                    (user_id, guild_id, xp_to_add, xp_to_add),
+                )
+    except Exception as e:
+        safe_id = _query_safe_id("bulk_update_user_xp")
+        print(f"Error during bulk XP update: {e} — {safe_id}")
 
 
 async def create_tables(bot=None) -> None:
@@ -1563,22 +1688,29 @@ async def add_giveaway(
         voice_requirement,
         channel_id,
     )
-    giveawayId = await execute_insert_and_get_id(query, params)
+    try:
+        async with transaction() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(query, params)
+                await cursor.execute("SELECT LAST_INSERT_ID()")
+                last_id = await cursor.fetchone()
+                giveawayId = last_id[0] if last_id else None
+                if giveawayId is None:
+                    raise RuntimeError("Failed to get last insert ID for giveaway")
 
-    query = """
-    INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount)
-    VALUES (%s, %s, %s)
-    """
-    for ch_id, amount in channel_requirements.items():
-        params2 = (giveawayId, ch_id, amount)
-        await execute_action(query, params2)
-    query = """
-    INSERT INTO giveawayRoleRequirement (roleId, giveawayId)
-    VALUES (%s, %s)
-    """
-    for role_id in role_requirement:
-        params3 = (role_id, giveawayId)
-        await execute_action(query, params3)
+                for ch_id, amount in channel_requirements.items():
+                    await cursor.execute(
+                        "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
+                        (giveawayId, ch_id, amount),
+                    )
+                for role_id in role_requirement:
+                    await cursor.execute(
+                        "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
+                        (role_id, giveawayId),
+                    )
+    except Exception as e:
+        print(f"Error creating giveaway: {e}")
+        return None
 
     return giveawayId
 
@@ -1847,26 +1979,30 @@ async def update_giveaway(
         channel_id,
         giveaway_id,
     )
-    await execute_action(query, params)
-
-    await execute_action(
-        "DELETE FROM giveawayChannelRequirement WHERE giveawayId = %s",
-        (giveaway_id,),
-    )
-    if channel_requirements is not None and len(channel_requirements) > 0 and channel_requirements != {}:
-        for ch_id, amount in channel_requirements.items():
-            query2 = "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)"
-            params2 = (giveaway_id, ch_id, amount)
-            await execute_action(query2, params2)
-
-    await execute_action(
-        "DELETE FROM giveawayRoleRequirement WHERE giveawayId = %s",
-        (giveaway_id,),
-    )
-    for role_id in role_requirement:
-        query3 = "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)"
-        params3 = (role_id, giveaway_id)
-        await execute_action(query3, params3)
+    try:
+        async with transaction() as conn, conn.cursor() as cursor:
+            await cursor.execute(query, params)
+            await cursor.execute(
+                "DELETE FROM giveawayChannelRequirement WHERE giveawayId = %s",
+                (giveaway_id,),
+            )
+            if channel_requirements is not None and len(channel_requirements) > 0 and channel_requirements != {}:
+                for ch_id, amount in channel_requirements.items():
+                    await cursor.execute(
+                        "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
+                        (giveaway_id, ch_id, amount),
+                    )
+            await cursor.execute(
+                "DELETE FROM giveawayRoleRequirement WHERE giveawayId = %s",
+                (giveaway_id,),
+            )
+            for role_id in role_requirement:
+                await cursor.execute(
+                    "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
+                    (role_id, giveaway_id),
+                )
+    except Exception as e:
+        print(f"Error during giveaway update for {giveaway_id}: {e}")
 
 
 async def set_text_cooldown(guild_id: str, cooldown: int) -> None:
