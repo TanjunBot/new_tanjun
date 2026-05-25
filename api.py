@@ -89,7 +89,7 @@ async def preload_guild_configs(bot) -> None:
            levelUpMessage, levelUpChannelId, textCooldown, voiceCooldown
     FROM levelConfig
     """
-    pool = _get_pool()
+    pool = bot._pool if bot is not None and hasattr(bot, "_pool") and bot._pool is not None else _get_pool()
     if pool is None:
         return
     global _guild_config_cache
@@ -128,9 +128,9 @@ async def _get_cached_blacklist(guild_id: str) -> dict[str, list[BlacklistEntryM
 
 async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> Any:
     """Get a cached level config value with TTL check. Falls back to DB on miss."""
-    cached = _guild_config_cache.get(guild_id)
-    if _is_cache_valid(cached, _GUILD_CONFIG_CACHE_TTL):
-        return cached[0].get(key, default)
+    cache_entry = _guild_config_cache.get(guild_id)
+    if _is_cache_valid(cache_entry, _GUILD_CONFIG_CACHE_TTL):
+        return cache_entry[0].get(key, default)
     # Cache miss — reload from DB
     query = """
     SELECT guild_id, active, difficulty, customFormula, levelUpMessageActive,
@@ -157,6 +157,8 @@ async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> An
                 }
                 _guild_config_cache[guild_id] = (data, time.time())
                 return data.get(key, default)
+            # Cache the miss (no levelConfig row for this guild)
+            _guild_config_cache[guild_id] = ({}, time.time())
     except Exception as e:
         print(f"Error caching guild config for {guild_id}: {e}")
     return default
@@ -1116,6 +1118,7 @@ async def delete_level_system_data(guild_id: str) -> None:
         query = f"DELETE FROM {table} WHERE guild_id = %s"
         params = (guild_id,)
         await execute_action(query, params)
+    _invalidate_guild_cache(guild_id)
 
 
 async def set_levelup_message_status(guild_id: str, status: bool) -> None:
