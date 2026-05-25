@@ -87,10 +87,10 @@ async def _execute_with_retry(
             async with pool.acquire(timeout=_POOL_ACQUIRE_TIMEOUT) as connection, connection.cursor() as cursor:
                 await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
                 return await callback(cursor, connection)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             msg = f"Timeout on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {query[:80]}..."
             print(msg)
-            last_exception = asyncio.TimeoutError(msg)
+            last_exception = TimeoutError(msg)
             if attempt < _MAX_DB_RETRIES - 1:
                 await asyncio.sleep(0.5 * (attempt + 1))
             continue
@@ -185,9 +185,8 @@ async def check_pool_health(bot=None) -> bool:
     if pool is None:
         return False
     try:
-        async with pool.acquire(timeout=5) as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute("SELECT 1")
+        async with pool.acquire(timeout=5) as conn, conn.cursor() as cursor:
+            await cursor.execute("SELECT 1")
         return True
     except Exception:
         return False
@@ -204,16 +203,13 @@ async def bulk_update_user_xp(
         print("Tried to bulk_update_user_xp without pool.")
         return
     try:
-        async with pool.acquire(timeout=_POOL_ACQUIRE_TIMEOUT) as conn:
-            async with conn.cursor() as cursor:
-                for user_id, xp_to_add in updates:
-                    await cursor.execute(
-                        "INSERT INTO level (user_id, guild_id, xp) "
-                        "VALUES (%s, %s, %s) "
-                        "ON DUPLICATE KEY UPDATE xp = xp + %s",
-                        (user_id, guild_id, xp_to_add, xp_to_add),
-                    )
-                await conn.commit()
+        async with pool.acquire(timeout=_POOL_ACQUIRE_TIMEOUT) as conn, conn.cursor() as cursor:
+            for user_id, xp_to_add in updates:
+                await cursor.execute(
+                    "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s",
+                    (user_id, guild_id, xp_to_add, xp_to_add),
+                )
+            await conn.commit()
     except Exception as e:
         print(f"Error during bulk XP update: {e}")
 
