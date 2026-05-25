@@ -8,7 +8,7 @@ a single implementation that both can use.
 import math
 import random
 
-from api import get_blacklist, get_channel_boost, get_user_boost, get_user_roles_boosts
+from api import _get_cached_blacklist, get_channel_boost, get_user_boost, get_user_roles_boosts
 
 
 async def calculate_xp(guild_id: str, user_id: str, channel_id: str, role_ids: list[str]) -> int:
@@ -46,8 +46,8 @@ async def calculate_xp(guild_id: str, user_id: str, channel_id: str, role_ids: l
 
 
 async def is_entity_blacklisted(guild_id: str, user_id: str, channel_id: str, role_ids: set[str]) -> bool:
-    """Check if a user/channel/role combo is blacklisted for XP."""
-    blacklist = await get_blacklist(guild_id)
+    """Check if a user/channel/role combo is blacklisted for XP using cached data."""
+    blacklist = await _get_cached_blacklist(guild_id)
     return (
         channel_id in (channel.entity_id for channel in blacklist["channels"])
         or user_id in (user.entity_id for user in blacklist["users"])
