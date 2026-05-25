@@ -1,9 +1,9 @@
 import asyncio
 import hashlib
 import json
+import time
 from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
-import time
 from datetime import datetime
 from typing import Any
 
@@ -132,6 +132,7 @@ async def _execute_with_retry(
     if last_exception:
         print(f"All retries exhausted for {operation}: {safe_id}")
     return None
+
 
 # ── Cache System ──────────────────────────────────────────────────────────────
 
@@ -1689,25 +1690,24 @@ async def add_giveaway(
         channel_id,
     )
     try:
-        async with transaction() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(query, params)
-                await cursor.execute("SELECT LAST_INSERT_ID()")
-                last_id = await cursor.fetchone()
-                giveawayId = last_id[0] if last_id else None
-                if giveawayId is None:
-                    raise RuntimeError("Failed to get last insert ID for giveaway")
+        async with transaction() as conn, conn.cursor() as cursor:
+            await cursor.execute(query, params)
+            await cursor.execute("SELECT LAST_INSERT_ID()")
+            last_id = await cursor.fetchone()
+            giveawayId = last_id[0] if last_id else None
+            if giveawayId is None:
+                raise RuntimeError("Failed to get last insert ID for giveaway")
 
-                for ch_id, amount in channel_requirements.items():
-                    await cursor.execute(
-                        "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
-                        (giveawayId, ch_id, amount),
-                    )
-                for role_id in role_requirement:
-                    await cursor.execute(
-                        "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
-                        (role_id, giveawayId),
-                    )
+            for ch_id, amount in channel_requirements.items():
+                await cursor.execute(
+                    "INSERT INTO giveawayChannelRequirement (giveawayId, channelId, amount) VALUES (%s, %s, %s)",
+                    (giveawayId, ch_id, amount),
+                )
+            for role_id in role_requirement:
+                await cursor.execute(
+                    "INSERT INTO giveawayRoleRequirement (roleId, giveawayId) VALUES (%s, %s)",
+                    (role_id, giveawayId),
+                )
     except Exception as e:
         print(f"Error creating giveaway: {e}")
         return None
