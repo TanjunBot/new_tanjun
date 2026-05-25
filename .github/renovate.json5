@@ -3,6 +3,7 @@
   extends: [
     'config:recommended',
   ],
+  baseBranches: ['development'],
   pruneStaleBranches: true,
   packageRules: [
     {
