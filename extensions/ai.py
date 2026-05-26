@@ -14,7 +14,7 @@ async def aiCustomSituationAutocomplete(
     current: str,
 ) -> list[app_commands.Choice[str]]:
     situations = await getCustomSituations()
-    filtered_situations = [situation[0] for situation in situations if current.lower() in situation[0].lower()]
+    filtered_situations = [situation for situation in situations if current.lower() in situation.lower()]
 
     return [app_commands.Choice(name=situation, value=situation) for situation in filtered_situations[:25]]
 
@@ -133,12 +133,12 @@ class AiCommands(discord.app_commands.Group):
         await ask_gpt(
             commandInfo,
             name=personality,
-            situation=situation[1],  # type: ignore[index]
+            situation=situation.situation,
             prompt=prompt,
-            temperature=situation[4],  # type: ignore[index]
-            top_p=situation[5],  # type: ignore[index]
-            frequency_penalty=situation[6],  # type: ignore[index]
-            presence_penalty=situation[7],  # type: ignore[index]
+            temperature=situation.temperature,
+            top_p=situation.top_p,
+            frequency_penalty=situation.frequency_penalty,
+            presence_penalty=situation.presence_penalty,
         )
 
     @app_commands.command(

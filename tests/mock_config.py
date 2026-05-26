@@ -16,8 +16,7 @@ def patch_config_module() -> MagicMock:
     mock_config_module_instance.database_password = "mock_db_password"
     mock_config_module_instance.database_user = "mock_db_user"
     mock_config_module_instance.database_schema = "mock_db_schema"
-    mock_config_module_instance.tenorAPIKey = "mock_tenor_api_key"
-    mock_config_module_instance.tenorCKey = "mock_tenor_ckey"
+    mock_config_module_instance.giphyAPIKey = "mock_giphy_api_key"
     mock_config_module_instance.GithubAuthToken = "mock_github_token"
     mock_config_module_instance.ImgBBApiKey = "mock_imgbb_key"
     mock_config_module_instance.openAIKey = "mock_openai_key"
@@ -38,8 +37,7 @@ def patch_config_module() -> MagicMock:
         "database_password": mock_config_module_instance.database_password,
         "database_user": mock_config_module_instance.database_user,
         "database_schema": mock_config_module_instance.database_schema,
-        "tenorAPIKey": mock_config_module_instance.tenorAPIKey,
-        "tenorCKey": mock_config_module_instance.tenorCKey,
+        "giphyAPIKey": mock_config_module_instance.giphyAPIKey,
         "GithubAuthToken": mock_config_module_instance.GithubAuthToken,
         "ImgBBApiKey": mock_config_module_instance.ImgBBApiKey,
         "openAIKey": mock_config_module_instance.openAIKey,
