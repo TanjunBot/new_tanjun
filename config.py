@@ -35,3 +35,4 @@ CALC_SUBTRACT = "math_substract:1254372627766837248"
 CALC_MULTIPLY = "math_multiply:1254372798319558768"
 CALC_DIVIDE = "math_divide:1254373636224323644"
 CALC_BACKSPACE = "math_backspace:1254371946695757854"
+OPENROUTER_API_KEY = os.environ.get(\"OPENROUTER_API_KEY\", \"")\nOPENROUTER_MODEL = os.environ.get(\"OPENROUTER_MODEL\", \"deepseek/deepseek-v4-flash:free\")
