@@ -1,26 +1,28 @@
+
 from aiohttp import ClientSession
+
 from health_check import HealthCheck, HealthCheckResult, HealthStatus
-import asyncio
+
 
 class OpenAIHealthCheck(HealthCheck):
     @property
     def name(self) -> str:
         return "OpenAI API"
-    
+
     @property
     def critical(self) -> bool:
         return True  # AI features are a selling point
-    
+
     async def run(self) -> HealthCheckResult:
         from config import openAiKey
-        
+
         if not openAiKey:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.CRITICAL,
                 message="OpenAI API key not configured. Set openAIKey in .env",
             )
-        
+
         try:
             async with ClientSession() as session:
                 headers = {
@@ -51,8 +53,8 @@ class OpenAIHealthCheck(HealthCheck):
                             status=HealthStatus.DEGRADED,
                             message=f"OpenAI API returned HTTP {response.status}",
                         )
-        
-        except asyncio.TimeoutError:
+
+        except TimeoutError:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.DEGRADED,
@@ -64,7 +66,7 @@ class OpenAIHealthCheck(HealthCheck):
                 status=HealthStatus.DEGRADED,
                 message=f"OpenAI API connection error: {e}",
             )
-        
+
         return HealthCheckResult(
             check_name=self.name,
             status=HealthStatus.HEALTHY,
