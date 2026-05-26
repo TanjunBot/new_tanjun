@@ -365,9 +365,12 @@ async def counting(message: discord.Message):
         if mode == 12:
             goal = romeal_to_number(goal)
         starter = get_first_number(newMode)
+        try:
+            await clear_counting_mode(message.channel.id)
+        except Exception as exc:
+            logger.warning("Error clearing counting mode: %s", exc)
         results = await asyncio.gather(
             message.add_reaction("💀"),
-            clear_counting_mode(message.channel.id),
             set_counting_mode_progress(
                 channel_id=message.channel.id,
                 progress=starter,
@@ -407,9 +410,12 @@ async def counting(message: discord.Message):
         if mode == 12:
             goal = romeal_to_number(goal)
         starter = get_first_number(newMode)
+        try:
+            await clear_counting_mode(message.channel.id)
+        except Exception as exc:
+            logger.warning("Error clearing counting mode: %s", exc)
         results = await asyncio.gather(
             message.add_reaction("💀"),
-            clear_counting_mode(message.channel.id),
             set_counting_mode_progress(
                 channel_id=message.channel.id,
                 progress=starter,
@@ -447,9 +453,12 @@ async def counting(message: discord.Message):
         if newMode == 12:
             goal = romeal_to_number(goal)
         starter = get_first_number(newMode)
+        try:
+            await clear_counting_mode(message.channel.id)
+        except Exception as exc:
+            logger.warning("Error clearing counting mode: %s", exc)
         results = await asyncio.gather(
             message.add_reaction("💀"),
-            clear_counting_mode(message.channel.id),
             set_counting_mode_progress(
                 channel_id=message.channel.id,
                 progress=starter,
@@ -489,9 +498,12 @@ async def counting(message: discord.Message):
         if mode == 12:
             goal = romeal_to_number(goal)
         starter = get_first_number(newMode)
+        try:
+            await clear_counting_mode(message.channel.id)
+        except Exception as exc:
+            logger.warning("Error clearing counting mode: %s", exc)
         results = await asyncio.gather(
             message.add_reaction("💀"),
-            clear_counting_mode(message.channel.id),
             set_counting_mode_progress(
                 channel_id=message.channel.id,
                 progress=starter,
@@ -536,9 +548,12 @@ async def counting(message: discord.Message):
         if mode == 12:
             new_goal = romeal_to_number(new_goal)
         starter = get_first_number(newMode)
+        try:
+            await clear_counting_mode(message.channel.id)
+        except Exception as exc:
+            logger.warning("Error clearing counting mode: %s", exc)
         results = await asyncio.gather(
             message.add_reaction("🎉"),
-            clear_counting_mode(message.channel.id),
             set_counting_mode_progress(
                 channel_id=message.channel.id,
                 progress=starter,
@@ -569,18 +584,19 @@ async def counting(message: discord.Message):
     # nosec: B311
     if random.randint(1, 100) == 1:
         correctNumber = get_correct_next_number(mode, correctNumber)
-        results = await asyncio.gather(
-            message.channel.send(str(correctNumber)),
-            set_counting_mode_progress(
-                channel_id=message.channel.id,
-                progress=(romeal_to_number(correctNumber) if mode == 12 else correctNumber),
-                mode=mode,
-                counter_id="me",
-                guild_id=message.guild.id,
-                goal=goal,
-            ),
-            return_exceptions=True,
-        )
-        for r in results:
-            if isinstance(r, Exception):
-                logger.warning("Error in counting modes bot auto-count: %s", r)
+        try:
+            await message.channel.send(str(correctNumber))
+        except Exception as exc:
+            logger.warning("Error in counting modes bot auto-count send: %s", exc)
+        else:
+            try:
+                await set_counting_mode_progress(
+                    channel_id=message.channel.id,
+                    progress=(romeal_to_number(correctNumber) if mode == 12 else correctNumber),
+                    mode=mode,
+                    counter_id="me",
+                    guild_id=message.guild.id,
+                    goal=goal,
+                )
+            except Exception as exc:
+                logger.warning("Error in counting modes bot auto-count progress update: %s", exc)

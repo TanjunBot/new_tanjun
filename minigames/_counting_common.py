@@ -119,11 +119,12 @@ async def counting(
     await increase_progress_func(message.channel.id, message.author.id)
     # nosec: B311
     if random.randint(1, 100) == 1:
-        results = await asyncio.gather(
-            message.channel.send(str(progress + 2)),
-            increase_progress_func(message.channel.id, "me"),
-            return_exceptions=True,
-        )
-        for r in results:
-            if isinstance(r, Exception):
-                logger.warning("Error in counting bot auto-count: %s", r)
+        try:
+            await message.channel.send(str(progress + 2))
+        except Exception as exc:
+            logger.warning("Error in counting bot auto-count send: %s", exc)
+        else:
+            try:
+                await increase_progress_func(message.channel.id, "me")
+            except Exception as exc:
+                logger.warning("Error in counting bot auto-count progress update: %s", exc)

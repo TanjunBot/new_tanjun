@@ -60,7 +60,7 @@ async def wordchain(message: discord.Message) -> None:
 
     for char in content:
         if char in endChars:
-            new_sentence = wordchain_word + content
+            new_sentence = f"{wordchain_word} {content}"
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(locale, "minigames.wordchain.finished.title"),
                 description=tanjunLocalizer.localize(
