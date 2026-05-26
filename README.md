@@ -1,4 +1,4 @@
-# Tanjun [![Tanjun CI](https://github.com/TanjunBot/new_tanjun/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/TanjunBot/new_tanjun/actions/workflows/ci.yml) [![Tanjun Status](https://status.tanjun.bot/api/badge/8/status)](https://status.tanjun.bot) [![Tanjun Uptime](https://status.tanjun.bot/api/badge/8/uptime)](https://status.tanjun.bot) [![License](https://img.shields.io/github/license/TanjunBot/new_tanjun)](LICENSE.txt)
+# Tanjun [![Tanjun CI](https://github.com/TanjunBot/new_tanjun/actions/workflows/ci.yml/badge.svg?branch=development)](https://github.com/TanjunBot/new_tanjun/actions/workflows/ci.yml) [![Tanjun Status](https://status.tanjun.bot/api/badge/8/status)](https://status.tanjun.bot) [![Tanjun Uptime](https://status.tanjun.bot/api/badge/8/uptime)](https://status.tanjun.bot) [![License](https://img.shields.io/github/license/TanjunBot/new_tanjun)](LICENSE.txt)
 
 ![Tanjun Banner](https://github.com/TanjunBot/new_tanjun/assets/91985694/a3fdde70-b402-4a9c-89f3-35083942837e)
 
@@ -186,7 +186,7 @@ docker compose up -d
 
 ### Updating
 
-Update scripts for Linux (`update.sh`) and Windows (`update.bat`) are included in the repository. The Docker image is automatically built and published to `ghcr.io/tanjunbot/new_tanjun:latest` on pushes to master.
+Update scripts for Linux (`update.sh`) and Windows (`update.bat`) are included in the repository. The Docker image is automatically built and published to `ghcr.io/tanjunbot/new_tanjun:latest` on pushes to the default branch.
 
 ---
 
