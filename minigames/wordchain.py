@@ -1,10 +1,13 @@
-# Unused imports:
-# import random
+import asyncio
+import logging
+
 import discord
 
 from api import check_if_opted_out, clear_wordchain, get_wordchain_last_user_id, get_wordchain_word, set_wordchain_word
 from localizer import tanjunLocalizer
 from utility import tanjunEmbed
+
+logger = logging.getLogger(__name__)
 
 
 async def wordchain(message: discord.Message) -> None:
@@ -29,11 +32,14 @@ async def wordchain(message: discord.Message) -> None:
     locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
 
     if await check_if_opted_out(message.author.id):
-        try:
-            await message.author.send(tanjunLocalizer.localize(locale, "minigames.wordchain.opted_out"))
-        except discord.Forbidden:
-            pass
-        await message.delete()
+        results = await asyncio.gather(
+            message.author.send(tanjunLocalizer.localize(locale, "minigames.wordchain.opted_out")),
+            message.delete(),
+            return_exceptions=True,
+        )
+        for r in results:
+            if isinstance(r, Exception):
+                logger.warning("Error in wordchain opted_out handler: %s", r)
         return
 
     content = message.content
@@ -54,17 +60,24 @@ async def wordchain(message: discord.Message) -> None:
 
     for char in content:
         if char in endChars:
-            await clear_wordchain(message.channel.id)
-            await set_wordchain_word(channel_id=message.channel.id, guild_id=message.guild.id, word="", worder_id="nobody")
+            new_sentence = f"{wordchain_word} {content}"
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(locale, "minigames.wordchain.finished.title"),
                 description=tanjunLocalizer.localize(
                     locale,
                     "minigames.wordchain.finished.description",
-                    sentence=wordchain_word + content,
+                    sentence=new_sentence,
                 ),
             )
-            await message.channel.send(embed=embed)
+            results = await asyncio.gather(
+                clear_wordchain(message.channel.id),
+                set_wordchain_word(channel_id=message.channel.id, guild_id=message.guild.id, word="", worder_id="nobody"),
+                message.channel.send(embed=embed),
+                return_exceptions=True,
+            )
+            for r in results:
+                if isinstance(r, Exception):
+                    logger.warning("Error in wordchain finished handler: %s", r)
             return
 
     if content == ",":

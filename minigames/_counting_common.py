@@ -1,3 +1,5 @@
+import asyncio
+import logging
 import random
 
 import discord
@@ -5,6 +7,8 @@ import discord
 from api import check_if_opted_out
 from localizer import tanjunLocalizer
 from utility import tanjunEmbed
+
+logger = logging.getLogger(__name__)
 
 
 async def _handle_guild_check(message: discord.Message) -> bool:
@@ -29,11 +33,14 @@ async def _handle_opted_out(message: discord.Message, locale: str) -> bool:
     if not await check_if_opted_out(message.author.id):
         return False
 
-    try:
-        await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
-    except discord.Forbidden:
-        pass
-    await message.delete()
+    results = await asyncio.gather(
+        message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out")),
+        message.delete(),
+        return_exceptions=True,
+    )
+    for r in results:
+        if isinstance(r, Exception):
+            logger.warning("Error in opted_out handler: %s", r)
     return True
 
 
@@ -112,5 +119,12 @@ async def counting(
     await increase_progress_func(message.channel.id, message.author.id)
     # nosec: B311
     if random.randint(1, 100) == 1:
-        await message.channel.send(str(progress + 2))
-        await increase_progress_func(message.channel.id, "me")
+        try:
+            await message.channel.send(str(progress + 2))
+        except Exception as exc:
+            logger.warning("Error in counting bot auto-count send: %s", exc)
+        else:
+            try:
+                await increase_progress_func(message.channel.id, "me")
+            except Exception as exc:
+                logger.warning("Error in counting bot auto-count progress update: %s", exc)
