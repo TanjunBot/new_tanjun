@@ -45,6 +45,7 @@ async def counting(
     increase_progress_func,
     on_failure=None,
     on_double_count=None,
+    config: dict | None = None,
 ) -> None:
     """Shared counting logic parameterized by variant-specific API functions and callbacks.
 
@@ -59,6 +60,9 @@ async def counting(
     on_double_count : async callable(message, locale, correct_number) or None
         Called when the same user counts twice in a row.
         If None, the message is silently deleted (normal counting behavior).
+    config : dict or None
+        Pre-fetched config with 'progress' and 'last_counter_id'. If provided,
+        get_progress_func and get_last_counter_id_func are not called.
     """
     if message.author.bot:
         return
@@ -66,7 +70,10 @@ async def counting(
     if await _handle_guild_check(message):
         return
 
-    progress = await get_progress_func(message.channel.id)
+    if config is not None:
+        progress = config.get("progress")
+    else:
+        progress = await get_progress_func(message.channel.id)
     locale = _get_locale(message)
 
     if not progress and progress != 0:
@@ -100,7 +107,10 @@ async def counting(
             await message.delete()
         return
 
-    last_counter_id = await get_last_counter_id_func(message.channel.id)
+    if config is not None:
+        last_counter_id = config.get("last_counter_id")
+    else:
+        last_counter_id = await get_last_counter_id_func(message.channel.id)
 
     if last_counter_id == str(message.author.id):
         if on_double_count:

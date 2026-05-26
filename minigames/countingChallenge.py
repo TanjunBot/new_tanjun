@@ -31,7 +31,8 @@ async def _challenge_double_count(message: discord.Message, locale: str, _correc
     await set_counting_challenge_progress(message.channel.id, 0)
 
 
-async def counting(message) -> None:
+async def counting(message, config: dict | None = None) -> None:
+    """Counting challenge handler. Accepts optional pre-fetched config to skip a DB query."""
     await _counting_base(
         message,
         get_progress_func=get_counting_challenge_progress,
@@ -39,4 +40,5 @@ async def counting(message) -> None:
         increase_progress_func=increase_counting_challenge_progress,
         on_failure=_challenge_failure,
         on_double_count=_challenge_double_count,
+        config=config,
     )
