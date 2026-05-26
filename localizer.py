@@ -2,8 +2,8 @@ import json
 from string import Template
 from typing import Any, cast
 
-from utils.async_io import run_blocking
 from utility import missingLocalization
+from utils.async_io import run_blocking
 
 reported_locales: list[str] = []
 

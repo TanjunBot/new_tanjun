@@ -12,6 +12,6 @@ async def run_blocking(func, *args, **kwargs):
     """Run a blocking function in the thread pool to avoid blocking the event loop."""
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(
-        _io_executor, 
+        _io_executor,
         functools.partial(func, *args, **kwargs)
     )
