@@ -22,16 +22,9 @@ async def check_health() -> bool:
 
     # Check 2: Database pool is responsive
     try:
-        from api import _get_pool
+        from api import check_pool_health
 
-        pool = _get_pool()
-        if pool:
-            async with pool.acquire() as conn, conn.cursor() as cursor:
-                await cursor.execute("SELECT 1")
-                result = await cursor.fetchone()
-                if result and result[0] == 1:
-                    return True
-        return False
+        return await check_pool_health()
     except Exception:
         return False
 
