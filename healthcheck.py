@@ -26,12 +26,11 @@ async def check_health() -> bool:
 
         pool = _get_pool()
         if pool:
-            async with pool.acquire() as conn:
-                async with conn.cursor() as cursor:
-                    await cursor.execute("SELECT 1")
-                    result = await cursor.fetchone()
-                    if result and result[0] == 1:
-                        return True
+            async with pool.acquire() as conn, conn.cursor() as cursor:
+                await cursor.execute("SELECT 1")
+                result = await cursor.fetchone()
+                if result and result[0] == 1:
+                    return True
         return False
     except Exception:
         return False
