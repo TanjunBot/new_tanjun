@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from api import remove_scheduled_message, update_scheduled_message_content
+from api import get_counting_configs, remove_scheduled_message, update_scheduled_message_content
 from commands.admin.joinToCreate.joinToCreateListener import memberJoin, memberLeave
 from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
 from commands.admin.ticket.open_ticket import openTicket as openTicketListener
@@ -34,9 +34,14 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
-        await counting(message)
-        await countingChallenge(message)
-        await countingModes(message)
+        # Single DB check for all counting configs — skip all 3 handlers if none
+        counting_config, challenge_config, modes_config = await get_counting_configs(message.channel.id)
+        if counting_config:
+            await counting(message, config=counting_config)
+        if challenge_config:
+            await countingChallenge(message, config=challenge_config)
+        if modes_config:
+            await countingModes(message, config=modes_config)
         await wordchain(message)
         await addLevelXp(message)
         await addMessageToGiveaway(message)
