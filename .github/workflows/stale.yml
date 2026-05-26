@@ -1,4 +1,4 @@
-name: 'Inaktive Issues und Pull Requests schließen'
+name: 'Close inactive issues and pull requests'
 permissions:
   issues: write
   pull-requests: write
@@ -13,10 +13,10 @@ jobs:
     steps:
       - uses: actions/stale@v9.0.0
         with:
-          stale-pr-message: 'Diese Pull Request wurde als inaktiv markiert, weil sie seit 30 Tagen offen ist und keine Aktivität aufweist. Entferne das "stale"-Label oder diesen Kommentar, sonst wird diese Pull Request in 5 Tagen geschlossen.'
-          close-pr-message: 'Diese Pull Request wurde geschlossen, weil sie seit 5 Tagen keine Aktivität aufweist.'
-          stale-issue-message: 'Dieses Issue wurde als inaktiv markiert, weil es seit 30 Tagen offen ist und keine Aktivität aufweist. Entferne das "stale"-Label oder diesen Kommentar, sonst wird dieses Issue in 5 Tagen geschlossen.'
-          close-issue-message: 'Dieses Issue wurde geschlossen, weil es seit 5 Tagen keine Aktivität aufweist.'
+          stale-pr-message: 'This pull request has been marked as stale because it has been open for 30 days with no activity. Remove the "stale" label or this comment, otherwise this pull request will be closed in 5 days.'
+          close-pr-message: 'This pull request has been closed because it has had no activity for 5 days.'
+          stale-issue-message: 'This issue has been marked as stale because it has been open for 30 days with no activity. Remove the "stale" label or this comment, otherwise this issue will be closed in 5 days.'
+          close-issue-message: 'This issue has been closed because it has had no activity for 5 days.'
           days-before-stale: 30
           days-before-close: 5
           exempt-issue-labels: 'help wanted, question, deferred, Renovate'

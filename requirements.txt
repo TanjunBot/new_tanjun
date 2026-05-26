@@ -1,5 +1,5 @@
 # Core dependencies
-asyncmy==0.2.10
+asyncmy==0.2.11
 discord.py==2.5.2
 rembg
 
@@ -20,7 +20,7 @@ cffi
 charset-normalizer==3.4.2
 colorama==0.4.6
 contourpy==1.3.2
-cryptography==46.0.6
+cryptography==46.0.7
 cycler==0.12.1
 decorator==5.2.1
 defusedxml==0.7.1
@@ -35,7 +35,7 @@ frozenlist==1.6.0
 h11==0.16.0
 httpcore==1.0.9
 httpx==0.28.1
-idna==3.10
+idna==3.15
 jedi==0.19.2
 jinja2==3.1.6
 jiter==0.9.0
@@ -51,13 +51,13 @@ matplotlib-inline==0.1.7
 mistune==3.2.1
 mpmath==1.3.0
 multidict==6.4.3
-mysql-connector-python==9.7.0
+mysql-connector-python==9.2.0
 nbclient==0.10.2
 nbconvert==7.17.1
 nbformat==5.10.4
 num2words==0.5.14
 numpy==2.2.5
-openai==1.109.1
+openai==1.69.0
 packaging==25.0
 pandocfilters==1.5.1
 parso==0.8.4
@@ -68,8 +68,8 @@ prompt-toolkit==3.0.51
 propcache==0.3.1
 pure-eval==0.2.3
 pycparser==2.22
-pydantic==2.13.4
-pydantic-core==2.47.0
+pydantic==2.11.1
+pydantic-core==2.33.0
 pygithub==2.6.1
 pygments==2.20.0
 pyjwt==2.12.0

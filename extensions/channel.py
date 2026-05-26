@@ -48,22 +48,22 @@ class WelcomeCommands(discord.app_commands.Group):
     )
     async def welcome(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         channel: discord.TextChannel = None,  # type: ignore[assignment]
         message: app_commands.Range[str, 0, 1024] = None,  # type: ignore[assignment]
         background: discord.Attachment = None,  # type: ignore[assignment]
     ) -> None:
-        await interaction.response.defer()  # type: ignore[name-defined]
+        await interaction.response.defer()
         commandInfo = utility.CommandInfo(
-            user=interaction.user,  # type: ignore[name-defined]
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
-            guild=interaction.guild,  # type: ignore[name-defined]
-            command=interaction.command,  # type: ignore[name-defined]
-            locale=interaction.locale,  # type: ignore[name-defined]
-            message=interaction.message,  # type: ignore[name-defined]
-            permissions=interaction.permissions,  # type: ignore[name-defined]
-            reply=interaction.followup.send,  # type: ignore[name-defined]
-            client=interaction.client,  # type: ignore[name-defined]
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
         await setWelcomeChannelCommand(
@@ -108,22 +108,22 @@ class FarewellCommands(discord.app_commands.Group):
     )
     async def set_farewell_channel(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         channel: discord.TextChannel = None,  # type: ignore[assignment]
         message: app_commands.Range[str, 0, 1024] = None,  # type: ignore[assignment]
         background: discord.Attachment = None,  # type: ignore[assignment]
     ) -> None:
-        await interaction.response.defer()  # type: ignore[name-defined]
+        await interaction.response.defer()
         commandInfo = utility.CommandInfo(
-            user=interaction.user,  # type: ignore[name-defined]
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
-            guild=interaction.guild,  # type: ignore[name-defined]
-            command=interaction.command,  # type: ignore[name-defined]
-            locale=interaction.locale,  # type: ignore[name-defined]
-            message=interaction.message,  # type: ignore[name-defined]
-            permissions=interaction.permissions,  # type: ignore[name-defined]
-            reply=interaction.followup.send,  # type: ignore[name-defined]
-            client=interaction.client,  # type: ignore[name-defined]
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
         await setFarewellChannelCommand(commandInfo, channel, message, background)
@@ -214,23 +214,23 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
     )
     async def add_dynamicslowmode(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         channel: discord.TextChannel,
         messages: app_commands.Range[int, 1, 2147483647],
         per: app_commands.Range[int, 1, 2147483647],
         resetafter: app_commands.Range[int, 1, 2147483647] = 60,
     ) -> None:
-        await interaction.response.defer()  # type: ignore[name-defined]
+        await interaction.response.defer()
         commandInfo = utility.CommandInfo(
-            user=interaction.user,  # type: ignore[name-defined]
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
-            guild=interaction.guild,  # type: ignore[name-defined]
-            command=interaction.command,  # type: ignore[name-defined]
-            locale=interaction.locale,  # type: ignore[name-defined]
-            message=interaction.message,  # type: ignore[name-defined]
-            permissions=interaction.permissions,  # type: ignore[name-defined]
-            reply=interaction.followup.send,  # type: ignore[name-defined]
-            client=interaction.client,  # type: ignore[name-defined]
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
         await addDynamicslowmodeCommand(
@@ -289,8 +289,8 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
 
 
 class ChannelCommands(discord.app_commands.Group):
-    def _init_(self) -> None:
-        super()._init_(  # type: ignore[misc]
+    def __init__(self) -> None:
+        super().__init__(  # type: ignore[misc]
             name=app_commands.locale_str("channel_name"),
             description=app_commands.locale_str("channel_description"),
         )

@@ -107,13 +107,13 @@ async def claimBoosterRole(commandInfo: commandInfo, name: str, color: discord.C
 
 async def remove_claimed_booster_roles_that_are_expired(client: discord.Client):
     claimed_booster_roles = await get_claimed_booster_role()
-    for user, role, guild_id in claimed_booster_roles:
-        guild = client.get_guild(int(guild_id))
-        user = guild.get_member(int(user))
-        role = guild.get_role(int(role))
+    for entry in claimed_booster_roles:
+        guild = client.get_guild(int(entry.guild_id))
+        user = guild.get_member(int(entry.user_id))
+        role = guild.get_role(int(entry.role_id))
         if not user.premium_since and role:
             await user.remove_roles(role)
-            await remove_claimed_booster_role(user.id, guild_id)
+            await remove_claimed_booster_role(user.id, entry.guild_id)
             await role.delete(
                 reason=tanjunLocalizer.localize(
                     guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US",
@@ -121,4 +121,4 @@ async def remove_claimed_booster_roles_that_are_expired(client: discord.Client):
                 )
             )
         if not role:
-            await remove_claimed_booster_role(user.id, guild_id)
+            await remove_claimed_booster_role(user.id, entry.guild_id)

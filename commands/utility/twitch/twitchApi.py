@@ -106,9 +106,9 @@ async def notify_twitch_online(client: discord.Client, uuid: str, data: dict[str
     datas = await get_twitch_online_notification_by_twitch_uuid(uuid)
     if datas is None:
         return
-    channelId = datas[1]
-    notificationMessage = datas[5]
-    guildId = datas[2]
+    channelId = datas.channel_id
+    notificationMessage = datas.notification_message
+    guildId = datas.guild_id
     guild = client.get_guild(int(guildId))
     if guild is None:
         return

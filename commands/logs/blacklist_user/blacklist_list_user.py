@@ -40,9 +40,9 @@ async def blacklist_list_user(commandInfo: utility.commandInfo):
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
         async def remove_user(self, interaction: discord.Interaction, button: discord.ui.Button):
-            user_id = self.users[self.selectedIndex][0]
+            user_id = self.users[self.selectedIndex]
             await remove_log_blacklist_user_api(self.guild.id, user_id)
-            self.users = tuple(x for x in self.users if x[0] != user_id)
+            self.users = tuple(x for x in self.users if x != user_id)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
@@ -59,7 +59,7 @@ async def blacklist_list_user(commandInfo: utility.commandInfo):
             if interaction.data["component_type"] == 5:  # UserSelect
                 userId = interaction.data["values"][0]
                 await add_log_blacklist_user_api(self.guild.id, userId)
-                self.users += ((userId,),)
+                self.users += (userId,)
                 await self.update_view(interaction)
             return True
 
@@ -70,7 +70,7 @@ async def blacklist_list_user(commandInfo: utility.commandInfo):
                 if self.selectedIndex >= len(self.users):
                     self.selectedIndex = len(self.users) - 1
                 description = "\n".join(
-                    [f"{'➤' if i == self.selectedIndex else ''} <@{user[0]}>" for i, user in enumerate(self.users)]
+                    [f"{'➤' if i == self.selectedIndex else ''} <@{user}>" for i, user in enumerate(self.users)]
                 )
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListUser.title"),
@@ -91,7 +91,7 @@ async def blacklist_list_user(commandInfo: utility.commandInfo):
     if not blacklisted_users or len(blacklisted_users) == 0:
         description = tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListUser.noBlacklistedUsers")
     else:
-        description = "\n".join([f"{'➤' if i == 0 else ''} <@{user[0]}>" for i, user in enumerate(blacklisted_users)])
+        description = "\n".join([f"{'➤' if i == 0 else ''} <@{user}>" for i, user in enumerate(blacklisted_users)])
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListUser.title"),
         description=description,

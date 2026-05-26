@@ -72,7 +72,10 @@ async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:
                 locale,
                 "commands.utility.afk.removed.description",
                 messages="\n".join(
-                    [f"- https://discord.com/channels/{message.guild.id}/{msg[1]}/{msg[0]}" for msg in messages]
+                    [
+                        f"- https://discord.com/channels/{message.guild.id}/{msg.channel_id}/{msg.message_id}"
+                        for msg in messages
+                    ]
                 ),
             ),
         )

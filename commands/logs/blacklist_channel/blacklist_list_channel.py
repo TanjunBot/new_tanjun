@@ -40,9 +40,9 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
         async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button):
-            channel_id = self.channels[self.selectedIndex][0]
+            channel_id = self.channels[self.selectedIndex]
             await remove_log_blacklist_channel_api(self.guild.id, channel_id)
-            self.channels = tuple(x for x in self.channels if x[0] != channel_id)
+            self.channels = tuple(x for x in self.channels if x != channel_id)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
@@ -59,7 +59,7 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
             if interaction.data["component_type"] == 8:  # ChannelSelect
                 channelId = interaction.data["values"][0]
                 await add_log_blacklist_channel_api(self.guild.id, channelId)
-                self.channels += ((channelId,),)
+                self.channels += (channelId,)
                 await self.update_view(interaction)
             return True
 
@@ -73,7 +73,7 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
                 if self.selectedIndex >= len(self.channels):
                     self.selectedIndex = len(self.channels) - 1
                 description = "\n".join(
-                    [f"{'➤' if i == self.selectedIndex else ''} <#{channel[0]}>" for i, channel in enumerate(self.channels)]
+                    [f"{'➤' if i == self.selectedIndex else ''} <#{channel}>" for i, channel in enumerate(self.channels)]
                 )
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListChannel.title"),
@@ -98,7 +98,7 @@ async def blacklist_list_channel(commandInfo: utility.commandInfo):
             "commands.logs.blacklistListChannel.noBlacklistedChannels",
         )
     else:
-        description = "\n".join([f"{'➤' if i == 0 else ''} <#{channel[0]}>" for i, channel in enumerate(blacklisted_channels)])
+        description = "\n".join([f"{'➤' if i == 0 else ''} <#{channel}>" for i, channel in enumerate(blacklisted_channels)])
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListChannel.title"),
         description=description,

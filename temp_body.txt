@@ -1,0 +1,55 @@
+## Description
+
+Replace the OpenAI API integration with OpenRouter. The default model should be `deepseek/deepseek-v4-flash:free`. Model selection should be configurable for future changes but hardcoded to this model for now.
+
+## Current State
+
+The AI system likely uses OpenAI's API directly (check `commands/ai/` and any API client code). This needs to be swapped to OpenRouter, which provides access to many models including free tier options.
+
+## Requirements
+
+### API Client Migration
+- Replace OpenAI API calls with OpenRouter API calls
+- OpenRouter endpoint: `https://openrouter.ai/api/v1/chat/completions`
+- Authentication: OpenRouter API key (configured via environment variable)
+- The API format is OpenAI-compatible, so the migration should be straightforward
+
+### Default Model
+- Default model: `deepseek/deepseek-v4-flash:free`
+- The model should be stored in a single place (config or constant) so it can be changed later
+- Wrap the model name in a config variable: `OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "deepseek/deepseek-v4-flash:free")`
+- No need for a model selection command or UI yet — just a config var
+
+### Configuration
+```python
+# config.py additions
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "deepseek/deepseek-v4-flash:free")
+```
+
+### Rate Limiting & Error Handling
+- OpenRouter free tier has rate limits — handle 429 responses gracefully
+- Log model used in AI responses for debugging
+- Handle OpenRouter-specific error responses
+
+### Backward Compatibility
+- The existing AI token system (freeToken, plusToken, paidToken) should continue to work
+- The existing custom situation system should work unchanged
+- Only the underlying API client changes
+
+## Files to Investigate
+- `commands/ai/` — all AI command files
+- Any OpenAI client initialization code
+- `config.py` — add OpenRouter config vars
+- `.env.example` — update with OpenRouter key documentation
+
+## Acceptance Criteria
+- [ ] OpenRouter API replaces OpenAI API
+- [ ] Default model is `deepseek/deepseek-v4-flash:free`
+- [ ] Model name is configurable via env var
+- [ ] AI tokens (free/plus/paid) still work correctly
+- [ ] Custom situations still work
+- [ ] Rate limit errors are caught and reported gracefully
+- [ ] 429 responses don't crash the bot
+- [ ] All existing AI tests pass (or are updated)
+- [ ] `.env.example` updated with OPENROUTER_API_KEY and OPENROUTER_MODEL

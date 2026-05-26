@@ -91,9 +91,9 @@ async def ask_gpt(
             "commands.ai.ask.success.footer",
             cost=tokenCost,
             token=token - tokenCost if token - tokenCost > 0 else 0,
-            free=tokenOverview[0],  # type: ignore[index]
-            plus=tokenOverview[1],  # type: ignore[index]
-            paid=tokenOverview[2],  # type: ignore[index]
+            free=tokenOverview.free_token,
+            plus=tokenOverview.plus_token,
+            paid=tokenOverview.paid_token,
         )
     )
     await commandInfo.reply(embed=embed)
