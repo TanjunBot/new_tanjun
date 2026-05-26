@@ -11,7 +11,11 @@ class Localizer:
     def __init__(self) -> None:
         self.translations: dict[str, list[dict[str, object]]] = {}
 
+    async def load_translations_async(self, locale: str) -> list[dict[str, object]]:
+        return await run_blocking(self._load_translations_sync, locale)
+
     def load_translations(self, locale: str) -> list[dict[str, object]]:
+        return await self.load_translations_async(locale)
         """Load the translations from a JSON file based on the specified locale."""
         try:
             with open(f"locales/{locale}.json", encoding="utf-8") as file:

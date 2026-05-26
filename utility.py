@@ -942,7 +942,18 @@ def checkIfhasPlus(userid: int) -> bool:
     return True
 
 
-def missingLocalization(locale: str) -> None:
+async def missingLocalization(locale: str) -> None:
+    await run_blocking(_missingLocalization, locale)
+
+def _missingLocalization(locale: str) -> None:
+    g = Github(GithubAuthToken)
+    repo = g.get_repo("TanjunBot/new_tanjun")
+    label = repo.get_label("missing localization")
+    repo.create_issue(
+        title="Missing localization",
+        body=f"Missing localization for {locale}",
+        labels=[label],
+    )
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("missing localization")
