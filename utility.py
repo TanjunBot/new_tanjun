@@ -2,12 +2,9 @@ import ast
 import datetime
 import gzip
 import math
-import operator
 import operator as op
-import os
 import random
 import re
-import tempfile
 
 # Import Callable and Coroutine from typing
 from collections.abc import Callable, Coroutine, Mapping
@@ -37,8 +34,7 @@ from config import (
     bytebin_password,
     bytebin_url,
     bytebin_username,
-    tenorAPIKey,
-    tenorCKey,
+    giphyAPIKey,
 )
 
 
@@ -920,46 +916,27 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
                 return await response.json()
 
         r = await fetch(
-            "https://tenor.googleapis.com/v2/search?q=%s&key=%s&client_key=%s&limit=%s"
-            % (query, tenorAPIKey, tenorCKey, limit)
+            "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg" % (giphyAPIKey, query, limit)
         )
 
         if r is None:
             return []
+        results = r.get("data", [])
         # nosec: B311
-        random.shuffle(r["results"])
+        random.shuffle(results)
 
-        return [r["results"][i]["media_formats"]["mediumgif"]["url"] for i in range(amount)]
-
-
-def get_highest_exponent(polynomial: str) -> int:
-    polynomial = polynomial.replace(" ", "")
-
-    term_pattern = re.compile(r"([+-]?\d*)(x(\^(\d+))?)?")
-
-    terms = term_pattern.findall(polynomial)
-
-    highest_exponent = 0
-
-    for term in terms:
-        coefficient, variable, _, exponent = term
-
-        if variable:
-            if exponent:
-                highest_exponent = max(highest_exponent, int(exponent))
-            else:
-                highest_exponent = max(highest_exponent, 1)
-
-    return highest_exponent
+        return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
 
 
 def checkIfHasPro(guildid: int) -> bool:
+    # TODO: Implement actual Pro subscription check against database/payment backend
     if guildid == 0:
         return False
     return True
 
 
 def checkIfhasPlus(userid: int) -> bool:
+    # TODO: Implement actual Plus subscription check against database/payment backend
     if userid == 0:
         return False
     return True
@@ -1054,8 +1031,8 @@ def eval_expr(expr: str, variables=None) -> float:
 
 
 def eval_(node, variables):
-    if isinstance(node, ast.Num):
-        return node.n
+    if isinstance(node, ast.Constant):
+        return node.value
     elif isinstance(node, ast.BinOp):
         return operators[type(node.op)](eval_(node.left, variables), eval_(node.right, variables))
     elif isinstance(node, ast.UnaryOp):
@@ -1200,106 +1177,19 @@ def dateToRelativeTimeStr(date: datetime.datetime) -> str:
     return " ".join(components)
 
 
-class MockInteraction(discord.Interaction):
-    def __init__(self, bot, guild, channel, user):
-        # Initialize base Interaction with required parameters
-        super().__init__(data={}, state=bot._connection)
-
-        # Set required attributes
-        self.type = discord.InteractionType.application_command
-        self.id = 0  # Mock ID
-        self.application_id = bot.application_id or 0
-        self.guild = guild
-        self.channel = channel
-        self.user = user
-        self.locale = "en-US"
-        self.guild_locale = "en-US"
-        self.client = bot
-
-        # Mock the response object
-        self._response = False
-        self.response = MockInteractionResponse(self)
-        self.followup = discord.Webhook.from_state(
-            data={
-                "application_id": self.application_id,
-                "token": "mock_token",
-                "id": self.id,
-            },
-            state=bot._connection,
-        )
-
-    async def original_response(self):  # type: ignore[override]
-        return self.response.message
-
-
-class MockInteractionResponse:
-    def __init__(self, interaction):
-        self.interaction = interaction
-        self.message = None  # This will store the message sent
-
-    async def send_message(self, content=None, embed=None, **kwargs):
-        # Simulate sending a message
-        self.message = discord.Message(
-            state=self.interaction._state,
-            channel=self.interaction.channel,
-            data={
-                "id": 1234567890,  # Mock message ID
-                "content": content or "",
-                "embeds": [embed.to_dict()] if embed else [],
-                "channel_id": self.interaction.channel.id,
-                "author": {
-                    "id": self.interaction.client.user.id,
-                    "username": self.interaction.client.user.name,
-                    "discriminator": self.interaction.client.user.discriminator,
-                    "bot": True,
-                },
-            },
-        )
-
-    async def delete_original_response(self):
-        # Simulate deleting the message
-        if self.message:
-            # Here we can assume the message is deleted
-            self.message = None
-
-    # Implement other response methods as needed
-    async def defer(self, **kwargs):
-        pass
-
-    async def edit_message(self, **kwargs):
-        pass
-
-
-def create_mock_interaction(self):
-    guild = self.bot.guilds[0]  # Use the first guild the bot is connected to
-    channel = guild.text_channels[0]  # Use the first text channel
-    user = guild.me  # Use the bot as the user
-    return MockInteraction(self.bot, guild, channel, user)
-
-
 def date_time_to_timestamp(date: datetime.datetime) -> int:
     return int(date.timestamp())
 
 
 async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict:
-    # Create a temporary file with the appropriate file extension
-    with tempfile.NamedTemporaryFile(delete=False, suffix="." + file_extension, mode="wb") as temp_file:
-        temp_file.write(image_bytes)
-        temp_file_path = temp_file.name
-
-    # Upload the image to ImgBB
     async with aiohttp.ClientSession() as session:
-        with open(temp_file_path, "rb") as image_file:
-            form_data = aiohttp.FormData()
-            form_data.add_field("key", ImgBBApiKey)
-            form_data.add_field("image", image_file)
-            form_data.add_field("name", "tbg")
+        form_data = aiohttp.FormData()
+        form_data.add_field("key", ImgBBApiKey)
+        form_data.add_field("image", image_bytes, filename=f"upload.{file_extension}")
+        form_data.add_field("name", "tbg")
 
-            async with session.post("https://api.imgbb.com/1/upload", data=form_data) as response:
-                response_data = await response.json()
-
-    # Optionally, delete the temporary file if you want to clean up
-    os.remove(temp_file_path)
+        async with session.post("https://api.imgbb.com/1/upload", data=form_data) as response:
+            response_data = await response.json()
 
     return response_data
 

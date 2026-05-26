@@ -19,8 +19,8 @@ from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
 from commands.utility.autopublish import publish_message
 from commands.utility.report import report_btn_click
 from config import adminIds
-from loops.giveaway import handleVoiceChange
-from loops.level import handleVoiceChange as handleLevelVoiceChange
+from loops._voice_tracker import handleVoiceChange
+from loops._voice_tracker import handleVoiceChange as handleLevelVoiceChange
 from minigames.addLevelXp import addLevelXp
 from minigames.counting import counting
 from minigames.countingChallenge import counting as countingChallenge
@@ -82,7 +82,7 @@ class ListenerCog(commands.Cog):
                 await closeTicketListener(interaction)
                 return
         except Exception:
-            pass
+            logging.exception("Error in on_interaction listener")
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:

@@ -267,7 +267,7 @@ async def welcomeNewUser(member: discord.Member) -> None:
     if welcomeChannel is None:
         return
 
-    background_frames, _ = await get_image_or_gif_frames(welcomeChannel[3, misc, call - overload, name - defined])  # type: ignore[func-returns-value, misc, call-overload, name-defined]
+    background_frames, _ = await get_image_or_gif_frames(welcomeChannel.image_background)
 
     avatar_url = str(member.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)  # type: ignore[func-returns-value, misc]
@@ -283,7 +283,7 @@ async def welcomeNewUser(member: discord.Member) -> None:
 
     file = discord.File(img_byte_arr, filename="bg.gif")  # type: ignore[arg-type]
 
-    description = welcomeChannel[2]
+    description = welcomeChannel.message
 
     if not description:
         description = tanjunLocalizer.localize(
@@ -300,6 +300,6 @@ async def welcomeNewUser(member: discord.Member) -> None:
     )
     embed.set_image(url="attachment://bg.gif")
 
-    channel = await member.guild.fetch_channel(int(welcomeChannel[0]))
+    channel = await member.guild.fetch_channel(int(welcomeChannel.channel_id))
 
     await channel.send(embed=embed, file=file)  # type: ignore[union-attr]

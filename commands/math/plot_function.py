@@ -13,7 +13,6 @@ from sympy import Symbol, diff, parse_expr
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def plot_function_command(
@@ -24,7 +23,7 @@ async def plot_function_command(
 ) -> None:
     class FunctionPlotter:
         def __init__(self, commandInfo: utility.CommandInfo, author_id: int) -> None:
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
             self.author_id = author_id
             self.functions: list[tuple[str, Callable, str]] = []  # type: ignore[type-arg]
             self.x_min = -10
@@ -59,12 +58,12 @@ async def plot_function_command(
             func_str = func_str.replace("log", "np.log")
             func_str = func_str.replace("sqrt", "np.sqrt")
 
-            # Check if the function is just a constant (only contains numbers and operators)
             if all(c.isdigit() or c in "+-*/.() " for c in func_str):
-                constant = eval(func_str)
+                node = ast.parse(func_str, mode="eval").body
+                constant = _safe_eval_node(node, 0)
                 return lambda x: np.full_like(x, constant) if isinstance(x, np.ndarray) else constant
 
-            return lambda x: eval(func_str, {"x": x, "np": np})
+            return lambda x: _safe_np_eval(func_str, x)
 
         async def find_zeros(self, func: Callable) -> list[float]:  # type: ignore[type-arg]
             x = np.linspace(self.x_min, self.x_max, 1000)

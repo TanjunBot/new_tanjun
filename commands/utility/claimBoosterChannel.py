@@ -91,12 +91,12 @@ async def claimBoosterChannel(commandInfo: commandInfo, name: str):
 
 async def remove_claimed_booster_channels_that_are_expired(client: discord.Client):
     claimed_booster_channels = await get_claimed_booster_channel()
-    for user, channel, guild_id in claimed_booster_channels:
-        guild = client.get_guild(int(guild_id))
-        user = guild.get_member(int(user))
-        channel = guild.get_channel(int(channel))
+    for entry in claimed_booster_channels:
+        guild = client.get_guild(int(entry.guild_id))
+        user = guild.get_member(int(entry.user_id))
+        channel = guild.get_channel(int(entry.channel_id))
         if not user.premium_since and channel:
-            await remove_claimed_booster_channel(user.id, guild_id)
+            await remove_claimed_booster_channel(user.id, entry.guild_id)
             await channel.delete(
                 reason=tanjunLocalizer.localize(
                     guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US",
@@ -104,4 +104,4 @@ async def remove_claimed_booster_channels_that_are_expired(client: discord.Clien
                 )
             )
         if not channel:
-            await remove_claimed_booster_channel(user.id, guild_id)
+            await remove_claimed_booster_channel(user.id, entry.guild_id)

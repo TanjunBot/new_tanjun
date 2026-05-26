@@ -270,7 +270,7 @@ async def farewellUser(member: discord.Member) -> None:
     if farewellChannel is None:
         return
 
-    background_frames, _ = await get_image_or_gif_frames(farewellChannel[3, misc, call - overload, name - defined])  # type: ignore[func-returns-value, misc, call-overload, name-defined]
+    background_frames, _ = await get_image_or_gif_frames(farewellChannel.image_background)  # type: ignore[func-returns-value, misc, call-overload, name-defined]
 
     avatar_url = str(member.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)  # type: ignore[func-returns-value, misc]
@@ -286,7 +286,7 @@ async def farewellUser(member: discord.Member) -> None:
 
     file = discord.File(img_byte_arr, filename="bg.gif")  # type: ignore[arg-type]
 
-    description = farewellChannel[2]
+    description = farewellChannel.message
 
     if not description:
         description = tanjunLocalizer.localize(
@@ -303,6 +303,6 @@ async def farewellUser(member: discord.Member) -> None:
     )
     embed.set_image(url="attachment://bg.gif")
 
-    channel = await member.guild.fetch_channel(int(farewellChannel[0]))
+    channel = await member.guild.fetch_channel(int(farewellChannel.channel_id))
 
     await channel.send(embed=embed, file=file)  # type: ignore[union-attr]

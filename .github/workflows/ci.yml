@@ -72,12 +72,7 @@ jobs:
           . venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install flake8 pytest # Assuming pytest is used for testing
-
-      # - name: Lint with flake8
-      #   run: |
-      #     . venv/bin/activate
-      #     python run_flake8.py
+          pip install pytest # Assuming pytest is used for testing
 
       - name: Run tests
         id: run_tests
