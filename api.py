@@ -1364,6 +1364,10 @@ async def set_xp_scaling(guild_id: str, scaling: str) -> None:
 
 
 async def get_xp_scaling(guild_id: str) -> str:
+    """Get the XP scaling for a guild, using cached config when available."""
+    cached_value = await _get_cached_config(guild_id, "scaling")
+    if cached_value is not None:
+        return cached_value
     query = "SELECT difficulty FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
@@ -1382,6 +1386,10 @@ async def set_custom_formula(guild_id: str, formula: str) -> None:
 
 
 async def get_custom_formula(guild_id: str) -> str | None:
+    """Get the custom XP formula for a guild, using cached config when available."""
+    cached_value = await _get_cached_config(guild_id, "custom_formula")
+    if cached_value is not None:
+        return cached_value
     query = "SELECT customFormula FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
@@ -2067,6 +2075,10 @@ async def set_voice_cooldown(guild_id: str, cooldown: int) -> None:
 
 
 async def get_text_cooldown(guild_id: str) -> int:
+    """Get the text XP cooldown for a guild, using cached config when available."""
+    cached_value = await _get_cached_config(guild_id, "text_cooldown")
+    if cached_value is not None:
+        return cached_value
     query = "SELECT textCooldown FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
@@ -2074,6 +2086,10 @@ async def get_text_cooldown(guild_id: str) -> int:
 
 
 async def get_voice_cooldown(guild_id: str) -> int:
+    """Get the voice XP cooldown for a guild, using cached config when available."""
+    cached_value = await _get_cached_config(guild_id, "voice_cooldown")
+    if cached_value is not None:
+        return cached_value
     query = "SELECT voiceCooldown FROM levelConfig WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)

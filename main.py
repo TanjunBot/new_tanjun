@@ -1048,6 +1048,12 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
     await create_tables(bot)
+
+    # Preload guild configs into cache to avoid cold-start latency
+    from api import preload_guild_configs
+
+    await preload_guild_configs(bot)
+
 nimport logging
 
 logger = logging.getLogger(__name__)
