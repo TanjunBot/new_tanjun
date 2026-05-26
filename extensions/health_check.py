@@ -1,3 +1,25 @@
+# Background Loop Health Check
+
+Requires the HealthCheck framework from the main health check issue.
+
+The bot relies on multiple background task loops (`extensions/loops.py`):
+- Giveaway sending (10s)
+- Giveaway ending (10s)
+- Voice XP processing (5s)
+- AI token refill (60s)
+- Server pinging (5s)
+- Database backup (1h)
+- Booster role/channel cleanup (10s)
+- Scheduled messages (10s)
+- Twitch polling (10s)
+- Clear Notified Users (10s)
+- Pokemon Werbung (10s)
+
+If one of these loops crashes silently (they all use `except Exception: pass`), the feature stops working without any notification.
+
+## Implementation
+
+```python
 class BackgroundLoopHealthCheck(HealthCheck):
     def __init__(self, bot):
         self.bot = bot
@@ -28,6 +50,8 @@ class BackgroundLoopHealthCheck(HealthCheck):
             ("Booster Channels", cog.removeExpiredClaimedBoosterChannels),
             ("Scheduled Messages", cog.sendScheduledMessages),
             ("Twitch Polling", cog.pollTwitchStreams),
+            ("Clear Notified Users", cog.clearNotifiedUsersLoop),
+            ("Pokemon Werbung", cog.sendPokemonWerbung)
         ]
         
         failed_loops = []

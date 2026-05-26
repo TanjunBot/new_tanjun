@@ -5,7 +5,7 @@ backend-path = ["."]
 
 [project]
 name = "tanjun_5.0"
-version = "1.1.1"
+version = "1.1.4"
 description = "The Officila Tanjun Discord Bot!"
 readme = "README.md"
 requires-python = ">=3.12"
