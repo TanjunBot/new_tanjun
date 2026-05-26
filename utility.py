@@ -36,6 +36,7 @@ from config import (
     bytebin_username,
     giphyAPIKey,
 )
+from utils.async_io import _io_executor
 
 
 class EmbedProxy:
@@ -942,8 +943,8 @@ def checkIfhasPlus(userid: int) -> bool:
     return True
 
 
-async def missingLocalization(locale: str) -> None:
-    await run_blocking(_missingLocalization, locale)
+def missingLocalization(locale: str) -> None:
+    _io_executor.submit(_missingLocalization, locale)
 
 def _missingLocalization(locale: str) -> None:
     g = Github(GithubAuthToken)

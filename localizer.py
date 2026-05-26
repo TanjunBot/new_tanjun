@@ -2,6 +2,7 @@ import json
 from string import Template
 from typing import Any, cast
 
+from utils.async_io import run_blocking
 from utility import missingLocalization
 
 reported_locales: list[str] = []
@@ -11,11 +12,7 @@ class Localizer:
     def __init__(self) -> None:
         self.translations: dict[str, list[dict[str, object]]] = {}
 
-    async def load_translations_async(self, locale: str) -> list[dict[str, object]]:
-        return await run_blocking(self._load_translations_sync, locale)
-
-    def load_translations(self, locale: str) -> list[dict[str, object]]:
-        return await self.load_translations_async(locale)
+    def _load_translations_sync(self, locale: str) -> list[dict[str, object]]:
         """Load the translations from a JSON file based on the specified locale."""
         try:
             with open(f"locales/{locale}.json", encoding="utf-8") as file:
@@ -31,6 +28,12 @@ class Localizer:
         except json.JSONDecodeError:
             print(f"Error decoding JSON from the translation file for locale '{locale}'.")
             return []
+
+    async def load_translations_async(self, locale: str) -> list[dict[str, object]]:
+        return await run_blocking(self._load_translations_sync, locale)
+
+    def load_translations(self, locale: str) -> list[dict[str, object]]:
+        return self._load_translations_sync(locale)
 
     def get_translation(self, translations: list[dict[str, object]], key: str) -> dict[str, object] | None:
         """Retrieve a nested translation using dot notation for nested keys."""
