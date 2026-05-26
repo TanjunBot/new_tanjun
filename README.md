@@ -186,7 +186,7 @@ docker compose up -d
 
 ### Updating
 
-Update scripts for Linux (`update.sh`) and Windows (`update.bat`) are included in the repository. The Docker image is automatically built and published to `ghcr.io/tanjunbot/new_tanjun:latest` on pushes to the default branch.
+Update scripts for Linux (`update.sh`) and Windows (`update.bat`) are included in the repository. The Docker image is automatically built and published to `ghcr.io/tanjunbot/new_tanjun:latest` on pushes to the `master` branch.
 
 ---
 
