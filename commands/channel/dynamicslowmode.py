@@ -228,6 +228,6 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
     new_slowmode = int(messages_in_window / dynamicSlowmodeChannel.per)
     if new_slowmode != message.channel.slowmode_delay and new_slowmode > cashed_slowmode_delay:  # type: ignore[union-attr]
         await message.channel.edit(slowmode_delay=new_slowmode, reason=reasonLocale)  # type: ignore[union-attr]
-    elif new_slowmode < cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
+    elif new_slowmode <= cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
         await message.channel.edit(slowmode_delay=cashed_slowmode_delay, reason=resetReasonLocale)  # type: ignore[union-attr]
         await remove_cashed_slowmode_delay(message.channel.id)
