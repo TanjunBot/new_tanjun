@@ -2588,8 +2588,9 @@ async def set_log_enable(guild_id: str, **kwargs: Any) -> None:
     end_query = " WHERE guildId = %s"
     params: list[Any] = []
 
+    known_columns = LogEnableModel.known_db_columns()
     for key, value in kwargs.items():
-        if value is not None and key in _LOG_ENABLE_COLUMNS:
+        if value is not None and key in known_columns:
             query += f"{key} = %s, "
             params.append(value)
 

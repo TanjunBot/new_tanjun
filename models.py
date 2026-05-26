@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, ClassVar
 
+from pydantic import BaseModel, model_validator
+
 
 @dataclass
 class GiveawayModel:
@@ -338,35 +340,34 @@ class TokenOverviewModel:
         return cls(*row)
 
 
-@dataclass
-class LogEnableModel:
+class LogEnableModel(BaseModel):
     guild_id: str
-    automod_rule_create: bool
-    automod_rule_update: bool
-    automod_rule_delete: bool
-    automod_action: bool
-    guild_channel_delete: bool
-    guild_channel_create: bool
-    guild_channel_update: bool
-    guild_update: bool
-    invite_create: bool
-    invite_delete: bool
-    member_join: bool
-    member_leave: bool
-    member_update: bool
-    user_update: bool
-    member_ban: bool
-    member_unban: bool
-    presence_update: bool
-    message_edit: bool
-    message_delete: bool
-    reaction_add: bool
-    reaction_remove: bool
-    guild_role_create: bool
-    guild_role_delete: bool
-    guild_role_update: bool
+    automod_rule_create: bool = True
+    automod_rule_update: bool = True
+    automod_rule_delete: bool = True
+    automod_action: bool = False
+    guild_channel_delete: bool = True
+    guild_channel_create: bool = True
+    guild_channel_update: bool = True
+    guild_update: bool = True
+    invite_create: bool = True
+    invite_delete: bool = False
+    member_join: bool = True
+    member_leave: bool = True
+    member_update: bool = True
+    user_update: bool = True
+    member_ban: bool = True
+    member_unban: bool = True
+    presence_update: bool = True
+    message_edit: bool = True
+    message_delete: bool = True
+    reaction_add: bool = False
+    reaction_remove: bool = False
+    guild_role_create: bool = True
+    guild_role_delete: bool = True
+    guild_role_update: bool = True
 
-    # Ordered list matching LOG_OPTIONS order (skipping guild_id)
+    # Ordered list matching LOG_OPTIONS order (skipping guild_id), in DB column order
     _OPTION_KEYS: ClassVar[list[str]] = [
         "automod_rule_create",
         "automod_rule_update",
@@ -394,17 +395,72 @@ class LogEnableModel:
         "guild_role_update",
     ]
 
+    # DB column name → model field name mapping
+    _DB_FIELD_MAP: ClassVar[dict[str, str]] = {
+        "automodRuleCreate": "automod_rule_create",
+        "automodRuleUpdate": "automod_rule_update",
+        "automodRuleDelete": "automod_rule_delete",
+        "automodAction": "automod_action",
+        "guildChannelDelete": "guild_channel_delete",
+        "guildChannelCreate": "guild_channel_create",
+        "guildChannelUpdate": "guild_channel_update",
+        "guildUpdate": "guild_update",
+        "inviteCreate": "invite_create",
+        "inviteDelete": "invite_delete",
+        "memberJoin": "member_join",
+        "memberLeave": "member_leave",
+        "memberUpdate": "member_update",
+        "userUpdate": "user_update",
+        "memberBan": "member_ban",
+        "memberUnban": "member_unban",
+        "presenceUpdate": "presence_update",
+        "messageEdit": "message_edit",
+        "messageDelete": "message_delete",
+        "reactionAdd": "reaction_add",
+        "reactionRemove": "reaction_remove",
+        "guildRoleCreate": "guild_role_create",
+        "guildRoleDelete": "guild_role_delete",
+        "guildRoleUpdate": "guild_role_update",
+    }
+
+    # Reverse mapping: model field → DB column name
+    _FIELD_DB_MAP: ClassVar[dict[str, str]] = {v: k for k, v in _DB_FIELD_MAP.items()}  # type: ignore[misc]
+
+    @model_validator(mode="wrap")
+    @classmethod
+    def coerce_ints_to_bools(cls, values, handler):
+        if isinstance(values, dict):
+            coerced = {}
+            for k, v in values.items():
+                if isinstance(v, int) and k != "guild_id":
+                    coerced[k] = bool(v)
+                else:
+                    coerced[k] = v
+            return handler(coerced)
+        return handler(values)
+
     @classmethod
     def from_row(cls, row: tuple) -> LogEnableModel:
         guild_id = row[0]
-        values = [bool(v) for v in row[1:25]]
-        return cls(guild_id, *values)
+        field_names = [k for k in cls._OPTION_KEYS]
+        values = {name: bool(v) for name, v in zip(field_names, row[1:25])}
+        return cls(guild_id=guild_id, **values)
+
+    @property
+    def options(self) -> dict[str, bool]:
+        """Return all boolean option fields as a dict, excluding guild_id."""
+        return {k: v for k, v in self.model_dump().items() if k != "guild_id" and isinstance(v, bool)}
 
     def get_option(self, index: int) -> bool:
         return getattr(self, self._OPTION_KEYS[index])
 
     def set_option(self, index: int, value: bool) -> None:
         setattr(self, self._OPTION_KEYS[index], value)
+
+    @classmethod
+    def known_db_columns(cls) -> frozenset[str]:
+        """Return the set of known DB column names."""
+        return frozenset(cls._DB_FIELD_MAP.keys())
 
 
 @dataclass
