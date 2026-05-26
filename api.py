@@ -1065,6 +1065,45 @@ async def get_counting_progress(channel_id: str | int) -> int | None:
     return result[0][0] if result else None
 
 
+async def get_counting_configs(channel_id: str | int) -> tuple[dict | None, dict | None, dict | None]:
+    """Fetch all counting configs (normal, challenge, modes) for a channel in a single query.
+
+    Returns (counting_config, challenge_config, modes_config) where each is a dict
+    with keys like 'progress', 'last_counter_id', 'guild_id', or None if not configured.
+    """
+    counting_query = "SELECT progress, last_counter_id, guild_id FROM counting WHERE channel_id = %s"
+    challenge_query = "SELECT progress, last_counter_id, guild_id FROM counting_challenge WHERE channel_id = %s"
+    modes_query = "SELECT progress, mode, goal, last_counter_id, guild_id FROM counting_modes WHERE channel_id = %s"
+    params = (channel_id,)
+    counting_result, challenge_result, modes_result = await asyncio.gather(
+        execute_query(counting_query, params),
+        execute_query(challenge_query, params),
+        execute_query(modes_query, params),
+    )
+    counting_config = (
+        {"progress": counting_result[0][0], "last_counter_id": counting_result[0][1], "guild_id": counting_result[0][2]}
+        if counting_result
+        else None
+    )
+    challenge_config = (
+        {"progress": challenge_result[0][0], "last_counter_id": challenge_result[0][1], "guild_id": challenge_result[0][2]}
+        if challenge_result
+        else None
+    )
+    modes_config = (
+        {
+            "progress": modes_result[0][0],
+            "mode": modes_result[0][1],
+            "goal": modes_result[0][2],
+            "last_counter_id": modes_result[0][3],
+            "guild_id": modes_result[0][4],
+        }
+        if modes_result
+        else None
+    )
+    return counting_config, challenge_config, modes_config
+
+
 async def increase_counting_progress(channel_id: str | int, last_counter_id: str | int) -> None:
     query = "UPDATE counting SET progress = progress + 1, last_counter_id = %s WHERE channel_id = %s"
     params = (last_counter_id, channel_id)

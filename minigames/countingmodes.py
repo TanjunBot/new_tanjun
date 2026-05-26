@@ -305,13 +305,24 @@ def get_first_number(mode: int):
         return 0
 
 
-async def counting(message: discord.Message):
+async def counting(message: discord.Message, config: dict | None = None) -> None:
+    """Counting modes handler. Accepts optional pre-fetched config to skip DB queries.
+
+    The config dict should have keys: 'progress', 'mode', 'goal', 'last_counter_id', 'guild_id'.
+    """
     if message.author.bot:
         return
 
-    progress = await get_counting_mode_progress(message.channel.id)
-
-    mode = await get_counting_mode_mode(message.channel.id)
+    if config is not None:
+        progress = config.get("progress")
+        mode = config.get("mode")
+        goal = config.get("goal")
+        last_counter_id = config.get("last_counter_id")
+    else:
+        progress = await get_counting_mode_progress(message.channel.id)
+        mode = await get_counting_mode_mode(message.channel.id)
+        goal = None  # Fetched later if needed
+        last_counter_id = None
 
     locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
 
@@ -443,7 +454,8 @@ async def counting(message: discord.Message):
         await message.reply(embed=embed)
         return
 
-    last_counter_id = await get_last_mode_counter_id(message.channel.id)
+    if config is None:
+        last_counter_id = await get_last_mode_counter_id(message.channel.id)
 
     if last_counter_id == str(message.author.id):
         await message.add_reaction("💀")
@@ -479,7 +491,8 @@ async def counting(message: discord.Message):
         await message.reply(embed=embed)
         return
 
-    goal = await get_count_mode_goal(message.channel.id)
+    if config is None or goal is None:
+        goal = await get_count_mode_goal(message.channel.id)
 
     if mode == 12:
         number = romeal_to_number(number)
