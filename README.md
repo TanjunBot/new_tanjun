@@ -13,6 +13,7 @@ A powerful, feature-rich Discord bot built with [discord.py](https://github.com/
 ## Features
 
 ### 🛡️ Moderation & Administration
+
 - Ban, kick, timeout, warn with configurable warnings
 - Purge messages, nuke channels, slowmode management
 - Role management (add, remove, create, delete, copy, move)
@@ -22,6 +23,7 @@ A powerful, feature-rich Discord bot built with [discord.py](https://github.com/
 - Auto-moderation with triggered messages
 
 ### 📈 Leveling System
+
 - XP tracking with configurable scaling and cooldowns
 - Level-up messages with customizable channel and message
 - Rank cards with role rewards
@@ -29,33 +31,40 @@ A powerful, feature-rich Discord bot built with [discord.py](https://github.com/
 - Level blacklist for channels/roles/users
 
 ### 🎁 Giveaways
+
 - Start, edit, end, and reroll giveaways
 - Blacklist management (users and roles)
 - Multiple winners support
 
 ### 🤖 AI Integration
+
 - GPT-powered chat with custom situation prompts
 - Token management system
 
 ### 🎮 Games & Minigames
+
 - Counting (with configurable modes, challenges, and word chain)
 - Akinator, Connect 4, Hangman, Tic-Tac-Toe, Wordle
 - Rock Paper Scissors, Flag Quiz
 - Country flags game
 
 ### 🖼️ Image Manipulation
+
 - Resize, rescale, mirror, compress images
 - Background removal and filter effects
 
 ### 📊 Logging
+
 - Configurable log channels for various events
 - Channel/role/user-specific blacklist for logs
 
 ### 🌍 Localization
+
 - Multi-language support (English, German)
 - Crowdin integration for community translations
 
 ### 🔄 Utility
+
 - AFK status, avatar/banner display
 - Boosted channel and role management
 - Scheduled messages, Twitch integration
@@ -65,6 +74,7 @@ A powerful, feature-rich Discord bot built with [discord.py](https://github.com/
 - Feedback and reporting
 
 ### 🩺 Health Monitoring
+
 - Startup validation and periodic health checks
 - Database connectivity verification
 - External API health checks (OpenAI, Twitch, GIPHY, Brawl Stars, GitHub, ImgBB, bytebin)
@@ -84,18 +94,21 @@ A powerful, feature-rich Discord bot built with [discord.py](https://github.com/
 ### Running with Docker (Recommended)
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/TanjunBot/new_tanjun.git
    cd new_tanjun
    ```
 
 2. Copy the environment file and configure it:
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
    ```
 
 3. Start with Docker Compose:
+
    ```bash
    docker compose up -d
    ```
@@ -103,29 +116,34 @@ A powerful, feature-rich Discord bot built with [discord.py](https://github.com/
 ### Manual Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/TanjunBot/new_tanjun.git
    cd new_tanjun
    ```
 
 2. Create a virtual environment:
+
    ```bash
    python3.12 -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. Install dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. Copy and configure the environment file:
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
    ```
 
 5. Run the bot:
+
    ```bash
    python main.py
    ```
@@ -174,7 +192,7 @@ Update scripts for Linux (`update.sh`) and Windows (`update.bat`) are included i
 
 ## Project Structure
 
-```
+```text
 ├── ai/               # AI integration (GPT, token management)
 ├── assets/           # Static assets (images, fonts)
 ├── commands/         # Slash command implementations
@@ -211,7 +229,7 @@ Update scripts for Linux (`update.sh`) and Windows (`update.bat`) are included i
 
 We welcome contributions! Please check the [issue tracker](https://github.com/TanjunBot/new_tanjun/issues) for open issues or feature requests.
 
-For setup instructions and guidelines, see [`CONTRIBUTING.md`](CONTRIBUTING.md) (coming soon).
+For setup instructions and guidelines, see CONTRIBUTING.md (coming soon).
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
