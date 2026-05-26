@@ -52,7 +52,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         await commandInfo.reply(embed=embed)
         return
 
-    channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[0][0])
+    channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[0].id)
     page = 0
     selected_channel = 0
 
@@ -75,11 +75,11 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         description = tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.admin.trigger_messages.configure.trigger.description",
-            trigger=trigger_message[2],
-            response=trigger_message[3],
+            trigger=trigger_message.trigger,
+            response=trigger_message.response,
         )
 
-        if trigger_message[4]:
+        if trigger_message.case_sensitive:
             description += "\n\n" + tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.trigger_messages.configure.trigger.caseSensitive",
@@ -97,9 +97,9 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             )
             for index, channel in enumerate(channels):
                 if index == selected_channel:
-                    description += f"\n🠲 {index + 1}. <#{channel[1]}>"
+                    description += f"\n🠲 {index + 1}. <#{channel.channel_id}>"
                 else:
-                    description += f"\n{index + 1}. <#{channel[1]}>"
+                    description += f"\n{index + 1}. <#{channel.channel_id}>"
         else:
             description += "\n\n" + tanjunLocalizer.localize(
                 commandInfo.locale,
@@ -110,7 +110,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             title=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.trigger_messages.configure.trigger.title",
-                trigger=trigger_message[2],
+                trigger=trigger_message.trigger,
             ),
             description=description,
         )
@@ -181,8 +181,8 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             nonlocal channels
             channels = await get_trigger_message_channels(
                 commandInfo.guild.id,
-                trigger_messages[0, index, call - overload, name - defined][0, index, call - overload, name - defined],
-            )  # type: ignore[union-attr, index, call-overload, name-defined]
+                trigger_messages[0].id,
+            )
             embed = await generate_embed()  # type: ignore[no-untyped-call]
             view = TriggerMessageView()
             await interaction.response.edit_message(embed=embed, view=view)
@@ -211,13 +211,13 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             await add_trigger_message_channel(
                 commandInfo.guild.id,  # type: ignore[union-attr]
                 data["values"][0] if data is not None else "",
-                trigger_messages[page][0],  # type: ignore[index]
+                trigger_messages[page].id,
             )
             nonlocal channels
             channels = await get_trigger_message_channels(
                 commandInfo.guild.id,
-                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
-            )  # type: ignore[union-attr, index, call-overload, name-defined]
+                trigger_messages[page].id,
+            )
             embed = await generate_embed()  # type: ignore[no-untyped-call]
             view = TriggerMessageView()
             await interaction.response.edit_message(embed=embed, view=view)
@@ -243,8 +243,8 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             nonlocal channels
             channels = await get_trigger_message_channels(
                 commandInfo.guild.id,
-                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
-            )  # type: ignore[union-attr, index, call-overload, name-defined]
+                trigger_messages[page].id,
+            )
             nonlocal selected_channel
             selected_channel = 0
             await self.update_message(interaction)
@@ -261,14 +261,14 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             nonlocal trigger_messages
             await remove_trigger_message(
                 commandInfo.guild.id,
-                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
-            )  # type: ignore[union-attr, index, call-overload, name-defined]
+                trigger_messages[page].id,
+            )
             trigger_messages = await get_trigger_messages(commandInfo.guild.id)  # type: ignore[union-attr]
             nonlocal channels
             channels = await get_trigger_message_channels(
                 commandInfo.guild.id,
-                trigger_messages[0, index, call - overload, name - defined][0, index, call - overload, name - defined],
-            )  # type: ignore[union-attr, index, call-overload, name-defined]
+                trigger_messages[0].id,
+            )
             await self.update_message(interaction)
 
         @discord.ui.button(
@@ -300,8 +300,8 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             nonlocal channels
             channels = await get_trigger_message_channels(
                 commandInfo.guild.id,
-                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
-            )  # type: ignore[union-attr, index, call-overload, name-defined]
+                trigger_messages[page].id,
+            )
             nonlocal selected_channel
             selected_channel = 0
             await self.update_message(interaction)
@@ -330,12 +330,12 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             row=1,
         )
         async def add_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
-            view = TriggerMessageChannelView(commandInfo, trigger_messages[page][0])  # type: ignore[index]
+            view = TriggerMessageChannelView(commandInfo, trigger_messages[page].id)
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     commandInfo.locale,
                     "commands.admin.trigger_messages.configure.trigger.addChannel.title",
-                    trigger=trigger_messages[page][2],  # type: ignore[index]
+                    trigger=trigger_messages[page].trigger,
                 ),
                 description=tanjunLocalizer.localize(
                     commandInfo.locale,
@@ -358,13 +358,13 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             nonlocal channels
             await remove_trigger_message_channel(
                 commandInfo.guild.id,  # type: ignore[union-attr]
-                channels[selected_channel][1],  # type: ignore[index]
-                trigger_messages[page][0],  # type: ignore[index]
+                channels[selected_channel].channel_id,
+                trigger_messages[page].id,
             )
             channels = await get_trigger_message_channels(
                 commandInfo.guild.id,
-                trigger_messages[page, index, call - overload, name - defined][0, index, call - overload, name - defined],
-            )  # type: ignore[union-attr, index, call-overload, name-defined]
+                trigger_messages[page].id,
+            )
             await self.update_message(interaction)
 
         @discord.ui.button(
