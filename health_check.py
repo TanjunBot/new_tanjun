@@ -49,3 +49,4 @@ class HealthCheck(ABC):
     async def run(self) -> HealthCheckResult:
         """Execute the health check and return the result."""
         ...
+
