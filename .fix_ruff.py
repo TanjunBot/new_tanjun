@@ -1,5 +1,6 @@
 # noqa: N999
 """Fix common Ruff issues systematically."""
+
 import json
 import subprocess
 import sys
@@ -7,10 +8,7 @@ from collections import defaultdict
 
 
 def run_ruff():
-    result = subprocess.run(
-        ["ruff", "check", ".", "--output-format", "json"],
-        capture_output=True, text=True, check=False
-    )
+    result = subprocess.run(["ruff", "check", ".", "--output-format", "json"], capture_output=True, text=True, check=False)
     return json.loads(result.stdout)
 
 
@@ -31,12 +29,12 @@ def fix_f821(data):
                     content = f.read()
                 if "from typing import cast" not in content and "from typing import" not in content:
                     # Add after last import
-                    import_end = content.rfind("\nimport ") 
+                    import_end = content.rfind("\nimport ")
                     if import_end == -1:
                         import_end = content.find("\nfrom ")
                     else:
                         import_end = content.rfind("\nfrom ", 0, import_end + 10)
-                    
+
                     if import_end >= 0:
                         insert_pos = content.find("\n", import_end + 1) + 1
                         # Find the end of the last import line
@@ -46,7 +44,7 @@ def fix_f821(data):
                             stripped = line.strip()
                             if stripped.startswith("import ") or stripped.startswith("from "):
                                 last_import_line = i + 1  # this line number
-                                
+
                         # Insert after last import line
                         lines.insert(last_import_line, "from typing import cast\n")
                         fixes[fname] = "".join(lines)
@@ -124,7 +122,7 @@ def fix_n999(data):
     for e in data:
         if e["code"] == "N999":
             files_to_fix.add(e["filename"])
-    
+
     for fname in sorted(files_to_fix):
         with open(fname) as f:
             content = f.read()
@@ -149,11 +147,11 @@ def fix_sim112(data):
             fname = e["filename"]
             line_no = e["location"]["row"]
             changes[fname] = changes.get(fname, 0) + 1
-            
+
             # Mark as needing manual review but add noqa for now
             # Actually this is a valid fix - env vars SHOULD be uppercase
             # Let's not auto-fix this, just track it.
-    
+
     if changes:
         print(f"\n  SIM112 (uncapitalized env vars) in {len(changes)} files - need manual fixes:")
         for fname, count in sorted(changes.items()):
@@ -184,31 +182,31 @@ def main():
         dry_run = True
     else:
         dry_run = False
-    
+
     print("Running ruff check...")
     data = run_ruff()
-    
+
     print(f"\nProcessing {len(data)} errors...")
-    
+
     # Group by code
     by_code = defaultdict(list)
     for e in data:
         by_code[e["code"]].append(e)
-    
+
     print("\nError breakdown:")
     for code in sorted(by_code.keys()):
         print(f"  {code:5s}: {len(by_code[code]):4d}")
-    
+
     if not dry_run:
         print("\n--- Fixing F821 (undefined name) ---")
         fix_f821(data)
-        
+
         print("\n--- Fixing N999 (invalid module name) ---")
         fix_n999(data)
-        
+
         print("\n--- Fixing SIM105 (suppressible exception) ---")
         add_noqa_for_suppressible(data)
-        
+
         print("\n--- Done ---")
     else:
         print("\nDry run - no changes made.")

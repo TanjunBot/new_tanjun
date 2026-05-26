@@ -30,8 +30,8 @@ from typing import Any
 REPO = "TanjunBot/new_tanjun"
 BASE_BRANCH = "development"
 MILESTONE_TITLE = "1.2"
-POLL_INTERVAL_SECONDS = 60      # How long between CodeRabbit status checks
-MAX_REVIEW_CYCLES = 15           # Safety: max review-fix loops before aborting
+POLL_INTERVAL_SECONDS = 60  # How long between CodeRabbit status checks
+MAX_REVIEW_CYCLES = 15  # Safety: max review-fix loops before aborting
 BOT_LABEL = "tanjun-issue-bot"  # Label we'll apply to issues we're working on
 
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
@@ -42,8 +42,10 @@ REPO_DIR = WORKSPACE
 
 # ─── Helpers ─────────────────────────────────────────────────────────────────
 
+
 def run(cmd: list[str], cwd: str | None = None, timeout: int = 120, check: bool = True) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, capture_output=True, text=True, cwd=cwd or str(REPO_DIR), timeout=timeout, check=check)
+
 
 def gh(args: list[str], input_data: str | None = None) -> Any:
     """Run `gh` command and parse JSON output."""
@@ -59,8 +61,10 @@ def gh(args: list[str], input_data: str | None = None) -> Any:
             return result.stdout.strip()
     return None
 
+
 def log(msg: str):
     print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}")
+
 
 def ai_complete(prompt: str, system_prompt: str | None = None) -> str:
     """Call OpenRouter to get a code implementation."""
@@ -69,6 +73,7 @@ def ai_complete(prompt: str, system_prompt: str | None = None) -> str:
         sys.exit(1)
 
     import requests
+
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
@@ -91,18 +96,28 @@ def ai_complete(prompt: str, system_prompt: str | None = None) -> str:
     resp.raise_for_status()
     return resp.json()["choices"][0]["message"]["content"]
 
+
 # ─── Issue Selection ─────────────────────────────────────────────────────────
+
 
 def get_next_issue() -> dict | None:
     """Find the oldest open issue in the target milestone, not already being worked on."""
-    issues = gh([
-        "issue", "list",
-        "--repo", REPO,
-        "--milestone", MILESTONE_TITLE,
-        "--state", "open",
-        "--json", "number,title,body,labels,createdAt",
-        "-L", "50",
-    ])
+    issues = gh(
+        [
+            "issue",
+            "list",
+            "--repo",
+            REPO,
+            "--milestone",
+            MILESTONE_TITLE,
+            "--state",
+            "open",
+            "--json",
+            "number,title,body,labels,createdAt",
+            "-L",
+            "50",
+        ]
+    )
     if not issues:
         return None
 
@@ -120,16 +135,18 @@ def get_next_issue() -> dict | None:
     candidates.sort(key=lambda x: x["createdAt"])
     return candidates[0]
 
+
 # ─── Branch & Implementation ────────────────────────────────────────────────
+
 
 def create_branch(issue: dict) -> str:
     """Create a feature branch for the issue."""
     number = issue["number"]
     title = issue["title"]
     # Sanitize title for branch name
-    safe_title = re.sub(r'[^a-zA-Z0-9-_\s]', '', title).strip().lower()
-    safe_title = re.sub(r'\s+', '-', safe_title)[:60]
-    safe_title = re.sub(r'-+$', '', safe_title)
+    safe_title = re.sub(r"[^a-zA-Z0-9-_\s]", "", title).strip().lower()
+    safe_title = re.sub(r"\s+", "-", safe_title)[:60]
+    safe_title = re.sub(r"-+$", "", safe_title)
     branch = f"fix/issue-{number}-{safe_title}"
 
     run(["git", "checkout", BASE_BRANCH])
@@ -137,6 +154,7 @@ def create_branch(issue: dict) -> str:
     run(["git", "checkout", "-b", branch])
 
     return branch
+
 
 def implement_issue(issue: dict, branch: str) -> bool:
     """Use AI to understand the issue and write the code changes."""
@@ -149,7 +167,10 @@ def implement_issue(issue: dict, branch: str) -> bool:
     # Read some context about the repo structure
     repo_structure = subprocess.run(
         ["find", ".", "-type", "f", "-name", "*.py", "! -path './.git/*'", "! -path './.venv/*'", "! -path './__pycache__/*'"],
-        capture_output=True, text=True, cwd=str(REPO_DIR), timeout=30
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_DIR),
+        timeout=30,
     ).stdout.strip()[:5000]
 
     # Read key files for context
@@ -192,7 +213,7 @@ Output a JSON array of file changes following the format specified.
     result = ai_complete(prompt, system_prompt)
 
     # Parse JSON from response (handle markdown code fences)
-    json_match = re.search(r'```(?:json)?\s*(\[.*?\])\s*```', result, re.DOTALL)
+    json_match = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", result, re.DOTALL)
     if json_match:
         result = json_match.group(1)
 
@@ -202,7 +223,7 @@ Output a JSON array of file changes following the format specified.
         # Good
         pass
     elif "[" in result and "]" in result:
-        result = result[result.index("["):result.rindex("]")+1]
+        result = result[result.index("[") : result.rindex("]") + 1]
     else:
         log(f"AI response wasn't valid JSON. Full response:\n{result[:2000]}")
         return False
@@ -237,63 +258,85 @@ Output a JSON array of file changes following the format specified.
 
     return True
 
+
 # ─── PR Creation ────────────────────────────────────────────────────────────
+
 
 def create_pr(issue: dict, branch: str) -> int:
     """Push branch and create PR. Returns PR number."""
     run(["git", "add", "-A"])
     diff_stat = run(["git", "diff", "--stat", "--cached"], check=False).stdout.strip()
-    run(["git", "commit", "-m", f"fix(#{issue['number']}): {issue['title']}\n\nAutomated fix by tanjun-issue-bot.\n\n{diff_stat}"])
+    run(
+        [
+            "git",
+            "commit",
+            "-m",
+            f"fix(#{issue['number']}): {issue['title']}\n\nAutomated fix by tanjun-issue-bot.\n\n{diff_stat}",
+        ]
+    )
     run(["git", "push", "origin", branch, "-u"])
 
-    body = f"""## Automated Fix for Issue #{issue['number']}
+    body = f"""## Automated Fix for Issue #{issue["number"]}
 
-**Issue:** {issue['title']}
+**Issue:** {issue["title"]}
 
 This PR was automatically generated by the Tanjun Issue Bot.
 
-Closes #{issue['number']}
+Closes #{issue["number"]}
 
 > _Please review by the CodeRabbit AI. If further changes are needed, the bot will address them._
 """
-    pr_data = gh([
-        "pr", "create",
-        "--repo", REPO,
-        "--base", BASE_BRANCH,
-        "--head", branch,
-        "--title", f"fix(#{issue['number']}): {issue['title']}",
-        "--body", body,
-        "--label", BOT_LABEL,
-    ])
+    pr_data = gh(
+        [
+            "pr",
+            "create",
+            "--repo",
+            REPO,
+            "--base",
+            BASE_BRANCH,
+            "--head",
+            branch,
+            "--title",
+            f"fix(#{issue['number']}): {issue['title']}",
+            "--body",
+            body,
+            "--label",
+            BOT_LABEL,
+        ]
+    )
 
     if isinstance(pr_data, dict):
         return pr_data["number"]
     elif isinstance(pr_data, str):
         # Parse URL
-        match = re.search(r'/(\d+)$', pr_data)
+        match = re.search(r"/(\d+)$", pr_data)
         if match:
             return int(match.group(1))
     return 0
 
+
 # ─── CodeRabbit Review Loop ──────────────────────────────────────────────
+
 
 def request_coderabbit_review(pr_number: int):
     """Comment on the PR to request CodeRabbit review."""
     log(f"Requesting CodeRabbit review on PR #{pr_number}")
-    gh([
-        "pr", "comment",
-        "--repo", REPO,
-        str(pr_number),
-        "--body", "@coderabbitai review"
-    ])
+    gh(["pr", "comment", "--repo", REPO, str(pr_number), "--body", "@coderabbitai review"])
+
 
 def get_coderabbit_review_state(pr_number: int) -> str | None:
     """Check CodeRabbit's review state on the PR. Returns status or None."""
-    reviews = gh([
-        "pr", "view", str(pr_number),
-        "--repo", REPO,
-        "--json", "reviews",
-    ])
+    reviews = gh(
+        [
+            "pr",
+            "view",
+            str(pr_number),
+            "--repo",
+            REPO,
+            "--json",
+            "reviews",
+        ]
+    )
     if not reviews:
         return None
 
@@ -305,13 +348,20 @@ def get_coderabbit_review_state(pr_number: int) -> str | None:
                 return state
     return None
 
+
 def get_coderabbit_review_body(pr_number: int) -> str:
     """Get the latest review body from CodeRabbit."""
-    reviews = gh([
-        "pr", "view", str(pr_number),
-        "--repo", REPO,
-        "--json", "reviews",
-    ])
+    reviews = gh(
+        [
+            "pr",
+            "view",
+            str(pr_number),
+            "--repo",
+            REPO,
+            "--json",
+            "reviews",
+        ]
+    )
     if not reviews:
         return ""
     for rev in reversed(reviews.get("reviews", [])):
@@ -322,15 +372,21 @@ def get_coderabbit_review_body(pr_number: int) -> str:
                 return body
     return ""
 
+
 def fix_review_issues(pr_number: int, branch: str, review_body: str) -> bool:
     """Use AI to fix issues CodeRabbit pointed out."""
     log("Fixing issues pointed out by CodeRabbit...")
 
     # Get current state of changed files
-    pr_diff = gh([
-        "pr", "diff", str(pr_number),
-        "--repo", REPO,
-    ])
+    pr_diff = gh(
+        [
+            "pr",
+            "diff",
+            str(pr_number),
+            "--repo",
+            REPO,
+        ]
+    )
     pr_diff = str(pr_diff) if pr_diff else ""
 
     system_prompt = """You are an expert Python developer fixing issues identified by a code review.
@@ -362,12 +418,12 @@ Output a JSON array of file changes.
     result = ai_complete(prompt, system_prompt)
 
     # Parse JSON
-    json_match = re.search(r'```(?:json)?\s*(\[.*?\])\s*```', result, re.DOTALL)
+    json_match = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", result, re.DOTALL)
     if json_match:
         result = json_match.group(1)
     result = result.strip()
     if "[" in result and "]" in result:
-        result = result[result.index("["):result.rindex("]")+1]
+        result = result[result.index("[") : result.rindex("]") + 1]
 
     try:
         changes = json.loads(result)
@@ -387,6 +443,7 @@ Output a JSON array of file changes.
     run(["git", "commit", "-m", f"fix(pr #{pr_number}): Address CodeRabbit review feedback"])
     run(["git", "push", "origin", branch])
     return True
+
 
 def wait_for_coderabbit(pr_number: int, branch: str) -> bool:
     """
@@ -427,7 +484,9 @@ def wait_for_coderabbit(pr_number: int, branch: str) -> bool:
     log(f"MAX_REVIEW_CYCLES ({MAX_REVIEW_CYCLES}) reached. Aborting.")
     return False
 
+
 # ─── Merge & Close ───────────────────────────────────────────────────────
+
 
 def merge_and_close(pr_number: int, issue_number: int) -> bool:
     """Merge PR into development and close the issue."""
@@ -448,14 +507,26 @@ def merge_and_close(pr_number: int, issue_number: int) -> bool:
 
     # Close the issue
     try:
-        gh(["issue", "close", str(issue_number), "--repo", REPO, "--comment", f"Fixed in PR #{pr_number} and merged into {BASE_BRANCH}."])
+        gh(
+            [
+                "issue",
+                "close",
+                str(issue_number),
+                "--repo",
+                REPO,
+                "--comment",
+                f"Fixed in PR #{pr_number} and merged into {BASE_BRANCH}.",
+            ]
+        )
         log(f"Issue #{issue_number} closed!")
     except Exception as e:
         log(f"Failed to close issue: {e}")
 
     return True
 
+
 # ─── Main ─────────────────────────────────────────────────────────────────
+
 
 def main():
     log("Tanjun Issue Bot starting...")
@@ -519,6 +590,7 @@ def main():
         raise
 
     log("Done!")
+
 
 if __name__ == "__main__":
     main()
