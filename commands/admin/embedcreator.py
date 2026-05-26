@@ -6,14 +6,13 @@ from discord.ui import Modal, Select, TextInput, View
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def create_embed(commandInfo: utility.CommandInfo, channel: discord.TextChannel, title: str) -> None:
     class EmbedCreatorView(View):
         def __init__(self, commandInfo: utility.CommandInfo, target_channel: discord.TextChannel) -> None:
             super().__init__(timeout=1800)  # 30 minutes timeout
-            self.commandInfo: utility.CommandInfo = CommandInfo  # type: ignore[assignment]
+            self.commandInfo: utility.CommandInfo = commandInfo  # type: ignore[assignment]
             self.embed: discord.Embed = discord.Embed(title=title, color=0xFFFFFF)
             self.preview_message: discord.Message | None = None
             self.target_channel: discord.TextChannel = target_channel

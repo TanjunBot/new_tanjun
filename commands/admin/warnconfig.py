@@ -3,7 +3,7 @@ import discord
 import utility
 from api import get_warn_config, set_warn_config
 from localizer import tanjunLocalizer
-from utility import CommandInfo
+from models import WarnConfigModel
 
 
 async def warn_config(commandInfo: utility.CommandInfo) -> None:
@@ -11,9 +11,9 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
     config = await get_warn_config(commandInfo.guild.id)  # Retrieve current configuration settings
 
     class WarnConfigModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.CommandInfo, config: dict[str, int] | None) -> None:
+        def __init__(self, commandInfo: utility.CommandInfo, config: WarnConfigModel | None) -> None:
             super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warnconfig.modal.title"))
-            self.commandInfo = CommandInfo
+            self.commandInfo = commandInfo
 
             # Provide default values from the current configuration
             self.add_item(
@@ -26,7 +26,7 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.warnexpiration.placeholder",
                     ),
-                    default=str(config.get("expiration_days", "") or "2") if config else "2",
+                    default=str(config.expiration_days) if config else "2",
                     required=False,
                 )
             )
@@ -40,7 +40,7 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.timeout_threshold.placeholder",
                     ),
-                    default=str(config.get("timeout_threshold", "") or "2") if config else "2",
+                    default=str(config.timeout_threshold) if config else "2",
                     required=False,
                 )
             )
@@ -54,7 +54,7 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.timeout_duration.placeholder",
                     ),
-                    default=str(config.get("timeout_duration", "") or "60") if config else "60",
+                    default=str(config.timeout_duration) if config else "60",
                     required=False,
                 )
             )
@@ -68,7 +68,7 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.kick_threshold.placeholder",
                     ),
-                    default=str(config.get("kick_threshold", "") or "5") if config else "5",
+                    default=str(config.kick_threshold) if config else "5",
                     required=False,
                 )
             )
@@ -82,7 +82,7 @@ async def warn_config(commandInfo: utility.CommandInfo) -> None:
                         commandInfo.locale,
                         "commands.admin.warnconfig.modal.ban_threshold.placeholder",
                     ),
-                    default=str(config.get("ban_threshold", "") or "10") if config else "10",
+                    default=str(config.ban_threshold) if config else "10",
                     required=False,
                 )
             )

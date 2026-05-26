@@ -54,10 +54,10 @@ async def unlock_channel(commandInfo: utility.CommandInfo, channel: discord.Text
             return
 
         # Restore overwrites
-        for role_id, overwrites in saved_overwrites.items():
-            role = channel.guild.get_role(int(role_id))
+        for overwrite in saved_overwrites:
+            role = channel.guild.get_role(int(overwrite.role_id))
             if role:
-                await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(**overwrites))
+                await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(**overwrite.overwrites))
 
         # Clear saved overwrites
         await clear_channel_overwrites(channel.id)

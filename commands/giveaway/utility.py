@@ -26,47 +26,53 @@ from api import (
     add_giveaway_participant as add_giveaway_participant_api,
 )
 from localizer import tanjunLocalizer
+from models import GiveawayChannelRequirementModel, GiveawayModel
 from utility import relativeTimeStrToDate, tanjunEmbed
 
 
-async def generateGiveawayEmbed(giveawayInformation, locale) -> None:  # type: ignore[no-untyped-def]
+async def generateGiveawayEmbed(
+    giveaway: GiveawayModel,
+    locale: str,
+    role_requirements: list[str],
+    channel_requirements: list[GiveawayChannelRequirementModel],
+) -> discord.Embed:
     requirements_parts = []
 
-    if giveawayInformation["new_message_requirement"]:
+    if giveaway.new_message_requirement:
         requirements_parts.append(
             tanjunLocalizer.localize(
                 locale,
                 "commands.giveaway.giveawayEmbed.new_message_requirement",
-                count=giveawayInformation["new_message_requirement"],
+                count=giveaway.new_message_requirement,
             )
         )
-    if giveawayInformation["day_requirement"]:
+    if giveaway.day_requirement:
         requirements_parts.append(
             tanjunLocalizer.localize(
                 locale,
                 "commands.giveaway.giveawayEmbed.day_requirement",
-                count=giveawayInformation["day_requirement"],
+                count=giveaway.day_requirement,
             )
         )
-    if giveawayInformation["role_requirement"]:
+    if role_requirements:
         requirements_parts.append(
             tanjunLocalizer.localize(
                 locale,
                 "commands.giveaway.giveawayEmbed.role_requirement",
-                roles=", ".join(f"<@&{role}>" for role in giveawayInformation["role_requirement"]),
+                roles=", ".join(f"<@&{role}>" for role in role_requirements),
             )
         )
-    if giveawayInformation["voice_requirement"]:
+    if giveaway.voice_requirement:
         requirements_parts.append(
             tanjunLocalizer.localize(
                 locale,
                 "commands.giveaway.giveawayEmbed.voice_requirement",
-                minutes=giveawayInformation["voice_requirement"],
+                minutes=giveaway.voice_requirement,
             )
         )
 
-    if giveawayInformation["channel_requirements"]:
-        channels_desc = ", ".join(f"<#{k}>: {v}" for k, v in giveawayInformation["channel_requirements"].items())
+    if channel_requirements:
+        channels_desc = ", ".join(f"<#{req.channel_id}>: {req.amount}" for req in channel_requirements)
         requirements_parts.append(
             tanjunLocalizer.localize(
                 locale,
@@ -83,22 +89,22 @@ async def generateGiveawayEmbed(giveawayInformation, locale) -> None:  # type: i
 
     description = ""
 
-    if giveawayInformation["description"]:
-        description += giveawayInformation["description"] + "\n\n"
+    if giveaway.description:
+        description += giveaway.description + "\n\n"
 
-    if giveawayInformation["price"]:
+    if giveaway.price:
         description += tanjunLocalizer.localize(
             locale,
             "commands.giveaway.giveawayEmbed.price",
-            price=giveawayInformation["price"],
+            price=giveaway.price,
         )
 
-    if giveawayInformation["sponsor"]:
+    if giveaway.sponsor:
         description += (
             tanjunLocalizer.localize(
                 locale,
                 "commands.giveaway.giveawayEmbed.sponsor",
-                sponsor=f"<@{giveawayInformation['sponsor']}>",
+                sponsor=f"<@{giveaway.sponsor}>",
             )
             + "\n"
         )
@@ -107,36 +113,35 @@ async def generateGiveawayEmbed(giveawayInformation, locale) -> None:  # type: i
         locale,
         "commands.giveaway.giveawayEmbed.description",
         requirements=requirements_text,
-        winners=giveawayInformation["winners"],
+        winners=giveaway.winners,
     )
 
-    if giveawayInformation["end_time"]:
+    if giveaway.end_time:
         description += "\n" + tanjunLocalizer.localize(
             locale,
             "commands.giveaway.giveawayEmbed.end_time",
-            date=f"<t:{int((relativeTimeStrToDate(giveawayInformation['end_time']) if isinstance(giveawayInformation['end_time'], str) else giveawayInformation['end_time']).timestamp())}:R>",
+            date=f"<t:{int((relativeTimeStrToDate(giveaway.end_time) if isinstance(giveaway.end_time, str) else giveaway.end_time).timestamp())}:R>",
         )
 
-    # Creating embed with localized content
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
             locale,
             "commands.giveaway.giveawayEmbed.title",
-            title=giveawayInformation["title"],
+            title=giveaway.title,
         ),
         description=description,
     )
 
-    return embed  # type: ignore[return-value]
+    return embed
 
 
 async def sendGiveaway(giveawayid, client) -> None:  # type: ignore[no-untyped-def]
-    giveawayInformation = await get_giveaway(giveawayid)
+    giveaway = await get_giveaway(giveawayid)
 
-    if not giveawayInformation:
+    if not giveaway:
         return
 
-    guildId = giveawayInformation[1]
+    guildId = giveaway.guild_id
 
     guild = client.get_guild(int(guildId))
 
@@ -149,28 +154,9 @@ async def sendGiveaway(giveawayid, client) -> None:  # type: ignore[no-untyped-d
 
     channel_requirements = await get_giveaway_channel_requirements(giveawayid)
 
-    giveawayData = {
-        "id": giveawayInformation[0],
-        "title": giveawayInformation[2],
-        "description": giveawayInformation[3],
-        "winners": giveawayInformation[4],
-        "with_button": giveawayInformation[5],
-        "custom_name": giveawayInformation[6],
-        "sponsor": giveawayInformation[7],
-        "price": giveawayInformation[8],
-        "message": giveawayInformation[9],
-        "end_time": giveawayInformation[10],
-        "start_time": giveawayInformation[11],
-        "new_message_requirement": giveawayInformation[14],
-        "day_requirement": giveawayInformation[15],
-        "role_requirement": role_requirements,
-        "voice_requirement": giveawayInformation[16],
-        "channel_requirements": channel_requirements,
-    }
+    embed = await generateGiveawayEmbed(giveaway, locale, role_requirements, channel_requirements)
 
-    embed = await generateGiveawayEmbed(giveawayData, locale)  # type: ignore[func-returns-value]
-
-    channel = guild.get_channel(int(giveawayInformation[18]))
+    channel = guild.get_channel(int(giveaway.channel_id))
 
     if not channel:
         return
@@ -189,19 +175,19 @@ async def sendGiveaway(giveawayid, client) -> None:  # type: ignore[no-untyped-d
     )
     view.add_item(btn)
 
-    message = await channel.send(giveawayInformation[9], embed=embed, view=view)
+    message = await channel.send(giveaway.message, embed=embed, view=view)
 
     await set_giveaway_message_id(giveawayid, message.id)
     await set_giveaway_started(giveawayid)
 
 
 async def updateGiveawayEmbed(giveawayid, client) -> None:  # type: ignore[no-untyped-def]
-    giveawayInformation = await get_giveaway(giveawayid)
+    giveaway = await get_giveaway(giveawayid)
 
-    if not giveawayInformation:
+    if not giveaway:
         return
 
-    guildId = giveawayInformation[1]
+    guildId = giveaway.guild_id
 
     guild = client.get_guild(int(guildId))
 
@@ -214,44 +200,25 @@ async def updateGiveawayEmbed(giveawayid, client) -> None:  # type: ignore[no-un
 
     channel_requirements = await get_giveaway_channel_requirements(giveawayid)
 
-    giveawayData = {
-        "id": giveawayInformation[0],
-        "title": giveawayInformation[2],
-        "description": giveawayInformation[3],
-        "winners": giveawayInformation[4],
-        "with_button": giveawayInformation[5],
-        "custom_name": giveawayInformation[6],
-        "sponsor": giveawayInformation[7],
-        "price": giveawayInformation[8],
-        "message": giveawayInformation[9],
-        "end_time": giveawayInformation[10],
-        "start_time": giveawayInformation[11],
-        "new_message_requirement": giveawayInformation[14],
-        "day_requirement": giveawayInformation[15],
-        "role_requirement": role_requirements,
-        "voice_requirement": giveawayInformation[16],
-        "channel_requirements": channel_requirements,
-    }
+    embed = await generateGiveawayEmbed(giveaway, locale, role_requirements, channel_requirements)
 
-    embed = await generateGiveawayEmbed(giveawayData, locale)  # type: ignore[func-returns-value]
-
-    channel = guild.get_channel(int(giveawayInformation[18]))
+    channel = guild.get_channel(int(giveaway.channel_id))
 
     if not channel:
         return
 
-    message = await channel.fetch_message(int(giveawayInformation[19]))
+    message = await channel.fetch_message(int(giveaway.message_id))
 
     await message.edit(embed=embed)
 
 
 async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type: ignore[no-untyped-def]
-    giveawayInformation = await get_giveaway(giveawayid)
+    giveaway = await get_giveaway(giveawayid)
 
-    if not giveawayInformation:
+    if not giveaway:
         return
 
-    guildId = giveawayInformation[1]
+    guildId = giveaway.guild_id
 
     guild = client.get_guild(int(guildId))
 
@@ -276,8 +243,8 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
             ),
         )
 
-        giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
-        giveawaymessage = await giveawayChannel.fetch_message(int(giveawayInformation[19]))
+        giveawayChannel = guild.get_channel(int(giveaway.channel_id))
+        giveawaymessage = await giveawayChannel.fetch_message(int(giveaway.message_id))
 
         view = discord.ui.View()
 
@@ -329,7 +296,7 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
     blacklisted_roles = await get_blacklisted_roles(guildId)
 
     if blacklisted_roles:
-        if any(str(role.id) in blacklisted_roles for role in member.roles):  # type: ignore[comparison-overlap]
+        if any(str(role.id) in [bl.entity_id for bl in blacklisted_roles] for role in member.roles):  # type: ignore[comparison-overlap]
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
@@ -343,7 +310,7 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
             return embed  # type: ignore[return-value]
 
     # check if new Message requirement is met
-    if giveawayInformation[14]:
+    if giveaway.new_message_requirement:
         new_messages = await get_new_messages(giveaway_id=giveawayid, user_id=userid)
         if not new_messages:
             embed = tanjunEmbed(
@@ -355,13 +322,13 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
                     str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.message_requirement",
                     new_messages=0,
-                    required_messages=giveawayInformation[14],
-                    missing_messages=giveawayInformation[14],
+                    required_messages=giveaway.new_message_requirement,
+                    missing_messages=giveaway.new_message_requirement,
                 ),
             )
             return embed  # type: ignore[return-value]
 
-        elif new_messages < giveawayInformation[14]:
+        elif new_messages < giveaway.new_message_requirement:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
@@ -371,14 +338,14 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
                     str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.message_requirement",
                     new_messages=new_messages,
-                    required_messages=giveawayInformation[14],
-                    missing_messages=giveawayInformation[14] - new_messages,
+                    required_messages=giveaway.new_message_requirement,
+                    missing_messages=giveaway.new_message_requirement - new_messages,
                 ),
             )
             return embed  # type: ignore[return-value]
 
     # check if day requirement is met
-    if giveawayInformation[15]:
+    if giveaway.day_requirement:
         member = guild.get_member(userid)
         if not member:
             return
@@ -388,14 +355,14 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
         if not joinDate:
             return
 
-        giveawayStartDate = giveawayInformation[11]
+        giveawayStartDate = giveaway.start_time
 
         if not giveawayStartDate:
             return
 
         days = (giveawayStartDate - joinDate).days
 
-        if days < giveawayInformation[15]:
+        if days < giveaway.day_requirement:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
@@ -404,13 +371,13 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
                 description=tanjunLocalizer.localize(
                     str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.day_requirement",
-                    required_days=giveawayInformation[15],
+                    required_days=giveaway.day_requirement,
                 ),
             )
             return embed  # type: ignore[return-value]
 
     # check if voice requirement is met
-    if giveawayInformation[16]:
+    if giveaway.voice_requirement:
         member = guild.get_member(userid)
         if not member:
             return
@@ -420,7 +387,7 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
         if not voice_time:
             voice_time = 0
 
-        if voice_time < giveawayInformation[16]:
+        if voice_time < giveaway.voice_requirement:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
@@ -429,8 +396,8 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
                 description=tanjunLocalizer.localize(
                     str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
                     "commands.giveaway.giveawayEmbed.participation_failed.voice_requirement",
-                    required_minutes=giveawayInformation[16],
-                    missing_minutes=giveawayInformation[16] - voice_time,
+                    required_minutes=giveaway.voice_requirement,
+                    missing_minutes=giveaway.voice_requirement - voice_time,
                 ),
             )
             return embed  # type: ignore[return-value]
@@ -465,10 +432,10 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
         if not member:
             return
 
-        for channel, count in channel_requirements:
-            messages = await get_new_messages_channel(giveawayid, channel, userid)
+        for req in channel_requirements:
+            messages = await get_new_messages_channel(giveawayid, req.channel_id, userid)
 
-            if not messages or messages < count:
+            if not messages or messages < req.amount:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
                         str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
@@ -477,9 +444,9 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
                     description=tanjunLocalizer.localize(
                         str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US",
                         "commands.giveaway.giveawayEmbed.participation_failed.channel_requirements",
-                        channel=channel,
-                        required_messages=count,
-                        missing_messages=count,
+                        channel=req.channel_id,
+                        required_messages=req.amount,
+                        missing_messages=req.amount,
                     ),
                 )
                 return embed  # type: ignore[return-value]
@@ -487,8 +454,8 @@ async def add_giveaway_participant(giveawayid, userid, client) -> None:  # type:
     # add participant to giveaway
     await add_giveaway_participant_api(giveawayid, userid)
 
-    giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
-    giveawaymessage = await giveawayChannel.fetch_message(int(giveawayInformation[19]))
+    giveawayChannel = guild.get_channel(int(giveaway.channel_id))
+    giveawaymessage = await giveawayChannel.fetch_message(int(giveaway.message_id))
 
     view = discord.ui.View()
 
@@ -536,17 +503,17 @@ async def addMessageToGiveaway(message: discord.Message):  # type: ignore[no-unt
 
 
 async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-def]
-    giveawayInformation = await get_giveaway(giveaway_id)
+    giveaway = await get_giveaway(giveaway_id)
 
-    if giveawayInformation[13] == 1:  # type: ignore[index]
+    if giveaway.ended:
         return
 
     await set_giveaway_ended(giveaway_id)
 
-    if not giveawayInformation:
+    if not giveaway:
         return
 
-    guildId = giveawayInformation[1]
+    guildId = giveaway.guild_id
 
     guild = client.get_guild(int(guildId))
 
@@ -568,11 +535,11 @@ async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-d
                 "commands.giveaway.endedGiveaway.no_participants.description",
             ),
         )
-        giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
+        giveawayChannel = guild.get_channel(int(giveaway.channel_id))
         if not giveawayChannel:
             return
         try:
-            giveawaymessage = await giveawayChannel.fetch_message(int(giveawayInformation[19]))
+            giveawaymessage = await giveawayChannel.fetch_message(int(giveaway.message_id))
         except Exception:
             return
         if not giveawaymessage:
@@ -598,10 +565,10 @@ async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-d
 
     participantAmount = len(participants)
 
-    if giveawayInformation[4] > participantAmount:
+    if giveaway.winners > participantAmount:
         winners = participants
     else:
-        for i in range(giveawayInformation[4]):
+        for i in range(giveaway.winners):
             # nosec: B311
             winner = random.choice(participants)
             participants.remove(winner)
@@ -634,11 +601,11 @@ async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-d
             except Exception:
                 pass
 
-    giveawayChannel = guild.get_channel(int(giveawayInformation[18]))
+    giveawayChannel = guild.get_channel(int(giveaway.channel_id))
     if not giveawayChannel:
         return
     try:
-        giveawaymessage = await giveawayChannel.fetch_message(int(giveawayInformation[19]))
+        giveawaymessage = await giveawayChannel.fetch_message(int(giveaway.message_id))
     except Exception:
         return
     if not giveawaymessage:
@@ -678,12 +645,12 @@ async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-d
 
 
 async def updateGiveawayMessage(giveaway_id, client) -> None:  # type: ignore[no-untyped-def]
-    giveawayInformation = await get_giveaway(giveaway_id)
+    giveaway = await get_giveaway(giveaway_id)
 
-    if not giveawayInformation:
+    if not giveaway:
         return
 
-    guildId = giveawayInformation[1]
+    guildId = giveaway.guild_id
 
     guild = client.get_guild(int(guildId))
 
@@ -696,34 +663,15 @@ async def updateGiveawayMessage(giveaway_id, client) -> None:  # type: ignore[no
 
     channel_requirements = await get_giveaway_channel_requirements(giveaway_id)
 
-    giveawayData = {
-        "id": giveawayInformation[0],
-        "title": giveawayInformation[2],
-        "description": giveawayInformation[3],
-        "winners": giveawayInformation[4],
-        "with_button": giveawayInformation[5],
-        "custom_name": giveawayInformation[6],
-        "sponsor": giveawayInformation[7],
-        "price": giveawayInformation[8],
-        "message": giveawayInformation[9],
-        "end_time": giveawayInformation[10],
-        "start_time": giveawayInformation[11],
-        "new_message_requirement": giveawayInformation[14],
-        "day_requirement": giveawayInformation[15],
-        "role_requirement": role_requirements,
-        "voice_requirement": giveawayInformation[16],
-        "channel_requirements": channel_requirements,
-    }
+    embed = await generateGiveawayEmbed(giveaway, locale, role_requirements, channel_requirements)
 
-    embed = await generateGiveawayEmbed(giveawayData, locale)  # type: ignore[func-returns-value]
-
-    channel = guild.get_channel(int(giveawayInformation[18]))
+    channel = guild.get_channel(int(giveaway.channel_id))
 
     if not channel:
         return
 
     try:
-        message = await channel.fetch_message(int(giveawayInformation[19]))
+        message = await channel.fetch_message(int(giveaway.message_id))
         await message.edit(embed=embed)
     except discord.errors.NotFound:
         pass

@@ -5,19 +5,26 @@ from discord import app_commands
 from discord.ext import commands
 
 import utility
+from commands.image._filter import apply_filter
 from commands.image.background import background
-from commands.image.blur_image import blur_image
 from commands.image.compress import compress
-from commands.image.contour import contour_image
-from commands.image.detail import detail_image
-from commands.image.edge_enhance import edge_enhance
-from commands.image.emboss import emboss
-from commands.image.find_edges import find_edges
 from commands.image.mirror import mirror
 from commands.image.rescale import rescale
 from commands.image.resize import resize
-from commands.image.sharpen import sharpen
-from commands.image.smooth import smooth
+
+
+def _make_command_info(interaction: discord.Interaction) -> utility.CommandInfo:
+    return utility.CommandInfo(
+        user=interaction.user,
+        channel=cast(discord.abc.GuildChannel, interaction.channel),
+        guild=interaction.guild,
+        command=interaction.command,
+        locale=interaction.locale,  # type: ignore[arg-type]
+        message=interaction.message,
+        permissions=interaction.permissions,
+        reply=interaction.followup.send,
+        client=interaction.client,
+    )
 
 
 class ImageCommands(discord.app_commands.Group):
@@ -34,11 +41,11 @@ class ImageCommands(discord.app_commands.Group):
         type=[
             app_commands.Choice(
                 name=app_commands.locale_str("image_blur_params_type_gaussian"),
-                value="gussian",
+                value="gaussian",
             ),
             app_commands.Choice(
                 name=app_commands.locale_str("image_blur_params_type_boxblurr"),
-                value="boxblurr",
+                value="box_blur",
             ),
         ]
     )
@@ -50,19 +57,15 @@ class ImageCommands(discord.app_commands.Group):
         radius: app_commands.Range[int, 1, 10] = 3,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
+        filter_name = "gaussian_blur" if type == "gaussian" else "box_blur"
+        await apply_filter(
+            _make_command_info(interaction),
+            image,
+            filter_name,
+            error_locale_key="image.blur",
+            success_locale_key="image.blur",
+            radius=radius,
         )
-
-        await blur_image(commandInfo=commandInfo, image=image, type=type, radius=radius)
 
     @app_commands.command(
         name=app_commands.locale_str("image_contour_name"),
@@ -71,19 +74,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_contour_params_image_description"))
     async def contourimage(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await contour_image(commandInfo=commandInfo, image=image)
+        await apply_filter(_make_command_info(interaction), image, "contour")
 
     @app_commands.command(
         name=app_commands.locale_str("image_detail_name"),
@@ -92,19 +83,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_detail_params_image_description"))
     async def detailimage(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await detail_image(commandInfo=commandInfo, image=image)
+        await apply_filter(_make_command_info(interaction), image, "detail")
 
     @app_commands.command(
         name=app_commands.locale_str("image_edgeenhance_name"),
@@ -113,19 +92,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_edgeenhance_params_image_description"))
     async def edgeenhance(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await edge_enhance(commandInfo=commandInfo, image=image)
+        await apply_filter(_make_command_info(interaction), image, "edge_enhance", success_locale_key="image.edgeenhance")
 
     @app_commands.command(
         name=app_commands.locale_str("image_emboss_name"),
@@ -134,19 +101,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_emboss_params_image_description"))
     async def emboss(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await emboss(commandInfo=commandInfo, image=image)
+        await apply_filter(_make_command_info(interaction), image, "emboss")
 
     @app_commands.command(
         name=app_commands.locale_str("image_findedges_name"),
@@ -155,19 +110,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_findedges_params_image_description"))
     async def findedges(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await find_edges(commandInfo=commandInfo, image=image)
+        await apply_filter(_make_command_info(interaction), image, "find_edges", success_locale_key="image.findedges")
 
     @app_commands.command(
         name=app_commands.locale_str("image_sharpen_name"),
@@ -176,19 +119,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_sharpen_params_image_description"))
     async def sharpen(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await sharpen(commandInfo=commandInfo, image=image)
+        await apply_filter(_make_command_info(interaction), image, "sharpen")
 
     @app_commands.command(
         name=app_commands.locale_str("image_smooth_name"),
@@ -197,19 +128,7 @@ class ImageCommands(discord.app_commands.Group):
     @app_commands.describe(image=app_commands.locale_str("image_smooth_params_image_description"))
     async def smooth(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await smooth(commandInfo=commandInfo, image=image)
+        await apply_filter(_make_command_info(interaction), image, "smooth")
 
     @app_commands.command(
         name=app_commands.locale_str("image_resize_name"),
@@ -228,19 +147,7 @@ class ImageCommands(discord.app_commands.Group):
         height: app_commands.Range[int, 5, 15000],
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await resize(commandInfo=commandInfo, image=image, width=width, height=height)
+        await resize(commandInfo=_make_command_info(interaction), image=image, width=width, height=height)
 
     @app_commands.command(
         name=app_commands.locale_str("image_rescale_name"),
@@ -257,19 +164,7 @@ class ImageCommands(discord.app_commands.Group):
         factor: app_commands.Range[float, 0.1, 10.0],
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await rescale(commandInfo=commandInfo, image=image, factor=factor)
+        await rescale(commandInfo=_make_command_info(interaction), image=image, factor=factor)
 
     @app_commands.command(
         name=app_commands.locale_str("image_mirror_name"),
@@ -298,19 +193,7 @@ class ImageCommands(discord.app_commands.Group):
         direction: str = "x",
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await mirror(commandInfo=commandInfo, image=image, axis=direction)
+        await mirror(commandInfo=_make_command_info(interaction), image=image, axis=direction)
 
     @app_commands.command(
         name=app_commands.locale_str("image_compress_name"),
@@ -327,19 +210,7 @@ class ImageCommands(discord.app_commands.Group):
         quality: app_commands.Range[int, 1, 100],
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await compress(commandInfo=commandInfo, image=image, quality=quality)
+        await compress(commandInfo=_make_command_info(interaction), image=image, quality=quality)
 
     @app_commands.command(
         name=app_commands.locale_str("image_background_name"),
@@ -350,22 +221,7 @@ class ImageCommands(discord.app_commands.Group):
     )
     async def background(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await background(
-            commandInfo=commandInfo,
-            image=image,
-        )
+        await background(commandInfo=_make_command_info(interaction), image=image)
 
 
 class ImageCog(commands.Cog):

@@ -40,9 +40,9 @@ async def blacklist_list_role(commandInfo: utility.commandInfo):
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
         async def remove_role(self, interaction: discord.Interaction, button: discord.ui.Button):
-            role_id = self.roles[self.selectedIndex][0]
+            role_id = self.roles[self.selectedIndex]
             await remove_log_blacklist_role_api(self.guild.id, role_id)
-            self.roles = tuple(x for x in self.roles if x[0] != role_id)
+            self.roles = tuple(x for x in self.roles if x != role_id)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
@@ -59,7 +59,7 @@ async def blacklist_list_role(commandInfo: utility.commandInfo):
             if interaction.data["component_type"] == 6:  # RoleSelect
                 roleId = interaction.data["values"][0]
                 await add_log_blacklist_role_api(self.guild.id, roleId)
-                self.roles += ((roleId,),)
+                self.roles += (roleId,)
                 await self.update_view(interaction)
             return True
 
@@ -70,7 +70,7 @@ async def blacklist_list_role(commandInfo: utility.commandInfo):
                 if self.selectedIndex >= len(self.roles):
                     self.selectedIndex = len(self.roles) - 1
                 description = "\n".join(
-                    [f"{'➤' if i == self.selectedIndex else ''} <@&{role[0]}>" for i, role in enumerate(self.roles)]
+                    [f"{'➤' if i == self.selectedIndex else ''} <@&{role}>" for i, role in enumerate(self.roles)]
                 )
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListRole.title"),
@@ -91,7 +91,7 @@ async def blacklist_list_role(commandInfo: utility.commandInfo):
     if not blacklisted_roles or len(blacklisted_roles) == 0:
         description = tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListRole.noBlacklistedRoles")
     else:
-        description = "\n".join([f"{'➤' if i == 0 else ''} <@&{role[0]}>" for i, role in enumerate(blacklisted_roles)])
+        description = "\n".join([f"{'➤' if i == 0 else ''} <@&{role}>" for i, role in enumerate(blacklisted_roles)])
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(commandInfo.locale, "commands.logs.blacklistListRole.title"),
         description=description,

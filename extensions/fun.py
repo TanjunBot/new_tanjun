@@ -7,23 +7,32 @@ from discord.ext import commands
 import utility
 from commands.fun.funcommands import fun_command
 
+FUN_ACTIONS = ["hug", "kiss", "boop", "wave", "slap", "laugh", "tickle", "pat", "poke"]
+
 
 class funCommands(discord.app_commands.Group):
     @app_commands.command(
-        name=app_commands.locale_str("fun_hug_name"),
-        description=app_commands.locale_str("fun_hug_description"),
+        name=app_commands.locale_str("fun_action_name"),
+        description=app_commands.locale_str("fun_action_description"),
     )
     @app_commands.describe(
-        user=app_commands.locale_str("fun_hug_params_member_description"),
-        message=app_commands.locale_str("fun_hug_params_message_description"),
+        action=app_commands.locale_str("fun_action_params_action_description"),
+        user=app_commands.locale_str("fun_action_params_member_description"),
+        message=app_commands.locale_str("fun_action_params_message_description"),
     )
-    async def hug(
+    @app_commands.choices(
+        action=[
+            app_commands.Choice(name=app_commands.locale_str(f"fun_action_choice_{action}"), value=action)
+            for action in FUN_ACTIONS
+        ]
+    )
+    async def action(
         self,
         interaction: discord.Interaction,
+        action: str,
         user: discord.Member,
         message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
     ) -> None:
-        fun_type = "hug"
         await interaction.response.defer()
         commandInfo = utility.CommandInfo(
             user=interaction.user,
@@ -37,247 +46,7 @@ class funCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await fun_command(commandInfo, fun_type, user, message)
-
-    @app_commands.command(
-        name=app_commands.locale_str("fun_kiss_name"),
-        description=app_commands.locale_str("fun_kiss_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("fun_kiss_params_member_description"),
-        message=app_commands.locale_str("fun_kiss_params_message_description"),
-    )
-    async def kiss(
-        self,
-        interaction: discord.Interaction,
-        user: discord.Member,
-        message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
-    ) -> None:
-        fun_type = "kiss"
-        await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await fun_command(commandInfo, fun_type, user, message)
-
-    @app_commands.command(
-        name=app_commands.locale_str("fun_boop_name"),
-        description=app_commands.locale_str("fun_boop_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("fun_boop_params_member_description"),
-        message=app_commands.locale_str("fun_boop_params_message_description"),
-    )
-    async def boop(
-        self,
-        interaction: discord.Interaction,
-        user: discord.Member,
-        message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
-    ) -> None:
-        fun_type = "boop"
-        await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await fun_command(commandInfo, fun_type, user, message)
-
-    @app_commands.command(
-        name=app_commands.locale_str("fun_wave_name"),
-        description=app_commands.locale_str("fun_wave_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("fun_wave_params_member_description"),
-        message=app_commands.locale_str("fun_wave_params_message_description"),
-    )
-    async def wave(
-        self,
-        interaction: discord.Interaction,
-        user: discord.Member,
-        message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
-    ) -> None:
-        fun_type = "wave"
-        await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await fun_command(commandInfo, fun_type, user, message)
-
-    @app_commands.command(
-        name=app_commands.locale_str("fun_slap_name"),
-        description=app_commands.locale_str("fun_slap_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("fun_slap_params_member_description"),
-        message=app_commands.locale_str("fun_slap_params_message_description"),
-    )
-    async def slap(
-        self,
-        interaction: discord.Interaction,
-        user: discord.Member,
-        message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
-    ) -> None:
-        fun_type = "slap"
-        await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await fun_command(commandInfo, fun_type, user, message)
-
-    @app_commands.command(
-        name=app_commands.locale_str("fun_laugh_name"),
-        description=app_commands.locale_str("fun_laugh_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("fun_laugh_params_member_description"),
-        message=app_commands.locale_str("fun_laugh_params_message_description"),
-    )
-    async def laugh(
-        self,
-        interaction: discord.Interaction,
-        user: discord.Member,
-        message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
-    ) -> None:
-        fun_type = "laugh"
-        await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await fun_command(commandInfo, fun_type, user, message)
-
-    @app_commands.command(
-        name=app_commands.locale_str("fun_tickle_name"),
-        description=app_commands.locale_str("fun_tickle_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("fun_tickle_params_member_description"),
-        message=app_commands.locale_str("fun_tickle_params_message_description"),
-    )
-    async def tickle(
-        self,
-        interaction: discord.Interaction,
-        user: discord.Member,
-        message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
-    ) -> None:
-        fun_type = "tickle"
-        await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await fun_command(commandInfo, fun_type, user, message)
-
-    @app_commands.command(
-        name=app_commands.locale_str("fun_pat_name"),
-        description=app_commands.locale_str("fun_pat_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("fun_pat_params_member_description"),
-        message=app_commands.locale_str("fun_pat_params_message_description"),
-    )
-    async def pat(
-        self,
-        interaction: discord.Interaction,
-        user: discord.Member,
-        message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
-    ) -> None:
-        fun_type = "pat"
-        await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await fun_command(commandInfo, fun_type, user, message)
-
-    @app_commands.command(
-        name=app_commands.locale_str("fun_poke_name"),
-        description=app_commands.locale_str("fun_poke_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("fun_poke_params_member_description"),
-        message=app_commands.locale_str("fun_poke_params_message_description"),
-    )
-    async def poke(
-        self,
-        interaction: discord.Interaction,
-        user: discord.Member,
-        message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
-    ) -> None:
-        fun_type = "poke"
-        await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-
-        await fun_command(commandInfo, fun_type, user, message)
+        await fun_command(commandInfo, action, user, message)
 
 
 class funCog(commands.Cog):

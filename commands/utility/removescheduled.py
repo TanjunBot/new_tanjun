@@ -1,5 +1,3 @@
-from typing import Any
-
 import discord
 from discord.ui import Select, View
 
@@ -7,10 +5,11 @@ import utility
 from api import get_scheduled_messages
 from api import remove_scheduled_message as remove_message
 from localizer import tanjunLocalizer
+from models import ScheduledMessageModel
 
 
 class MessageSelectView(View):
-    def __init__(self, messages: list[tuple[Any, ...]], locale: str) -> None:
+    def __init__(self, messages: list[ScheduledMessageModel], locale: str) -> None:
         super().__init__(timeout=300)  # 5 minute timeout
         self.locale = locale
 
@@ -18,9 +17,9 @@ class MessageSelectView(View):
             placeholder=tanjunLocalizer.localize(locale, "commands.utility.removescheduled.select.placeholder"),
             options=[
                 discord.SelectOption(
-                    label=f"ID: {msg[0]} - {msg[4][:50]}...",
-                    description=f"{msg[3]} | {msg[2] or 'DM'}",
-                    value=str(msg[0]),
+                    label=f"ID: {msg.message_id} - {msg.content[:50]}...",
+                    description=f"{msg.user_id} | {msg.channel_id or 'DM'}",
+                    value=str(msg.message_id),
                 )
                 for msg in messages
             ][:25],
@@ -72,7 +71,7 @@ async def remove_scheduled_message(commandInfo: utility.CommandInfo, message_id:
 
     message_exists = False
     for msg in messages:
-        if msg[0] == message_id:
+        if msg.message_id == message_id:
             message_exists = True
             break
 
