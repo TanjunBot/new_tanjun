@@ -4,7 +4,7 @@ This PR bumps the version in pyproject.toml to 1.2.0 as part of the milestone 1.
 
 ## Changes
 
-- Updated the version in .
+- Updated the version in pyproject.toml.
 
 ## Related Issues
 
