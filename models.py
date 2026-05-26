@@ -443,7 +443,14 @@ class LogEnableModel(BaseModel):
     def from_row(cls, row: tuple) -> LogEnableModel:
         guild_id = row[0]
         field_names = [k for k in cls._OPTION_KEYS]
-        values = {name: bool(v) for name, v in zip(field_names, row[1:25])}
+        expected_count = len(field_names)
+        actual_values = row[1:]
+        if len(actual_values) != expected_count:
+            raise ValueError(
+                f"Expected {expected_count} column values for LogEnableModel, "
+                f"got {len(actual_values)}. Row: {row[:expected_count + 1]!r}..."
+            )
+        values = {name: bool(v) for name, v in zip(field_names, actual_values)}
         return cls(guild_id=guild_id, **values)
 
     @property
