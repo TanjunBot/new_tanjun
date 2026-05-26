@@ -1,20 +1,22 @@
-from datetime import timedelta
+import time
+from collections import defaultdict, deque
 
 import discord
 
 import utility
 from api import (
     add_dynamicslowmode,
-    add_dynamicslowmode_message,
     cash_slowmode_delay,
-    clear_old_dynamicslowmode_messages,
     get_dynamicslowmode,
     get_dynamicslowmode_channels,
-    get_dynamicslowmode_messages,
     remove_cashed_slowmode_delay,
     remove_dynamicslowmode,
 )
 from localizer import tanjunLocalizer
+
+# In-memory message tracking per channel
+# Maps channel_id -> deque of timestamps (maxlen=100 to bound memory usage)
+_recent_messages: dict[int, deque[float]] = defaultdict(lambda: deque(maxlen=100))
 
 
 async def addDynamicslowmode(
@@ -119,6 +121,8 @@ async def removeDynamicslowmode(commandInfo: utility.CommandInfo, channel: disco
         return
 
     await remove_dynamicslowmode(commandInfo.guild.id, channel.id)  # type: ignore[union-attr]
+    # Clean up in-memory tracking
+    _recent_messages.pop(int(channel.id), None)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -186,6 +190,7 @@ async def getDynamicslowmodeChannels(commandInfo: utility.CommandInfo) -> None:
 
 
 async def dynamicslowmodeMessage(message: discord.Message) -> None:
+    """Track messages in-memory and adjust slowmode when thresholds are exceeded."""
     if message.author.bot:
         return
 
@@ -199,33 +204,30 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
         await cash_slowmode_delay(message.channel.id, message.channel.slowmode_delay)  # type: ignore[union-attr, arg-type]
         cashed_slowmode_delay = message.channel.slowmode_delay  # type: ignore[union-attr]
 
-    message_time = message.created_at.replace(tzinfo=None)
-    await add_dynamicslowmode_message(message.channel.id, message.id, message_time)  # type: ignore[arg-type]
+    channel_id: int = message.channel.id  # type: ignore[assignment]
+    now = time.time()
 
-    dynamicSlowmodeMessages = await get_dynamicslowmode_messages(message.channel.id)
+    # Track in memory
+    _recent_messages[channel_id].append(now)
 
-    minTime = message_time - timedelta(seconds=dynamicSlowmodeChannel.reset_after)
-
-    messages = 1
-    for dynamicSlowmodeMessage in dynamicSlowmodeMessages:  # type: ignore[union-attr]
-        if dynamicSlowmodeMessage.send_time < minTime:
-            messages += 1
-
-    await clear_old_dynamicslowmode_messages(message.channel.id, minTime)
+    # Count messages in the time window
+    cutoff = now - dynamicSlowmodeChannel.reset_after
+    messages_in_window = sum(1 for t in _recent_messages[channel_id] if t > cutoff)
 
     reasonLocale = tanjunLocalizer.localize(
         (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]
         "commands.channel.dynamicslowmode.reason",
-        messages=messages,
+        messages=messages_in_window,
         per=dynamicSlowmodeChannel.per,
     )
     resetReasonLocale = tanjunLocalizer.localize(
         (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]
         "commands.channel.dynamicslowmode.resetReason",
     )
-    newSlowmode = int(messages / dynamicSlowmodeChannel.per)
-    if newSlowmode != message.channel.slowmode_delay and newSlowmode > cashed_slowmode_delay:  # type: ignore[union-attr]
-        await message.channel.edit(slowmode_delay=newSlowmode, reason=reasonLocale)  # type: ignore[union-attr]
-    elif newSlowmode < cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
+
+    new_slowmode = int(messages_in_window / dynamicSlowmodeChannel.per)
+    if new_slowmode != message.channel.slowmode_delay and new_slowmode > cashed_slowmode_delay:  # type: ignore[union-attr]
+        await message.channel.edit(slowmode_delay=new_slowmode, reason=reasonLocale)  # type: ignore[union-attr]
+    elif new_slowmode < cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
         await message.channel.edit(slowmode_delay=cashed_slowmode_delay, reason=resetReasonLocale)  # type: ignore[union-attr]
         await remove_cashed_slowmode_delay(message.channel.id)
