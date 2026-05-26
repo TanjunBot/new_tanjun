@@ -28,7 +28,7 @@ async def add_blacklist_role(
         await commandInfo.reply(embed=embed)
         return
 
-    blacklistedRoles = [role[0] for role in await get_giveaway_blacklisted_roles(commandInfo.guild.id)]  # type: ignore[union-attr]
+    blacklistedRoles = [role.entity_id for role in await get_giveaway_blacklisted_roles(commandInfo.guild.id)]  # type: ignore[union-attr]
 
     if str(role.id) in blacklistedRoles:
         embed = utility.tanjunEmbed(

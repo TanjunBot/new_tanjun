@@ -17,8 +17,7 @@ database_port = int(os.environ.get("database_port", 3306))
 database_password = os.environ.get("database_password")
 database_user = os.environ.get("database_user")
 database_schema = os.environ.get("database_schema")
-tenorAPIKey = os.environ.get("tenorAPIKey")
-tenorCKey = os.environ.get("tenorCKey")
+giphyAPIKey = os.environ.get("giphyAPIKey")
 GithubAuthToken = os.environ.get("GithubAuthToken")
 ImgBBApiKey = os.environ.get("ImgBBApiKey")
 openAiKey = os.environ.get("openAIKey")
@@ -29,3 +28,10 @@ brawlstarsToken = os.environ.get("brawlstarsToken")
 twitchSecret = os.environ.get("twitchSecret")
 twitchId = os.environ.get("twitchId")
 prefix = os.environ.get("prefix")
+
+# Emoji identifiers for calculator
+CALC_ADD = "math_add:1254372629456883793"
+CALC_SUBTRACT = "math_substract:1254372627766837248"
+CALC_MULTIPLY = "math_multiply:1254372798319558768"
+CALC_DIVIDE = "math_divide:1254373636224323644"
+CALC_BACKSPACE = "math_backspace:1254371946695757854"

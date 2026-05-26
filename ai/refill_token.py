@@ -5,7 +5,7 @@ from discord import Client
 from api import resetToken
 
 
-async def refillAiToken(client: Client):  # type: ignore[no-untyped-def]
+async def refill_ai_token(client: Client) -> None:
     now = datetime.now()
 
     formatted_now = now.strftime("%d %H:%M")
@@ -13,12 +13,12 @@ async def refillAiToken(client: Client):  # type: ignore[no-untyped-def]
     if formatted_now != "01 00:00":
         return
     skus = await client.fetch_skus()
-    plusSku = None
+    plus_sku = None
     for sku in skus:
         if sku.name == "Tanjun Plus":
-            plusSku = sku
+            plus_sku = sku
 
-    if plusSku:
-        await resetToken(plusSku)  # type: ignore[arg-type]
+    if plus_sku:
+        await resetToken(plus_sku)  # type: ignore[arg-type]
     else:
         await resetToken()

@@ -8,6 +8,7 @@ from discord.ui import Button, View
 import utility
 from api import get_detailed_warnings, remove_warning
 from localizer import tanjunLocalizer
+from models import DetailedWarningModel
 from utility import CommandInfo
 
 WARNINGS_PER_PAGE = 5
@@ -16,12 +17,12 @@ WARNINGS_PER_PAGE = 5
 class WarningView(View):
     def __init__(
         self,
-        warnings: list[tuple[int, str, datetime, datetime | None, str]],
+        warnings: list[DetailedWarningModel],
         member: discord.Member,
         commandInfo: utility.CommandInfo,
     ) -> None:
         super().__init__(timeout=300)  # 5 minutes timeout
-        self.warnings: list[tuple[int, str, datetime, datetime | None, str]] = warnings
+        self.warnings: list[DetailedWarningModel] = warnings
         self.member: discord.Member = member
         self.commandInfo: utility.CommandInfo = CommandInfo  # type: ignore[assignment]
         self.page: int = 0
@@ -49,16 +50,16 @@ class WarningView(View):
             )
             prev_button.callback = self.prev_page  # type: ignore[method-assign]
             self.add_item(prev_button)
-        for i, (warning_id, _, _, expires_at, _) in enumerate(self.warnings[start:end], start=start + 1):
+        for i, w in enumerate(self.warnings[start:end], start=start + 1):
             button = Button(  # type: ignore[var-annotated]
                 label=tanjunLocalizer.localize(
                     str(self.commandInfo.locale),
                     "commands.admin.viewwarns.removeButton",
                     number=i,
                 ),
-                custom_id=f"remove_{warning_id}",
+                custom_id=f"remove_{w.id}",
                 style=discord.ButtonStyle.danger,
-                disabled=expires_at is not None and datetime.now() > expires_at,
+                disabled=w.expires_at is not None and datetime.now() > w.expires_at,
             )
             button.callback = self.remove_warning_callback  # type: ignore[method-assign]
             self.add_item(button)
@@ -75,7 +76,7 @@ class WarningView(View):
         data = cast(dict[str, Any], interaction.data)
         warning_id = int(str(data["custom_id"]).split("_")[1])
         await remove_warning(warning_id)
-        self.warnings = [w for w in self.warnings if w[0] != warning_id]
+        self.warnings = [w for w in self.warnings if w.id != warning_id]
 
         if len(self.warnings) == 0:
             embed = utility.tanjunEmbed(
@@ -115,7 +116,7 @@ class WarningView(View):
 def create_warnings_embed(
     commandInfo: utility.CommandInfo,
     member: discord.Member,
-    warnings: list[tuple[int, str, datetime, datetime | None, str]],
+    warnings: list[DetailedWarningModel],
     page: int,
 ) -> utility.tanjunEmbed:
     start = page * WARNINGS_PER_PAGE
@@ -131,11 +132,11 @@ def create_warnings_embed(
         ),
     )
 
-    for i, (_, reason, created_at, expires_at, created_by) in enumerate(current_warnings, start=start + 1):
-        expired = expires_at is not None and datetime.now() > expires_at
+    for i, w in enumerate(current_warnings, start=start + 1):
+        expired = w.expires_at is not None and datetime.now() > w.expires_at
         expiration_str = (
-            f"<t:{int(expires_at.timestamp())}:D>"
-            if expires_at is not None
+            f"<t:{int(w.expires_at.timestamp())}:D>"
+            if w.expires_at is not None
             else tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.viewwarns.never",
@@ -149,13 +150,13 @@ def create_warnings_embed(
                 commandInfo.locale,
                 "commands.admin.viewwarns.warningDetails",
                 reason=(
-                    reason
-                    if reason is not None and len(reason.strip()) > 0  # type: ignore[redundant-expr]
+                    w.reason
+                    if w.reason is not None and len(w.reason.strip()) > 0  # type: ignore[redundant-expr]
                     else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.noReason")
                 ),
-                date=f"<t:{int(created_at.timestamp())}:D>",
+                date=f"<t:{int(w.created_at.timestamp())}:D>",
                 expiration=expiration_str,
-                created_by=created_by,
+                created_by=w.created_by,
             ),
             inline=False,
         )

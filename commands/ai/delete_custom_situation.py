@@ -16,14 +16,14 @@ async def delete_custom_situation(
         await commandInfo.reply(embed=embed)
         return
 
-    await deleteCustomSituation(situation[0])
+    await deleteCustomSituation(situation.user_id)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.deletecustom.success.title"),
         description=tanjunLocalizer.localize(
             commandInfo.locale,
             "commands.ai.deletecustom.success.description",
-            name=situation[2],
+            name=situation.name,
         ),
     )
     await commandInfo.reply(embed=embed)

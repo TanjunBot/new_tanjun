@@ -76,8 +76,8 @@ async def open_ticket_2(interaction: discord.Interaction) -> None:
         )
         return
 
-    introduction = ticket[3]
-    ping_role = ticket[4]
+    introduction = ticket.introduction
+    ping_role = ticket.ping_role
 
     assert interaction.channel is not None
     assert interaction.guild is not None
