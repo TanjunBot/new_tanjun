@@ -2,6 +2,7 @@ import re
 
 import aiohttp
 import discord
+from aiohttp import ClientTimeout
 
 import utility
 from localizer import tanjunLocalizer
@@ -82,7 +83,7 @@ async def copy_emoji(
             emoji_url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
 
             try:
-                async with aiohttp.ClientSession() as session, session.get(emoji_url) as resp:
+                async with aiohttp.ClientSession() as session, session.get(emoji_url, timeout=ClientTimeout(total=10)) as resp:
                     if resp.status != 200:
                         failed_emojis.append(match.group(0))
                         continue
