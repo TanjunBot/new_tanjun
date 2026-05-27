@@ -16,8 +16,8 @@
 #   max_length    - Maximum allowed character length for the translation
 #
 # Translation Workflow:
-# 1. Developers add new source entries to /locales/de.json (German is the source language)
-#    and copy with translations to /locales/en.json.
+# 1. Developers add new source entries to /locales/en.json (English is the source language)
+#    and copy with translations to /locales/de.json.
 # 2. After committing new source strings to the development branch, Crowdin's GitHub
 #    integration picks them up automatically via bundle configuration.
 # 3. Translators manage translations through the Crowdin web interface.
