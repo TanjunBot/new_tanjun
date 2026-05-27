@@ -31,6 +31,7 @@ from config import (
 )
 from health.manager import HealthCheckManager
 from OpenAIHealthCheck import OpenAIHealthCheck
+from TwitchAPIHealthCheck import TwitchAPIHealthCheck
 from translator import TanjunTranslator
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -124,6 +125,7 @@ async def main():
     # Run startup health checks
     health_manager = HealthCheckManager(bot)
     health_manager.register(OpenAIHealthCheck())
+    health_manager.register(TwitchAPIHealthCheck())
     ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.

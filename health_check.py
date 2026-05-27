@@ -12,10 +12,12 @@ New code should import from the ``health`` package directly.
 
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 from OpenAIHealthCheck import OpenAIHealthCheck
+from TwitchAPIHealthCheck import TwitchAPIHealthCheck
 
 __all__ = [
     "HealthCheck",
     "HealthCheckResult",
     "HealthStatus",
     "OpenAIHealthCheck",
+    "TwitchAPIHealthCheck",
 ]
