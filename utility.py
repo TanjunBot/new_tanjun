@@ -969,6 +969,11 @@ def _missingLocalization(locale: str) -> None:
 
 
 def addFeedback(content: str, author: str) -> None:
+    future = _io_executor.submit(_addFeedback, content, author)
+    future.add_done_callback(_handle_submit_exception)
+
+
+def _addFeedback(content: str, author: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("Feedback")
