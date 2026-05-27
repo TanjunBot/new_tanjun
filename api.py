@@ -2,6 +2,7 @@ import asyncio
 import hashlib
 import json
 import time
+import uuid
 from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -279,20 +280,28 @@ async def execute_query_iter(
         return
 
     safe_id = _query_safe_id(query)
+    yielded_any = False
     for attempt in range(_MAX_DB_RETRIES):
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
             async with conn, conn.cursor() as cursor:
                 await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
                 async for row in cursor:
+                    yielded_any = True
                     yield row
             return
         except TimeoutError:
+            if yielded_any:
+                print(f"Timeout after yielding rows on execute_query_iter: {safe_id}")
+                return
             print(f"Timeout on execute_query_iter attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
             if attempt < _MAX_DB_RETRIES - 1:
                 await asyncio.sleep(0.5 * (attempt + 1))
             continue
         except Exception as e:
+            if yielded_any:
+                print(f"Error after yielding rows during query iteration: {e} — {safe_id}")
+                return
             err_str = str(e).lower()
             retryable = (
                 "deadlock" in err_str
@@ -323,8 +332,8 @@ async def transaction(bot=None):
     if pool is None:
         raise RuntimeError("Database pool is not initialized")
 
-    safe_id = _query_safe_id("transaction")
     for attempt in range(_MAX_DB_RETRIES):
+        safe_id = str(uuid.uuid4())
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
             async with conn:
@@ -336,7 +345,7 @@ async def transaction(bot=None):
                     raise
             return
         except TimeoutError:
-            print(f"Timeout on transaction acquire attempt {attempt + 1}/{_MAX_DB_RETRIES}: conn_pool")
+            print(f"Timeout on transaction acquire attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
             if attempt < _MAX_DB_RETRIES - 1:
                 await asyncio.sleep(0.5 * (attempt + 1))
             continue
@@ -354,7 +363,7 @@ async def check_pool_health(bot=None) -> bool:
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
             async with conn, conn.cursor() as cursor:
-                await cursor.execute("SELECT 1")
+                await asyncio.wait_for(cursor.execute("SELECT 1"), timeout=_QUERY_TIMEOUT)
             return True
         except Exception:
             if attempt < _MAX_DB_RETRIES - 1:
