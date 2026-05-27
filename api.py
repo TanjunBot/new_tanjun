@@ -1279,10 +1279,25 @@ async def delete_level_system_data(guild_id: str) -> None:
         "levelRole",
         "levelConfig",
     ]
-    for table in tables:
-        query = f"DELETE FROM {table} WHERE guild_id = %s"
-        params = (guild_id,)
-        await execute_action(query, params)
+    # Validated mapping to avoid SQL injection from f-strings
+    table_delete_queries = {
+        "level": "DELETE FROM level WHERE guild_id = %s",
+        "blacklistedUser": "DELETE FROM blacklistedUser WHERE guild_id = %s",
+        "blacklistedRole": "DELETE FROM blacklistedRole WHERE guild_id = %s",
+        "blacklistedChannel": "DELETE FROM blacklistedChannel WHERE guild_id = %s",
+        "userXpBoost": "DELETE FROM userXpBoost WHERE guild_id = %s",
+        "roleXpBoost": "DELETE FROM roleXpBoost WHERE guild_id = %s",
+        "channelXpBoost": "DELETE FROM channelXpBoost WHERE guild_id = %s",
+        "levelRole": "DELETE FROM levelRole WHERE guild_id = %s",
+        "levelConfig": "DELETE FROM levelConfig WHERE guild_id = %s",
+    }
+    try:
+        async with transaction() as conn, conn.cursor() as cursor:
+            for table in tables:
+                await cursor.execute(table_delete_queries[table], (guild_id,))
+    except Exception as e:
+        print(f"Error deleting level system data for guild {guild_id}: {e}")
+        raise
     _invalidate_guild_cache(guild_id)
 
 
@@ -1798,8 +1813,30 @@ async def set_giveaway_ended(giveaway_id: int) -> None:
 
 
 async def delete_old_giveaways() -> None:
-    query = "DELETE FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK"
-    await execute_action(query)
+    """Delete old ended giveaways and their related data in a single transaction."""
+    try:
+        async with transaction() as conn, conn.cursor() as cursor:
+            # Find old giveaways first
+            await cursor.execute("SELECT giveawayId FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK")
+            old_ids = [row[0] for row in await cursor.fetchall()]
+            if not old_ids:
+                return
+
+            related_tables = [
+                "giveawayChannelRequirement",
+                "giveawayRoleRequirement",
+                "giveawayParticipant",
+                "giveawayVoiceTime",
+                "giveawayNewMessage",
+                "giveawayChannelMessages",
+            ]
+            for give_id in old_ids:
+                for table in related_tables:
+                    await cursor.execute(f"DELETE FROM {table} WHERE giveawayId = %s", (give_id,))
+            await cursor.execute("DELETE FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK")
+    except Exception as e:
+        print(f"Error deleting old giveaways: {e}")
+        raise
 
 
 async def get_giveaway_participants(giveaway_id: int) -> list[str]:
@@ -1946,9 +1983,23 @@ async def get_giveaway_blacklisted_roles(guild_id: str) -> list[GiveawayBlacklis
 
 
 async def delete_giveaway(giveaway_id: int) -> None:
-    query = "DELETE FROM giveaway WHERE giveawayId = %s"
-    params = (giveaway_id,)
-    await execute_action(query, params)
+    """Delete a giveaway and all related data in a single transaction."""
+    related_tables = [
+        "giveawayChannelRequirement",
+        "giveawayRoleRequirement",
+        "giveawayParticipant",
+        "giveawayVoiceTime",
+        "giveawayNewMessage",
+        "giveawayChannelMessages",
+    ]
+    try:
+        async with transaction() as conn, conn.cursor() as cursor:
+            for table in related_tables:
+                await cursor.execute(f"DELETE FROM {table} WHERE giveawayId = %s", (giveaway_id,))
+            await cursor.execute("DELETE FROM giveaway WHERE giveawayId = %s", (giveaway_id,))
+    except Exception as e:
+        print(f"Error deleting giveaway {giveaway_id}: {e}")
+        raise
 
 
 async def set_giveaway_endtime(giveaway_id: int, endtime: datetime) -> None:
