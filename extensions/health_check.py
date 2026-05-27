@@ -8,6 +8,7 @@ class BackgroundLoopHealthCheck(HealthCheck):
     The bot relies on multiple background task loops (extensions/loops.py):
     - Giveaway sending (10s)
     - Giveaway ending (10s)
+    - Voice checking (60s)
     - Voice XP processing (5s)
     - AI token refill (60s)
     - Server pinging (5s)
@@ -15,11 +16,11 @@ class BackgroundLoopHealthCheck(HealthCheck):
     - Booster role/channel cleanup (10s)
     - Scheduled messages (10s)
     - Twitch polling (10s)
-    - Clear Notified Users (10s)
-    - Pokemon Werbung (10s)
+    - Clear Notified Users (5s)
+    - Pokemon Werbung (scheduled: 2am, 8am, 2pm, 8pm)
 
-    If one of these loops crashes silently (they all use `except Exception: pass`),
-    the feature stops working without any notification.
+    If one of these loops stops unexpectedly, the feature stops working.
+    Most loops log exceptions and continue; this check detects stopped tasks.
     """
 
     def __init__(self, bot: Any):
