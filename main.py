@@ -30,6 +30,13 @@ from config import (
     prefix,
 )
 from DatabaseHealthCheck import DatabaseHealthCheck
+from external_api_health_checks import (
+    BrawlStarsHealthCheck,
+    BytebinHealthCheck,
+    GIPHYHealthCheck,
+    GitHubAPIHealthCheck,
+    ImgBBHealthCheck,
+)
 from health.manager import HealthCheckManager
 from locale_file_health_check import LocaleFileHealthCheck
 from OpenAIHealthCheck import OpenAIHealthCheck
@@ -125,9 +132,17 @@ async def main():
 
     # Run startup health checks
     health_manager = HealthCheckManager(bot)
-    health_manager.register(OpenAIHealthCheck())
-    health_manager.register(LocaleFileHealthCheck())
-    health_manager.register(DatabaseHealthCheck())
+    health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(DatabaseHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(GIPHYHealthCheck(), interval=1800)  # 30 minutes
+    health_manager.register(BrawlStarsHealthCheck(), interval=1800)  # 30 minutes
+    health_manager.register(ImgBBHealthCheck(), interval=1800)  # 30 minutes
+    health_manager.register(BytebinHealthCheck(), interval=1800)  # 30 minutes
+    health_manager.register(GitHubAPIHealthCheck(), interval=3600)  # 60 minutes
+    health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
     ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.

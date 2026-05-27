@@ -1,3 +1,5 @@
+from typing import Any
+
 import discord
 
 import utility

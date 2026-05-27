@@ -80,8 +80,13 @@ async def setFarewellChannel(
     imgUrl = None
 
     if image_background is not None:
-        imgUrl = (await utility.upload_image_to_imgbb(image_background, image_background.filename.split(".")[-1]))["data"][
-            "url"
+        imgUrl = (
+            await utility.upload_image_to_imgbb(
+                image_background,
+                image_background.filename.split(".")[-1],  # type: ignore[arg-type, call-overload, name-defined]
+            )
+        )["data"][  # type: ignore[index, arg-type, call-overload, name-defined]
+          "url"
         ]
     else:
         imgUrl = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"  # type: ignore[unreachable]
