@@ -55,6 +55,11 @@ async def log_event_producer(guild_id: str, embed: discord.Embed) -> None:
         pass  # Drop oldest event silently when queue is full
 
 
+async def sendLogEmbeds(guild_id: str, embed: discord.Embed) -> None:
+    """Backward-compatible shim for sendLogEmbeds - enqueues log events."""
+    await log_event_producer(guild_id, embed)
+
+
 async def log_event_consumer(bot: commands.Bot) -> None:
     """Background task that processes the queue asynchronously."""
     while True:
@@ -334,6 +339,7 @@ class LogsCommands(discord.app_commands.Group):
 class LogsCog(commands.Cog):
     def __init__(self, bot) -> None:  # type: ignore[no-untyped-def]
         self.bot = bot
+        self._log_consumer_task: asyncio.Task[None] | None = None
 
     @commands.Cog.listener()
     async def on_automod_rule_create(self, rule: discord.AutoModRule) -> None:
@@ -3019,7 +3025,10 @@ class LogsCog(commands.Cog):
 
     async def log_consumer_task(self) -> None:
         """Run the log event consumer as a background task."""
-        await log_event_consumer(self.bot)
+        try:
+            await log_event_consumer(self.bot)
+        finally:
+            self._log_consumer_task = None
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
@@ -3044,7 +3053,9 @@ class LogsCog(commands.Cog):
         logcmds.add_command(roleBlacklist)
         self.bot.tree.add_command(logcmds)
 
-        self.bot.loop.create_task(self.log_consumer_task())
+        # Only create the log consumer task if it doesn't exist or is done
+        if self._log_consumer_task is None or self._log_consumer_task.done():
+            self._log_consumer_task = self.bot.loop.create_task(self.log_consumer_task())
 
 
 async def setup(bot: commands.Bot) -> None:
