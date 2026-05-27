@@ -51,17 +51,19 @@ class Localizer:
         if not result and locale != "en":
             en_cached = self._cache.get("en")
             if en_cached and (now - en_cached[1]) < self._cache_ttl:
-                return en_cached[0]
-            try:
-                with open("locales/en.json", encoding="utf-8") as file:
-                    fallback_data: object = json.load(file)
-                    parsed = _validate(fallback_data)
-                    if parsed is not None:
-                        result = parsed
-                    else:
-                        print("Invalid translation schema for locale 'en'.")
-            except (FileNotFoundError, json.JSONDecodeError):
-                pass
+                result = en_cached[0]
+            else:
+                try:
+                    with open("locales/en.json", encoding="utf-8") as file:
+                        fallback_data: object = json.load(file)
+                        parsed = _validate(fallback_data)
+                        if parsed is not None:
+                            self._cache["en"] = (parsed, now)
+                            result = parsed
+                        else:
+                            print("Invalid translation schema for locale 'en'.")
+                except (FileNotFoundError, json.JSONDecodeError):
+                    pass
 
         self._cache[locale] = (result, now)
         return result
