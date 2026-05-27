@@ -1,4 +1,5 @@
 from health_check import HealthCheck, HealthCheckResult, HealthStatus
+from typing import Any
 
 
 class BackgroundLoopHealthCheck(HealthCheck):
@@ -21,7 +22,7 @@ class BackgroundLoopHealthCheck(HealthCheck):
     the feature stops working without any notification.
     """
 
-    def __init__(self, bot):
+    def __init__(self, bot: Any):
         self.bot = bot
 
     @property
@@ -41,30 +42,31 @@ class BackgroundLoopHealthCheck(HealthCheck):
                 "LoopCog not found. No background tasks registered.",
             )
 
-        # Check each loop task
-        loop_tasks = [
-            ("Giveaway Sender", cog.sendSendReadyGiveaways),
-            ("Giveaway Ender", cog.endGiveawaysLoop),
-            ("Voice Checker", cog.checkVoiceUsers),
-            ("Voice XP", cog.addVoiceUserLoop),
-            ("AI Token Refill", cog.refillAiTokenLoop),
-            ("Ping Server", cog.pingServerLoop),
-            ("Database Backup", cog.backupDatabaseLoop),
-            ("Booster Roles", cog.removeExpiredClaimedBoosterRoles),
-            ("Booster Channels", cog.removeExpiredClaimedBoosterChannels),
-            ("Scheduled Messages", cog.sendScheduledMessages),
-            ("Twitch Polling", cog.pollTwitchStreams),
-            ("Clear Notified Users", cog.clearNotifiedUsersLoop),
-            ("Pokemon Werbung", cog.sendPokemonWerbung),
+        # Check each loop task (use safe attribute resolution)
+        loop_specs = [
+            ("Giveaway Sender", "sendSendReadyGiveaways"),
+            ("Giveaway Ender", "endGiveawaysLoop"),
+            ("Voice Checker", "checkVoiceUsers"),
+            ("Voice XP", "addVoiceUserLoop"),
+            ("AI Token Refill", "refillAiTokenLoop"),
+            ("Ping Server", "pingServerLoop"),
+            ("Database Backup", "backupDatabaseLoop"),
+            ("Booster Roles", "removeExpiredClaimedBoosterRoles"),
+            ("Booster Channels", "removeExpiredClaimedBoosterChannels"),
+            ("Scheduled Messages", "sendScheduledMessages"),
+            ("Twitch Polling", "pollTwitchStreams"),
+            ("Clear Notified Users", "clearNotifiedUsersLoop"),
+            ("Pokemon Werbung", "sendPokemonWerbung"),
         ]
 
         failed_loops = []
-        for name, task in loop_tasks:
+        for name, attr in loop_specs:
+            task = getattr(cog, attr, None)
+            if task is None:
+                failed_loops.append(f"{name} (missing)")
+                continue
             if not task.is_running():
                 failed_loops.append(name)
-            # Optionally check how long since last iteration
-            # if task.delta and task.delta.total_seconds() > expected_interval * 3:
-            #     failed_loops.append(f"{name} (stuck)")
 
         if failed_loops:
             return HealthCheckResult(
@@ -77,5 +79,5 @@ class BackgroundLoopHealthCheck(HealthCheck):
         return HealthCheckResult(
             self.name,
             HealthStatus.HEALTHY,
-            f"All {len(loop_tasks)} background loops are running.",
+            f"All {len(loop_specs)} background loops are running.",
         )
