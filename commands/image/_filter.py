@@ -22,7 +22,7 @@ FILTERS = {
 
 
 async def apply_filter(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     image: discord.Attachment,
     filter_name: str,
     *,
@@ -34,7 +34,7 @@ async def apply_filter(
 
     Parameters
     ----------
-    commandInfo
+    command_info
     image : discord.Attachment
     filter_name : str
         Key into FILTERS dict.
@@ -50,23 +50,22 @@ async def apply_filter(
     """
     success_key = success_locale_key or f"image.{filter_name}"
 
-    if isinstance(image, discord.Attachment):
-        if not image.filename.endswith((".png", ".jpg", ".jpeg")):
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(commandInfo.locale), f"commands.{error_locale_key}.typenotsupported.title"),
-                description=tanjunLocalizer.localize(
-                    str(commandInfo.locale), f"commands.{error_locale_key}.typenotsupported.description"
-                ),
-            )
-            await commandInfo.reply(embed=embed)
-            return
+    if isinstance(image, discord.Attachment) and not image.filename.endswith((".png", ".jpg", ".jpeg")):
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), f"commands.{error_locale_key}.typenotsupported.title"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), f"commands.{error_locale_key}.typenotsupported.description"
+            ),
+        )
+        await command_info.reply(embed=embed)
+        return
 
     if image.size > 8 * 1024 * 1024:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), f"commands.{error_locale_key}.filesize.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), f"commands.{error_locale_key}.filesize.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), f"commands.{error_locale_key}.filesize.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), f"commands.{error_locale_key}.filesize.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     image_data = await image.read()
@@ -78,12 +77,12 @@ async def apply_filter(
         filter_func = FILTERS.get(filter_name)
         if filter_func is None:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.error.unknown_filter.title"),
+                title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.error.unknown_filter.title"),
                 description=tanjunLocalizer.localize(
-                    str(commandInfo.locale), "commands.image.error.unknown_filter.description"
+                    str(command_info.locale), "commands.image.error.unknown_filter.description"
                 ),
             )
-            await commandInfo.reply(embed=embed)
+            await command_info.reply(embed=embed)
             return
         pil_image = pil_image.filter(filter_func())
 
@@ -92,8 +91,8 @@ async def apply_filter(
     buffer.seek(0)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), f"commands.{success_key}.success.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), f"commands.{success_key}.success.description"),
+        title=tanjunLocalizer.localize(str(command_info.locale), f"commands.{success_key}.success.title"),
+        description=tanjunLocalizer.localize(str(command_info.locale), f"commands.{success_key}.success.description"),
     )
     embed.set_image(url="attachment://image.png")
-    await commandInfo.reply(embed=embed, file=discord.File(fp=buffer, filename="image.png"))
+    await command_info.reply(embed=embed, file=discord.File(fp=buffer, filename="image.png"))

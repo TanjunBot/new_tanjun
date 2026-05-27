@@ -4,31 +4,31 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def avatarDecoration(commandInfo: CommandInfo, user: discord.Member) -> None:
+async def avatarDecoration(command_info: CommandInfo, user: discord.Member) -> None:
     if not user.avatar_decoration:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.avatarDecoration.no_decoration.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.avatarDecoration.no_decoration.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.avatarDecoration.title",
             user=user.display_name,
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.avatarDecoration.description",
         ),
     )
     embed.set_image(url=user.avatar_decoration.url)
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

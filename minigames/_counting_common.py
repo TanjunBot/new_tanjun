@@ -1,3 +1,4 @@
+import contextlib
 import random
 
 import discord
@@ -29,10 +30,8 @@ async def _handle_opted_out(message: discord.Message, locale: str) -> bool:
     if not await check_if_opted_out(message.author.id):
         return False
 
-    try:
+    with contextlib.suppress(discord.Forbidden):
         await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
-    except discord.Forbidden:
-        pass
     await message.delete()
     return True
 
@@ -64,9 +63,6 @@ async def counting(
         Pre-fetched config with 'progress' and 'last_counter_id'. If provided,
         get_progress_func and get_last_counter_id_func are not called.
     """
-    if message.author.bot:
-        return
-
     if await _handle_guild_check(message):
         return
 

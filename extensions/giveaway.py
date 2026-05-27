@@ -29,7 +29,7 @@ class BlacklistCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         role: discord.Role,
     ) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -43,7 +43,7 @@ class BlacklistCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await add_blacklist_role(
-            commandInfo=commandInfo,
+            command_info=command_info,
             role=role,
         )
 
@@ -59,7 +59,7 @@ class BlacklistCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         role: discord.Role,
     ) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -73,7 +73,7 @@ class BlacklistCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await remove_blacklist_role(
-            commandInfo=commandInfo,
+            command_info=command_info,
             role=role,
         )
 
@@ -89,7 +89,7 @@ class BlacklistCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         user: discord.User,
     ) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -103,7 +103,7 @@ class BlacklistCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await add_blacklist_user(
-            commandInfo=commandInfo,
+            command_info=command_info,
             user=user,
         )
 
@@ -119,7 +119,7 @@ class BlacklistCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         user: discord.User,
     ) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -133,7 +133,7 @@ class BlacklistCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await remove_blacklist_user(
-            commandInfo=commandInfo,
+            command_info=command_info,
             user=user,
         )
 
@@ -145,7 +145,7 @@ class BlacklistCommands(discord.app_commands.Group):
         self,
         ctx: discord.Interaction,
     ) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -159,7 +159,7 @@ class BlacklistCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await list_blacklist(
-            commandInfo=commandInfo,
+            command_info=command_info,
         )
 
 
@@ -178,7 +178,7 @@ class GiveawayCommands(discord.app_commands.Group):
         title: app_commands.Range[str, 0, 128],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -195,7 +195,7 @@ class GiveawayCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await start_giveaway(  # type: ignore[no-untyped-call]
-            commandInfo=commandInfo,
+            command_info=command_info,
             title=title,
             target_channel=channel,
         )
@@ -212,7 +212,7 @@ class GiveawayCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
     ) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -226,8 +226,8 @@ class GiveawayCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await end_giveaway(
-            commandInfo=commandInfo,
-            giveawayId=giveawayid,
+            command_info=command_info,
+            giveaway_id=giveawayid,
         )
 
     @app_commands.command(
@@ -242,7 +242,7 @@ class GiveawayCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
     ) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -256,8 +256,8 @@ class GiveawayCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await reroll_giveaway(
-            commandInfo=commandInfo,
-            giveawayId=giveawayid,
+            command_info=command_info,
+            giveaway_id=giveawayid,
         )
 
     @app_commands.command(
@@ -272,7 +272,7 @@ class GiveawayCommands(discord.app_commands.Group):
         ctx: discord.Interaction,
         giveawayid: app_commands.Range[int, 1, 4294967295],
     ) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=ctx.user,
             channel=cast(discord.abc.GuildChannel, ctx.channel),
             guild=ctx.guild,
@@ -286,8 +286,8 @@ class GiveawayCommands(discord.app_commands.Group):
 
         await ctx.response.defer()
         await edit_giveaway(  # type: ignore[no-untyped-call]
-            commandInfo=commandInfo,
-            giveawayId=giveawayid,
+            command_info=command_info,
+            giveaway_id=giveawayid,
         )
 
 
@@ -300,11 +300,11 @@ class GiveawayCog(commands.Cog):
         giveaway_commands = GiveawayCommands(
             name=app_commands.locale_str("giveaway_name"), description=app_commands.locale_str("giveaway_description")
         )
-        blacklistCmds = BlacklistCommands(
+        blacklist_cmds = BlacklistCommands(
             name=app_commands.locale_str("giveaway_blacklist_name"),
             description=app_commands.locale_str("giveaway_blacklist_description"),
         )
-        giveaway_commands.add_command(blacklistCmds)
+        giveaway_commands.add_command(blacklist_cmds)
         if self.bot.tree:  # type: ignore[truthy-bool]
             self.bot.tree.add_command(giveaway_commands)
 

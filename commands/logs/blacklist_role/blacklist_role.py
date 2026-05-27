@@ -10,47 +10,47 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def blacklist_role(commandInfo: utility.CommandInfo, role: discord.Role) -> None:
+async def blacklist_role(command_info: utility.CommandInfo, role: discord.Role) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.blacklistRole.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.blacklistRole.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    assert commandInfo.guild is not None
-    isBlacklisted = await is_log_role_blacklisted_api(commandInfo.guild.id, role.id)
+    assert command_info.guild is not None
+    is_blacklisted = await is_log_role_blacklisted_api(command_info.guild.id, role.id)
 
-    if isBlacklisted:
+    if is_blacklisted:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.blacklistRole.alreadyBlacklisted.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.blacklistRole.alreadyBlacklisted.description",
             ),
         )
     else:
-        await add_log_blacklist_role_api(commandInfo.guild.id, role.id)
+        await add_log_blacklist_role_api(command_info.guild.id, role.id)
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.blacklistRole.blacklisted.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.blacklistRole.blacklisted.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.blacklistRole.blacklisted.description",
             ),
         )
 
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

@@ -5,7 +5,7 @@ from aiohttp import ClientTimeout
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
 from utility import (
-    commandInfo,
+    command_info,
     date_time_to_timestamp,
     isoTimeToDate,
     tanjunEmbed,
@@ -27,48 +27,48 @@ async def getEventRotation():
         return await response.json()
 
 
-async def events(commandInfo: commandInfo):
-    eventRotation = await getEventRotation()
-    if not eventRotation:
-        return await commandInfo.reply(
+async def events(command_info: command_info):
+    event_rotation = await getEventRotation()
+    if not event_rotation:
+        return await command_info.reply(
             tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.events.error.notFound",
             )
         )
 
     async def generate_page(page_num: int) -> discord.Embed:
-        event = eventRotation[page_num]
-        startTime = event["startTime"]
-        startTimestamp = date_time_to_timestamp(isoTimeToDate(startTime))
-        endTime = event["endTime"]
-        endTimestamp = date_time_to_timestamp(isoTimeToDate(endTime))
+        event = event_rotation[page_num]
+        start_time = event["start_time"]
+        start_timestamp = date_time_to_timestamp(isoTimeToDate(start_time))
+        end_time = event["end_time"]
+        end_timestamp = date_time_to_timestamp(isoTimeToDate(end_time))
         map_ = event["event"]["map"]
-        mapLocale = tanjunLocalizer.localize(
-            commandInfo.locale,
+        map_locale = tanjunLocalizer.localize(
+            command_info.locale,
             f"commands.utility.brawlstars.maps.{map_}",
         )
         mode = event["event"]["mode"]
-        modeLocale = tanjunLocalizer.localize(
-            commandInfo.locale,
-            f"commands.utility.brawlstars.gameModes.{mode}",
+        mode_locale = tanjunLocalizer.localize(
+            command_info.locale,
+            f"commands.utility.brawlstars.game_modes.{mode}",
         )
 
         description = tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.brawlstars.events.description",
-            startTime=startTimestamp,
-            endTime=endTimestamp,
-            map_=mapLocale,
-            mode=modeLocale,
+            start_time=start_timestamp,
+            end_time=end_timestamp,
+            map_=map_locale,
+            mode=mode_locale,
         )
 
         return tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.events.title",
                 current_page=page_num + 1,
-                total_pages=len(eventRotation),
+                total_pages=len(event_rotation),
             ),
             description=description,
         )
@@ -81,10 +81,10 @@ async def events(commandInfo: commandInfo):
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
         async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if not interaction.user.id == commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.brawlstars.events.notYourEmbed",
                     ),
                     ephemeral=True,
@@ -98,10 +98,10 @@ async def events(commandInfo: commandInfo):
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
         async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if not interaction.user.id == commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.brawlstars.events.notYourEmbed",
                     ),
                     ephemeral=True,
@@ -113,15 +113,15 @@ async def events(commandInfo: commandInfo):
                 self.current_page += 1
             await interaction.response.edit_message(view=self, embed=await generate_page(self.current_page))
 
-    if len(eventRotation) > 1:
-        view = BrawlersPaginator(len(eventRotation))
-        await commandInfo.reply(embed=await generate_page(0), view=view)
+    if len(event_rotation) > 1:
+        view = BrawlersPaginator(len(event_rotation))
+        await command_info.reply(embed=await generate_page(0), view=view)
     else:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.events.titleNoPages",
             ),
             description=(await generate_page(0)).description,
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)

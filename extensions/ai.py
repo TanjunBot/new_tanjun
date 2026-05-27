@@ -44,7 +44,7 @@ class CustomSituationCommands(discord.app_commands.Group):
     ) -> None:
         from typing import cast
 
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -59,7 +59,7 @@ class CustomSituationCommands(discord.app_commands.Group):
         await interaction.response.defer()
 
         await add_custom_situation(
-            commandInfo=commandInfo,
+            command_info=command_info,
             name=name,
             situation=personality,
             temperature=temperature,
@@ -78,7 +78,7 @@ class CustomSituationCommands(discord.app_commands.Group):
     ) -> None:
         from typing import cast
 
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -93,7 +93,7 @@ class CustomSituationCommands(discord.app_commands.Group):
         await interaction.response.defer()
 
         await delete_custom_situation(
-            commandInfo=commandInfo,
+            command_info=command_info,
         )
 
 
@@ -116,7 +116,7 @@ class AiCommands(discord.app_commands.Group):
         await interaction.response.defer()
         from typing import cast
 
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -131,7 +131,7 @@ class AiCommands(discord.app_commands.Group):
         situation = await getCustomSituation(personality)
 
         await ask_gpt(
-            commandInfo,
+            command_info,
             name=personality,
             situation=situation.situation,
             prompt=prompt,
@@ -164,7 +164,7 @@ class AiCommands(discord.app_commands.Group):
         await interaction.response.defer()
         from typing import cast
 
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -177,7 +177,7 @@ class AiCommands(discord.app_commands.Group):
         )
 
         await ask_gpt(
-            commandInfo,
+            command_info,
             name="GPT",
             situation="",
             prompt=prompt,
@@ -210,7 +210,7 @@ class AiCommands(discord.app_commands.Group):
         await interaction.response.defer()
         from typing import cast
 
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -230,7 +230,7 @@ class AiCommands(discord.app_commands.Group):
         """
 
         await ask_gpt(
-            commandInfo,
+            command_info,
             name="tanjuwun",
             situation=situation,
             prompt=prompt,

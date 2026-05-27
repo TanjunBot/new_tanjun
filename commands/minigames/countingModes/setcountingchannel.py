@@ -11,19 +11,19 @@ from utility import CommandInfo, tanjunEmbed
 LOCALE_KEY = "minigames.setcountingchannel"
 
 
-async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
-    if await require_moderate_members(commandInfo, LOCALE_KEY):
+async def setCountingChannel(command_info: CommandInfo, channel: discord.TextChannel) -> None:
+    if await require_moderate_members(command_info, LOCALE_KEY):
         return
 
-    if commandInfo.guild is None:
+    if command_info.guild is None:
         return
 
-    if await require_bot_permissions(commandInfo, channel):
+    if await require_bot_permissions(command_info, channel):
         return
 
     await set_counting_mode_progress(
         channel_id=channel.id,
-        guild_id=commandInfo.guild.id,
+        guild_id=command_info.guild.id,
         progress=1,
         mode=8,
         goal=128,
@@ -31,13 +31,13 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
     )
 
     introduction_embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), f"{LOCALE_KEY}.modesintroduction.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, f"{LOCALE_KEY}.modesintroduction.description"),
+        title=tanjunLocalizer.localize(str(command_info.locale), f"{LOCALE_KEY}.modesintroduction.title"),
+        description=tanjunLocalizer.localize(command_info.locale, f"{LOCALE_KEY}.modesintroduction.description"),
     )
     await channel.send(embed=introduction_embed)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), f"{LOCALE_KEY}.success.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, f"{LOCALE_KEY}.success.description", channel=channel.mention),
+        title=tanjunLocalizer.localize(str(command_info.locale), f"{LOCALE_KEY}.success.title"),
+        description=tanjunLocalizer.localize(command_info.locale, f"{LOCALE_KEY}.success.description", channel=channel.mention),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

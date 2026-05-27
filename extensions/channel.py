@@ -54,7 +54,7 @@ class WelcomeCommands(discord.app_commands.Group):
         background: discord.Attachment = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -67,7 +67,7 @@ class WelcomeCommands(discord.app_commands.Group):
         )
 
         await setWelcomeChannelCommand(
-            commandInfo=commandInfo,
+            command_info=command_info,
             channel=channel,
             message=message,
             image_background=background,
@@ -80,7 +80,7 @@ class WelcomeCommands(discord.app_commands.Group):
     )
     async def remove_welcome(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -92,7 +92,7 @@ class WelcomeCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await removeWelcomeChannelCommand(commandInfo=commandInfo)  # type: ignore[call-arg]
+        await removeWelcomeChannelCommand(command_info=command_info)  # type: ignore[call-arg]
         return
 
 
@@ -114,7 +114,7 @@ class FarewellCommands(discord.app_commands.Group):
         background: discord.Attachment = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -126,7 +126,7 @@ class FarewellCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await setFarewellChannelCommand(commandInfo, channel, message, background)
+        await setFarewellChannelCommand(command_info, channel, message, background)
         return
 
     @app_commands.command(
@@ -135,7 +135,7 @@ class FarewellCommands(discord.app_commands.Group):
     )
     async def remove_farewell_channel(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -147,7 +147,7 @@ class FarewellCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await removeFarewellChannelCommand(commandInfo=commandInfo)  # type: ignore[call-arg]
+        await removeFarewellChannelCommand(command_info=command_info)  # type: ignore[call-arg]
         return
 
 
@@ -161,7 +161,7 @@ class MediaCommands(discord.app_commands.Group):
     )
     async def media_add_cmd(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -173,7 +173,7 @@ class MediaCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await addMediaChannelCommand(commandInfo=commandInfo, channel=channel)
+        await addMediaChannelCommand(command_info=command_info, channel=channel)
         return
 
     @app_commands.command(
@@ -185,7 +185,7 @@ class MediaCommands(discord.app_commands.Group):
     )
     async def media_remove_cmd(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -197,7 +197,7 @@ class MediaCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await removeMediaChannelCommand(commandInfo=commandInfo, channel=channel)
+        await removeMediaChannelCommand(command_info=command_info, channel=channel)
         return
 
 
@@ -221,7 +221,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         resetafter: app_commands.Range[int, 1, 2147483647] = 60,
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -234,7 +234,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
         )
 
         await addDynamicslowmodeCommand(
-            commandInfo=commandInfo,
+            command_info=command_info,
             channel=channel,
             messages=messages,
             per=per,
@@ -251,7 +251,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
     )
     async def remove_dynamicslowmode(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -263,7 +263,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await removeDynamicslowmodeCommand(commandInfo=commandInfo, channel=channel)
+        await removeDynamicslowmodeCommand(command_info=command_info, channel=channel)
         return
 
     @app_commands.command(
@@ -272,7 +272,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
     )
     async def get_dynamicslowmode_channels(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -284,7 +284,7 @@ class DynamicslowmodeCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await getDynamicslowmodeChannelsCommand(commandInfo=commandInfo)
+        await getDynamicslowmodeChannelsCommand(command_info=command_info)
         return
 
 

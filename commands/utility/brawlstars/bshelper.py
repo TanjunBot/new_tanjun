@@ -1,4 +1,4 @@
-starPowerEmojiMap = {
+star_powerEmojiMap = {
     23000076: "<:23000076:1320821922661142548>",
     23000077: "<:23000077:1320827629363793931>",
     23000078: "<:23000078:1320830458182897805>",
@@ -175,7 +175,7 @@ starPowerEmojiMap = {
 
 def getStarPowerEmoji(id: int) -> str:
     try:
-        emoji = starPowerEmojiMap[id]
+        emoji = star_powerEmojiMap[id]
     except KeyError:
         emoji = ""
     return emoji
@@ -389,7 +389,7 @@ def getGearEmoji(gear: int) -> str:
     return emoji
 
 
-levelEmojiMap = {
+level_emojiMap = {
     1: "<:tier1:1321075685208621086>",
     2: "<:tier2:1321075686982684753>",
     3: "<:tier3:1321075688429715509>",
@@ -446,9 +446,9 @@ levelEmojiMap = {
 
 def getLevelEmoji(level: int) -> str:
     if level > 50:
-        return levelEmojiMap[51]
+        return level_emojiMap[51]
     try:
-        return levelEmojiMap[level]
+        return level_emojiMap[level]
     except ValueError:
         return ""
 

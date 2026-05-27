@@ -4,10 +4,10 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def avatar(commandInfo: CommandInfo, user: discord.Member) -> None:
+async def avatar(command_info: CommandInfo, user: discord.Member) -> None:
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.avatar.title",
             user=user.display_name,
         ),
@@ -19,4 +19,4 @@ async def avatar(commandInfo: CommandInfo, user: discord.Member) -> None:
     )
     if user.guild_avatar and user.avatar:
         embed.set_thumbnail(url=user.avatar.url)
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

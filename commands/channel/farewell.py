@@ -22,65 +22,65 @@ executor = ThreadPoolExecutor()
 
 
 async def setFarewellChannel(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     channel: discord.TextChannel,
     message: str | None = None,
     image_background: discord.Attachment = None,  # type: ignore[assignment]
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.farewell.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.farewell.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     if (
-        not channel.permissions_for(commandInfo.guild.me).send_messages  # type: ignore[union-attr]
-        or not channel.permissions_for(commandInfo.guild.me).embed_links  # type: ignore[union-attr]
-        or not channel.permissions_for(commandInfo.guild.me).attach_files  # type: ignore[union-attr]
+        not channel.permissions_for(command_info.guild.me).send_messages  # type: ignore[union-attr]
+        or not channel.permissions_for(command_info.guild.me).embed_links  # type: ignore[union-attr]
+        or not channel.permissions_for(command_info.guild.me).attach_files  # type: ignore[union-attr]
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.farewell.missingBotPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.farewell.missingBotPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if await get_leave_channel(commandInfo.guild.id):  # type: ignore[union-attr]
+    if await get_leave_channel(command_info.guild.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.farewell.alreadySet.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.farewell.alreadySet.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    imgUrl = None
+    img_url = None
 
     if image_background is not None:
-        imgUrl = (
+        img_url = (
             await utility.upload_image_to_imgbb(
                 image_background,
                 image_background.filename.split(".")[-1],  # type: ignore[arg-type, call-overload, name-defined]
@@ -89,61 +89,61 @@ async def setFarewellChannel(
           "url"
         ]
     else:
-        imgUrl = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"  # type: ignore[unreachable]
+        img_url = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"  # type: ignore[unreachable]
 
-    await set_leave_channel(commandInfo.guild.id, channel.id, message, imgUrl)  # type: ignore[union-attr, arg-type]
+    await set_leave_channel(command_info.guild.id, channel.id, message, img_url)  # type: ignore[union-attr, arg-type]
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.channel.farewell.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.admin.channel.farewell.success.description",
             channel=channel.mention,
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
 
 
-async def removeFarewellChannel(commandInfo: utility.CommandInfo) -> None:
+async def removeFarewellChannel(command_info: utility.CommandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.farewell.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.farewell.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if not await get_leave_channel(commandInfo.guild.id):  # type: ignore[union-attr]
+    if not await get_leave_channel(command_info.guild.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.notSet.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.channel.farewell.notSet.title"),
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale),
+                str(command_info.locale),
                 "commands.admin.channel.farewell.notSet.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    await remove_leave_channel(commandInfo.guild.id)  # type: ignore[union-attr]
+    await remove_leave_channel(command_info.guild.id)  # type: ignore[union-attr]
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.deleteSuccess.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.channel.farewell.deleteSuccess.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.admin.channel.farewell.deleteSuccess.description",
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
 
 
 async def fetch_image(url: str) -> io.BytesIO | None:
@@ -259,12 +259,12 @@ def process_image(background_frames, avatar_frames, user) -> None:  # type: igno
 
 
 async def farewellUser(member: discord.Member) -> None:
-    farewellChannel = await get_leave_channel(member.guild.id)
-    if farewellChannel is None:
+    farewell_channel = await get_leave_channel(member.guild.id)
+    if farewell_channel is None:
         return
 
-    if farewellChannel.image_background:
-        background_frames, _ = await get_image_or_gif_frames(farewellChannel.image_background)
+    if farewell_channel.image_background:
+        background_frames, _ = await get_image_or_gif_frames(farewell_channel.image_background)
     else:
         background_frames = []
 
@@ -285,7 +285,7 @@ async def farewellUser(member: discord.Member) -> None:
 
     file = discord.File(img_byte_arr, filename="bg.gif")  # type: ignore[arg-type]
 
-    description = farewellChannel.message
+    description = farewell_channel.message
 
     if not description:
         description = tanjunLocalizer.localize(
@@ -302,6 +302,6 @@ async def farewellUser(member: discord.Member) -> None:
     )
     embed.set_image(url="attachment://bg.gif")
 
-    channel = await member.guild.fetch_channel(int(farewellChannel.channel_id))
+    channel = await member.guild.fetch_channel(int(farewell_channel.channel_id))
 
     await channel.send(embed=embed, file=file)  # type: ignore[union-attr]

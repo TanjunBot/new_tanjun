@@ -147,7 +147,7 @@ class ImageCommands(discord.app_commands.Group):
         height: app_commands.Range[int, 5, 15000],
     ) -> None:
         await interaction.response.defer()
-        await resize(commandInfo=_make_command_info(interaction), image=image, width=width, height=height)
+        await resize(command_info=_make_command_info(interaction), image=image, width=width, height=height)
 
     @app_commands.command(
         name=app_commands.locale_str("image_rescale_name"),
@@ -164,7 +164,7 @@ class ImageCommands(discord.app_commands.Group):
         factor: app_commands.Range[float, 0.1, 10.0],
     ) -> None:
         await interaction.response.defer()
-        await rescale(commandInfo=_make_command_info(interaction), image=image, factor=factor)
+        await rescale(command_info=_make_command_info(interaction), image=image, factor=factor)
 
     @app_commands.command(
         name=app_commands.locale_str("image_mirror_name"),
@@ -193,7 +193,7 @@ class ImageCommands(discord.app_commands.Group):
         direction: str = "x",
     ) -> None:
         await interaction.response.defer()
-        await mirror(commandInfo=_make_command_info(interaction), image=image, axis=direction)
+        await mirror(command_info=_make_command_info(interaction), image=image, axis=direction)
 
     @app_commands.command(
         name=app_commands.locale_str("image_compress_name"),
@@ -210,7 +210,7 @@ class ImageCommands(discord.app_commands.Group):
         quality: app_commands.Range[int, 1, 100],
     ) -> None:
         await interaction.response.defer()
-        await compress(commandInfo=_make_command_info(interaction), image=image, quality=quality)
+        await compress(command_info=_make_command_info(interaction), image=image, quality=quality)
 
     @app_commands.command(
         name=app_commands.locale_str("image_background_name"),
@@ -221,7 +221,7 @@ class ImageCommands(discord.app_commands.Group):
     )
     async def background(self, interaction: discord.Interaction, image: discord.Attachment) -> None:
         await interaction.response.defer()
-        await background(commandInfo=_make_command_info(interaction), image=image)
+        await background(command_info=_make_command_info(interaction), image=image)
 
 
 class ImageCog(commands.Cog):

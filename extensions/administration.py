@@ -26,7 +26,7 @@ from commands.admin.joinToCreate.joinToCreateListener import (
 )
 from commands.channel.farewell import farewellUser
 from commands.channel.welcome import welcomeNewUser
-from extensions.logs import sendLogEmbeds
+from extensions.logs import send_logEmbeds
 from localizer import tanjunLocalizer
 from loops.create_database_backup import create_database_backup
 from minigames.addLevelXp import update_user_roles
@@ -40,6 +40,8 @@ try:
 except ImportError:
     TEST_FUNCTIONS_AVAILABLE = False
     print("Warning: Test functions not available in tests module")
+import contextlib
+
 from utility import addFeedback, missingLocalization, tanjunEmbed
 
 
@@ -52,7 +54,7 @@ def _mysql_defaults_file(user: str, password: str, host: str, port: int) -> str:
     return path
 
 
-class administrationCog(commands.Cog):
+class AdministrationCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
@@ -149,7 +151,7 @@ class administrationCog(commands.Cog):
         if ctx.author.id not in config.adminIds:
             return
 
-        await sendLogEmbeds(self.bot)
+        await send_logEmbeds(self.bot)
         await create_database_backup(self.bot)
         await removeAllJoinToCreateChannels()
         await ctx.send("Updating...")
@@ -210,36 +212,36 @@ class administrationCog(commands.Cog):
     async def bsstarpoweremojis(self, ctx: commands.Context, start: int = 0) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
-        allBrawlers = await self.getBrawlers()
-        for i, brawler in enumerate(allBrawlers["items"]):
+        all_brawlers = await self.getBrawlers()
+        for i, brawler in enumerate(all_brawlers["items"]):
             if i < start:
                 continue
-            starPowers = brawler["starPowers"]
-            for starPower in starPowers:
-                url = f"https://cdn.brawlify.com/star-powers/borderless/{starPower['id']}.png"
+            star_powers = brawler["star_powers"]
+            for star_power in star_powers:
+                url = f"https://cdn.brawlify.com/star-powers/borderless/{star_power['id']}.png"
                 try:
                     async with (
                         aiohttp.ClientSession() as session,
                         session.get(url, timeout=ClientTimeout(total=10)) as response,
                     ):
                         if response.status != 200:
-                            print(f"Download failed: {response.status} for {starPower['name']}")
-                            await ctx.send(f"Download failed: {response.status} for {starPower['name']}")
+                            print(f"Download failed: {response.status} for {star_power['name']}")
+                            await ctx.send(f"Download failed: {response.status} for {star_power['name']}")
                             continue
                         image = await response.read()
-                        emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)  # type: ignore[union-attr]
-                        await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
+                        emoji = await ctx.guild.create_custom_emoji(name=f"{star_power['id']}", image=image)  # type: ignore[union-attr]
+                        await ctx.send(f"{emoji} {star_power['name']}; i:{i}")
                 except (TimeoutError, aiohttp.ClientError, discord.HTTPException) as e:
-                    print(f"Failed to create emoji for {starPower['name']}: {e}")
-                    await ctx.send(f"Failed to create emoji for {starPower['name']}: {e}")
+                    print(f"Failed to create emoji for {star_power['name']}: {e}")
+                    await ctx.send(f"Failed to create emoji for {star_power['name']}: {e}")
                     continue
 
     @commands.command()
     async def bsgadgetsemojis(self, ctx: commands.Context, start: int = 0) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
-        allBrawlers = await self.getBrawlers()
-        for i, brawler in enumerate(allBrawlers["items"]):
+        all_brawlers = await self.getBrawlers()
+        for i, brawler in enumerate(all_brawlers["items"]):
             if i < start:
                 continue
             gadgets = brawler["gadgets"]
@@ -278,9 +280,9 @@ class administrationCog(commands.Cog):
     async def bsaccdata(self, ctx: commands.Context, id: str) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
-        accData = await self.getAccData(id)
-        accData["brawlers"] = accData["brawlers"][1]
-        await ctx.send(f"```json\n{(json.dumps(accData, indent=4))[0:1900]}\n```")
+        acc_data = await self.getAccData(id)
+        acc_data["brawlers"] = acc_data["brawlers"][1]
+        await ctx.send(f"```json\n{(json.dumps(acc_data, indent=4))[0:1900]}\n```")
 
     @commands.command()
     async def editembedmessage(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
@@ -403,24 +405,22 @@ Das Tanjun-Team
 @entcheneric, @arion2000 und @.pegi
                     """
 
-        sebdedOwners = []
+        sent_owners = []
         for guild in self.bot.guilds:
             owner = guild.owner
             if not owner:
                 continue
-            if owner.id in sebdedOwners:
+            if owner.id in sent_owners:
                 continue
-            sebdedOwners.append(owner.id)
+            sent_owners.append(owner.id)
 
-            try:
+            with contextlib.suppress(Exception):
                 await owner.send(
                     embed=tanjunEmbed(
                         title="Tanjun Update",
                         description=message,
                     )
                 )
-            except Exception:
-                pass
 
     @commands.command()
     async def sendDemoIsNoMoreToAllAdmins(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
@@ -495,15 +495,13 @@ Das Tanjun-Team
             if not owner:
                 continue
 
-            try:
+            with contextlib.suppress(Exception):
                 await owner.send(
                     embed=tanjunEmbed(
                         title="Tanjun Update",
                         description=message,
                     )
                 )
-            except Exception:
-                pass
 
     @commands.command()
     async def me(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
@@ -518,20 +516,20 @@ Das Tanjun-Team
         if ctx.author.id not in config.adminIds:
             return
 
-        permissionResult = (
+        permission_result = (
             not ctx.channel.permissions_for(ctx.guild.me).manage_messages  # type: ignore[union-attr]
             or not ctx.channel.permissions_for(ctx.guild.me).read_message_history  # type: ignore[union-attr]
             or not ctx.channel.permissions_for(ctx.guild.me).manage_channels  # type: ignore[union-attr]
         )
-        await ctx.send(f"{permissionResult}")
+        await ctx.send(f"{permission_result}")
 
     @commands.command()
     async def permissionTest2(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
 
-        permissionResult = ctx.channel.permissions_for(ctx.guild.me).manage_messages  # type: ignore[union-attr]
-        await ctx.send(f"{permissionResult}")
+        permission_result = ctx.channel.permissions_for(ctx.guild.me).manage_messages  # type: ignore[union-attr]
+        await ctx.send(f"{permission_result}")
 
     @commands.command()
     async def listPermissions(self, ctx: commands.Context, channel: discord.TextChannel | None = None) -> None:  # type: ignore[type-arg]
@@ -541,11 +539,11 @@ Das Tanjun-Team
         if not channel:
             channel = ctx.channel  # type: ignore[assignment]
 
-        permissionResult = channel.permissions_for(ctx.guild.me)  # type: ignore[union-attr]
-        permissionText = ""
-        for permission in permissionResult:
-            permissionText += f"{permission}\n"
-        await ctx.send(f"{permissionText}")
+        permission_result = channel.permissions_for(ctx.guild.me)  # type: ignore[union-attr]
+        permission_text = ""
+        for permission in permission_result:
+            permission_text += f"{permission}\n"
+        await ctx.send(f"{permission_text}")
 
     @commands.command()
     async def database_sync(self, ctx: commands.Context, url: str | None = None) -> None:  # type: ignore[type-arg]
@@ -664,10 +662,8 @@ Das Tanjun-Team
             )
             return
         finally:
-            try:
+            with contextlib.suppress(OSError):
                 os.unlink(defaults_file)
-            except OSError:
-                pass
 
         # Prepare filtered sql
         filtered_sql_file = "filtered_import.sql"
@@ -752,4 +748,4 @@ Das Tanjun-Team
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(administrationCog(bot))
+    await bot.add_cog(AdministrationCog(bot))

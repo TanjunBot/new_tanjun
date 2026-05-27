@@ -47,7 +47,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
 
     ticket_channel = channel
 
-    if not hasattr(ticket_channel, "id") or not ticket_channel.id == int(ticket.channel_id):
+    if not hasattr(ticket_channel, "id") or ticket_channel.id != int(ticket.channel_id):
         await interaction.followup.send(
             tanjunLocalizer.localize(
                 str(interaction.locale),
@@ -65,7 +65,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
     summary_channel = guild.get_channel(summary_channel_id)  # type: ignore[arg-type]
 
     if not summary_channel:
-        if isinstance(channel, discord.TextChannel) or isinstance(channel, discord.Thread):
+        if isinstance(channel, (discord.TextChannel, discord.Thread)):
             await channel.edit(archived=True, locked=True)  # type: ignore[call-overload]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -1071,7 +1071,7 @@ async def generate_summary_html(
         <script>
         """
 
-    roleJsObject = ""
+    role_js_object = ""
 
     for role in mentioned_roles:
         members = []
@@ -1080,7 +1080,7 @@ async def generate_summary_html(
         permissions = []
         for permission, _ in iter(role.permissions):
             permissions.append(permission)
-        roleJsObject += f"""
+        role_js_object += f"""
         {{
             id: '{str(role.id)}',
             name: '{role.name}',
@@ -1092,15 +1092,15 @@ async def generate_summary_html(
 
     html += f"""
             const roles = [
-                {roleJsObject}
+                {role_js_object}
             ];
             """
 
-    channelJsObject = ""
+    channel_js_object = ""
 
     for channel in mentioned_channels:
         any_channel = channel  # type: Any
-        channelJsObject += f"""
+        channel_js_object += f"""
         {{
             id: '{any_channel.id}',
             name: '{any_channel.name}',
@@ -1112,17 +1112,17 @@ async def generate_summary_html(
 
     html += f"""
             const channels = [
-                {channelJsObject}
+                {channel_js_object}
             ];
     """
 
-    userJsObject = ""
+    user_js_object = ""
 
     for user in mentioned_users:
         roles = []
         for role in user.roles:
             roles.append(str(role.id))
-        userJsObject += f"""
+        user_js_object += f"""
         {{
             id: '{str(user.id)}',
             displayname: '{user.display_name}',
@@ -1130,13 +1130,13 @@ async def generate_summary_html(
             avatar: '{user.avatar}',
             status: '{user.status}',
             roles: {roles},
-            createdAt: '{user.created_at}',
+            created_at: '{user.created_at}',
         }},
         """
 
     html += f"""
             const users = [
-                {userJsObject}
+                {user_js_object}
             ];
     """
 
@@ -4078,8 +4078,8 @@ async def generate_summary_html(
                     message.querySelectorAll('.role-mention').forEach(mention => {
                         mention.addEventListener('click', (event) => {
                             event.stopPropagation();
-                            const roleId = mention.getAttribute('data-role-id');
-                            const role = roles.find(r => r.id === roleId);
+                            const role_id = mention.getAttribute('data-role-id');
+                            const role = roles.find(r => r.id === role_id);
                             if (role) {
                                 showRolePopover(role, event);
                             }
@@ -4089,8 +4089,8 @@ async def generate_summary_html(
                     message.querySelectorAll('.user-mention').forEach(mention => {
                         mention.addEventListener('click', (event) => {
                             event.stopPropagation();
-                            const userId = mention.getAttribute('data-user-id');
-                            const user = users.find(u => u.id === userId);
+                            const user_id = mention.getAttribute('data-user-id');
+                            const user = users.find(u => u.id === user_id);
                             if (user) {
                                 showUserPopover(user, event);
                             }
@@ -4100,8 +4100,8 @@ async def generate_summary_html(
                     message.querySelectorAll('.channel-mention').forEach(mention => {
                         mention.addEventListener('click', (event) => {
                             event.stopPropagation();
-                            const channelId = mention.getAttribute('data-channel-id');
-                            const channel = channels.find(c => c.id === channelId);
+                            const channel_id = mention.getAttribute('data-channel-id');
+                            const channel = channels.find(c => c.id === channel_id);
                             if (channel) {
                                 showChannelPopover(channel, event);
                             }
@@ -4193,8 +4193,8 @@ async def generate_summary_html(
             }
 
             function showTitleUserPopover(event, element) {
-                const userId = element.getAttribute('data-user-id');
-                showUserPopover(users.find(user => user.id === userId), event);
+                const user_id = element.getAttribute('data-user-id');
+                showUserPopover(users.find(user => user.id === user_id), event);
             }
 
             function showUserPopover(user, event) {
@@ -4207,7 +4207,7 @@ async def generate_summary_html(
                 const t = translations[currentLang] || translations['en'];
 
                 const userRoles = user.roles
-                    .map(roleId => roles.find(r => r.id === roleId))
+                    .map(role_id => roles.find(r => r.id === role_id))
                     .filter(role => role !== undefined);
 
                 const popover = document.createElement('div');
@@ -4229,7 +4229,7 @@ async def generate_summary_html(
                 </div>
             ` : ''}
             <div class="user-joined">
-                ${t.permissions.userPopover.memberSince} ${new Date(user.createdAt).toLocaleDateString()}
+                ${t.permissions.userPopover.memberSince} ${new Date(user.created_at).toLocaleDateString()}
             </div>
         </div>
     `;

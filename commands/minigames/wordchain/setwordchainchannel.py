@@ -5,110 +5,110 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
-    if commandInfo.guild is None:
+async def setwordchainchannel(command_info: CommandInfo, channel: discord.TextChannel) -> None:
+    if command_info.guild is None:
         return
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).moderate_members
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_moderate_members_perms.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_moderate_members_perms.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if commandInfo.client.user is None:
+    if command_info.client.user is None:
         return
-    selfMember = commandInfo.guild.get_member(commandInfo.client.user.id)
-    if selfMember is None:
+    self_member = command_info.guild.get_member(command_info.client.user.id)
+    if self_member is None:
         return
 
-    if not channel.permissions_for(selfMember).send_messages:
+    if not channel.permissions_for(self_member).send_messages:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_send_perms.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_send_perms.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if not channel.permissions_for(selfMember).manage_messages:
+    if not channel.permissions_for(self_member).manage_messages:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_message_delete_perms.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_message_delete_perms.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if not channel.permissions_for(selfMember).read_messages:
+    if not channel.permissions_for(self_member).read_messages:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_read_perms.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_read_perms.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if not channel.permissions_for(selfMember).view_channel:
+    if not channel.permissions_for(self_member).view_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_view_perms.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "minigames.setwordchainchannel.error.no_view_perms.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     await set_wordchain_word(
         channel_id=channel.id,
-        guild_id=commandInfo.guild.id,
+        guild_id=command_info.guild.id,
         word="",
         worder_id="nobody",
     )
 
-    introductionEmbed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.introduction.title"),
+    introduction_embed = tanjunEmbed(
+        title=tanjunLocalizer.localize(str(command_info.locale), "minigames.setwordchainchannel.introduction.title"),
         description=tanjunLocalizer.localize(
-            str(commandInfo.locale), "minigames.setwordchainchannel.introduction.description"
+            str(command_info.locale), "minigames.setwordchainchannel.introduction.description"
         ),
     )
-    await channel.send(embed=introductionEmbed)
+    await channel.send(embed=introduction_embed)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "minigames.setwordchainchannel.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "minigames.setwordchainchannel.success.description",
             channel=channel.mention,
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

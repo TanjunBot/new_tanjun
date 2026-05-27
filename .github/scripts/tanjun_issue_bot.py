@@ -113,7 +113,7 @@ def get_next_issue() -> dict | None:
             "--state",
             "open",
             "--json",
-            "number,title,body,labels,createdAt",
+            "number,title,body,labels,created_at",
             "-L",
             "50",
         ]
@@ -132,7 +132,7 @@ def get_next_issue() -> dict | None:
         return None
 
     # Pick oldest (first created)
-    candidates.sort(key=lambda x: x["createdAt"])
+    candidates.sort(key=lambda x: x["created_at"])
     return candidates[0]
 
 
