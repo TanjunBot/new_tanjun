@@ -30,6 +30,7 @@ from config import (
     prefix,
 )
 from health.manager import HealthCheckManager
+from locale_file_health_check import LocaleFileHealthCheck
 from OpenAIHealthCheck import OpenAIHealthCheck
 from translator import TanjunTranslator
 

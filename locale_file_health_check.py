@@ -72,15 +72,27 @@ class LocaleFileHealthCheck(HealthCheck):
             locale_data[locale] = data
 
             # Check required keys
-            identifiers = {entry.get("identifier") for entry in data if isinstance(entry, dict)}
+            identifiers = {
+                entry.get("identifier")
+                for entry in data
+                if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
+            }
             for key in self.REQUIRED_KEYS:
                 if key not in identifiers:
                     missing_keys.append(f"{locale}:{key}")
 
         # Cross-locale comparison: warn about keys in en.json missing from de.json
         if "en" in locale_data and "de" in locale_data:
-            en_ids = {entry.get("identifier") for entry in locale_data["en"] if isinstance(entry, dict)}
-            de_ids = {entry.get("identifier") for entry in locale_data["de"] if isinstance(entry, dict)}
+            en_ids = {
+                entry.get("identifier")
+                for entry in locale_data["en"]
+                if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
+            }
+            de_ids = {
+                entry.get("identifier")
+                for entry in locale_data["de"]
+                if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
+            }
             missing_from_de = en_ids - de_ids
             if missing_from_de:
                 # Limit to first 20 to avoid absurdly long messages
@@ -111,7 +123,8 @@ class LocaleFileHealthCheck(HealthCheck):
                 return HealthCheckResult(
                     self.name,
                     HealthStatus.HEALTHY,
-                    "Locale files exist, parse correctly, and contain all required keys.",
+                    f"Locale files exist, parse correctly, and contain all required keys. "
+                    f"Warnings: {len(warnings)} translation mismatch(es) detected.",
                     details={"warnings": warnings},
                 )
             return HealthCheckResult(
