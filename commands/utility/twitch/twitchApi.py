@@ -2,6 +2,7 @@ from collections.abc import Mapping
 from typing import Any
 
 import aiohttp
+from aiohttp import ClientTimeout
 import discord
 
 from api import get_twitch_online_notification_by_twitch_uuid

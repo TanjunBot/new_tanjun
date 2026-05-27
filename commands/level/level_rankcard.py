@@ -87,11 +87,14 @@ async def set_background_command(commandInfo: CommandInfo, image: discord.Attach
 
 
 async def fetch_image(url: str) -> io.BytesIO | None:
-    async with aiohttp.ClientSession() as session, session.get(url, timeout=ClientTimeout(total=10)) as response:
-        if response.status != 200:
-            return None
-        image_data = io.BytesIO(await response.read())
-        return image_data
+    try:
+        async with aiohttp.ClientSession() as session, session.get(url, timeout=ClientTimeout(total=10)) as response:
+            if response.status != 200:
+                return None
+            image_data = io.BytesIO(await response.read())
+            return image_data
+    except (asyncio.TimeoutError, aiohttp.ClientError):
+        return None
 
 
 async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
