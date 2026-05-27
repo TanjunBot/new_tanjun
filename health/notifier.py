@@ -75,25 +75,29 @@ async def notify_health_failures(
         )
         return
 
-    embed = discord.Embed(
-        title="⚠️ Health Check Failure",
-        color=0xFF0000,
-        timestamp=datetime.now(UTC),
-    )
-
-    for failure in failures:
-        status_emoji = "🔴" if failure.status == HealthStatus.CRITICAL else "🟡"
-        embed.add_field(
-            name=f"{status_emoji} {failure.check_name}",
-            value=f"**Status:** {failure.status.value}\n{failure.message}",
-            inline=False,
+    chunks = [failures[i:i + 25] for i in range(0, len(failures), 25)]
+    for idx, chunk in enumerate(chunks, start=1):
+        title = f"⚠️ Health Check Failure ({idx}/{len(chunks)})" if len(chunks) > 1 else "⚠️ Health Check Failure"
+        embed = discord.Embed(
+            title=title,
+            color=0xFF0000,
+            timestamp=datetime.now(UTC),
         )
 
-    try:
-        await channel.send(
-            content=f"<@{user_id}>",
-            embed=embed,
-        )
+        for failure in chunk:
+            status_emoji = "🔴" if failure.status == HealthStatus.CRITICAL else "🟡"
+            embed.add_field(
+                name=f"{status_emoji} {failure.check_name}"[:256],
+                value=f"**Status:** {failure.status.value}\n{failure.message}"[:1024],
+                inline=False,
+            )
+
+        try:
+            await channel.send(
+                content=f"<@{user_id}>",
+                embed=embed,
+            )
+        except Exception as exc:
+            logger.error("Failed to send health failure notification: %s", exc)
+            return
         logger.info("Sent health failure notification to channel %s", channel_id)
-    except Exception as exc:
-        logger.error("Failed to send health failure notification: %s", exc)
