@@ -42,7 +42,7 @@ async def dump_database_schema(user: str, password: str, host: str, port: int, o
 
         if process.returncode != 0:
             error_text = stderr.decode() if stderr else "Unknown error"
-            print(f"An error occurred while dumping the database schema: {error_text}")
+            raise RuntimeError(f"An error occurred while dumping the database schema to {output_file}: {error_text}")
         else:
             print(f"Schema dumped to {output_file} successfully.")
     except FileNotFoundError:
