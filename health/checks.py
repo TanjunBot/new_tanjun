@@ -9,7 +9,8 @@ Defines:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
 from typing import Any
 
@@ -19,6 +20,7 @@ class HealthStatus(Enum):
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     CRITICAL = "critical"
+    UNKNOWN = "unknown"
 
 
 @dataclass
@@ -28,6 +30,7 @@ class HealthCheckResult:
     status: HealthStatus
     message: str
     details: dict[str, Any] | None = None
+    timestamp: datetime | None = field(default_factory=datetime.utcnow)
 
 
 class HealthCheck(ABC):

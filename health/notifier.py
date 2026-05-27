@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from datetime import datetime
 from typing import TYPE_CHECKING
 
@@ -13,11 +14,30 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Default alert channel and user ping for health check failures
-# Channel: 959513664589791293 (alerts channel)
-# User: 471036610561966111 (bot owner ping)
-HEALTH_ALERT_CHANNEL_ID: int = 959513664589791293
-HEALTH_ALERT_USER_ID: int = 471036610561966111
+# Alert channel and user ping for health check failures, configured via env vars.
+# Falls back to the default values if not set.
+_alert_channel_str = os.environ.get("HEALTH_ALERT_CHANNEL_ID")
+_alert_user_str = os.environ.get("HEALTH_ALERT_USER_ID")
+
+if _alert_channel_str is not None:
+    try:
+        HEALTH_ALERT_CHANNEL_ID: int = int(_alert_channel_str)
+    except ValueError:
+        raise RuntimeError(
+            f"HEALTH_ALERT_CHANNEL_ID must be an integer, got: {_alert_channel_str!r}"
+        )
+else:
+    HEALTH_ALERT_CHANNEL_ID = 959513664589791293
+
+if _alert_user_str is not None:
+    try:
+        HEALTH_ALERT_USER_ID: int = int(_alert_user_str)
+    except ValueError:
+        raise RuntimeError(
+            f"HEALTH_ALERT_USER_ID must be an integer, got: {_alert_user_str!r}"
+        )
+else:
+    HEALTH_ALERT_USER_ID = 471036610561966111
 
 
 async def notify_health_failures(
