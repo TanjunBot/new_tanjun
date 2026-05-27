@@ -937,12 +937,12 @@ async def get_warnings(guild_id: str | int, user_id: str | int | None = None) ->
         query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id, user_id)
         result = await safe_execute_query(query, params)
-        return [WarningModel.from_row(row) for row in result] if result else None
+        return [WarningModel.from_row(row) for row in result] if result else []
     else:
         query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id,)
         result = await safe_execute_query(query, params)
-        return [WarningModel.from_row(row) for row in result] if result else None
+        return [WarningModel.from_row(row) for row in result] if result else []
 
 
 async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> list[DetailedWarningModel] | None:
@@ -2255,7 +2255,7 @@ async def addCustomSituation(
 async def getCustomSituations() -> list[str]:
     query = "SELECT name FROM aiSituations where unlocked = 1"
     result = await safe_execute_query(query)
-    return result
+    return [row[0] for row in result] if result else []
 
 
 async def getCustomSituation(name: str) -> AISituationModel | None:
