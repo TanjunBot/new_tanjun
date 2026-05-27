@@ -30,7 +30,7 @@ class HealthCheckResult:
     status: HealthStatus
     message: str
     details: dict[str, Any] | None = None
-    timestamp: datetime | None = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=datetime.utcnow)
 
 
 class HealthCheck(ABC):
