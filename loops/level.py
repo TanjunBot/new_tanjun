@@ -6,8 +6,15 @@ from api import (
     get_xp_scaling,
     update_user_xp_from_voice,
 )
-from loops._voice_tracker import voiceUsers
+from loops._voice_tracker import voice_user_ids
 from minigames._xp_core import calculate_xp, is_entity_blacklisted
+
+
+def _get_member(client: discord.Client, user_id: int, guild_id: int) -> discord.Member | None:
+    guild = client.get_guild(guild_id)
+    if guild is None:
+        return None
+    return guild.get_member(user_id)
 
 
 async def fetch_xp_details(user: discord.Member):
@@ -23,7 +30,11 @@ async def fetch_xp_details(user: discord.Member):
 
 
 async def addXpToVoiceUsers(client):
-    for user in voiceUsers:
+    for user_id, guild_id in voice_user_ids:
+        user = _get_member(client, user_id, guild_id)
+        if user is None:
+            continue
+
         if not await get_level_system_status(user.guild.id):
             continue
 

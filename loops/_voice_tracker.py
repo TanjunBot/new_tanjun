@@ -10,7 +10,10 @@ import discord
 
 from api import check_if_opted_out
 
-voiceUsers: list[discord.Member] = []
+# Store (user_id, guild_id) pairs instead of Member objects to prevent
+# memory leaks from stale/disconnected member references. IDs are stable
+# across Discord reconnections and provide O(1) lookup & removal.
+voice_user_ids: set[tuple[int, int]] = set()
 
 
 async def handleVoiceChange(user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
@@ -22,30 +25,28 @@ async def handleVoiceChange(user: discord.Member, before: discord.VoiceState, af
 
     if len(active_members) < 2:
         for member in channel_members:
-            removeVoiceUser(member)
+            removeVoiceUser(member.id, member.guild.id)
     else:
-        updateVoiceUsers(active_members)
+        updateVoiceUsers([(m.id, m.guild.id) for m in active_members])
 
 
-def updateVoiceUsers(active_members: list[discord.Member]) -> None:
-    global voiceUsers
-    current_users_set = set(voiceUsers)
-    active_users_set = set(active_members)
+def updateVoiceUsers(active_user_ids: list[tuple[int, int]]) -> None:
+    global voice_user_ids
+    current_set = voice_user_ids
+    active_set = set(active_user_ids)
 
-    users_to_add = active_users_set - current_users_set
-    users_to_remove = current_users_set - active_users_set
+    users_to_add = active_set - current_set
+    users_to_remove = current_set - active_set
 
-    for user in users_to_add:
-        addVoiceUser(user)
-    for user in users_to_remove:
-        removeVoiceUser(user)
-
-
-def addVoiceUser(user: discord.Member) -> None:
-    if user not in voiceUsers:
-        voiceUsers.append(user)
+    for user_id, guild_id in users_to_add:
+        addVoiceUser(user_id, guild_id)
+    for user_id, guild_id in users_to_remove:
+        removeVoiceUser(user_id, guild_id)
 
 
-def removeVoiceUser(user: discord.Member) -> None:
-    if user in voiceUsers:
-        voiceUsers.remove(user)
+def addVoiceUser(user_id: int, guild_id: int) -> None:
+    voice_user_ids.add((user_id, guild_id))
+
+
+def removeVoiceUser(user_id: int, guild_id: int) -> None:
+    voice_user_ids.discard((user_id, guild_id))
