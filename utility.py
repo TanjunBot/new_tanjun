@@ -966,14 +966,6 @@ def _missingLocalization(locale: str) -> None:
         body=f"Missing localization for {locale}",
         labels=[label],
     )
-    g = Github(GithubAuthToken)
-    repo = g.get_repo("TanjunBot/new_tanjun")
-    label = repo.get_label("missing localization")
-    repo.create_issue(
-        title="Missing localization",
-        body=f"Missing localization for {locale}",
-        labels=[label],
-    )
 
 
 def addFeedback(content: str, author: str) -> None:
