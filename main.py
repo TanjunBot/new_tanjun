@@ -29,8 +29,6 @@ from config import (
     database_user,
     prefix,
 )
-from health.manager import HealthCheckManager
-from OpenAIHealthCheck import OpenAIHealthCheck
 from external_api_health_checks import (
     BrawlStarsHealthCheck,
     BytebinHealthCheck,
@@ -38,6 +36,8 @@ from external_api_health_checks import (
     GitHubAPIHealthCheck,
     ImgBBHealthCheck,
 )
+from health.manager import HealthCheckManager
+from OpenAIHealthCheck import OpenAIHealthCheck
 from translator import TanjunTranslator
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))

@@ -37,17 +37,19 @@ class GIPHYHealthCheck(HealthCheck):
             )
 
         try:
-            async with ClientSession() as session:
-                async with session.get(
+            async with (
+                ClientSession() as session,
+                session.get(
                     f"https://api.giphy.com/v1/gifs/trending?api_key={giphyAPIKey}&limit=1",
                     timeout=10,
-                ) as response:
-                    if response.status != 200:
-                        return HealthCheckResult(
-                            check_name=self.name,
-                            status=HealthStatus.DEGRADED,
-                            message=f"GIPHY API returned HTTP {response.status}",
-                        )
+                ) as response,
+            ):
+                if response.status != 200:
+                    return HealthCheckResult(
+                        check_name=self.name,
+                        status=HealthStatus.DEGRADED,
+                        message=f"GIPHY API returned HTTP {response.status}",
+                    )
         except TimeoutError:
             return HealthCheckResult(
                 check_name=self.name,
@@ -92,24 +94,26 @@ class BrawlStarsHealthCheck(HealthCheck):
         headers = {"Authorization": f"Bearer {brawlstarsToken}"}
 
         try:
-            async with ClientSession() as session:
-                async with session.get(
+            async with (
+                ClientSession() as session,
+                session.get(
                     "https://api.brawlstars.com/v1/brawlers",
                     headers=headers,
                     timeout=10,
-                ) as response:
-                    if response.status == 403:
-                        return HealthCheckResult(
-                            check_name=self.name,
-                            status=HealthStatus.DEGRADED,
-                            message="Brawl Stars token is invalid (HTTP 403).",
-                        )
-                    elif response.status != 200:
-                        return HealthCheckResult(
-                            check_name=self.name,
-                            status=HealthStatus.DEGRADED,
-                            message=f"Brawl Stars API returned HTTP {response.status}",
-                        )
+                ) as response,
+            ):
+                if response.status == 403:
+                    return HealthCheckResult(
+                        check_name=self.name,
+                        status=HealthStatus.DEGRADED,
+                        message="Brawl Stars token is invalid (HTTP 403).",
+                    )
+                elif response.status != 200:
+                    return HealthCheckResult(
+                        check_name=self.name,
+                        status=HealthStatus.DEGRADED,
+                        message=f"Brawl Stars API returned HTTP {response.status}",
+                    )
         except TimeoutError:
             return HealthCheckResult(
                 check_name=self.name,
@@ -197,7 +201,7 @@ class BytebinHealthCheck(HealthCheck):
         return False
 
     async def run(self) -> HealthCheckResult:
-        from config import bytebin_url, bytebin_username, bytebin_password
+        from config import bytebin_password, bytebin_url, bytebin_username
 
         if not bytebin_url:
             return HealthCheckResult(
@@ -210,22 +214,17 @@ class BytebinHealthCheck(HealthCheck):
         if bytebin_username and bytebin_password:
             import base64
 
-            auth = base64.b64encode(
-                f"{bytebin_username}:{bytebin_password}".encode()
-            ).decode()
+            auth = base64.b64encode(f"{bytebin_username}:{bytebin_password}".encode()).decode()
             headers["Authorization"] = f"Basic {auth}"
 
         try:
-            async with ClientSession() as session:
-                async with session.get(
-                    bytebin_url, headers=headers, timeout=10
-                ) as response:
-                    if response.status >= 500:
-                        return HealthCheckResult(
-                            check_name=self.name,
-                            status=HealthStatus.DEGRADED,
-                            message=f"bytebin returned HTTP {response.status}",
-                        )
+            async with ClientSession() as session, session.get(bytebin_url, headers=headers, timeout=10) as response:
+                if response.status >= 500:
+                    return HealthCheckResult(
+                        check_name=self.name,
+                        status=HealthStatus.DEGRADED,
+                        message=f"bytebin returned HTTP {response.status}",
+                    )
         except TimeoutError:
             return HealthCheckResult(
                 check_name=self.name,
@@ -270,24 +269,26 @@ class GitHubAPIHealthCheck(HealthCheck):
         headers = {"Authorization": f"Bearer {GithubAuthToken}"}
 
         try:
-            async with ClientSession() as session:
-                async with session.get(
+            async with (
+                ClientSession() as session,
+                session.get(
                     "https://api.github.com/user",
                     headers=headers,
                     timeout=10,
-                ) as response:
-                    if response.status == 401:
-                        return HealthCheckResult(
-                            check_name=self.name,
-                            status=HealthStatus.DEGRADED,
-                            message="GitHub token is invalid (HTTP 401).",
-                        )
-                    elif response.status != 200:
-                        return HealthCheckResult(
-                            check_name=self.name,
-                            status=HealthStatus.DEGRADED,
-                            message=f"GitHub API returned HTTP {response.status}",
-                        )
+                ) as response,
+            ):
+                if response.status == 401:
+                    return HealthCheckResult(
+                        check_name=self.name,
+                        status=HealthStatus.DEGRADED,
+                        message="GitHub token is invalid (HTTP 401).",
+                    )
+                elif response.status != 200:
+                    return HealthCheckResult(
+                        check_name=self.name,
+                        status=HealthStatus.DEGRADED,
+                        message=f"GitHub API returned HTTP {response.status}",
+                    )
         except TimeoutError:
             return HealthCheckResult(
                 check_name=self.name,
