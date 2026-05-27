@@ -126,12 +126,13 @@ async def _execute_with_retry(
                 await asyncio.sleep(0.5 * (attempt + 1))
                 last_exception = e
                 continue
+            # Non-retryable error or final attempt: raise instead of silently returning None
             print(f"Error during {operation}: {e} — {safe_id}")
-            return None
+            raise
 
     if last_exception:
         print(f"All retries exhausted for {operation}: {safe_id}")
-    return None
+        raise last_exception
 
 
 # ── Cache System ──────────────────────────────────────────────────────────────
@@ -917,13 +918,37 @@ async def create_tables(bot=None) -> None:
         await cursor.execute("SHOW TABLES")
         existing = {row[0] for row in await cursor.fetchall()}
 
-    await asyncio.gather(
-        *[
-            execute_action(tables[table_name], bot=bot)
-            for table_name in tables
-            if table_name not in existing
-        ]
-    )
+    # Build dependency map: table -> list of tables it depends on (via FK REFERENCES)
+    dependencies = {
+        "triggerMessagesChannel": ["triggerMessages"],
+        "tickets": ["ticketMessages"],
+        "dynamicslowmode_messages": ["dynamicslowmode"],
+    }
+
+    # Filter to only tables that need to be created
+    to_create = {name for name in tables if name not in existing}
+
+    # Topologically sort tables into batches for dependency-safe parallel creation
+    created = set()
+    batches = []
+    while to_create:
+        # Find all tables whose dependencies are satisfied (or have no dependencies)
+        batch = {
+            name for name in to_create
+            if all(dep in created or dep not in to_create for dep in dependencies.get(name, []))
+        }
+        if not batch:
+            # Circular dependency or missing parent - shouldn't happen with current schema
+            raise RuntimeError(f"Cannot resolve table dependencies for: {to_create}")
+        batches.append(batch)
+        to_create -= batch
+        created.update(batch)
+
+    # Create tables in batches, parallelizing within each batch
+    for batch in batches:
+        await asyncio.gather(
+            *[execute_action(tables[table_name], bot=bot) for table_name in batch]
+        )
 
 
 async def add_warning(
