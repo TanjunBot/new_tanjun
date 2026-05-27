@@ -79,8 +79,8 @@ class BackgroundLoopHealthCheck(HealthCheck):
             return HealthCheckResult(
                 self.name,
                 HealthStatus.DEGRADED,
-                f"Stopped loops: {', '.join(failed_loops)}",
-                details={"stopped_loops": failed_loops},
+                f"Failed loops: {', '.join(failed_loops)}",
+                details={"failed_loops": failed_loops},
             )
 
         return HealthCheckResult(
