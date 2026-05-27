@@ -5,8 +5,8 @@ import io
 from concurrent.futures import ThreadPoolExecutor
 
 import aiohttp
-from aiohttp import ClientTimeout
 import discord
+from aiohttp import ClientTimeout
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 import utility

@@ -14,7 +14,10 @@ async def fetch_player_data(player_tag: str) -> dict[str, Any] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     url = "https://api.brawlstars.com/v1/players"
     params = {"tag": player_tag}
-    async with aiohttp.ClientSession() as session, session.get(url, headers=headers, params=params, timeout=ClientTimeout(total=10)) as response:
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(url, headers=headers, params=params, timeout=ClientTimeout(total=10)) as response,
+    ):
         if response.status != 200:
             return None
         return await response.json()

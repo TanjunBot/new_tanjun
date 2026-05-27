@@ -1,6 +1,6 @@
 import aiohttp
-from aiohttp import ClientTimeout
 import discord
+from aiohttp import ClientTimeout
 
 from config import brawlstarsToken
 from localizer import tanjunLocalizer

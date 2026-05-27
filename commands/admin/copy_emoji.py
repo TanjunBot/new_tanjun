@@ -1,8 +1,8 @@
 import re
 
 import aiohttp
-from aiohttp import ClientTimeout
 import discord
+from aiohttp import ClientTimeout
 
 import utility
 from localizer import tanjunLocalizer

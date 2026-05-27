@@ -1,8 +1,8 @@
 import json
 
 import aiohttp
-from aiohttp import ClientTimeout
 import discord
+from aiohttp import ClientTimeout
 
 from api import get_brawlstars_linked_account
 from commands.utility.brawlstars.bshelper import (

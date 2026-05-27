@@ -15,8 +15,8 @@ from difflib import SequenceMatcher
 from typing import Any, Protocol, Self, TypeVar
 
 import aiohttp
-from aiohttp import ClientTimeout
 import discord
+from aiohttp import ClientTimeout
 from github import Github
 from pyparsing import (
     CaselessLiteral,

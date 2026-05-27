@@ -4,8 +4,8 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 import aiohttp
-from aiohttp import ClientTimeout
 import discord
+from aiohttp import ClientTimeout
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 from api import get_user_level_info, set_custom_background
