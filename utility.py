@@ -935,8 +935,6 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
     except (TimeoutError, aiohttp.ClientError):
         return []
 
-        return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
-
 
 def checkIfHasPro(guildid: int) -> bool:
     # TODO: Implement actual Pro subscription check against database/payment backend
