@@ -4,7 +4,7 @@ import utility
 from api import get_join_to_create_channel
 from localizer import tanjunLocalizer
 
-joinToCreateChannels = []  # type: ignore[var-annotated]
+join_to_create_channels = []  # type: ignore[var-annotated]
 
 
 async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> None:
@@ -12,26 +12,26 @@ async def memberJoin(voiceState: discord.VoiceState, member: discord.Member) -> 
     if not voiceState.channel:
         return
 
-    masterChannel = await get_join_to_create_channel(str(voiceState.channel.id))
+    master_channel = await get_join_to_create_channel(str(voiceState.channel.id))
 
-    print("masterChannel", masterChannel)
+    print("master_channel", master_channel)
 
-    if not masterChannel:
+    if not master_channel:
         return
 
-    newChannel = await voiceState.channel.clone(name=f"{member.name}")
+    new_channel = await voiceState.channel.clone(name=f"{member.name}")
 
-    print("newChannel", newChannel)
+    print("new_channel", new_channel)
 
     overwrites = {member: discord.PermissionOverwrite(view_channel=True, manage_channels=True)}
 
-    await newChannel.edit(overwrites=overwrites)  # type: ignore[arg-type]
+    await new_channel.edit(overwrites=overwrites)  # type: ignore[arg-type]
 
-    await member.move_to(newChannel)
+    await member.move_to(new_channel)
 
-    joinToCreateChannels.append(newChannel)
+    join_to_create_channels.append(new_channel)
 
-    await newChannel.send(
+    await new_channel.send(
         embed=utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en",
@@ -50,15 +50,15 @@ async def memberLeave(beforeVoice: discord.VoiceState) -> None:
     if not beforeVoice.channel:
         return
 
-    if beforeVoice.channel.id in joinToCreateChannels:
+    if beforeVoice.channel.id in join_to_create_channels:
         if len(beforeVoice.channel.members) >= 1:
             return
         await beforeVoice.channel.delete()
-        joinToCreateChannels.remove(beforeVoice.channel)
+        join_to_create_channels.remove(beforeVoice.channel)
 
 
 async def removeAllJoinToCreateChannels() -> None:
-    for channel in joinToCreateChannels:
+    for channel in join_to_create_channels:
         for member in channel.members:
             await member.send(
                 embed=utility.tanjunEmbed(
@@ -73,4 +73,4 @@ async def removeAllJoinToCreateChannels() -> None:
                 )
             )
         await channel.delete()
-    joinToCreateChannels.clear()
+    join_to_create_channels.clear()

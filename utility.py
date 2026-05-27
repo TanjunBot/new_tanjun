@@ -1,6 +1,7 @@
 import ast
 import bisect
 import collections
+import contextlib
 import datetime
 import gzip
 import logging
@@ -100,7 +101,7 @@ class _EmbedAuthorProxy(Protocol):
     proxy_icon_url: str | None
 
 
-class tanjunEmbed:
+class TanjunEmbed:
     """Represents a Discord embed.
 
     .. container:: operations
@@ -233,15 +234,11 @@ class tanjunEmbed:
 
         # try to fill in the more rich fields
 
-        try:
+        with contextlib.suppress(KeyError):
             self._colour = discord.Colour(value=data["color"])
-        except KeyError:
-            pass
 
-        try:
+        with contextlib.suppress(KeyError):
             self._timestamp = discord.utils.parse_time(data["timestamp"])
-        except KeyError:
-            pass
 
         for attr in (
             "thumbnail",
@@ -305,7 +302,7 @@ class tanjunEmbed:
         )
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, tanjunEmbed):
+        if not isinstance(other, TanjunEmbed):
             return NotImplemented
         return (
             self.type == other.type
@@ -398,10 +395,8 @@ class tanjunEmbed:
 
         .. versionadded:: 2.0
         """
-        try:
+        with contextlib.suppress(AttributeError):
             del self._footer
-        except AttributeError:
-            pass
 
         return self
 
@@ -564,10 +559,8 @@ class tanjunEmbed:
 
         .. versionadded:: 1.4
         """
-        try:
+        with contextlib.suppress(AttributeError):
             del self._author
-        except AttributeError:
-            pass
 
         return self
 
@@ -682,10 +675,8 @@ class tanjunEmbed:
         index: :class:`int`
             The index of the field to remove.
         """
-        try:
+        with contextlib.suppress(AttributeError, IndexError):
             del self._fields[index]
-        except (AttributeError, IndexError):
-            pass
 
         return self
 
@@ -797,7 +788,7 @@ class CommandInfo:
         self.client = client
 
 
-commandInfo = CommandInfo
+command_info = CommandInfo
 
 
 def cmp(a: int, b: int) -> int:
@@ -922,7 +913,7 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
                     return await response.json()
 
             r = await fetch(
-                "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg" % (giphyAPIKey, query, limit)
+                f"https://api.giphy.com/v1/gifs/search?api_key={giphyAPIKey}&q={query}&limit={limit}&rating=pg"
             )
 
             if r is None:

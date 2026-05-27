@@ -3,24 +3,24 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def optIn(commandInfo: CommandInfo) -> None:
-    if not await check_if_opted_out(commandInfo.user.id):
+async def optIn(command_info: CommandInfo) -> None:
+    if not await check_if_opted_out(command_info.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.messagetrackingoptin.error.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.messagetrackingoptin.error.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.messagetrackingoptin.error.already_opted_in",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    await opt_in(commandInfo.user.id)
+    await opt_in(command_info.user.id)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.messagetrackingoptin.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.messagetrackingoptin.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.messagetrackingoptin.success.description",
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

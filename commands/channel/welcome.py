@@ -22,120 +22,120 @@ executor = ThreadPoolExecutor()
 
 
 async def setWelcomeChannel(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     channel: discord.TextChannel,
     message: str | None = None,
     image_background: discord.Attachment = None,  # type: ignore[assignment]
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.welcome.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.welcome.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     if (
-        not channel.permissions_for(commandInfo.guild.me).send_messages  # type: ignore[union-attr]
-        or not channel.permissions_for(commandInfo.guild.me).embed_links  # type: ignore[union-attr]
-        or not channel.permissions_for(commandInfo.guild.me).attach_files  # type: ignore[union-attr]
+        not channel.permissions_for(command_info.guild.me).send_messages  # type: ignore[union-attr]
+        or not channel.permissions_for(command_info.guild.me).embed_links  # type: ignore[union-attr]
+        or not channel.permissions_for(command_info.guild.me).attach_files  # type: ignore[union-attr]
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.welcome.missingBotPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.welcome.missingBotPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if await get_welcome_channel(commandInfo.guild.id):  # type: ignore[union-attr]
+    if await get_welcome_channel(command_info.guild.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.welcome.alreadySet.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.welcome.alreadySet.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    imgUrl = None
+    img_url = None
 
     if image_background is not None:
-        imgUrl = (await utility.upload_image_to_imgbb(image_background, image_background.filename.split(".")[-1]))["data"][
+        img_url = (await utility.upload_image_to_imgbb(image_background, image_background.filename.split(".")[-1]))["data"][
             "url"
         ]
     else:
-        imgUrl = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"  # type: ignore[unreachable]
+        img_url = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"  # type: ignore[unreachable]
 
-    await set_welcome_channel(commandInfo.guild.id, channel.id, message, imgUrl)  # type: ignore[union-attr, arg-type]
+    await set_welcome_channel(command_info.guild.id, channel.id, message, img_url)  # type: ignore[union-attr, arg-type]
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.welcome.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.channel.welcome.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.admin.channel.welcome.success.description",
             channel=channel.mention,
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
 
 
-async def removeWelcomeChannel(commandInfo: utility.CommandInfo) -> None:
+async def removeWelcomeChannel(command_info: utility.CommandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.welcome.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.channel.welcome.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if not await get_welcome_channel(commandInfo.guild.id):  # type: ignore[union-attr]
+    if not await get_welcome_channel(command_info.guild.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.welcome.notSet.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.welcome.notSet.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.channel.welcome.notSet.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.channel.welcome.notSet.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    await remove_welcome_channel(commandInfo.guild.id)  # type: ignore[union-attr]
+    await remove_welcome_channel(command_info.guild.id)  # type: ignore[union-attr]
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.welcome.deleteSuccess.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.channel.welcome.deleteSuccess.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.admin.channel.welcome.deleteSuccess.description",
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
 
 
 async def fetch_image(url: str) -> io.BytesIO | None:
@@ -251,12 +251,12 @@ def process_image(background_frames, avatar_frames, user) -> None:  # type: igno
 
 
 async def welcomeNewUser(member: discord.Member) -> None:
-    welcomeChannel = await get_welcome_channel(member.guild.id)
-    if welcomeChannel is None:
+    welcome_channel = await get_welcome_channel(member.guild.id)
+    if welcome_channel is None:
         return
 
-    if welcomeChannel.image_background:
-        background_frames, _ = await get_image_or_gif_frames(welcomeChannel.image_background)
+    if welcome_channel.image_background:
+        background_frames, _ = await get_image_or_gif_frames(welcome_channel.image_background)
     else:
         background_frames = []
 
@@ -277,7 +277,7 @@ async def welcomeNewUser(member: discord.Member) -> None:
 
     file = discord.File(img_byte_arr, filename="bg.gif")  # type: ignore[arg-type]
 
-    description = welcomeChannel.message
+    description = welcome_channel.message
 
     if not description:
         description = tanjunLocalizer.localize(
@@ -294,6 +294,6 @@ async def welcomeNewUser(member: discord.Member) -> None:
     )
     embed.set_image(url="attachment://bg.gif")
 
-    channel = await member.guild.fetch_channel(int(welcomeChannel.channel_id))
+    channel = await member.guild.fetch_channel(int(welcome_channel.channel_id))
 
     await channel.send(embed=embed, file=file)  # type: ignore[union-attr]

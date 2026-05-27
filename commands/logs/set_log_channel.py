@@ -11,64 +11,64 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo
 
 
-async def set_log_channel(commandInfo: utility.CommandInfo, channel: discord.TextChannel) -> None:
+async def set_log_channel(command_info: utility.CommandInfo, channel: discord.TextChannel) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.setLogChannel.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.setLogChannel.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    assert commandInfo.guild is not None
-    assert commandInfo.client.user is not None
-    selfMember = CommandInfo.guild.get_member(commandInfo.client.user.id)  # type: ignore[misc, union-attr]
-    permissions = channel.permissions_for(selfMember)  # type: ignore[arg-type]
+    assert command_info.guild is not None
+    assert command_info.client.user is not None
+    self_member = CommandInfo.guild.get_member(command_info.client.user.id)  # type: ignore[misc, union-attr]
+    permissions = channel.permissions_for(self_member)  # type: ignore[arg-type]
 
     if not permissions.send_messages:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.setLogChannel.botMissingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.setLogChannel.botMissingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    logChannel = await get_log_channel_api(commandInfo.guild.id)
+    log_channel = await get_log_channel_api(command_info.guild.id)
 
-    if logChannel:
+    if log_channel:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.setLogChannel.alreadySet.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.setLogChannel.alreadySet.title"),
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale), "commands.logs.setLogChannel.alreadySet.description"
+                str(command_info.locale), "commands.logs.setLogChannel.alreadySet.description"
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    await set_log_channel_api(commandInfo.guild.id, channel.id)
+    await set_log_channel_api(command_info.guild.id, channel.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.setLogChannel.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.setLogChannel.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.logs.setLogChannel.success.description",
             channel=channel.mention,
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

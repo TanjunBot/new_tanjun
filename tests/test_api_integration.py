@@ -1,24 +1,34 @@
 """Database integration tests for api.py.
 
-Requires a running MariaDB/MySQL test database at 127.0.0.1:3307.
-Run with Docker:
-    docker compose -f compose.test.yaml up -d
+These tests connect to a real MariaDB/MySQL database to verify that SQL queries,
+table creation, and CRUD operations work correctly at the database level.
+
+Setup and Usage:
+    # Start the test database container
+    docker compose -f docker-compose.test.yml up -d
+
+    # Run integration tests
     pytest tests/test_api_integration.py -v
-    docker compose -f compose.test.yaml down
+
+    # Cleanup
+    docker compose -f docker-compose.test.yml down
 
 Skips automatically if database is unreachable or SKIP_INTEGRATION_TESTS=1.
+Set TANJUN_INTEGRATION=true as an alternative environment trigger.
 """
 
 import os
+from datetime import datetime, timedelta
+from unittest.mock import MagicMock
 
 import pytest
 
-# These must be set before importing api — the conftest.py patches discord
-# globally, so we need to ensure our mock is compatible.
-import sys
-from unittest.mock import MagicMock
+import tests.mock_config as mock_config
 
-# Re-patch discord after conftest to ensure Entitlement exists for api imports
+mock_config.patch_config_module()
+
+# Mock discord before importing any project modules
+import sys
 _discord_mock = MagicMock()
 _discord_mock.Entitlement = MagicMock()
 sys.modules["discord"] = _discord_mock
@@ -27,7 +37,20 @@ sys.modules["discord.ext.commands"] = MagicMock()
 sys.modules["discord.app_commands"] = MagicMock()
 
 import api
-from api import get_table_definitions
+from api import (
+    add_channel_to_blacklist,
+    add_level_role,
+    add_role_to_blacklist,
+    add_warning,
+    check_pool_health,
+    get_level_roles,
+    get_level_system_status,
+    get_table_definitions,
+    get_warnings,
+    remove_level_role,
+    remove_warning,
+    set_level_system_status,
+)
 
 # Test DB connection settings — override via env when using custom setup
 TEST_DB_HOST = os.environ.get("TEST_DB_HOST", "127.0.0.1")
@@ -36,7 +59,6 @@ TEST_DB_USER = os.environ.get("TEST_DB_USER", "root")
 TEST_DB_PASSWORD = os.environ.get("TEST_DB_PASSWORD", "test")
 TEST_DB_NAME = os.environ.get("TEST_DB_NAME", "tanjun_test")
 
-
 pytestmark = [
     pytest.mark.asyncio,
     pytest.mark.skipif(
@@ -44,6 +66,13 @@ pytestmark = [
         reason="Integration tests disabled via SKIP_INTEGRATION_TESTS=1",
     ),
 ]
+
+
+# Test constants for function-based tests (from version 3)
+TEST_GUILD = "99999999999999999"
+TEST_USER = "88888888888888888"
+TEST_ROLE = "77777777777777777"
+TEST_CHANNEL = "66666666666666666"
 
 
 _created_tables = False
@@ -125,7 +154,7 @@ def _get_table_definitions():
 
 
 # ---------------------------------------------------------------------------
-# Tests
+# Class-based tests (from version 2)
 # ---------------------------------------------------------------------------
 
 
@@ -467,3 +496,187 @@ class TestHealthCheck:
         api.set_bot(None)
         healthy = await api.check_pool_health()
         assert healthy is False
+
+
+# ---------------------------------------------------------------------------
+# Function-based tests (from version 3)
+# These use the integration_db_pool fixture from conftest.py
+# ---------------------------------------------------------------------------
+
+
+async def test_pool_health_returns_true_when_db_is_reachable(integration_db_pool):
+    """Verify check_pool_health returns True against a real database."""
+    healthy = await check_pool_health()
+    assert healthy is True, "Pool should be healthy against a reachable DB"
+
+
+# ── Table creation ───────────────────────────────────────────────────────────
+
+
+async def test_tables_are_created_via_create_tables(integration_db_pool):
+    """Verify that create_tables creates all expected tables."""
+    import asyncmy
+
+    pool = integration_db_pool
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute("SHOW TABLES")
+        tables = {row[0] for row in await cursor.fetchall()}
+
+    # Core expected tables
+    expected = {
+        "warnings",
+        "warn_config",
+        "level",
+        "levelConfig",
+        "levelRole",
+        "blacklistedChannel",
+        "blacklistedRole",
+        "blacklistedUser",
+        "userXpBoost",
+        "channelXpBoost",
+        "roleXpBoost",
+    }
+    missing = expected - tables
+    assert not missing, f"Expected tables missing: {missing}"
+
+
+# ── Warnings CRUD ────────────────────────────────────────────────────────────
+
+
+async def test_add_and_retrieve_warning(integration_db_pool):
+    """Write a warning to the database and read it back."""
+    expires_at = datetime.now() + timedelta(days=30)
+    await add_warning(TEST_GUILD, TEST_USER, "Integration test warning", "bot", expires_at)
+
+    warnings = await get_warnings(TEST_GUILD, TEST_USER)
+    assert warnings is not None, "get_warnings should return a list"
+    assert len(warnings) >= 1, "Should have at least one warning"
+
+    matching = [w for w in warnings if w.reason == "Integration test warning"]
+    assert len(matching) >= 1, "Should find the warning we just added"
+
+
+async def test_remove_warning(integration_db_pool):
+    """Add a warning and then remove it, verifying the removal."""
+    expires_at = datetime.now() + timedelta(days=30)
+    await add_warning(TEST_GUILD, TEST_USER, "To be removed", "bot", expires_at)
+
+    warnings_before = await get_warnings(TEST_GUILD, TEST_USER)
+    target = [w for w in (warnings_before or []) if w.reason == "To be removed"]
+    assert len(target) >= 1, "Should find the warning to remove"
+
+    # Remove the first matching warning
+    warning_id = target[0].id
+    await remove_warning(warning_id)
+
+    warnings_after = await get_warnings(TEST_GUILD, TEST_USER) or []
+    still_around = [w for w in warnings_after if w.id == warning_id]
+    assert len(still_around) == 0, "Warning should no longer be present after removal"
+
+
+# ── Blacklist CRUD ───────────────────────────────────────────────────────────
+
+
+async def test_channel_blacklist_round_trip(integration_db_pool):
+    """Verify a channel can be blacklisted and the operation doesn't error."""
+    import asyncmy
+
+    await add_channel_to_blacklist(TEST_GUILD, TEST_CHANNEL, "Integration test channel blacklist")
+
+    # Verify by reading directly from the database
+    pool = integration_db_pool
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute(
+            "SELECT channel_id, reason FROM blacklistedChannel WHERE guild_id = %s AND channel_id = %s",
+            (TEST_GUILD, TEST_CHANNEL),
+        )
+        row = await cursor.fetchone()
+    assert row is not None, "Channel should appear in blacklist"
+    assert row[0] == TEST_CHANNEL
+    assert row[1] == "Integration test channel blacklist"
+
+
+async def test_role_blacklist_round_trip(integration_db_pool):
+    """Verify a role can be blacklisted and the operation doesn't error."""
+    import asyncmy
+
+    await add_role_to_blacklist(TEST_GUILD, TEST_ROLE, "Integration test role blacklist")
+
+    # Verify by reading directly from the database
+    pool = integration_db_pool
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute(
+            "SELECT role_id, reason FROM blacklistedRole WHERE guild_id = %s AND role_id = %s",
+            (TEST_GUILD, TEST_ROLE),
+        )
+        row = await cursor.fetchone()
+    assert row is not None, "Role should appear in blacklist"
+    assert row[0] == TEST_ROLE
+    assert row[1] == "Integration test role blacklist"
+
+
+# ── Level system CRUD ────────────────────────────────────────────────────────
+
+
+async def test_level_system_status_toggle(integration_db_pool):
+    """Enable and disable the level system for a guild."""
+    # Start with disabled
+    await set_level_system_status(TEST_GUILD, False)
+    enabled = await get_level_system_status(TEST_GUILD)
+    assert enabled is False, "Level system should be disabled"
+
+    # Enable
+    await set_level_system_status(TEST_GUILD, True)
+    enabled = await get_level_system_status(TEST_GUILD)
+    assert enabled is True, "Level system should be enabled"
+
+
+async def test_level_role_add_and_remove(integration_db_pool):
+    """Add a level role, verify it's returned, then remove it."""
+    await add_level_role(TEST_GUILD, TEST_ROLE, 10)
+
+    roles = await get_level_roles(TEST_GUILD)
+    matching = [r for r in (roles or []) if r.role_id == TEST_ROLE]
+    assert len(matching) >= 1, "Level role should be present after adding"
+    assert matching[0].level == 10
+
+    # Remove
+    await remove_level_role(TEST_GUILD, TEST_ROLE)
+    roles_after = await get_level_roles(TEST_GUILD) or []
+    still_around = [r for r in roles_after if r.role_id == TEST_ROLE]
+    assert len(still_around) == 0, "Level role should be gone after removal"
+
+
+# ── XP CRUD ──────────────────────────────────────────────────────────────────
+
+
+async def test_xp_insert_and_retrieve(integration_db_pool):
+    """Write XP for a user and verify it reads back correctly."""
+    from api import get_user_xp, update_user_xp
+
+    xp_amount = 500
+    await update_user_xp(TEST_GUILD, TEST_USER, xp_amount)
+
+    xp = await get_user_xp(TEST_GUILD, TEST_USER)
+    assert xp is not None, "XP should be retrievable after insert"
+    assert xp >= xp_amount, f"Expected at least {xp_amount} XP, got {xp}"
+
+
+async def test_bulk_xp_update(integration_db_pool):
+    """Bulk-update XP for multiple users and verify results."""
+    from api import bulk_update_user_xp, get_user_xp
+
+    user_a = "10000000000000001"
+    user_b = "10000000000000002"
+    entries = [
+        (user_a, 200),
+        (user_b, 300),
+    ]
+
+    await bulk_update_user_xp(TEST_GUILD, entries)
+
+    xp_a = await get_user_xp(TEST_GUILD, user_a)
+    xp_b = await get_user_xp(TEST_GUILD, user_b)
+    # Since other tests may have inserted XP, we verify at-minimum values
+    assert xp_a is not None and xp_a >= 200, f"user_a XP should be >= 200, got {xp_a}"
+    assert xp_b is not None and xp_b >= 300, f"user_b XP should be >= 300, got {xp_b}"

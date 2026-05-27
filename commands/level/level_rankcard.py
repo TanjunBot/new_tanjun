@@ -16,63 +16,63 @@ from utility import CommandInfo, draw_text_with_outline, tanjunEmbed, upload_ima
 executor = ThreadPoolExecutor()
 
 
-async def show_rankcard_command(commandInfo: CommandInfo, user: discord.Member) -> None:
-    assert commandInfo.guild is not None
-    user_info = await get_user_level_info(str(commandInfo.guild.id), str(user.id))
+async def show_rankcard_command(command_info: CommandInfo, user: discord.Member) -> None:
+    assert command_info.guild is not None
+    user_info = await get_user_level_info(str(command_info.guild.id), str(user.id))
 
     if not user_info:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.error.no_data.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.level.rank.error.no_data.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.level.rank.error.no_data.description",
                 user=user.mention,
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    rankcard_image = await generate_rankcard(user, user_info, commandInfo)
+    rankcard_image = await generate_rankcard(user, user_info, command_info)
 
     file = discord.File(rankcard_image, filename="rankcard.gif")
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.success.title", user=user.name),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.level.rank.success.title", user=user.name),
     )
     embed.set_image(url="attachment://rankcard.gif")
 
-    await commandInfo.reply(embed=embed, file=file)
+    await command_info.reply(embed=embed, file=file)
 
 
-async def set_background_command(commandInfo: CommandInfo, image: discord.Attachment) -> None:
+async def set_background_command(command_info: CommandInfo, image: discord.Attachment) -> None:
     if image.content_type not in ["image/png", "image/jpeg", "image/gif"]:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.level.setbackground.error.invalid_format.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.level.setbackground.error.invalid_format.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     uploaded_image = await upload_image_to_imgbb(await image.read(), image.content_type.split("/")[1])
 
     await set_custom_background(
-        str(commandInfo.guild.id),  # type: ignore[union-attr]
-        str(commandInfo.user.id),
+        str(command_info.guild.id),  # type: ignore[union-attr]
+        str(command_info.user.id),
         uploaded_image["data"]["url"],  # type: ignore[index]
     )
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.success.description"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.level.setbackground.success.title"),
+        description=tanjunLocalizer.localize(str(command_info.locale), "commands.level.setbackground.success.description"),
     )
     embed.set_image(url=uploaded_image["data"]["url"])  # type: ignore[index]
 
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
 
 
 async def fetch_image(url: str) -> io.BytesIO | None:
@@ -139,9 +139,9 @@ def process_image(
     avatar_decoration_frames: list[Image.Image] | None,
     user: discord.Member,
     user_info: UserLevelInfoModel,
-    commandInfo: CommandInfo,
+    command_info: CommandInfo,
 ) -> io.BytesIO:
-    DECORATION_SIZE_MULTIPLIER = 1.2
+    decoration_size_multiplier = 1.2
 
     num_frames = max(
         len(background_frames),
@@ -169,7 +169,7 @@ def process_image(
 
     # Resize decoration frames if they exist
     if avatar_decoration_frames:
-        decoration_size = int(200 * DECORATION_SIZE_MULTIPLIER)
+        decoration_size = int(200 * decoration_size_multiplier)
         offset = int((decoration_size - 200) / 2)
         for i in range(len(avatar_decoration_frames)):
             avatar_decoration_frames[i] = avatar_decoration_frames[i].resize((decoration_size, decoration_size))
@@ -207,7 +207,7 @@ def process_image(
         draw_text_with_outline(
             draw,
             (250, 105),
-            tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.rank.data.level", level=user_info.level),
+            tanjunLocalizer.localize(str(command_info.locale), "commands.level.rank.data.level", level=user_info.level),
             info_font,
             (255, 255, 255, 255),
             (0, 0, 0, 255),
@@ -216,7 +216,7 @@ def process_image(
             draw,
             (250, 150),
             tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.level.rank.data.xp",
                 xp=user_info.xp,
                 xp_needed=user_info.xp_needed,
@@ -288,7 +288,7 @@ def process_image(
     return img_byte_arr
 
 
-async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], commandInfo: CommandInfo) -> io.BytesIO:
+async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], command_info: CommandInfo) -> io.BytesIO:
     # Load background image or frames
     custom_bg = user_info.custom_background
     if custom_bg:
@@ -314,7 +314,7 @@ async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], com
         avatar_decoration_frames,
         user,
         user_info,
-        commandInfo,
+        command_info,
     )
 
     if not isinstance(img_byte_arr, io.BytesIO):

@@ -3,6 +3,12 @@ on:
   push:
     branches-ignore:
       - l10n*
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch/tag/commit to test'
+        required: false
+        type: string
 
 jobs:
   test:

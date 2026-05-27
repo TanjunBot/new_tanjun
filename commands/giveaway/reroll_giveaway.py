@@ -8,96 +8,96 @@ from localizer import tanjunLocalizer
 
 
 async def reroll_giveaway(
-    commandInfo: utility.commandInfo,
-    giveawayId: int,
+    command_info: utility.command_info,
+    giveaway_id: int,
 ):
-    if not commandInfo.permissions.manage_guild:
+    if not command_info.permissions.manage_guild:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    giveaway = await get_giveaway(giveawayId)
+    giveaway = await get_giveaway(giveaway_id)
     if not giveaway:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.notFound.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.notFound.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if giveaway.guild_id != str(commandInfo.guild.id):
+    if giveaway.guild_id != str(command_info.guild.id):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.notFound.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.notFound.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     if not giveaway.ended:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.notEnded.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.notEnded.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     class RerollOptionsView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo, giveawayId: int):
+        def __init__(self, command_info: utility.command_info, giveaway_id: int):
             super().__init__()
-            self.commandInfo = commandInfo
-            self.giveawayId = giveawayId
+            self.command_info = command_info
+            self.giveaway_id = giveaway_id
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.reroll_giveaway.rerollOneWinner"),
+            label=tanjunLocalizer.localize(command_info.locale, "commands.giveaway.reroll_giveaway.rerollOneWinner"),
             style=discord.ButtonStyle.primary,
         )
         async def reroll_one(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
-            await perform_reroll(self.commandInfo, self.giveawayId, 1)
+            await perform_reroll(self.command_info, self.giveaway_id, 1)
             self.stop()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.giveaway.reroll_giveaway.rerollAllWinners"),
+            label=tanjunLocalizer.localize(command_info.locale, "commands.giveaway.reroll_giveaway.rerollAllWinners"),
             style=discord.ButtonStyle.primary,
         )
         async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
-            giveaway = await get_giveaway(self.giveawayId)
-            await perform_reroll(self.commandInfo, self.giveawayId, giveaway.winners)
+            giveaway = await get_giveaway(self.giveaway_id)
+            await perform_reroll(self.command_info, self.giveaway_id, giveaway.winners)
             self.stop()
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
-            if interaction.user != self.commandInfo.user:
+            if interaction.user != self.command_info.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.command_info.locale,
                         "commands.giveaway.reroll_giveaway.error.notAuthorized",
                     ),
                     ephemeral=True,
@@ -107,37 +107,37 @@ async def reroll_giveaway(
 
     winners_count = giveaway.winners
     if winners_count > 1:
-        view = RerollOptionsView(commandInfo, giveawayId)
+        view = RerollOptionsView(command_info, giveaway_id)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.selectOption.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.selectOption.description",
             ),
         )
-        await commandInfo.reply(embed=embed, view=view)
+        await command_info.reply(embed=embed, view=view)
     else:
-        await perform_reroll(commandInfo, giveawayId, 1)
+        await perform_reroll(command_info, giveaway_id, 1)
 
 
-async def perform_reroll(commandInfo: utility.commandInfo, giveawayId: int, reroll_count: int):
-    participants = await get_giveaway_participants(giveawayId)
+async def perform_reroll(command_info: utility.command_info, giveaway_id: int, reroll_count: int):
+    participants = await get_giveaway_participants(giveaway_id)
 
     if not participants:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.noParticipants.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.reroll_giveaway.error.noParticipants.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     new_winners = []
@@ -152,25 +152,25 @@ async def perform_reroll(commandInfo: utility.commandInfo, giveawayId: int, rero
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.giveaway.reroll_giveaway.success.title",
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.giveaway.reroll_giveaway.success.description",
             winners=", ".join(f"<@{winner}>" for winner in new_winners),
         ),
     )
 
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
 
     for winner in new_winners:
-        member = commandInfo.guild.get_member(int(winner))
+        member = command_info.guild.get_member(int(winner))
         if member:
             await member.send(
                 tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.giveaway.reroll_giveaway.winnerDM",
-                    guild_name=commandInfo.guild.name,
+                    guild_name=command_info.guild.name,
                 )
             )

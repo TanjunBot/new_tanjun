@@ -40,33 +40,33 @@ class MessageSelectView(View):
             await self.message.edit(embed=embed, view=None)
 
 
-async def remove_scheduled_message(commandInfo: utility.CommandInfo, message_id: int | None = None) -> None:
-    messages = await get_scheduled_messages(commandInfo.user.id)
+async def remove_scheduled_message(command_info: utility.CommandInfo, message_id: int | None = None) -> None:
+    messages = await get_scheduled_messages(command_info.user.id)
 
     if not messages:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.removescheduled.error.no_messages.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.removescheduled.error.no_messages.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     if not message_id:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.removescheduled.select.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.removescheduled.select.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.removescheduled.select.description",
             ),
         )
-        view = MessageSelectView(messages, commandInfo.locale)
-        view.set_message(await commandInfo.reply(embed=embed, view=view))
+        view = MessageSelectView(messages, command_info.locale)
+        view.set_message(await command_info.reply(embed=embed, view=view))
         return
 
     message_exists = False
@@ -78,26 +78,26 @@ async def remove_scheduled_message(commandInfo: utility.CommandInfo, message_id:
     if not message_exists:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.removescheduled.error.not_found.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.removescheduled.error.not_found.description",
                 id=message_id,
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     await remove_message(message_id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.removescheduled.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.removescheduled.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.removescheduled.success.description",
             id=message_id,
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

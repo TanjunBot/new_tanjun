@@ -30,13 +30,10 @@ def fix_f821(data):
                 if "from typing import cast" not in content and "from typing import" not in content:
                     # Add after last import
                     import_end = content.rfind("\nimport ")
-                    if import_end == -1:
-                        import_end = content.find("\nfrom ")
-                    else:
-                        import_end = content.rfind("\nfrom ", 0, import_end + 10)
+                    import_end = content.find("\nfrom ") if import_end == -1 else content.rfind("\nfrom ", 0, import_end + 10)
 
                     if import_end >= 0:
-                        insert_pos = content.find("\n", import_end + 1) + 1
+                        content.find("\n", import_end + 1) + 1
                         # Find the end of the last import line
                         lines = content.splitlines(keepends=True)
                         last_import_line = 0
@@ -95,20 +92,19 @@ def fix_f821(data):
                     fixes[fname] = "".join(lines)
                     print(f"  Adding 'import logging' to {fname}")
 
-        elif name == "operator":
-            if fname not in fixes:
-                with open(fname) as f:
-                    content = f.read()
-                if "import operator" not in content:
-                    lines = content.splitlines(keepends=True)
-                    last_import_line = 0
-                    for i, line in enumerate(lines):
-                        stripped = line.strip()
-                        if stripped.startswith("import ") or stripped.startswith("from "):
-                            last_import_line = i + 1
-                    lines.insert(last_import_line, "import operator\n")
-                    fixes[fname] = "".join(lines)
-                    print(f"  Adding 'import operator' to {fname}")
+        elif name == "operator" and fname not in fixes:
+            with open(fname) as f:
+                content = f.read()
+            if "import operator" not in content:
+                lines = content.splitlines(keepends=True)
+                last_import_line = 0
+                for i, line in enumerate(lines):
+                    stripped = line.strip()
+                    if stripped.startswith("import ") or stripped.startswith("from "):
+                        last_import_line = i + 1
+                lines.insert(last_import_line, "import operator\n")
+                fixes[fname] = "".join(lines)
+                print(f"  Adding 'import operator' to {fname}")
 
     # Write all fixes
     for fname, content in fixes.items():
@@ -145,7 +141,7 @@ def fix_sim112(data):
     for e in data:
         if e["code"] == "SIM112":
             fname = e["filename"]
-            line_no = e["location"]["row"]
+            e["location"]["row"]
             changes[fname] = changes.get(fname, 0) + 1
 
             # Mark as needing manual review but add noqa for now
@@ -178,10 +174,7 @@ def add_noqa_for_suppressible(data):
 
 
 def main():
-    if len(sys.argv) > 1 and sys.argv[1] == "--dry-run":
-        dry_run = True
-    else:
-        dry_run = False
+    dry_run = bool(len(sys.argv) > 1 and sys.argv[1] == "--dry-run")
 
     print("Running ruff check...")
     data = run_ruff()

@@ -1,5 +1,7 @@
 # Unused imports:
 # import random
+import contextlib
+
 import discord
 
 from api import check_if_opted_out, clear_wordchain, get_wordchain_last_user_id, get_wordchain_word, set_wordchain_word
@@ -8,10 +10,7 @@ from utility import tanjunEmbed
 
 
 async def wordchain(message: discord.Message) -> None:
-    if message.author.bot:
-        return
-
-    if message.guild == None:
+    if message.guild is None:
         embed: discord.Embed = tanjunEmbed(
             title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
             description=tanjunLocalizer.localize(
@@ -29,10 +28,8 @@ async def wordchain(message: discord.Message) -> None:
     locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
 
     if await check_if_opted_out(message.author.id):
-        try:
+        with contextlib.suppress(discord.Forbidden):
             await message.author.send(tanjunLocalizer.localize(locale, "minigames.wordchain.opted_out"))
-        except discord.Forbidden:
-            pass
         await message.delete()
         return
 
@@ -50,10 +47,10 @@ async def wordchain(message: discord.Message) -> None:
         await message.delete()
         return
 
-    endChars = (".", "?", "!", ";", ":")
+    end_chars = (".", "?", "!", ";", ":")
 
     for char in content:
-        if char in endChars:
+        if char in end_chars:
             await clear_wordchain(message.channel.id)
             await set_wordchain_word(channel_id=message.channel.id, guild_id=message.guild.id, word="", worder_id="nobody")
             embed = tanjunEmbed(

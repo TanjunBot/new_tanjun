@@ -9,22 +9,21 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def background(commandInfo: utility.CommandInfo, image: discord.Attachment):  # type: ignore[no-untyped-def]
-    if isinstance(image, discord.Attachment):
-        if not image.filename.endswith((".png", ".jpg", ".jpeg")):
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.typenotsupported.title"),
-                description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.typenotsupported.description"),
-            )
-            await commandInfo.reply(embed=embed)
-            return
+async def background(command_info: utility.CommandInfo, image: discord.Attachment):  # type: ignore[no-untyped-def]
+    if isinstance(image, discord.Attachment) and not image.filename.endswith((".png", ".jpg", ".jpeg")):
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.typenotsupported.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.typenotsupported.description"),
+        )
+        await command_info.reply(embed=embed)
+        return
 
     if image.size > 8 * 1024 * 1024:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.filesize.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.filesize.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.filesize.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.filesize.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     image = await image.read()  # type: ignore[assignment]
@@ -40,8 +39,8 @@ async def background(commandInfo: utility.CommandInfo, image: discord.Attachment
     buffer.seek(0)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.background.disabled.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.image.background.disabled.description"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.background.disabled.title"),
+        description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.background.disabled.description"),
     )
     embed.set_image(url="attachment://image.png")
-    await commandInfo.reply(embed=embed, file=discord.File(fp=buffer, filename="image.png"))
+    await command_info.reply(embed=embed, file=discord.File(fp=buffer, filename="image.png"))

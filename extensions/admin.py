@@ -71,7 +71,7 @@ class WarnCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -83,7 +83,7 @@ class WarnCommands(discord.app_commands.Group):
             client=interaction.client,  # type: ignore[name-defined]
         )
 
-        await warnUserCommand(commandInfo=commandInfo, member=user, reason=reason)
+        await warnUserCommand(command_info=command_info, member=user, reason=reason)
         return
 
     @app_commands.command(
@@ -95,7 +95,7 @@ class WarnCommands(discord.app_commands.Group):
     )
     async def view(self, interaction: discord.Interaction, user: discord.Member) -> None:
         await interaction.response.defer(ephemeral=True)
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -107,7 +107,7 @@ class WarnCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await viewWarningsCommand(commandInfo=commandInfo, member=user)
+        await viewWarningsCommand(command_info=command_info, member=user)
         return
 
     @app_commands.command(
@@ -115,7 +115,7 @@ class WarnCommands(discord.app_commands.Group):
         description=app_commands.locale_str("admin_warn_config_description"),
     )
     async def config(self, interaction: discord.Interaction) -> None:
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -127,7 +127,7 @@ class WarnCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await warnConfigCommand(commandInfo=commandInfo)
+        await warnConfigCommand(command_info=command_info)
         return
 
 
@@ -142,7 +142,7 @@ class RoleCommands(discord.app_commands.Group):
     )
     async def addrole(self, interaction: discord.Interaction, user: discord.Member = None, role: discord.Role = None) -> None:  # type: ignore[assignment]
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -154,7 +154,7 @@ class RoleCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await addroleCommand(commandInfo=commandInfo, user=user, role=role)
+        await addroleCommand(command_info=command_info, user=user, role=role)
         return
 
     @app_commands.command(
@@ -172,7 +172,7 @@ class RoleCommands(discord.app_commands.Group):
         role: discord.Role = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -184,7 +184,7 @@ class RoleCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await removeroleCommand(commandInfo=commandInfo, user=user, role=role)
+        await removeroleCommand(command_info=command_info, user=user, role=role)
         return
 
     @app_commands.command(
@@ -212,7 +212,7 @@ class RoleCommands(discord.app_commands.Group):
         display_emoji: app_commands.Range[str, 0, 1] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -225,7 +225,7 @@ class RoleCommands(discord.app_commands.Group):
         )
 
         await createroleCommand(
-            commandInfo=commandInfo,
+            command_info=command_info,
             name=name,
             color=color,
             display_icon=display_icon if display_icon else display_emoji,  # type: ignore[truthy-bool]
@@ -250,7 +250,7 @@ class RoleCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -262,7 +262,7 @@ class RoleCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await deleteroleCommand(commandInfo=commandInfo, role=role, reason=reason)
+        await deleteroleCommand(command_info=command_info, role=role, reason=reason)
         return
 
     @app_commands.command(
@@ -294,7 +294,7 @@ class RoleCommands(discord.app_commands.Group):
         position: app_commands.Choice[str],
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -307,7 +307,7 @@ class RoleCommands(discord.app_commands.Group):
         )
 
         await moveroleCommand(
-            commandInfo=commandInfo,
+            command_info=command_info,
             role=role,
             target_role=target_role,
             position=position.value,
@@ -337,7 +337,7 @@ class RoleCommands(discord.app_commands.Group):
         self, interaction: discord.Interaction, role: discord.Role, copymembers: app_commands.Choice[str]
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -350,7 +350,7 @@ class RoleCommands(discord.app_commands.Group):
         )
 
         await copyRoleCommand(
-            commandInfo=commandInfo,
+            command_info=command_info,
             role=role,
             copy_members=copymembers.value == "true",
         )
@@ -367,7 +367,7 @@ class ReportCommands(discord.app_commands.Group):
     )
     async def set_channel(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[assignment]
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -382,7 +382,7 @@ class ReportCommands(discord.app_commands.Group):
         if not channel:  # type: ignore[truthy-bool]
             channel = ctx.channel  # type: ignore[name-defined]
 
-        await setReportChannelCommand(commandInfo=commandInfo, channel=channel)
+        await setReportChannelCommand(command_info=command_info, channel=channel)
         return
 
     @app_commands.command(
@@ -391,7 +391,7 @@ class ReportCommands(discord.app_commands.Group):
     )
     async def remove_channel(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -403,7 +403,7 @@ class ReportCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await removeReportChannelCommand(commandInfo=commandInfo)
+        await removeReportChannelCommand(command_info=command_info)
         return
 
     @app_commands.command(
@@ -415,7 +415,7 @@ class ReportCommands(discord.app_commands.Group):
     )
     async def show_reports(self, interaction: discord.Interaction, user: discord.Member = None) -> None:  # type: ignore[assignment]
         await interaction.response.defer(ephemeral=True)
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -427,7 +427,7 @@ class ReportCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await showReportsCommand(commandInfo=commandInfo, user=user)
+        await showReportsCommand(command_info=command_info, user=user)
         return
 
     @app_commands.command(
@@ -439,7 +439,7 @@ class ReportCommands(discord.app_commands.Group):
     )
     async def unblock_reporter(self, interaction: discord.Interaction, user: discord.Member) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -451,7 +451,7 @@ class ReportCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await unblockReporterCommand(commandInfo=commandInfo, user=user)
+        await unblockReporterCommand(command_info=command_info, user=user)
         return
 
 
@@ -462,7 +462,7 @@ class TriggerMessagesCommands(discord.app_commands.Group):
     )
     async def configure(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -474,7 +474,7 @@ class TriggerMessagesCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await configureTriggerMessagesCommand(commandInfo=commandInfo)
+        await configureTriggerMessagesCommand(command_info=command_info)
         return
 
     @app_commands.command(
@@ -506,7 +506,7 @@ class TriggerMessagesCommands(discord.app_commands.Group):
         casesensitive: app_commands.Choice[str] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -519,10 +519,10 @@ class TriggerMessagesCommands(discord.app_commands.Group):
         )
 
         await addTriggerMessageCommand(
-            commandInfo=commandInfo,
+            command_info=command_info,
             trigger=trigger,
             response=response,
-            caseSensitive=casesensitive.value == "t" if casesensitive else False,  # type: ignore[truthy-bool]
+            case_sensitive=casesensitive.value == "t" if casesensitive else False,  # type: ignore[truthy-bool]
         )
         return
 
@@ -537,7 +537,7 @@ class JoinToCreateCommands(discord.app_commands.Group):
     )
     async def set_channel(self, interaction: discord.Interaction, channel: discord.VoiceChannel) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -549,7 +549,7 @@ class JoinToCreateCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await jointoCreateChannelCommand(commandInfo=commandInfo, channel=channel)  # type: ignore[arg-type]
+        await jointoCreateChannelCommand(command_info=command_info, channel=channel)  # type: ignore[arg-type]
         return
 
     @app_commands.command(
@@ -561,7 +561,7 @@ class JoinToCreateCommands(discord.app_commands.Group):
     )
     async def remove_channel(self, interaction: discord.Interaction, channel: discord.VoiceChannel) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -573,11 +573,11 @@ class JoinToCreateCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await removeJoinToCreateChannelCommand(commandInfo=commandInfo, channel=channel)  # type: ignore[arg-type]
+        await removeJoinToCreateChannelCommand(command_info=command_info, channel=channel)  # type: ignore[arg-type]
         return
 
 
-class administrationCommands(discord.app_commands.Group):
+class AdministrationCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_kick_name"),
         description=app_commands.locale_str("admin_kick_description"),
@@ -593,7 +593,7 @@ class administrationCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer(ephemeral=True)
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -605,7 +605,7 @@ class administrationCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await kickCommand(commandInfo=commandInfo, target=user, reason=reason)
+        await kickCommand(command_info=command_info, target=user, reason=reason)
         return
 
     @app_commands.command(
@@ -625,7 +625,7 @@ class administrationCommands(discord.app_commands.Group):
         delete_message_days: app_commands.Range[int, 0, 7] = 0,
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -638,7 +638,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await banCommand(
-            commandInfo=commandInfo,
+            command_info=command_info,
             target=user,
             reason=reason,
             delete_message_days=delete_message_days,
@@ -660,7 +660,7 @@ class administrationCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -672,7 +672,7 @@ class administrationCommands(discord.app_commands.Group):
             client=interaction.client,  # type: ignore[name-defined]
         )
 
-        await unbanCommand(commandInfo=commandInfo, username=username, reason=reason)
+        await unbanCommand(command_info=command_info, username=username, reason=reason)
         return
 
     @app_commands.command(
@@ -692,7 +692,7 @@ class administrationCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -704,7 +704,7 @@ class administrationCommands(discord.app_commands.Group):
             client=interaction.client,  # type: ignore[name-defined]
         )
 
-        await timeoutCommand(commandInfo=commandInfo, member=user, duration=duration, reason=reason)
+        await timeoutCommand(command_info=command_info, member=user, duration=duration, reason=reason)
         return
 
     @app_commands.command(
@@ -722,7 +722,7 @@ class administrationCommands(discord.app_commands.Group):
         reason: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -734,7 +734,7 @@ class administrationCommands(discord.app_commands.Group):
             client=interaction.client,  # type: ignore[name-defined]
         )
 
-        await removeTimeoutCommand(commandInfo=commandInfo, member=user, reason=reason)
+        await removeTimeoutCommand(command_info=command_info, member=user, reason=reason)
         return
 
     @app_commands.command(
@@ -802,7 +802,7 @@ class administrationCommands(discord.app_commands.Group):
         setting: app_commands.Choice[str] = "all",  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer(ephemeral=True)  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -815,7 +815,7 @@ class administrationCommands(discord.app_commands.Group):
         )
 
         await purgeCommand(
-            commandInfo=commandInfo,
+            command_info=command_info,
             amount=limit,
             channel=channel,
             setting=setting.value if setting != "all" else "all",
@@ -837,7 +837,7 @@ class administrationCommands(discord.app_commands.Group):
         nickname: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -849,7 +849,7 @@ class administrationCommands(discord.app_commands.Group):
             client=interaction.client,  # type: ignore[name-defined]
         )
 
-        await changeNicknameCommand(commandInfo=commandInfo, member=user, nickname=nickname)
+        await changeNicknameCommand(command_info=command_info, member=user, nickname=nickname)
         return
 
     @app_commands.command(
@@ -867,7 +867,7 @@ class administrationCommands(discord.app_commands.Group):
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -879,7 +879,7 @@ class administrationCommands(discord.app_commands.Group):
             client=interaction.client,  # type: ignore[name-defined]
         )
 
-        await setSlowmodeCommand(commandInfo=commandInfo, seconds=seconds, channel=channel)
+        await setSlowmodeCommand(command_info=command_info, seconds=seconds, channel=channel)
         return
 
     @app_commands.command(
@@ -891,7 +891,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def lock(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[assignment]
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -903,7 +903,7 @@ class administrationCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await lockChannelCommand(commandInfo=commandInfo, channel=channel)
+        await lockChannelCommand(command_info=command_info, channel=channel)
         return
 
     @app_commands.command(
@@ -915,7 +915,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def unlock(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[assignment]
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -927,7 +927,7 @@ class administrationCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await unlockChannelCommand(commandInfo=commandInfo, channel=channel)
+        await unlockChannelCommand(command_info=command_info, channel=channel)
         return
 
     @app_commands.command(
@@ -939,7 +939,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def nuke(self, interaction: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[assignment]
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -954,7 +954,7 @@ class administrationCommands(discord.app_commands.Group):
         if not channel:  # type: ignore[truthy-bool]
             channel = ctx.channel  # type: ignore[name-defined]
 
-        await nukeChannelCommand(commandInfo=commandInfo, channel=channel)
+        await nukeChannelCommand(command_info=command_info, channel=channel)
         return
 
     @app_commands.command(
@@ -972,7 +972,7 @@ class administrationCommands(discord.app_commands.Group):
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer(ephemeral=True)  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -987,7 +987,7 @@ class administrationCommands(discord.app_commands.Group):
         if not channel:  # type: ignore[truthy-bool]
             channel = ctx.channel
 
-        await sayCommand(commandInfo=commandInfo, channel=channel, message=message)
+        await sayCommand(command_info=command_info, channel=channel, message=message)
         return
 
     @app_commands.command(
@@ -1005,7 +1005,7 @@ class administrationCommands(discord.app_commands.Group):
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer(ephemeral=True)  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -1020,7 +1020,7 @@ class administrationCommands(discord.app_commands.Group):
         if channel is None:
             channel = ctx.channel  # type: ignore[unreachable]
 
-        await createEmbedCommand(commandInfo=commandInfo, channel=channel, title=title)
+        await createEmbedCommand(command_info=command_info, channel=channel, title=title)
         return
 
     @app_commands.command(
@@ -1033,7 +1033,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def createemoji(self, interaction: discord.Interaction, name: str, imageurl: str) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -1047,7 +1047,7 @@ class administrationCommands(discord.app_commands.Group):
 
         view = discord.ui.View()
         role_select = discord.ui.RoleSelect(  # type: ignore[var-annotated]
-            placeholder=tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelectPlaceholder"),  # type: ignore[name-defined]
+            placeholder=tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.role_selectPlaceholder"),  # type: ignore[name-defined]
             default_values=[ctx.guild.default_role],  # type: ignore[name-defined]
             min_values=1,
             max_values=25,
@@ -1055,14 +1055,14 @@ class administrationCommands(discord.app_commands.Group):
 
         async def role_select_callback(interaction: discord.Interaction) -> None:
             roles = [ctx.guild.get_role(int(r)) for r in interaction.data["values"]]  # type: ignore[typeddict-item, name-defined, index]
-            commandInfo.message = interaction.message
-            commandInfo.reply = interaction.response.send_message  # type: ignore[assignment]
-            await createEmojiCommand(commandInfo=commandInfo, name=name, image_url=imageurl, roles=roles)
+            command_info.message = interaction.message
+            command_info.reply = interaction.response.send_message  # type: ignore[assignment]
+            await createEmojiCommand(command_info=command_info, name=name, image_url=imageurl, roles=roles)
 
         role_select.callback = role_select_callback  # type: ignore[method-assign]
         view.add_item(role_select)
         await ctx.followup.send(  # type: ignore[name-defined]
-            tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.roleSelect"),  # type: ignore[name-defined]
+            tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.role_select"),  # type: ignore[name-defined]
             view=view,
         )
 
@@ -1075,7 +1075,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def claimboosterrole(self, interaction: discord.Interaction, role: discord.Role = None) -> None:  # type: ignore[assignment]
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -1086,7 +1086,7 @@ class administrationCommands(discord.app_commands.Group):
             reply=interaction.followup.send,
             client=interaction.client,
         )
-        await CreateBoosterRoleCommand(commandInfo=commandInfo, role=role)
+        await CreateBoosterRoleCommand(command_info=command_info, role=role)
 
     @app_commands.command(
         name=app_commands.locale_str("admin_createticket_name"),
@@ -1111,7 +1111,7 @@ class administrationCommands(discord.app_commands.Group):
         introduction: app_commands.Range[str, 0, 1024] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()  # type: ignore[name-defined]
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,  # type: ignore[name-defined]
             channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
             guild=interaction.guild,  # type: ignore[name-defined]
@@ -1127,7 +1127,7 @@ class administrationCommands(discord.app_commands.Group):
             channel = ctx.channel
 
         await createTicketCommand(
-            commandInfo=commandInfo,
+            command_info=command_info,
             channel=channel,
             name=name,
             description=description,
@@ -1238,7 +1238,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def set_locale(self, interaction: discord.Interaction, locale: str) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -1250,7 +1250,7 @@ class administrationCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await setLocaleCommand(commandInfo=commandInfo, locale=locale)
+        await setLocaleCommand(command_info=command_info, locale=locale)
         return
 
     @app_commands.command(
@@ -1262,7 +1262,7 @@ class administrationCommands(discord.app_commands.Group):
     )
     async def copy_emoji(self, interaction: discord.Interaction, emoji: str) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -1273,17 +1273,17 @@ class administrationCommands(discord.app_commands.Group):
             reply=interaction.followup.send,
             client=interaction.client,
         )
-        await copyEmojiCommand(commandInfo=commandInfo, emoji=emoji)
+        await copyEmojiCommand(command_info=command_info, emoji=emoji)
         return
 
 
-class adminCog(commands.Cog):
+class AdminCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        admincmds = administrationCommands(
+        admincmds = AdministrationCommands(
             name=app_commands.locale_str("admin_name"),
             description=app_commands.locale_str("admin_description"),
         )
@@ -1316,4 +1316,4 @@ class adminCog(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(adminCog(bot))
+    await bot.add_cog(AdminCog(bot))

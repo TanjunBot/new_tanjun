@@ -13,7 +13,7 @@ MAX_CONTENT_LENGTH = 1000  # Maximum length for message content preview
 MAX_EMBED_LENGTH = 6000  # Discord's maximum embed length
 
 
-async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
+async def list_scheduled_messages(command_info: utility.CommandInfo) -> None:
     class PaginationView(View):
         def __init__(self, messages: list[ScheduledMessageModel], locale: str, page: int = 0) -> None:
             super().__init__(timeout=300)  # 5 minute timeout
@@ -108,7 +108,7 @@ async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
             return embed
 
         async def previous_page(self, interaction: discord.Interaction) -> None:
-            if interaction.user != commandInfo.user:
+            if interaction.user != command_info.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         self.locale,
@@ -122,7 +122,7 @@ async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
             await self.update_message(interaction)
 
         async def next_page(self, interaction: discord.Interaction) -> None:
-            if interaction.user != commandInfo.user:
+            if interaction.user != command_info.user:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
                         self.locale,
@@ -165,22 +165,22 @@ async def list_scheduled_messages(commandInfo: utility.CommandInfo) -> None:
             if self.message is not None:
                 await self.message.edit(view=discord.ui.View())
 
-    messages = await get_scheduled_messages(commandInfo.user.id)
+    messages = await get_scheduled_messages(command_info.user.id)
 
     if not messages:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.listscheduled.no_messages.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.listscheduled.no_messages.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.listscheduled.no_messages.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    view = PaginationView(messages, commandInfo.locale)
+    view = PaginationView(messages, command_info.locale)
     view.set_message(
-        await commandInfo.reply(
+        await command_info.reply(
             embed=view.get_embed(),
             view=view if len(messages) > MESSAGES_PER_PAGE else discord.ui.View(),
         )

@@ -13,40 +13,40 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def afk(commandInfo: CommandInfo, reason: str) -> None:
-    if await check_if_opted_out(commandInfo.user.id):
+async def afk(command_info: CommandInfo, reason: str) -> None:
+    if await check_if_opted_out(command_info.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.afk.opted_out.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.afk.opted_out.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.afk.opted_out.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if await checkIfUserIsAfk(commandInfo.user.id):
+    if await checkIfUserIsAfk(command_info.user.id):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.afk.already_afk.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.afk.already_afk.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.afk.already_afk.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    await setAfk(commandInfo.user.id, reason)
+    await setAfk(command_info.user.id, reason)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.afk.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.afk.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.afk.success.description",
             reason=reason,
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
 
 
 async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:
@@ -89,26 +89,26 @@ async def checkIfMentionsAreAfk(message: discord.Message) -> None:
 
     locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
 
-    afkUsers = []
+    afk_users = []
     reasons = []
     for mention in message.mentions:
         if await checkIfUserIsAfk(mention.id):
-            afkUsers.append(mention)
+            afk_users.append(mention)
             reason = await getAfkReason(mention.id)
             reasons.append(reason)
             await addAfkMessage(mention.id, message.id, message.channel.id)
-    if afkUsers:
-        if len(afkUsers) == 1:
+    if afk_users:
+        if len(afk_users) == 1:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
                     locale,
                     "commands.utility.afk.mentions_one.title",
-                    user=afkUsers[0].display_name,
+                    user=afk_users[0].display_name,
                 ),
                 description=tanjunLocalizer.localize(
                     locale,
                     "commands.utility.afk.mentions_one.description",
-                    user=afkUsers[0].mention,
+                    user=afk_users[0].mention,
                     reason=reasons[0],
                 ),
             )
@@ -119,7 +119,7 @@ async def checkIfMentionsAreAfk(message: discord.Message) -> None:
             description=tanjunLocalizer.localize(
                 locale,
                 "commands.utility.afk.mentions.description",
-                users=(f"- {user.mention}\n" for user in afkUsers),
+                users=(f"- {user.mention}\n" for user in afk_users),
             ),
         )
         await message.channel.send(embed=embed)

@@ -9,12 +9,12 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def getPlayerInfo(playerTag: str) -> dict[str, str] | None:
+async def getPlayerInfo(player_tag: str) -> dict[str, str] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with (
         aiohttp.ClientSession() as session,
         session.get(
-            f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}",
+            f"https://api.brawlstars.com/v1/players/%23{player_tag[1:]}",
             headers=headers,
             timeout=ClientTimeout(total=10),
         ) as response,
@@ -28,52 +28,52 @@ async def getPlayerInfo(playerTag: str) -> dict[str, str] | None:
             return None
 
 
-async def link(commandInfo: CommandInfo, playerTag: str) -> None:
-    if not playerTag.startswith("#"):
-        playerTag = f"#{playerTag}"
-    playerInfo = await getPlayerInfo(playerTag)
-    if not playerInfo:
-        await commandInfo.reply(
+async def link(command_info: CommandInfo, player_tag: str) -> None:
+    if not player_tag.startswith("#"):
+        player_tag = f"#{player_tag}"
+    player_info = await getPlayerInfo(player_tag)
+    if not player_info:
+        await command_info.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.link.error.notFound.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.link.error.notFound.description",
                 ),
             )
         )
         return
 
-    if await get_brawlstars_linked_account(commandInfo.user.id):
-        await commandInfo.reply(
+    if await get_brawlstars_linked_account(command_info.user.id):
+        await command_info.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.link.error.alreadyLinked.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.link.error.alreadyLinked.description",
                 ),
             )
         )
         return
 
-    await add_brawlstars_linked_account(commandInfo.user.id, playerTag)
+    await add_brawlstars_linked_account(command_info.user.id, player_tag)
 
-    await commandInfo.reply(
+    await command_info.reply(
         embed=tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.link.success.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.link.success.description",
-                tag=playerTag,
+                tag=player_tag,
             ),
         )
     )

@@ -5,7 +5,7 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def help(commandInfo, ctx):
+async def help(command_info, ctx):
     class HelpSelect(discord.ui.Select):
         options = []
         cash = set()
@@ -13,22 +13,22 @@ async def help(commandInfo, ctx):
         def __init__(self, client, options):
             self.client = client
             super().__init__(
-                placeholder=tanjunLocalizer.localize(commandInfo.locale, "commands.help.select.placeholder"),
+                placeholder=tanjunLocalizer.localize(command_info.locale, "commands.help.select.placeholder"),
                 max_values=1,
                 min_values=1,
                 options=options,
             )
 
         @classmethod
-        def get_locale(self, key, locale, **kwargs):
+        def get_locale(cls, key, locale, **kwargs):
             key = key.replace("_", ".")
             # Check if the key itself is in the cache
-            if key in self.cash:
+            if key in cls.cash:
                 return key
 
             # If not found, get the localized version
             localized = tanjunLocalizer.localize(locale, key, **kwargs)
-            self.cash.add(localized)
+            cls.cash.add(localized)
             return localized
 
         async def callback(self, interaction):
@@ -58,7 +58,7 @@ async def help(commandInfo, ctx):
                         except Exception:
                             command_text += self.get_locale(
                                 "commands.utility.help.noDescriptionAvailable",
-                                commandInfo.locale,
+                                command_info.locale,
                                 group_name=group.name,
                             )
 
@@ -79,7 +79,7 @@ async def help(commandInfo, ctx):
                                     command_text += f"{cmd_desc}\n\n"
                                 except Exception:
                                     command_text += tanjunLocalizer.localize(
-                                        commandInfo.locale,
+                                        command_info.locale,
                                         "commands.utility.help.noDescriptionAvailable",
                                         group_name=cmd.name,
                                     )
@@ -101,7 +101,7 @@ async def help(commandInfo, ctx):
 
                                     if hasattr(subcmd, "parameters") and subcmd.parameters:
                                         command_text += tanjunLocalizer.localize(
-                                            commandInfo.locale,
+                                            command_info.locale,
                                             "commands.utility.help.parameters",
                                         )
                                         for param in subcmd.parameters:
@@ -117,7 +117,7 @@ async def help(commandInfo, ctx):
                                                 command_text += f"- **{param_name}**: {param_desc}\n"
                                             except Exception:
                                                 command_text += tanjunLocalizer.localize(
-                                                    commandInfo.locale,
+                                                    command_info.locale,
                                                     "commands.utility.help.noDescriptionAvailable",
                                                     group_name=param.name,
                                                 )
@@ -139,7 +139,7 @@ async def help(commandInfo, ctx):
                                     command_text += f"{cmd_desc}\n\n"
                                 except Exception:
                                     command_text += tanjunLocalizer.localize(
-                                        commandInfo.locale,
+                                        command_info.locale,
                                         "commands.utility.help.noDescriptionAvailable",
                                         group_name=cmd.name,
                                     )
@@ -160,7 +160,7 @@ async def help(commandInfo, ctx):
                                             command_text += f"- **{param_name}**: {param_desc}\n"
                                         except Exception:
                                             command_text += tanjunLocalizer.localize(
-                                                commandInfo.locale,
+                                                command_info.locale,
                                                 "commands.utility.help.noDescriptionAvailable",
                                                 group_name=param.name,
                                             )
@@ -188,7 +188,7 @@ async def help(commandInfo, ctx):
                     if len(texts) > 1:
                         embed = discord.Embed(
                             title=tanjunLocalizer.localize(
-                                commandInfo.locale,
+                                command_info.locale,
                                 "commands.utility.help.title",
                                 group_name=group_name_locale,
                                 page=i,
@@ -200,7 +200,7 @@ async def help(commandInfo, ctx):
                     else:
                         embed = discord.Embed(
                             title=tanjunLocalizer.localize(
-                                commandInfo.locale,
+                                command_info.locale,
                                 "commands.utility.help.titleNoPages",
                                 group_name=group_name_locale,
                             ),
@@ -213,33 +213,32 @@ async def help(commandInfo, ctx):
             await interaction.response.edit_message(embeds=[embeds[0]], view=view)
 
         @classmethod
-        def generate_options(self, client):
+        def generate_options(cls, client):
             options = []
             groups = []
             for cmd in client.tree.walk_commands():
-                if cmd.parent is not None:
-                    if cmd.parent.qualified_name not in groups:
-                        groups.append(cmd.parent.qualified_name)
-                        if " " not in cmd.parent.qualified_name:
-                            options.append(
-                                discord.SelectOption(
-                                    label=tanjunLocalizer.localize(
-                                        commandInfo.locale,
-                                        str(cmd.parent.name).replace("_", "."),
-                                    ),
-                                    description=tanjunLocalizer.localize(
-                                        commandInfo.locale,
-                                        str(cmd.parent.description).replace("_", "."),
-                                    ),
-                                    value=cmd.parent.qualified_name,
-                                )
+                if cmd.parent is not None and cmd.parent.qualified_name not in groups:
+                    groups.append(cmd.parent.qualified_name)
+                    if " " not in cmd.parent.qualified_name:
+                        options.append(
+                            discord.SelectOption(
+                                label=tanjunLocalizer.localize(
+                                    command_info.locale,
+                                    str(cmd.parent.name).replace("_", "."),
+                                ),
+                                description=tanjunLocalizer.localize(
+                                    command_info.locale,
+                                    str(cmd.parent.description).replace("_", "."),
+                                ),
+                                value=cmd.parent.qualified_name,
                             )
+                        )
             if not options:
                 options.append(
                     discord.SelectOption(
-                        label=tanjunLocalizer.localize(commandInfo.locale, "commands.utility.help.noCommands.label"),
+                        label=tanjunLocalizer.localize(command_info.locale, "commands.utility.help.noCommands.label"),
                         description=tanjunLocalizer.localize(
-                            commandInfo.locale,
+                            command_info.locale,
                             "commands.utility.help.noCommands.description",
                         ),
                         value="no_commands",
@@ -258,7 +257,7 @@ async def help(commandInfo, ctx):
             self.add_item(HelpSelect(client, options))
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.help.buttons.previous"),
+            label=tanjunLocalizer.localize(command_info.locale, "commands.help.buttons.previous"),
             style=discord.ButtonStyle.gray,
         )
         async def previous_button(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -266,7 +265,7 @@ async def help(commandInfo, ctx):
             await interaction.response.edit_message(embeds=[self.embeds[self.current_page]])
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.help.buttons.next"),
+            label=tanjunLocalizer.localize(command_info.locale, "commands.help.buttons.next"),
             style=discord.ButtonStyle.gray,
         )
         async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -280,7 +279,7 @@ async def help(commandInfo, ctx):
             self.add_item(HelpSelect(client, options))
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.help.select.title"),
-        description=tanjunLocalizer.localize(commandInfo.locale, "commands.help.select.description"),
+        title=tanjunLocalizer.localize(command_info.locale, "commands.help.select.title"),
+        description=tanjunLocalizer.localize(command_info.locale, "commands.help.select.description"),
     )
-    await commandInfo.reply(embed=embed, view=HelpView(commandInfo.client))
+    await command_info.reply(embed=embed, view=HelpView(command_info.client))

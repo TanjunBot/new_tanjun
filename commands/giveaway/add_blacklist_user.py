@@ -11,51 +11,51 @@ from localizer import tanjunLocalizer
 
 
 async def add_blacklist_user(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     user: discord.User,
 ) -> None:
-    if not commandInfo.permissions.administrator:
+    if not command_info.permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.add_blacklist_user.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.add_blacklist_user.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if await check_if_user_blacklisted(commandInfo.guild.id, user.id):  # type: ignore[union-attr]
+    if await check_if_user_blacklisted(command_info.guild.id, user.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.add_blacklist_user.alreadyBlacklisted.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.add_blacklist_user.alreadyBlacklisted.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     await add_blacklist_user_api(
-        guild_id=commandInfo.guild.id,  # type: ignore[union-attr]
+        guild_id=command_info.guild.id,  # type: ignore[union-attr]
         user_id=user.id,
     )
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.giveaway.add_blacklist_user.success.title",
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.giveaway.add_blacklist_user.success.description",
         ),
     )
 
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
