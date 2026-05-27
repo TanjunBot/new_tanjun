@@ -65,14 +65,14 @@ async def create_emoji(
         )
         await commandInfo.reply(embed=embed)
 
-    except (TimeoutError, discord.HTTPException, aiohttp.ClientError) as e:
-        await commandInfo.reply(
-            tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createEmoji.error", error=str(e))
-        )
     except (TimeoutError, aiohttp.ClientError):
         await commandInfo.reply(
             tanjunLocalizer.localize(
                 str(commandInfo.locale),
                 "commands.admin.createEmoji.imageDownloadError",
             )
+        )
+    except discord.HTTPException as e:
+        await commandInfo.reply(
+            tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createEmoji.error", error=str(e))
         )
