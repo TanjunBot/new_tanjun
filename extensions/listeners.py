@@ -20,7 +20,6 @@ from commands.utility.autopublish import publish_message
 from commands.utility.report import report_btn_click
 from config import adminIds
 from loops._voice_tracker import handleVoiceChange
-from loops._voice_tracker import handleVoiceChange as handleLevelVoiceChange
 from minigames.addLevelXp import addLevelXp
 from minigames.counting import counting
 from minigames.countingChallenge import counting as countingChallenge
@@ -94,7 +93,6 @@ class ListenerCog(commands.Cog):
         await memberLeave(before)
         await memberJoin(after, user)
         await handleVoiceChange(user, before, after)  # type: ignore[no-untyped-call]
-        await handleLevelVoiceChange(user, before, after)  # type: ignore[no-untyped-call]
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
