@@ -2194,6 +2194,39 @@ async def getLevelLeaderboard(guild_id: str) -> list[LevelLeaderboardEntryModel]
     return [LevelLeaderboardEntryModel.from_row(row) for row in result] if result else []
 
 
+async def get_level_leaderboard_paginated(
+    guild_id: str,
+    limit: int = 10,
+    offset: int = 0,
+) -> list[LevelLeaderboardEntryModel]:
+    """Fetch a paginated slice of the level leaderboard.
+
+    Uses SQL-level LIMIT/OFFSET so only the requested page of rows
+    is loaded from the database.
+    """
+    if limit < 1:
+        limit = 10
+    if offset < 0:
+        offset = 0
+    query = """
+        SELECT user_id, xp FROM level
+        WHERE guild_id = %s
+        ORDER BY xp DESC, user_id ASC
+        LIMIT %s OFFSET %s
+    """
+    params = (guild_id, limit, offset)
+    result = await execute_query(query, params)
+    return [LevelLeaderboardEntryModel.from_row(row) for row in result] if result else []
+
+
+async def get_level_leaderboard_count(guild_id: str) -> int:
+    """Return the total number of members on the leaderboard for a guild."""
+    query = "SELECT COUNT(*) FROM level WHERE guild_id = %s"
+    params = (guild_id,)
+    result = await execute_query(query, params)
+    return result[0][0] if result else 0
+
+
 async def addCustomSituation(
     user_id: str,
     situation: str,
