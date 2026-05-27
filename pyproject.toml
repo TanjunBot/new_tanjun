@@ -123,11 +123,12 @@ dependencies = [
 "Bug Tracker" = "https://github.com/TanjunBot/new_tanjun/issues"
 
 [tool.setuptools]
-py-modules = ["api", "config", "localizer", "utility", "models", "translator", "main", "healthcheck", "health_check", "free_tier_guarantee", "locale_file_health_check", "OpenAIHealthCheck", "run_flake8", "temp_fix"]
+py-modules = ["api", "config", "localizer", "utility", "models", "translator", "main", "healthcheck", "health_check", "free_tier_guarantee", "locale_file_health_check", "OpenAIHealthCheck"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["ai*", "loops*", "assets*", "health*", "locales*", "commands*", "minigames*", "extensions*", "tests*", "utils*"]
+include = ["ai*", "loops*", "assets*", "health*", "locales*", "commands*", "minigames*", "extensions*", "utils*"]
+exclude = ["tests*"]
 
 [tool.ruff]
 target-version = "py312"

@@ -204,6 +204,10 @@ class administrationCog(commands.Cog):
                         aiohttp.ClientSession() as session,
                         session.get(url, timeout=ClientTimeout(total=10)) as response,
                     ):
+                        if response.status != 200:
+                            print(f"Download failed: {response.status} for {starPower['name']}")
+                            await ctx.send(f"Download failed: {response.status} for {starPower['name']}")
+                            continue
                         image = await response.read()
                         emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)  # type: ignore[union-attr]
                         await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
@@ -228,6 +232,10 @@ class administrationCog(commands.Cog):
                         aiohttp.ClientSession() as session,
                         session.get(url, timeout=ClientTimeout(total=10)) as response,
                     ):
+                        if response.status != 200:
+                            print(f"Download failed: {response.status} for {gadget['name']}")
+                            await ctx.send(f"Download failed: {response.status} for {gadget['name']}")
+                            continue
                         image = await response.read()
                         emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)  # type: ignore[union-attr]
 

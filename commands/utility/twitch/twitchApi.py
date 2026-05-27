@@ -1,5 +1,6 @@
 from collections.abc import Mapping
 from typing import Any
+import asyncio
 
 import aiohttp
 import discord
