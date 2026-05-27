@@ -2204,10 +2204,14 @@ async def get_level_leaderboard_paginated(
     Uses SQL-level LIMIT/OFFSET so only the requested page of rows
     is loaded from the database.
     """
+    if limit < 1:
+        limit = 10
+    if offset < 0:
+        offset = 0
     query = """
         SELECT user_id, xp FROM level
         WHERE guild_id = %s
-        ORDER BY xp DESC
+        ORDER BY xp DESC, user_id ASC
         LIMIT %s OFFSET %s
     """
     params = (guild_id, limit, offset)
