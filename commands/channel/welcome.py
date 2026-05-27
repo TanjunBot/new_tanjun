@@ -166,14 +166,14 @@ async def fetch_image(url: str) -> io.BytesIO | None:
         return None
 
 
-async def get_image_or_gif_frames(url) -> None:  # type: ignore[no-untyped-def]
+async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
     image_data = await fetch_image(url)
     if image_data is None:
         return [], 0
     image = Image.open(image_data)  # type: ignore[arg-type]
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
     duration = image.info.get("duration", 100)
-    return frames, duration  # type: ignore[return-value]
+    return frames, duration
 
 
 def process_image(background_frames, avatar_frames, user) -> None:  # type: ignore[no-untyped-def]
@@ -272,7 +272,7 @@ async def welcomeNewUser(member: discord.Member) -> None:
     background_frames, _ = await get_image_or_gif_frames(welcomeChannel.image_background)
 
     avatar_url = str(member.display_avatar.url)
-    avatar_frames, _ = await get_image_or_gif_frames(avatar_url)  # type: ignore[func-returns-value, misc]
+    avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
 
     if not background_frames or not avatar_frames:
         return
