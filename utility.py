@@ -1008,6 +1008,9 @@ def _invert_get_level_for_xp(xp: int, scaling: str) -> int:
 
     This is O(1) — no iteration, no threshold list building.
     """
+    # Guard against non-positive xp to prevent complex number results from power operations
+    if xp <= 0:
+        return 0
     level = _LEVEL_INVERSES.get(scaling, lambda _: 0)(xp)
     # Clamp to valid range: level must be >= 0 and the inverse may overshoot
     # the exact threshold boundary, so verify and step down/up if needed.
