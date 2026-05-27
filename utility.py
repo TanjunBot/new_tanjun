@@ -912,23 +912,28 @@ class NumericStringParser:
 
 
 async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
-    async with aiohttp.ClientSession(timeout=ClientTimeout(total=10)) as session:
+    try:
+        async with aiohttp.ClientSession(timeout=ClientTimeout(total=10)) as session:
 
-        async def fetch(url: str) -> dict | None:
-            async with session.get(url) as response:
-                if response.status != 200:
-                    return None
-                return await response.json()
+            async def fetch(url: str) -> dict | None:
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        return None
+                    return await response.json()
 
-        r = await fetch(
-            "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg" % (giphyAPIKey, query, limit)
-        )
+            r = await fetch(
+                "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg" % (giphyAPIKey, query, limit)
+            )
 
-        if r is None:
-            return []
-        results = r.get("data", [])
-        # nosec: B311
-        random.shuffle(results)
+            if r is None:
+                return []
+            results = r.get("data", [])
+            # nosec: B311
+            random.shuffle(results)
+
+            return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
+    except (TimeoutError, aiohttp.ClientError):
+        return []
 
         return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
 

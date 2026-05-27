@@ -172,7 +172,7 @@ async def fetch_image(url: str) -> io.BytesIO | None:
 async def get_image_or_gif_frames(url) -> None:  # type: ignore[no-untyped-def]
     image_data = await fetch_image(url)
     if image_data is None:
-        return None
+        return None, None
     image = Image.open(image_data)  # type: ignore[arg-type]
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
     duration = image.info.get("duration", 100)
