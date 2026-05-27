@@ -1279,10 +1279,22 @@ async def delete_level_system_data(guild_id: str) -> None:
         "levelRole",
         "levelConfig",
     ]
+    # Validated mapping to avoid SQL injection from f-strings
+    table_delete_queries = {
+        "level": "DELETE FROM level WHERE guild_id = %s",
+        "blacklistedUser": "DELETE FROM blacklistedUser WHERE guild_id = %s",
+        "blacklistedRole": "DELETE FROM blacklistedRole WHERE guild_id = %s",
+        "blacklistedChannel": "DELETE FROM blacklistedChannel WHERE guild_id = %s",
+        "userXpBoost": "DELETE FROM userXpBoost WHERE guild_id = %s",
+        "roleXpBoost": "DELETE FROM roleXpBoost WHERE guild_id = %s",
+        "channelXpBoost": "DELETE FROM channelXpBoost WHERE guild_id = %s",
+        "levelRole": "DELETE FROM levelRole WHERE guild_id = %s",
+        "levelConfig": "DELETE FROM levelConfig WHERE guild_id = %s",
+    }
     try:
         async with transaction() as conn, conn.cursor() as cursor:
             for table in tables:
-                await cursor.execute(f"DELETE FROM {table} WHERE guild_id = %s", (guild_id,))
+                await cursor.execute(table_delete_queries[table], (guild_id,))
     except Exception as e:
         print(f"Error deleting level system data for guild {guild_id}: {e}")
         raise
@@ -1824,6 +1836,7 @@ async def delete_old_giveaways() -> None:
             await cursor.execute("DELETE FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK")
     except Exception as e:
         print(f"Error deleting old giveaways: {e}")
+        raise
 
 
 async def get_giveaway_participants(giveaway_id: int) -> list[str]:
