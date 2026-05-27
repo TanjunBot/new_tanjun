@@ -124,6 +124,7 @@ async def main():
     # Run startup health checks
     health_manager = HealthCheckManager(bot)
     health_manager.register(OpenAIHealthCheck())
+    health_manager.register(LocaleFileHealthCheck())
     ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.
