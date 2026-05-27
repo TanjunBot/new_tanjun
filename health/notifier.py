@@ -14,28 +14,38 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Alert channel and user ping for health check failures, configured via env vars.
-# Both must be set — no safe defaults, so misconfiguration is caught early.
-_alert_channel_str = os.environ.get("HEALTH_ALERT_CHANNEL_ID")
-_alert_user_str = os.environ.get("HEALTH_ALERT_USER_ID")
 
-if _alert_channel_str is None:
-    raise RuntimeError("Missing required env var: HEALTH_ALERT_CHANNEL_ID")
-try:
-    HEALTH_ALERT_CHANNEL_ID: int = int(_alert_channel_str)
-except ValueError as exc:
-    raise RuntimeError(
-        f"HEALTH_ALERT_CHANNEL_ID must be an integer, got: {_alert_channel_str!r}"
-    ) from exc
+def _parse_alert_config() -> tuple[int, int]:
+    """Read and validate alert config from environment variables.
 
-if _alert_user_str is None:
-    raise RuntimeError("Missing required env var: HEALTH_ALERT_USER_ID")
-try:
-    HEALTH_ALERT_USER_ID: int = int(_alert_user_str)
-except ValueError as exc:
-    raise RuntimeError(
-        f"HEALTH_ALERT_USER_ID must be an integer, got: {_alert_user_str!r}"
-    ) from exc
+    Returns:
+        A tuple of (channel_id, user_id).
+
+    Raises:
+        RuntimeError: If either env var is missing or not a valid integer.
+    """
+    channel_str = os.environ.get("HEALTH_ALERT_CHANNEL_ID")
+    user_str = os.environ.get("HEALTH_ALERT_USER_ID")
+
+    if channel_str is None:
+        raise RuntimeError("Missing required env var: HEALTH_ALERT_CHANNEL_ID")
+    try:
+        channel_id = int(channel_str)
+    except ValueError as exc:
+        raise RuntimeError(
+            f"HEALTH_ALERT_CHANNEL_ID must be an integer, got: {channel_str!r}"
+        ) from exc
+
+    if user_str is None:
+        raise RuntimeError("Missing required env var: HEALTH_ALERT_USER_ID")
+    try:
+        user_id = int(user_str)
+    except ValueError as exc:
+        raise RuntimeError(
+            f"HEALTH_ALERT_USER_ID must be an integer, got: {user_str!r}"
+        ) from exc
+
+    return channel_id, user_id
 
 
 async def notify_health_failures(
@@ -51,20 +61,21 @@ async def notify_health_failures(
     if not failures:
         return
 
+    channel_id, user_id = _parse_alert_config()
     import discord
 
     # Try cache first, fall back to API fetch for uncached channels
-    channel = bot.get_channel(HEALTH_ALERT_CHANNEL_ID)
+    channel = bot.get_channel(channel_id)
     if channel is None:
         try:
-            channel = await bot.fetch_channel(HEALTH_ALERT_CHANNEL_ID)
+            channel = await bot.fetch_channel(channel_id)
         except Exception:
             channel = None
 
     if channel is None:
         logger.warning(
             "Health alert channel %s not found, cannot notify failures",
-            HEALTH_ALERT_CHANNEL_ID,
+            channel_id,
         )
         return
 
@@ -84,9 +95,9 @@ async def notify_health_failures(
 
     try:
         await channel.send(
-            content=f"<@{HEALTH_ALERT_USER_ID}>",
+            content=f"<@{user_id}>",
             embed=embed,
         )
-        logger.info("Sent health failure notification to channel %s", HEALTH_ALERT_CHANNEL_ID)
+        logger.info("Sent health failure notification to channel %s", channel_id)
     except Exception as exc:
         logger.error("Failed to send health failure notification: %s", exc)

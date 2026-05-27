@@ -81,7 +81,12 @@ class HealthCheckManager:
         logger.info("Running startup health checks...")
         results = await self.run_all()
 
-        critical_failures = [r for r in results if r.status == HealthStatus.CRITICAL]
+        critical_check_names = {c.name for c in self._checks if c.critical}
+        critical_failures = [
+            r for r in results
+            if r.status == HealthStatus.CRITICAL
+            and r.check_name in critical_check_names
+        ]
         degraded = [r for r in results if r.status == HealthStatus.DEGRADED]
         healthy = [r for r in results if r.status == HealthStatus.HEALTHY]
 
