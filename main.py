@@ -31,8 +31,8 @@ from config import (
 )
 from health.manager import HealthCheckManager
 from OpenAIHealthCheck import OpenAIHealthCheck
-from TwitchAPIHealthCheck import TwitchAPIHealthCheck
 from translator import TanjunTranslator
+from TwitchAPIHealthCheck import TwitchAPIHealthCheck
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
