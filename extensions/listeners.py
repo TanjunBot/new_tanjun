@@ -33,6 +33,12 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
+        # Early filter: skip bot messages and DMs once for all handlers
+        if message.author.bot:
+            return
+        if message.guild is None:
+            return
+
         # Single DB check for all counting configs — skip all 3 handlers if none
         counting_config, challenge_config, modes_config = await get_counting_configs(message.channel.id)
         if counting_config:

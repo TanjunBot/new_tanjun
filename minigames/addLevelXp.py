@@ -20,7 +20,7 @@ _MAX_NOTIFIED_USERS = 10_000
 
 
 async def addLevelXp(message: discord.Message) -> None:
-    if message.author.bot or await check_if_opted_out(str(message.author.id)):
+    if await check_if_opted_out(str(message.author.id)):
         return
 
     if message.guild is None:

@@ -127,9 +127,6 @@ async def removeMediaChannel(commandInfo: utility.CommandInfo, channel: discord.
 
 
 async def mediaChannelMessage(message: discord.Message) -> None:
-    if message.author.bot:
-        return
-
     if not await get_media_channel(message.channel.id):
         return
 
