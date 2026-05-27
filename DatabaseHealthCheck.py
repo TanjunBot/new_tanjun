@@ -41,7 +41,14 @@ class DatabaseHealthCheck(HealthCheck):
         details: dict[str, object] = {}
 
         try:
-            # Check pool utilization
+            # First acquire and release a connection to verify pool is functional
+            try:
+                conn = await asyncio.wait_for(pool.acquire(), timeout=5.0)
+                pool.release(conn)
+            except TimeoutError:
+                raise  # Propagate to outer handler
+
+            # Now read pool properties after confirming pool is functional
             pool_size = pool.size
             pool_maxsize = pool.maxsize
             pool_freesize = pool.freesize
@@ -49,22 +56,27 @@ class DatabaseHealthCheck(HealthCheck):
 
             details["pool_size"] = pool_size
             details["pool_maxsize"] = pool_maxsize
-            details["pool_freesize"] = pool.freesize
+            details["pool_freesize"] = pool_freesize
             details["pool_active"] = active
 
             utilization = (active / pool_maxsize) * 100 if pool_maxsize > 0 else 0
 
             # Acquire a connection and run SELECT 1
-            async with pool.acquire() as conn:
-                async with conn.cursor() as cursor:
-                    await cursor.execute("SELECT 1")
-                    result = await cursor.fetchone()
-                    if not result or result[0] != 1:
-                        return HealthCheckResult(
-                            check_name=self.name,
-                            status=HealthStatus.CRITICAL,
-                            message="SELECT 1 returned unexpected result.",
-                        )
+            try:
+                conn = await asyncio.wait_for(pool.acquire(), timeout=5.0)
+            except TimeoutError:
+                raise  # Propagate to outer handler
+
+            async with conn, conn.cursor() as cursor:
+                await cursor.execute("SELECT 1")
+                result = await cursor.fetchone()
+                if not result or result[0] != 1:
+                    return HealthCheckResult(
+                        check_name=self.name,
+                        status=HealthStatus.CRITICAL,
+                        message="SELECT 1 returned unexpected result.",
+                        details=details,
+                    )
 
             details["utilization_pct"] = round(utilization, 1)
 
@@ -73,8 +85,7 @@ class DatabaseHealthCheck(HealthCheck):
                     check_name=self.name,
                     status=HealthStatus.DEGRADED,
                     message=(
-                        f"Database pool utilization is high ({utilization:.1f}%): "
-                        f"{active}/{pool_maxsize} connections active."
+                        f"Database pool utilization is high ({utilization:.1f}%): {active}/{pool_maxsize} connections active."
                     ),
                     details=details,
                 )
@@ -86,7 +97,7 @@ class DatabaseHealthCheck(HealthCheck):
                 details=details,
             )
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.CRITICAL,
