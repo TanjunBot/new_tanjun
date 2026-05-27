@@ -1,15 +1,14 @@
 import discord
 
 from api import (
+    _get_cached_config,
     check_if_opted_out,
-    get_custom_formula,
     get_level_roles,
     get_level_system_status,
     get_levelup_channel,
     get_levelup_message,
     get_levelup_message_status,
     get_user_xp,
-    get_xp_scaling,
     update_user_xp,
 )
 from localizer import tanjunLocalizer
@@ -49,8 +48,8 @@ async def addLevelXp(message: discord.Message) -> None:
 
 
 async def fetch_xp_details(message: discord.Message, guild_id: str) -> tuple[str, str | None, int]:
-    scaling = await get_xp_scaling(guild_id)
-    custom_formula = await get_custom_formula(guild_id)
+    scaling = await _get_cached_config(guild_id, "scaling", "medium")
+    custom_formula = await _get_cached_config(guild_id, "custom_formula")
     xp_to_add = await calculate_xp(
         guild_id,
         str(message.author.id),
