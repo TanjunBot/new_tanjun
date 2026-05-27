@@ -1,5 +1,6 @@
 import ast
 import bisect
+import collections
 import datetime
 import gzip
 import logging
@@ -1002,18 +1003,28 @@ class LevelThresholdCache:
     per-call overhead to just the bisect.
     """
 
-    _thresholds: dict[tuple[str, str | None], tuple[list[int], int]] = {}
+    _thresholds: collections.OrderedDict[tuple[str, str | None], tuple[list[int], int]] = collections.OrderedDict()
     _MAX_LEVEL = 10000
+    _MAX_ENTRIES = 50  # Prevent unbounded growth: ~50 scaling/formula combos max
 
     @classmethod
     def get_level_for_xp(cls, xp: int, scaling: str, custom_formula: str | None = None) -> int:
         key = (scaling, custom_formula)
-        thresholds, max_level = cls._thresholds.get(key, (None, 0))  # type: ignore
+        entry = cls._thresholds.get(key)
+        thresholds: list[int] | None
+        max_level: int
+        if entry is not None:
+            thresholds, max_level = entry
+        else:
+            thresholds = None
+            max_level = cls._MAX_LEVEL
+
         if thresholds is None or thresholds[-1] < xp:
             # Build or extend thresholds if needed
             if thresholds is None:
                 start_level = 1
                 thresholds = []
+                max_level = cls._MAX_LEVEL
             else:
                 # Extend from current; don't rebuild from scratch
                 if max_level >= cls._MAX_LEVEL and thresholds[-1] >= xp:
@@ -1026,6 +1037,9 @@ class LevelThresholdCache:
                     max_level = level
                     break
             cls._thresholds[key] = (thresholds, max_level)
+            # Evict oldest entries if cache exceeds limit
+            while len(cls._thresholds) > cls._MAX_ENTRIES:
+                cls._thresholds.popitem(last=False)
         return bisect.bisect_right(thresholds, xp)
 
 
