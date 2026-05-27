@@ -41,6 +41,7 @@ from health.manager import HealthCheckManager
 from locale_file_health_check import LocaleFileHealthCheck
 from OpenAIHealthCheck import OpenAIHealthCheck
 from translator import TanjunTranslator
+from TwitchAPIHealthCheck import TwitchAPIHealthCheck
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -135,6 +136,7 @@ async def main():
     health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
     health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
     health_manager.register(DatabaseHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(TwitchAPIHealthCheck())  # Uses default 5-minute interval
     health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
     health_manager.register(GIPHYHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(BrawlStarsHealthCheck(), interval=1800)  # 30 minutes

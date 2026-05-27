@@ -1,11 +1,12 @@
 # Unused imports:
 # from typing import List
 # import os
+import asyncio
 import difflib
 
 import discord
 from discord import app_commands
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 import utility
 from api import (
@@ -43,31 +44,28 @@ class EmbedColors:
     red = 0xFF0000
 
 
-class LogEmbeds:
-    def __init__(self) -> None:
-        self.embeds: dict[str, list[discord.Embed]] = {}
-
-    def add_embed(self, guild_id: str, embed: discord.Embed) -> None:
-        if guild_id not in self.embeds:
-            self.embeds[guild_id] = []
-        self.embeds[guild_id].append(embed)
-
-    def get_all_embeds(self) -> dict[str, list[discord.Embed]]:
-        return self.embeds
-
-    def clear_embeds(self) -> None:
-        self.embeds = {}
+_log_queue: asyncio.Queue[tuple[str, discord.Embed]] = asyncio.Queue(maxsize=200)
 
 
-log_embeds_manager = LogEmbeds()
+async def log_event_producer(guild_id: str, embed: discord.Embed) -> None:
+    """Called by event listeners - never blocks."""
+    try:
+        _log_queue.put_nowait((guild_id, embed))
+    except asyncio.QueueFull:
+        pass  # Drop oldest event silently when queue is full
 
 
-async def sendLogEmbeds(bot: commands.Bot) -> None:
-    global log_embeds_manager
-    embeds = log_embeds_manager.get_all_embeds()
-    for guildId, ems in embeds.items():
+async def sendLogEmbeds(guild_id: str, embed: discord.Embed) -> None:
+    """Backward-compatible shim for sendLogEmbeds - enqueues log events."""
+    await log_event_producer(guild_id, embed)
+
+
+async def log_event_consumer(bot: commands.Bot) -> None:
+    """Background task that processes the queue asynchronously."""
+    while True:
+        guild_id, embed = await _log_queue.get()
         try:
-            destination = await get_log_channel(str(guildId))
+            destination = await get_log_channel(str(guild_id))
             if destination is None:
                 continue
             destinationChannel = bot.get_channel(int(destination))
@@ -75,12 +73,9 @@ async def sendLogEmbeds(bot: commands.Bot) -> None:
                 destinationChannel, (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread)
             ):
                 continue
-            for i in range(0, len(ems), 10):
-                chunk = ems[i : i + 10]
-                await destinationChannel.send(embeds=chunk)
+            await destinationChannel.send(embed=embed)
         except Exception:
-            pass
-    log_embeds_manager.clear_embeds()
+            pass  # Log failure but do not crash consumer
 
 
 class ChannelBlacklistCommands(discord.app_commands.Group):
@@ -344,6 +339,7 @@ class LogsCommands(discord.app_commands.Group):
 class LogsCog(commands.Cog):
     def __init__(self, bot) -> None:  # type: ignore[no-untyped-def]
         self.bot = bot
+        self._log_consumer_task: asyncio.Task[None] | None = None
 
     @commands.Cog.listener()
     async def on_automod_rule_create(self, rule: discord.AutoModRule) -> None:
@@ -509,7 +505,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleCreate.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(rule.guild.id), embed)
+        await log_event_producer(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_automod_rule_update(self, rule: discord.AutoModRule) -> None:
@@ -677,7 +673,7 @@ class LogsCog(commands.Cog):
             description=description,
         )
         embed.set_footer(text=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.footer"))
-        log_embeds_manager.add_embed(str(rule.guild.id), embed)
+        await log_event_producer(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_automod_rule_delete(self, rule: discord.AutoModRule) -> None:
@@ -844,7 +840,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(rule.guild.id), embed)
+        await log_event_producer(str(rule.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_automod_action(self, execution: discord.AutoModAction) -> None:
@@ -928,7 +924,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(execution.guild.id), embed)
+        await log_event_producer(str(execution.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel) -> None:
@@ -1022,7 +1018,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelDelete.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(channel.guild.id), embed)
+        await log_event_producer(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: discord.abc.GuildChannel) -> None:
@@ -1097,7 +1093,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelCreate.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(channel.guild.id), embed)
+        await log_event_producer(str(channel.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_channel_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel) -> None:
@@ -1382,7 +1378,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildChannelUpdate.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(after.guild.id), embed)
+        await log_event_producer(str(after.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_update(self, before: discord.Guild, after: discord.Guild) -> None:
@@ -1808,7 +1804,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildUpdate.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(after.id), embed)
+        await log_event_producer(str(after.id), embed)
 
     @commands.Cog.listener()
     async def on_invite_create(self, invite: discord.Invite) -> None:
@@ -1903,7 +1899,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteCreate.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(invite.guild.id), embed)  # type: ignore[union-attr]
+        await log_event_producer(str(invite.guild.id), embed)  # type: ignore[union-attr]
 
     @commands.Cog.listener()
     async def on_invite_delete(self, invite: discord.Invite) -> None:
@@ -1995,7 +1991,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.inviteDelete.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(invite.guild.id), embed)  # type: ignore[union-attr]
+        await log_event_producer(str(invite.guild.id), embed)  # type: ignore[union-attr]
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:
@@ -2024,7 +2020,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(member.guild.id), embed)
+        await log_event_producer(str(member.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member) -> None:
@@ -2060,7 +2056,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(member.guild.id), embed)
+        await log_event_producer(str(member.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
@@ -2194,7 +2190,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUpdate.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(after.guild.id), embed)
+        await log_event_producer(str(after.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_user_update(self, before: discord.User, after: discord.User) -> None:
@@ -2302,7 +2298,7 @@ class LogsCog(commands.Cog):
                 title=tanjunLocalizer.localize(locale, "logs.userUpdate.title"),
                 description=description,
             )
-            log_embeds_manager.add_embed(str(guild.id), embed)
+            await log_event_producer(str(guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_ban(self, user: discord.Member) -> None:
@@ -2338,7 +2334,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberBan.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(user.guild.id), embed)
+        await log_event_producer(str(user.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_member_unban(self, guild: discord.Guild, user: discord.User) -> None:
@@ -2375,7 +2371,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.memberUnban.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(guild.id), embed)
+        await log_event_producer(str(guild.id), embed)
 
     @commands.Cog.listener()
     async def on_presence_update(self, before: discord.Member, after: discord.Member) -> None:
@@ -2417,7 +2413,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.presenceUpdate.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(after.guild.id), embed)
+        await log_event_producer(str(after.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
@@ -2561,7 +2557,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageEdit.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(after.guild.id), embed)  # type: ignore[union-attr]
+        await log_event_producer(str(after.guild.id), embed)  # type: ignore[union-attr]
 
         # if embedsChanged:
         #     for i in range(len(before.embeds)):
@@ -2657,9 +2653,9 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.messageDelete.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(message.guild.id), embed)  # type: ignore[union-attr]
+        await log_event_producer(str(message.guild.id), embed)  # type: ignore[union-attr]
         for emb in message.embeds:
-            log_embeds_manager.add_embed(str(message.guild.id), emb)  # type: ignore[union-attr]
+            await log_event_producer(str(message.guild.id), emb)  # type: ignore[union-attr]
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User) -> None:
@@ -2699,7 +2695,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionAdd.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(reaction.guild.id), embed)
+        await log_event_producer(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User) -> None:
@@ -2739,7 +2735,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.reactionRemove.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(reaction.guild.id), embed)
+        await log_event_producer(str(reaction.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_create(self, role: discord.Role) -> None:
@@ -2817,7 +2813,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleCreate.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(role.guild.id), embed)
+        await log_event_producer(str(role.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role: discord.Role) -> None:
@@ -2896,7 +2892,7 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleDelete.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(role.guild.id), embed)
+        await log_event_producer(str(role.guild.id), embed)
 
     @commands.Cog.listener()
     async def on_guild_role_update(self, before: discord.Role, after: discord.Role) -> None:
@@ -3025,14 +3021,14 @@ class LogsCog(commands.Cog):
             title=tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.title"),
             description=description,
         )
-        log_embeds_manager.add_embed(str(after.guild.id), embed)
+        await log_event_producer(str(after.guild.id), embed)
 
-    @tasks.loop(seconds=10)
-    async def sendLogEmbeds(self) -> None:
+    async def log_consumer_task(self) -> None:
+        """Run the log event consumer as a background task."""
         try:
-            await sendLogEmbeds(self.bot)
-        except Exception:
-            pass
+            await log_event_consumer(self.bot)
+        finally:
+            self._log_consumer_task = None
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
@@ -3057,7 +3053,9 @@ class LogsCog(commands.Cog):
         logcmds.add_command(roleBlacklist)
         self.bot.tree.add_command(logcmds)
 
-        self.sendLogEmbeds.start()  # type: ignore[unused-awaitable]
+        # Only create the log consumer task if it doesn't exist or is done
+        if self._log_consumer_task is None or self._log_consumer_task.done():
+            self._log_consumer_task = self.bot.loop.create_task(self.log_consumer_task())
 
 
 async def setup(bot: commands.Bot) -> None:

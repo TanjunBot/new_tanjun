@@ -1,4 +1,5 @@
 import os
+import sys
 
 from dotenv import load_dotenv
 
@@ -28,6 +29,40 @@ brawlstarsToken = os.environ.get("brawlstarsToken")
 twitchSecret = os.environ.get("twitchSecret")
 twitchId = os.environ.get("twitchId")
 prefix = os.environ.get("prefix")
+
+# ── Required environment variable validation ──────────────────────────────────
+
+REQUIRED_VARS = [
+    "token",
+    "applicationId",
+    "adminIds",
+    "database_ip",
+    "database_password",
+    "database_user",
+    "database_schema",
+    "prefix",
+]
+
+missing = [var for var in REQUIRED_VARS if not os.environ.get(var)]
+if missing:
+    print(
+        f"FATAL: Missing required environment variables: {', '.join(missing)}",
+        file=sys.stderr,
+    )
+    print(
+        "Please check your .env file or set these environment variables before starting the bot.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+# Validate numeric env vars
+
+for _port_name, _port_var in (("database_port", database_port),):
+    if database_port is not None and not isinstance(database_port, int):
+        print(f"FATAL: {_port_name} must be an integer, got {type(database_port).__name__}", file=sys.stderr)
+        sys.exit(1)
+
+# Validate boolean/env flag vars (future-proof placeholder)
 
 # Emoji identifiers for calculator
 CALC_ADD = "math_add:1254372629456883793"

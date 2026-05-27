@@ -14,6 +14,7 @@ from DatabaseHealthCheck import DatabaseHealthCheck
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 from locale_file_health_check import LocaleFileHealthCheck
 from OpenAIHealthCheck import OpenAIHealthCheck
+from TwitchAPIHealthCheck import TwitchAPIHealthCheck
 
 __all__ = [
     "DatabaseHealthCheck",
@@ -22,4 +23,5 @@ __all__ = [
     "HealthStatus",
     "LocaleFileHealthCheck",
     "OpenAIHealthCheck",
+    "TwitchAPIHealthCheck",
 ]

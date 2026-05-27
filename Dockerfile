@@ -17,9 +17,9 @@ RUN useradd -m appuser && \
 USER appuser
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY pyproject.toml README.md LICENSE.txt ./
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir .
 
 # Copy the entire application
 COPY . /usr/local/app/
