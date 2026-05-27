@@ -269,7 +269,10 @@ async def welcomeNewUser(member: discord.Member) -> None:
     if welcomeChannel is None:
         return
 
-    background_frames, _ = await get_image_or_gif_frames(welcomeChannel.image_background)
+    if welcomeChannel.image_background:
+        background_frames, _ = await get_image_or_gif_frames(welcomeChannel.image_background)
+    else:
+        background_frames = []
 
     avatar_url = str(member.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)

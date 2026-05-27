@@ -272,7 +272,10 @@ async def farewellUser(member: discord.Member) -> None:
     if farewellChannel is None:
         return
 
-    background_frames, _ = await get_image_or_gif_frames(farewellChannel.image_background)
+    if farewellChannel.image_background:
+        background_frames, _ = await get_image_or_gif_frames(farewellChannel.image_background)
+    else:
+        background_frames = []
 
     avatar_url = str(member.display_avatar.url)
     avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
