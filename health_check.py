@@ -1,41 +1,52 @@
-class BackgroundLoopHealthCheck(HealthCheck):
-    def __init__(self, bot):
-        self.bot = bot
+"""Health check framework for Tanjun bot.
+
+Defines the base classes for all health checks:
+- HealthCheck: abstract base class
+- HealthCheckResult: result container
+- HealthStatus: status enum
+"""
+
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any
+
+
+class HealthStatus(Enum):
+    """Status of a health check."""
+    HEALTHY = "healthy"
+    DEGRADED = "degraded"
+    CRITICAL = "critical"
+
+
+@dataclass
+class HealthCheckResult:
+    """Result of a single health check."""
+    check_name: str
+    status: HealthStatus
+    message: str
+    details: dict[str, Any] | None = None
+
+
+class HealthCheck(ABC):
+    """Abstract base class for all health checks."""
 
     @property
+    @abstractmethod
     def name(self) -> str:
-        return "Background Loops"
+        """Human-readable name of this health check."""
+        ...
 
     @property
+    @abstractmethod
     def critical(self) -> bool:
-        return False  # Individual loops failing is degraded, not critical
+        """Whether failure of this check is critical for the bot."""
+        ...
 
+    @abstractmethod
     async def run(self) -> HealthCheckResult:
-        cog = self.bot.get_cog("LoopCog")
-        if not cog:
-            return HealthCheckResult(
-                self.name,
-                HealthStatus.CRITICAL,
-                "LoopCog not found. No background tasks registered.",
-            )
+        """Execute the health check and return the result."""
+        ...
 
-        loops = [
-            ("Giveaway Sender", cog.sendSendReadyGiveaways),
-            ("Giveaway Ender", cog.endGiveawaysLoop),
-            ("Voice Checker", cog.checkVoiceUsers),
-            ("Voice XP", cog.addVoiceUserLoop),
-            ("AI Token Refill", cog.refillAiTokenLoop),
-            ("Ping Server", cog.pingServerLoop),
-            ("Database Backup", cog.backupDatabaseLoop),
-            ("Booster Roles", cog.removeExpiredClaimedBoosterRoles),
-            ("Booster Channels", cog.removeExpiredClaimedBoosterChannels),
-            ("Scheduled Messages", cog.sendScheduledMessages),
-            ("Twitch Polling", cog.pollTwitchStreams),
-        ]
-
-        failed_loops = [name for name, task in loops if not task.is_running()]
-
-        if failed_loops:
-            return HealthCheckResult(self.name, HealthStatus.DEGRADED, "Stopped loops: {', '.join(failed_loops)}")
-
-        return HealthCheckResult(self.name, HealthStatus.HEALTHY, "All loops are running.")
