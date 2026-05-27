@@ -87,14 +87,10 @@ class LocaleFileHealthCheck(HealthCheck):
                 sample = sorted(missing_from_de)[:20]
                 if len(missing_from_de) > 20:
                     warnings.append(
-                        f"en.json has {len(missing_from_de)} entries not in de.json "
-                        f"(showing first 20): {', '.join(sample)}"
+                        f"en.json has {len(missing_from_de)} entries not in de.json (showing first 20): {', '.join(sample)}"
                     )
                 else:
-                    warnings.append(
-                        f"en.json has {len(missing_from_de)} entries not in de.json: "
-                        f"{', '.join(sample)}"
-                    )
+                    warnings.append(f"en.json has {len(missing_from_de)} entries not in de.json: {', '.join(sample)}")
 
         issues: list[str] = []
         status = HealthStatus.HEALTHY
