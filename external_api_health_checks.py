@@ -40,7 +40,8 @@ class GIPHYHealthCheck(HealthCheck):
             async with (
                 ClientSession() as session,
                 session.get(
-                    f"https://api.giphy.com/v1/gifs/trending?api_key={giphyAPIKey}&limit=1",
+                    "https://api.giphy.com/v1/gifs/trending",
+                    params={"api_key": giphyAPIKey, "limit": "1"},
                     timeout=10,
                 ) as response,
             ):
@@ -56,11 +57,11 @@ class GIPHYHealthCheck(HealthCheck):
                 status=HealthStatus.DEGRADED,
                 message="GIPHY API request timed out after 10s",
             )
-        except ClientError as e:
+        except ClientError:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.DEGRADED,
-                message=f"GIPHY API connection error: {e}",
+                message="GIPHY API connection error",
             )
 
         return HealthCheckResult(
@@ -120,11 +121,11 @@ class BrawlStarsHealthCheck(HealthCheck):
                 status=HealthStatus.DEGRADED,
                 message="Brawl Stars API request timed out after 10s",
             )
-        except ClientError as e:
+        except ClientError:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.DEGRADED,
-                message=f"Brawl Stars API connection error: {e}",
+                message="Brawl Stars API connection error",
             )
 
         return HealthCheckResult(
@@ -156,30 +157,33 @@ class ImgBBHealthCheck(HealthCheck):
             )
 
         try:
-            async with ClientSession() as session:
-                # Verify key with a simple ping — 400 is expected without image,
-                # which means the key works.
-                async with session.get(
-                    f"https://api.imgbb.com/1/upload?key={ImgBBApiKey}",
+            # Verify key with a simple ping — 400 is expected without image,
+            # which means the key works.
+            async with (
+                ClientSession() as session,
+                session.get(
+                    "https://api.imgbb.com/1/upload",
+                    params={"key": ImgBBApiKey},
                     timeout=10,
-                ) as response:
-                    if response.status not in (200, 400):
-                        return HealthCheckResult(
-                            check_name=self.name,
-                            status=HealthStatus.DEGRADED,
-                            message=f"ImgBB API returned HTTP {response.status}",
-                        )
+                ) as response,
+            ):
+                if response.status not in (200, 400):
+                    return HealthCheckResult(
+                        check_name=self.name,
+                        status=HealthStatus.DEGRADED,
+                        message=f"ImgBB API returned HTTP {response.status}",
+                    )
         except TimeoutError:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.DEGRADED,
                 message="ImgBB API request timed out after 10s",
             )
-        except ClientError as e:
+        except ClientError:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.DEGRADED,
-                message=f"ImgBB API connection error: {e}",
+                message="ImgBB API connection error",
             )
 
         return HealthCheckResult(
@@ -219,6 +223,12 @@ class BytebinHealthCheck(HealthCheck):
 
         try:
             async with ClientSession() as session, session.get(bytebin_url, headers=headers, timeout=10) as response:
+                if bytebin_username and bytebin_password and response.status in (401, 403):
+                    return HealthCheckResult(
+                        check_name=self.name,
+                        status=HealthStatus.DEGRADED,
+                        message=f"bytebin authentication failed (HTTP {response.status})",
+                    )
                 if response.status >= 500:
                     return HealthCheckResult(
                         check_name=self.name,
@@ -231,11 +241,11 @@ class BytebinHealthCheck(HealthCheck):
                 status=HealthStatus.DEGRADED,
                 message="bytebin request timed out after 10s",
             )
-        except ClientError as e:
+        except ClientError:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.DEGRADED,
-                message=f"bytebin connection error: {e}",
+                message="bytebin connection error",
             )
 
         return HealthCheckResult(
@@ -295,11 +305,11 @@ class GitHubAPIHealthCheck(HealthCheck):
                 status=HealthStatus.DEGRADED,
                 message="GitHub API request timed out after 10s",
             )
-        except ClientError as e:
+        except ClientError:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.DEGRADED,
-                message=f"GitHub API connection error: {e}",
+                message="GitHub API connection error",
             )
 
         return HealthCheckResult(

@@ -130,12 +130,12 @@ async def main():
 
     # Run startup health checks
     health_manager = HealthCheckManager(bot)
-    health_manager.register(OpenAIHealthCheck())
-    health_manager.register(GIPHYHealthCheck())
-    health_manager.register(BrawlStarsHealthCheck())
-    health_manager.register(ImgBBHealthCheck())
-    health_manager.register(BytebinHealthCheck())
-    health_manager.register(GitHubAPIHealthCheck())
+    health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(GIPHYHealthCheck(), interval=1800)  # 30 minutes
+    health_manager.register(BrawlStarsHealthCheck(), interval=1800)  # 30 minutes
+    health_manager.register(ImgBBHealthCheck(), interval=1800)  # 30 minutes
+    health_manager.register(BytebinHealthCheck(), interval=1800)  # 30 minutes
+    health_manager.register(GitHubAPIHealthCheck(), interval=3600)  # 60 minutes
     ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.
