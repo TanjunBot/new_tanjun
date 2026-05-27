@@ -1,5 +1,4 @@
 import logging
-import traceback
 
 import discord
 from discord.ext import commands
@@ -22,6 +21,7 @@ from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
 from commands.utility.autopublish import publish_message
 from commands.utility.report import report_btn_click
 from config import adminIds
+from localizer import tanjunLocalizer
 from loops._voice_tracker import handleVoiceChange
 from minigames.addLevelXp import addLevelXp
 from minigames.counting import counting
@@ -89,15 +89,22 @@ class ListenerCog(commands.Cog):
                 await closeTicketListener(interaction)
                 return
         except discord.Forbidden:
-            await self._send_error(interaction, "I don't have permission to do that.")
+            locale = interaction.locale  # type: ignore[assignment]
+            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.forbidden")
+            await self._send_error(interaction, error_msg)
         except discord.NotFound:
-            await self._send_error(interaction, "This interaction has expired.")
+            locale = interaction.locale  # type: ignore[assignment]
+            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.notfound")
+            await self._send_error(interaction, error_msg)
         except discord.HTTPException as e:
-            await self._send_error(interaction, f"Discord API error (code {e.status}).")
-        except Exception as e:
-            traceback.print_exc()
+            locale = interaction.locale  # type: ignore[assignment]
+            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.http", status=e.status)
+            await self._send_error(interaction, error_msg)
+        except Exception:
             logging.exception("Unexpected error in on_interaction listener")
-            await self._send_error(interaction, "An unexpected error occurred. Please try again.")
+            locale = interaction.locale  # type: ignore[assignment]
+            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.unexpected")
+            await self._send_error(interaction, error_msg)
 
     async def _send_error(self, interaction: discord.Interaction, message: str) -> None:
         embed = discord.Embed(

@@ -31326,5 +31326,37 @@
     "context": "Message when database import fails",
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "listeners.interaction.error.forbidden",
+    "source_string": "Ich habe keine Berechtigung, das zu tun.",
+    "translation": "I don't have permission to do that.",
+    "context": "Error message when the bot lacks permissions during interaction handling",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "listeners.interaction.error.notfound",
+    "source_string": "Diese Interaktion ist abgelaufen.",
+    "translation": "This interaction has expired.",
+    "context": "Error message when an interaction is no longer valid or has timed out",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "listeners.interaction.error.http",
+    "source_string": "Discord API-Fehler (Code ${status}).",
+    "translation": "Discord API error (code ${status}).",
+    "context": "Error message for Discord HTTP exceptions with status code",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "listeners.interaction.error.unexpected",
+    "source_string": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.",
+    "translation": "An unexpected error occurred. Please try again.",
+    "context": "Generic error message for unexpected exceptions during interaction handling",
+    "labels": "unassigned",
+    "max_length": null
   }
 ]
