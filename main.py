@@ -29,7 +29,6 @@ from config import (
     database_user,
     prefix,
 )
-from health.checks import HealthStatus
 from health.manager import HealthCheckManager
 from OpenAIHealthCheck import OpenAIHealthCheck
 from translator import TanjunTranslator

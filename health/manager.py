@@ -84,9 +84,7 @@ class HealthCheckManager:
         results = await self.run_all()
 
         critical_failures = [
-            result
-            for check, result in zip(self._checks, results)
-            if check.critical and result.status == HealthStatus.CRITICAL
+            result for check, result in zip(self._checks, results) if check.critical and result.status == HealthStatus.CRITICAL
         ]
         degraded = [r for r in results if r.status == HealthStatus.DEGRADED]
         healthy = [r for r in results if r.status == HealthStatus.HEALTHY]
