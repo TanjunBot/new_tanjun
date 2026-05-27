@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -7,7 +9,6 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-from __future__ import annotations
 
 import asyncio
 import os
@@ -124,12 +125,11 @@ async def main():
     # Run startup health checks
     health_manager = HealthCheckManager(bot)
     health_manager.register(OpenAIHealthCheck())
-    ok = await health_manager.run_startup_checks()
+    ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.
-        for result in health_manager._last_results.values():
-            if result.status == HealthStatus.CRITICAL:
-                print(f"  CRITICAL: [{result.check_name}] {result.message}")
+        for result in critical_failures:
+            print(f"  CRITICAL: [{result.check_name}] {result.message}")
         print("FATAL: Critical health checks failed. Bot cannot start.")
         return
 

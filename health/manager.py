@@ -72,18 +72,22 @@ class HealthCheckManager:
 
         return results
 
-    async def run_startup_checks(self) -> bool:
+    async def run_startup_checks(self) -> tuple[bool, list[HealthCheckResult]]:
         """Run all checks at startup.
 
         Returns:
-            True if all critical checks passed, False if any critical check failed.
+            A tuple of (ok, critical_failures) where ok is True if all
+            critical checks passed, and critical_failures contains the
+            HealthCheckResult for each failing critical check.
         """
         logger.info("Running startup health checks...")
         results = await self.run_all()
 
-        critical_checks = {c for c in self._checks if c.critical}
-        critical_check_names = {c.name for c in critical_checks}
-        critical_failures = [r for r in results if r.status == HealthStatus.CRITICAL and r.check_name in critical_check_names]
+        critical_failures = [
+            result
+            for check, result in zip(self._checks, results)
+            if check.critical and result.status == HealthStatus.CRITICAL
+        ]
         degraded = [r for r in results if r.status == HealthStatus.DEGRADED]
         healthy = [r for r in results if r.status == HealthStatus.HEALTHY]
 
@@ -104,9 +108,9 @@ class HealthCheckManager:
                 "FATAL: %d critical health check(s) failed. Bot cannot start.",
                 len(critical_failures),
             )
-            return False
+            return False, critical_failures
 
-        return True
+        return True, []
 
     async def notify_critical_failures(self) -> None:
         """Notify the designated Discord channel about critical startup failures."""
@@ -120,6 +124,9 @@ class HealthCheckManager:
         Args:
             interval: Seconds between check runs (default 300 = 5 minutes).
         """
+        if interval <= 0:
+            raise ValueError("interval must be > 0")
+
         if self._running:
             logger.warning("Periodic health checks already running")
             return
