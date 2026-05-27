@@ -29,6 +29,7 @@ from config import (
     database_user,
     prefix,
 )
+from DatabaseHealthCheck import DatabaseHealthCheck
 from external_api_health_checks import (
     BrawlStarsHealthCheck,
     BytebinHealthCheck,
@@ -133,6 +134,8 @@ async def main():
     # Run startup health checks
     health_manager = HealthCheckManager(bot)
     health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(DatabaseHealthCheck())  # Uses default 5-minute interval
     health_manager.register(TwitchAPIHealthCheck())  # Uses default 5-minute interval
     health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
     health_manager.register(GIPHYHealthCheck(), interval=1800)  # 30 minutes
