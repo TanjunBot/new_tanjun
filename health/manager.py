@@ -53,7 +53,7 @@ class HealthCheckManager:
 
         results: list[HealthCheckResult] = []
         for check, raw in zip(self._checks, raw_results):
-            if isinstance(raw, Exception):
+            if isinstance(raw, BaseException):
                 result = HealthCheckResult(
                     check_name=check.name,
                     status=HealthStatus.CRITICAL,
@@ -81,8 +81,13 @@ class HealthCheckManager:
         logger.info("Running startup health checks...")
         results = await self.run_all()
 
-        critical_check_names = {c.name for c in self._checks if c.critical}
-        critical_failures = [r for r in results if r.status == HealthStatus.CRITICAL and r.check_name in critical_check_names]
+        critical_checks = {c for c in self._checks if c.critical}
+        critical_check_names = {c.name for c in critical_checks}
+        critical_failures = [
+            r for r in results
+            if r.status == HealthStatus.CRITICAL
+            and r.check_name in critical_check_names
+        ]
         degraded = [r for r in results if r.status == HealthStatus.DEGRADED]
         healthy = [r for r in results if r.status == HealthStatus.HEALTHY]
 
