@@ -70,7 +70,7 @@ class Localizer:
             print(f"No translation found for key '{key}'.")
             if locale_str not in reported_locales:
                 reported_locales.append(locale_str)
-                missingLocalization(key)
+                missingLocalization(locale_str)
             return "err: no translation found."
 
         template_string: str = str(translation.get("translation", ""))
