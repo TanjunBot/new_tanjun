@@ -965,6 +965,11 @@ def get_table_definitions() -> dict[str, str]:
         PRIMARY KEY(`userId`)
     ) ENGINE=InnoDB;
     """
+    return tables
+
+
+async def create_tables(bot=None) -> None:
+    tables = get_table_definitions()
 
     return tables
 

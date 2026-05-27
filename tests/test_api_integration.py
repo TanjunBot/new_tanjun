@@ -27,6 +27,7 @@ sys.modules["discord.ext.commands"] = MagicMock()
 sys.modules["discord.app_commands"] = MagicMock()
 
 import api
+from api import get_table_definitions
 
 # Test DB connection settings — override via env when using custom setup
 TEST_DB_HOST = os.environ.get("TEST_DB_HOST", "127.0.0.1")
