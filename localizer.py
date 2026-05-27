@@ -44,6 +44,7 @@ class Localizer:
         return []
 
     async def load_translations_async(self, locale: str) -> list[dict[str, object]]:
+        """Async wrapper: load translations off the event loop via the shared thread pool."""
         return await run_blocking(self._load_translations_sync, locale)
 
     def load_translations(self, locale: str) -> list[dict[str, object]]:
