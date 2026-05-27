@@ -917,11 +917,13 @@ async def create_tables(bot=None) -> None:
         await cursor.execute("SHOW TABLES")
         existing = {row[0] for row in await cursor.fetchall()}
 
-    for table_name in tables:
-        if table_name in existing:
-            continue
-        table_query = tables[table_name]
-        await execute_action(table_query, bot=bot)
+    await asyncio.gather(
+        *[
+            execute_action(tables[table_name], bot=bot)
+            for table_name in tables
+            if table_name not in existing
+        ]
+    )
 
 
 async def add_warning(
