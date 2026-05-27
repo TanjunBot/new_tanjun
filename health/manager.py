@@ -47,12 +47,13 @@ class HealthCheckManager:
             return []
 
         results: list[HealthCheckResult] = []
-        task_to_check: dict[asyncio.Task[HealthCheckResult], HealthCheck] = {
-            asyncio.create_task(check.run()): check for check in self._checks
-        }
+        tasks = [asyncio.create_task(check.run()) for check in self._checks]
+        task_map: dict[asyncio.Task[HealthCheckResult], HealthCheck] = dict(
+            zip(tasks, self._checks)
+        )
 
-        for task in asyncio.as_completed(task_to_check):
-            check = task_to_check[task]
+        for task in asyncio.as_completed(tasks):
+            check = task_map[task]
             try:
                 result = await task
             except Exception as exc:
@@ -124,18 +125,24 @@ class HealthCheckManager:
         self._running = True
         logger.info("Starting periodic health checks (interval=%ds)", interval)
 
-        while self._running:
-            await asyncio.sleep(interval)
-            results = await self.run_all()
+        async def _periodic_loop() -> None:
+            while self._running:
+                await asyncio.sleep(interval)
+                results = await self.run_all()
 
-            failures = [
-                r for r in results
-                if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)
-            ]
-            if failures:
-                await notify_health_failures(self.bot, failures)
+                failures = [
+                    r for r in results
+                    if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)
+                ]
+                if failures:
+                    await notify_health_failures(self.bot, failures)
+
+        self._periodic_task = asyncio.create_task(_periodic_loop())
 
     def stop_periodic_checks(self) -> None:
         """Stop periodic health checks."""
         self._running = False
+        if self._periodic_task is not None:
+            self._periodic_task.cancel()
+            self._periodic_task = None
         logger.info("Periodic health checks stopped")

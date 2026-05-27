@@ -15,29 +15,27 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # Alert channel and user ping for health check failures, configured via env vars.
-# Falls back to the default values if not set.
+# Both must be set — no safe defaults, so misconfiguration is caught early.
 _alert_channel_str = os.environ.get("HEALTH_ALERT_CHANNEL_ID")
 _alert_user_str = os.environ.get("HEALTH_ALERT_USER_ID")
 
-if _alert_channel_str is not None:
-    try:
-        HEALTH_ALERT_CHANNEL_ID: int = int(_alert_channel_str)
-    except ValueError:
-        raise RuntimeError(
-            f"HEALTH_ALERT_CHANNEL_ID must be an integer, got: {_alert_channel_str!r}"
-        )
-else:
-    HEALTH_ALERT_CHANNEL_ID = 959513664589791293
+if _alert_channel_str is None:
+    raise RuntimeError("Missing required env var: HEALTH_ALERT_CHANNEL_ID")
+try:
+    HEALTH_ALERT_CHANNEL_ID: int = int(_alert_channel_str)
+except ValueError as exc:
+    raise RuntimeError(
+        f"HEALTH_ALERT_CHANNEL_ID must be an integer, got: {_alert_channel_str!r}"
+    ) from exc
 
-if _alert_user_str is not None:
-    try:
-        HEALTH_ALERT_USER_ID: int = int(_alert_user_str)
-    except ValueError:
-        raise RuntimeError(
-            f"HEALTH_ALERT_USER_ID must be an integer, got: {_alert_user_str!r}"
-        )
-else:
-    HEALTH_ALERT_USER_ID = 471036610561966111
+if _alert_user_str is None:
+    raise RuntimeError("Missing required env var: HEALTH_ALERT_USER_ID")
+try:
+    HEALTH_ALERT_USER_ID: int = int(_alert_user_str)
+except ValueError as exc:
+    raise RuntimeError(
+        f"HEALTH_ALERT_USER_ID must be an integer, got: {_alert_user_str!r}"
+    ) from exc
 
 
 async def notify_health_failures(
@@ -55,8 +53,15 @@ async def notify_health_failures(
 
     import discord
 
+    # Try cache first, fall back to API fetch for uncached channels
     channel = bot.get_channel(HEALTH_ALERT_CHANNEL_ID)
-    if not channel:
+    if channel is None:
+        try:
+            channel = await bot.fetch_channel(HEALTH_ALERT_CHANNEL_ID)
+        except Exception:
+            channel = None
+
+    if channel is None:
         logger.warning(
             "Health alert channel %s not found, cannot notify failures",
             HEALTH_ALERT_CHANNEL_ID,
