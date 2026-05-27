@@ -3,32 +3,32 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def unlink(commandInfo: CommandInfo) -> None:
-    if not await get_brawlstars_linked_account(commandInfo.user.id):
-        await commandInfo.reply(
+async def unlink(command_info: CommandInfo) -> None:
+    if not await get_brawlstars_linked_account(command_info.user.id):
+        await command_info.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.unlink.error.notLinked.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.unlink.error.notLinked.description",
                 ),
             )
         )
         return
 
-    await remove_brawlstars_linked_account(commandInfo.user.id)
+    await remove_brawlstars_linked_account(command_info.user.id)
 
-    await commandInfo.reply(
+    await command_info.reply(
         embed=tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.unlink.success.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.unlink.success.description",
             ),
         )

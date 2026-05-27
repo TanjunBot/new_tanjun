@@ -5,17 +5,17 @@ from localizer import tanjunLocalizer
 
 
 async def fun_command(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     fun_type: str,
     member: discord.Member,
     message: str | None,
 ) -> None:
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             f"commands.fun.{fun_type}.title",
             member=member.name,
-            user=commandInfo.user.name,
+            user=command_info.user.name,
         ),
         description=message,
     )
@@ -27,4 +27,4 @@ async def fun_command(
     if gifs:
         embed.set_image(url=gifs[0])
     embed.set_footer(text="Powered By GIPHY")
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

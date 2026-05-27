@@ -6,44 +6,44 @@ from utility import CommandInfo
 
 
 async def moverole(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     role: discord.Role,
     target_role: discord.Role,
     position: str,
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).manage_roles
     ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.moverole.missingPermission.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.moverole.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    assert commandInfo.guild is not None
-    if not commandInfo.guild.me.guild_permissions.manage_roles:
+    assert command_info.guild is not None
+    if not command_info.guild.me.guild_permissions.manage_roles:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.missingPermissionBot.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.moverole.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.moverole.missingPermissionBot.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if isinstance(commandInfo.user, discord.Member) and role.position >= CommandInfo.user.top_role.position:  # type: ignore[misc, union-attr]
+    if isinstance(command_info.user, discord.Member) and role.position >= CommandInfo.user.top_role.position:  # type: ignore[misc, union-attr]
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.roleTooHigh.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.roleTooHigh.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.moverole.roleTooHigh.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.moverole.roleTooHigh.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     try:
@@ -53,25 +53,25 @@ async def moverole(
             await role.edit(position=target_role.position - 1)
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.success.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.moverole.success.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.moverole.success.description",
                 role=role.mention,
                 target_role=target_role.mention,
                 position=position,
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.forbidden.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.forbidden.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.moverole.forbidden.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.moverole.forbidden.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
     except discord.HTTPException:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.error.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.moverole.error.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.moverole.error.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.moverole.error.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)

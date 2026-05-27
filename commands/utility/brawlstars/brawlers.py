@@ -14,15 +14,15 @@ from commands.utility.brawlstars.bshelper import (
 )
 from config import brawlstarsToken
 from localizer import tanjunLocalizer
-from utility import commandInfo, similar, tanjunEmbed
+from utility import command_info, similar, tanjunEmbed
 
 
-async def getPlayerInfo(playerTag: str):
+async def getPlayerInfo(player_tag: str):
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     async with (
         aiohttp.ClientSession() as session,
         session.get(
-            f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}",
+            f"https://api.brawlstars.com/v1/players/%23{player_tag[1:]}",
             headers=headers,
             timeout=ClientTimeout(total=10),
         ) as response,
@@ -32,102 +32,102 @@ async def getPlayerInfo(playerTag: str):
         return await response.json()
 
 
-async def brawlers(commandInfo: commandInfo, playerTag: str = None):
-    if not playerTag:
-        playerTag = await get_brawlstars_linked_account(commandInfo.user.id)
-    if playerTag and playerTag.startswith("<@"):
-        playerTagUserID = playerTag.split("<@")[1].split(">")[0]
-        playerTag = await get_brawlstars_linked_account(playerTagUserID)
-        if not playerTag:
-            return await commandInfo.reply(
+async def brawlers(command_info: command_info, player_tag: str = None):
+    if not player_tag:
+        player_tag = await get_brawlstars_linked_account(command_info.user.id)
+    if player_tag and player_tag.startswith("<@"):
+        player_tag_user_id = player_tag.split("<@")[1].split(">")[0]
+        player_tag = await get_brawlstars_linked_account(player_tag_user_id)
+        if not player_tag:
+            return await command_info.reply(
                 embed=tanjunEmbed(
                     title=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.brawlstars.battlelog.error.userNotLinked.title",
                     ),
                     description=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.brawlstars.battlelog.error.userNotLinked.description",
                     ),
                 )
             )
-    if playerTag and not playerTag.startswith("#"):
-        playerTag = f"#{playerTag}"
-    if not playerTag:
-        return await commandInfo.reply(
+    if player_tag and not player_tag.startswith("#"):
+        player_tag = f"#{player_tag}"
+    if not player_tag:
+        return await command_info.reply(
             embed=tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.brawlers.error.notLinked.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.brawlers.error.notLinked.description",
                 ),
             )
         )
-    playerInfo = await getPlayerInfo(playerTag)
-    if not playerInfo:
-        return await commandInfo.reply(
+    player_info = await getPlayerInfo(player_tag)
+    if not player_info:
+        return await command_info.reply(
             tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.brawlers.error.notFound",
             )
         )
 
-    playerName = playerInfo["name"]
-    total_brawlers = len(playerInfo["brawlers"])
+    player_name = player_info["name"]
+    total_brawlers = len(player_info["brawlers"])
 
     async def generate_page(page_number: int) -> discord.Embed:
-        brawler = playerInfo["brawlers"][page_number]
+        brawler = player_info["brawlers"][page_number]
         id = brawler["id"]
         name = parseName(brawler["name"])
         power = brawler["power"]
         rank = brawler["rank"]
         trophies = brawler["trophies"]
-        highestTrophies = brawler["highestTrophies"]
+        highest_trophies = brawler["highest_trophies"]
         gears = brawler["gears"]
         gadgets = brawler["gadgets"]
-        starPowers = brawler["starPowers"]
-        levelEmoji = getLevelEmoji(rank)
+        star_powers = brawler["star_powers"]
+        level_emoji = getLevelEmoji(rank)
 
         if rank <= 50:
             description = tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.brawlers.description.overview",
                 name=name,
                 power=power,
                 rank=rank,
                 trophies=trophies,
-                highestTrophies=highestTrophies,
-                levelEmoji=levelEmoji,
+                highest_trophies=highest_trophies,
+                level_emoji=level_emoji,
             )
             description += "\n"
         else:
             description = tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.brawlers.description.overviewMaxTier",
                 name=name,
                 power=power,
                 rank=rank,
                 trophies=trophies,
-                highestTrophies=highestTrophies,
-                levelEmoji=levelEmoji,
+                highest_trophies=highest_trophies,
+                level_emoji=level_emoji,
             )
             description += "\n"
 
-        if len(starPowers) > 0:
+        if len(star_powers) > 0:
             description += tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.utility.brawlstars.brawlers.description.starPowers",
+                command_info.locale,
+                "commands.utility.brawlstars.brawlers.description.star_powers",
             )
             description += "\n"
 
-            for starPower in starPowers:
-                name = f" {getStarPowerEmoji(starPower['id'])} {parseName(starPower['name'])}"
+            for star_power in star_powers:
+                name = f" {getStarPowerEmoji(star_power['id'])} {parseName(star_power['name'])}"
                 description += tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.utility.brawlstars.brawlers.description.starPower",
+                    command_info.locale,
+                    "commands.utility.brawlstars.brawlers.description.star_power",
                     name=name,
                 )
                 description += "\n"
@@ -135,7 +135,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
 
         if len(gadgets) > 0:
             description += tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.brawlers.description.gadgets",
             )
             description += "\n"
@@ -144,7 +144,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             for gadget in gadgets:
                 name = f" {getGadgetEmoji(gadget['id'])} {parseName(gadget['name'])}"
                 description += tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.brawlers.description.gadget",
                     name=name,
                 )
@@ -153,7 +153,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
 
         if len(gears) > 0:
             description += tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.brawlers.description.gears",
             )
             description += "\n"
@@ -161,7 +161,7 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             for gear in gears:
                 name = f" {getGearEmoji(gear['id'])} {parseName(gear['name'])}"
                 description += tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.brawlers.description.gear",
                     name=name,
                 )
@@ -169,18 +169,18 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             description += "\n"
             description += "\n"
 
-        if commandInfo.user.id == 1295625022454370346 and commandInfo.guild.id == 947219439764521060:
+        if command_info.user.id == 1295625022454370346 and command_info.guild.id == 947219439764521060:
             description += "\n"
             description += f"raw: \n```json\n{json.dumps(brawler, indent=4)}\n```"
 
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.brawlers.title",
                 current_page=page_number + 1,
                 total_pages=total_brawlers,
-                name=playerName,
-                tag=playerTag,
+                name=player_name,
+                tag=player_tag,
             ),
             description=description,
         )
@@ -194,10 +194,10 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
         async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if not interaction.user.id == commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.brawlstars.events.notYourEmbed",
                     ),
                     ephemeral=True,
@@ -214,10 +214,10 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
         async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if not interaction.user.id == commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.brawlstars.events.notYourEmbed",
                     ),
                     ephemeral=True,
@@ -234,34 +234,34 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
 
         @discord.ui.button(label="🔍", style=discord.ButtonStyle.primary)
         async def search(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if not interaction.user.id == commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.brawlstars.events.notYourEmbed",
                     ),
                     ephemeral=True,
                 )
                 return
-            await interaction.response.send_modal(SearchModal(commandInfo))
+            await interaction.response.send_modal(SearchModal(command_info))
 
     class SearchModal(discord.ui.Modal):
-        def __init__(self, commandInfo: commandInfo):
+        def __init__(self, command_info: command_info):
             super().__init__(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.brawlstars.brawlers.search.title",
                 )
             )
-            self.commandInfo = commandInfo
+            self.command_info = command_info
             self.add_item(
                 discord.ui.TextInput(
                     label=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.brawlstars.brawlers.search.label",
                     ),
                     placeholder=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.brawlstars.brawlers.search.placeholder",
                     ),
                     required=True,
@@ -270,28 +270,28 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
 
         async def on_submit(self, interaction: discord.Interaction):
             try:
-                brawlerName = self.children[0].value
+                brawler_name = self.children[0].value
 
-                desiredPage = 0
-                bestSimilarity = -100
-                for i, brawler in enumerate(playerInfo["brawlers"]):
-                    similarity = similar(brawler["name"].lower(), brawlerName.lower())
-                    if similarity > bestSimilarity:
-                        bestSimilarity = similarity
-                        desiredPage = i
+                desired_page = 0
+                best_similarity = -100
+                for i, brawler in enumerate(player_info["brawlers"]):
+                    similarity = similar(brawler["name"].lower(), brawler_name.lower())
+                    if similarity > best_similarity:
+                        best_similarity = similarity
+                        desired_page = i
 
-                view = BrawlersPaginator(desiredPage)
-                page = await generate_page(desiredPage)
+                view = BrawlersPaginator(desired_page)
+                page = await generate_page(desired_page)
                 await interaction.response.edit_message(view=view, embed=page)
 
             except ValueError:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.command_info.locale,
                         "commands.utility.brawlstars.brawlers.search.error.title",
                     ),
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.command_info.locale,
                         "commands.utility.brawlstars.brawlers.search.error.invalidInput",
                     ),
                 )
@@ -300,11 +300,11 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
             except Exception:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.command_info.locale,
                         "commands.utility.brawlstars.brawlers.search.error.title",
                     ),
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.command_info.locale,
                         "commands.utility.brawlstars.brawlers.search.error.invalidInput",
                     ),
                 )
@@ -313,16 +313,16 @@ async def brawlers(commandInfo: commandInfo, playerTag: str = None):
     if total_brawlers > 1:
         first_page = await generate_page(0)
         view = BrawlersPaginator()
-        await commandInfo.reply(embed=first_page, view=view)
+        await command_info.reply(embed=first_page, view=view)
     else:
         first_page = await generate_page(0)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.brawlstars.brawlers.titleNoPages",
-                playerName=playerName,
-                tag=playerTag,
+                player_name=player_name,
+                tag=player_tag,
             ),
             description=first_page.description,
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)

@@ -65,7 +65,7 @@ class Connect4:
 
         return None
 
-    def is_full(self, board: list[list[str]] = None):
+    def is_full(self, board: list[list[str]] = None) -> bool:
         if not board:
             board = self.board
         for row in board:
@@ -277,7 +277,7 @@ class Connect4:
                     )
                     return
 
-                if not interaction.user.id == self.connect4.current_player.id:
+                if interaction.user.id != self.connect4.current_player.id:
                     await interaction.followup.send(
                         tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.notYourTurn"),
                         ephemeral=True,
@@ -307,7 +307,7 @@ class Connect4:
                     )
                     return
 
-                if not interaction.user.id == self.connect4.current_player.id:
+                if interaction.user.id != self.connect4.current_player.id:
                     await interaction.followup.send(
                         tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.notYourTurn"),
                         ephemeral=True,
@@ -334,7 +334,7 @@ class Connect4:
                     )
                     return
 
-                if not interaction.user.id == self.connect4.current_player.id:
+                if interaction.user.id != self.connect4.current_player.id:
                     await interaction.followup.send(
                         tanjunLocalizer.localize(interaction.locale, "commands.games.connect4.notYourTurn"),
                         ephemeral=True,
@@ -352,7 +352,7 @@ class Connect4:
 
 
 async def connect4(
-    commandInfo: utility.commandInfo,
+    command_info: utility.command_info,
     player1: discord.Member,
     player2: discord.Member = None,
     rows: int = 6,
@@ -361,5 +361,5 @@ async def connect4(
     # Add some reasonable limits to prevent massive boards
     rows = min(max(4, rows), 12)  # Minimum 4, Maximum 12
     columns = min(max(4, columns), 12)  # Minimum 4, Maximum 12
-    connect4 = Connect4(player1, player2, commandInfo.locale, rows, columns)
-    await connect4.update_board(commandInfo, initial=True)
+    connect4 = Connect4(player1, player2, command_info.locale, rows, columns)
+    await connect4.update_board(command_info, initial=True)

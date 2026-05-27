@@ -5,54 +5,54 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, get_level_for_xp, tanjunEmbed
 
 
-async def give_xp_command(commandInfo: CommandInfo, user: discord.Member, amount: int) -> None:
+async def give_xp_command(command_info: CommandInfo, user: discord.Member, amount: int) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_guild
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).manage_guild
     ):
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.givexp.error.no_permission.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.level.givexp.error.no_permission.title"),
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale),
+                str(command_info.locale),
                 "commands.level.givexp.error.no_permission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
 
         return
 
     if amount <= 0:
         embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.givexp.error.invalid_amount.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.level.givexp.error.invalid_amount.title"),
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale),
+                str(command_info.locale),
                 "commands.level.givexp.error.invalid_amount.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
 
         return
 
-    if commandInfo.guild is None:
-        raise ValueError("Guild is missing in commandInfo")
+    if command_info.guild is None:
+        raise ValueError("Guild is missing in command_info")
 
-    raw_xp = await get_user_xp(str(commandInfo.guild.id), str(user.id))
+    raw_xp = await get_user_xp(str(command_info.guild.id), str(user.id))
     current_xp: int = int(raw_xp) if raw_xp is not None else 0
     new_xp = current_xp + amount
 
-    scaling = await get_xp_scaling(str(commandInfo.guild.id))
-    custom_formula = await get_custom_formula(str(commandInfo.guild.id))
+    scaling = await get_xp_scaling(str(command_info.guild.id))
+    custom_formula = await get_custom_formula(str(command_info.guild.id))
 
     old_level = get_level_for_xp(current_xp, scaling, custom_formula)
     new_level = get_level_for_xp(new_xp, scaling, custom_formula)
 
-    await update_user_xp(str(commandInfo.guild.id), str(user.id), new_xp)
+    await update_user_xp(str(command_info.guild.id), str(user.id), new_xp)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.givexp.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.level.givexp.success.title"),
         description=tanjunLocalizer.localize(
-            str(commandInfo.locale),
+            str(command_info.locale),
             "commands.level.givexp.success.description",
             user=user.mention,
             amount=amount,
@@ -61,4 +61,4 @@ async def give_xp_command(commandInfo: CommandInfo, user: discord.Member, amount
             new_level=new_level,
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

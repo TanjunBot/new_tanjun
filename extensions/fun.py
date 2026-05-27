@@ -10,7 +10,7 @@ from commands.fun.funcommands import fun_command
 FUN_ACTIONS = ["hug", "kiss", "boop", "wave", "slap", "laugh", "tickle", "pat", "poke"]
 
 
-class funCommands(discord.app_commands.Group):
+class FunCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("fun_action_name"),
         description=app_commands.locale_str("fun_action_description"),
@@ -34,7 +34,7 @@ class funCommands(discord.app_commands.Group):
         message: app_commands.Range[str, 0, 2000] = None,  # type: ignore[assignment]
     ) -> None:
         await interaction.response.defer()
-        commandInfo = utility.CommandInfo(
+        command_info = utility.CommandInfo(
             user=interaction.user,
             channel=cast(discord.abc.GuildChannel, interaction.channel),
             guild=interaction.guild,
@@ -46,21 +46,21 @@ class funCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        await fun_command(commandInfo, action, user, message)
+        await fun_command(command_info, action, user, message)
 
 
-class funCog(commands.Cog):
+class FunCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        utilityCmds = funCommands(
+        utility_cmds = FunCommands(
             name=app_commands.locale_str("funcmd_name"), description=app_commands.locale_str("funcmd_description")
         )
         if self.bot.tree:  # type: ignore[truthy-bool]
-            self.bot.tree.add_command(utilityCmds)
+            self.bot.tree.add_command(utility_cmds)
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(funCog(bot))
+    await bot.add_cog(FunCog(bot))

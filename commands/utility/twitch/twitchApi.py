@@ -117,19 +117,19 @@ async def notify_twitch_online(client: discord.Client, uuid: str, data: dict[str
     datas = await get_twitch_online_notification_by_twitch_uuid(uuid)
     if datas is None:
         return
-    channelId = datas.channel_id
-    notificationMessage = datas.notification_message
-    guildId = datas.guild_id
-    guild = client.get_guild(int(guildId))
+    channel_id = datas.channel_id
+    notification_message = datas.notification_message
+    guild_id = datas.guild_id
+    guild = client.get_guild(int(guild_id))
     if guild is None:
         return
     message = parse_twitch_notification_message(
-        notificationMessage,
+        notification_message,
         str(guild.preferred_locale),
         data["user_name"],
     )
-    channel = guild.get_channel(int(channelId))
-    if channel is None or isinstance(channel, discord.ForumChannel) or isinstance(channel, discord.CategoryChannel):
+    channel = guild.get_channel(int(channel_id))
+    if channel is None or isinstance(channel, (discord.ForumChannel, discord.CategoryChannel)):
         return
     embed = tanjunEmbed(description=f"[{data['title']}](https://www.twitch.tv/{data['user_name']})")
     embed.set_image(url=data["thumbnail_url"].replace("{width}", "1920").replace("{height}", "1080"))

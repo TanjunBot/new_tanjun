@@ -570,9 +570,9 @@ class LogEnableModel(BaseModel):
         "automodRuleUpdate": "automod_rule_update",
         "automodRuleDelete": "automod_rule_delete",
         "automodAction": "automod_action",
-        "guildChannelDelete": "guild_channel_delete",
-        "guildChannelCreate": "guild_channel_create",
-        "guildChannelUpdate": "guild_channel_update",
+        "guild_channelDelete": "guild_channel_delete",
+        "guild_channelCreate": "guild_channel_create",
+        "guild_channelUpdate": "guild_channel_update",
         "guildUpdate": "guild_update",
         "inviteCreate": "invite_create",
         "inviteDelete": "invite_delete",
@@ -619,7 +619,7 @@ class LogEnableModel(BaseModel):
                 f"Expected {expected_count} column values for LogEnableModel, "
                 f"got {len(actual_values)}. Row: {row[: expected_count + 1]!r}..."
             )
-        values = {name: bool(v) for name, v in zip(field_names, actual_values)}
+        values = {name: bool(v) for name, v in zip(field_names, actual_values, strict=False)}
         return cls(guild_id=guild_id, **values)
 
     @classmethod

@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import os
 import platform
 import tempfile
@@ -48,10 +49,8 @@ async def dump_database_schema(user: str, password: str, host: str, port: int, o
     except FileNotFoundError:
         print("mysqldump command not found. Make sure MySQL is installed and mysqldump is in your PATH.")
     finally:
-        try:
+        with contextlib.suppress(OSError):
             os.unlink(defaults_file)
-        except OSError:
-            pass
 
 
 async def create_database_backup(client: Client) -> None:

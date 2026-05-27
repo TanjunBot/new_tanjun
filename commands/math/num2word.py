@@ -4,8 +4,8 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def num2word(commandInfo: utility.commandInfo, number: int, locale: str):
-    validLocales = [
+async def num2word(command_info: utility.command_info, number: int, locale: str):
+    valid_locales = [
         "en",
         "am",
         "ar",
@@ -63,17 +63,17 @@ async def num2word(commandInfo: utility.commandInfo, number: int, locale: str):
     if locale == "en_US":
         locale = "en"
 
-    if locale not in validLocales:
+    if locale not in valid_locales:
         locale = "en"
 
     word = num2words.num2words(number, lang=locale)
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.math.num2word.title"),
+        title=tanjunLocalizer.localize(command_info.locale, "commands.math.num2word.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.math.num2word.description",
             number=number,
             word=word[:4000],
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

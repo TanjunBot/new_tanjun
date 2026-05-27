@@ -40,8 +40,8 @@ def generate_wordle_background() -> None:
     img.save("wordle_background.png")
 
 
-async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> None:
-    locale = str(commandInfo.locale)
+async def wordle(command_info: utility.CommandInfo, language: str = "own") -> None:
+    locale = str(command_info.locale)
     if language == "own":
         language = locale
     if language in ["en-US", "en-GB"]:
@@ -130,11 +130,11 @@ async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> Non
         if given_up:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.wordle.givenUp.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.wordle.givenUp.description",
                     guesses=len(guesses) - 7,
                 ),
@@ -142,11 +142,11 @@ async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> Non
         elif len(guesses) >= 6:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.wordle.failure.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.wordle.failure.description",
                     word=word,
                 ),
@@ -154,28 +154,28 @@ async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> Non
         elif len(guesses) > 0 and guesses[-1] == word:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.wordle.success.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.wordle.success.description",
                 ),
             )
         else:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.wordle.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.wordle.description",
                     guesses=len(guesses),
                 ),
             )
         embed.set_image(url="attachment://wordle.png")
-        view = None if len(guesses) > 6 or (len(guesses) > 0 and guesses[-1] == word) or given_up else WordleView(commandInfo)
+        view = None if len(guesses) > 6 or (len(guesses) > 0 and guesses[-1] == word) or given_up else WordleView(command_info)
         await interaction.response.edit_message(
             embed=embed,
             attachments=[discord.File(img_byte_arr, filename="wordle.png")],  # type: ignore[arg-type]
@@ -183,15 +183,15 @@ async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> Non
         )
 
     class WordleInputModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.CommandInfo, config) -> None:  # type: ignore[no-untyped-def]
-            super().__init__(title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.modal.title"))
-            self.commandInfo = commandInfo
+        def __init__(self, command_info: utility.CommandInfo, config) -> None:  # type: ignore[no-untyped-def]
+            super().__init__(title=tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.modal.title"))
+            self.command_info = command_info
 
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.modal.input.label"),
+                    label=tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.modal.input.label"),
                     placeholder=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.games.wordle.modal.input.placeholder",
                     ),
                     max_length=5,
@@ -207,9 +207,9 @@ async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> Non
 
                 if guess.lower() not in allowed_words:
                     embed = utility.tanjunEmbed(
-                        title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.games.wordle.error.title"),  # type: ignore[misc]
+                        title=tanjunLocalizer.localize(self.command_info.locale, "commands.games.wordle.error.title"),  # type: ignore[misc]
                         description=tanjunLocalizer.localize(
-                            self.commandInfo.locale,  # type: ignore[misc]
+                            self.command_info.locale,  # type: ignore[misc]
                             "commands.games.wordle.error.invalidInput",
                         ),
                     )
@@ -221,41 +221,41 @@ async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> Non
                 await update_wordle_game(interaction)
             except ValueError:
                 embed = utility.tanjunEmbed(
-                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.games.wordle.error.title"),  # type: ignore[misc]
+                    title=tanjunLocalizer.localize(self.command_info.locale, "commands.games.wordle.error.title"),  # type: ignore[misc]
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,  # type: ignore[misc]
+                        self.command_info.locale,  # type: ignore[misc]
                         "commands.games.wordle.error.invalidInput",
                     ),
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
     class WordleView(discord.ui.View):
-        def __init__(self, commandInfo: utility.CommandInfo) -> None:
+        def __init__(self, command_info: utility.CommandInfo) -> None:
             super().__init__(timeout=3600)
-            self.commandInfo = commandInfo
+            self.command_info = command_info
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.buttons.guess"),
+            label=tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
         async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.notYourGame"),
+                    tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.notYourGame"),
                     ephemeral=True,
                 )
                 return
-            modal = WordleInputModal(self.commandInfo, guesses)  # type: ignore[arg-type]
+            modal = WordleInputModal(self.command_info, guesses)  # type: ignore[arg-type]
             await interaction.response.send_modal(modal)
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.buttons.giveUp"),
+            label=tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.buttons.giveUp"),
             style=discord.ButtonStyle.red,
         )
         async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(str(commandInfo.locale), "commands.games.wordle.notYourGame"),
+                    tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -268,23 +268,23 @@ async def wordle(commandInfo: utility.CommandInfo, language: str = "own") -> Non
             guesses.append("NOTHING")
             await update_wordle_game(interaction, given_up=True)
 
-    view = WordleView(commandInfo)
+    view = WordleView(command_info)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.games.wordle.initial.title",
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.games.wordle.initial.description",
             guesses=len(guesses),
         )
         + (
-            f"\n\n{tanjunLocalizer.localize(str(commandInfo.locale), 'commands.games.wordle.initial.descriptionextra.ja')}"
+            f"\n\n{tanjunLocalizer.localize(str(command_info.locale), 'commands.games.wordle.initial.descriptionextra.ja')}"
             if language == "ja"
             else ""
         ),
     )
     embed.set_image(url="attachment://wordle.png")
     img_byte_arr = await generate_wordle_image(guesses, word)  # type: ignore[func-returns-value]
-    await commandInfo.reply(view=view, embed=embed, file=discord.File(img_byte_arr, filename="wordle.png"))  # type: ignore[arg-type]
+    await command_info.reply(view=view, embed=embed, file=discord.File(img_byte_arr, filename="wordle.png"))  # type: ignore[arg-type]

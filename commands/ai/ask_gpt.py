@@ -11,14 +11,11 @@ from localizer import tanjunLocalizer
 open_ai_key = openAiKey or os.getenv("OPENAI_API_KEY")
 
 # Initialize client only if API key is available
-if open_ai_key:
-    client = AsyncOpenAI(api_key=open_ai_key)
-else:
-    client = None
+client = AsyncOpenAI(api_key=open_ai_key) if open_ai_key else None
 
 
 async def ask_gpt(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     name: str,
     situation: str,
     prompt: str,
@@ -27,38 +24,38 @@ async def ask_gpt(
     frequency_penalty: float = 0,
     presence_penalty: float = 0,
 ) -> None:
-    token = await getToken(commandInfo.user.id)
+    token = await getToken(command_info.user.id)
 
     if not token:
-        await includeToToken(commandInfo.user.id)
-        token = await getToken(commandInfo.user.id)
+        await includeToToken(command_info.user.id)
+        token = await getToken(command_info.user.id)
 
     if token < 20:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.notoken.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.notoken.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.notoken.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.notoken.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    additionalPromptInformation = f"""You are a Personality from the AI commands from the Discord Bot `Tanjun`.
+    additional_prompt_information = f"""You are a Personality from the AI commands from the Discord Bot `Tanjun`.
     Stick to your personality as close as possible. Here are some additional information about the server and the prompter:
-    Name: {commandInfo.user.name}
-    userID: {commandInfo.user.id}
-    Server: {commandInfo.guild.name if commandInfo.guild else "Direct Message"}
-    User Roles: {", ".join([role.name for role in getattr(commandInfo.user, "roles", [])])}
+    Name: {command_info.user.name}
+    userID: {command_info.user.id}
+    Server: {command_info.guild.name if command_info.guild else "Direct Message"}
+    User Roles: {", ".join([role.name for role in getattr(command_info.user, "roles", [])])}
 
     Here is your Personality. Here is the prompt you are supposed to answer:
     """
 
-    prompt = additionalPromptInformation + "\n\n" + prompt
+    prompt = additional_prompt_information + "\n\n" + prompt
 
     if not client:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.noapi.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.noapi.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.noapi.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.noapi.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     response = await client.chat.completions.create(
@@ -74,26 +71,26 @@ async def ask_gpt(
         presence_penalty=float(presence_penalty),
     )
 
-    tokenCost = int(response.usage.total_tokens * 0.125)  # type: ignore[union-attr]
+    token_cost = int(response.usage.total_tokens * 0.125)  # type: ignore[union-attr]
 
-    await useToken(commandInfo.user.id, tokenCost)
+    await useToken(command_info.user.id, token_cost)
 
-    tokenOverview = await getTokenOverview(commandInfo.user.id)
+    token_overview = await getTokenOverview(command_info.user.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.ask.success.title", name=name),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.success.title", name=name),
         description=response.choices[0].message.content,
     )
 
     embed.set_footer(
         text=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.ai.ask.success.footer",
-            cost=tokenCost,
-            token=token - tokenCost if token - tokenCost > 0 else 0,
-            free=tokenOverview.free_token,
-            plus=tokenOverview.plus_token,
-            paid=tokenOverview.paid_token,
+            cost=token_cost,
+            token=token - token_cost if token - token_cost > 0 else 0,
+            free=token_overview.free_token,
+            plus=token_overview.plus_token,
+            paid=token_overview.paid_token,
         )
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
