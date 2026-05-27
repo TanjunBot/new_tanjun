@@ -26,7 +26,7 @@ COPY . /usr/local/app/
 
 # Health check for container orchestration
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD python /usr/local/app/healthcheck.py
+  CMD ["python", "/usr/local/app/healthcheck.py"]
 
 EXPOSE 8080
 CMD ["python", "main.py"]
