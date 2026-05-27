@@ -1805,9 +1805,7 @@ async def delete_old_giveaways() -> None:
     try:
         async with transaction() as conn, conn.cursor() as cursor:
             # Find old giveaways first
-            await cursor.execute(
-                "SELECT giveawayId FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK"
-            )
+            await cursor.execute("SELECT giveawayId FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK")
             old_ids = [row[0] for row in await cursor.fetchall()]
             if not old_ids:
                 return
@@ -1823,9 +1821,7 @@ async def delete_old_giveaways() -> None:
             for give_id in old_ids:
                 for table in related_tables:
                     await cursor.execute(f"DELETE FROM {table} WHERE giveawayId = %s", (give_id,))
-            await cursor.execute(
-                "DELETE FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK"
-            )
+            await cursor.execute("DELETE FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK")
     except Exception as e:
         print(f"Error deleting old giveaways: {e}")
 
