@@ -16,3 +16,12 @@ indent_size = 2
 
 [Makefile]
 indent_style = tab
+
+[makefile]
+indent_style = tab
+
+[GNUmakefile]
+indent_style = tab
+
+[*.mk]
+indent_style = tab
