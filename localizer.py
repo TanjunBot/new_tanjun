@@ -30,7 +30,6 @@ class Localizer:
             pass
         except json.JSONDecodeError:
             print(f"Error decoding JSON from the translation file for locale '{locale}'.")
-            return []
 
         # Fallback to English
         try:
