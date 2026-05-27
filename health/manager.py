@@ -46,23 +46,26 @@ class HealthCheckManager:
             logger.warning("No health checks registered")
             return []
 
-        results: list[HealthCheckResult] = []
-        tasks = [asyncio.create_task(check.run()) for check in self._checks]
-        task_map: dict[asyncio.Task[HealthCheckResult], HealthCheck] = dict(
-            zip(tasks, self._checks)
+        raw_results = await asyncio.gather(
+            *(check.run() for check in self._checks),
+            return_exceptions=True,
         )
 
-        for task in asyncio.as_completed(tasks):
-            check = task_map[task]
-            try:
-                result = await task
-            except Exception as exc:
+        results: list[HealthCheckResult] = []
+        for check, raw in zip(self._checks, raw_results):
+            if isinstance(raw, Exception):
                 result = HealthCheckResult(
                     check_name=check.name,
                     status=HealthStatus.CRITICAL,
-                    message=f"Health check raised an unexpected exception: {exc}",
+                    message=f"Health check raised an unexpected exception: {raw}",
                 )
-                logger.exception("Health check %s raised an exception", check.name)
+                logger.exception(
+                    "Health check %s raised an exception",
+                    check.name,
+                    exc_info=(type(raw), raw, raw.__traceback__),
+                )
+            else:
+                result = raw
 
             self._last_results[result.check_name] = result
             results.append(result)
@@ -128,14 +131,16 @@ class HealthCheckManager:
         async def _periodic_loop() -> None:
             while self._running:
                 await asyncio.sleep(interval)
-                results = await self.run_all()
-
-                failures = [
-                    r for r in results
-                    if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)
-                ]
-                if failures:
-                    await notify_health_failures(self.bot, failures)
+                try:
+                    results = await self.run_all()
+                    failures = [
+                        r for r in results
+                        if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)
+                    ]
+                    if failures:
+                        await notify_health_failures(self.bot, failures)
+                except Exception:
+                    logger.exception("Periodic health check iteration failed")
 
         self._periodic_task = asyncio.create_task(_periodic_loop())
 
