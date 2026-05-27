@@ -1,14 +1,17 @@
 import asyncio
 import hashlib
 import json
+import logging
 import time
-from collections.abc import AsyncIterator, Sequence
+import uuid
+from collections.abc import AsyncIterator, Awaitable, Callable, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any
 
 # import asyncmy
 from discord import Entitlement
+from discord.ext import commands
 
 from models import (
     AfkMessageModel,
@@ -47,6 +50,8 @@ from utility import get_level_for_xp, get_xp_for_level
 
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
+
+logger = logging.getLogger(__name__)
 
 _bot = None
 
@@ -171,8 +176,9 @@ async def preload_guild_configs(bot) -> None:
     global _guild_config_cache
     _guild_config_cache = {}
     try:
-        async with pool.acquire() as conn, conn.cursor() as cursor:
-            await cursor.execute(query)
+        conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+        async with conn, conn.cursor() as cursor:
+            await asyncio.wait_for(cursor.execute(query), timeout=_QUERY_TIMEOUT)
             async for row in cursor:
                 guild_id = str(row[0])
                 _guild_config_cache[guild_id] = (
@@ -217,8 +223,9 @@ async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> An
     if pool is None:
         return default
     try:
-        async with pool.acquire() as conn, conn.cursor() as cursor:
-            await cursor.execute(query, (guild_id,))
+        conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+        async with conn, conn.cursor() as cursor:
+            await asyncio.wait_for(cursor.execute(query, (guild_id,)), timeout=_QUERY_TIMEOUT)
             row = await cursor.fetchone()
             if row:
                 data = {
@@ -277,15 +284,42 @@ async def execute_query_iter(
         print(f"Tried to execute_query_iter without pool. {_sanitize_for_log(query)}")
         return
 
-    try:
-        conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-        async with conn, conn.cursor() as cursor:
-            await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
-            async for row in cursor:
-                yield row
-    except Exception as e:
-        safe_id = _query_safe_id(query)
-        print(f"Error during query iteration: {e} — q={safe_id}")
+    safe_id = _query_safe_id(query)
+    yielded_any = False
+    for attempt in range(_MAX_DB_RETRIES):
+        try:
+            conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+            async with conn, conn.cursor() as cursor:
+                await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
+                async for row in cursor:
+                    yielded_any = True
+                    yield row
+            return
+        except TimeoutError:
+            if yielded_any:
+                logger.error(f"Timeout after yielding rows on execute_query_iter: {safe_id}")
+                raise
+            print(f"Timeout on execute_query_iter attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
+            if attempt < _MAX_DB_RETRIES - 1:
+                await asyncio.sleep(0.5 * (attempt + 1))
+            continue
+        except Exception as e:
+            if yielded_any:
+                logger.error(f"Error after yielding rows during query iteration: {e} — {safe_id}")
+                raise
+            err_str = str(e).lower()
+            retryable = (
+                "deadlock" in err_str
+                or "connection" in err_str
+                or "timeout" in err_str
+            )
+            if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                print(f"Transient error on execute_query_iter attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
+                await asyncio.sleep(0.5 * (attempt + 1))
+                continue
+            print(f"Error during query iteration: {e} — {safe_id}")
+            return
+    print(f"All retries exhausted for execute_query_iter: {safe_id}")
 
 
 async def safe_execute_query(
@@ -303,14 +337,26 @@ async def transaction(bot=None):
     if pool is None:
         raise RuntimeError("Database pool is not initialized")
 
-    conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-    async with conn:
+    for attempt in range(_MAX_DB_RETRIES):
+        safe_id = str(uuid.uuid4())
         try:
-            yield conn
-            await conn.commit()
+            conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+            async with conn:
+                try:
+                    yield conn
+                    await conn.commit()
+                except Exception:
+                    await conn.rollback()
+                    raise
+            return
+        except TimeoutError:
+            print(f"Timeout on transaction acquire attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
+            if attempt < _MAX_DB_RETRIES - 1:
+                await asyncio.sleep(0.5 * (attempt + 1))
+            continue
         except Exception:
-            await conn.rollback()
             raise
+    raise RuntimeError(f"Could not acquire database connection after {_MAX_DB_RETRIES} attempts [{safe_id}]")
 
 
 async def check_pool_health(bot=None) -> bool:
@@ -318,13 +364,18 @@ async def check_pool_health(bot=None) -> bool:
     pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
     if pool is None:
         return False
-    try:
-        conn = await asyncio.wait_for(pool.acquire(), timeout=5)
-        async with conn, conn.cursor() as cursor:
-            await cursor.execute("SELECT 1")
-        return True
-    except Exception:
-        return False
+    for attempt in range(_MAX_DB_RETRIES):
+        try:
+            conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+            async with conn, conn.cursor() as cursor:
+                await asyncio.wait_for(cursor.execute("SELECT 1"), timeout=_QUERY_TIMEOUT)
+            return True
+        except Exception:
+            if attempt < _MAX_DB_RETRIES - 1:
+                await asyncio.sleep(0.5 * (attempt + 1))
+                continue
+            return False
+    return False
 
 
 async def bulk_update_user_xp(
@@ -914,9 +965,14 @@ async def create_tables(bot=None) -> None:
     pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
     if pool is None:
         return
-    async with pool.acquire() as conn, conn.cursor() as cursor:
-        await cursor.execute("SHOW TABLES")
-        existing = {row[0] for row in await cursor.fetchall()}
+    try:
+        conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+        async with conn, conn.cursor() as cursor:
+            await asyncio.wait_for(cursor.execute("SHOW TABLES"), timeout=_QUERY_TIMEOUT)
+            existing = {row[0] for row in await cursor.fetchall()}
+    except Exception as e:
+        print(f"Error discovering existing tables: {e}")
+        return
 
     # Build dependency map: table -> list of tables it depends on (via FK REFERENCES)
     dependencies = {
