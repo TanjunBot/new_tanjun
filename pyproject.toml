@@ -2,9 +2,6 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.packages.find]
-include = ["ai*", "commands*", "extensions*", "health*", "loops*", "minigames*", "utils*"]
-
 [project]
 name = "tanjun_5.0"
 version = "1.1.4"
