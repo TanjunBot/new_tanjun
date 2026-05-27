@@ -29,6 +29,7 @@ from config import (
     database_user,
     prefix,
 )
+from DatabaseHealthCheck import DatabaseHealthCheck
 from health.manager import HealthCheckManager
 from locale_file_health_check import LocaleFileHealthCheck
 from OpenAIHealthCheck import OpenAIHealthCheck
@@ -126,6 +127,7 @@ async def main():
     health_manager = HealthCheckManager(bot)
     health_manager.register(OpenAIHealthCheck())
     health_manager.register(LocaleFileHealthCheck())
+    health_manager.register(DatabaseHealthCheck())
     ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.
