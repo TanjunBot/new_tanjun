@@ -1,83 +1,95 @@
-# Background Loop Health Check
+from health_check import HealthCheck, HealthCheckResult, HealthStatus
+from typing import Any
 
-Requires the HealthCheck framework from the main health check issue.
 
-The bot relies on multiple background task loops (`extensions/loops.py`):
-- Giveaway sending (10s)
-- Giveaway ending (10s)
-- Voice XP processing (5s)
-- AI token refill (60s)
-- Server pinging (5s)
-- Database backup (1h)
-- Booster role/channel cleanup (10s)
-- Scheduled messages (10s)
-- Twitch polling (10s)
-- Clear Notified Users (10s)
-- Pokemon Werbung (10s)
-
-If one of these loops crashes silently (they all use `except Exception: pass`), the feature stops working without any notification.
-
-## Implementation
-
-```python
 class BackgroundLoopHealthCheck(HealthCheck):
-    def __init__(self, bot):
+    """Health check for background task loops.
+
+    The bot relies on multiple background task loops (extensions/loops.py):
+    - Giveaway sending (10s)
+    - Giveaway ending (10s)
+    - Voice checking (60s)
+    - Voice XP processing (5s)
+    - AI token refill (60s)
+    - Server pinging (5s)
+    - Database backup (1h)
+    - Booster role/channel cleanup (10s)
+    - Scheduled messages (10s)
+    - Twitch polling (10s)
+    - Clear Notified Users (5s)
+    - Pokemon Werbung (scheduled: 2am, 8am, 2pm, 8pm)
+
+    If one of these loops stops unexpectedly, the feature stops working.
+    Most loops log exceptions and continue; this check detects stopped tasks.
+    """
+
+    def __init__(self, bot: Any):
         self.bot = bot
-    
+
     @property
-    def name(self) -> str: return "Background Loops"
+    def name(self) -> str:
+        return "Background Loops"
+
     @property
-    def critical(self) -> bool: return False  # Individual loops failing is degraded, not critical
-    
+    def critical(self) -> bool:
+        return True  # Missing LoopCog is critical
+
     async def run(self) -> HealthCheckResult:
         cog = self.bot.get_cog("LoopCog")
         if not cog:
             return HealthCheckResult(
-                self.name, HealthStatus.CRITICAL,
-                "LoopCog not found. No background tasks registered."
+                self.name,
+                HealthStatus.CRITICAL,
+                "LoopCog not found. No background tasks registered.",
             )
-        
-        # Check each loop task
-        loop_tasks = [
-            ("Giveaway Sender", cog.sendSendReadyGiveaways),
-            ("Giveaway Ender", cog.endGiveawaysLoop),
-            ("Voice Checker", cog.checkVoiceUsers),
-            ("Voice XP", cog.addVoiceUserLoop),
-            ("AI Token Refill", cog.refillAiTokenLoop),
-            ("Ping Server", cog.pingServerLoop),
-            ("Database Backup", cog.backupDatabaseLoop),
-            ("Booster Roles", cog.removeExpiredClaimedBoosterRoles),
-            ("Booster Channels", cog.removeExpiredClaimedBoosterChannels),
-            ("Scheduled Messages", cog.sendScheduledMessages),
-            ("Twitch Polling", cog.pollTwitchStreams),
-            ("Clear Notified Users", cog.clearNotifiedUsersLoop),
-            ("Pokemon Werbung", cog.sendPokemonWerbung)
+
+        # Check each loop task (use safe attribute resolution)
+        loop_specs = [
+            ("Giveaway Sender", "sendSendReadyGiveaways"),
+            ("Giveaway Ender", "endGiveawaysLoop"),
+            ("Voice Checker", "checkVoiceUsers"),
+            ("Voice XP", "addVoiceUserLoop"),
+            ("AI Token Refill", "refillAiTokenLoop"),
+            ("Ping Server", "pingServerLoop"),
+            ("Database Backup", "backupDatabaseLoop"),
+            ("Booster Roles", "removeExpiredClaimedBoosterRoles"),
+            ("Booster Channels", "removeExpiredClaimedBoosterChannels"),
+            ("Scheduled Messages", "sendScheduledMessages"),
+            ("Twitch Polling", "pollTwitchStreams"),
+            ("Clear Notified Users", "clearNotifiedUsersLoop"),
+            ("Pokemon Werbung", "sendPokemonWerbung"),
         ]
-        
+
         failed_loops = []
-        for name, task in loop_tasks:
-            if not task.is_running():
-                failed_loops.append(name)
-            # Optionally check how long since last iteration
-            # if task.delta and task.delta.total_seconds() > expected_interval * 3:
-            #     failed_loops.append(f"{name} (stuck)")
-        
+        for name, attr in loop_specs:
+            task = getattr(cog, attr, None)
+            if task is None:
+                failed_loops.append(f"{name} (missing)")
+                continue
+            try:
+                is_running = getattr(task, "is_running")
+            except Exception:
+                failed_loops.append(f"{name} (invalid)")
+                continue
+            if not callable(is_running):
+                failed_loops.append(f"{name} (invalid)")
+                continue
+            try:
+                if not is_running():
+                    failed_loops.append(name)
+            except Exception:
+                failed_loops.append(f"{name} (error)")
+
         if failed_loops:
             return HealthCheckResult(
-                self.name, HealthStatus.DEGRADED,
-                f"Stopped loops: {', '.join(failed_loops)}",
-                details={"stopped_loops": failed_loops}
+                self.name,
+                HealthStatus.DEGRADED,
+                f"Failed loops: {', '.join(failed_loops)}",
+                details={"failed_loops": failed_loops},
             )
-        
+
         return HealthCheckResult(
-            self.name, HealthStatus.HEALTHY,
-            f"All {len(loop_tasks)} background loops are running."
+            self.name,
+            HealthStatus.HEALTHY,
+            f"All {len(loop_specs)} background loops are running.",
         )
-```
-
-## Checks
-
-- **Critical**: No (startup check would always pass since loops start after ready)
-- **Startup check**: No
-- **Periodic check**: Yes (every 2 minutes - detects failures quickly)
-- **Failure action**: Notify alert channel with which loop(s) stopped
