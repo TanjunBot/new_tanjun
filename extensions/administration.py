@@ -69,36 +69,28 @@ class administrationCog(commands.Cog):
         if not ctx.bot.tree:
             return
         fmt = await ctx.bot.tree.sync()
-        await ctx.send(
-            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.sync.completed", count=len(fmt))
-        )
+        await ctx.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.sync.completed", count=len(fmt)))
 
     @commands.command()
     async def feedback(self, ctx: commands.Context, *, content: str) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         addFeedback(content, ctx.author.name)
-        await ctx.send(
-            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.added")
-        )
+        await ctx.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.added"))
 
     @commands.command()
     async def blockFeedback(self, ctx: commands.Context, user: discord.User) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         await feedbackBlockUser(user.id)
-        await ctx.send(
-            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.blocked", user_name=user.name)
-        )
+        await ctx.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.blocked", user_name=user.name))
 
     @commands.command()
     async def unblockFeedback(self, ctx: commands.Context, user: discord.User) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         await feedbackUnblockUser(user.id)
-        await ctx.send(
-            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.unblocked", user_name=user.name)
-        )
+        await ctx.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.unblocked", user_name=user.name))
 
     @commands.command()
     async def test_bot(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
@@ -287,71 +279,47 @@ class administrationCog(commands.Cog):
             return m.author == ctx.author and m.channel == ctx.channel  # type: ignore[no-any-return]
 
         try:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.confirm")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.confirm"))
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
         if confirmation_message.content.lower() != "y":
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled"))
             return
 
         try:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.confirm2")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.confirm2"))
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
         if confirmation_message.content.lower() != "y":
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled"))
             return
 
         try:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.say_wallah")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.say_wallah"))
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
         if confirmation_message.content.lower() != "wallah":
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled"))
             return
 
         try:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.enter_password")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.enter_password"))
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
         if confirmation_message.content.lower() != "passwort":
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.wrong_password")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.wrong_password"))
             return
 
         message = """
@@ -412,71 +380,47 @@ Das Tanjun-Team
             return m.author == ctx.author and m.channel == ctx.channel  # type: ignore[no-any-return]
 
         try:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.demo_message.confirm")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.demo_message.confirm"))
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
         if confirmation_message.content.lower() != "y":
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled"))
             return
 
         try:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.confirm2")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.confirm2"))
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
         if confirmation_message.content.lower() != "y":
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled"))
             return
 
         try:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.say_wallah")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.say_wallah"))
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
         if confirmation_message.content.lower() != "wallah":
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled"))
             return
 
         try:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.enter_password")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.enter_password"))
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
         if confirmation_message.content.lower() != "passwort":
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.wrong_password")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.wrong_password"))
             return
 
         message = """
@@ -562,35 +506,31 @@ Das Tanjun-Team
         elif url:
             attachment_url = url
         else:
-            await ctx.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.no_attachment")
-            )
+            await ctx.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.no_attachment"))
             return
 
-        status_msg = await ctx.send(
-            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.downloading")
-        )
+        status_msg = await ctx.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.downloading"))
 
         try:
             async with aiohttp.ClientSession() as session, session.get(attachment_url) as resp:
                 if resp.status != 200:
-                    await status_msg.edit(content=tanjunLocalizer.localize(
-                        self._locale(ctx), "commands.admin.database_sync.download_failed", status=resp.status
-                    ))
+                    await status_msg.edit(
+                        content=tanjunLocalizer.localize(
+                            self._locale(ctx), "commands.admin.database_sync.download_failed", status=resp.status
+                        )
+                    )
                     return
                 content = await resp.read()
 
             with open("temp_import.sql", "wb") as f:
                 f.write(content)
         except Exception as e:
-            await status_msg.edit(content=tanjunLocalizer.localize(
-                self._locale(ctx), "commands.admin.database_sync.download_error", error=e
-            ))
+            await status_msg.edit(
+                content=tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.download_error", error=e)
+            )
             return
 
-        await status_msg.edit(
-            content=tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.analyzing")
-        )
+        await status_msg.edit(content=tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.analyzing"))
 
         schemas: set[str] = set()
         with open("temp_import.sql", encoding="utf-8", errors="ignore") as f:
@@ -605,9 +545,7 @@ Das Tanjun-Team
                     schemas.add(use_match.group(1))
 
         if not schemas:
-            schemas.add(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.no_schema_found")
-            )
+            schemas.add(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.no_schema_found"))
 
         schema_list = "\n".join([f"- `{s}`" for s in schemas])
         await status_msg.edit(
@@ -622,25 +560,18 @@ Das Tanjun-Team
         try:
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=60.0)
         except TimeoutError:
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.timeout")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.timeout"))
             return
 
         selected_schema = confirmation_message.content.strip()
         if selected_schema.lower() == "abbrechen":
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.aborted")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.aborted"))
             return
 
         if selected_schema not in schemas and (
-            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.no_schema_found")
-            not in list(schemas)[0]
+            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.no_schema_found") not in list(schemas)[0]
         ):
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.schema_warning")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.schema_warning"))
 
         # Parse and filter sql dump
         await ctx.channel.send(
@@ -673,9 +604,7 @@ Das Tanjun-Team
             )
         except Exception as e:
             await ctx.channel.send(
-                tanjunLocalizer.localize(
-                    self._locale(ctx), "commands.admin.database_sync.backup_error", error=e
-                )
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.backup_error", error=e)
             )
             return
         finally:
@@ -720,9 +649,7 @@ Das Tanjun-Team
                         f_out.write(mod_line)
         except Exception as e:
             await ctx.channel.send(
-                tanjunLocalizer.localize(
-                    self._locale(ctx), "commands.admin.database_sync.filter_error", error=e
-                )
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.filter_error", error=e)
             )
             return
 
@@ -756,14 +683,10 @@ Das Tanjun-Team
                     check=True,
                 )
 
-            await ctx.channel.send(
-                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.success")
-            )
+            await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.success"))
         except subprocess.CalledProcessError as e:
             await ctx.channel.send(
-                tanjunLocalizer.localize(
-                    self._locale(ctx), "commands.admin.database_sync.import_error", error=e
-                )
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.import_error", error=e)
             )
 
         # Clean up temporary files
