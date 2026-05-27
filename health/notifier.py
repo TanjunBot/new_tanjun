@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from health.checks import HealthCheckResult, HealthStatus
@@ -66,7 +66,7 @@ async def notify_health_failures(
     embed = discord.Embed(
         title="⚠️ Health Check Failure",
         color=0xFF0000,
-        timestamp=datetime.now(),
+        timestamp=datetime.now(timezone.utc),
     )
 
     for failure in failures:

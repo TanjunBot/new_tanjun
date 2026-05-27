@@ -47,21 +47,21 @@ class HealthCheckManager:
             return []
 
         results: list[HealthCheckResult] = []
-        coros = [check.run() for check in self._checks]
+        task_to_check: dict[asyncio.Task[HealthCheckResult], HealthCheck] = {
+            asyncio.create_task(check.run()): check for check in self._checks
+        }
 
-        for coro in asyncio.as_completed(coros):
+        for task in asyncio.as_completed(task_to_check):
+            check = task_to_check[task]
             try:
-                result = await coro
+                result = await task
             except Exception as exc:
-                # If an individual check raises unexpectedly, treat it as critical
-                check_index = coros.index(coro) if coro in coros else -1
-                check_name = self._checks[check_index].name if check_index >= 0 else "unknown"
                 result = HealthCheckResult(
-                    check_name=check_name,
+                    check_name=check.name,
                     status=HealthStatus.CRITICAL,
                     message=f"Health check raised an unexpected exception: {exc}",
                 )
-                logger.exception("Health check %s raised an exception", check_name)
+                logger.exception("Health check %s raised an exception", check.name)
 
             self._last_results[result.check_name] = result
             results.append(result)

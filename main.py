@@ -220,7 +220,6 @@ logging.basicConfig(
 from translator import TanjunTranslator
 
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
-from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 from health.manager import HealthCheckManager
 from OpenAIHealthCheck import OpenAIHealthCheck
 nimport logging
