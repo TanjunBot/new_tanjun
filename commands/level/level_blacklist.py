@@ -10,7 +10,7 @@ from api import (
     remove_user_from_blacklist,
 )
 from localizer import tanjunLocalizer
-from utility import CommandInfo, checkIfHasPro, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
 async def add_channel_to_blacklist_command(
@@ -169,19 +169,6 @@ async def add_user_to_blacklist_command(commandInfo: CommandInfo, user: discord.
         return
 
     assert commandInfo.guild is not None
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.level.blacklist.add_channel.error.no_pro.title",
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.level.blacklist.add_channel.error.no_pro.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
 
     await add_user_to_blacklist(str(commandInfo.guild.id), str(user.id), reason)
     embed = tanjunEmbed(

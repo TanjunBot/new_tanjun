@@ -2,6 +2,7 @@ import json
 
 import aiohttp
 import discord
+from aiohttp import ClientTimeout
 
 from api import get_brawlstars_linked_account
 from commands.utility.brawlstars.bshelper import (
@@ -23,6 +24,7 @@ async def getPlayerInfo(playerTag: str):
         session.get(
             f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}",
             headers=headers,
+            timeout=ClientTimeout(total=10),
         ) as response,
     ):
         if response.status != 200:
