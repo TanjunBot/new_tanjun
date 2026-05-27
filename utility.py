@@ -1,6 +1,7 @@
 import ast
 import datetime
 import gzip
+import logging
 import math
 import operator as op
 import random
@@ -36,6 +37,7 @@ from config import (
     bytebin_username,
     giphyAPIKey,
 )
+from utils.async_io import _io_executor
 
 
 class EmbedProxy:
@@ -873,11 +875,11 @@ class NumericStringParser:
 
         # Operator map
         self.opn = {
-            "+": operator.add,
-            "-": operator.sub,
-            "*": operator.mul,
-            "/": operator.truediv,
-            "^": operator.pow,
+            "+": op.add,
+            "-": op.sub,
+            "*": op.mul,
+            "/": op.truediv,
+            "^": op.pow,
         }
 
     def evaluateStack(self, s):
@@ -943,6 +945,19 @@ def checkIfhasPlus(userid: int) -> bool:
 
 
 def missingLocalization(locale: str) -> None:
+    future = _io_executor.submit(_missingLocalization, locale)
+    future.add_done_callback(_handle_submit_exception)
+
+
+def _handle_submit_exception(future) -> None:
+    """Exception handler for background executor tasks."""
+    try:
+        future.result()
+    except Exception:
+        logging.exception("Exception in background executor task")
+
+
+def _missingLocalization(locale: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("missing localization")
@@ -954,6 +969,11 @@ def missingLocalization(locale: str) -> None:
 
 
 def addFeedback(content: str, author: str) -> None:
+    future = _io_executor.submit(_addFeedback, content, author)
+    future.add_done_callback(_handle_submit_exception)
+
+
+def _addFeedback(content: str, author: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("Feedback")

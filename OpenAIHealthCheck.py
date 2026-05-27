@@ -1,5 +1,4 @@
-
-from aiohttp import ClientSession
+from aiohttp import ClientError, ClientSession
 
 from health_check import HealthCheck, HealthCheckResult, HealthStatus
 

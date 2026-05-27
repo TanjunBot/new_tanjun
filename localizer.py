@@ -3,6 +3,7 @@ from string import Template
 from typing import Any, cast
 
 from utility import missingLocalization
+from utils.async_io import run_blocking
 
 reported_locales: list[str] = []
 
@@ -11,22 +12,43 @@ class Localizer:
     def __init__(self) -> None:
         self.translations: dict[str, list[dict[str, object]]] = {}
 
-    def load_translations(self, locale: str) -> list[dict[str, object]]:
+    def _load_translations_sync(self, locale: str) -> list[dict[str, object]]:
         """Load the translations from a JSON file based on the specified locale."""
+        def _validate(data: object) -> list[dict[str, object]] | None:
+            if isinstance(data, list) and all(isinstance(entry, dict) for entry in data):
+                return cast(list[dict[str, object]], data)
+            return None
+
         try:
             with open(f"locales/{locale}.json", encoding="utf-8") as file:
                 data: object = json.load(file)
-                return cast(list[dict[str, object]], data)
+                result = _validate(data)
+                if result is not None:
+                    return result
+                print(f"Invalid translation schema for locale '{locale}'.")
         except FileNotFoundError:
-            try:
-                with open("locales/en.json", encoding="utf-8") as file:
-                    fallback_data: object = json.load(file)
-                    return cast(list[dict[str, object]], fallback_data)
-            except (FileNotFoundError, json.JSONDecodeError):
-                return []
+            pass
         except json.JSONDecodeError:
             print(f"Error decoding JSON from the translation file for locale '{locale}'.")
-            return []
+
+        # Fallback to English
+        try:
+            with open("locales/en.json", encoding="utf-8") as file:
+                fallback_data: object = json.load(file)
+                result = _validate(fallback_data)
+                if result is not None:
+                    return result
+                print("Invalid translation schema for locale 'en'.")
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass
+        return []
+
+    async def load_translations_async(self, locale: str) -> list[dict[str, object]]:
+        """Async wrapper: load translations off the event loop via the shared thread pool."""
+        return await run_blocking(self._load_translations_sync, locale)
+
+    def load_translations(self, locale: str) -> list[dict[str, object]]:
+        return self._load_translations_sync(locale)
 
     def get_translation(self, translations: list[dict[str, object]], key: str) -> dict[str, object] | None:
         """Retrieve a nested translation using dot notation for nested keys."""
@@ -48,7 +70,7 @@ class Localizer:
             print(f"No translation found for key '{key}'.")
             if locale_str not in reported_locales:
                 reported_locales.append(locale_str)
-                missingLocalization(key)
+                missingLocalization(locale_str)
             return "err: no translation found."
 
         template_string: str = str(translation.get("translation", ""))
