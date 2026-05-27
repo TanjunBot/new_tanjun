@@ -4,7 +4,6 @@ Validates:
 1. twitchId and twitchSecret are configured
 2. App access token can be obtained
 3. API is reachable
-4. Token is not expired
 """
 
 from __future__ import annotations
@@ -28,7 +27,7 @@ class TwitchAPIHealthCheck(HealthCheck):
     async def run(self) -> HealthCheckResult:
         from config import twitchId, twitchSecret
 
-        if not twitchId or twitchSecret is None:
+        if not twitchId or not twitchSecret:
             return HealthCheckResult(
                 check_name=self.name,
                 status=HealthStatus.CRITICAL,
@@ -57,6 +56,13 @@ class TwitchAPIHealthCheck(HealthCheck):
                         )
                     data = await response.json()
                     token = data.get("access_token")
+
+                    if not token:
+                        return HealthCheckResult(
+                            check_name=self.name,
+                            status=HealthStatus.CRITICAL,
+                            message="Twitch auth failed: No access token returned in response",
+                        )
 
                 # Test API call with token
                 headers = {"Client-ID": twitchId, "Authorization": f"Bearer {token}"}
