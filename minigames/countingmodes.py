@@ -310,9 +310,6 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
 
     The config dict should have keys: 'progress', 'mode', 'goal', 'last_counter_id', 'guild_id'.
     """
-    if message.author.bot:
-        return
-
     if config is not None:
         progress = config.get("progress")
         mode = config.get("mode")

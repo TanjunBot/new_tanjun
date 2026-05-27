@@ -64,9 +64,6 @@ async def counting(
         Pre-fetched config with 'progress' and 'last_counter_id'. If provided,
         get_progress_func and get_last_counter_id_func are not called.
     """
-    if message.author.bot:
-        return
-
     if await _handle_guild_check(message):
         return
 

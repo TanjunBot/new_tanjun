@@ -191,9 +191,6 @@ async def getDynamicslowmodeChannels(commandInfo: utility.CommandInfo) -> None:
 
 async def dynamicslowmodeMessage(message: discord.Message) -> None:
     """Track messages in-memory and adjust slowmode when thresholds are exceeded."""
-    if message.author.bot:
-        return
-
     dynamicSlowmodeChannel = await get_dynamicslowmode(message.channel.id)
     if not dynamicSlowmodeChannel:
         return

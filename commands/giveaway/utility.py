@@ -494,9 +494,6 @@ async def addMessageToGiveaway(message: discord.Message):  # type: ignore[no-unt
     if await check_if_opted_out(message.author.id):
         return
 
-    if message.author.bot:
-        return
-
     await add_giveaway_new_message_if_needed(message.author.id, message.guild.id)  # type: ignore[union-attr]
 
     await add_giveaway_new_message_channel_if_needed(message.author.id, message.guild.id, message.channel.id)  # type: ignore[union-attr]

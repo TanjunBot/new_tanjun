@@ -13,9 +13,6 @@ async def send_trigger_message(message: discord.Message) -> None:
     if not message.content:
         return
 
-    if message.author.bot:
-        return
-
     trigger_message = await is_trigger_message(message.guild.id, message.content, message.channel.id)
     if not trigger_message:
         return
