@@ -1,6 +1,6 @@
+import asyncio
 import os
 import platform
-import subprocess
 import tempfile
 from typing import cast
 
@@ -18,7 +18,7 @@ def _write_defaults_file(user: str, password: str, host: str, port: int) -> str:
     return path
 
 
-def dump_database_schema(user: str, password: str, host: str, port: int, output_file: str) -> None:
+async def dump_database_schema(user: str, password: str, host: str, port: int, output_file: str) -> None:
     if platform.system() != "Linux":
         print("Tried to create Database backup on a non Linux system. This is not supported. Abording..")
         return
@@ -33,10 +33,18 @@ def dump_database_schema(user: str, password: str, host: str, port: int, output_
         ]
 
         with open(output_file, "w") as file:
-            subprocess.run(dump_command, stdout=file, check=True)
-        print(f"Schema dumped to {output_file} successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred while dumping the database schema: {e}")
+            process = await asyncio.create_subprocess_exec(
+                *dump_command,
+                stdout=file,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            _, stderr = await process.communicate()
+
+        if process.returncode != 0:
+            error_text = stderr.decode() if stderr else "Unknown error"
+            raise RuntimeError(f"An error occurred while dumping the database schema to {output_file}: {error_text}")
+        else:
+            print(f"Schema dumped to {output_file} successfully.")
     except FileNotFoundError:
         print("mysqldump command not found. Make sure MySQL is installed and mysqldump is in your PATH.")
     finally:
@@ -49,7 +57,7 @@ def dump_database_schema(user: str, password: str, host: str, port: int, output_
 async def create_database_backup(client: Client) -> None:
     assert database_user is not None
     assert database_password is not None
-    dump_database_schema(database_user, database_password, database_ip, database_port, "backup.sql")
+    await dump_database_schema(database_user, database_password, database_ip, database_port, "backup.sql")
 
     channel = cast(TextChannel, client.get_channel(1259573137108893766))
 
