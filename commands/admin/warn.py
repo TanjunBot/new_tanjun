@@ -38,7 +38,8 @@ async def warn_user(commandInfo: utility.CommandInfo, member: discord.Member, re
     expireDate = datetime.now(UTC) + timedelta(days=warn_config.expiration_days)
 
     await add_warning(guild_id, user_id, reason, expireDate, commandInfo.user.id)  # type: ignore[arg-type]
-    warn_count = len(await get_warnings(guild_id, user_id))  # type: ignore[arg-type]
+    warnings_list = [w async for w in get_warnings(guild_id, user_id)]  # type: ignore[arg-type]
+    warn_count = len(warnings_list)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.warn.success.title"),

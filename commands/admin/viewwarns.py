@@ -194,9 +194,9 @@ async def view_warnings(commandInfo: utility.CommandInfo, member: discord.Member
     guild_id = CommandInfo.guild.id  # type: ignore[misc, union-attr]
     user_id = member.id
 
-    warnings = await get_detailed_warnings(guild_id, user_id)
+    warnings = [w async for w in get_detailed_warnings(guild_id, user_id)]
 
-    if warnings is None or len(warnings) == 0:
+    if len(warnings) == 0:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.viewwarns.noWarnings.title"),
             description=tanjunLocalizer.localize(
