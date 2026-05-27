@@ -14,6 +14,7 @@ class Localizer:
 
     def _load_translations_sync(self, locale: str) -> list[dict[str, object]]:
         """Load the translations from a JSON file based on the specified locale."""
+
         def _validate(data: object) -> list[dict[str, object]] | None:
             if isinstance(data, list) and all(isinstance(entry, dict) for entry in data):
                 return cast(list[dict[str, object]], data)

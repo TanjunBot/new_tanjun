@@ -617,7 +617,7 @@ class LogEnableModel(BaseModel):
         if len(actual_values) != expected_count:
             raise ValueError(
                 f"Expected {expected_count} column values for LogEnableModel, "
-                f"got {len(actual_values)}. Row: {row[:expected_count + 1]!r}..."
+                f"got {len(actual_values)}. Row: {row[: expected_count + 1]!r}..."
             )
         values = {name: bool(v) for name, v in zip(field_names, actual_values)}
         return cls(guild_id=guild_id, **values)
