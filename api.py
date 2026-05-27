@@ -2255,7 +2255,7 @@ async def addCustomSituation(
 async def getCustomSituations() -> list[str]:
     query = "SELECT name FROM aiSituations where unlocked = 1"
     result = await safe_execute_query(query)
-    return [row[0] for row in result] if result else []
+    return [row[0] for row in result]
 
 
 async def getCustomSituation(name: str) -> AISituationModel | None:
