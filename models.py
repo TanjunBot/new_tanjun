@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from typing import Any, ClassVar
 
@@ -35,6 +36,13 @@ class GiveawayModel:
     def from_row(cls, row: tuple) -> GiveawayModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[GiveawayModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class GiveawayChannelRequirementModel:
@@ -45,6 +53,13 @@ class GiveawayChannelRequirementModel:
     def from_row(cls, row: tuple) -> GiveawayChannelRequirementModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[GiveawayChannelRequirementModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class GiveawayBlacklistEntryModel:
@@ -54,6 +69,13 @@ class GiveawayBlacklistEntryModel:
     @classmethod
     def from_row(cls, row: tuple) -> GiveawayBlacklistEntryModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[GiveawayBlacklistEntryModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
@@ -76,6 +98,13 @@ class ReportModel:
     def from_row(cls, row: tuple) -> ReportModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ReportModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class ScheduledMessageModel:
@@ -94,6 +123,13 @@ class ScheduledMessageModel:
     def from_row(cls, row: tuple) -> ScheduledMessageModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ScheduledMessageModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class TwitchOnlineNotificationModel:
@@ -108,6 +144,13 @@ class TwitchOnlineNotificationModel:
     def from_row(cls, row: tuple) -> TwitchOnlineNotificationModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TwitchOnlineNotificationModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class TriggerMessageModel:
@@ -121,6 +164,13 @@ class TriggerMessageModel:
     def from_row(cls, row: tuple) -> TriggerMessageModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TriggerMessageModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class TriggerMessageChannelModel:
@@ -131,6 +181,13 @@ class TriggerMessageChannelModel:
     @classmethod
     def from_row(cls, row: tuple) -> TriggerMessageChannelModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TriggerMessageChannelModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
@@ -147,6 +204,13 @@ class TicketMessageModel:
     @classmethod
     def from_row(cls, row: tuple) -> TicketMessageModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TicketMessageModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
@@ -165,6 +229,13 @@ class TicketModel:
     def from_row(cls, row: tuple) -> TicketModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TicketModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class AISituationModel:
@@ -182,6 +253,13 @@ class AISituationModel:
     def from_row(cls, row: tuple) -> AISituationModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[AISituationModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class WarningModel:
@@ -198,6 +276,13 @@ class WarningModel:
     def from_row(cls, row: tuple) -> WarningModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[WarningModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class DetailedWarningModel:
@@ -211,6 +296,13 @@ class DetailedWarningModel:
     @classmethod
     def from_row(cls, row: tuple) -> DetailedWarningModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[DetailedWarningModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
@@ -227,6 +319,13 @@ class WarnConfigModel:
         _, expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold = row
         return cls(expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[WarnConfigModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class XpBoostModel:
@@ -236,6 +335,13 @@ class XpBoostModel:
     @classmethod
     def from_row(cls, row: tuple) -> XpBoostModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[XpBoostModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
@@ -247,6 +353,13 @@ class BlacklistEntryModel:
     def from_row(cls, row: tuple) -> BlacklistEntryModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[BlacklistEntryModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class LevelRoleModel:
@@ -256,6 +369,13 @@ class LevelRoleModel:
     @classmethod
     def from_row(cls, row: tuple) -> LevelRoleModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[LevelRoleModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
@@ -271,6 +391,13 @@ class DynamicSlowmodeModel:
     def from_row(cls, row: tuple) -> DynamicSlowmodeModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[DynamicSlowmodeModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class AfkMessageModel:
@@ -281,6 +408,13 @@ class AfkMessageModel:
     def from_row(cls, row: tuple) -> AfkMessageModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[AfkMessageModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class LogBlacklistEntryModel:
@@ -290,6 +424,13 @@ class LogBlacklistEntryModel:
     @classmethod
     def from_row(cls, row: tuple) -> LogBlacklistEntryModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[LogBlacklistEntryModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
@@ -303,6 +444,13 @@ class WelcomeChannelModel:
     def from_row(cls, row: tuple) -> WelcomeChannelModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[WelcomeChannelModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class LeaveChannelModel:
@@ -314,6 +462,13 @@ class LeaveChannelModel:
     @classmethod
     def from_row(cls, row: tuple) -> LeaveChannelModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[LeaveChannelModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
@@ -327,6 +482,13 @@ class DynamicSlowmodeMessageModel:
     def from_row(cls, row: tuple) -> DynamicSlowmodeMessageModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[DynamicSlowmodeMessageModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class TokenOverviewModel:
@@ -338,6 +500,13 @@ class TokenOverviewModel:
     @classmethod
     def from_row(cls, row: tuple) -> TokenOverviewModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TokenOverviewModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 class LogEnableModel(BaseModel):
@@ -453,6 +622,13 @@ class LogEnableModel(BaseModel):
         values = {name: bool(v) for name, v in zip(field_names, actual_values)}
         return cls(guild_id=guild_id, **values)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[LogEnableModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
     @property
     def options(self) -> dict[str, bool]:
         """Return all boolean option fields as a dict, excluding guild_id."""
@@ -480,6 +656,13 @@ class ClaimedBoosterChannelModel:
     def from_row(cls, row: tuple) -> ClaimedBoosterChannelModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ClaimedBoosterChannelModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class ClaimedBoosterRoleModel:
@@ -491,6 +674,13 @@ class ClaimedBoosterRoleModel:
     def from_row(cls, row: tuple) -> ClaimedBoosterRoleModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ClaimedBoosterRoleModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class BlockedReporterModel:
@@ -501,6 +691,13 @@ class BlockedReporterModel:
     def from_row(cls, row: tuple) -> BlockedReporterModel:
         return cls(*row)
 
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[BlockedReporterModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
 
 @dataclass
 class LevelLeaderboardEntryModel:
@@ -510,6 +707,13 @@ class LevelLeaderboardEntryModel:
     @classmethod
     def from_row(cls, row: tuple) -> LevelLeaderboardEntryModel:
         return cls(*row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[LevelLeaderboardEntryModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
@@ -530,6 +734,13 @@ class ChannelOverwriteModel:
         import json
 
         return cls(role_id=row[0], overwrites=json.loads(row[1]))
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ChannelOverwriteModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
 
 
 @dataclass
