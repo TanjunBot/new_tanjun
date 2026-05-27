@@ -28,11 +28,10 @@ from config import (
     database_user,
     prefix,
 )
-from translator import TanjunTranslator
-
-from health.checks import HealthCheck, HealthCheckResult, HealthStatus
+from health.checks import HealthStatus
 from health.manager import HealthCheckManager
 from OpenAIHealthCheck import OpenAIHealthCheck
+from translator import TanjunTranslator
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -121,7 +120,6 @@ async def main():
     from api import preload_guild_configs
 
     await preload_guild_configs(bot)
-
 
     # Run startup health checks
     health_manager = HealthCheckManager(bot)

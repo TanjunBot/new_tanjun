@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from health.checks import HealthCheckResult, HealthStatus
@@ -32,18 +32,14 @@ def _parse_alert_config() -> tuple[int, int]:
     try:
         channel_id = int(channel_str)
     except ValueError as exc:
-        raise RuntimeError(
-            f"HEALTH_ALERT_CHANNEL_ID must be an integer, got: {channel_str!r}"
-        ) from exc
+        raise RuntimeError(f"HEALTH_ALERT_CHANNEL_ID must be an integer, got: {channel_str!r}") from exc
 
     if user_str is None:
         raise RuntimeError("Missing required env var: HEALTH_ALERT_USER_ID")
     try:
         user_id = int(user_str)
     except ValueError as exc:
-        raise RuntimeError(
-            f"HEALTH_ALERT_USER_ID must be an integer, got: {user_str!r}"
-        ) from exc
+        raise RuntimeError(f"HEALTH_ALERT_USER_ID must be an integer, got: {user_str!r}") from exc
 
     return channel_id, user_id
 
@@ -82,7 +78,7 @@ async def notify_health_failures(
     embed = discord.Embed(
         title="⚠️ Health Check Failure",
         color=0xFF0000,
-        timestamp=datetime.now(timezone.utc),
+        timestamp=datetime.now(UTC),
     )
 
     for failure in failures:

@@ -82,11 +82,7 @@ class HealthCheckManager:
         results = await self.run_all()
 
         critical_check_names = {c.name for c in self._checks if c.critical}
-        critical_failures = [
-            r for r in results
-            if r.status == HealthStatus.CRITICAL
-            and r.check_name in critical_check_names
-        ]
+        critical_failures = [r for r in results if r.status == HealthStatus.CRITICAL and r.check_name in critical_check_names]
         degraded = [r for r in results if r.status == HealthStatus.DEGRADED]
         healthy = [r for r in results if r.status == HealthStatus.HEALTHY]
 
@@ -113,10 +109,7 @@ class HealthCheckManager:
 
     async def notify_critical_failures(self) -> None:
         """Notify the designated Discord channel about critical startup failures."""
-        critical_results = [
-            r for r in self._last_results.values()
-            if r.status == HealthStatus.CRITICAL
-        ]
+        critical_results = [r for r in self._last_results.values() if r.status == HealthStatus.CRITICAL]
         if critical_results:
             await notify_health_failures(self.bot, critical_results)
 
@@ -138,10 +131,7 @@ class HealthCheckManager:
                 await asyncio.sleep(interval)
                 try:
                     results = await self.run_all()
-                    failures = [
-                        r for r in results
-                        if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)
-                    ]
+                    failures = [r for r in results if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)]
                     if failures:
                         await notify_health_failures(self.bot, failures)
                 except Exception:

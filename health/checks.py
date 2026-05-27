@@ -10,13 +10,14 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
 
 class HealthStatus(Enum):
     """Status of a health check."""
+
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     CRITICAL = "critical"
@@ -26,11 +27,12 @@ class HealthStatus(Enum):
 @dataclass
 class HealthCheckResult:
     """Result of a single health check."""
+
     check_name: str
     status: HealthStatus
     message: str
     details: dict[str, Any] | None = None
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 class HealthCheck(ABC):

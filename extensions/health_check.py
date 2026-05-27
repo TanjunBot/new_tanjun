@@ -1,5 +1,6 @@
-from health_check import HealthCheck, HealthCheckResult, HealthStatus
 from typing import Any
+
+from health_check import HealthCheck, HealthCheckResult, HealthStatus
 
 
 class BackgroundLoopHealthCheck(HealthCheck):
@@ -67,7 +68,7 @@ class BackgroundLoopHealthCheck(HealthCheck):
                 failed_loops.append(f"{name} (missing)")
                 continue
             try:
-                is_running = getattr(task, "is_running")
+                is_running = task.is_running
             except Exception:
                 failed_loops.append(f"{name} (invalid)")
                 continue
