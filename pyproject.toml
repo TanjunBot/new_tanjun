@@ -1,16 +1,16 @@
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
-backend-path = ["."]
+
+[tool.setuptools.packages.find]
+include = ["ai*", "commands*", "extensions*", "health*", "loops*", "minigames*", "utils*"]
 
 [project]
 name = "tanjun_5.0"
 version = "1.1.4"
 description = "The Officila Tanjun Discord Bot!"
 readme = "README.md"
-requires-python = ">=3.12"
-
-license = {file = "LICENSE.txt"}
+requires-python = ">=3.11"
 
 authors = [
     {name = "EntchenEric", email = "eseidel2004@gmail.com"},
@@ -38,7 +38,7 @@ dependencies = [
     "httpx==0.28.1",
     "idna==3.16",
     "matplotlib==3.10.9",
-    "mpmath==1.4.1",
+    "mpmath==1.3.0",
     "multidict==6.7.1",
     "mysql-connector-python==9.7.0",
     "num2words==0.5.14",
@@ -65,7 +65,7 @@ dependencies = [
     "typing_extensions==4.15.0",
     "urllib3==2.7.0",
     "yarl==1.24.2",
-    "rembg",
+    "rembg==2.0.75",
 ]
 
 [project.optional-dependencies]
