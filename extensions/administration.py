@@ -58,9 +58,20 @@ class administrationCog(commands.Cog):
     def _locale(self, ctx: commands.Context) -> str:
         """Get locale string from context."""
         guild = getattr(ctx, "guild", None)
-        if guild is not None:
-            return str(guild.preferred_locale)
-        return "en_US"
+        locale = str(guild.preferred_locale) if guild is not None else "en_US"
+
+        # Normalize locale string
+        locale = locale.replace("_", "-")
+
+        # Canonicalize common English variants to "en"
+        if locale.startswith("en-") or locale == "en":
+            locale = "en"
+
+        # Ensure fallback is valid
+        if locale not in ["en", "de"]:
+            locale = "en"
+
+        return locale
 
     @commands.command()
     async def sync(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
@@ -318,7 +329,8 @@ class administrationCog(commands.Cog):
             await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
-        if confirmation_message.content.lower() != "passwort":
+        expected_password = tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.expected_password").lower()
+        if confirmation_message.content.lower() != expected_password:
             await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.wrong_password"))
             return
 
@@ -419,7 +431,8 @@ Das Tanjun-Team
             await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout"))
             return
 
-        if confirmation_message.content.lower() != "passwort":
+        expected_password = tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.expected_password").lower()
+        if confirmation_message.content.lower() != expected_password:
             await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.wrong_password"))
             return
 
@@ -564,7 +577,8 @@ Das Tanjun-Team
             return
 
         selected_schema = confirmation_message.content.strip()
-        if selected_schema.lower() == "abbrechen":
+        cancel_token = tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.cancel_token").lower()
+        if selected_schema.lower() == cancel_token:
             await ctx.channel.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.aborted"))
             return
 

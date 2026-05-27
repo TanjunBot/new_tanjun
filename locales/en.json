@@ -31152,6 +31152,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.update_text.expected_password",
+    "source_string": "passwort",
+    "translation": "password",
+    "context": "Expected password response value",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.update_text.cancelled",
     "source_string": "Abgebrochen!",
     "translation": "Cancelled!",
@@ -31217,7 +31225,7 @@
   },
   {
     "identifier": "commands.admin.database_sync.schema_prompt",
-    "source_string": "Ich habe folgende Schemata im Dump gefunden:",
+    "source_string": "Ich habe folgende Schemata im Dump gefunden:\n${schema_list}\n\n**Welches Schema soll geladen werden?** Bitte gebe den exakten Schema-Namen in den Chat ein (oder `abbrechen` zum Abbrechen).",
     "translation": "I found the following schemas in the dump:\n${schema_list}\n\n**Which schema should be loaded?** Please type the exact schema name in the chat (or `cancel` to cancel).",
     "context": "Prompt asking which schema to import",
     "labels": "unassigned",
@@ -31244,6 +31252,14 @@
     "source_string": "Datenbank-Sync abgebrochen.",
     "translation": "Database sync cancelled.",
     "context": "Message when database sync is cancelled",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.cancel_token",
+    "source_string": "abbrechen",
+    "translation": "cancel",
+    "context": "Expected cancel token value",
     "labels": "unassigned",
     "max_length": null
   },

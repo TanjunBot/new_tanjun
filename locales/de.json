@@ -31042,7 +31042,7 @@
   {
     "identifier": "commands.admin.feedback.added",
     "source_string": "Feedback wurde hinzugefuegt. Vielen dank!",
-    "translation": "Feedback wurde hinzugefügt. Vielen dank!",
+    "translation": "Feedback wurde hinzugefügt. Vielen Dank!",
     "context": "Message after adding feedback",
     "labels": "unassigned",
     "max_length": null
@@ -31066,7 +31066,7 @@
   {
     "identifier": "commands.admin.update_text.confirm",
     "source_string": "Willst du wirklich die Update-Text an alle Admins senden? (y/n)",
-    "translation": "Willst du wirklich die Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!",
+    "translation": "Willst du wirklich die Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
     "context": "Confirmation prompt before sending update to all admins",
     "labels": "unassigned",
     "max_length": null
@@ -31104,6 +31104,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.update_text.expected_password",
+    "source_string": "passwort",
+    "translation": "passwort",
+    "context": "Expected password response value",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.update_text.cancelled",
     "source_string": "Abgebrochen!",
     "translation": "Abgebrochen!",
@@ -31122,7 +31130,7 @@
   {
     "identifier": "commands.admin.demo_message.confirm",
     "source_string": "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)",
-    "translation": "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!",
+    "translation": "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
     "context": "Confirmation prompt before sending demo thank you message to all admins",
     "labels": "unassigned",
     "max_length": null
@@ -31196,6 +31204,14 @@
     "source_string": "Datenbank-Sync abgebrochen.",
     "translation": "Datenbank-Sync abgebrochen.",
     "context": "Message when database sync is cancelled",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.cancel_token",
+    "source_string": "abbrechen",
+    "translation": "abbrechen",
+    "context": "Expected cancel token value",
     "labels": "unassigned",
     "max_length": null
   },
