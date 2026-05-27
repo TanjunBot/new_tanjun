@@ -1,9 +1,8 @@
 import discord
 
 from api import (
-    get_custom_formula,
+    _get_cached_config,
     get_level_system_status,
-    get_xp_scaling,
     update_user_xp_from_voice,
 )
 from loops._voice_tracker import voice_user_ids
@@ -18,10 +17,11 @@ def _get_member(client: discord.Client, user_id: int, guild_id: int) -> discord.
 
 
 async def fetch_xp_details(user: discord.Member):
-    scaling = await get_xp_scaling(user.guild.id)
-    custom_formula = await get_custom_formula(user.guild.id)
+    guild_id = str(user.guild.id)
+    scaling = await _get_cached_config(guild_id, "scaling", "medium")
+    custom_formula = await _get_cached_config(guild_id, "custom_formula")
     xp_to_add = await calculate_xp(
-        str(user.guild.id),
+        guild_id,
         str(user.id),
         str(user.voice.channel.id) if user.voice and user.voice.channel else "0",
         [str(role.id) for role in user.roles],

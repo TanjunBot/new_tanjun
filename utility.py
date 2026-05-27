@@ -1,4 +1,5 @@
 import ast
+import bisect
 import datetime
 import gzip
 import logging
@@ -991,6 +992,43 @@ LEVEL_SCALINGS = {
     "extreme": lambda level: 100 * (level**2.5),
 }
 
+
+class LevelThresholdCache:
+    """Pre-compute and cache level XP thresholds per (scaling, custom_formula) pair.
+
+    Instead of binary-searching get_xp_for_level on every call (O(log n) per call
+    with O(1) per iteration), this pre-computes all thresholds once and uses
+    bisect_right for O(log n) lookup on the pre-computed list — reducing
+    per-call overhead to just the bisect.
+    """
+
+    _thresholds: dict[tuple[str, str | None], tuple[list[int], int]] = {}
+    _MAX_LEVEL = 10000
+
+    @classmethod
+    def get_level_for_xp(cls, xp: int, scaling: str, custom_formula: str | None = None) -> int:
+        key = (scaling, custom_formula)
+        thresholds, max_level = cls._thresholds.get(key, (None, 0))  # type: ignore
+        if thresholds is None or thresholds[-1] < xp:
+            # Build or extend thresholds if needed
+            if thresholds is None:
+                start_level = 1
+                thresholds = []
+            else:
+                # Extend from current; don't rebuild from scratch
+                if max_level >= cls._MAX_LEVEL and thresholds[-1] >= xp:
+                    return bisect.bisect_right(thresholds, xp)
+                start_level = len(thresholds) + 1
+                max_level = cls._MAX_LEVEL
+            for level in range(start_level, max_level + 1):
+                thresholds.append(get_xp_for_level(level, scaling, custom_formula))
+                if thresholds[-1] > xp and level >= start_level + 10:
+                    max_level = level
+                    break
+            cls._thresholds[key] = (thresholds, max_level)
+        return bisect.bisect_right(thresholds, xp)
+
+
 operators = {
     ast.Add: op.add,
     ast.Sub: op.sub,
@@ -1098,14 +1136,8 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str = None) -> in
 
 
 def get_level_for_xp(xp: int, scaling: str, custom_formula: str = None) -> int:
-    low, high = 1, 10000  # Assuming a high range cap for levels
-    while low < high:
-        mid = (low + high) // 2
-        if get_xp_for_level(mid, scaling, custom_formula) > xp:
-            high = mid
-        else:
-            low = mid + 1
-    return low
+    """Get the level for a given XP value using pre-computed thresholds."""
+    return LevelThresholdCache.get_level_for_xp(xp, scaling, custom_formula)
 
 
 def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
