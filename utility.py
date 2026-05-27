@@ -16,6 +16,7 @@ from typing import Any, Protocol, Self, TypeVar
 
 import aiohttp
 import discord
+from aiohttp import ClientTimeout
 from github import Github
 from pyparsing import (
     CaselessLiteral,
@@ -911,39 +912,28 @@ class NumericStringParser:
 
 
 async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
-    async with aiohttp.ClientSession() as session:
+    try:
+        async with aiohttp.ClientSession(timeout=ClientTimeout(total=10)) as session:
 
-        async def fetch(url: str) -> dict | None:
-            async with session.get(url) as response:
-                if response.status != 200:
-                    return None
-                return await response.json()
+            async def fetch(url: str) -> dict | None:
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        return None
+                    return await response.json()
 
-        r = await fetch(
-            "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg" % (giphyAPIKey, query, limit)
-        )
+            r = await fetch(
+                "https://api.giphy.com/v1/gifs/search?api_key=%s&q=%s&limit=%s&rating=pg" % (giphyAPIKey, query, limit)
+            )
 
-        if r is None:
-            return []
-        results = r.get("data", [])
-        # nosec: B311
-        random.shuffle(results)
+            if r is None:
+                return []
+            results = r.get("data", [])
+            # nosec: B311
+            random.shuffle(results)
 
-        return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
-
-
-def checkIfHasPro(guildid: int) -> bool:
-    # TODO: Implement actual Pro subscription check against database/payment backend
-    if guildid == 0:
-        return False
-    return True
-
-
-def checkIfhasPlus(userid: int) -> bool:
-    # TODO: Implement actual Plus subscription check against database/payment backend
-    if userid == 0:
-        return False
-    return True
+            return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
+    except (TimeoutError, aiohttp.ClientError):
+        return []
 
 
 def missingLocalization(locale: str) -> None:
@@ -1251,7 +1241,7 @@ def date_time_to_timestamp(date: datetime.datetime) -> int:
 
 
 async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict:
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(timeout=ClientTimeout(total=30)) as session:
         form_data = aiohttp.FormData()
         form_data.add_field("key", ImgBBApiKey)
         form_data.add_field("image", image_bytes, filename=f"upload.{file_extension}")
@@ -1269,7 +1259,7 @@ async def upload_to_tanjun_logs(content: str) -> str:
     username = bytebin_username
     password = bytebin_password
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(timeout=ClientTimeout(total=10)) as session:
         auth = aiohttp.BasicAuth(username, password)
         headers = {"Content-Type": "text/html", "Content-Encoding": "gzip"}
 

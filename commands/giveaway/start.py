@@ -430,15 +430,6 @@ class RoleRequirementView(ui.View):
 
     async def submit(self, interaction: discord.Interaction):
         role_ids = [role for role in interaction.data["values"]]
-        if len(role_ids) > 1 and not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(
-                    self.commandInfo.locale,
-                    "commands.giveaway.builder.role_requirement.pro",
-                ),
-                ephemeral=True,
-            )
-            role_ids = role_ids[:1]
         self.roles = role_ids
         await interaction.response.edit_message(
             content=tanjunLocalizer.localize(
@@ -1135,12 +1126,6 @@ class GiveawayBuilder(ui.View):
         await self.update_embed(interaction.response.edit_message)
 
     async def custom_name(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
-                ephemeral=True,
-            )
-            return
         modal = CustomNameModal(
             self,
             self.commandInfo,
@@ -1225,12 +1210,6 @@ class GiveawayBuilder(ui.View):
         await interaction.response.send_modal(modal)
 
     async def start_time(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
-                ephemeral=True,
-            )
-            return
         modal = StartTimeModal(
             self,
             self.commandInfo,
@@ -1258,12 +1237,6 @@ class GiveawayBuilder(ui.View):
         await interaction.response.send_modal(modal)
 
     async def day_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
-                ephemeral=True,
-            )
-            return
         modal = DayRequirementModal(
             self,
             self.commandInfo,
@@ -1301,12 +1274,6 @@ class GiveawayBuilder(ui.View):
         )
 
     async def voice_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
-                ephemeral=True,
-            )
-            return
         modal = VoiceRequirementModal(
             self,
             self.commandInfo,
@@ -1322,12 +1289,6 @@ class GiveawayBuilder(ui.View):
         await interaction.response.send_modal(modal)
 
     async def add_channel_requirement(self, interaction: discord.Interaction, button: GiveawayBuilderButton):
-        if not utility.checkIfHasPro(self.commandInfo.guild):
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(self.commandInfo.locale, "commands.giveaway.builder.pro_required"),
-                ephemeral=True,
-            )
-            return
         view = AddChannelRequirementView(self.commandInfo, self)
 
         await interaction.response.edit_message(

@@ -16,6 +16,7 @@ from typing import Any
 
 import aiohttp
 import discord
+from aiohttp import ClientTimeout
 from discord.ext import commands
 
 import config
@@ -134,9 +135,19 @@ class administrationCog(commands.Cog):
         await create_database_backup(self.bot)
         await removeAllJoinToCreateChannels()
         await ctx.send("Updating...")
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f"http://127.0.0.1:6969/restart/{self.bot.application_id}") as response:
+        try:
+            async with (
+                aiohttp.ClientSession() as session,
+                session.get(
+                    f"http://127.0.0.1:6969/restart/{self.bot.application_id}", timeout=ClientTimeout(total=10)
+                ) as response,
+            ):
+                if response.status != 200:
+                    await ctx.send(f"Error: Received status code {response.status}. Response: {await response.text()}")
+                    return
                 await ctx.send(await response.text())
+        except (TimeoutError, aiohttp.ClientError) as e:
+            await ctx.send(f"Failed to connect to update service: {e}")
 
     @commands.command()
     async def welcome(self, ctx: commands.Context, user: discord.Member | None = None) -> None:  # type: ignore[type-arg]
@@ -169,7 +180,9 @@ class administrationCog(commands.Cog):
     async def getBrawlers(self) -> dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
-            async with session.get("https://api.brawlstars.com/v1/brawlers", headers=headers) as response:
+            async with session.get(
+                "https://api.brawlstars.com/v1/brawlers", headers=headers, timeout=ClientTimeout(total=10)
+            ) as response:
                 result = await response.json()
                 if not isinstance(result, dict):
                     return {"items": []}
@@ -186,10 +199,22 @@ class administrationCog(commands.Cog):
             starPowers = brawler["starPowers"]
             for starPower in starPowers:
                 url = f"https://cdn.brawlify.com/star-powers/borderless/{starPower['id']}.png"
-                async with aiohttp.ClientSession() as session, session.get(url) as response:
-                    image = await response.read()
-                    emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)  # type: ignore[union-attr]
-                    await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
+                try:
+                    async with (
+                        aiohttp.ClientSession() as session,
+                        session.get(url, timeout=ClientTimeout(total=10)) as response,
+                    ):
+                        if response.status != 200:
+                            print(f"Download failed: {response.status} for {starPower['name']}")
+                            await ctx.send(f"Download failed: {response.status} for {starPower['name']}")
+                            continue
+                        image = await response.read()
+                        emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)  # type: ignore[union-attr]
+                        await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
+                except (TimeoutError, aiohttp.ClientError, discord.HTTPException) as e:
+                    print(f"Failed to create emoji for {starPower['name']}: {e}")
+                    await ctx.send(f"Failed to create emoji for {starPower['name']}: {e}")
+                    continue
 
     @commands.command()
     async def bsgadgetsemojis(self, ctx: commands.Context, start: int = 0) -> None:  # type: ignore[type-arg]
@@ -202,16 +227,30 @@ class administrationCog(commands.Cog):
             gadgets = brawler["gadgets"]
             for gadget in gadgets:
                 url = f"https://cdn.brawlify.com/gadgets/borderless/{gadget['id']}.png"
-                async with aiohttp.ClientSession() as session, session.get(url) as response:
-                    image = await response.read()
-                    emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)  # type: ignore[union-attr]
+                try:
+                    async with (
+                        aiohttp.ClientSession() as session,
+                        session.get(url, timeout=ClientTimeout(total=10)) as response,
+                    ):
+                        if response.status != 200:
+                            print(f"Download failed: {response.status} for {gadget['name']}")
+                            await ctx.send(f"Download failed: {response.status} for {gadget['name']}")
+                            continue
+                        image = await response.read()
+                        emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)  # type: ignore[union-attr]
 
-                    await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
+                        await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
+                except (TimeoutError, aiohttp.ClientError, discord.HTTPException) as e:
+                    print(f"Failed to create emoji for {gadget['name']}: {e}")
+                    await ctx.send(f"Failed to create emoji for {gadget['name']}: {e}")
+                    continue
 
     async def getAccData(self, id: str) -> dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
-            async with session.get(f"https://api.brawlstars.com/v1/players/%23{id}", headers=headers) as response:
+            async with session.get(
+                f"https://api.brawlstars.com/v1/players/%23{id}", headers=headers, timeout=ClientTimeout(total=10)
+            ) as response:
                 result = await response.json()
                 if not isinstance(result, dict):
                     return {}
@@ -515,7 +554,10 @@ Das Tanjun-Team
         status_msg = await ctx.send("Lade SQL Dump herunter...")
 
         try:
-            async with aiohttp.ClientSession() as session, session.get(attachment_url) as resp:
+            async with (
+                aiohttp.ClientSession() as session,
+                session.get(attachment_url, timeout=ClientTimeout(total=300)) as resp,
+            ):
                 if resp.status != 200:
                     await status_msg.edit(content=f"Download fehlgeschlagen! Status: {resp.status}")
                     return

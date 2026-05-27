@@ -7,7 +7,6 @@ from api import get_custom_formula, set_custom_formula, set_xp_scaling
 from localizer import tanjunLocalizer
 from utility import (
     LEVEL_SCALINGS,
-    checkIfHasPro,
     commandInfo,
     get_xp_for_level,
     tanjunEmbed,
@@ -57,20 +56,6 @@ async def change_xp_scaling_command(commandInfo: commandInfo, scaling: str, cust
         return
 
     if scaling == "custom":
-        if not checkIfHasPro(commandInfo.guild.id):
-            embed = tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.level.changexpscaling.error.no_pro.title",
-                ),
-                description=tanjunLocalizer.localize(
-                    commandInfo.locale,
-                    "commands.level.changexpscaling.error.no_pro.description",
-                ),
-            )
-            await commandInfo.reply(embed=embed)
-            return
-
         if not custom_formula:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(
@@ -157,8 +142,6 @@ async def show_xp_scalings(commandInfo: commandInfo, start_level: int = 1, end_l
 
         for scaling in list(LEVEL_SCALINGS.keys()) + ["custom"]:
             if scaling == "custom":
-                if not checkIfHasPro(commandInfo.guild.id):
-                    continue
                 custom_formula = await get_custom_formula(str(commandInfo.guild.id))
                 if not custom_formula:
                     continue

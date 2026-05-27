@@ -4,7 +4,6 @@ from api import set_counting_challenge_progress
 from commands.minigames._counting_common import (
     require_bot_permissions,
     require_moderate_members,
-    require_pro,
 )
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
@@ -17,9 +16,6 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         return
 
     if commandInfo.guild is None:
-        return
-
-    if await require_pro(commandInfo, commandInfo.guild.id, LOCALE_KEY):
         return
 
     if await require_bot_permissions(commandInfo, channel):

@@ -3,6 +3,7 @@ from typing import Any
 
 import aiohttp
 import discord
+from aiohttp import ClientTimeout
 
 from api import get_twitch_online_notification_by_twitch_uuid
 from config import twitchId, twitchSecret
@@ -37,9 +38,16 @@ class TwitchAPI:
             "grant_type": "client_credentials",
         }
 
-        async with self.session.post(url=auth_url, params=params) as response:
-            data = await response.json()
-            self.access_token = data["access_token"]
+        try:
+            async with self.session.post(url=auth_url, params=params, timeout=ClientTimeout(total=10)) as response:
+                data = await response.json()
+                self.access_token = data["access_token"]
+        except (TimeoutError, aiohttp.ClientError) as e:
+            print(f"Error getting Twitch access token: {e}")
+            self.access_token = None
+        except Exception as e:
+            print(f"Unexpected error getting Twitch access token: {e}")
+            self.access_token = None
 
     async def setup_headers(self) -> None:
         if self.client_id is None or self.client_secret is None:
@@ -58,7 +66,7 @@ class TwitchAPI:
         url = f"{self.base_url}/users"
         params = {"login": login_name}
 
-        async with self.session.get(url, headers=self.headers, params=params) as response:
+        async with self.session.get(url, headers=self.headers, params=params, timeout=ClientTimeout(total=10)) as response:
             data: dict[str, list[dict[str, str]]] = await response.json()
             if data["data"]:
                 return data["data"][0]
@@ -71,9 +79,12 @@ class TwitchAPI:
         url = f"{self.base_url}/streams"
         params = {"user_id": user_ids}
 
-        async with self.session.get(url, headers=self.headers, params=params) as response:
-            data: dict[str, list[dict[str, str]]] = await response.json()
-            return data.get("data", [])
+        try:
+            async with self.session.get(url, headers=self.headers, params=params, timeout=ClientTimeout(total=10)) as response:
+                data: dict[str, list[dict[str, str]]] = await response.json()
+                return data.get("data", [])
+        except (TimeoutError, aiohttp.ClientError):
+            return []
 
     async def initialize_stream_status(self, user_ids: list[str]) -> None:
         if not user_ids:

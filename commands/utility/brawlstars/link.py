@@ -1,6 +1,7 @@
 from typing import Any
 
 import aiohttp
+from aiohttp import ClientTimeout
 
 from api import add_brawlstars_linked_account, get_brawlstars_linked_account
 from config import brawlstarsToken
@@ -15,6 +16,7 @@ async def getPlayerInfo(playerTag: str) -> dict[str, str] | None:
         session.get(
             f"https://api.brawlstars.com/v1/players/%23{playerTag[1:]}",
             headers=headers,
+            timeout=ClientTimeout(total=10),
         ) as response,
     ):
         if response.status != 200:
