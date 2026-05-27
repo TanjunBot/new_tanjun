@@ -526,7 +526,7 @@ Das Tanjun-Team
         try:
             async with (
                 aiohttp.ClientSession() as session,
-                session.get(attachment_url, timeout=ClientTimeout(total=10)) as resp,
+                session.get(attachment_url, timeout=ClientTimeout(total=300)) as resp,
             ):
                 if resp.status != 200:
                     await status_msg.edit(content=f"Download fehlgeschlagen! Status: {resp.status}")
