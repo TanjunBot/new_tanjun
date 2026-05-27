@@ -133,16 +133,11 @@ class LoopCog(commands.Cog):
             live_streams = {stream["user_id"]: stream for stream in streams}
 
             # Batch notification for streams going live simultaneously
-            newly_live = [
-                uuid for uuid in user_ids
-                if not twitch_api.stream_status.get(uuid, False)
-                and uuid in live_streams
-            ]
+            newly_live = [uuid for uuid in user_ids if not twitch_api.stream_status.get(uuid, False) and uuid in live_streams]
 
             if newly_live:
                 await asyncio.gather(
-                    *(notify_twitch_online(self.bot, uuid, live_streams[uuid])
-                      for uuid in newly_live),
+                    *(notify_twitch_online(self.bot, uuid, live_streams[uuid]) for uuid in newly_live),
                     return_exceptions=True,
                 )
 
