@@ -1,6 +1,5 @@
 from collections.abc import Mapping
 from typing import Any
-import asyncio
 
 import aiohttp
 import discord
@@ -43,7 +42,7 @@ class TwitchAPI:
             async with self.session.post(url=auth_url, params=params, timeout=ClientTimeout(total=10)) as response:
                 data = await response.json()
                 self.access_token = data["access_token"]
-        except (asyncio.TimeoutError, aiohttp.ClientError) as e:
+        except (TimeoutError, aiohttp.ClientError) as e:
             print(f"Error getting Twitch access token: {e}")
             self.access_token = None
         except Exception as e:
@@ -84,7 +83,7 @@ class TwitchAPI:
             async with self.session.get(url, headers=self.headers, params=params, timeout=ClientTimeout(total=10)) as response:
                 data: dict[str, list[dict[str, str]]] = await response.json()
                 return data.get("data", [])
-        except (asyncio.TimeoutError, aiohttp.ClientError):
+        except (TimeoutError, aiohttp.ClientError):
             return []
 
     async def initialize_stream_status(self, user_ids: list[str]) -> None:
