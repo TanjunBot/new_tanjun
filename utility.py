@@ -1009,7 +1009,10 @@ class LevelThresholdCache:
 
     @classmethod
     def get_level_for_xp(cls, xp: int, scaling: str, custom_formula: str | None = None) -> int:
-        key = (scaling, custom_formula)
+        # Normalize key: only store custom_formula when scaling is "custom"
+        # to avoid duplicate cache entries for built-in scalings
+        effective_formula = custom_formula if scaling == "custom" else None
+        key = (scaling, effective_formula)
         entry = cls._thresholds.get(key)
         thresholds: list[int] | None
         max_level: int
@@ -1032,7 +1035,7 @@ class LevelThresholdCache:
                 start_level = len(thresholds) + 1
                 max_level = cls._MAX_LEVEL
             for level in range(start_level, max_level + 1):
-                thresholds.append(get_xp_for_level(level, scaling, custom_formula))
+                thresholds.append(get_xp_for_level(level, scaling, effective_formula))
                 if thresholds[-1] > xp and level >= start_level + 10:
                     max_level = level
                     break
@@ -1149,7 +1152,7 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None
     return math.floor(result)
 
 
-def get_level_for_xp(xp: int, scaling: str, custom_formula: str = None) -> int:
+def get_level_for_xp(xp: int, scaling: str, custom_formula: str | None = None) -> int:
     """Get the level for a given XP value using pre-computed thresholds."""
     return LevelThresholdCache.get_level_for_xp(xp, scaling, custom_formula)
 
