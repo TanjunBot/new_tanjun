@@ -1,3 +1,5 @@
+import logging
+
 import discord
 from discord.ext import commands
 
@@ -19,6 +21,7 @@ from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
 from commands.utility.autopublish import publish_message
 from commands.utility.report import report_btn_click
 from config import adminIds
+from localizer import tanjunLocalizer
 from loops._voice_tracker import handleVoiceChange
 from minigames.addLevelXp import addLevelXp
 from minigames.counting import counting
@@ -91,8 +94,37 @@ class ListenerCog(commands.Cog):
             elif custom_id.startswith("ticket_close"):
                 await closeTicketListener(interaction)
                 return
+        except discord.Forbidden:
+            locale = interaction.locale  # type: ignore[assignment]
+            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.forbidden")
+            await self._send_error(interaction, error_msg)
+        except discord.NotFound:
+            locale = interaction.locale  # type: ignore[assignment]
+            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.notfound")
+            await self._send_error(interaction, error_msg)
+        except discord.HTTPException as e:
+            locale = interaction.locale  # type: ignore[assignment]
+            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.http", status=e.status)
+            await self._send_error(interaction, error_msg)
         except Exception:
-            logging.exception("Error in on_interaction listener")
+            logging.exception("Unexpected error in on_interaction listener")
+            locale = interaction.locale  # type: ignore[assignment]
+            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.unexpected")
+            await self._send_error(interaction, error_msg)
+
+    async def _send_error(self, interaction: discord.Interaction, message: str) -> None:
+        embed = discord.Embed(
+            colour=0xE74C3C,
+            title="Error",
+            description=message,
+        )
+        try:
+            if interaction.response.is_done():
+                await interaction.followup.send(embed=embed, ephemeral=True)
+            else:
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+        except Exception:
+            pass  # Truly give up if we can't even send an error
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:

@@ -4,14 +4,13 @@ import json
 import logging
 import time
 import uuid
-from collections.abc import AsyncIterator, Awaitable, Callable, Sequence
+from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any
 
 # import asyncmy
 from discord import Entitlement
-from discord.ext import commands
 
 from models import (
     AfkMessageModel,
