@@ -936,13 +936,13 @@ async def get_warnings(guild_id: str | int, user_id: str | int | None = None) ->
     if user_id:
         query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id, user_id)
-        result = await execute_query(query, params)
-        return [WarningModel.from_row(row) for row in result] if result else None
+        result = await safe_execute_query(query, params)
+        return [WarningModel.from_row(row) for row in result] if result else []
     else:
         query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id,)
-        result = await execute_query(query, params)
-        return [WarningModel.from_row(row) for row in result] if result else None
+        result = await safe_execute_query(query, params)
+        return [WarningModel.from_row(row) for row in result] if result else []
 
 
 async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> list[DetailedWarningModel] | None:
@@ -952,7 +952,7 @@ async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> list
         "ORDER BY created_at DESC"
     )
     params = (guild_id, user_id)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     if result is None:
         return None
     return [DetailedWarningModel.from_row(row) for row in result]
@@ -1014,7 +1014,7 @@ async def save_channel_overwrites(channel_id: str | int, role_id: str | int, ove
 async def get_channel_overwrites(channel_id: str | int) -> list[ChannelOverwriteModel]:
     query = "SELECT role_id, overwrites FROM channel_overwrites WHERE channel_id = %s"
     params = (channel_id,)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     if result is None:
         return []
     return [ChannelOverwriteModel.from_row(row) for row in result]
@@ -1412,8 +1412,8 @@ async def add_level_role(guild_id: str, role_id: str, level: int) -> None:
 async def get_level_roles(guild_id: str) -> list[LevelRoleModel]:
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [LevelRoleModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [LevelRoleModel.from_row(row) for row in result]
 
 
 async def get_level_role(guild_id: str, role_id: str) -> int | None:
@@ -1499,29 +1499,29 @@ async def get_all_boosts(guild_id: str) -> dict[str, list[XpBoostModel]]:
     channel_query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s"
     user_query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s"
 
-    roles = await execute_query(role_query, (guild_id,))
-    channels = await execute_query(channel_query, (guild_id,))
-    users = await execute_query(user_query, (guild_id,))
+    roles = await safe_execute_query(role_query, (guild_id,))
+    channels = await safe_execute_query(channel_query, (guild_id,))
+    users = await safe_execute_query(user_query, (guild_id,))
 
     return {
-        "roles": [XpBoostModel.from_row(row) for row in roles] if roles else [],
-        "channels": [XpBoostModel.from_row(row) for row in channels] if channels else [],
-        "users": [XpBoostModel.from_row(row) for row in users] if users else [],
+        "roles": [XpBoostModel.from_row(row) for row in roles],
+        "channels": [XpBoostModel.from_row(row) for row in channels],
+        "users": [XpBoostModel.from_row(row) for row in users],
     }
 
 
 async def get_user_boost(guild_id: str, user_id: str) -> XpBoostModel | None:
     query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
     params = (guild_id, user_id)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     return XpBoostModel.from_row(result[0]) if result else None
 
 
 async def get_user_roles_boosts(guild_id: str, role_ids: list[str]) -> list[XpBoostModel]:
     query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
     params = (guild_id, tuple(role_ids))
-    result = await execute_query(query, params)
-    return [XpBoostModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [XpBoostModel.from_row(row) for row in result]
 
 
 async def get_channel_boost(guild_id: str, channel_id: str) -> XpBoostModel | None:
@@ -1590,14 +1590,14 @@ async def get_blacklist(guild_id: str) -> dict[str, list[BlacklistEntryModel]]:
     roles_query = "SELECT role_id, reason FROM blacklistedRole WHERE guild_id = %s"
     users_query = "SELECT user_id, reason FROM blacklistedUser WHERE guild_id = %s"
 
-    channels = await execute_query(channels_query, (guild_id,))
-    roles = await execute_query(roles_query, (guild_id,))
-    users = await execute_query(users_query, (guild_id,))
+    channels = await safe_execute_query(channels_query, (guild_id,))
+    roles = await safe_execute_query(roles_query, (guild_id,))
+    users = await safe_execute_query(users_query, (guild_id,))
 
     return {
-        "channels": [BlacklistEntryModel.from_row(row) for row in channels] if channels else [],
-        "roles": [BlacklistEntryModel.from_row(row) for row in roles] if roles else [],
-        "users": [BlacklistEntryModel.from_row(row) for row in users] if users else [],
+        "channels": [BlacklistEntryModel.from_row(row) for row in channels],
+        "roles": [BlacklistEntryModel.from_row(row) for row in roles],
+        "users": [BlacklistEntryModel.from_row(row) for row in users],
     }
 
 
@@ -1780,21 +1780,21 @@ async def get_giveaway(giveaway_id: int) -> GiveawayModel | None:
         "FROM giveaway WHERE giveawayId = %s"
     )
     params = (giveaway_id,)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     return GiveawayModel.from_row(result[0]) if result else None
 
 
 async def get_giveaway_channel_requirements(giveaway_id: int) -> list[GiveawayChannelRequirementModel]:
     query = "SELECT channelId, amount FROM giveawayChannelRequirement WHERE giveawayId = %s"
     params = (giveaway_id,)
-    result = await execute_query(query, params)
-    return [GiveawayChannelRequirementModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [GiveawayChannelRequirementModel.from_row(row) for row in result]
 
 
 async def get_giveaway_role_requirements(giveaway_id: int) -> list[str]:
     query = "SELECT roleId FROM giveawayRoleRequirement WHERE giveawayId = %s"
     params = (giveaway_id,)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     if result is None:
         return []
     return [row[0] for row in result]
@@ -1842,7 +1842,7 @@ async def delete_old_giveaways() -> None:
 async def get_giveaway_participants(giveaway_id: int) -> list[str]:
     query = "SELECT userId FROM giveawayParticipant WHERE giveawayId = %s"
     params = (giveaway_id,)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     if result is None:
         return []
     return [row[0] for row in result]
@@ -1858,22 +1858,22 @@ async def get_new_messages(giveaway_id: int, user_id: str) -> int | None:
 async def get_new_messages_channel(giveaway_id: int, channel_id: str, user_id: str) -> int | None:
     query = "SELECT amount FROM giveawayChannelMessages WHERE giveawayId = %s AND channelId = %s AND userId = %s"
     params = (giveaway_id, channel_id, user_id)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     return result[0][0] if result else None
 
 
 async def get_voice_time(giveaway_id: int, user_id: str) -> int | None:
     query = "SELECT voiceMinutes FROM giveawayVoiceTime WHERE giveawayId = %s AND userId = %s"
     params = (giveaway_id, user_id)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     return result[0][0] if result else None
 
 
 async def get_blacklisted_roles(guild_id: str) -> list[GiveawayBlacklistEntryModel]:
     query = "SELECT roleId, reason FROM giveawayBlacklistedRole WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [GiveawayBlacklistEntryModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [GiveawayBlacklistEntryModel.from_row(row) for row in result]
 
 
 async def check_if_user_blacklisted(guild_id: str, user_id: str) -> bool:
@@ -1886,7 +1886,7 @@ async def check_if_user_blacklisted(guild_id: str, user_id: str) -> bool:
 async def check_if_giveaway_participant(giveaway_id: int, user_id: str) -> bool:
     query = "SELECT * FROM giveawayParticipant WHERE giveawayId = %s AND userId = %s"
     params = (giveaway_id, user_id)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     return result is not None and len(result) > 0
 
 
@@ -1904,8 +1904,8 @@ async def add_giveaway_participant(giveaway_id: int, user_id: str) -> None:
 
 async def get_send_ready_giveaways() -> list[int]:
     query = "SELECT giveawayId FROM giveaway WHERE started = 0 AND starttime < NOW()"
-    result = await execute_query(query)
-    return [row[0] for row in result] if result else []
+    result = await safe_execute_query(query)
+    return [row[0] for row in result]
 
 
 async def add_giveaway_voice_minutes_if_needed(user_id: Any, guild_id: Any) -> None:
@@ -1940,8 +1940,8 @@ async def add_giveaway_new_message_channel_if_needed(user_id: Any, guild_id: Any
 
 async def get_end_ready_giveaways() -> list[int]:
     query = "SELECT giveawayId FROM giveaway WHERE ended = 0 AND endtime < NOW() AND started = 1 AND messageId <> 'pending'"
-    result = await execute_query(query)
-    return [row[0] for row in result] if result else []
+    result = await safe_execute_query(query)
+    return [row[0] for row in result]
 
 
 async def add_giveaway_blacklisted_user(guild_id: str, user_id: str) -> None:
@@ -1971,15 +1971,15 @@ async def remove_giveaway_blacklisted_role(guild_id: str, role_id: str) -> None:
 async def get_giveaway_blacklisted_users(guild_id: str) -> list[GiveawayBlacklistEntryModel]:
     query = "SELECT userId, reason FROM giveawayBlacklistedUser WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [GiveawayBlacklistEntryModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [GiveawayBlacklistEntryModel.from_row(row) for row in result]
 
 
 async def get_giveaway_blacklisted_roles(guild_id: str) -> list[GiveawayBlacklistEntryModel]:
     query = "SELECT roleId, reason FROM giveawayBlacklistedRole WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [GiveawayBlacklistEntryModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [GiveawayBlacklistEntryModel.from_row(row) for row in result]
 
 
 async def delete_giveaway(giveaway_id: int) -> None:
@@ -2241,8 +2241,8 @@ async def consumePaidToken(user_id: str, amount: int) -> None:
 async def getLevelLeaderboard(guild_id: str) -> list[LevelLeaderboardEntryModel]:
     query = "SELECT user_id, xp FROM level WHERE guild_id = %s ORDER BY xp DESC"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [LevelLeaderboardEntryModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [LevelLeaderboardEntryModel.from_row(row) for row in result]
 
 
 async def get_level_leaderboard_paginated(
@@ -2266,8 +2266,8 @@ async def get_level_leaderboard_paginated(
         LIMIT %s OFFSET %s
     """
     params = (guild_id, limit, offset)
-    result = await execute_query(query, params)
-    return [LevelLeaderboardEntryModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [LevelLeaderboardEntryModel.from_row(row) for row in result]
 
 
 async def get_level_leaderboard_count(guild_id: str) -> int:
@@ -2305,8 +2305,8 @@ async def addCustomSituation(
 
 async def getCustomSituations() -> list[str]:
     query = "SELECT name FROM aiSituations where unlocked = 1"
-    result = await execute_query(query)
-    return result if result else []
+    result = await safe_execute_query(query)
+    return [row[0] for row in result]
 
 
 async def getCustomSituation(name: str) -> AISituationModel | None:
@@ -2396,7 +2396,7 @@ async def removeAfk(user_id: str) -> None:
 async def checkIfUserIsAfk(user_id: str) -> bool:
     query = "SELECT * FROM afkUsers WHERE userId = %s"
     params = (user_id,)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     return result is not None and len(result) > 0
 
 
@@ -2412,8 +2412,8 @@ async def addAfkMessage(user_id: str, message_id: str, channel_id: str) -> None:
 async def getAfkMessages(user_id: str) -> list[AfkMessageModel]:
     query = "SELECT messageId, channelId FROM afkMessages WHERE userId = %s"
     params = (user_id,)
-    result = await execute_query(query, params)
-    return [AfkMessageModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [AfkMessageModel.from_row(row) for row in result]
 
 
 async def getAfkReason(user_id: str) -> str | None:
@@ -2464,14 +2464,14 @@ async def get_claimed_booster_channel(
             else "SELECT userId, channelId, guildId FROM claimedBoosterChannel WHERE userId = %s"
         )
         params = (user_id, guild_id) if guild_id else (user_id,)
-        result = await execute_query(query, params)
+        result = await safe_execute_query(query, params)
         if not result:
             return None
         return result[0][0] if guild_id else [ClaimedBoosterChannelModel.from_row(row) for row in result]
     else:
         query = "SELECT userId, channelId, guildId FROM claimedBoosterChannel"
-        result = await execute_query(query)
-        return [ClaimedBoosterChannelModel.from_row(row) for row in result] if result else []
+        result = await safe_execute_query(query)
+        return [ClaimedBoosterChannelModel.from_row(row) for row in result]
 
 
 async def add_booster_role(guild_id: str, role_id: str) -> None:
@@ -2515,14 +2515,14 @@ async def get_claimed_booster_role(
             else "SELECT userId, roleId, guildId FROM claimedBoosterRole WHERE userId = %s"
         )
         params = (user_id, guild_id) if guild_id else (user_id,)
-        result = await execute_query(query, params)
+        result = await safe_execute_query(query, params)
         if not result:
             return None
         return result[0][0] if guild_id else [ClaimedBoosterRoleModel.from_row(row) for row in result]
     else:
         query = "SELECT userId, roleId, guildId FROM claimedBoosterRole"
-        result = await execute_query(query)
-        return [ClaimedBoosterRoleModel.from_row(row) for row in result] if result else []
+        result = await safe_execute_query(query)
+        return [ClaimedBoosterRoleModel.from_row(row) for row in result]
 
 
 async def set_log_channel(guild_id: str, channel_id: str) -> None:
@@ -2556,8 +2556,8 @@ async def remove_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
 async def get_log_blacklist_channel(guild_id: str) -> list[str]:
     query = "SELECT channelId FROM logBlacklistChannel WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [row[0] for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [row[0] for row in result]
 
 
 async def is_log_channel_blacklisted(guild_id: str, channel_id: str) -> str | None:
@@ -2582,8 +2582,8 @@ async def remove_log_role_blacklist(guild_id: str, role_id: str) -> None:
 async def get_log_role_blacklist(guild_id: str) -> list[str]:
     query = "SELECT roleId FROM logRoleBlacklist WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [row[0] for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [row[0] for row in result]
 
 
 async def is_log_role_blacklisted(guild_id: str, role_id: str) -> str | None:
@@ -2608,8 +2608,8 @@ async def remove_log_user_blacklist(guild_id: str, user_id: str) -> None:
 async def get_log_user_blacklist(guild_id: str) -> list[str]:
     query = "SELECT userId FROM logUserBlacklist WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [row[0] for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [row[0] for row in result]
 
 
 async def is_log_user_blacklisted(guild_id: str, user_id: str) -> str | None:
@@ -2740,8 +2740,8 @@ async def get_scheduled_messages(user_id: str) -> list[ScheduledMessageModel]:
     ORDER BY sendTime ASC
     """
     params = (user_id,)
-    result = await execute_query(query, params)
-    return [ScheduledMessageModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [ScheduledMessageModel.from_row(row) for row in result]
 
 
 async def remove_scheduled_message(message_id: int) -> None:
@@ -2768,8 +2768,8 @@ async def get_user_scheduled_messages_in_timeframe(
         query += " AND guildId = %s"
         params.append(guild_id)
 
-    result = await execute_query(query, tuple(params))
-    return [ScheduledMessageModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, tuple(params))
+    return [ScheduledMessageModel.from_row(row) for row in result]
 
 
 async def update_scheduled_message_content(message_id: int, new_content: str) -> None:
@@ -2789,8 +2789,8 @@ async def get_ready_scheduled_messages() -> list[ScheduledMessageModel]:
     SELECT messageId, guildId, channelId, userId, content, sendTime, repeatInterval, repeatAmount, createdAt
     FROM scheduledMessages WHERE sendTime <= NOW()
     """
-    res = await execute_query(query)
-    return [ScheduledMessageModel.from_row(row) for row in res] if res else []
+    res = await safe_execute_query(query)
+    return [ScheduledMessageModel.from_row(row) for row in res]
 
 
 async def report_user(
@@ -2859,8 +2859,8 @@ async def get_reports(guild_id: str, user_id: str | None = None) -> list[ReportM
         query += " AND userId = %s"
         params.append(user_id)
 
-    result = await execute_query(query, tuple(params))
-    return [ReportModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, tuple(params))
+    return [ReportModel.from_row(row) for row in result]
 
 
 async def get_reports_by_reporter(guild_id: str, reporter_id: str) -> list[ReportModel]:
@@ -2876,8 +2876,8 @@ async def get_reports_by_reporter(guild_id: str, reporter_id: str) -> list[Repor
         FROM reports WHERE guildId = %s AND reporterId = %s
     """
     params = (guild_id, reporter_id)
-    result = await execute_query(query, params)
-    return [ReportModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [ReportModel.from_row(row) for row in result]
 
 
 async def block_reporter(guild_id: str, reporter_id: str) -> None:
@@ -2895,8 +2895,8 @@ async def unblock_reporter(guild_id: str, reporter_id: str) -> None:
 async def get_blocked_reporters(guild_id: str) -> list[BlockedReporterModel]:
     query = "SELECT guildId, userId FROM blockedReporters WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [BlockedReporterModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [BlockedReporterModel.from_row(row) for row in result]
 
 
 async def check_if_reporter_is_blocked(guild_id: str, reporter_id: str) -> bool:
@@ -2926,8 +2926,8 @@ async def remove_report_channel(guild_id: str) -> None:
 async def get_trigger_messages(guild_id: str) -> list[TriggerMessageModel]:
     query = "SELECT id, guildId, `trigger`, response, caseSensitive FROM triggerMessages WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [TriggerMessageModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [TriggerMessageModel.from_row(row) for row in result]
 
 
 async def add_trigger_message(guild_id: str, trigger: str, response: str, caseSensitive: bool = False) -> None:
@@ -2945,15 +2945,15 @@ async def remove_trigger_message(guild_id: str, trigger: str) -> None:
 async def get_trigger_message_channels(guild_id: str, trigger_id: int) -> list[TriggerMessageChannelModel]:
     query = "SELECT guildId, channelId, triggerId FROM triggerMessagesChannel WHERE guildId = %s AND triggerId = %s"
     params = (guild_id, trigger_id)
-    result = await execute_query(query, params)
-    return [TriggerMessageChannelModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [TriggerMessageChannelModel.from_row(row) for row in result]
 
 
 async def get_trigger_messages_by_channel(guild_id: str, channel_id: str) -> list[TriggerMessageChannelModel]:
     query = "SELECT guildId, channelId, triggerId FROM triggerMessagesChannel WHERE guildId = %s AND channelId = %s"
     params = (guild_id, channel_id)
-    result = await execute_query(query, params)
-    return [TriggerMessageChannelModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [TriggerMessageChannelModel.from_row(row) for row in result]
 
 
 async def add_trigger_message_channel(guild_id: str, channel_id: str, trigger_id: int) -> None:
@@ -3021,8 +3021,8 @@ async def delete_ticket_message(guild_id: str, ticket_message_id: str) -> None:
 async def get_ticket_messages(guild_id: str) -> list[TicketMessageModel]:
     query = "SELECT id, guildId, channelId, introduction, pingRole, name, description, summaryChannelId FROM ticketMessages WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [TicketMessageModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [TicketMessageModel.from_row(row) for row in result]
 
 
 async def get_ticket_messages_by_id(ticket_message_id: str) -> TicketMessageModel | None:
@@ -3055,8 +3055,8 @@ async def get_tickets(guild_id: str) -> list[TicketModel]:
         FROM tickets WHERE guildId = %s
     """
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [TicketModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [TicketModel.from_row(row) for row in result]
 
 
 async def get_ticket_by_id(guild_id: str, ticket_id: str, channel_id: str) -> TicketModel | None:
@@ -3168,8 +3168,8 @@ async def remove_leave_channel(guild_id: str) -> None:
 async def get_dynamicslowmode_channels(guild_id: str) -> list[DynamicSlowmodeModel]:
     query = "SELECT guildId, channelId, messages, per, resetafter, cashedSlowmode FROM dynamicslowmode WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [DynamicSlowmodeModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [DynamicSlowmodeModel.from_row(row) for row in result]
 
 
 async def add_dynamicslowmode(guild_id: str, channel_id: str, messages: int, per: int, resetafter: int) -> None:
@@ -3207,8 +3207,8 @@ async def clear_old_dynamicslowmode_messages(channel_id: str, send_time: datetim
 async def get_dynamicslowmode_messages(channel_id: str) -> list[DynamicSlowmodeMessageModel]:
     query = "SELECT id, channelId, messageId, sendTime FROM dynamicslowmode_messages WHERE channelId = %s"
     params = (channel_id,)
-    result = await execute_query(query, params)
-    return [DynamicSlowmodeMessageModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [DynamicSlowmodeMessageModel.from_row(row) for row in result]
 
 
 async def cash_slowmode_delay(channel_id: str, slowmode_delay: int) -> None:
@@ -3226,8 +3226,8 @@ async def remove_cashed_slowmode_delay(channel_id: str) -> None:
 async def get_twitch_online_notification(channel_id: str) -> list[TwitchOnlineNotificationModel]:
     query = "SELECT id, channelId, guildId, twitchUuid, twitchName, notificationMessage FROM twitchOnlineNotification WHERE channelId = %s"
     params = (channel_id,)
-    result = await execute_query(query, params)
-    return [TwitchOnlineNotificationModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [TwitchOnlineNotificationModel.from_row(row) for row in result]
 
 
 async def set_twitch_online_notification(
@@ -3253,21 +3253,21 @@ async def remove_twitch_online_notification(id: str) -> None:
 async def get_twitch_online_notification_by_twitch_uuid(twitch_uuid: str) -> TwitchOnlineNotificationModel | None:
     query = "SELECT id, channelId, guildId, twitchUuid, twitchName, notificationMessage FROM twitchOnlineNotification WHERE twitchUuid = %s"
     params = (twitch_uuid,)
-    result = await execute_query(query, params)
+    result = await safe_execute_query(query, params)
     return TwitchOnlineNotificationModel.from_row(result[0]) if result else None
 
 
 async def get_all_twitch_notification_uuids() -> list[str]:
     query = "SELECT twitchUuid FROM twitchOnlineNotification"
-    result = await execute_query(query, ())
-    return [row[0] for row in result] if result else []
+    result = await safe_execute_query(query, ())
+    return [row[0] for row in result]
 
 
 async def get_twitch_notification_by_guild_id(guild_id: str) -> list[TwitchOnlineNotificationModel]:
     query = "SELECT id, channelId, guildId, twitchUuid, twitchName, notificationMessage FROM twitchOnlineNotification WHERE guildId = %s"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    return [TwitchOnlineNotificationModel.from_row(row) for row in result] if result else []
+    result = await safe_execute_query(query, params)
+    return [TwitchOnlineNotificationModel.from_row(row) for row in result]
 
 
 async def get_brawlstars_linked_account(user_id: str) -> str | None:
