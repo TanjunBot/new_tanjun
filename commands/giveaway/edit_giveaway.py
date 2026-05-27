@@ -510,12 +510,6 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
-            embed = discord.Embed(
-                title="Pro Feature", description="This feature requires a Pro subscription.", color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
         modal = start_giveaway.CustomNameModal(
             self,
             self.commandInfo,
@@ -620,12 +614,6 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
-            embed = discord.Embed(
-                title="Pro Feature", description="This feature requires a Pro subscription.", color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
         modal = start_giveaway.StartTimeModal(
             self,
             self.commandInfo,
@@ -661,12 +649,6 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
-            embed = discord.Embed(
-                title="Pro Feature", description="This feature requires a Pro subscription.", color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
         modal = start_giveaway.DayRequirementModal(
             self,
             self.commandInfo,
@@ -712,12 +694,6 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
-            embed = discord.Embed(
-                title="Pro Feature", description="This feature requires a Pro subscription.", color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
         modal = start_giveaway.VoiceRequirementModal(
             self,
             self.commandInfo,
@@ -737,12 +713,6 @@ class GiveawayEditor(ui.View):
         interaction: discord.Interaction,
         button: start_giveaway.GiveawayBuilderButton,
     ):
-        if not utility.checkIfHasPro(self.commandInfo.guild):  # type: ignore[arg-type]
-            embed = discord.Embed(
-                title="Pro Feature", description="This feature requires a Pro subscription.", color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
         view = start_giveaway.AddChannelRequirementView(self.commandInfo, self)
 
         await interaction.response.edit_message(

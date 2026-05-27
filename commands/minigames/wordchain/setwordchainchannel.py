@@ -2,7 +2,7 @@ import discord
 
 from api import set_wordchain_word
 from localizer import tanjunLocalizer
-from utility import CommandInfo, checkIfHasPro, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
 async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextChannel) -> None:
@@ -21,17 +21,6 @@ async def setwordchainchannel(commandInfo: CommandInfo, channel: discord.TextCha
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "minigames.setwordchainchannel.error.no_moderate_members_perms.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
-    if not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "minigames.setwordchainchannel.error.no_pro.title"),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "minigames.setwordchainchannel.error.no_pro.description",
             ),
         )
         await commandInfo.reply(embed=embed)
