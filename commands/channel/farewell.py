@@ -95,9 +95,9 @@ async def setFarewellChannel(
     if image_background is not None:
         imgUrl = (
             await utility.upload_image_to_imgbb(
-                image_background, image_background.filename.split(".")[-1, arg - type, call - overload, name - defined]
+                image_background, image_background.filename.split(".")[-1]  # type: ignore[arg-type, call-overload, name-defined]
             )
-        )["data", arg - type, call - overload, name - defined][  # type: ignore[index, arg-type, call-overload, name-defined]
+        )["data"][  # type: ignore[index, arg-type, call-overload, name-defined]
             "url"
         ]
     else:

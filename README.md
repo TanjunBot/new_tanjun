@@ -149,7 +149,7 @@ A powerful, feature-rich Discord bot built with [discord.py](https://github.com/
    pre-commit install
    ```
 
-   This will run Ruff linting/formatting, mypy type checking, and other checks automatically on every commit.
+   This will run Ruff linting/formatting, mypy type checking, and other checks automatically on every commit. Note that mypy run by pre-commit uses the settings defined in `.pre-commit-config.yaml` and may be less strict than CI. To ensure identical validation locally, update the mypy configuration in `.pre-commit-config.yaml` to match CI settings.
 
 6. Run the bot:
 
