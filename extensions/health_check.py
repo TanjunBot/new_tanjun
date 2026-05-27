@@ -32,7 +32,7 @@ class BackgroundLoopHealthCheck(HealthCheck):
 
     @property
     def critical(self) -> bool:
-        return False  # Individual loops failing is degraded, not critical
+        return True  # Missing LoopCog is critical
 
     async def run(self) -> HealthCheckResult:
         cog = self.bot.get_cog("LoopCog")
