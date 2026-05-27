@@ -75,7 +75,7 @@ async def notify_health_failures(
         )
         return
 
-    chunks = [failures[i:i + 25] for i in range(0, len(failures), 25)]
+    chunks = [failures[i : i + 25] for i in range(0, len(failures), 25)]
     for idx, chunk in enumerate(chunks, start=1):
         title = f"⚠️ Health Check Failure ({idx}/{len(chunks)})" if len(chunks) > 1 else "⚠️ Health Check Failure"
         embed = discord.Embed(
