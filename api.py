@@ -4,14 +4,13 @@ import json
 import logging
 import time
 import uuid
-from collections.abc import AsyncIterator, Awaitable, Callable, Sequence
+from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any
 
 # import asyncmy
 from discord import Entitlement
-from discord.ext import commands
 
 from models import (
     AfkMessageModel,
@@ -1015,14 +1014,12 @@ async def add_warning(
     await execute_action(query, params)
 
 
-async def get_warnings(guild_id: str | int, user_id: str | int | None = None) -> list[WarningModel]:
-    """Return all active warnings for a guild (or a specific user).
+async def get_warnings(guild_id: str | int, user_id: str | int | None = None) -> AsyncIterator[WarningModel]:
+    """Stream all active warnings for a guild (or a specific user).
 
-    Uses the streaming async generator under the hood so that only
-    one row is held in memory at a time, even when the result set
-    contains thousands of warnings.
+    Yields rows one at a time so that only one row is held in memory
+    at a time, even when the result set contains thousands of warnings.
     """
-    rows: list[WarningModel] = []
     if user_id:
         query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id, user_id)
@@ -1030,21 +1027,22 @@ async def get_warnings(guild_id: str | int, user_id: str | int | None = None) ->
         query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id,)
     async for row in WarningModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+        yield row
 
 
-async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> list[DetailedWarningModel]:
+async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> AsyncIterator[DetailedWarningModel]:
+    """Stream detailed warnings for a specific user in a guild.
+
+    Yields rows one at a time, ordered by creation date descending.
+    """
     query = (
         "SELECT id, reason, created_at, expires_at, created_by "
         "FROM warnings WHERE guild_id = %s AND user_id = %s "
         "ORDER BY created_at DESC"
     )
     params = (guild_id, user_id)
-    rows: list[DetailedWarningModel] = []
     async for row in DetailedWarningModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+        yield row
 
 
 async def remove_warning(warning_id: int) -> None:
@@ -1100,13 +1098,15 @@ async def save_channel_overwrites(channel_id: str | int, role_id: str | int, ove
     await execute_action(query, params)
 
 
-async def get_channel_overwrites(channel_id: str | int) -> list[ChannelOverwriteModel]:
+async def get_channel_overwrites(channel_id: str | int) -> AsyncIterator[ChannelOverwriteModel]:
+    """Stream channel permission overwrites for a specific channel.
+
+    Yields rows one at a time.
+    """
     query = "SELECT role_id, overwrites FROM channel_overwrites WHERE channel_id = %s"
     params = (channel_id,)
-    rows: list[ChannelOverwriteModel] = []
     async for row in ChannelOverwriteModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+        yield row
 
 
 async def clear_channel_overwrites(channel_id: str | int) -> None:
@@ -1498,13 +1498,15 @@ async def add_level_role(guild_id: str, role_id: str, level: int) -> None:
     await execute_action(query, params)
 
 
-async def get_level_roles(guild_id: str) -> list[LevelRoleModel]:
+async def get_level_roles(guild_id: str) -> AsyncIterator[LevelRoleModel]:
+    """Stream level roles for a guild.
+
+    Yields rows one at a time.
+    """
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
     params = (guild_id,)
-    rows: list[LevelRoleModel] = []
     async for row in LevelRoleModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+        yield row
 
 
 async def get_level_role(guild_id: str, role_id: str) -> int | None:
@@ -2357,13 +2359,15 @@ async def consumePaidToken(user_id: str, amount: int) -> None:
     await execute_action(query, params)
 
 
-async def getLevelLeaderboard(guild_id: str) -> list[LevelLeaderboardEntryModel]:
+async def getLevelLeaderboard(guild_id: str) -> AsyncIterator[LevelLeaderboardEntryModel]:
+    """Stream the full level leaderboard for a guild.
+
+    Yields rows one at a time, ordered by XP descending.
+    """
     query = "SELECT user_id, xp FROM level WHERE guild_id = %s ORDER BY xp DESC"
     params = (guild_id,)
-    rows: list[LevelLeaderboardEntryModel] = []
     async for row in LevelLeaderboardEntryModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+        yield row
 
 
 async def get_level_leaderboard_paginated(
