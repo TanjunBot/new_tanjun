@@ -1,3 +1,6 @@
+import logging
+import traceback
+
 import discord
 from discord.ext import commands
 
@@ -85,8 +88,30 @@ class ListenerCog(commands.Cog):
             elif custom_id.startswith("ticket_close"):
                 await closeTicketListener(interaction)
                 return
+        except discord.Forbidden:
+            await self._send_error(interaction, "I don't have permission to do that.")
+        except discord.NotFound:
+            await self._send_error(interaction, "This interaction has expired.")
+        except discord.HTTPException as e:
+            await self._send_error(interaction, f"Discord API error (code {e.status}).")
+        except Exception as e:
+            traceback.print_exc()
+            logging.exception("Unexpected error in on_interaction listener")
+            await self._send_error(interaction, "An unexpected error occurred. Please try again.")
+
+    async def _send_error(self, interaction: discord.Interaction, message: str) -> None:
+        embed = discord.Embed(
+            colour=0xE74C3C,
+            title="Error",
+            description=message,
+        )
+        try:
+            if interaction.response.is_done():
+                await interaction.followup.send(embed=embed, ephemeral=True)
+            else:
+                await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception:
-            logging.exception("Error in on_interaction listener")
+            pass  # Truly give up if we can't even send an error
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
