@@ -218,11 +218,6 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 from translator import TanjunTranslator
-
-from health.checks import HealthCheck, HealthCheckResult, HealthStatus
-from health.checks import HealthCheck, HealthCheckResult, HealthStatus
-from health.manager import HealthCheckManager
-from OpenAIHealthCheck import OpenAIHealthCheck
 nimport logging
 
 logger = logging.getLogger(__name__)
@@ -1078,18 +1073,6 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-    # Run startup health checks
-    health_manager = HealthCheckManager(bot)
-    health_manager.register(OpenAIHealthCheck())
-    ok = await health_manager.run_startup_checks()
-    if not ok:
-        await health_manager.notify_critical_failures()
-        print("FATAL: Critical health checks failed. Bot cannot start.")
-        return
-
-    # Start periodic health checks
-    asyncio.create_task(health_manager.start_periodic_checks(interval=300))
-
     # Start the bot
 nimport logging
 

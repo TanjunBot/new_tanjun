@@ -1,0 +1,142 @@
+"""Health check manager for Tanjun bot.
+
+Orchestrates startup validation and periodic health monitoring.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+from datetime import datetime
+from typing import TYPE_CHECKING
+
+from health.checks import HealthCheck, HealthCheckResult, HealthStatus
+from health.notifier import notify_health_failures
+
+if TYPE_CHECKING:
+    from discord.ext import commands
+
+logger = logging.getLogger(__name__)
+
+
+class HealthCheckManager:
+    """Manages registration and execution of health checks.
+
+    Handles:
+    - Registering health checks
+    - Running all checks concurrently at startup
+    - Periodic health monitoring during operation
+    - Notifying failures to the designated Discord channel
+    """
+
+    def __init__(self, bot: commands.AutoShardedBot) -> None:
+        self.bot = bot
+        self._checks: list[HealthCheck] = []
+        self._last_results: dict[str, HealthCheckResult] = {}
+        self._running = False
+        self._periodic_task: asyncio.Task[None] | None = None
+
+    def register(self, check: HealthCheck) -> None:
+        """Register a health check."""
+        self._checks.append(check)
+        logger.info("Registered health check: %s (critical=%s)", check.name, check.critical)
+
+    async def run_all(self) -> list[HealthCheckResult]:
+        """Run all registered checks concurrently and return results."""
+        if not self._checks:
+            logger.warning("No health checks registered")
+            return []
+
+        results: list[HealthCheckResult] = []
+        coros = [check.run() for check in self._checks]
+
+        for coro in asyncio.as_completed(coros):
+            try:
+                result = await coro
+            except Exception as exc:
+                # If an individual check raises unexpectedly, treat it as critical
+                check_index = coros.index(coro) if coro in coros else -1
+                check_name = self._checks[check_index].name if check_index >= 0 else "unknown"
+                result = HealthCheckResult(
+                    check_name=check_name,
+                    status=HealthStatus.CRITICAL,
+                    message=f"Health check raised an unexpected exception: {exc}",
+                )
+                logger.exception("Health check %s raised an exception", check_name)
+
+            self._last_results[result.check_name] = result
+            results.append(result)
+
+        return results
+
+    async def run_startup_checks(self) -> bool:
+        """Run all checks at startup.
+
+        Returns:
+            True if all critical checks passed, False if any critical check failed.
+        """
+        logger.info("Running startup health checks...")
+        results = await self.run_all()
+
+        critical_failures = [r for r in results if r.status == HealthStatus.CRITICAL]
+        degraded = [r for r in results if r.status == HealthStatus.DEGRADED]
+        healthy = [r for r in results if r.status == HealthStatus.HEALTHY]
+
+        # Log summary
+        logger.info(
+            "Health check summary: %d healthy, %d degraded, %d critical failures",
+            len(healthy),
+            len(degraded),
+            len(critical_failures),
+        )
+
+        for result in results:
+            level = logging.WARNING if result.status != HealthStatus.HEALTHY else logging.INFO
+            logger.log(level, "  [%s] %s: %s", result.status.value, result.check_name, result.message)
+
+        if critical_failures:
+            logger.error(
+                "FATAL: %d critical health check(s) failed. Bot cannot start.",
+                len(critical_failures),
+            )
+            return False
+
+        return True
+
+    async def notify_critical_failures(self) -> None:
+        """Notify the designated Discord channel about critical startup failures."""
+        critical_results = [
+            r for r in self._last_results.values()
+            if r.status == HealthStatus.CRITICAL
+        ]
+        if critical_results:
+            await notify_health_failures(self.bot, critical_results)
+
+    async def start_periodic_checks(self, interval: int = 300) -> None:
+        """Start periodic health checks every *interval* seconds.
+
+        Args:
+            interval: Seconds between check runs (default 300 = 5 minutes).
+        """
+        if self._running:
+            logger.warning("Periodic health checks already running")
+            return
+
+        self._running = True
+        logger.info("Starting periodic health checks (interval=%ds)", interval)
+
+        while self._running:
+            await asyncio.sleep(interval)
+            results = await self.run_all()
+
+            failures = [
+                r for r in results
+                if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)
+            ]
+            if failures:
+                await notify_health_failures(self.bot, failures)
+
+    def stop_periodic_checks(self) -> None:
+        """Stop periodic health checks."""
+        self._running = False
+        logger.info("Periodic health checks stopped")
