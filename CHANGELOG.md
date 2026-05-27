@@ -26,10 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Discord API gateway health check for connection latency and intents (#1411)
   - OpenAI API health check for API key and basic completion capability (#1413)
   - Database connectivity health check (#1399)
-  - Background loop health check to verify all task loops are running (#1416)
+  - Background loop health check to verify all task loops are running (#1416, #1469)
   - Twitch API health check
   - Locale file health check for integrity verification of locale files (#1460)
-  - Background loop health check for task reliability (#1469)
 - Startup validation and caching for all guild-level configs to avoid cold-start latency (#1377)
 - Async iterator protocol (`iter_rows`) to all models (#1479)
 - Pagination to leaderboard command to avoid loading all rows at once (#1484)
@@ -56,12 +55,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optimized counting minigame hot path: combined DB queries with early skip (#1456)
 - Consolidated voice state update handlers into single dispatcher (#1370)
 - Refined voice tracking: used `set` of `(user_id, guild_id)` tuples instead of `list[discord.Member]` (#1485)
-- Replaced DB-based message tracking with in-memory tracking in dynamic slowmode
 - Upgraded test infrastructure and CI workflows
 - Translated `stale.yml` workflow from German to English (#1394)
 - Enhanced `healthcheck.py` to verify database connectivity, not just file existence (#1399)
 
-### Fixes
+### Fixed
 
 - Resolved 13 critical runtime bugs from milestone 1.2
 - Fixed various tech debt issues (3 batches) from milestone 1.2
@@ -142,8 +140,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Counting minigame
 - Leaderboard
 
-[1.2.0]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.0.3...development
-[1.1.4]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.0.3...development
+[1.2.0]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.1.4...development
+[1.1.4]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.0.3...ver/1.1.4
 [1.0.3]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.0.2...ver/1.0.3
 [1.0.2]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.0.1...ver/1.0.2
 [1.0.1]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.0.0...ver/1.0.1
