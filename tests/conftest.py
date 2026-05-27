@@ -80,3 +80,85 @@ def mock_bot(mock_db_pool: MagicMock) -> MagicMock:
     bot = MagicMock()
     bot._pool = mock_db_pool
     return bot
+
+
+# --- Integration test fixtures (requires test database container) ---
+
+@pytest.fixture(scope="session")
+def integration_mode() -> str:
+    """
+    Return the integration test mode.
+
+    Set TANJUN_INTEGRATION=true in environment to enable real database tests.
+    Tests default to 'skip' to avoid requiring a running test DB.
+    """
+    import os
+    return os.environ.get("TANJUN_INTEGRATION", "false").lower()
+
+
+@pytest.fixture(scope="session")
+def event_loop():
+    """Create an event loop for the session-scoped integration fixtures."""
+    import asyncio
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    yield loop
+    loop.close()
+
+
+@pytest.fixture(scope="session")
+async def integration_db_pool():
+    """
+    Create a real database connection pool pointing at the test database.
+
+    Requires the test database to be running (e.g. via docker-compose.test.yml):
+        docker compose -f docker-compose.test.yml up -d
+
+    Yields the pool and drops + recreates all tables on teardown so each
+    test session starts with a clean schema.
+    """
+    import os
+    import asyncmy
+
+    host = os.environ.get("TANJUN_TEST_DB_HOST", "localhost")
+    port = int(os.environ.get("TANJUN_TEST_DB_PORT", "3307"))
+    user = os.environ.get("TANJUN_TEST_DB_USER", "root")
+    password = os.environ.get("TANJUN_TEST_DB_PASSWORD", "test")
+    db = os.environ.get("TANJUN_TEST_DB_NAME", "tanjun_test")
+
+    pool = await asyncmy.create_pool(
+        host=host,
+        port=port,
+        user=user,
+        password=password,
+        db=db,
+        minsize=1,
+        maxsize=2,
+    )
+
+    # Set the global pool so api._get_pool() resolves
+    from api import set_bot
+    _fake_bot = MagicMock()
+    _fake_bot._pool = pool
+    set_bot(_fake_bot)
+
+    # Create all tables
+    from api import create_tables
+    await create_tables(_fake_bot)
+
+    yield pool
+
+    # Clean up: drop all tables
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(
+                "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') "
+                "FROM information_schema.tables WHERE table_schema = %s",
+                (db,),
+            )
+            drop_queries = await cursor.fetchall()
+            for (dq,) in drop_queries:
+                await cursor.execute(dq)
+
+    pool.close()
+    await pool.wait_closed()

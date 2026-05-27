@@ -1,0 +1,31 @@
+---
+services:
+  test-db:
+    image: mariadb:11
+    container_name: tanjun-test-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: test
+      MARIADB_DATABASE: tanjun_test
+      MARIADB_USER: test_user
+      MARIADB_PASSWORD: test_password
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--su-mysql",
+          "--connect",
+          "--innodb_initialized",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - test-db-data:/var/lib/mysql
+
+volumes:
+  test-db-data:
