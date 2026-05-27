@@ -2,10 +2,10 @@ import re
 
 import aiohttp
 import discord
+from aiohttp import ClientTimeout
 
 import utility
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro
 
 
 async def copy_emoji(
@@ -57,17 +57,6 @@ async def copy_emoji(
         await commandInfo.reply(embed=embed)
         return
 
-    # Check if user has pro when trying to add multiple emojis
-    if len(matches) > 1 and not checkIfHasPro(commandInfo.guild.id):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.copyEmoji.error.proRequired.title"),
-            description=tanjunLocalizer.localize(
-                str(commandInfo.locale), "commands.admin.copyEmoji.error.proRequired.description"
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     successful_emojis = []
     failed_emojis = []
 
@@ -94,7 +83,7 @@ async def copy_emoji(
             emoji_url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
 
             try:
-                async with aiohttp.ClientSession() as session, session.get(emoji_url) as resp:
+                async with aiohttp.ClientSession() as session, session.get(emoji_url, timeout=ClientTimeout(total=10)) as resp:
                     if resp.status != 200:
                         failed_emojis.append(match.group(0))
                         continue

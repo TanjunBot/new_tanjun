@@ -5,12 +5,13 @@ from typing import Any
 
 import aiohttp
 import discord
+from aiohttp import ClientTimeout
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 from api import get_user_level_info, set_custom_background
 from localizer import tanjunLocalizer
 from models import UserLevelInfoModel
-from utility import CommandInfo, checkIfhasPlus, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
+from utility import CommandInfo, draw_text_with_outline, tanjunEmbed, upload_image_to_imgbb
 
 executor = ThreadPoolExecutor()
 
@@ -43,17 +44,6 @@ async def show_rankcard_command(commandInfo: CommandInfo, user: discord.Member) 
 
 
 async def set_background_command(commandInfo: CommandInfo, image: discord.Attachment) -> None:
-    if not checkIfhasPlus(commandInfo.user.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.setbackground.error.no_plus.title"),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.level.setbackground.error.no_plus.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     if image.content_type not in ["image/png", "image/jpeg", "image/gif"]:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -86,11 +76,14 @@ async def set_background_command(commandInfo: CommandInfo, image: discord.Attach
 
 
 async def fetch_image(url: str) -> io.BytesIO | None:
-    async with aiohttp.ClientSession() as session, session.get(url) as response:
-        if response.status != 200:
-            return None
-        image_data = io.BytesIO(await response.read())
-        return image_data
+    try:
+        async with aiohttp.ClientSession() as session, session.get(url, timeout=ClientTimeout(total=10)) as response:
+            if response.status != 200:
+                return None
+            image_data = io.BytesIO(await response.read())
+            return image_data
+    except (TimeoutError, aiohttp.ClientError):
+        return None
 
 
 async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:

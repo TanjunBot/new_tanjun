@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import aiohttp
 import discord
+from aiohttp import ClientTimeout
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 import utility
@@ -15,7 +16,7 @@ from api import (
     set_leave_channel,
 )
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, draw_text_with_outline
+from utility import draw_text_with_outline
 
 executor = ThreadPoolExecutor()
 
@@ -76,20 +77,6 @@ async def setFarewellChannel(
         await commandInfo.reply(embed=embed)
         return
 
-    if image_background and not checkIfHasPro(commandInfo.user):  # type: ignore[truthy-bool, arg-type]
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.channel.farewell.missingPro.title",
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.channel.farewell.missingPro.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
     imgUrl = None
 
     if image_background is not None:
@@ -99,7 +86,7 @@ async def setFarewellChannel(
                 image_background.filename.split(".")[-1],  # type: ignore[arg-type, call-overload, name-defined]
             )
         )["data"][  # type: ignore[index, arg-type, call-overload, name-defined]
-            "url"
+          "url"
         ]
     else:
         imgUrl = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"  # type: ignore[unreachable]
@@ -117,65 +104,70 @@ async def setFarewellChannel(
     await commandInfo.reply(embed=embed)
 
 
-async def removeFarewellChannel() -> None:
+async def removeFarewellChannel(commandInfo: utility.CommandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)  # type: ignore[name-defined]
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)  # type: ignore[name-defined]
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator  # type: ignore[name-defined]
+        isinstance(commandInfo.user, discord.Member)
+        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
+        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,  # type: ignore[name-defined]
+                commandInfo.locale,
                 "commands.admin.channel.farewell.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,  # type: ignore[name-defined]
+                commandInfo.locale,
                 "commands.admin.channel.farewell.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)  # type: ignore[name-defined]
+        await commandInfo.reply(embed=embed)
         return
 
-    if not await get_leave_channel(commandInfo.guild.id):  # type: ignore[name-defined]
+    if not await get_leave_channel(commandInfo.guild.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.notSet.title"),  # type: ignore[name-defined]
+            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.notSet.title"),
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale),  # type: ignore[name-defined]
+                str(commandInfo.locale),
                 "commands.admin.channel.farewell.notSet.description",
             ),
         )
-        await commandInfo.reply(embed=embed)  # type: ignore[name-defined]
+        await commandInfo.reply(embed=embed)
         return
 
-    await remove_leave_channel(commandInfo.guild.id)  # type: ignore[name-defined]
+    await remove_leave_channel(commandInfo.guild.id)  # type: ignore[union-attr]
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.deleteSuccess.title"),  # type: ignore[name-defined]
+        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.channel.farewell.deleteSuccess.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,  # type: ignore[name-defined]
+            commandInfo.locale,
             "commands.admin.channel.farewell.deleteSuccess.description",
         ),
     )
-    await commandInfo.reply(embed=embed)  # type: ignore[name-defined]
+    await commandInfo.reply(embed=embed)
 
 
 async def fetch_image(url: str) -> io.BytesIO | None:
-    async with (
-        aiohttp.ClientSession() as session,
-        session.get(url) as response,
-    ):
-        if response.status != 200:
-            return None
-        image_data = io.BytesIO(await response.read())
-        return image_data
+    try:
+        async with (
+            aiohttp.ClientSession() as session,
+            session.get(url, timeout=ClientTimeout(total=10)) as response,
+        ):
+            if response.status != 200:
+                return None
+            image_data = io.BytesIO(await response.read())
+            return image_data
+    except (TimeoutError, aiohttp.ClientError):
+        return None
 
 
-async def get_image_or_gif_frames(url) -> None:  # type: ignore[no-untyped-def]
+async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
     image_data = await fetch_image(url)
+    if image_data is None:
+        return [], 0
     image = Image.open(image_data)  # type: ignore[arg-type]
     frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
     duration = image.info.get("duration", 100)
-    return frames, duration  # type: ignore[return-value]
+    return frames, duration
 
 
 def process_image(background_frames, avatar_frames, user) -> None:  # type: ignore[no-untyped-def]
@@ -271,10 +263,16 @@ async def farewellUser(member: discord.Member) -> None:
     if farewellChannel is None:
         return
 
-    background_frames, _ = await get_image_or_gif_frames(farewellChannel.image_background)  # type: ignore[func-returns-value, misc, call-overload, name-defined]
+    if farewellChannel.image_background:
+        background_frames, _ = await get_image_or_gif_frames(farewellChannel.image_background)
+    else:
+        background_frames = []
 
     avatar_url = str(member.display_avatar.url)
-    avatar_frames, _ = await get_image_or_gif_frames(avatar_url)  # type: ignore[func-returns-value, misc]
+    avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
+
+    if not background_frames or not avatar_frames:
+        return
 
     loop = asyncio.get_event_loop()
     img_byte_arr = await loop.run_in_executor(  # type: ignore[func-returns-value]

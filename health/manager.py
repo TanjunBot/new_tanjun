@@ -31,14 +31,25 @@ class HealthCheckManager:
     def __init__(self, bot: commands.AutoShardedBot) -> None:
         self.bot = bot
         self._checks: list[HealthCheck] = []
+        self._check_intervals: dict[str, int] = {}
         self._last_results: dict[str, HealthCheckResult] = {}
         self._running = False
         self._periodic_task: asyncio.Task[None] | None = None
 
-    def register(self, check: HealthCheck) -> None:
-        """Register a health check."""
+    def register(self, check: HealthCheck, interval: int | None = None) -> None:
+        """Register a health check.
+
+        Args:
+            check: The health check to register.
+            interval: Optional interval in seconds for periodic checks.
+                      If None, uses the default interval from start_periodic_checks.
+        """
         self._checks.append(check)
-        logger.info("Registered health check: %s (critical=%s)", check.name, check.critical)
+        if interval is not None:
+            self._check_intervals[check.name] = interval
+        logger.info(
+            "Registered health check: %s (critical=%s, interval=%s)", check.name, check.critical, interval or "default"
+        )
 
     async def run_all(self) -> list[HealthCheckResult]:
         """Run all registered checks concurrently and return results."""
@@ -120,7 +131,8 @@ class HealthCheckManager:
         """Start periodic health checks every *interval* seconds.
 
         Args:
-            interval: Seconds between check runs (default 300 = 5 minutes).
+            interval: Default seconds between check runs (default 300 = 5 minutes).
+                      Individual checks may have custom intervals set via register().
         """
         if interval <= 0:
             raise ValueError("interval must be > 0")
@@ -130,16 +142,56 @@ class HealthCheckManager:
             return
 
         self._running = True
-        logger.info("Starting periodic health checks (interval=%ds)", interval)
+        logger.info("Starting periodic health checks (default_interval=%ds)", interval)
+
+        # Track last run time for each check
+        last_run: dict[str, float] = {}
 
         async def _periodic_loop() -> None:
             while self._running:
                 await asyncio.sleep(interval)
                 try:
-                    results = await self.run_all()
-                    failures = [r for r in results if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)]
-                    if failures:
-                        await notify_health_failures(self.bot, failures)
+                    import time
+
+                    current_time = time.time()
+                    checks_to_run: list[HealthCheck] = []
+
+                    for check in self._checks:
+                        check_interval = self._check_intervals.get(check.name, interval)
+                        last_run_time = last_run.get(check.name, 0)
+
+                        if current_time - last_run_time >= check_interval:
+                            checks_to_run.append(check)
+                            last_run[check.name] = current_time
+
+                    if checks_to_run:
+                        raw_results = await asyncio.gather(
+                            *(check.run() for check in checks_to_run),
+                            return_exceptions=True,
+                        )
+
+                        results: list[HealthCheckResult] = []
+                        for check, raw in zip(checks_to_run, raw_results):
+                            if isinstance(raw, BaseException):
+                                result = HealthCheckResult(
+                                    check_name=check.name,
+                                    status=HealthStatus.CRITICAL,
+                                    message=f"Health check raised an unexpected exception: {raw}",
+                                )
+                                logger.exception(
+                                    "Health check %s raised an exception",
+                                    check.name,
+                                    exc_info=(type(raw), raw, raw.__traceback__),
+                                )
+                            else:
+                                result = raw
+
+                            self._last_results[result.check_name] = result
+                            results.append(result)
+
+                        failures = [r for r in results if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)]
+                        if failures:
+                            await notify_health_failures(self.bot, failures)
                 except Exception:
                     logger.exception("Periodic health check iteration failed")
 
