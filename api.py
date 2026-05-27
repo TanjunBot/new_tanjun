@@ -1,15 +1,17 @@
 import asyncio
 import hashlib
 import json
+import logging
 import time
 import uuid
-from collections.abc import AsyncIterator, Sequence
+from collections.abc import AsyncIterator, Awaitable, Callable, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any
 
 # import asyncmy
 from discord import Entitlement
+from discord.ext import commands
 
 from models import (
     AfkMessageModel,
@@ -48,6 +50,8 @@ from utility import get_level_for_xp, get_xp_for_level
 
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
+
+logger = logging.getLogger(__name__)
 
 _bot = None
 
@@ -292,16 +296,16 @@ async def execute_query_iter(
             return
         except TimeoutError:
             if yielded_any:
-                print(f"Timeout after yielding rows on execute_query_iter: {safe_id}")
-                return
+                logger.error(f"Timeout after yielding rows on execute_query_iter: {safe_id}")
+                raise
             print(f"Timeout on execute_query_iter attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
             if attempt < _MAX_DB_RETRIES - 1:
                 await asyncio.sleep(0.5 * (attempt + 1))
             continue
         except Exception as e:
             if yielded_any:
-                print(f"Error after yielding rows during query iteration: {e} — {safe_id}")
-                return
+                logger.error(f"Error after yielding rows during query iteration: {e} — {safe_id}")
+                raise
             err_str = str(e).lower()
             retryable = (
                 "deadlock" in err_str
