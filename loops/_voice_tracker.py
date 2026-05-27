@@ -31,7 +31,6 @@ async def handleVoiceChange(user: discord.Member, before: discord.VoiceState, af
 
 
 def updateVoiceUsers(active_user_ids: list[tuple[int, int]]) -> None:
-    global voice_user_ids
     current_set = voice_user_ids
     active_set = set(active_user_ids)
 

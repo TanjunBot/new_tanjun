@@ -30,7 +30,7 @@ async def fetch_xp_details(user: discord.Member):
 
 
 async def addXpToVoiceUsers(client):
-    for user_id, guild_id in voice_user_ids:
+    for user_id, guild_id in list(voice_user_ids):
         user = _get_member(client, user_id, guild_id)
         if user is None:
             continue

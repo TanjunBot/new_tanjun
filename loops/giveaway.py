@@ -11,7 +11,7 @@ async def sendReadyGiveaways(client):
 
 
 async def checkVoiceUsers(client):
-    for user_id, guild_id in voice_user_ids:
+    for user_id, guild_id in list(voice_user_ids):
         await add_giveaway_voice_minutes_if_needed(user_id, guild_id)
 
 
