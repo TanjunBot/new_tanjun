@@ -1134,7 +1134,7 @@ def eval_(node, variables):
         raise TypeError(f"Unsupported operation: {node}")
 
 
-def get_xp_for_level(level: int, scaling: str, custom_formula: str = None) -> int:
+def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None) -> int:
     if level <= 0:
         return 0
     if scaling == "custom" and custom_formula:
