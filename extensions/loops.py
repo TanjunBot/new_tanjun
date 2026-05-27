@@ -110,7 +110,7 @@ class LoopCog(commands.Cog):
         except Exception:
             logging.exception("Error in loop")
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=60)  # Reduced from 10s to 60s to respect Twitch API rate limits
     async def pollTwitchStreams(self) -> None:
         try:
             twitch_api = getTwitchApi()
@@ -132,16 +132,23 @@ class LoopCog(commands.Cog):
             streams = await twitch_api.get_streams(user_ids)
             live_streams = {stream["user_id"]: stream for stream in streams}
 
-            # Check for newly live streams
+            # Batch notification for streams going live simultaneously
+            newly_live = [
+                uuid for uuid in user_ids
+                if not twitch_api.stream_status.get(uuid, False)
+                and uuid in live_streams
+            ]
+
+            if newly_live:
+                await asyncio.gather(
+                    *(notify_twitch_online(self.bot, uuid, live_streams[uuid])
+                      for uuid in newly_live),
+                    return_exceptions=True,
+                )
+
+            # Update status for all tracked uuids
             for uuid in user_ids:
-                was_live = twitch_api.stream_status.get(uuid, False)
-                is_live = uuid in live_streams
-
-                if not was_live and is_live:
-                    # Stream just went live
-                    await notify_twitch_online(self.bot, uuid, live_streams[uuid])
-
-                twitch_api.stream_status[uuid] = is_live
+                twitch_api.stream_status[uuid] = uuid in live_streams
 
         except Exception:
             logging.exception("Error in loop")
