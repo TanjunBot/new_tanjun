@@ -10,54 +10,54 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
+async def seeTwitchLiveNotifications(command_info: CommandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).administrator
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.twitch.listTwitchLiveNotifications.error.missingPermissions.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.twitch.listTwitchLiveNotifications.error.missingPermissions.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    notifications = await get_twitch_notification_by_guild_id(commandInfo.guild.id)  # type: ignore[union-attr]
+    notifications = await get_twitch_notification_by_guild_id(command_info.guild.id)  # type: ignore[union-attr]
 
     if not notifications:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.twitch.listTwitchLiveNotifications.error.noNotifications.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.twitch.listTwitchLiveNotifications.error.noNotifications.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     class TwitchLiveNotification(discord.ui.View):
-        def __init__(self, page: int = 0, notifications: list | None = None, commandInfo: CommandInfo | None = None) -> None:  # type: ignore[type-arg]
+        def __init__(self, page: int = 0, notifications: list | None = None, command_info: CommandInfo | None = None) -> None:  # type: ignore[type-arg]
             super().__init__()
             self.current_page = page
             self.notifications = notifications if notifications is not None else []
-            self.commandInfo = commandInfo
+            self.command_info = command_info
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)  # type: ignore[arg-type]
         async def previous_page(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
-            if not interaction.user.id == self.commandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.twitch.listTwitchLiveNotifications.error.notYourNotification.description",
                     ),
                     ephemeral=True,
@@ -70,10 +70,10 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
 
         @discord.ui.button(label="🗑️", style=discord.ButtonStyle.danger)
         async def delete_notification(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
-            if not interaction.user.id == self.commandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.twitch.listTwitchLiveNotifications.error.notYourNotification.description",
                     ),
                     ephemeral=True,
@@ -81,15 +81,15 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
                 return
             global notifications
             await remove_twitch_online_notification(self.notifications[self.current_page].id)
-            self.notifications = await get_twitch_notification_by_guild_id(commandInfo.guild.id)  # type: ignore[assignment, union-attr]
+            self.notifications = await get_twitch_notification_by_guild_id(command_info.guild.id)  # type: ignore[assignment, union-attr]
             if not self.notifications:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.twitch.listTwitchLiveNotifications.error.noNotifications.title",
                     ),
                     description=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.twitch.listTwitchLiveNotifications.error.noNotifications.description",
                     ),
                 )
@@ -101,10 +101,10 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary, disabled=len(notifications) <= 1)  # type: ignore[arg-type]
         async def next_page(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
-            if not interaction.user.id == self.commandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:  # type: ignore[misc]
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.utility.twitch.listTwitchLiveNotifications.error.notYourNotification.description",
                     ),
                     ephemeral=True,
@@ -118,25 +118,25 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
         async def update_message(self, interaction: discord.Interaction) -> None:
             notification = parse_twitch_notification_message(
                 self.notifications[self.current_page].notification_message,
-                commandInfo.locale,
+                command_info.locale,
                 self.notifications[self.current_page].twitch_name,
             )
             if len(self.notifications) > 1:
                 title = tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.twitch.listTwitchLiveNotifications.title",
                     current_page=self.current_page + 1,
                     total_pages=len(self.notifications),
                 )
             else:
                 title = tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.twitch.listTwitchLiveNotifications.titleNoPages",
                 )
             embed = tanjunEmbed(
                 title=title,
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.utility.twitch.listTwitchLiveNotifications.description",
                     channel=self.notifications[self.current_page].id,
                     twitch_name=self.notifications[self.current_page].twitch_name,
@@ -144,37 +144,37 @@ async def seeTwitchLiveNotifications(commandInfo: CommandInfo) -> None:
                 ),
             )
             if len(self.notifications) > 1:
-                view = TwitchLiveNotification(self.current_page, self.notifications, self.commandInfo)
+                view = TwitchLiveNotification(self.current_page, self.notifications, self.command_info)
                 await interaction.response.edit_message(embed=embed, view=view)
             else:
                 await interaction.response.edit_message(embed=embed, view=view)
 
-    view = TwitchLiveNotification(0, notifications, commandInfo)
+    view = TwitchLiveNotification(0, notifications, command_info)
     notification = parse_twitch_notification_message(
         notifications[0].notification_message,
-        commandInfo.locale,
+        command_info.locale,
         notifications[0].twitch_name,
     )
     if len(notifications) > 1:
         title = tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.twitch.listTwitchLiveNotifications.title",
             current_page=1,
             total_pages=len(notifications),
         )
     else:
         title = tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.twitch.listTwitchLiveNotifications.titleNoPages",
         )
     embed = tanjunEmbed(
         title=title,
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.twitch.listTwitchLiveNotifications.description",
             channel=notifications[0].id,
             twitch_name=notifications[0].twitch_name,
             message=notification,
         ),
     )
-    await commandInfo.reply(embed=embed, view=view)
+    await command_info.reply(embed=embed, view=view)

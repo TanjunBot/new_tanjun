@@ -10,40 +10,40 @@ from api import (
 from localizer import tanjunLocalizer
 
 
-async def remove_log_channel(commandInfo: utility.CommandInfo) -> None:
+async def remove_log_channel(command_info: utility.CommandInfo) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.removeLogChannel.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.logs.removeLogChannel.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    assert commandInfo.guild is not None
-    logChannel = await get_log_channel_api(commandInfo.guild.id)
+    assert command_info.guild is not None
+    log_channel = await get_log_channel_api(command_info.guild.id)
 
-    if not logChannel:
+    if not log_channel:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.removeLogChannel.notSet.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.removeLogChannel.notSet.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.removeLogChannel.notSet.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.removeLogChannel.notSet.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    await remove_log_channel_api(commandInfo.guild.id)
+    await remove_log_channel_api(command_info.guild.id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.removeLogChannel.success.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.logs.removeLogChannel.success.description"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.removeLogChannel.success.title"),
+        description=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.removeLogChannel.success.description"),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

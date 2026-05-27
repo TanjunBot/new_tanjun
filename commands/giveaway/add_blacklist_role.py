@@ -11,46 +11,46 @@ from localizer import tanjunLocalizer
 
 
 async def add_blacklist_role(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     role: discord.Role,
 ) -> None:
-    if not commandInfo.permissions.administrator:
+    if not command_info.permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.add_blacklist_role.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.add_blacklist_role.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    blacklistedRoles = [role.entity_id for role in await get_giveaway_blacklisted_roles(commandInfo.guild.id)]  # type: ignore[union-attr]
+    blacklisted_roles = [role.entity_id for role in await get_giveaway_blacklisted_roles(command_info.guild.id)]  # type: ignore[union-attr]
 
-    if str(role.id) in blacklistedRoles:
+    if str(role.id) in blacklisted_roles:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.add_blacklist_role.alreadyBlacklisted.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.giveaway.add_blacklist_role.alreadyBlacklisted.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    await add_blacklist_role_api(commandInfo.guild.id, role.id)  # type: ignore[union-attr]
+    await add_blacklist_role_api(command_info.guild.id, role.id)  # type: ignore[union-attr]
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.giveaway.add_blacklist_role.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.giveaway.add_blacklist_role.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.giveaway.add_blacklist_role.success.description",
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)
     return

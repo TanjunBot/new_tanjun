@@ -6,7 +6,7 @@ from localizer import tanjunLocalizer
 
 
 async def create_ticket(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     channel: discord.TextChannel,
     name: str,
     description: str,
@@ -15,40 +15,40 @@ async def create_ticket(
     introduction: str | None = None,
 ) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).moderate_members
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).moderate_members
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.create_ticket.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.create_ticket.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    assert commandInfo.guild is not None
-    if not channel.permissions_for(commandInfo.guild.me).send_messages:
+    assert command_info.guild is not None
+    if not channel.permissions_for(command_info.guild.me).send_messages:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.create_ticket.missingBotPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.create_ticket.missingBotPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     ticket_id = await create_ticket_message(
-        guild_id=commandInfo.guild.id,
+        guild_id=command_info.guild.id,
         channel_id=channel.id,
         name=name,
         description=description,
@@ -58,7 +58,7 @@ async def create_ticket(
     )
 
     view = discord.ui.View()
-    label = tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.create_ticket.button.label")
+    label = tanjunLocalizer.localize(str(command_info.locale), "commands.admin.create_ticket.button.label")
     btn = discord.ui.Button(  # type: ignore[var-annotated]
         label=label,
         style=discord.ButtonStyle.success,
@@ -68,9 +68,9 @@ async def create_ticket(
     view.add_item(btn)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.create_ticket.embed.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.create_ticket.embed.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.admin.create_ticket.embed.description",
             name=name,
             description=description,
@@ -82,7 +82,7 @@ async def create_ticket(
     await channel.send(embed=embed, view=view)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.create_ticket.success.title"),
-        description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.create_ticket.success.description"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.create_ticket.success.title"),
+        description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.create_ticket.success.description"),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

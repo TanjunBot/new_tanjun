@@ -1,3 +1,4 @@
+import contextlib
 import random
 
 import discord
@@ -29,10 +30,8 @@ async def _handle_opted_out(message: discord.Message, locale: str) -> bool:
     if not await check_if_opted_out(message.author.id):
         return False
 
-    try:
+    with contextlib.suppress(discord.Forbidden):
         await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
-    except discord.Forbidden:
-        pass
     await message.delete()
     return True
 

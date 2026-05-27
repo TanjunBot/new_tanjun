@@ -12,14 +12,14 @@ from localizer import tanjunLocalizer
 ITEMS_PER_PAGE = 10
 
 
-async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
+async def leaderboard(command_info: utility.command_info, page: int = 1):
     if page < 1:
         page = 1
 
-    total_entries = await get_level_leaderboard_count(commandInfo.guild.id)
+    total_entries = await get_level_leaderboard_count(command_info.guild.id)
     if total_entries == 0:
-        await commandInfo.message.channel.send(
-            tanjunLocalizer.localize(commandInfo.locale, "commands.level.leaderboard.no_data")
+        await command_info.message.channel.send(
+            tanjunLocalizer.localize(command_info.locale, "commands.level.leaderboard.no_data")
         )
         return
 
@@ -27,13 +27,13 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
     if page > total_pages:
         page = total_pages
 
-    scaling = await get_xp_scaling(commandInfo.guild.id)
-    custom_formula = await get_custom_formula(commandInfo.guild.id)
+    scaling = await get_xp_scaling(command_info.guild.id)
+    custom_formula = await get_custom_formula(command_info.guild.id)
 
     async def load_page(page_number: int) -> list:
         offset = (page_number - 1) * ITEMS_PER_PAGE
         return await get_level_leaderboard_paginated(
-            commandInfo.guild.id,
+            command_info.guild.id,
             limit=ITEMS_PER_PAGE,
             offset=offset,
         )
@@ -50,13 +50,13 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
             xp_till_next_level = utility.get_xp_for_level(level, scaling, custom_formula)
             description += (
                 f"\n{base_rank + i}. <@{user}> - "
-                f"{tanjunLocalizer.localize(commandInfo.locale, 'commands.level.leaderboard.data', level=level, xp_from_last_level=xp_from_last_level, xp_till_next_level=xp_till_next_level)}"
+                f"{tanjunLocalizer.localize(command_info.locale, 'commands.level.leaderboard.data', level=level, xp_from_last_level=xp_from_last_level, xp_till_next_level=xp_till_next_level)}"
             )
 
         if total_pages > 1:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.level.leaderboard.title",
                     current_page=page_number,
                     total_pages=total_pages,
@@ -65,7 +65,7 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
             )
         else:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.level.leaderboard.titleNoPages"),
+                title=tanjunLocalizer.localize(command_info.locale, "commands.level.leaderboard.titleNoPages"),
                 description=description,
             )
         return embed
@@ -78,10 +78,10 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
 
         @discord.ui.button(label="⬅️", style=discord.ButtonStyle.secondary)
         async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if not interaction.user.id == commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.level.leaderboard.notYourEmbed",
                     ),
                     ephemeral=True,
@@ -98,10 +98,10 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
 
         @discord.ui.button(label="➡️", style=discord.ButtonStyle.secondary)
         async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if not interaction.user.id == commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.level.leaderboard.notYourEmbed",
                     ),
                     ephemeral=True,
@@ -118,4 +118,4 @@ async def leaderboard(commandInfo: utility.commandInfo, page: int = 1):
 
     first_page = await generate_page(page)
     view = LeaderboardPaginator(page)
-    await commandInfo.reply(embed=first_page, view=view)
+    await command_info.reply(embed=first_page, view=view)

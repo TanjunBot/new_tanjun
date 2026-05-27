@@ -16,14 +16,14 @@ from localizer import tanjunLocalizer
 
 
 async def plot_function_command(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     func_str: str,
     x_min: float | None = None,
     x_max: float | None = None,
 ) -> None:
     class FunctionPlotter:
-        def __init__(self, commandInfo: utility.CommandInfo, author_id: int) -> None:
-            self.commandInfo = commandInfo
+        def __init__(self, command_info: utility.CommandInfo, author_id: int) -> None:
+            self.command_info = command_info
             self.author_id = author_id
             self.functions: list[tuple[str, Callable, str]] = []  # type: ignore[type-arg]
             self.x_min = -10
@@ -31,15 +31,15 @@ async def plot_function_command(
             self.y_min = -10
             self.y_max = 10
             self.plot_title = tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.default_title",
             )
             self.x_label = tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.default_x_label",
             )
             self.y_label = tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.default_y_label",
             )
             self.style = "default"
@@ -155,14 +155,14 @@ async def plot_function_command(
             embed = utility.tanjunEmbed(
                 title=self.plot_title,
                 description=tanjunLocalizer.localize(
-                    locale=self.commandInfo.locale,  # type: ignore[misc]
+                    locale=self.command_info.locale,  # type: ignore[misc]
                     key="commands.math.plotfunction.description",
                     x_min=round(self.x_min, 2),
                     x_max=round(self.x_max, 2),
                 ),
             )
 
-            for i, (func_str, func, name) in enumerate(self.functions):
+            for _i, (func_str, _func, name) in enumerate(self.functions):
                 embed.add_field(name=f"{name}(x)", value=func_str, inline=False)
 
             embed.set_image(url="attachment://function_plot.png")
@@ -171,14 +171,14 @@ async def plot_function_command(
     class AddFunctionModal(
         discord.ui.Modal,
         title=tanjunLocalizer.localize(
-            locale=commandInfo.locale,
+            locale=command_info.locale,
             key="commands.math.plotfunction.modals.add_function.title",
         ),
     ):
         def __init__(self, view) -> None:  # type: ignore[no-untyped-def]
             super().__init__(
                 title=tanjunLocalizer.localize(
-                    locale=commandInfo.locale,
+                    locale=command_info.locale,
                     key="commands.math.plotfunction.modals.add_function.title",
                 )
             )
@@ -187,11 +187,11 @@ async def plot_function_command(
         # Text input for the function expression
         function_expression = discord.ui.TextInput(  # type: ignore[var-annotated]
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.add_function.function_expression",
             ),
             placeholder=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.add_function.function_expression_placeholder",
             ),
             style=discord.TextStyle.short,
@@ -201,11 +201,11 @@ async def plot_function_command(
         # Optional: Text input for naming the function
         function_name = discord.ui.TextInput(  # type: ignore[var-annotated]
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.add_function.function_name",
             ),
             placeholder=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.add_function.function_name_placeholder",
             ),
             style=discord.TextStyle.short,
@@ -239,11 +239,11 @@ async def plot_function_command(
         # ):
         #     embed = utility.tanjunEmbed(
         #         title=tanjunLocalizer.localize(
-        #             locale = self.plotter.commandInfo.locale,
+        #             locale = self.plotter.command_info.locale,
         #             key = "commands.math.plotfunction.error.title"
         #         ),
         #         description=tanjunLocalizer.localize(
-        #             locale = self.plotter.commandInfo.locale,
+        #             locale = self.plotter.command_info.locale,
         #             key = "commands.math.plotfunction.error.description",
         #             er=str(error)
         #         )
@@ -350,7 +350,7 @@ async def plot_function_command(
             await interaction.response.edit_message(
                 view=view,
                 content=tanjunLocalizer.localize(
-                    locale=commandInfo.locale,
+                    locale=command_info.locale,
                     key="commands.math.plotfunction.select_menus.integrate.placeholder",
                 ),
             )
@@ -358,11 +358,11 @@ async def plot_function_command(
         @discord.ui.button(label="d/dx", style=discord.ButtonStyle.secondary, custom_id="derive", row=1)
         async def derive(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             view = discord.ui.View()
-            view.add_item(derativeSelect(self.plotter, self))
+            view.add_item(DerivativeSelect(self.plotter, self))
             await interaction.response.edit_message(
                 view=view,
                 content=tanjunLocalizer.localize(
-                    locale=commandInfo.locale,
+                    locale=command_info.locale,
                     key="commands.math.plotfunction.select_menus.derive.placeholder",
                 ),
             )
@@ -370,7 +370,7 @@ async def plot_function_command(
         @discord.ui.button(
             emoji="<:edit:1254736542283464808>",
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.buttons.rename_plot",
             ),
             style=discord.ButtonStyle.secondary,
@@ -383,7 +383,7 @@ async def plot_function_command(
         @discord.ui.button(
             emoji="<:edit:1254736542283464808>",
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.buttons.change_x_label",
             ),
             style=discord.ButtonStyle.secondary,
@@ -396,7 +396,7 @@ async def plot_function_command(
         @discord.ui.button(
             emoji="<:edit:1254736542283464808>",
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.buttons.change_y_label",
             ),
             style=discord.ButtonStyle.secondary,
@@ -409,7 +409,7 @@ async def plot_function_command(
         @discord.ui.button(
             emoji="<:edit:1254736542283464808>",
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.buttons.change_style",
             ),
             style=discord.ButtonStyle.secondary,
@@ -422,7 +422,7 @@ async def plot_function_command(
             await interaction.response.edit_message(
                 view=view,
                 content=tanjunLocalizer.localize(
-                    locale=commandInfo.locale,
+                    locale=command_info.locale,
                     key="commands.math.plotfunction.select_menus.style.placeholder",
                 ),
             )
@@ -430,7 +430,7 @@ async def plot_function_command(
         @discord.ui.button(
             emoji="<:edit:1254736542283464808>",
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.buttons.rename_function",
             ),
             style=discord.ButtonStyle.secondary,
@@ -447,7 +447,7 @@ async def plot_function_command(
             await interaction.response.edit_message(
                 view=view,
                 content=tanjunLocalizer.localize(
-                    locale=commandInfo.locale,
+                    locale=command_info.locale,
                     key="commands.math.plotfunction.select_menus.rename_function.placeholder",
                 ),
             )
@@ -475,7 +475,7 @@ async def plot_function_command(
             if self.message:
                 await self.message.edit(view=self)  # type: ignore[unreachable]
 
-    class derativeSelect(discord.ui.Select):  # type: ignore[type-arg]
+    class DerivativeSelect(discord.ui.Select):  # type: ignore[type-arg]
         def __init__(self, plotter: FunctionPlotter, plotterView: PlotterView) -> None:
             self.plotter = plotter
             self.plotterView = plotterView
@@ -488,7 +488,7 @@ async def plot_function_command(
             ]
             super().__init__(
                 placeholder=tanjunLocalizer.localize(
-                    locale=commandInfo.locale,
+                    locale=command_info.locale,
                     key="commands.math.plotfunction.select_menus.derive.placeholder",
                 ),
                 options=options,
@@ -528,7 +528,7 @@ async def plot_function_command(
             ]
             super().__init__(
                 placeholder=tanjunLocalizer.localize(
-                    locale=commandInfo.locale,
+                    locale=command_info.locale,
                     key="commands.math.plotfunction.select_menus.integrate.placeholder",
                 ),
                 options=options,
@@ -550,7 +550,7 @@ async def plot_function_command(
     class ChangeTitleModal(
         discord.ui.Modal,
         title=tanjunLocalizer.localize(
-            locale=commandInfo.locale,
+            locale=command_info.locale,
             key="commands.math.plotfunction.modals.change_title.title",
         ),
     ):
@@ -560,11 +560,11 @@ async def plot_function_command(
 
         new_title = discord.ui.TextInput(  # type: ignore[var-annotated]
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.change_title.new_title",
             ),
             placeholder=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.change_title.new_title_placeholder",
             ),
             required=True,
@@ -577,7 +577,7 @@ async def plot_function_command(
     class ChangeXLabelModal(
         discord.ui.Modal,
         title=tanjunLocalizer.localize(
-            locale=commandInfo.locale,
+            locale=command_info.locale,
             key="commands.math.plotfunction.modals.change_x_label.title",
         ),
     ):
@@ -587,11 +587,11 @@ async def plot_function_command(
 
         new_label = discord.ui.TextInput(  # type: ignore[var-annotated]
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.change_x_label.new_label",
             ),
             placeholder=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.change_x_label.new_label_placeholder",
             ),
             required=True,
@@ -604,7 +604,7 @@ async def plot_function_command(
     class ChangeYLabelModal(
         discord.ui.Modal,
         title=tanjunLocalizer.localize(
-            locale=commandInfo.locale,
+            locale=command_info.locale,
             key="commands.math.plotfunction.modals.change_y_label.title",
         ),
     ):
@@ -614,11 +614,11 @@ async def plot_function_command(
 
         new_label = discord.ui.TextInput(  # type: ignore[var-annotated]
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.change_y_label.new_label",
             ),
             placeholder=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.change_y_label.new_label_placeholder",
             ),
             required=True,
@@ -639,7 +639,7 @@ async def plot_function_command(
             options = [discord.SelectOption(label=style, value=style) for style in self.styles[0:25]]
             super().__init__(
                 placeholder=tanjunLocalizer.localize(
-                    locale=commandInfo.locale,
+                    locale=command_info.locale,
                     key="commands.math.plotfunction.select_menus.style.placeholder",
                 ),
                 options=options,
@@ -662,7 +662,7 @@ async def plot_function_command(
             ]
             super().__init__(
                 placeholder=tanjunLocalizer.localize(
-                    locale=commandInfo.locale,
+                    locale=command_info.locale,
                     key="commands.math.plotfunction.select_menus.rename_function.placeholder",
                 ),
                 options=options,
@@ -675,7 +675,7 @@ async def plot_function_command(
     class RenameFunctionModal(
         discord.ui.Modal,
         title=tanjunLocalizer.localize(
-            locale=commandInfo.locale,
+            locale=command_info.locale,
             key="commands.math.plotfunction.modals.rename_function.title",
         ),
     ):
@@ -692,11 +692,11 @@ async def plot_function_command(
 
         new_name = discord.ui.TextInput(  # type: ignore[var-annotated]
             label=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.rename_function.new_name",
             ),
             placeholder=tanjunLocalizer.localize(
-                locale=commandInfo.locale,
+                locale=command_info.locale,
                 key="commands.math.plotfunction.modals.rename_function.new_name_placeholder",
             ),
             required=True,
@@ -708,7 +708,7 @@ async def plot_function_command(
             await self.plotterView.update_plot(interaction)
 
     # Instantiate the FunctionPlotter
-    plotter = FunctionPlotter(commandInfo, commandInfo.user.id)
+    plotter = FunctionPlotter(command_info, command_info.user.id)
     await plotter.add_function(func_str, "f")
 
     if x_min is not None:
@@ -725,5 +725,5 @@ async def plot_function_command(
     view = PlotterView(plotter)
 
     # Send the plot with the interactive view
-    message = await commandInfo.reply(embed=embed, file=file, view=view)
+    message = await command_info.reply(embed=embed, file=file, view=view)
     view.message = message  # type: ignore[assignment]

@@ -4,26 +4,26 @@ from localizer import tanjunLocalizer
 
 
 async def delete_custom_situation(
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
 ) -> None:
-    situation = await getCustomSituationFromUser(commandInfo.user.id)
+    situation = await getCustomSituationFromUser(command_info.user.id)
 
     if situation is None:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.deletecustom.notfound.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.deletecustom.notfound.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.deletecustom.notfound.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.deletecustom.notfound.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     await deleteCustomSituation(situation.user_id)
 
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.ai.deletecustom.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.deletecustom.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.ai.deletecustom.success.description",
             name=situation.name,
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

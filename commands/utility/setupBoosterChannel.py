@@ -6,57 +6,57 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def setupBoosterChannel(commandInfo: CommandInfo, category: discord.CategoryChannel) -> None:
-    if isinstance(commandInfo.user, discord.User) or commandInfo.guild is None:
+async def setupBoosterChannel(command_info: CommandInfo, category: discord.CategoryChannel) -> None:
+    if isinstance(command_info.user, discord.User) or command_info.guild is None:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "errors.guildonly.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "errors.guildonly.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    if not getattr(commandInfo.user, "guild_permissions", None) or not commandInfo.user.guild_permissions.administrator:
+    if not getattr(command_info.user, "guild_permissions", None) or not command_info.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.setupboosterchannel.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.setupboosterchannel.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    booster_channel = await get_booster_channel(commandInfo.guild.id)
+    booster_channel = await get_booster_channel(command_info.guild.id)
     if booster_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.setupboosterchannel.already_set.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.utility.setupboosterchannel.already_set.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    await add_booster_channel(commandInfo.guild.id, category.id)
+    await add_booster_channel(command_info.guild.id, category.id)
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.utility.setupboosterchannel.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.setupboosterchannel.success.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.utility.setupboosterchannel.success.description",
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

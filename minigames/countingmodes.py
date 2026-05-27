@@ -1,5 +1,6 @@
 # Unused imports:
 # from typing import Union
+import contextlib
 import random
 from math import sqrt
 
@@ -274,7 +275,7 @@ def get_goal(mode: int):
         return random.randint(20, 100) ** 3
 
 
-def get_first_number(mode: int):
+def get_first_number(mode: int) -> int | None:
     if mode == 1:
         return 0
     if mode == 2:
@@ -333,35 +334,33 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         progress = int(str(progress), 2)
 
     if await check_if_opted_out(message.author.id):
-        try:
+        with contextlib.suppress(discord.Forbidden):
             await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
-        except discord.Forbidden:
-            pass
         await message.delete()
         return
 
     content = message.content
 
     if mode == 12:
-        correctNumber = get_correct_next_number(mode, romeal_to_number(progress))
+        correct_number = get_correct_next_number(mode, romeal_to_number(progress))
     else:
-        correctNumber = get_correct_next_number(mode, progress)
+        correct_number = get_correct_next_number(mode, progress)
 
     if not content:
         await message.add_reaction("💀")
         # nosec: B311
-        newMode = random.randint(1, len(modeMap))
-        goal = get_goal(newMode)
+        new_mode = random.randint(1, len(modeMap))
+        goal = get_goal(new_mode)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.failed.title"),
             description=tanjunLocalizer.localize(
                 locale,
                 "minigames.counting.modes.failed.description",
-                number=correctNumber,
-                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[newMode]}.name"),
+                number=correct_number,
+                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[new_mode]}.name"),
                 mode_description=tanjunLocalizer.localize(
                     locale,
-                    f"minigames.counting.modes.modes.{modeMap[newMode]}.description",
+                    f"minigames.counting.modes.modes.{modeMap[new_mode]}.description",
                 ),
                 goal=goal,
             ),
@@ -369,11 +368,11 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         await clear_counting_mode(message.channel.id)
         if mode == 12:
             goal = romeal_to_number(goal)
-        starter = get_first_number(newMode)
+        starter = get_first_number(new_mode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
-            mode=newMode,
+            mode=new_mode,
             goal=goal,
             counter_id="nobody",
             guild_id=message.guild.id,
@@ -386,18 +385,18 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     except ValueError:
         await message.add_reaction("💀")
         # nosec: B311
-        newMode = random.randint(1, len(modeMap))
-        goal = get_goal(newMode)
+        new_mode = random.randint(1, len(modeMap))
+        goal = get_goal(new_mode)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.failed.title"),
             description=tanjunLocalizer.localize(
                 locale,
                 "minigames.counting.modes.failed.description",
-                number=correctNumber,
-                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[newMode]}.name"),
+                number=correct_number,
+                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[new_mode]}.name"),
                 mode_description=tanjunLocalizer.localize(
                     locale,
-                    f"minigames.counting.modes.modes.{modeMap[newMode]}.description",
+                    f"minigames.counting.modes.modes.{modeMap[new_mode]}.description",
                 ),
                 goal=goal,
             ),
@@ -405,11 +404,11 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         await clear_counting_mode(message.channel.id)
         if mode == 12:
             goal = romeal_to_number(goal)
-        starter = get_first_number(newMode)
+        starter = get_first_number(new_mode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
-            mode=newMode,
+            mode=new_mode,
             goal=goal,
             counter_id="nobody",
             guild_id=message.guild.id,
@@ -417,33 +416,33 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         await message.reply(embed=embed)
         return
 
-    if number != correctNumber:
+    if number != correct_number:
         await message.add_reaction("💀")
         # nosec: B311
-        newMode = random.randint(1, len(modeMap))
-        goal = get_goal(newMode)
+        new_mode = random.randint(1, len(modeMap))
+        goal = get_goal(new_mode)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.failed.title"),
             description=tanjunLocalizer.localize(
                 locale,
                 "minigames.counting.modes.failed.description",
-                number=correctNumber,
-                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[newMode]}.name"),
+                number=correct_number,
+                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[new_mode]}.name"),
                 mode_description=tanjunLocalizer.localize(
                     locale,
-                    f"minigames.counting.modes.modes.{modeMap[newMode]}.description",
+                    f"minigames.counting.modes.modes.{modeMap[new_mode]}.description",
                 ),
                 goal=goal,
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if newMode == 12:
+        if new_mode == 12:
             goal = romeal_to_number(goal)
-        starter = get_first_number(newMode)
+        starter = get_first_number(new_mode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
-            mode=newMode,
+            mode=new_mode,
             goal=goal,
             counter_id="nobody",
             guild_id=message.guild.id,
@@ -457,18 +456,18 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     if last_counter_id == str(message.author.id):
         await message.add_reaction("💀")
         # nosec: B311
-        newMode = random.randint(1, len(modeMap))
-        goal = get_goal(newMode)
+        new_mode = random.randint(1, len(modeMap))
+        goal = get_goal(new_mode)
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.failed_double.title"),
             description=tanjunLocalizer.localize(
                 locale,
                 "minigames.counting.modes.failed_double.description",
-                number=correctNumber,
-                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[newMode]}.name"),
+                number=correct_number,
+                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[new_mode]}.name"),
                 mode_description=tanjunLocalizer.localize(
                     locale,
-                    f"minigames.counting.modes.modes.{modeMap[newMode]}.description",
+                    f"minigames.counting.modes.modes.{modeMap[new_mode]}.description",
                 ),
                 goal=goal,
             ),
@@ -476,11 +475,11 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         await clear_counting_mode(message.channel.id)
         if mode == 12:
             goal = romeal_to_number(goal)
-        starter = get_first_number(newMode)
+        starter = get_first_number(new_mode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
-            mode=newMode,
+            mode=new_mode,
             goal=goal,
             counter_id="nobody",
             guild_id=message.guild.id,
@@ -497,8 +496,8 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     if number == goal:
         await message.add_reaction("🎉")
         # nosec: B311
-        newMode = random.randint(1, len(modeMap))
-        new_goal = get_goal(newMode)
+        new_mode = random.randint(1, len(modeMap))
+        new_goal = get_goal(new_mode)
         if mode == 12:
             new_goal = romeal_to_number(new_goal)
         embed = tanjunEmbed(
@@ -506,10 +505,10 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             description=tanjunLocalizer.localize(
                 locale,
                 "minigames.counting.modes.won.description",
-                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[newMode]}.name"),
+                mode_name=tanjunLocalizer.localize(locale, f"minigames.counting.modes.modes.{modeMap[new_mode]}.name"),
                 mode_description=tanjunLocalizer.localize(
                     locale,
-                    f"minigames.counting.modes.modes.{modeMap[newMode]}.description",
+                    f"minigames.counting.modes.modes.{modeMap[new_mode]}.description",
                 ),
                 goal=goal,
                 new_goal=new_goal,
@@ -518,11 +517,11 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         await clear_counting_mode(message.channel.id)
         if mode == 12:
             new_goal = romeal_to_number(new_goal)
-        starter = get_first_number(newMode)
+        starter = get_first_number(new_mode)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
-            mode=newMode,
+            mode=new_mode,
             goal=new_goal,
             counter_id="nobody",
             guild_id=message.guild.id,
@@ -531,11 +530,11 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         return
 
     if mode == 12:
-        correctNumber = romeal_to_number(correctNumber)
+        correct_number = romeal_to_number(correct_number)
 
     await set_counting_mode_progress(
         channel_id=message.channel.id,
-        progress=(-15 if (mode == 7 and number == 1 and progress == 0) else correctNumber),
+        progress=(-15 if (mode == 7 and number == 1 and progress == 0) else correct_number),
         mode=mode,
         counter_id=message.author.id,
         guild_id=message.guild.id,
@@ -543,11 +542,11 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     )
     # nosec: B311
     if random.randint(1, 100) == 1:
-        correctNumber = get_correct_next_number(mode, correctNumber)
-        await message.channel.send(correctNumber)
+        correct_number = get_correct_next_number(mode, correct_number)
+        await message.channel.send(correct_number)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
-            progress=(romeal_to_number(correctNumber) if mode == 12 else correctNumber),
+            progress=(romeal_to_number(correct_number) if mode == 12 else correct_number),
             mode=mode,
             counter_id="me",
             guild_id=message.guild.id,

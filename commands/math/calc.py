@@ -2,15 +2,15 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def calc(commandInfo: utility.CommandInfo, expression: str) -> None:
+async def calc(command_info: utility.CommandInfo, expression: str) -> None:
     nsp = utility.NumericStringParser()
 
     try:
         result = nsp.eval(expression)
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.calc.success.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.math.calc.success.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.math.calc.success.description",
                 expression=expression,
                 result=result,
@@ -18,10 +18,10 @@ async def calc(commandInfo: utility.CommandInfo, expression: str) -> None:
         )
     except Exception as e:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.math.calc.error.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.math.calc.error.title"),
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale), "commands.math.calc.error.description", error=str(e)
+                str(command_info.locale), "commands.math.calc.error.description", error=str(e)
             ),
         )
 
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

@@ -8,8 +8,8 @@ from commands.games.country_flags.flags import random_flag
 from localizer import tanjunLocalizer
 
 
-async def flag_quiz(commandInfo: utility.commandInfo):
-    locale = str(commandInfo.locale)
+async def flag_quiz(command_info: utility.command_info):
+    locale = str(command_info.locale)
     flag_file = random_flag()
     correct_country = flag_file.replace(".png", "").replace("_", " ").title()
     correct_country = tanjunLocalizer.localize(locale, f"countries.{correct_country}")
@@ -41,11 +41,11 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         if given_up:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.flagquiz.givenUp.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.flagquiz.givenUp.description",
                     country=correct_country,
                 ),
@@ -61,9 +61,9 @@ async def flag_quiz(commandInfo: utility.commandInfo):
 
         if len(guesses) > 0 and guesses[-1].lower() == correct_country.lower():
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.success.title"),
+                title=tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.success.title"),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.flagquiz.success.description",
                     guesses=len(guesses),
                 ),
@@ -79,9 +79,9 @@ async def flag_quiz(commandInfo: utility.commandInfo):
 
         if len(guesses) >= 5:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.failure.title"),
+                title=tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.failure.title"),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.flagquiz.failure.description",
                     country=correct_country,
                 ),
@@ -102,12 +102,12 @@ async def flag_quiz(commandInfo: utility.commandInfo):
 
         if hint_used:
             hint = get_hint(correct_country)
-            guess_list += f"\n\n{tanjunLocalizer.localize(commandInfo.locale, 'commands.games.flagquiz.hint')}: `{hint}`"
+            guess_list += f"\n\n{tanjunLocalizer.localize(command_info.locale, 'commands.games.flagquiz.hint')}: `{hint}`"
 
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.title"),
+            title=tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.games.flagquiz.description",
                 remaining=5 - len(guesses),
                 guesses=guess_list,
@@ -115,7 +115,7 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         )
         embed.set_image(url="attachment://flag.png")
 
-        view = FlagQuizView(commandInfo)
+        view = FlagQuizView(command_info)
         await interaction.followup.edit_message(
             message_id=interaction.message.id,
             embed=embed,
@@ -124,15 +124,15 @@ async def flag_quiz(commandInfo: utility.commandInfo):
         )
 
     class FlagQuizModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo):
-            super().__init__(title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.modal.title"))
-            self.commandInfo = commandInfo
+        def __init__(self, command_info: utility.command_info):
+            super().__init__(title=tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.modal.title"))
+            self.command_info = command_info
 
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.modal.input.label"),
+                    label=tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.modal.input.label"),
                     placeholder=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.games.flagquiz.modal.input.placeholder",
                     ),
                     required=True,
@@ -145,33 +145,33 @@ async def flag_quiz(commandInfo: utility.commandInfo):
             await update_game(interaction)
 
     class FlagQuizView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo):
+        def __init__(self, command_info: utility.command_info):
             super().__init__(timeout=3600)
-            self.commandInfo = commandInfo
+            self.command_info = command_info
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.buttons.guess"),
+            label=tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
         async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.notYourGame"),
+                    tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.notYourGame"),
                     ephemeral=True,
                 )
                 return
-            modal = FlagQuizModal(self.commandInfo)
+            modal = FlagQuizModal(self.command_info)
             await interaction.response.send_modal(modal)
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.buttons.hint"),
+            label=tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.buttons.hint"),
             style=discord.ButtonStyle.blurple,
         )
         async def hint_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.followup.send(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.notYourGame"),
+                    tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.notYourGame"),
                     ephemeral=True,
                 )
                 return
@@ -181,33 +181,33 @@ async def flag_quiz(commandInfo: utility.commandInfo):
                 await update_game(interaction, hint_used=True)
             else:
                 await interaction.followup.send(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.error.hintUsed"),
+                    tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.error.hintUsed"),
                     ephemeral=True,
                 )
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.buttons.giveUp"),
+            label=tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.buttons.giveUp"),
             style=discord.ButtonStyle.red,
         )
         async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.followup.send(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.notYourGame"),
+                    tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.notYourGame"),
                     ephemeral=True,
                 )
                 return
             await update_game(interaction, given_up=True)
 
-    view = FlagQuizView(commandInfo)
+    view = FlagQuizView(command_info)
     file = discord.File(f"commands/games/country_flags/{flag_file}", filename="flag.png")
     embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.flagquiz.title"),
+        title=tanjunLocalizer.localize(command_info.locale, "commands.games.flagquiz.title"),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.games.flagquiz.initial.description",
             guesses="",
         ),
     )
     embed.set_image(url="attachment://flag.png")
-    await commandInfo.reply(view=view, embed=embed, file=file)
+    await command_info.reply(view=view, embed=embed, file=file)

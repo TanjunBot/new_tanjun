@@ -5,50 +5,50 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 
-async def remove_level_role_command(commandInfo: CommandInfo, role: discord.Role) -> None:
+async def remove_level_role_command(command_info: CommandInfo, role: discord.Role) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).manage_roles
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).manage_roles
     ):
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                str(commandInfo.locale),
+                str(command_info.locale),
                 "commands.level.removelevelrole.error.no_permission.title",
             ),
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale),
+                str(command_info.locale),
                 "commands.level.removelevelrole.error.no_permission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    assert commandInfo.guild is not None
-    existing_role = await get_level_role(str(commandInfo.guild.id), str(role.id))
+    assert command_info.guild is not None
+    existing_role = await get_level_role(str(command_info.guild.id), str(role.id))
     if not existing_role:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
-                str(commandInfo.locale),
+                str(command_info.locale),
                 "commands.level.removelevelrole.error.role_not_found.title",
             ),
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale),
+                str(command_info.locale),
                 "commands.level.removelevelrole.error.role_not_found.description",
                 role=role.mention,
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    await remove_level_role(str(commandInfo.guild.id), str(role.id))
+    await remove_level_role(str(command_info.guild.id), str(role.id))
 
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.level.removelevelrole.success.title"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.level.removelevelrole.success.title"),
         description=tanjunLocalizer.localize(
-            str(commandInfo.locale),
+            str(command_info.locale),
             "commands.level.removelevelrole.success.description",
             role=role.mention,
         ),
     )
-    await commandInfo.reply(embed=embed)
+    await command_info.reply(embed=embed)

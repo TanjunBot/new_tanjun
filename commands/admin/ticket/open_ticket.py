@@ -14,7 +14,7 @@ async def openTicket(interaction: discord.Interaction) -> None:
 
     await interaction.response.defer(ephemeral=True)
 
-    class optedOutView(discord.ui.View):
+    class OptedOutView(discord.ui.View):
         def __init__(self) -> None:
             super().__init__()
 
@@ -46,7 +46,7 @@ async def openTicket(interaction: discord.Interaction) -> None:
             await self.message.edit(view=self)  # type: ignore[attr-defined]
 
     if await check_if_opted_out(interaction.user.id):
-        view = optedOutView()
+        view = OptedOutView()
         await interaction.followup.send(
             tanjunLocalizer.localize(
                 str(interaction.locale),

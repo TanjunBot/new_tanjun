@@ -4,76 +4,76 @@ import utility
 from localizer import tanjunLocalizer
 
 
-async def unban(commandInfo: utility.CommandInfo, username: str, reason: str | None = None) -> None:
+async def unban(command_info: utility.CommandInfo, username: str, reason: str | None = None) -> None:
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).ban_members
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).ban_members
     ):
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.missingPermission.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unban.missingPermission.title"),
             description=tanjunLocalizer.localize(
-                str(commandInfo.locale), "commands.admin.unban.missingPermission.description"
+                str(command_info.locale), "commands.admin.unban.missingPermission.description"
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    assert commandInfo.guild is not None
-    if not commandInfo.guild.me.guild_permissions.ban_members:
+    assert command_info.guild is not None
+    if not command_info.guild.me.guild_permissions.ban_members:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.missingPermissionBot.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unban.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.unban.missingPermissionBot.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
     try:
         # Get the list of banned users
-        bans = [ban_entry async for ban_entry in commandInfo.guild.bans()]
+        bans = [ban_entry async for ban_entry in command_info.guild.bans()]
 
         # Find the user to unban
         user_to_unban = discord.utils.get(bans, user__name=username)
 
         if user_to_unban is None:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.userNotFound.title"),
+                title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unban.userNotFound.title"),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.admin.unban.userNotFound.description",
                     username=username,
                 ),
             )
-            await commandInfo.reply(embed=embed)
+            await command_info.reply(embed=embed)
             return
 
-        await commandInfo.guild.unban(user_to_unban.user, reason=reason)
+        await command_info.guild.unban(user_to_unban.user, reason=reason)
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.success.title"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unban.success.title"),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.unban.success.description",
                 user=user_to_unban.user.name,
                 reason=(
                     reason
                     if reason is not None and len(reason.strip()) > 0
-                    else tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.noReasonProvided")
+                    else tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unban.noReasonProvided")
                 ),
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.forbidden.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.forbidden.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unban.forbidden.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unban.forbidden.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
     except discord.HTTPException:
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.error.title"),
-            description=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.unban.error.description"),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unban.error.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unban.error.description"),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)

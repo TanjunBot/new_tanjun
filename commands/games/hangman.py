@@ -46,7 +46,7 @@ _|___
     """,
     """
   _______
- |/      
+ |/
  |
  |
  |
@@ -137,8 +137,8 @@ def wrong_letters(guesses: list[str], word):
     return len([x for x in guesses if len(x) == 1 and x != word and x not in word])
 
 
-async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
-    locale = str(commandInfo.locale)
+async def hangman(command_info: utility.command_info, language: str = "own"):
+    locale = str(command_info.locale)
     if language == "own":
         language = locale
     if language in ["en-US", "en-GB"]:
@@ -166,11 +166,11 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             hanged_man = hangmanSteps[wrong_letters(guesses, word)]
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.givenUp.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.givenUp.description",
                     guesses=len(guesses),
                     guessed_letters=guessed_letters if len(guessed_letters) > 0 else "",
@@ -181,11 +181,11 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
         elif wrong_letters(guesses, word) >= 11:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.failure.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.failure.description",
                     word=word,
                     hanged_man=hanged_man,
@@ -196,11 +196,11 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
         elif len(guesses) > 0 and guesses[-1] == word:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.success.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.success.description",
                     hanged_man=hanged_man,
                     guessed_letters=guessed_letters if len(guessed_letters) > 0 else "",
@@ -211,11 +211,11 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
         elif wrong_guess:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.wrongGuess.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.wrongGuess.description",
                     guesses=len(guesses),
                     hanged_man=hanged_man,
@@ -226,11 +226,11 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
         else:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.games.hangman.description",
                     guesses=len(guesses),
                     hanged_man=hanged_man,
@@ -241,20 +241,20 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
         view = (
             None
             if wrong_letters(guesses, word) > 11 or (len(guesses) > 0 and guesses[-1] == word) or given_up
-            else WordleView(commandInfo)
+            else WordleView(command_info)
         )
         await interaction.response.edit_message(embed=embed, view=view)
 
     class HangmanInputModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.commandInfo, config):
-            super().__init__(title=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.modal.title"))
-            self.commandInfo = commandInfo
+        def __init__(self, command_info: utility.command_info, config):
+            super().__init__(title=tanjunLocalizer.localize(command_info.locale, "commands.games.hangman.modal.title"))
+            self.command_info = command_info
 
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.modal.input.label"),
+                    label=tanjunLocalizer.localize(command_info.locale, "commands.games.hangman.modal.input.label"),
                     placeholder=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.games.hangman.modal.input.placeholder",
                     ),
                     required=True,
@@ -266,68 +266,67 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             try:
                 guess = self.children[0].value.lower()
 
-                if len(guess) > 1:
-                    if guess != word:
-                        guesses.append("THISAINTBEINGTHEWORD")
-                        await update_hangman_game(interaction, wrong_guess=True)
-                        return
+                if len(guess) > 1 and guess != word:
+                    guesses.append("THISAINTBEINGTHEWORD")
+                    await update_hangman_game(interaction, wrong_guess=True)
+                    return
 
                 guesses.append(guess)
 
                 await update_hangman_game(interaction)
             except ValueError:
                 embed = utility.tanjunEmbed(
-                    title=tanjunLocalizer.localize(self.commandInfo.locale, "commands.games.hangman.error.title"),
+                    title=tanjunLocalizer.localize(self.command_info.locale, "commands.games.hangman.error.title"),
                     description=tanjunLocalizer.localize(
-                        self.commandInfo.locale,
+                        self.command_info.locale,
                         "commands.games.hangman.error.invalidInput",
                     ),
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
     class WordleView(discord.ui.View):
-        def __init__(self, commandInfo: utility.commandInfo):
+        def __init__(self, command_info: utility.command_info):
             super().__init__(timeout=3600)
-            self.commandInfo = commandInfo
+            self.command_info = command_info
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.buttons.guess"),
+            label=tanjunLocalizer.localize(command_info.locale, "commands.games.hangman.buttons.guess"),
             style=discord.ButtonStyle.green,
         )
         async def guess_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"),
+                    tanjunLocalizer.localize(command_info.locale, "commands.games.hangman.notYourGame"),
                     ephemeral=True,
                 )
                 return
-            modal = HangmanInputModal(self.commandInfo, guesses)
+            modal = HangmanInputModal(self.command_info, guesses)
             await interaction.response.send_modal(modal)
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.buttons.giveUp"),
+            label=tanjunLocalizer.localize(command_info.locale, "commands.games.hangman.buttons.giveUp"),
             style=discord.ButtonStyle.red,
         )
         async def give_up_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
-            if interaction.user.id != commandInfo.user.id:
+            if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(commandInfo.locale, "commands.games.hangman.notYourGame"),
+                    tanjunLocalizer.localize(command_info.locale, "commands.games.hangman.notYourGame"),
                     ephemeral=True,
                 )
                 return
             guesses.append(word)
             await update_hangman_game(interaction, given_up=True)
 
-    view = WordleView(commandInfo)
+    view = WordleView(command_info)
     hanged_man = hangmanSteps[wrong_letters(guesses, word)]
     guessed_letters = get_guessed_letters(guesses, word)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.games.hangman.initial.title",
         ),
         description=tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.games.hangman.initial.description",
             guesses=len(guesses),
             hanged_man=hanged_man,
@@ -335,4 +334,4 @@ async def hangman(commandInfo: utility.commandInfo, language: str = "own"):
             used_letters=", ".join([f"{letter}" for letter in [x for x in guesses if len(x) == 1]]),
         ),
     )
-    await commandInfo.reply(view=view, embed=embed)
+    await command_info.reply(view=view, embed=embed)

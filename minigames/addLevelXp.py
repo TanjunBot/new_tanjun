@@ -1,3 +1,5 @@
+import contextlib
+
 import discord
 
 from api import (
@@ -105,7 +107,7 @@ async def update_user_roles(message: discord.Message, new_level: int, guild_id: 
         if lr.level <= new_level:
             role = message.guild.get_role(int(lr.role_id))
             if role and role not in message.author.roles:
-                try:
+                with contextlib.suppress(discord.Forbidden):
                     await message.author.add_roles(
                         role,
                         reason=tanjunLocalizer.localize(
@@ -114,12 +116,8 @@ async def update_user_roles(message: discord.Message, new_level: int, guild_id: 
                             level=lr.level,
                         ),
                     )
-                except discord.Forbidden:
-                    pass
         elif lr.level > new_level:
             role = message.guild.get_role(int(lr.role_id))
             if role and role in message.author.roles:
-                try:
+                with contextlib.suppress(discord.Forbidden):
                     await message.author.remove_roles(role)
-                except discord.Forbidden:
-                    pass

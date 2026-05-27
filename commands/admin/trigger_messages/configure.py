@@ -15,44 +15,44 @@ from localizer import tanjunLocalizer
 
 
 async def configure_trigger_messages(  # type: ignore[no-untyped-def]
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
 ):
     if (
-        isinstance(commandInfo.user, discord.Member)
-        and isinstance(commandInfo.channel, discord.abc.GuildChannel)
-        and not commandInfo.channel.permissions_for(commandInfo.user).administrator
+        isinstance(command_info.user, discord.Member)
+        and isinstance(command_info.channel, discord.abc.GuildChannel)
+        and not command_info.channel.permissions_for(command_info.user).administrator
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.missingPermission.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.missingPermission.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    assert commandInfo.guild is not None
-    trigger_messages = await get_trigger_messages(commandInfo.guild.id)
+    assert command_info.guild is not None
+    trigger_messages = await get_trigger_messages(command_info.guild.id)
 
     if trigger_messages is None or len(trigger_messages) == 0:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.noTriggerMessages.title",
             ),
             description=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.noTriggerMessages.description",
             ),
         )
-        await commandInfo.reply(embed=embed)
+        await command_info.reply(embed=embed)
         return
 
-    channels = await get_trigger_message_channels(commandInfo.guild.id, trigger_messages[0].id)
+    channels = await get_trigger_message_channels(command_info.guild.id, trigger_messages[0].id)
     page = 0
     selected_channel = 0
 
@@ -61,11 +61,11 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         if page < 0 or page >= len(trigger_messages):
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.admin.trigger_messages.configure.trigger.title",
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.admin.trigger_messages.configure.trigger.noTriggerMessages.description",
                 ),
             )
@@ -73,7 +73,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
 
         trigger_message = trigger_messages[page]
         description = tanjunLocalizer.localize(
-            commandInfo.locale,
+            command_info.locale,
             "commands.admin.trigger_messages.configure.trigger.description",
             trigger=trigger_message.trigger,
             response=trigger_message.response,
@@ -81,18 +81,18 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
 
         if trigger_message.case_sensitive:
             description += "\n\n" + tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.trigger_messages.configure.trigger.caseSensitive",
+                command_info.locale,
+                "commands.admin.trigger_messages.configure.trigger.case_sensitive",
             )
         else:
             description += "\n\n" + tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.trigger.caseInsensitive",
             )
 
         if channels is not None and len(channels) > 0:
             description += "\n\n" + tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.trigger.channels",
             )
             for index, channel in enumerate(channels):
@@ -102,13 +102,13 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
                     description += f"\n{index + 1}. <#{channel.channel_id}>"
         else:
             description += "\n\n" + tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.trigger.noChannels",
             )
 
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.trigger.title",
                 trigger=trigger_message.trigger,
             ),
@@ -117,10 +117,10 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         return embed
 
     class TriggerMessageModal(discord.ui.Modal):
-        def __init__(self, commandInfo: utility.CommandInfo) -> None:
+        def __init__(self, command_info: utility.CommandInfo) -> None:
             super().__init__(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.admin.trigger_messages.configure.modal.title",
                 )
             )
@@ -128,11 +128,11 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             self.add_item(
                 discord.ui.TextInput(
                     label=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.admin.trigger_messages.configure.modal.trigger.label",
                     ),
                     placeholder=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.admin.trigger_messages.configure.modal.trigger.placeholder",
                     ),
                     required=True,
@@ -143,11 +143,11 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             self.add_item(
                 discord.ui.TextInput(
                     label=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.admin.trigger_messages.configure.modal.response.label",
                     ),
                     placeholder=tanjunLocalizer.localize(
-                        commandInfo.locale,
+                        command_info.locale,
                         "commands.admin.trigger_messages.configure.modal.response.placeholder",
                     ),
                     required=True,
@@ -158,12 +158,12 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             self.add_item(
                 discord.ui.TextInput(
                     label=tanjunLocalizer.localize(
-                        commandInfo.locale,
-                        "commands.admin.trigger_messages.configure.modal.caseSensitive.label",
+                        command_info.locale,
+                        "commands.admin.trigger_messages.configure.modal.case_sensitive.label",
                     ),
                     placeholder=tanjunLocalizer.localize(
-                        commandInfo.locale,
-                        "commands.admin.trigger_messages.configure.modal.caseSensitive.placeholder",
+                        command_info.locale,
+                        "commands.admin.trigger_messages.configure.modal.case_sensitive.placeholder",
                     ),
                     default="n",
                     required=True,
@@ -174,13 +174,13 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         async def on_submit(self, interaction: discord.Interaction) -> None:
             trigger = self.children[0].value.strip()  # type: ignore[attr-defined]
             response = self.children[1].value.strip()  # type: ignore[attr-defined]
-            caseSensitive = self.children[2].value == "y"  # type: ignore[attr-defined]
-            await add_trigger_message(commandInfo.guild.id, trigger, response, caseSensitive)  # type: ignore[union-attr]
+            case_sensitive = self.children[2].value == "y"  # type: ignore[attr-defined]
+            await add_trigger_message(command_info.guild.id, trigger, response, case_sensitive)  # type: ignore[union-attr]
             nonlocal trigger_messages
-            trigger_messages = await get_trigger_messages(commandInfo.guild.id)  # type: ignore[union-attr]
+            trigger_messages = await get_trigger_messages(command_info.guild.id)  # type: ignore[union-attr]
             nonlocal channels
             channels = await get_trigger_message_channels(
-                commandInfo.guild.id,
+                command_info.guild.id,
                 trigger_messages[0].id,
             )
             embed = await generate_embed()  # type: ignore[no-untyped-call]
@@ -188,20 +188,20 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             await interaction.response.edit_message(embed=embed, view=view)
 
     class TriggerMessageChannelView(discord.ui.View):
-        def __init__(self, commandInfo: utility.CommandInfo, trigger_id: int) -> None:
+        def __init__(self, command_info: utility.CommandInfo, trigger_id: int) -> None:
             super().__init__()
 
-            channelSelect = discord.ui.ChannelSelect(  # type: ignore[var-annotated]
+            channel_select = discord.ui.ChannelSelect(  # type: ignore[var-annotated]
                 placeholder=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.admin.trigger_messages.configure.trigger.addChannel.placeholder",
                 ),
                 min_values=1,
                 max_values=1,
                 custom_id="channel_select",
             )
-            channelSelect.callback = self.on_channel_select  # type: ignore[method-assign]
-            self.add_item(channelSelect)
+            channel_select.callback = self.on_channel_select  # type: ignore[method-assign]
+            self.add_item(channel_select)
 
         async def on_channel_select(self, interaction: discord.Interaction) -> None:
             from typing import Any, cast
@@ -209,13 +209,13 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             data = cast(Any, interaction.data)
             nonlocal channels
             await add_trigger_message_channel(
-                commandInfo.guild.id,  # type: ignore[union-attr]
+                command_info.guild.id,  # type: ignore[union-attr]
                 data["values"][0] if data is not None else "",
                 trigger_messages[page].id,
             )
             nonlocal channels
             channels = await get_trigger_message_channels(
-                commandInfo.guild.id,
+                command_info.guild.id,
                 trigger_messages[page].id,
             )
             embed = await generate_embed()  # type: ignore[no-untyped-call]
@@ -228,7 +228,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.previous.label",
             ),
             style=discord.ButtonStyle.secondary,
@@ -242,7 +242,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
                 page = len(trigger_messages) - 1  # type: ignore[arg-type]
             nonlocal channels
             channels = await get_trigger_message_channels(
-                commandInfo.guild.id,
+                command_info.guild.id,
                 trigger_messages[page].id,
             )
             nonlocal selected_channel
@@ -251,7 +251,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.remove.label",
             ),
             style=discord.ButtonStyle.danger,
@@ -260,32 +260,32 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         async def remove(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             nonlocal trigger_messages
             await remove_trigger_message(
-                commandInfo.guild.id,
+                command_info.guild.id,
                 trigger_messages[page].id,
             )
-            trigger_messages = await get_trigger_messages(commandInfo.guild.id)  # type: ignore[union-attr]
+            trigger_messages = await get_trigger_messages(command_info.guild.id)  # type: ignore[union-attr]
             nonlocal channels
             channels = await get_trigger_message_channels(
-                commandInfo.guild.id,
+                command_info.guild.id,
                 trigger_messages[0].id,
             )
             await self.update_message(interaction)
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.new.label",
             ),
             style=discord.ButtonStyle.primary,
             emoji="➕",
         )
         async def new(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
-            modal = TriggerMessageModal(commandInfo)
+            modal = TriggerMessageModal(command_info)
             await interaction.response.send_modal(modal)
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.next.label",
             ),
             style=discord.ButtonStyle.secondary,
@@ -299,7 +299,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
                 page = 0
             nonlocal channels
             channels = await get_trigger_message_channels(
-                commandInfo.guild.id,
+                command_info.guild.id,
                 trigger_messages[page].id,
             )
             nonlocal selected_channel
@@ -307,7 +307,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             await self.update_message(interaction)
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.trigger_messages.configure.up.label"),
+            label=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.trigger_messages.configure.up.label"),
             style=discord.ButtonStyle.secondary,
             emoji="⬆️",
             row=1,
@@ -322,7 +322,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.add_channel.label",
             ),
             style=discord.ButtonStyle.success,
@@ -330,15 +330,15 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             row=1,
         )
         async def add_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
-            view = TriggerMessageChannelView(commandInfo, trigger_messages[page].id)
+            view = TriggerMessageChannelView(command_info, trigger_messages[page].id)
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.admin.trigger_messages.configure.trigger.addChannel.title",
                     trigger=trigger_messages[page].trigger,
                 ),
                 description=tanjunLocalizer.localize(
-                    commandInfo.locale,
+                    command_info.locale,
                     "commands.admin.trigger_messages.configure.trigger.addChannel.description",
                 ),
             )
@@ -346,7 +346,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.remove_channel.label",
             ),
             style=discord.ButtonStyle.danger,
@@ -357,19 +357,19 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             nonlocal channels
             await remove_trigger_message_channel(
-                commandInfo.guild.id,  # type: ignore[union-attr]
+                command_info.guild.id,  # type: ignore[union-attr]
                 channels[selected_channel].channel_id,
                 trigger_messages[page].id,
             )
             channels = await get_trigger_message_channels(
-                commandInfo.guild.id,
+                command_info.guild.id,
                 trigger_messages[page].id,
             )
             await self.update_message(interaction)
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(
-                commandInfo.locale,
+                command_info.locale,
                 "commands.admin.trigger_messages.configure.down.label",
             ),
             style=discord.ButtonStyle.secondary,
@@ -391,4 +391,4 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
 
     view = TriggerMessageView()
     embed = await generate_embed()  # type: ignore[no-untyped-call]
-    await commandInfo.reply(embed=embed, view=view)
+    await command_info.reply(embed=embed, view=view)

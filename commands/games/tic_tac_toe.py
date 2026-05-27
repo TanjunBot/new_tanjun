@@ -118,32 +118,32 @@ class TicTacToe:
         timeout: bool = False,
     ):
         self.winner = self.check_winner()  # type: ignore[func-returns-value]
-        title = tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.title")
+        title = tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.title")
         description = tanjunLocalizer.localize(
             interaction.locale,
-            "commands.games.ticTacToe.description",
+            "commands.games.tic_tac_toe.description",
             player1=self.player1.mention,
             player2=self.player2.mention if self.player2 != "tanjun" else "Tanjun",  # type: ignore[union-attr]
         )
         if self.player2 == "tanjun":
             description += "\n" + tanjunLocalizer.localize(
                 str(interaction.locale),
-                "commands.games.ticTacToe.descriptionBotEnemy",
+                "commands.games.tic_tac_toe.descriptionBotEnemy",
                 difficulty=self.bot_difficulty,
             )
         if self.winner is not None:
             winner = self.player1 if self.winner == self.player1_move else self.player2  # type: ignore[unreachable]
             description += "\n" + tanjunLocalizer.localize(
                 str(interaction.locale),
-                "commands.games.ticTacToe.winner",
+                "commands.games.tic_tac_toe.winner",
                 winner=winner.mention if winner != "tanjun" else "Tanjun",
             )
         elif self.is_full():  # type: ignore[func-returns-value]
-            description += "\n" + tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.draw")  # type: ignore[unreachable]
+            description += "\n" + tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.draw")  # type: ignore[unreachable]
         else:
             description += "\n" + tanjunLocalizer.localize(
                 str(interaction.locale),
-                "commands.games.ticTacToe.currentTurn",
+                "commands.games.tic_tac_toe.currentTurn",
                 player=(self.current_player.mention if self.current_player != "tanjun" else "Tanjun"),
             )
         embed = utility.tanjunEmbed(title=title, description=description)
@@ -168,22 +168,22 @@ class TicTacToe:
         message: discord.Message | None = None,
     ):
         class TicTacToeView(discord.ui.View):
-            def __init__(self, ticTacToe: TicTacToe) -> None:
+            def __init__(self, tic_tac_toe: TicTacToe) -> None:
                 super().__init__(timeout=timeout)
-                self.player1 = ticTacToe.player1
-                self.player2 = ticTacToe.player2
-                self.board = ticTacToe.board
-                self.current_player = ticTacToe.current_player
-                self.player1_move = ticTacToe.player1_move
-                self.player2_move = ticTacToe.player2_move
-                self.bot_difficulty = ticTacToe.bot_difficulty
-                self.game_over = ticTacToe.game_over
-                self.winner = ticTacToe.winner
-                self.check_winner = ticTacToe.check_winner
-                self.is_full = ticTacToe.is_full
-                self.minimax = ticTacToe.minimax
-                self.update_board = ticTacToe.update_board
-                self.toggle_turn = ticTacToe.toggle_turn
+                self.player1 = tic_tac_toe.player1
+                self.player2 = tic_tac_toe.player2
+                self.board = tic_tac_toe.board
+                self.current_player = tic_tac_toe.current_player
+                self.player1_move = tic_tac_toe.player1_move
+                self.player2_move = tic_tac_toe.player2_move
+                self.bot_difficulty = tic_tac_toe.bot_difficulty
+                self.game_over = tic_tac_toe.game_over
+                self.winner = tic_tac_toe.winner
+                self.check_winner = tic_tac_toe.check_winner
+                self.is_full = tic_tac_toe.is_full
+                self.minimax = tic_tac_toe.minimax
+                self.update_board = tic_tac_toe.update_board
+                self.toggle_turn = tic_tac_toe.toggle_turn
 
             async def on_timeout(self) -> None:
                 for child in self.children:
@@ -206,14 +206,14 @@ class TicTacToe:
                     self.player2.id if self.player2 != "tanjun" else "tanjun",  # type: ignore[union-attr]
                 ]:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -234,14 +234,14 @@ class TicTacToe:
                     self.player2.id if self.player2 != "tanjun" else "tanjun",  # type: ignore[union-attr]
                 ]:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -262,14 +262,14 @@ class TicTacToe:
                     self.player2.id if self.player2 != "tanjun" else "tanjun",  # type: ignore[union-attr]
                 ]:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -290,14 +290,14 @@ class TicTacToe:
                     self.player2.id if self.player2 != "tanjun" else "tanjun",  # type: ignore[union-attr]
                 ]:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -318,14 +318,14 @@ class TicTacToe:
                     self.player2.id if self.player2 != "tanjun" else "tanjun",  # type: ignore[union-attr]
                 ]:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -346,14 +346,14 @@ class TicTacToe:
                     self.player2.id if self.player2 != "tanjun" else "tanjun",  # type: ignore[union-attr]
                 ]:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -374,14 +374,14 @@ class TicTacToe:
                     self.player2.id if self.player2 != "tanjun" else "tanjun",  # type: ignore[union-attr]
                 ]:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -402,14 +402,14 @@ class TicTacToe:
                     self.player2.id if self.player2 != "tanjun" else "tanjun",  # type: ignore[union-attr]
                 ]:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -430,14 +430,14 @@ class TicTacToe:
                     self.player2.id if self.player2 != "tanjun" else "tanjun",  # type: ignore[union-attr]
                 ]:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourGame"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourGame"),
                         ephemeral=True,
                     )
                     return
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -449,7 +449,7 @@ class TicTacToe:
 
                 if place < 0 or place > 8:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.invalidMove"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.invalidMove"),
                         ephemeral=True,
                     )
                     return
@@ -458,7 +458,7 @@ class TicTacToe:
                     await interaction.followup.send(
                         tanjunLocalizer.localize(
                             interaction.locale,
-                            "commands.games.ticTacToe.cellAlreadyTaken",
+                            "commands.games.tic_tac_toe.cellAlreadyTaken",
                         ),
                         ephemeral=True,
                     )
@@ -466,7 +466,7 @@ class TicTacToe:
 
                 if interaction.user != self.current_player:
                     await interaction.followup.send(
-                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.ticTacToe.notYourTurn"),
+                        tanjunLocalizer.localize(str(interaction.locale), "commands.games.tic_tac_toe.notYourTurn"),
                         ephemeral=True,
                     )
                     return
@@ -503,12 +503,12 @@ class TicTacToe:
 
 
 async def tic_tac_toe(  # type: ignore[no-untyped-def]
-    commandInfo: utility.CommandInfo,
+    command_info: utility.CommandInfo,
     player1: discord.Member,
     player2: discord.Member | None = None,
 ):
     if player2 is None:
         player2 = "tanjun"  # type: ignore[assignment]
 
-    ticTacToe = TicTacToe(player1, player2)
-    await ticTacToe.update_board(commandInfo, initial=True)  # type: ignore[arg-type]
+    tic_tac_toe = TicTacToe(player1, player2)
+    await tic_tac_toe.update_board(command_info, initial=True)  # type: ignore[arg-type]
