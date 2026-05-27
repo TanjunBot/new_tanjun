@@ -169,7 +169,7 @@ async def fetch_image(url: str) -> io.BytesIO | None:
                 return None
             image_data = io.BytesIO(await response.read())
             return image_data
-    except (asyncio.TimeoutError, aiohttp.ClientError):
+    except (TimeoutError, aiohttp.ClientError):
         return None
 
 

@@ -135,11 +135,13 @@ class administrationCog(commands.Cog):
         await create_database_backup(self.bot)
         await removeAllJoinToCreateChannels()
         await ctx.send("Updating...")
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
+        async with (
+            aiohttp.ClientSession() as session,
+            session.get(
                 f"http://127.0.0.1:6969/restart/{self.bot.application_id}", timeout=ClientTimeout(total=10)
-            ) as response:
-                await ctx.send(await response.text())
+            ) as response,
+        ):
+            await ctx.send(await response.text())
 
     @commands.command()
     async def welcome(self, ctx: commands.Context, user: discord.Member | None = None) -> None:  # type: ignore[type-arg]
