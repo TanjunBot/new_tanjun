@@ -146,7 +146,7 @@ class administrationCog(commands.Cog):
                     await ctx.send(f"Error: Received status code {response.status}. Response: {await response.text()}")
                     return
                 await ctx.send(await response.text())
-        except (asyncio.TimeoutError, aiohttp.ClientError) as e:
+        except (TimeoutError, aiohttp.ClientError) as e:
             await ctx.send(f"Failed to connect to update service: {e}")
 
     @commands.command()
@@ -200,11 +200,14 @@ class administrationCog(commands.Cog):
             for starPower in starPowers:
                 url = f"https://cdn.brawlify.com/star-powers/borderless/{starPower['id']}.png"
                 try:
-                    async with aiohttp.ClientSession() as session, session.get(url, timeout=ClientTimeout(total=10)) as response:
+                    async with (
+                        aiohttp.ClientSession() as session,
+                        session.get(url, timeout=ClientTimeout(total=10)) as response,
+                    ):
                         image = await response.read()
                         emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)  # type: ignore[union-attr]
                         await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
-                except (asyncio.TimeoutError, aiohttp.ClientError, discord.HTTPException) as e:
+                except (TimeoutError, aiohttp.ClientError, discord.HTTPException) as e:
                     print(f"Failed to create emoji for {starPower['name']}: {e}")
                     await ctx.send(f"Failed to create emoji for {starPower['name']}: {e}")
                     continue
@@ -221,12 +224,15 @@ class administrationCog(commands.Cog):
             for gadget in gadgets:
                 url = f"https://cdn.brawlify.com/gadgets/borderless/{gadget['id']}.png"
                 try:
-                    async with aiohttp.ClientSession() as session, session.get(url, timeout=ClientTimeout(total=10)) as response:
+                    async with (
+                        aiohttp.ClientSession() as session,
+                        session.get(url, timeout=ClientTimeout(total=10)) as response,
+                    ):
                         image = await response.read()
                         emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)  # type: ignore[union-attr]
 
                         await ctx.send(f"{emoji} {gadget['name']}; i:{i}")
-                except (asyncio.TimeoutError, aiohttp.ClientError, discord.HTTPException) as e:
+                except (TimeoutError, aiohttp.ClientError, discord.HTTPException) as e:
                     print(f"Failed to create emoji for {gadget['name']}: {e}")
                     await ctx.send(f"Failed to create emoji for {gadget['name']}: {e}")
                     continue
