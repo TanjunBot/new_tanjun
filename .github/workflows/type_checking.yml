@@ -34,8 +34,8 @@ jobs:
           echo "Installing pinned versions of Mypy, mypy-extensions, and typing-extensions..."
           pip install mypy==1.15.0 mypy-extensions==1.1.0 typing-extensions==4.13.2
           
-          echo "Installing other dependencies from requirements.txt if it exists..."
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          echo "Installing other dependencies from pyproject.toml (including dev extras for type stubs)..."
+          if [ -f pyproject.toml ]; then pip install -e ".[dev]"; fi
   
       # Correctly unindented step
       - name: Pre-Mypy Debug Diagnostics
