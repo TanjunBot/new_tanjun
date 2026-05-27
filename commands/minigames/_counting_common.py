@@ -1,7 +1,7 @@
 import discord
 
 from localizer import tanjunLocalizer
-from utility import CommandInfo, checkIfHasPro, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 
 async def require_moderate_members(commandInfo: CommandInfo, locale_key_prefix: str) -> bool:
@@ -146,19 +146,4 @@ async def require_valid_progress(commandInfo: CommandInfo, progress: int, locale
         await commandInfo.reply(embed=embed)
         return True
 
-    return False
-
-
-async def require_pro(commandInfo: CommandInfo, guild_id: int, locale_key_prefix: str) -> bool:
-    """Check if the guild has Pro. Returns True if not Pro (should return)."""
-    if not checkIfHasPro(guild_id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), f"{locale_key_prefix}.error.no_pro.title"),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                f"{locale_key_prefix}.error.no_pro.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return True
     return False

@@ -15,7 +15,7 @@ from api import (
     set_leave_channel,
 )
 from localizer import tanjunLocalizer
-from utility import checkIfHasPro, draw_text_with_outline
+from utility import draw_text_with_outline
 
 executor = ThreadPoolExecutor()
 
@@ -71,20 +71,6 @@ async def setFarewellChannel(
             description=tanjunLocalizer.localize(
                 commandInfo.locale,
                 "commands.admin.channel.farewell.alreadySet.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
-        return
-
-    if image_background and not checkIfHasPro(commandInfo.user):  # type: ignore[truthy-bool, arg-type]
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.channel.farewell.missingPro.title",
-            ),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                "commands.admin.channel.farewell.missingPro.description",
             ),
         )
         await commandInfo.reply(embed=embed)

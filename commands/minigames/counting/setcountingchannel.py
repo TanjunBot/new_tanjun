@@ -6,7 +6,7 @@ from commands.minigames._counting_common import (
     require_moderate_members,
 )
 from localizer import tanjunLocalizer
-from utility import CommandInfo, checkIfHasPro, tanjunEmbed
+from utility import CommandInfo, tanjunEmbed
 
 LOCALE_KEY = "minigames.setcountingchannel"
 
@@ -16,17 +16,6 @@ async def setCountingChannel(commandInfo: CommandInfo, channel: discord.TextChan
         return
 
     if commandInfo.guild is None:
-        return
-
-    if await get_counting_channel_amount(commandInfo.guild.id) != 0 and not checkIfHasPro(commandInfo.guild.id):
-        embed = tanjunEmbed(
-            title=tanjunLocalizer.localize(str(commandInfo.locale), f"{LOCALE_KEY}.error.no_pro.title"),
-            description=tanjunLocalizer.localize(
-                commandInfo.locale,
-                f"{LOCALE_KEY}.error.no_pro.description",
-            ),
-        )
-        await commandInfo.reply(embed=embed)
         return
 
     if await require_bot_permissions(commandInfo, channel):

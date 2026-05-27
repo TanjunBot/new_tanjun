@@ -932,20 +932,6 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
         return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
 
 
-def checkIfHasPro(guildid: int) -> bool:
-    # TODO: Implement actual Pro subscription check against database/payment backend
-    if guildid == 0:
-        return False
-    return True
-
-
-def checkIfhasPlus(userid: int) -> bool:
-    # TODO: Implement actual Plus subscription check against database/payment backend
-    if userid == 0:
-        return False
-    return True
-
-
 def missingLocalization(locale: str) -> None:
     future = _io_executor.submit(_missingLocalization, locale)
     future.add_done_callback(_handle_submit_exception)
