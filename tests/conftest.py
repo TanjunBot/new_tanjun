@@ -118,6 +118,7 @@ async def integration_db_pool():
     test session starts with a clean schema.
     """
     import os
+
     import asyncmy
 
     host = os.environ.get("TANJUN_TEST_DB_HOST", "localhost")
@@ -137,9 +138,11 @@ async def integration_db_pool():
     )
 
     # Set the global pool so api._get_pool() resolves
+    import api
     from api import set_bot
     _fake_bot = MagicMock()
     _fake_bot._pool = pool
+    original_bot = api._bot
     set_bot(_fake_bot)
 
     # Create all tables
@@ -149,16 +152,18 @@ async def integration_db_pool():
     yield pool
 
     # Clean up: drop all tables
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cursor:
-            await cursor.execute(
-                "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') "
-                "FROM information_schema.tables WHERE table_schema = %s",
-                (db,),
-            )
-            drop_queries = await cursor.fetchall()
-            for (dq,) in drop_queries:
-                await cursor.execute(dq)
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute(
+            "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') "
+            "FROM information_schema.tables WHERE table_schema = %s",
+            (db,),
+        )
+        drop_queries = await cursor.fetchall()
+        for (dq,) in drop_queries:
+            await cursor.execute(dq)
 
     pool.close()
     await pool.wait_closed()
+
+    # Restore original bot state
+    set_bot(original_bot)

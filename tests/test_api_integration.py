@@ -18,6 +18,7 @@ Usage:
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 
+import asyncmy
 import pytest
 
 import tests.mock_config as mock_config
@@ -25,7 +26,8 @@ import tests.mock_config as mock_config
 mock_config.patch_config_module()
 
 # Mock discord before importing any project modules
-import sys
+import sys  # noqa: E402
+
 _discord_mock = MagicMock()
 _discord_mock.Entitlement = MagicMock()
 sys.modules["discord"] = _discord_mock
@@ -33,19 +35,18 @@ sys.modules["discord.ext"] = MagicMock()
 sys.modules["discord.ext.commands"] = MagicMock()
 sys.modules["discord.app_commands"] = MagicMock()
 
-from api import (
-    add_warning,
-    get_warnings,
-    remove_warning,
+from api import (  # noqa: E402
     add_channel_to_blacklist,
-    add_role_to_blacklist,
-    get_level_roles,
     add_level_role,
-    remove_level_role,
-    set_level_system_status,
-    get_level_system_status,
+    add_role_to_blacklist,
+    add_warning,
     check_pool_health,
-    set_bot,
+    get_level_roles,
+    get_level_system_status,
+    get_warnings,
+    remove_level_role,
+    remove_warning,
+    set_level_system_status,
 )
 
 pytestmark = [
@@ -68,7 +69,7 @@ TEST_CHANNEL = "66666666666666666"
 # ── Pool health ──────────────────────────────────────────────────────────────
 
 
-async def test_pool_health_returns_true_when_db_is_reachable(integration_db_pool):
+async def test_pool_health_returns_true_when_db_is_reachable(integration_db_pool: asyncmy.Pool):
     """Verify check_pool_health returns True against a real database."""
     healthy = await check_pool_health()
     assert healthy is True, "Pool should be healthy against a reachable DB"
@@ -77,13 +78,12 @@ async def test_pool_health_returns_true_when_db_is_reachable(integration_db_pool
 # ── Table creation ───────────────────────────────────────────────────────────
 
 
-async def test_tables_are_created_via_create_tables(integration_db_pool):
+async def test_tables_are_created_via_create_tables(integration_db_pool: asyncmy.Pool):
     """Verify that create_tables creates all expected tables."""
     pool = integration_db_pool
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cursor:
-            await cursor.execute("SHOW TABLES")
-            tables = {row[0] for row in await cursor.fetchall()}
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute("SHOW TABLES")
+        tables = {row[0] for row in await cursor.fetchall()}
 
     # Core expected tables
     expected = {
@@ -106,7 +106,7 @@ async def test_tables_are_created_via_create_tables(integration_db_pool):
 # ── Warnings CRUD ────────────────────────────────────────────────────────────
 
 
-async def test_add_and_retrieve_warning(integration_db_pool):
+async def test_add_and_retrieve_warning(integration_db_pool: asyncmy.Pool):
     """Write a warning to the database and read it back."""
     expires_at = datetime.now() + timedelta(days=30)
     await add_warning(TEST_GUILD, TEST_USER, "Integration test warning", expires_at, "bot")
@@ -119,7 +119,7 @@ async def test_add_and_retrieve_warning(integration_db_pool):
     assert len(matching) >= 1, "Should find the warning we just added"
 
 
-async def test_remove_warning(integration_db_pool):
+async def test_remove_warning(integration_db_pool: asyncmy.Pool):
     """Add a warning and then remove it, verifying the removal."""
     expires_at = datetime.now() + timedelta(days=30)
     await add_warning(TEST_GUILD, TEST_USER, "To be removed", expires_at, "bot")
@@ -140,37 +140,35 @@ async def test_remove_warning(integration_db_pool):
 # ── Blacklist CRUD ───────────────────────────────────────────────────────────
 
 
-async def test_channel_blacklist_round_trip(integration_db_pool):
+async def test_channel_blacklist_round_trip(integration_db_pool: asyncmy.Pool):
     """Verify a channel can be blacklisted and the operation doesn't error."""
     await add_channel_to_blacklist(TEST_GUILD, TEST_CHANNEL, "Integration test channel blacklist")
 
     # Verify by reading directly from the database
     pool = integration_db_pool
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cursor:
-            await cursor.execute(
-                "SELECT channel_id, reason FROM blacklistedChannel WHERE guild_id = %s AND channel_id = %s",
-                (TEST_GUILD, TEST_CHANNEL),
-            )
-            row = await cursor.fetchone()
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute(
+            "SELECT channel_id, reason FROM blacklistedChannel WHERE guild_id = %s AND channel_id = %s",
+            (TEST_GUILD, TEST_CHANNEL),
+        )
+        row = await cursor.fetchone()
     assert row is not None, "Channel should appear in blacklist"
     assert row[0] == TEST_CHANNEL
     assert row[1] == "Integration test channel blacklist"
 
 
-async def test_role_blacklist_round_trip(integration_db_pool):
+async def test_role_blacklist_round_trip(integration_db_pool: asyncmy.Pool):
     """Verify a role can be blacklisted and the operation doesn't error."""
     await add_role_to_blacklist(TEST_GUILD, TEST_ROLE, "Integration test role blacklist")
 
     # Verify by reading directly from the database
     pool = integration_db_pool
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cursor:
-            await cursor.execute(
-                "SELECT role_id, reason FROM blacklistedRole WHERE guild_id = %s AND role_id = %s",
-                (TEST_GUILD, TEST_ROLE),
-            )
-            row = await cursor.fetchone()
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute(
+            "SELECT role_id, reason FROM blacklistedRole WHERE guild_id = %s AND role_id = %s",
+            (TEST_GUILD, TEST_ROLE),
+        )
+        row = await cursor.fetchone()
     assert row is not None, "Role should appear in blacklist"
     assert row[0] == TEST_ROLE
     assert row[1] == "Integration test role blacklist"
@@ -179,7 +177,7 @@ async def test_role_blacklist_round_trip(integration_db_pool):
 # ── Level system CRUD ────────────────────────────────────────────────────────
 
 
-async def test_level_system_status_toggle(integration_db_pool):
+async def test_level_system_status_toggle(integration_db_pool: asyncmy.Pool):
     """Enable and disable the level system for a guild."""
     # Start with disabled
     await set_level_system_status(TEST_GUILD, False)
@@ -192,7 +190,7 @@ async def test_level_system_status_toggle(integration_db_pool):
     assert enabled is True, "Level system should be enabled"
 
 
-async def test_level_role_add_and_remove(integration_db_pool):
+async def test_level_role_add_and_remove(integration_db_pool: asyncmy.Pool):
     """Add a level role, verify it's returned, then remove it."""
     await add_level_role(TEST_GUILD, TEST_ROLE, 10)
 
@@ -211,20 +209,19 @@ async def test_level_role_add_and_remove(integration_db_pool):
 # ── XP CRUD ──────────────────────────────────────────────────────────────────
 
 
-async def test_xp_insert_and_retrieve(integration_db_pool):
+async def test_xp_insert_and_retrieve(integration_db_pool: asyncmy.Pool):
     """Write XP for a user and verify it reads back correctly."""
-    from api import update_user_xp, get_user_xp
+    from api import get_user_xp, update_user_xp
 
     xp_amount = 500
-    result = await update_user_xp(TEST_GUILD, TEST_USER, xp_amount)
-    assert result is not None or result is None  # update_user_xp may not return the count
+    await update_user_xp(TEST_GUILD, TEST_USER, xp_amount)
 
     xp = await get_user_xp(TEST_GUILD, TEST_USER)
     assert xp is not None, "XP should be retrievable after insert"
     assert xp >= xp_amount, f"Expected at least {xp_amount} XP, got {xp}"
 
 
-async def test_bulk_xp_update(integration_db_pool):
+async def test_bulk_xp_update(integration_db_pool: asyncmy.Pool):
     """Bulk-update XP for multiple users and verify results."""
     from api import bulk_update_user_xp, get_user_xp
 

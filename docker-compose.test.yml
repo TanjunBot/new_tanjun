@@ -25,7 +25,4 @@ services:
       retries: 10
       start_period: 30s
     volumes:
-      - test-db-data:/var/lib/mysql
-
-volumes:
-  test-db-data:
+      - /var/lib/mysql
