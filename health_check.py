@@ -11,11 +11,13 @@ New code should import from the ``health`` package directly.
 """
 
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
+from locale_file_health_check import LocaleFileHealthCheck
 from OpenAIHealthCheck import OpenAIHealthCheck
 
 __all__ = [
     "HealthCheck",
     "HealthCheckResult",
     "HealthStatus",
+    "LocaleFileHealthCheck",
     "OpenAIHealthCheck",
 ]

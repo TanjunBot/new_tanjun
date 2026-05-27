@@ -1,2 +1,64 @@
+#
+# Crowdin Configuration
+#
+# This project uses Crowdin for translation management.
+#
+# Locale files use the "Crowdin JSON with identifiers" format (i18n_json):
+#   /locales/<language_code>.json
+#
+# Each file contains an array of translation entries with the following fields:
+#   identifier    - Unique dot-separated key for the translation string
+#                   (e.g. "commands.help.select.placeholder")
+#   source_string - Source text (typically German, the bot's primary language)
+#   translation   - Translated text in the target language
+#   context       - Description of where/how the string is used
+#   labels        - Comma-separated labels for categorization
+#   max_length    - Maximum allowed character length for the translation
+#
+# Translation Workflow:
+# 1. Developers add new source entries to /locales/en.json (English is the source language)
+#    and copy with translations to /locales/de.json.
+# 2. After committing new source strings to the development branch, Crowdin's GitHub
+#    integration picks them up automatically via bundle configuration.
+# 3. Translators manage translations through the Crowdin web interface.
+# 4. Crowdin creates PRs with translation updates (commit messages include
+#    "New Crowdin updates") when translations are approved.
+# 5. Review and merge those PRs as they arrive.
+#
+# For more information on Crowdin configuration, see:
+#   https://developer.crowdin.com/configuration-file/
+#
+
+# Crowdin project ID (set this when using CLI commands directly)
+# Currently, translations are synced through Crowdin's GitHub integration (bundles)
+# rather than CI-based CLI commands.
+project_id: ""
+
+# Crowdin API base URL
+base_url: "https://api.crowdin.com"
+
+preserve_hierarchy: true
+
+files:
+  - source: "/locales/en.json"
+    translation: "/locales/%two_letters_code%.json"
+    type: "i18n_json"
+    dest: "/locales/en.json"
+
+# Bundle configuration
+# Bundle ID 4 defines the files and languages synced through
+# Crowdin's GitHub integration (configured at https://crowdin.com/):
+#   - Source file: /locales/en.json
+#   - Translation files: /locales/<two_letter_code>.json
+#   - Languages: de (German), en (English)
+#   - Label filter: (none — all strings included)
+#
+# To add a new language:
+#   1. Add the language in the Crowdin web interface via "Integrations" -> "GitHub"
+#   2. Verify the bundle configuration picks up the new language
+#   3. Optionally add an initial /locales/<code>.json file with empty translations
+#      (all source_strings copied as translation for manual translation)
+#
+# Bundles are managed in the Crowdin web interface under Project Settings -> Integrations -> GitHub.
 bundles:
   - 4

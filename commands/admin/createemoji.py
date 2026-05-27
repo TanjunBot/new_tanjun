@@ -1,5 +1,6 @@
 import aiohttp
 import discord
+from aiohttp import ClientTimeout
 
 import utility
 from localizer import tanjunLocalizer
@@ -29,7 +30,7 @@ async def create_emoji(
     try:
         async with (
             aiohttp.ClientSession() as session,
-            session.get(image_url) as resp,
+            session.get(image_url, timeout=ClientTimeout(total=10)) as resp,
         ):
             if resp.status != 200:
                 await commandInfo.reply(
@@ -64,6 +65,13 @@ async def create_emoji(
         )
         await commandInfo.reply(embed=embed)
 
+    except (TimeoutError, aiohttp.ClientError):
+        await commandInfo.reply(
+            tanjunLocalizer.localize(
+                str(commandInfo.locale),
+                "commands.admin.createEmoji.imageDownloadError",
+            )
+        )
     except discord.HTTPException as e:
         await commandInfo.reply(
             tanjunLocalizer.localize(str(commandInfo.locale), "commands.admin.createEmoji.error", error=str(e))

@@ -27,7 +27,7 @@ jobs:
                                  python3-pip xmlstarlet jq
 
       - name: Cache Python Build Source
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.local/python-build-cache # Caching downloaded/extracted Python source

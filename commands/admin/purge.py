@@ -1,3 +1,5 @@
+from typing import cast
+
 import discord
 
 import utility

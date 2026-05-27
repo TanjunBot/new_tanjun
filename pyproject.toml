@@ -113,7 +113,7 @@ dev = [
     "rpds-py==0.30.0",
     "stack-data==0.6.3",
     "tinycss2==1.5.1",
-    "tornado==6.5.5",
+    "tornado==6.5.6",
     "tqdm==4.67.3",
     "traitlets==5.15.0",
     "wcwidth==0.7.0",
@@ -126,6 +126,14 @@ dev = [
 "Homepage" = "https://docs.tanjun.bot/"
 "Repository" = "https://github.com/TanjunBot/new_tanjun"
 "Bug Tracker" = "https://github.com/TanjunBot/new_tanjun/issues"
+
+[tool.setuptools]
+py-modules = ["api", "config", "localizer", "utility", "models", "translator", "main", "healthcheck", "health_check", "free_tier_guarantee", "locale_file_health_check", "OpenAIHealthCheck"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ai*", "loops*", "assets*", "health*", "locales*", "commands*", "minigames*", "extensions*", "utils*"]
+exclude = ["tests*"]
 
 [tool.ruff]
 target-version = "py312"
