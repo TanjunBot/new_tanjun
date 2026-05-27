@@ -55,6 +55,13 @@ class administrationCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
+    def _locale(self, ctx: commands.Context) -> str:
+        """Get locale string from context."""
+        guild = getattr(ctx, "guild", None)
+        if guild is not None:
+            return str(guild.preferred_locale)
+        return "en_US"
+
     @commands.command()
     async def sync(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
@@ -62,28 +69,36 @@ class administrationCog(commands.Cog):
         if not ctx.bot.tree:
             return
         fmt = await ctx.bot.tree.sync()
-        await ctx.send(f"{len(fmt)} Befehle wurden gesynced.")
+        await ctx.send(
+            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.sync.completed", count=len(fmt))
+        )
 
     @commands.command()
     async def feedback(self, ctx: commands.Context, *, content: str) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         addFeedback(content, ctx.author.name)
-        await ctx.send("Feedback wurde hinzugefügt. Vielen dank!")
+        await ctx.send(
+            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.added")
+        )
 
     @commands.command()
     async def blockFeedback(self, ctx: commands.Context, user: discord.User) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         await feedbackBlockUser(user.id)
-        await ctx.send(f"{user.name} wurde blockiert.")
+        await ctx.send(
+            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.blocked", user_name=user.name)
+        )
 
     @commands.command()
     async def unblockFeedback(self, ctx: commands.Context, user: discord.User) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
         await feedbackUnblockUser(user.id)
-        await ctx.send(f"{user.name} wurde entblockiert.")
+        await ctx.send(
+            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.unblocked", user_name=user.name)
+        )
 
     @commands.command()
     async def test_bot(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
@@ -273,48 +288,70 @@ class administrationCog(commands.Cog):
 
         try:
             await ctx.channel.send(
-                "Willst du wirklich die Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!"
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.confirm")
             )
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send("Timeout! Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
+            )
             return
 
         if confirmation_message.content.lower() != "y":
-            await ctx.channel.send("Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
+            )
             return
 
         try:
-            await ctx.channel.send("Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.confirm2")
+            )
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send("Timeout! Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
+            )
             return
 
         if confirmation_message.content.lower() != "y":
-            await ctx.channel.send("Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
+            )
             return
 
         try:
-            await ctx.channel.send("sag wallah.")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.say_wallah")
+            )
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send("Timeout! Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
+            )
             return
 
         if confirmation_message.content.lower() != "wallah":
-            await ctx.channel.send("Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
+            )
             return
 
         try:
-            await ctx.channel.send("Gebe das geheime geheim passwort ein.")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.enter_password")
+            )
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send("Timeout! Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
+            )
             return
 
         if confirmation_message.content.lower() != "passwort":
-            await ctx.channel.send("Falsches Passwort!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.wrong_password")
+            )
             return
 
         message = """
@@ -376,48 +413,70 @@ Das Tanjun-Team
 
         try:
             await ctx.channel.send(
-                "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!"
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.demo_message.confirm")
             )
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send("Timeout! Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
+            )
             return
 
         if confirmation_message.content.lower() != "y":
-            await ctx.channel.send("Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
+            )
             return
 
         try:
-            await ctx.channel.send("Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.confirm2")
+            )
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send("Timeout! Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
+            )
             return
 
         if confirmation_message.content.lower() != "y":
-            await ctx.channel.send("Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
+            )
             return
 
         try:
-            await ctx.channel.send("sag wallah.")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.say_wallah")
+            )
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send("Timeout! Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
+            )
             return
 
         if confirmation_message.content.lower() != "wallah":
-            await ctx.channel.send("Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.cancelled")
+            )
             return
 
         try:
-            await ctx.channel.send("Gebe das geheime geheim passwort ein.")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.enter_password")
+            )
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=30.0)  # type: ignore[arg-type]
         except TimeoutError:
-            await ctx.channel.send("Timeout! Abgebrochen!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.timeout")
+            )
             return
 
         if confirmation_message.content.lower() != "passwort":
-            await ctx.channel.send("Falsches Passwort!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.update_text.wrong_password")
+            )
             return
 
         message = """
@@ -504,30 +563,34 @@ Das Tanjun-Team
             attachment_url = url
         else:
             await ctx.send(
-                "Bitte stelle einen direkten Link oder einen Dateianhang für den SQL Dump bereit.\n"
-                "**Tipp:** Wenn die Datei für Discord zu groß ist (mehr als 25MB), kannst du sie z.B. bei "
-                "**[Catbox.moe](https://catbox.moe)** hochladen ("
-                "unterstützt bis zu 200MB, direkter Download-Link) oder in der Kommandozeile über Transfer.sh senden:\n"
-                "`curl --upload-file ./dein-dump.sql https://transfer.sh/dump.sql`"
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.no_attachment")
             )
             return
 
-        status_msg = await ctx.send("Lade SQL Dump herunter...")
+        status_msg = await ctx.send(
+            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.downloading")
+        )
 
         try:
             async with aiohttp.ClientSession() as session, session.get(attachment_url) as resp:
                 if resp.status != 200:
-                    await status_msg.edit(content=f"Download fehlgeschlagen! Status: {resp.status}")
+                    await status_msg.edit(content=tanjunLocalizer.localize(
+                        self._locale(ctx), "commands.admin.database_sync.download_failed", status=resp.status
+                    ))
                     return
                 content = await resp.read()
 
             with open("temp_import.sql", "wb") as f:
                 f.write(content)
         except Exception as e:
-            await status_msg.edit(content=f"Fehler beim Herunterladen: {e}")
+            await status_msg.edit(content=tanjunLocalizer.localize(
+                self._locale(ctx), "commands.admin.database_sync.download_error", error=e
+            ))
             return
 
-        await status_msg.edit(content="Analysiere SQL Dump für Schemata...")
+        await status_msg.edit(
+            content=tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.analyzing")
+        )
 
         schemas: set[str] = set()
         with open("temp_import.sql", encoding="utf-8", errors="ignore") as f:
@@ -542,11 +605,15 @@ Das Tanjun-Team
                     schemas.add(use_match.group(1))
 
         if not schemas:
-            schemas.add("Kein spezifisches Schema im Dump gefunden (direkter Import in Bot-Datenbank)")
+            schemas.add(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.no_schema_found")
+            )
 
         schema_list = "\n".join([f"- `{s}`" for s in schemas])
         await status_msg.edit(
-            content=f"Ich habe folgende Schemata im Dump gefunden:\n{schema_list}\n\n**Welches Schema soll geladen werden?** Bitte tippe den exakten Namen des Schemas in den Chat (oder `abbrechen` um abzubrechen)."
+            content=tanjunLocalizer.localize(
+                self._locale(ctx), "commands.admin.database_sync.schema_prompt", schema_list=schema_list
+            )
         )
 
         def check(m: discord.Message) -> bool:
@@ -555,21 +622,32 @@ Das Tanjun-Team
         try:
             confirmation_message = await self.bot.wait_for("message", check=check, timeout=60.0)
         except TimeoutError:
-            await ctx.channel.send("Timeout! Datenbank-Sync abgebrochen.")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.timeout")
+            )
             return
 
         selected_schema = confirmation_message.content.strip()
         if selected_schema.lower() == "abbrechen":
-            await ctx.channel.send("Datenbank-Sync abgebrochen.")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.aborted")
+            )
             return
 
-        if selected_schema not in schemas and "Kein spezifisches" not in list(schemas)[0]:
+        if selected_schema not in schemas and (
+            tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.no_schema_found")
+            not in list(schemas)[0]
+        ):
             await ctx.channel.send(
-                "Warnung: Das eingegebene Schema wurde im Dump nicht explizit gefunden, fahre trotzdem fort..."
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.schema_warning")
             )
 
         # Parse and filter sql dump
-        await ctx.channel.send(f"Bereite Import für Schema `{selected_schema}` vor und erstelle Backup...")
+        await ctx.channel.send(
+            tanjunLocalizer.localize(
+                self._locale(ctx), "commands.admin.database_sync.preparing_import", schema=selected_schema
+            )
+        )
 
         assert config.database_user is not None
         assert config.database_password is not None
@@ -589,9 +667,16 @@ Das Tanjun-Team
         try:
             with open(backup_file, "w") as f:
                 subprocess.run(dump_command, stdout=f, check=True)
-            await ctx.channel.send("Backup von der aktuellen Datenbank erfolgreich erstellt:", file=discord.File(backup_file))
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.backup_success"),
+                file=discord.File(backup_file),
+            )
         except Exception as e:
-            await ctx.channel.send(f"Fehler beim Erstellen des Backups: {e}\nAbbruch aus Sicherheitsgründen.")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(
+                    self._locale(ctx), "commands.admin.database_sync.backup_error", error=e
+                )
+            )
             return
         finally:
             try:
@@ -634,11 +719,19 @@ Das Tanjun-Team
                         )
                         f_out.write(mod_line)
         except Exception as e:
-            await ctx.channel.send(f"Fehler beim Filtern des SQL Dumps: {e}")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(
+                    self._locale(ctx), "commands.admin.database_sync.filter_error", error=e
+                )
+            )
             return
 
         # Import filtered sql
-        await ctx.channel.send(f"Lösche aktuelle Datenbank (`{config.database_schema}`) und importiere neues Schema...")
+        await ctx.channel.send(
+            tanjunLocalizer.localize(
+                self._locale(ctx), "commands.admin.database_sync.importing", schema=config.database_schema
+            )
+        )
 
         db_recreate_cmd = f"DROP DATABASE IF EXISTS `{config.database_schema}`; CREATE DATABASE `{config.database_schema}`;"
         try:
@@ -663,9 +756,15 @@ Das Tanjun-Team
                     check=True,
                 )
 
-            await ctx.channel.send("Datenbank erfolgreich synchronisiert und importiert!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.success")
+            )
         except subprocess.CalledProcessError as e:
-            await ctx.channel.send(f"Fehler beim Importieren der Datenbank: {e}\nBitte überprüfe das Backup-SQL!")
+            await ctx.channel.send(
+                tanjunLocalizer.localize(
+                    self._locale(ctx), "commands.admin.database_sync.import_error", error=e
+                )
+            )
 
         # Clean up temporary files
         for tmp_file in ["temp_import.sql", "filtered_import.sql"]:

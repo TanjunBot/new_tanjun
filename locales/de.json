@@ -31030,5 +31030,237 @@
     "context": null,
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "commands.admin.sync.completed",
+    "source_string": "${count} Befehle wurden gesynced.",
+    "translation": "${count} Befehle wurden gesynced.",
+    "context": "Message after syncing slash commands",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.feedback.added",
+    "source_string": "Feedback wurde hinzugefuegt. Vielen dank!",
+    "translation": "Feedback wurde hinzugefügt. Vielen dank!",
+    "context": "Message after adding feedback",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.feedback.blocked",
+    "source_string": "${user_name} wurde blockiert.",
+    "translation": "${user_name} wurde blockiert.",
+    "context": "Message after blocking a user from feedback",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.feedback.unblocked",
+    "source_string": "${user_name} wurde entblockiert.",
+    "translation": "${user_name} wurde entblockiert.",
+    "context": "Message after unblocking a user from feedback",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.update_text.confirm",
+    "source_string": "Willst du wirklich die Update-Text an alle Admins senden? (y/n)",
+    "translation": "Willst du wirklich die Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!",
+    "context": "Confirmation prompt before sending update to all admins",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.update_text.confirm2",
+    "source_string": "Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)",
+    "translation": "Wirklich wirklich wirklich ganz ganz ganz ganz ganz sicher? (y/n)",
+    "context": "Second confirmation prompt before sending update to all admins",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.update_text.say_wallah",
+    "source_string": "sag wallah.",
+    "translation": "sag wallah.",
+    "context": "Prompt asking the admin to say 'wallah' as verification",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.update_text.enter_password",
+    "source_string": "Gebe das geheime geheim passwort ein.",
+    "translation": "Gebe das geheime geheim passwort ein.",
+    "context": "Prompt asking the admin to enter the secret password",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.update_text.wrong_password",
+    "source_string": "Falsches Passwort!",
+    "translation": "Falsches Passwort!",
+    "context": "Message when wrong password is entered",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.update_text.cancelled",
+    "source_string": "Abgebrochen!",
+    "translation": "Abgebrochen!",
+    "context": "Message when an admin cancels an operation",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.update_text.timeout",
+    "source_string": "Timeout! Abgebrochen!",
+    "translation": "Timeout! Abgebrochen!",
+    "context": "Message when the input times out",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.demo_message.confirm",
+    "source_string": "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)",
+    "translation": "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eiene Nachricht an ganz viele Menschen gesendet!",
+    "context": "Confirmation prompt before sending demo thank you message to all admins",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.no_attachment",
+    "source_string": "Bitte stelle einen direkten Link oder einen Dateianhang fuer den SQL Dump bereit.",
+    "translation": "Bitte stelle einen direkten Link oder einen Dateianhang für den SQL Dump bereit.\n**Tipp:** Wenn die Datei für Discord zu groß ist (mehr als 25MB), kannst du sie z.B. bei **[Catbox.moe](https://catbox.moe)** hochladen (unterstützt bis zu 200MB, direkter Download-Link) oder in der Kommandozeile über Transfer.sh senden:\n`curl --upload-file ./dein-dump.sql https://transfer.sh/dump.sql`",
+    "context": "Message when no attachment or URL is provided for database_sync",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.downloading",
+    "source_string": "Lade SQL Dump herunter...",
+    "translation": "Lade SQL Dump herunter...",
+    "context": "Status message while downloading SQL dump",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.download_failed",
+    "source_string": "Download fehlgeschlagen! Status: ${status}",
+    "translation": "Download fehlgeschlagen! Status: ${status}",
+    "context": "Message when SQL dump download fails",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.download_error",
+    "source_string": "Fehler beim Herunterladen: ${error}",
+    "translation": "Fehler beim Herunterladen: ${error}",
+    "context": "Message when SQL dump download throws exception",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.analyzing",
+    "source_string": "Analysiere SQL Dump fuer Schemata...",
+    "translation": "Analysiere SQL Dump für Schemata...",
+    "context": "Status message while analyzing SQL dump schemas",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.schema_prompt",
+    "source_string": "Ich habe folgende Schemata im Dump gefunden:",
+    "translation": "Ich habe folgende Schemata im Dump gefunden:\n${schema_list}\n\n**Welches Schema soll geladen werden?** Bitte tippe den exakten Namen des Schemas in den Chat (oder `abbrechen` um abzubrechen).",
+    "context": "Prompt asking which schema to import",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.no_schema_found",
+    "source_string": "Kein spezifisches Schema im Dump gefunden (direkter Import in Bot-Datenbank)",
+    "translation": "Kein spezifisches Schema im Dump gefunden (direkter Import in Bot-Datenbank)",
+    "context": "When no specific schema is found in the dump",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.timeout",
+    "source_string": "Timeout! Datenbank-Sync abgebrochen.",
+    "translation": "Timeout! Datenbank-Sync abgebrochen.",
+    "context": "Message when schema selection times out",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.aborted",
+    "source_string": "Datenbank-Sync abgebrochen.",
+    "translation": "Datenbank-Sync abgebrochen.",
+    "context": "Message when database sync is cancelled",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.schema_warning",
+    "source_string": "Warnung: Das eingegebene Schema wurde im Dump nicht explizit gefunden, fahre trotzdem fort...",
+    "translation": "Warnung: Das eingegebene Schema wurde im Dump nicht explizit gefunden, fahre trotzdem fort...",
+    "context": "Warning when schema not found in dump",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.preparing_import",
+    "source_string": "Bereite Import fuer Schema '${schema}' vor und erstelle Backup...",
+    "translation": "Bereite Import für Schema '${schema}' vor und erstelle Backup...",
+    "context": "Status message before starting database import",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.backup_success",
+    "source_string": "Backup von der aktuellen Datenbank erfolgreich erstellt:",
+    "translation": "Backup von der aktuellen Datenbank erfolgreich erstellt:",
+    "context": "Message when database backup is created successfully",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.backup_error",
+    "source_string": "Fehler beim Erstellen des Backups: ${error}",
+    "translation": "Fehler beim Erstellen des Backups: ${error}\nAbbruch aus Sicherheitsgründen.",
+    "context": "Message when backup fails",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.filter_error",
+    "source_string": "Fehler beim Filtern des SQL Dumps: ${error}",
+    "translation": "Fehler beim Filtern des SQL Dumps: ${error}",
+    "context": "Message when filtering SQL dump fails",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.importing",
+    "source_string": "Loesche aktuelle Datenbank und importiere neues Schema...",
+    "translation": "Lösche aktuelle Datenbank (`${schema}`) und importiere neues Schema...",
+    "context": "Status message while importing database",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.success",
+    "source_string": "Datenbank erfolgreich synchronisiert und importiert!",
+    "translation": "Datenbank erfolgreich synchronisiert und importiert!",
+    "context": "Message when database sync completes successfully",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.database_sync.import_error",
+    "source_string": "Fehler beim Importieren der Datenbank: ${error}",
+    "translation": "Fehler beim Importieren der Datenbank: ${error}\nBitte überprüfe das Backup-SQL!",
+    "context": "Message when database import fails",
+    "labels": "unassigned",
+    "max_length": null
   }
 ]
