@@ -993,14 +993,40 @@ LEVEL_SCALINGS = {
     "extreme": lambda level: 100 * (level**2.5),
 }
 
+# Inverse formulas for built-in scalings: O(1) lookups instead of O(log n) threshold scans.
+# Each maps scaling name to a callable that computes level from xp.
+_LEVEL_INVERSES: dict[str, Callable[[int], int]] = {
+    "easy": lambda xp: xp // 100,
+    "medium": lambda xp: int((xp / 100) ** (1 / 1.5)),
+    "hard": lambda xp: int(math.sqrt(xp / 100)),
+    "extreme": lambda xp: int((xp / 100) ** (1 / 2.5)),
+}
+
+
+def _invert_get_level_for_xp(xp: int, scaling: str) -> int:
+    """Compute level directly via mathematical inverse of the standard scaling formula.
+
+    This is O(1) — no iteration, no threshold list building.
+    """
+    level = _LEVEL_INVERSES.get(scaling, lambda _: 0)(xp)
+    # Clamp to valid range: level must be >= 0 and the inverse may overshoot
+    # the exact threshold boundary, so verify and step down/up if needed.
+    if level < 0:
+        return 0
+    # Verify: ensure get_xp_for_level(level) <= xp < get_xp_for_level(level + 1)
+    while get_xp_for_level(level + 1, scaling) <= xp and level < 10000:
+        level += 1
+    while level > 0 and get_xp_for_level(level, scaling) > xp:
+        level -= 1
+    return level
+
 
 class LevelThresholdCache:
     """Pre-compute and cache level XP thresholds per (scaling, custom_formula) pair.
 
-    Instead of binary-searching get_xp_for_level on every call (O(log n) per call
-    with O(1) per iteration), this pre-computes all thresholds once and uses
-    bisect_right for O(log n) lookup on the pre-computed list — reducing
-    per-call overhead to just the bisect.
+    For built-in scalings (easy/medium/hard/extreme) we use O(1) mathematical
+    inversion. For custom formulas, we use binary search (O(log n)).
+    The cache is only used for custom formulas.
     """
 
     _thresholds: collections.OrderedDict[tuple[str, str | None], tuple[list[int], int]] = collections.OrderedDict()
@@ -1009,9 +1035,12 @@ class LevelThresholdCache:
 
     @classmethod
     def get_level_for_xp(cls, xp: int, scaling: str, custom_formula: str | None = None) -> int:
-        # Normalize key: only store custom_formula when scaling is "custom"
-        # to avoid duplicate cache entries for built-in scalings
-        effective_formula = custom_formula if scaling == "custom" else None
+        # Use O(1) mathematical inversion for known built-in scalings
+        if scaling != "custom":
+            return _invert_get_level_for_xp(xp, scaling)
+
+        # Only custom formulas reach here: use binary search with threshold cache
+        effective_formula = custom_formula
         key = (scaling, effective_formula)
         entry = cls._thresholds.get(key)
         thresholds: list[int] | None
@@ -1153,7 +1182,11 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None
 
 
 def get_level_for_xp(xp: int, scaling: str, custom_formula: str | None = None) -> int:
-    """Get the level for a given XP value using pre-computed thresholds."""
+    """Get the level for a given XP value.
+
+    For built-in scalings (easy/medium/hard/extreme) this uses O(1) mathematical
+    inversion of the formula. For custom formulas, binary search is used.
+    """
     return LevelThresholdCache.get_level_for_xp(xp, scaling, custom_formula)
 
 
