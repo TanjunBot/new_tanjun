@@ -66,11 +66,16 @@ class BackgroundLoopHealthCheck(HealthCheck):
             if task is None:
                 failed_loops.append(f"{name} (missing)")
                 continue
-            if not hasattr(task, "is_running") or not callable(task.is_running):
+            try:
+                is_running = getattr(task, "is_running")
+            except Exception:
+                failed_loops.append(f"{name} (invalid)")
+                continue
+            if not callable(is_running):
                 failed_loops.append(f"{name} (invalid)")
                 continue
             try:
-                if not task.is_running():
+                if not is_running():
                     failed_loops.append(name)
             except Exception:
                 failed_loops.append(f"{name} (error)")
