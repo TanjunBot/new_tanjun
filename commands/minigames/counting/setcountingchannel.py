@@ -1,6 +1,6 @@
 import discord
 
-from api import get_counting_channel_amount, set_counting_progress
+from api import set_counting_progress
 from commands.minigames._counting_common import (
     require_bot_permissions,
     require_moderate_members,

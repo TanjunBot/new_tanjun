@@ -6,7 +6,6 @@ import utility
 from localizer import tanjunLocalizer
 
 
-
 class Connect4:
     def __init__(
         self,
@@ -359,7 +358,7 @@ async def connect4(
     rows: int = 6,
     columns: int = 7,
 ):
-# Add some reasonable limits to prevent massive boards
+    # Add some reasonable limits to prevent massive boards
     rows = min(max(4, rows), 12)  # Minimum 4, Maximum 12
     columns = min(max(4, columns), 12)  # Minimum 4, Maximum 12
     connect4 = Connect4(player1, player2, commandInfo.locale, rows, columns)
