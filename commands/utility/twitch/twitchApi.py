@@ -37,7 +37,7 @@ class TwitchAPI:
             "grant_type": "client_credentials",
         }
 
-        async with self.session.post(url=auth_url, params=params) as response:
+        async with self.session.post(url=auth_url, params=params, timeout=ClientTimeout(total=10)) as response:
             data = await response.json()
             self.access_token = data["access_token"]
 
@@ -58,7 +58,7 @@ class TwitchAPI:
         url = f"{self.base_url}/users"
         params = {"login": login_name}
 
-        async with self.session.get(url, headers=self.headers, params=params) as response:
+        async with self.session.get(url, headers=self.headers, params=params, timeout=ClientTimeout(total=10)) as response:
             data: dict[str, list[dict[str, str]]] = await response.json()
             if data["data"]:
                 return data["data"][0]
@@ -71,7 +71,7 @@ class TwitchAPI:
         url = f"{self.base_url}/streams"
         params = {"user_id": user_ids}
 
-        async with self.session.get(url, headers=self.headers, params=params) as response:
+        async with self.session.get(url, headers=self.headers, params=params, timeout=ClientTimeout(total=10)) as response:
             data: dict[str, list[dict[str, str]]] = await response.json()
             return data.get("data", [])
 

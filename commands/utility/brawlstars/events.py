@@ -1,4 +1,5 @@
 import aiohttp
+from aiohttp import ClientTimeout
 import discord
 
 from config import brawlstarsToken
@@ -18,6 +19,7 @@ async def getEventRotation():
         session.get(
             "https://api.brawlstars.com/v1/events/rotation",
             headers=headers,
+            timeout=ClientTimeout(total=10),
         ) as response,
     ):
         if response.status != 200:

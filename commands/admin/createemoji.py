@@ -1,4 +1,5 @@
 import aiohttp
+from aiohttp import ClientTimeout
 import discord
 
 import utility
@@ -29,7 +30,7 @@ async def create_emoji(
     try:
         async with (
             aiohttp.ClientSession() as session,
-            session.get(image_url) as resp,
+            session.get(image_url, timeout=ClientTimeout(total=10)) as resp,
         ):
             if resp.status != 200:
                 await commandInfo.reply(

@@ -1,6 +1,7 @@
 from typing import Any
 
 import aiohttp
+from aiohttp import ClientTimeout
 
 from api import get_brawlstars_linked_account
 from config import brawlstarsToken
@@ -13,7 +14,7 @@ async def fetch_player_data(player_tag: str) -> dict[str, Any] | None:
     headers = {"Authorization": f"Bearer {brawlstarsToken}"}
     url = "https://api.brawlstars.com/v1/players"
     params = {"tag": player_tag}
-    async with aiohttp.ClientSession() as session, session.get(url, headers=headers, params=params) as response:
+    async with aiohttp.ClientSession() as session, session.get(url, headers=headers, params=params, timeout=ClientTimeout(total=10)) as response:
         if response.status != 200:
             return None
         return await response.json()
@@ -26,6 +27,7 @@ async def getAllBrawlers() -> dict[str, Any] | None:
         session.get(
             "https://api.brawlstars.com/v1/brawlers",
             headers=headers,
+            timeout=ClientTimeout(total=10),
         ) as response,
     ):
         if response.status != 200:

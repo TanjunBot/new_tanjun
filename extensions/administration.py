@@ -15,6 +15,7 @@ import tempfile
 from typing import Any
 
 import aiohttp
+from aiohttp import ClientTimeout
 import discord
 from discord.ext import commands
 
@@ -135,7 +136,7 @@ class administrationCog(commands.Cog):
         await removeAllJoinToCreateChannels()
         await ctx.send("Updating...")
         async with aiohttp.ClientSession() as session:
-            async with session.get(f"http://127.0.0.1:6969/restart/{self.bot.application_id}") as response:
+            async with session.get(f"http://127.0.0.1:6969/restart/{self.bot.application_id}", timeout=ClientTimeout(total=10)) as response:
                 await ctx.send(await response.text())
 
     @commands.command()
@@ -169,7 +170,7 @@ class administrationCog(commands.Cog):
     async def getBrawlers(self) -> dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
-            async with session.get("https://api.brawlstars.com/v1/brawlers", headers=headers) as response:
+            async with session.get("https://api.brawlstars.com/v1/brawlers", headers=headers, timeout=ClientTimeout(total=10)) as response:
                 result = await response.json()
                 if not isinstance(result, dict):
                     return {"items": []}
@@ -186,7 +187,7 @@ class administrationCog(commands.Cog):
             starPowers = brawler["starPowers"]
             for starPower in starPowers:
                 url = f"https://cdn.brawlify.com/star-powers/borderless/{starPower['id']}.png"
-                async with aiohttp.ClientSession() as session, session.get(url) as response:
+                async with aiohttp.ClientSession() as session, session.get(url, timeout=ClientTimeout(total=10)) as response:
                     image = await response.read()
                     emoji = await ctx.guild.create_custom_emoji(name=f"{starPower['id']}", image=image)  # type: ignore[union-attr]
                     await ctx.send(f"{emoji} {starPower['name']}; i:{i}")
@@ -202,7 +203,7 @@ class administrationCog(commands.Cog):
             gadgets = brawler["gadgets"]
             for gadget in gadgets:
                 url = f"https://cdn.brawlify.com/gadgets/borderless/{gadget['id']}.png"
-                async with aiohttp.ClientSession() as session, session.get(url) as response:
+                async with aiohttp.ClientSession() as session, session.get(url, timeout=ClientTimeout(total=10)) as response:
                     image = await response.read()
                     emoji = await ctx.guild.create_custom_emoji(name=f"{gadget['id']}", image=image)  # type: ignore[union-attr]
 
@@ -211,7 +212,7 @@ class administrationCog(commands.Cog):
     async def getAccData(self, id: str) -> dict[str, Any]:
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {config.brawlstarsToken}"}
-            async with session.get(f"https://api.brawlstars.com/v1/players/%23{id}", headers=headers) as response:
+            async with session.get(f"https://api.brawlstars.com/v1/players/%23{id}", headers=headers, timeout=ClientTimeout(total=10)) as response:
                 result = await response.json()
                 if not isinstance(result, dict):
                     return {}
@@ -515,7 +516,7 @@ Das Tanjun-Team
         status_msg = await ctx.send("Lade SQL Dump herunter...")
 
         try:
-            async with aiohttp.ClientSession() as session, session.get(attachment_url) as resp:
+            async with aiohttp.ClientSession() as session, session.get(attachment_url, timeout=ClientTimeout(total=10)) as resp:
                 if resp.status != 200:
                     await status_msg.edit(content=f"Download fehlgeschlagen! Status: {resp.status}")
                     return

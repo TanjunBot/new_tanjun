@@ -5,6 +5,7 @@ import io
 from concurrent.futures import ThreadPoolExecutor
 
 import aiohttp
+from aiohttp import ClientTimeout
 import discord
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
@@ -161,7 +162,7 @@ async def removeFarewellChannel() -> None:
 async def fetch_image(url: str) -> io.BytesIO | None:
     async with (
         aiohttp.ClientSession() as session,
-        session.get(url) as response,
+        session.get(url, timeout=ClientTimeout(total=10)) as response,
     ):
         if response.status != 200:
             return None
