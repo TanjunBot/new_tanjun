@@ -92,9 +92,10 @@ async def notify_health_failures(
                 inline=False,
             )
 
+        content = f"<@{user_id}>" if idx == 1 else None
         try:
             await channel.send(
-                content=f"<@{user_id}>",
+                content=content,
                 embed=embed,
             )
         except Exception as exc:
