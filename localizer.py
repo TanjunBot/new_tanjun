@@ -14,20 +14,35 @@ class Localizer:
 
     def _load_translations_sync(self, locale: str) -> list[dict[str, object]]:
         """Load the translations from a JSON file based on the specified locale."""
+        def _validate(data: object) -> list[dict[str, object]] | None:
+            if isinstance(data, list) and all(isinstance(entry, dict) for entry in data):
+                return cast(list[dict[str, object]], data)
+            return None
+
         try:
             with open(f"locales/{locale}.json", encoding="utf-8") as file:
                 data: object = json.load(file)
-                return cast(list[dict[str, object]], data)
+                result = _validate(data)
+                if result is not None:
+                    return result
+                print(f"Invalid translation schema for locale '{locale}'.")
         except FileNotFoundError:
-            try:
-                with open("locales/en.json", encoding="utf-8") as file:
-                    fallback_data: object = json.load(file)
-                    return cast(list[dict[str, object]], fallback_data)
-            except (FileNotFoundError, json.JSONDecodeError):
-                return []
+            pass
         except json.JSONDecodeError:
             print(f"Error decoding JSON from the translation file for locale '{locale}'.")
             return []
+
+        # Fallback to English
+        try:
+            with open("locales/en.json", encoding="utf-8") as file:
+                fallback_data: object = json.load(file)
+                result = _validate(fallback_data)
+                if result is not None:
+                    return result
+                print("Invalid translation schema for locale 'en'.")
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass
+        return []
 
     async def load_translations_async(self, locale: str) -> list[dict[str, object]]:
         return await run_blocking(self._load_translations_sync, locale)
