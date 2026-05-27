@@ -142,7 +142,16 @@ A powerful, feature-rich Discord bot built with [discord.py](https://github.com/
    # Edit .env with your configuration
    ```
 
-5. Run the bot:
+5. Install pre-commit hooks (recommended for development):
+
+   ```bash
+   pip install pre-commit
+   pre-commit install
+   ```
+
+   This will run Ruff linting/formatting, mypy type checking, and other checks automatically on every commit.
+
+6. Run the bot:
 
    ```bash
    python main.py
@@ -230,6 +239,20 @@ Update scripts for Linux (`update.sh`) and Windows (`update.bat`) are included i
 We welcome contributions! Please check the [issue tracker](https://github.com/TanjunBot/new_tanjun/issues) for open issues or feature requests.
 
 For setup instructions and guidelines, see CONTRIBUTING.md (coming soon).
+
+### Pre-commit Hooks
+
+This repository includes [pre-commit](https://pre-commit.com) configuration for automated linting and type checking:
+
+- **Ruff**: Linting and code formatting
+- **Mypy**: Static type checking
+- **Pre-commit hooks**: Trailing whitespace, end-of-file fixes, YAML validation
+
+Install with:
+
+```bash
+pip install pre-commit && pre-commit install
+```
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
