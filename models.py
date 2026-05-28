@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
-from dataclasses import dataclass
+from datetime import datetime
 from enum import IntEnum
-from typing import Any, ClassVar, Literal
+from typing import ClassVar, Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
-@dataclass
-class GiveawayModel:
+class GiveawayModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     # Matches SELECT column order from giveaway table
     giveaway_id: int
     guild_id: str
@@ -21,8 +22,8 @@ class GiveawayModel:
     sponsor: str | None
     price: str | None
     message: str | None
-    end_time: Any  # datetime
-    start_time: Any  # datetime | None
+    end_time: datetime
+    start_time: datetime | None
     started: bool
     ended: bool
     new_message_requirement: int | None
@@ -31,7 +32,7 @@ class GiveawayModel:
     send_failed: bool
     channel_id: str | None
     message_id: str
-    created_at: Any  # datetime
+    created_at: datetime
 
     @classmethod
     def from_row(cls, row: tuple) -> GiveawayModel:
@@ -45,8 +46,9 @@ class GiveawayModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class GiveawayChannelRequirementModel:
+class GiveawayChannelRequirementModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     channel_id: str
     amount: int
 
@@ -62,8 +64,9 @@ class GiveawayChannelRequirementModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class GiveawayBlacklistEntryModel:
+class GiveawayBlacklistEntryModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     entity_id: str
     reason: str | None = None
 
@@ -79,8 +82,9 @@ class GiveawayBlacklistEntryModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class ReportModel:
+class ReportModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     # Matches SELECT order from get_reports()
     id: int
     guild_id: str
@@ -107,18 +111,19 @@ class ReportModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class ScheduledMessageModel:
+class ScheduledMessageModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     # Matches SELECT column order from scheduledMessages table
     message_id: int
     guild_id: str | None
     channel_id: str | None
     user_id: str
     content: str
-    send_time: Any  # datetime
+    send_time: datetime
     repeat_interval: int | None
     repeat_amount: int | None
-    created_at: Any  # datetime
+    created_at: datetime
 
     @classmethod
     def from_row(cls, row: tuple) -> ScheduledMessageModel:
@@ -132,8 +137,9 @@ class ScheduledMessageModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class TwitchOnlineNotificationModel:
+class TwitchOnlineNotificationModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     channel_id: str
     guild_id: str
@@ -153,8 +159,9 @@ class TwitchOnlineNotificationModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class TriggerMessageModel:
+class TriggerMessageModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     guild_id: str
     trigger: str
@@ -173,8 +180,9 @@ class TriggerMessageModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class TriggerMessageChannelModel:
+class TriggerMessageChannelModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     guild_id: str
     channel_id: str
     trigger_id: int
@@ -191,8 +199,9 @@ class TriggerMessageChannelModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class TicketMessageModel:
+class TicketMessageModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     guild_id: str
     channel_id: str
@@ -214,8 +223,9 @@ class TicketMessageModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class TicketModel:
+class TicketModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     # Matches explicit SELECT order from get_tickets()
     guild_id: str
     opener_id: str
@@ -238,12 +248,13 @@ class TicketModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class AISituationModel:
+class AISituationModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     user_id: str
     situation: str | None
     name: str | None
-    created_at: Any  # datetime
+    created_at: datetime
     temperature: float
     top_p: float
     frequency_penalty: float
@@ -262,14 +273,15 @@ class AISituationModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class WarningModel:
+class WarningModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     guild_id: str
     user_id: str
     reason: str | None
-    created_at: Any  # datetime
-    expires_at: Any | None  # datetime
+    created_at: datetime
+    expires_at: datetime | None
     created_by: str
     escalation_level: int
 
@@ -285,13 +297,14 @@ class WarningModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class DetailedWarningModel:
+class DetailedWarningModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     # Subset projection from get_detailed_warnings()
     id: int
     reason: str | None
-    created_at: Any  # datetime
-    expires_at: Any | None  # datetime
+    created_at: datetime
+    expires_at: datetime | None
     created_by: str
 
     @classmethod
@@ -306,8 +319,9 @@ class DetailedWarningModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class WarnConfigModel:
+class WarnConfigModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     expiration_days: int
     timeout_threshold: int
     timeout_duration: int
@@ -328,8 +342,9 @@ class WarnConfigModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class XpBoostModel:
+class XpBoostModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     boost: float
     additive: bool
 
@@ -345,8 +360,9 @@ class XpBoostModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class BlacklistEntryModel:
+class BlacklistEntryModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     entity_id: str
     reason: str | None = None
 
@@ -362,8 +378,9 @@ class BlacklistEntryModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class LevelRoleModel:
+class LevelRoleModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     level: int
     role_id: str
 
@@ -379,8 +396,9 @@ class LevelRoleModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class DynamicSlowmodeModel:
+class DynamicSlowmodeModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     guild_id: str
     channel_id: str
     messages: int
@@ -400,8 +418,9 @@ class DynamicSlowmodeModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class AfkMessageModel:
+class AfkMessageModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     message_id: str
     channel_id: str
 
@@ -417,8 +436,9 @@ class AfkMessageModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class LogBlacklistEntryModel:
+class LogBlacklistEntryModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     guild_id: str
     entity_id: str
 
@@ -434,8 +454,9 @@ class LogBlacklistEntryModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class WelcomeChannelModel:
+class WelcomeChannelModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     channel_id: str
     guild_id: str
     message: str | None
@@ -453,8 +474,9 @@ class WelcomeChannelModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class LeaveChannelModel:
+class LeaveChannelModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     channel_id: str
     guild_id: str
     message: str | None
@@ -472,12 +494,13 @@ class LeaveChannelModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class DynamicSlowmodeMessageModel:
+class DynamicSlowmodeMessageModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     channel_id: str
     message_id: str
-    send_time: Any  # datetime
+    send_time: datetime
 
     @classmethod
     def from_row(cls, row: tuple) -> DynamicSlowmodeMessageModel:
@@ -491,8 +514,9 @@ class DynamicSlowmodeMessageModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class TokenOverviewModel:
+class TokenOverviewModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     free_token: int
     plus_token: int
     paid_token: int
@@ -511,6 +535,8 @@ class TokenOverviewModel:
 
 
 class LogEnableModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     guild_id: str
     automod_rule_create: bool = True
     automod_rule_update: bool = True
@@ -594,7 +620,7 @@ class LogEnableModel(BaseModel):
     }
 
     # Reverse mapping: model field → DB column name
-    _FIELD_DB_MAP: ClassVar[dict[str, str]] = {v: k for k, v in _DB_FIELD_MAP.items()}  # type: ignore[misc]
+    _FIELD_DB_MAP: ClassVar[dict[str, str]] = {v: k for k, v in _DB_FIELD_MAP.items()}
 
     @model_validator(mode="wrap")
     @classmethod
@@ -647,8 +673,9 @@ class LogEnableModel(BaseModel):
         return frozenset(cls._DB_FIELD_MAP.keys())
 
 
-@dataclass
-class ClaimedBoosterChannelModel:
+class ClaimedBoosterChannelModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     user_id: str
     channel_id: str
     guild_id: str
@@ -665,8 +692,9 @@ class ClaimedBoosterChannelModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class ClaimedBoosterRoleModel:
+class ClaimedBoosterRoleModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     user_id: str
     role_id: str
     guild_id: str
@@ -683,8 +711,9 @@ class ClaimedBoosterRoleModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class BlockedReporterModel:
+class BlockedReporterModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     guild_id: str
     user_id: str
 
@@ -700,8 +729,9 @@ class BlockedReporterModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class LevelLeaderboardEntryModel:
+class LevelLeaderboardEntryModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     user_id: str
     xp: int
 
@@ -717,16 +747,18 @@ class LevelLeaderboardEntryModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class UserLevelInfoModel:
+class UserLevelInfoModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     xp: int
     level: int
     xp_needed: int
     custom_background: str | None
 
 
-@dataclass
-class ChannelOverwriteModel:
+class ChannelOverwriteModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     role_id: str
     overwrites: dict
 
@@ -746,6 +778,8 @@ class ChannelOverwriteModel:
 
 class LevelConfig(BaseModel):
     """Pydantic model for a guild's level configuration."""
+    model_config = ConfigDict(from_attributes=True)
+
     guild_id: str
     active: bool = True
     difficulty: Literal['easy', 'medium', 'hard', 'extreme', 'custom'] = "medium"
