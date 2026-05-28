@@ -846,7 +846,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(execution.guild.id, str(execution.channel.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(execution.guild.id, str(execution.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
             return
 
         locale = execution.guild.preferred_locale if hasattr(execution.guild, "preferred_locale") else "en_US"
@@ -1810,10 +1810,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(invite.guild.id, str(invite.inviter.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(invite.guild.id, str(invite.inviter.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_blacklist(invite.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(invite.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
             if blacklisted_role in invite.inviter.roles:  # type: ignore[union-attr]
                 return
@@ -1905,10 +1905,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(invite.guild.id, str(invite.inviter.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(invite.guild.id, str(invite.inviter.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_blacklist(invite.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(invite.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
             if blacklisted_role in invite.inviter.roles:  # type: ignore[union-attr]
                 return
@@ -2062,7 +2062,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.CHANNEL):
+        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.USER):
             return
 
         blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)
@@ -2339,7 +2339,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.CHANNEL):
+        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.USER):
             return
 
         blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)
@@ -2381,10 +2381,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(after.guild.id, str(after.author.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(after.guild.id, str(after.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_entity_blacklisted(after.guild.id, str(after.channel.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(after.guild.id, str(after.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
             return
 
         blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
@@ -2533,13 +2533,13 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(message.guild.id, str(message.author.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(message.guild.id, str(message.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_entity_blacklisted(message.guild.id, str(message.channel.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(message.guild.id, str(message.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_blacklist(message.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(message.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
             if blacklisted_role in message.author.roles:  # type: ignore[union-attr]
                 return
@@ -2626,7 +2626,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
             return
 
         blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)
@@ -2666,7 +2666,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
             return
 
         blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)

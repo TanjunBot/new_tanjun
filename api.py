@@ -47,6 +47,7 @@ from models import (
 )
 from utility import get_level_for_xp, get_xp_for_level
 
+
 class LogBlacklistType(Enum):
     """Enum representing the three log blacklist types with their table/column mapping."""
 

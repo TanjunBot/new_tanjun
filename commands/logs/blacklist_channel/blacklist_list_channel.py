@@ -1,7 +1,7 @@
 import discord
 
 import utility
-from api import LogBlacklistType
+from api import LogBlacklistType, add_log_blacklist, get_log_blacklist, remove_log_blacklist
 from localizer import tanjunLocalizer
 
 
@@ -20,7 +20,7 @@ async def blacklist_list_channel(command_info: utility.command_info):
         await command_info.reply(embed=embed)
         return
 
-    blacklisted_channels = await get_log_blacklist_api(command_info.guild.id, LogBlacklistType.CHANNEL)
+    blacklisted_channels = await get_log_blacklist(command_info.guild.id, LogBlacklistType.CHANNEL)
 
     class BlacklistView(discord.ui.View):
         def __init__(self, channels: list, locale: str, guild: discord.Guild):
@@ -33,7 +33,7 @@ async def blacklist_list_channel(command_info: utility.command_info):
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
         async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button):
             channel_id = self.channels[self.selectedIndex]
-            await remove_log_blacklist_api(self.guild.id, channel_id, LogBlacklistType.CHANNEL)
+            await remove_log_blacklist(self.guild.id, channel_id, LogBlacklistType.CHANNEL)
             self.channels = tuple(x for x in self.channels if x != channel_id)
             await self.update_view(interaction)
 
@@ -50,7 +50,7 @@ async def blacklist_list_channel(command_info: utility.command_info):
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             if interaction.data["component_type"] == 8:  # ChannelSelect
                 channel_id = interaction.data["values"][0]
-                await add_log_blacklist_api(self.guild.id, channel_id, LogBlacklistType.CHANNEL)
+                await add_log_blacklist(self.guild.id, channel_id, LogBlacklistType.CHANNEL)
                 self.channels += (channel_id,)
                 await self.update_view(interaction)
             return True
