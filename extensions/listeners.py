@@ -53,7 +53,7 @@ class ListenerCog(commands.Cog):
         if modes_config:
             await countingModes(message, config=modes_config)
         # Everything else is independent — run concurrently with asyncio.gather
-        await asyncio.gather(
+        results = await asyncio.gather(
             wordchain(message),
             addLevelXp(message),
             addMessageToGiveaway(message),
@@ -65,6 +65,28 @@ class ListenerCog(commands.Cog):
             dynamicslowmodeMessage(message),
             return_exceptions=True,
         )
+        # Log any exceptions from handlers
+        handler_names = [
+            "wordchain",
+            "addLevelXp",
+            "addMessageToGiveaway",
+            "publish_message",
+            "checkIfAfkHasToBeRemoved",
+            "checkIfMentionsAreAfk",
+            "send_trigger_message",
+            "mediaChannelMessage",
+            "dynamicslowmodeMessage",
+        ]
+        for handler_name, result in zip(handler_names, results):
+            if isinstance(result, Exception):
+                logging.exception(
+                    "Exception in message handler '%s' for message %s in channel %s: %s",
+                    handler_name,
+                    message.id,
+                    message.channel.id,
+                    result,
+                    exc_info=result,
+                )
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction) -> None:

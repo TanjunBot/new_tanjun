@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from enum import IntEnum
 from typing import Any, ClassVar
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 
 @dataclass
@@ -763,7 +763,6 @@ class CountingMode(IntEnum):
     CUBE = 14
 
 
-@dataclass
-class LevelRolesGroupModel:
-    level: int
+class LevelRolesGroupModel(BaseModel):
+    level: int = Field(ge=0)
     role_ids: list[str]

@@ -7,6 +7,7 @@ import uuid
 from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
+from enum import Enum
 from typing import Any
 
 from discord import Entitlement
@@ -45,6 +46,61 @@ from models import (
     XpBoostModel,
 )
 from utility import get_level_for_xp_async, get_xp_for_level_async
+
+
+class LogBlacklistType(Enum):
+    """Enum representing the three log blacklist types with their table/column mapping."""
+
+    CHANNEL = ("logBlacklistChannel", "channel_id")
+    ROLE = ("logRoleBlacklist", "role_id")
+    USER = ("logUserBlacklist", "user_id")
+
+    @property
+    def table(self) -> str:
+        return self.value[0]
+
+    @property
+    def column(self) -> str:
+        return self.value[1]
+
+
+
+async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
+    """Add a log blacklist entry for the given entity type."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"INSERT INTO {table} (guild_id, {column}) VALUES (%s, %s)"
+    await execute_action(query, (guild_id, entity_id))
+
+
+async def remove_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
+    """Remove a log blacklist entry for the given entity type."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"DELETE FROM {table} WHERE guild_id = %s AND {column} = %s"
+    await execute_action(query, (guild_id, entity_id))
+
+
+async def get_log_blacklist(guild_id: str, blacklist_type: LogBlacklistType) -> list[str]:
+    """Retrieve all blacklisted entity IDs of a given type for a guild."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"SELECT {column} FROM {table} WHERE guild_id = %s"
+    entity_ids: list[str] = []
+    async for row in execute_query_iter(query, (guild_id,)):
+        entity_ids.append(row[0])
+    return entity_ids
+
+
+async def is_log_entity_blacklisted(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> str | None:
+    """Check whether a specific entity is blacklisted."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"SELECT {column} FROM {table} WHERE guild_id = %s AND {column} = %s"
+    result = await execute_query(query, (guild_id, entity_id))
+    return result[0] if result else None
+
+
 
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
@@ -1548,147 +1604,193 @@ async def get_custom_formula(guild_id: str) -> str | None:
 
 
 async def add_level_role(guild_id: str, role_id: str, level: int) -> None:
-    query = """
-    INSERT INTO levelRole (guild_id, role_id, level)
-    VALUES (%s, %s, %s)
-    ON DUPLICATE KEY UPDATE role_id = VALUES(role_id)
-    """
-    params = (guild_id, role_id, level)
-    await execute_action(query, params)
+    """Assign a level role (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    await level_role_repo.assign(guild_id, role_id, level)
 
 
 async def get_level_roles(guild_id: str) -> AsyncIterator[LevelRoleModel]:
-    """Stream level roles for a guild.
+    """Stream level roles for a guild (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
 
-    Yields rows one at a time.
-    """
-    query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
-    params = (guild_id,)
-    async for row in LevelRoleModel.iter_rows(query, params):
+    async for row in level_role_repo.get_all(guild_id):
         yield row
 
 
 async def get_level_role(guild_id: str, role_id: str) -> int | None:
-    query = "SELECT level FROM levelRole WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
+    """Get level for a role (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    return await level_role_repo.get_by_role(guild_id, role_id)
 
 
-async def remove_level_role(guild_id: str, role_id: str) -> None:
-    query = """
-    DELETE FROM levelRole
-    WHERE guild_id = %s AND role_id = %s
-    """
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+async def remove_level_role(guild_id: str, role_id: str, _level: int | None = None) -> None:
+    """Remove a level role (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    await level_role_repo.unassign(guild_id, role_id)
 
 
 async def get_all_level_roles(guild_id: str) -> list[LevelRolesGroupModel]:
-    query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s ORDER BY level"
-    params = (guild_id,)
-    groups: dict[int, list[str]] = {}
-    async for row in execute_query_iter(query, params):
-        level, role_id = row
-        if level not in groups:
-            groups[level] = []
-        groups[level].append(role_id)
-    return [LevelRolesGroupModel(level=level, role_ids=roles) for level, roles in groups.items()]
+    """Get level roles grouped by level (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    return await level_role_repo.get_grouped_by_level(guild_id)
+
+
+from enum import Enum
+
+
+class BoostTarget(Enum):
+    """Type-safe enum for XP boost target types, mapping to DB table and entity column."""
+    ROLE = ("roleXpBoost", "role_id")
+    CHANNEL = ("channelXpBoost", "channel_id")
+    USER = ("userXpBoost", "user_id")
+
+    @property
+    def table(self) -> str:
+        return self.value[0]
+
+    @property
+    def entity_column(self) -> str:
+        return self.value[1]
+
+
+class XpBoostRepository:
+    """Consolidated XP boost CRUD using BoostTarget enum.
+
+    Replaces the 9+ individual add/remove/get functions for role, channel, and user boosts.
+    """
+
+    @staticmethod
+    async def add_boost(
+        guild_id: str,
+        entity_id: str,
+        boost: float,
+        additive: bool,
+        target: BoostTarget = BoostTarget.USER,
+    ) -> None:
+        """Add or update an XP boost entry."""
+        query = f"""
+        INSERT INTO {target.table} (guild_id, {target.entity_column}, boost, additive)
+        VALUES (%s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
+        """
+        params = (guild_id, entity_id, boost, additive)
+        await execute_action(query, params)
+
+    @staticmethod
+    async def remove_boost(
+        guild_id: str,
+        entity_id: str,
+        target: BoostTarget = BoostTarget.USER,
+    ) -> None:
+        """Remove an XP boost entry."""
+        query = f"DELETE FROM {target.table} WHERE guild_id = %s AND {target.entity_column} = %s"
+        params = (guild_id, entity_id)
+        await execute_action(query, params)
+
+    @staticmethod
+    async def get_boost(
+        guild_id: str,
+        entity_id: str,
+        target: BoostTarget = BoostTarget.USER,
+    ) -> XpBoostModel | None:
+        """Get a specific XP boost entry by entity ID."""
+        query = f"SELECT boost, additive FROM {target.table} WHERE guild_id = %s AND {target.entity_column} = %s"
+        params = (guild_id, entity_id)
+        result = await execute_query(query, params)
+        return XpBoostModel.from_row(result[0]) if result else None
+
+    @staticmethod
+    async def get_boosts_for_target(
+        guild_id: str,
+        entity_ids: list[str],
+        target: BoostTarget = BoostTarget.ROLE,
+    ) -> list[XpBoostModel]:
+        """Get all boost entries for a list of entity IDs under a target type."""
+        if not entity_ids:
+            return []
+        query = f"SELECT boost, additive FROM {target.table} WHERE guild_id = %s AND {target.entity_column} IN %s"
+        params = (guild_id, tuple(entity_ids))
+        rows: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(query, params):
+            rows.append(row)
+        return rows
+
+    @staticmethod
+    async def get_all_boosts(guild_id: str) -> dict[str, list[XpBoostModel]]:
+        """Get all boosts for a guild, grouped by target type."""
+        role_query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s"
+        channel_query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s"
+        user_query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s"
+
+        roles: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(role_query, (guild_id,)):
+            roles.append(row)
+
+        channels: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(channel_query, (guild_id,)):
+            channels.append(row)
+
+        users: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(user_query, (guild_id,)):
+            users.append(row)
+
+        return {
+            "roles": roles,
+            "channels": channels,
+            "users": users,
+        }
+
+
+# --- Legacy wrapper functions (backward compatible) ---
 
 
 async def add_role_boost(guild_id: str, role_id: str, boost: float, additive: bool) -> None:
-    query = """
-    INSERT INTO roleXpBoost (guild_id, role_id, boost, additive)
-    VALUES (%s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
-    """
-    params = (guild_id, role_id, boost, additive)
-    await execute_action(query, params)
+    await XpBoostRepository.add_boost(guild_id, role_id, boost, additive, BoostTarget.ROLE)
 
 
 async def add_channel_boost(guild_id: str, channel_id: str, boost: float, additive: bool) -> None:
-    query = """
-    INSERT INTO channelXpBoost (guild_id, channel_id, boost, additive)
-    VALUES (%s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
-    """
-    params = (guild_id, channel_id, boost, additive)
-    await execute_action(query, params)
+    await XpBoostRepository.add_boost(guild_id, channel_id, boost, additive, BoostTarget.CHANNEL)
 
 
 async def add_user_boost(guild_id: str, user_id: str, boost: float, additive: bool) -> None:
-    query = """
-    INSERT INTO userXpBoost (guild_id, user_id, boost, additive)
-    VALUES (%s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
-    """
-    params = (guild_id, user_id, boost, additive)
-    await execute_action(query, params)
+    await XpBoostRepository.add_boost(guild_id, user_id, boost, additive, BoostTarget.USER)
 
 
 async def remove_role_boost(guild_id: str, role_id: str) -> None:
-    query = "DELETE FROM roleXpBoost WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    await XpBoostRepository.remove_boost(guild_id, role_id, BoostTarget.ROLE)
 
 
 async def remove_channel_boost(guild_id: str, channel_id: str) -> None:
-    query = "DELETE FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    await XpBoostRepository.remove_boost(guild_id, channel_id, BoostTarget.CHANNEL)
 
 
 async def remove_user_boost(guild_id: str, user_id: str) -> None:
-    query = "DELETE FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
+    await XpBoostRepository.remove_boost(guild_id, user_id, BoostTarget.USER)
 
 
 async def get_all_boosts(guild_id: str) -> dict[str, list[XpBoostModel]]:
-    role_query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s"
-    channel_query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s"
-    user_query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s"
-
-    roles: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(role_query, (guild_id,)):
-        roles.append(row)
-
-    channels: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(channel_query, (guild_id,)):
-        channels.append(row)
-
-    users: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(user_query, (guild_id,)):
-        users.append(row)
-
-    return {
-        "roles": roles,
-        "channels": channels,
-        "users": users,
-    }
+    return await XpBoostRepository.get_all_boosts(guild_id)
 
 
 async def get_user_boost(guild_id: str, user_id: str) -> XpBoostModel | None:
-    query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    result = await safe_execute_query(query, params)
-    return XpBoostModel.from_row(result[0]) if result else None
+    return await XpBoostRepository.get_boost(guild_id, user_id, BoostTarget.USER)
 
 
 async def get_user_roles_boosts(guild_id: str, role_ids: list[str]) -> list[XpBoostModel]:
-    query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
-    params = (guild_id, tuple(role_ids))
-    rows: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    return await XpBoostRepository.get_boosts_for_target(guild_id, role_ids, BoostTarget.ROLE)
 
 
 async def get_channel_boost(guild_id: str, channel_id: str) -> XpBoostModel | None:
-    query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    result = await execute_query(query, params)
-    return XpBoostModel.from_row(result[0]) if result else None
+    return await XpBoostRepository.get_boost(guild_id, channel_id, BoostTarget.CHANNEL)
+
+
+async def get_role_boost(guild_id: str, role_id: str) -> XpBoostModel | None:
+    """Get a specific role XP boost. Added for consistency with user/channel boost pattern."""
+    return await XpBoostRepository.get_boost(guild_id, role_id, BoostTarget.ROLE)
 
 
 async def add_channel_to_blacklist(guild_id: str, channel_id: str, reason: str | None = None) -> None:
@@ -2727,87 +2829,63 @@ async def remove_log_channel(guild_id: str) -> None:
 
 
 async def add_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
-    query = "INSERT INTO logBlacklistChannel (guild_id, channel_id) VALUES (%s, %s)"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    """Add a channel to the log blacklist. Thin wrapper around add_log_blacklist."""
+    await add_log_blacklist(guild_id, channel_id, LogBlacklistType.CHANNEL)
 
 
 async def remove_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
-    query = "DELETE FROM logBlacklistChannel WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    """Remove a channel from the log blacklist. Thin wrapper around remove_log_blacklist."""
+    await remove_log_blacklist(guild_id, channel_id, LogBlacklistType.CHANNEL)
 
 
 async def get_log_blacklist_channel(guild_id: str) -> list[str]:
-    query = "SELECT channel_id FROM logBlacklistChannel WHERE guild_id = %s"
-    params = (guild_id,)
-    channel_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        channel_ids.append(row[0])
-    return channel_ids
+    """Get all blacklisted channels for a guild. Thin wrapper around get_log_blacklist."""
+    return await get_log_blacklist(guild_id, LogBlacklistType.CHANNEL)
 
 
 async def is_log_channel_blacklisted(guild_id: str, channel_id: str) -> str | None:
-    query = "SELECT channel_id FROM logBlacklistChannel WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    result = await execute_query(query, params)
-    return result[0] if result else None
+    """Check if a channel is blacklisted. Thin wrapper around is_log_entity_blacklisted."""
+    return await is_log_entity_blacklisted(guild_id, channel_id, LogBlacklistType.CHANNEL)
 
 
 async def add_log_role_blacklist(guild_id: str, role_id: str) -> None:
-    query = "INSERT INTO logRoleBlacklist (guild_id, role_id) VALUES (%s, %s)"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    """Add a role to the log blacklist. Thin wrapper around add_log_blacklist."""
+    await add_log_blacklist(guild_id, role_id, LogBlacklistType.ROLE)
 
 
 async def remove_log_role_blacklist(guild_id: str, role_id: str) -> None:
-    query = "DELETE FROM logRoleBlacklist WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    """Remove a role from the log blacklist. Thin wrapper around remove_log_blacklist."""
+    await remove_log_blacklist(guild_id, role_id, LogBlacklistType.ROLE)
 
 
 async def get_log_role_blacklist(guild_id: str) -> list[str]:
-    query = "SELECT role_id FROM logRoleBlacklist WHERE guild_id = %s"
-    params = (guild_id,)
-    role_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        role_ids.append(row[0])
-    return role_ids
+    """Get all blacklisted roles for a guild. Thin wrapper around get_log_blacklist."""
+    return await get_log_blacklist(guild_id, LogBlacklistType.ROLE)
 
 
 async def is_log_role_blacklisted(guild_id: str, role_id: str) -> str | None:
-    query = "SELECT role_id FROM logRoleBlacklist WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    result = await execute_query(query, params)
-    return result[0] if result else None
+    """Check if a role is blacklisted. Thin wrapper around is_log_entity_blacklisted."""
+    return await is_log_entity_blacklisted(guild_id, role_id, LogBlacklistType.ROLE)
 
 
 async def add_log_user_blacklist(guild_id: str, user_id: str) -> None:
-    query = "INSERT INTO logUserBlacklist (guild_id, user_id) VALUES (%s, %s)"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
+    """Add a user to the log blacklist. Thin wrapper around add_log_blacklist."""
+    await add_log_blacklist(guild_id, user_id, LogBlacklistType.USER)
 
 
 async def remove_log_user_blacklist(guild_id: str, user_id: str) -> None:
-    query = "DELETE FROM logUserBlacklist WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
+    """Remove a user from the log blacklist. Thin wrapper around remove_log_blacklist."""
+    await remove_log_blacklist(guild_id, user_id, LogBlacklistType.USER)
 
 
 async def get_log_user_blacklist(guild_id: str) -> list[str]:
-    query = "SELECT user_id FROM logUserBlacklist WHERE guild_id = %s"
-    params = (guild_id,)
-    user_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        user_ids.append(row[0])
-    return user_ids
+    """Get all blacklisted users for a guild. Thin wrapper around get_log_blacklist."""
+    return await get_log_blacklist(guild_id, LogBlacklistType.USER)
 
 
 async def is_log_user_blacklisted(guild_id: str, user_id: str) -> str | None:
-    query = "SELECT user_id FROM logUserBlacklist WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    result = await execute_query(query, params)
-    return result[0] if result else None
+    """Check if a user is blacklisted. Thin wrapper around is_log_entity_blacklisted."""
+    return await is_log_entity_blacklisted(guild_id, user_id, LogBlacklistType.USER)
 
 
 async def get_log_channel(guild_id: str) -> str | None:
