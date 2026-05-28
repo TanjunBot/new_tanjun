@@ -2,13 +2,10 @@ import discord
 
 import utility
 from api import (
-    add_log_role_blacklist as add_log_blacklist_role_api,
-)
-from api import (
-    get_log_role_blacklist as get_log_blacklist_roles_api,
-)
-from api import (
-    remove_log_role_blacklist as remove_log_blacklist_role_api,
+    LogBlacklistTarget,
+    add_log_blacklist as add_log_blacklist_api,
+    get_log_blacklist as get_log_blacklist_api,
+    remove_log_blacklist as remove_log_blacklist_api,
 )
 from localizer import tanjunLocalizer
 
@@ -28,7 +25,7 @@ async def blacklist_list_role(command_info: utility.command_info):
         await command_info.reply(embed=embed)
         return
 
-    blacklisted_roles = await get_log_blacklist_roles_api(command_info.guild.id)
+    blacklisted_roles = await get_log_blacklist_api(LogBlacklistTarget.ROLE, command_info.guild.id)
 
     class BlacklistView(discord.ui.View):
         def __init__(self, roles: list, locale: str, guild: discord.Guild):
@@ -41,7 +38,7 @@ async def blacklist_list_role(command_info: utility.command_info):
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
         async def remove_role(self, interaction: discord.Interaction, button: discord.ui.Button):
             role_id = self.roles[self.selected_index]
-            await remove_log_blacklist_role_api(self.guild.id, role_id)
+            await remove_log_blacklist_api(LogBlacklistTarget.ROLE, self.guild.id, role_id)
             self.roles = tuple(x for x in self.roles if x != role_id)
             await self.update_view(interaction)
 
@@ -58,7 +55,7 @@ async def blacklist_list_role(command_info: utility.command_info):
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             if interaction.data["component_type"] == 6:  # RoleSelect
                 role_id = interaction.data["values"][0]
-                await add_log_blacklist_role_api(self.guild.id, role_id)
+                await add_log_blacklist_api(LogBlacklistTarget.ROLE, self.guild.id, role_id)
                 self.roles += (role_id,)
                 await self.update_view(interaction)
             return True

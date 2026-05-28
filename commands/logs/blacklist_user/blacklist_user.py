@@ -2,10 +2,9 @@ import discord
 
 import utility
 from api import (
-    get_log_user_blacklist as add_log_blacklist_user_api,
-)
-from api import (
-    is_log_user_blacklisted as is_log_user_blacklisted_api,
+    LogBlacklistTarget,
+    add_log_blacklist as add_log_blacklist_api,
+    is_log_blacklisted as is_log_blacklisted_api,
 )
 from localizer import tanjunLocalizer
 
@@ -30,7 +29,7 @@ async def blacklist_user(command_info: utility.CommandInfo, user: discord.Member
         return
 
     assert command_info.guild is not None
-    is_blacklisted = await is_log_user_blacklisted_api(command_info.guild.id, user.id)
+    is_blacklisted = await is_log_blacklisted_api(LogBlacklistTarget.USER, command_info.guild.id, user.id)
 
     if is_blacklisted:
         embed = utility.tanjunEmbed(
@@ -44,7 +43,7 @@ async def blacklist_user(command_info: utility.CommandInfo, user: discord.Member
             ),
         )
     else:
-        await add_log_blacklist_user_api(command_info.guild.id, user.id)  # type: ignore[call-arg]
+        await add_log_blacklist_api(LogBlacklistTarget.USER, command_info.guild.id, user.id)  # type: ignore[call-arg]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.blacklistUser.blacklisted.title"),
             description=tanjunLocalizer.localize(
