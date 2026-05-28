@@ -15,7 +15,6 @@ from sympy import Symbol, diff, parse_expr
 import utility
 from localizer import tanjunLocalizer
 
-
 _ALLOWED_NP_FUNCTIONS = {
     "sin",
     "cos",
@@ -28,10 +27,6 @@ _ALLOWED_NP_FUNCTIONS = {
     "e",
     "inf",
     "nan",
-    "array",
-    "full_like",
-    "linspace",
-    "where",
     "minimum",
     "maximum",
     "clip",
@@ -45,7 +40,9 @@ _ALLOWED_NP_FUNCTIONS = {
 def _safe_eval_node(node: ast.AST, x_val: np.ndarray | float) -> np.ndarray | float:
     """Evaluate an AST node safely with only x and restricted numpy functions."""
     if isinstance(node, ast.Constant):
-        return node.value
+        if isinstance(node.value, (int, float, complex)) and not isinstance(node.value, bool):
+            return node.value
+        raise ValueError(f"Non-numeric constant not allowed: {node.value!r}")
     if isinstance(node, ast.Name):
         if node.id == "x":
             return x_val
