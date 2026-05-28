@@ -1,41 +1,25 @@
 """Shared XP calculation for both voice and message XP.
 
 Provides a single canonical calculate_xp used by both loops/level.py and
-minigames/add_level_xp.py. The voice XP double-counting bug has been fixed
-by removing the redundant role_boost loop.
+minigames/add_level_xp.py.
+
+Delegates to XpCalculator service for the actual boost formula.
+The XpCalculator service class is also exported for direct use.
 """
 
-import math
-import random
+from services.xp_calculator import XpCalculator, xp_calculator
+from api import _get_cached_blacklist
 
-from api import _get_cached_blacklist, get_channel_boost, get_user_boost, get_user_roles_boosts
+# Re-export for callers that want to use the service directly
+__all__ = ["XpCalculator", "xp_calculator", "calculate_xp", "is_entity_blacklisted"]
 
 
 async def calculate_xp(guild_id: str, user_id: str, channel_id: str, role_ids: list[str]) -> int:
-    """Calculate XP to add based on base random value and boosts."""
-    # nosec: B311
-    base_xp = random.randint(1, 3)
-    user_boost = await get_user_boost(guild_id, user_id)
-    role_boosts = await get_user_roles_boosts(guild_id, role_ids) or []
-    channel_boost = await get_channel_boost(guild_id, channel_id)
+    """Calculate XP to add based on base random value and boosts.
 
-    total_additive_boost = sum(boost.boost - 1 for boost in role_boosts if boost.additive)
-    total_multiplicative_boost = math.prod(boost.boost for boost in role_boosts if not boost.additive)
-
-    if user_boost:
-        if user_boost.additive:
-            total_additive_boost += user_boost.boost - 1
-        else:
-            total_multiplicative_boost *= user_boost.boost
-
-    if channel_boost:
-        if channel_boost.additive:
-            total_additive_boost += channel_boost.boost - 1
-        else:
-            total_multiplicative_boost *= channel_boost.boost
-
-    total_boost = (1 + total_additive_boost) * total_multiplicative_boost
-    return int(base_xp * total_boost)
+    Delegates to XpCalculator service for the boost formula.
+    """
+    return await xp_calculator.calculate_xp(guild_id, user_id, role_ids, channel_id)
 
 
 async def is_entity_blacklisted(guild_id: str, user_id: str, channel_id: str, role_ids: set[str]) -> bool:
