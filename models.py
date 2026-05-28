@@ -10,14 +10,25 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 def _from_row(cls, row: tuple):
     """Convert a DB result row to a model instance using positional field order."""
-    field_names = list(cls.model_fields.keys())
-    return cls(**dict(zip(field_names, row, strict=False)))
+    field_names = tuple(cls.model_fields.keys())
+    if len(row) != len(field_names):
+        raise ValueError(
+            f"{cls.__name__}.from_row expected {len(field_names)} columns, got {len(row)}. "
+            "Check query projection/order."
+        )
+    return cls(**dict(zip(field_names, row, strict=True)))
 
 
 def _from_row_partial(cls, row: tuple, *, skip: int = 0):
     """Convert a DB result row to a model instance, skipping first `skip` columns."""
-    field_names = list(cls.model_fields.keys())
-    return cls(**dict(zip(field_names, row[skip:], strict=False)))
+    field_names = tuple(cls.model_fields.keys())
+    values = row[skip:]
+    if len(values) != len(field_names):
+        raise ValueError(
+            f"{cls.__name__}.from_row_partial expected {len(field_names)} mapped columns, "
+            f"got {len(values)} after skipping {skip}. Check query projection/order."
+        )
+    return cls(**dict(zip(field_names, values, strict=True)))
 
 
 class GiveawayModel(BaseModel):
