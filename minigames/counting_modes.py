@@ -3,18 +3,16 @@ from math import sqrt
 
 import discord
 
-from api import (
-    check_if_opted_out,
-    clear_counting_mode,
-    get_count_mode_goal,
-    get_counting_mode_mode,
-    get_counting_mode_progress,
-    get_last_mode_counter_id,
-    set_counting_mode_progress,
-)
+from services.counting_repository import CountingMode as _CountingDBMode, CountingRepository
+from api import check_if_opted_out
 from localizer import tanjunLocalizer
 from models import CountingMode
 from utility import DiscordSafe, EmbedColor, tanjunEmbed
+
+repo = CountingRepository
+MODE = _CountingDBMode.MODES
+
+# ── Mode definitions ─────────────────────────────────────────
 
 modeMap = {
     CountingMode.NORMAL: "normal",
@@ -315,8 +313,8 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         goal = config.get("goal")
         last_counter_id = config.get("last_counter_id")
     else:
-        progress = await get_counting_mode_progress(message.channel.id)
-        mode_raw = await get_counting_mode_mode(message.channel.id)
+        progress = await repo.get_progress(MODE, message.channel.id)
+        mode_raw = await repo.get_mode(message.channel.id)
         goal = None  # Fetched later if needed
         last_counter_id = None
 
@@ -368,17 +366,17 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
                 goal=goal,
             ),
         )
-        await clear_counting_mode(message.channel.id)
-        if mode == CountingMode.ROMEAN:
+        await repo.clear(MODE, message.channel.id)
+        if new_mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
         starter = get_first_number(new_mode)
-        await set_counting_mode_progress(
+        await repo.set_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
+            guild_id=message.guild.id,
             mode=new_mode,
             goal=goal,
             counter_id="nobody",
-            guild_id=message.guild.id,
         )
         await DiscordSafe.reply(message, embed=embed)
         return
@@ -409,17 +407,17 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
                 goal=goal,
             ),
         )
-        await clear_counting_mode(message.channel.id)
-        if mode == CountingMode.ROMEAN:
+        await repo.clear(MODE, message.channel.id)
+        if new_mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
         starter = get_first_number(new_mode)
-        await set_counting_mode_progress(
+        await repo.set_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
+            guild_id=message.guild.id,
             mode=new_mode,
             goal=goal,
             counter_id="nobody",
-            guild_id=message.guild.id,
         )
         await DiscordSafe.reply(message, embed=embed)
         return
@@ -444,23 +442,23 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
                 goal=goal,
             ),
         )
-        await clear_counting_mode(message.channel.id)
+        await repo.clear(MODE, message.channel.id)
         if new_mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
         starter = get_first_number(new_mode)
-        await set_counting_mode_progress(
+        await repo.set_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
+            guild_id=message.guild.id,
             mode=new_mode,
             goal=goal,
             counter_id="nobody",
-            guild_id=message.guild.id,
         )
         await DiscordSafe.reply(message, embed=embed)
         return
 
     if config is None:
-        last_counter_id = await get_last_mode_counter_id(message.channel.id)
+        last_counter_id = await repo.get_last_counter_id(MODE, message.channel.id)
 
     if last_counter_id == str(message.author.id):
         await DiscordSafe.add_reaction(message, "💀")
@@ -482,23 +480,23 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
                 goal=goal,
             ),
         )
-        await clear_counting_mode(message.channel.id)
-        if mode == CountingMode.ROMEAN:
+        await repo.clear(MODE, message.channel.id)
+        if new_mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
         starter = get_first_number(new_mode)
-        await set_counting_mode_progress(
+        await repo.set_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
+            guild_id=message.guild.id,
             mode=new_mode,
             goal=goal,
             counter_id="nobody",
-            guild_id=message.guild.id,
         )
         await DiscordSafe.reply(message, embed=embed)
         return
 
     if config is None or goal is None:
-        goal = await get_count_mode_goal(message.channel.id)
+        goal = await repo.get_goal(message.channel.id)
 
     if mode == CountingMode.ROMEAN:
         number = romeal_to_number(number)
@@ -508,7 +506,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         # nosec: B311
         new_mode = random.choice(list(modeMap))
         new_goal = get_goal(new_mode)
-        if mode == CountingMode.ROMEAN:
+        if new_mode == CountingMode.ROMEAN:
             new_goal = romeal_to_number(new_goal)
         embed = tanjunEmbed(
             colour=EmbedColor.SUCCESS,
@@ -525,17 +523,15 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
                 new_goal=new_goal,
             ),
         )
-        await clear_counting_mode(message.channel.id)
-        if mode == CountingMode.ROMEAN:
-            new_goal = romeal_to_number(new_goal)
+        await repo.clear(MODE, message.channel.id)
         starter = get_first_number(new_mode)
-        await set_counting_mode_progress(
+        await repo.set_mode_progress(
             channel_id=message.channel.id,
             progress=starter,
+            guild_id=message.guild.id,
             mode=new_mode,
             goal=new_goal,
             counter_id="nobody",
-            guild_id=message.guild.id,
         )
         await DiscordSafe.reply(message, embed=embed)
         return
@@ -543,13 +539,13 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     if mode == CountingMode.ROMEAN:
         correct_number = romeal_to_number(correct_number)
 
-    await set_counting_mode_progress(
+    await repo.set_mode_progress(
         channel_id=message.channel.id,
         progress=(-15 if (mode == CountingMode.FIBONACCI and number == 1 and progress == 0) else correct_number),
-        mode=mode,
-        counter_id=message.author.id,
         guild_id=message.guild.id,
+        mode=mode,
         goal=goal,
+        counter_id=message.author.id,
     )
     # nosec: B311
     if random.randint(1, 100) == 1:
@@ -561,11 +557,11 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             )
         )
         await DiscordSafe.send(message.channel, content=display_number)
-        await set_counting_mode_progress(
+        await repo.set_mode_progress(
             channel_id=message.channel.id,
             progress=(romeal_to_number(correct_number) if mode == CountingMode.ROMEAN else correct_number),
-            mode=mode,
-            counter_id="me",
             guild_id=message.guild.id,
+            mode=mode,
             goal=goal,
+            counter_id="me",
         )

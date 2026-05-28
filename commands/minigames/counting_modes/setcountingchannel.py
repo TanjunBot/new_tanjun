@@ -1,6 +1,6 @@
 import discord
 
-from api import set_counting_mode_progress
+from services.counting_repository import CountingRepository
 from commands.minigames._counting_common import (
     require_bot_permissions,
     require_moderate_members,
@@ -10,6 +10,7 @@ from models import CountingMode
 from utility import CommandInfo, tanjunEmbed
 
 LOCALE_KEY = "minigames.setcountingchannel"
+_repo = CountingRepository
 
 
 async def setCountingChannel(command_info: CommandInfo, channel: discord.TextChannel) -> None:
@@ -22,7 +23,7 @@ async def setCountingChannel(command_info: CommandInfo, channel: discord.TextCha
     if await require_bot_permissions(command_info, channel):
         return
 
-    await set_counting_mode_progress(
+    await _repo.set_mode_progress(
         channel_id=channel.id,
         guild_id=command_info.guild.id,
         progress=1,
