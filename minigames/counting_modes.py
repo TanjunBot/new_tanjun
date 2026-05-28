@@ -14,7 +14,7 @@ from api import (
     set_counting_mode_progress,
 )
 from localizer import tanjunLocalizer
-from utility import tanjunEmbed
+from utility import EmbedColor, tanjunEmbed
 
 modeMap = {
     1: "normal",

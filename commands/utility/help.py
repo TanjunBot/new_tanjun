@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 
 import utility
+from localizer import tanjunLocalizer
 from utility import EmbedColor
 
 

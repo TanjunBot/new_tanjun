@@ -187,8 +187,8 @@ class TanjunEmbed:
     def __init__(
         self,
         *,
-        colour: int | discord.Colour | EmbedColor | None = EmbedColor.BRAND,
-        color: int | discord.Colour | EmbedColor | None = EmbedColor.BRAND,
+        colour: int | discord.Colour | EmbedColor | None = None,
+        color: int | discord.Colour | EmbedColor | None = None,
         title: Any | None = None,
         type="rich",
         url: Any | None = None,
@@ -196,6 +196,8 @@ class TanjunEmbed:
         timestamp: datetime.datetime | None = None,
     ):
         self.colour = colour if colour is not None else color
+        if self.colour is None:
+            self.colour = EmbedColor.BRAND
         self.title: str | None = title
         self.type = type
         self.url: str | None = url

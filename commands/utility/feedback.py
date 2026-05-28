@@ -3,7 +3,7 @@ from discord import ui
 
 from api import feedbackIsBlocked
 from localizer import tanjunLocalizer
-from utility import CommandInfo, tanjunEmbed
+from utility import CommandInfo, EmbedColor, tanjunEmbed
 
 
 class FeedbackModal(ui.Modal):
