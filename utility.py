@@ -3,6 +3,7 @@ import bisect
 import collections
 import contextlib
 import datetime
+import enum
 import gzip
 import logging
 import math
@@ -42,6 +43,17 @@ from config import (
     giphyAPIKey,
 )
 from utils.async_io import _io_executor
+
+
+class EmbedColor(enum.IntEnum):
+    """Standardized embed colors for semantic use across the bot."""
+
+    BRAND = 0xCB33F5  # Default for info/neutral messages
+    SUCCESS = 0x4BB543  # Green: success confirmations
+    WARNING = 0xFFBF00  # Yellow: warnings, rate limits
+    ERROR = 0xE74C3C  # Red: errors, failures
+    INFO = 0x3498DB  # Blue: information
+    TIMEOUT = 0x95A5A6  # Gray: disabled/timeout
 
 
 class EmbedProxy:
@@ -175,8 +187,8 @@ class TanjunEmbed:
     def __init__(
         self,
         *,
-        colour: int | discord.Colour | None = 0xCB33F5,
-        color: int | discord.Colour | None = 0xCB33F5,
+        colour: int | discord.Colour | EmbedColor | None = None,
+        color: int | discord.Colour | EmbedColor | None = None,
         title: Any | None = None,
         type="rich",
         url: Any | None = None,
@@ -184,6 +196,8 @@ class TanjunEmbed:
         timestamp: datetime.datetime | None = None,
     ):
         self.colour = colour if colour is not None else color
+        if self.colour is None:
+            self.colour = EmbedColor.BRAND
         self.title: str | None = title
         self.type = type
         self.url: str | None = url

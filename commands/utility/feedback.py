@@ -3,7 +3,7 @@ from discord import ui
 
 from api import feedbackIsBlocked
 from localizer import tanjunLocalizer
-from utility import CommandInfo, tanjunEmbed
+from utility import CommandInfo, EmbedColor, tanjunEmbed
 
 
 class FeedbackModal(ui.Modal):
@@ -78,6 +78,7 @@ class FeedbackModal(ui.Modal):
         )
 
         embed = tanjunEmbed(
+            colour=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(
                 self.command_info.locale,
                 "commands.utility.feedback.modal.submitted.title",
