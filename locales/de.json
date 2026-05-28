@@ -31321,8 +31321,8 @@
   },
   {
     "identifier": "errors.cooldown.description",
-    "source_string": "Dieser Befehl hat eine Abklingzeit. Versuche es in ** Sekunden** erneut.",
-    "translation": "Dieser Befehl hat eine Abklingzeit. Versuche es in ** Sekunden** erneut.",
+    "source_string": "Dieser Befehl hat eine Abklingzeit. Versuche es in $retry_after Sekunden erneut.",
+    "translation": "Dieser Befehl hat eine Abklingzeit. Versuche es in $retry_after Sekunden erneut.",
     "context": "Description when command is on cooldown",
     "labels": "unassigned",
     "max_length": null
@@ -31337,8 +31337,8 @@
   },
   {
     "identifier": "errors.missing_permissions.description",
-    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen.",
-    "translation": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen.",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Fehlende Berechtigungen: $missing_permissions",
+    "translation": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Fehlende Berechtigungen: $missing_permissions",
     "context": "Description when user lacks permissions",
     "labels": "unassigned",
     "max_length": null
@@ -31369,8 +31369,8 @@
   },
   {
     "identifier": "errors.http_error.description",
-    "source_string": "Ein API-Fehler ist aufgetreten (Code ). Bitte versuche es später erneut.",
-    "translation": "Ein API-Fehler ist aufgetreten (Code ). Bitte versuche es später erneut.",
+    "source_string": "Ein API-Fehler ist aufgetreten (Code $status_code). Bitte versuche es später erneut.",
+    "translation": "Ein API-Fehler ist aufgetreten (Code $status_code). Bitte versuche es später erneut.",
     "context": "Description for HTTP errors with status code",
     "labels": "unassigned",
     "max_length": null

@@ -21,13 +21,21 @@ def _get_locale(interaction: discord.Interaction) -> str:
     """Resolve a usable locale string from the interaction.
 
     Falls back to ``"en"`` when the interaction has no guild or locale.
+    Normalizes locale strings to primary language subtag (e.g. "de-DE" -> "de").
     """
+    locale_str = None
     if interaction.guild_locale is not None:
-        return str(interaction.guild_locale.value)
+        locale_str = interaction.guild_locale.value
     # Fall back to user locale when guild locale is unavailable (DMs etc.)
-    if interaction.locale is not None:
-        return str(interaction.locale.value)
-    return "en"
+    elif interaction.locale is not None:
+        locale_str = interaction.locale.value
+
+    if locale_str is None:
+        return "en"
+
+    # Normalize to primary language subtag: "de-DE" -> "de", "en_US" -> "en"
+    primary_lang = str(locale_str).split('-')[0].split('_')[0].lower()
+    return primary_lang if primary_lang else "en"
 
 
 class ErrorHandlerCog(commands.Cog):
@@ -94,9 +102,17 @@ class ErrorHandlerCog(commands.Cog):
 
         elif isinstance(original, app_commands.CheckFailure):
             # Covers MissingPermissions, BotMissingPermissions, etc.
+            missing_permissions = None
+            if isinstance(original, (app_commands.MissingPermissions, app_commands.BotMissingPermissions)):
+                # Extract missing permissions and format as comma-separated list
+                perms = getattr(original, 'missing_permissions', None)
+                if perms:
+                    missing_permissions = ", ".join(str(p).replace("_", " ").title() for p in perms)
+
             embed = await self._build_error_embed(
                 interaction,
                 "errors.missing_permissions",
+                missing_permissions=missing_permissions or "Unknown",
             )
 
         elif isinstance(original, discord.Forbidden):
