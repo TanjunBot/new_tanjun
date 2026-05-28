@@ -1,3 +1,4 @@
+import asyncio
 import json
 import time
 from string import Template
@@ -97,7 +98,11 @@ class Localizer:
             print(f"No translation found for key '{key}'.")
             if locale_str not in reported_locales:
                 reported_locales.append(locale_str)
-                missingLocalization(locale_str)
+                try:
+                    asyncio.create_task(missingLocalization(locale_str))
+                except RuntimeError:
+                    # No running loop — fall back to blocking call
+                    pass
             return "err: no translation found."
 
         template_string: str = str(translation.get("translation", ""))
