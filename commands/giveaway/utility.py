@@ -569,7 +569,7 @@ async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-d
             await giveaway_service.remove_participant(giveaway_id, winner)
             member = guild.get_member(winner)
             if member:
-                with contextlib.suppress(Exception):
+                with contextlib.suppress(discord.Forbidden, discord.HTTPException):
                     await member.send(
                         tanjunLocalizer.localize(
                             locale,

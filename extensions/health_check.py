@@ -69,7 +69,7 @@ class BackgroundLoopHealthCheck(HealthCheck):
                 continue
             try:
                 is_running = task.is_running
-            except Exception:
+            except AttributeError:
                 failed_loops.append(f"{name} (invalid)")
                 continue
             if not callable(is_running):
@@ -78,7 +78,7 @@ class BackgroundLoopHealthCheck(HealthCheck):
             try:
                 if not is_running():
                     failed_loops.append(name)
-            except Exception:
+            except AttributeError:
                 failed_loops.append(f"{name} (error)")
 
         if failed_loops:

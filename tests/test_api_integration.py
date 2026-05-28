@@ -25,6 +25,8 @@ import pytest
 
 import tests.mock_config as mock_config
 
+from exceptions import DatabaseError
+
 mock_config.patch_config_module()
 
 # Mock discord before importing any project modules
@@ -128,7 +130,7 @@ async def integration_pool():
             for (stmt,) in await cursor.fetchall():
                 await cursor.execute(stmt)
             await conn.commit()
-    except Exception:
+    except (DatabaseError, Exception):
         pass
 
     pool.close()
