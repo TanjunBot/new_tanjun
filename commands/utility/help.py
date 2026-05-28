@@ -3,6 +3,7 @@ from discord import app_commands
 
 import utility
 from localizer import tanjunLocalizer
+from utility import EmbedColor
 
 
 async def help(command_info, ctx):
@@ -195,7 +196,7 @@ async def help(command_info, ctx):
                                 total_pages=len(texts),
                             ),
                             description=text,
-                            color=0xCB33F5,
+                            color=EmbedColor.BRAND,
                         )
                     else:
                         embed = discord.Embed(
@@ -205,7 +206,7 @@ async def help(command_info, ctx):
                                 group_name=group_name_locale,
                             ),
                             description=text,
-                            color=0xCB33F5,
+                            color=EmbedColor.BRAND,
                         )
                     embeds.append(embed)
 

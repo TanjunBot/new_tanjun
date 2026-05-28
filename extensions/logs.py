@@ -31,16 +31,9 @@ from commands.logs.configure_logs import configure_logs
 from commands.logs.remove_log_channel import remove_log_channel
 from commands.logs.set_log_channel import set_log_channel
 from localizer import tanjunLocalizer
-from utility import upload_image_to_imgbb, upload_to_tanjun_logs
+from utility import EmbedColor, upload_image_to_imgbb, upload_to_tanjun_logs
 
 embeds = {}  # type: ignore[var-annotated]
-
-
-class EmbedColors:
-    green = 0x4BB543
-    yellow = 0xFFBF00
-    red = 0xFF0000
-
 
 _log_queue: asyncio.Queue[tuple[str, discord.Embed]] = asyncio.Queue(maxsize=200)
 
@@ -499,7 +492,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.automodRuleCreate.title"),
             description=description,
         )
@@ -666,7 +659,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.title"),
             description=description,
         )
@@ -834,7 +827,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
@@ -918,7 +911,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
@@ -1012,7 +1005,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.guild_channelDelete.title"),
             description=description,
         )
@@ -1087,7 +1080,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.guild_channelCreate.title"),
             description=description,
         )
@@ -1372,7 +1365,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.guild_channelUpdate.title"),
             description=description,
         )
@@ -1798,7 +1791,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.guildUpdate.title"),
             description=description,
         )
@@ -1893,7 +1886,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.inviteCreate.title"),
             description=description,
         )
@@ -1985,7 +1978,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.inviteDelete.title"),
             description=description,
         )
@@ -2014,7 +2007,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
@@ -2050,7 +2043,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
@@ -2184,7 +2177,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.memberUpdate.title"),
             description=description,
         )
@@ -2254,7 +2247,7 @@ class LogsCog(commands.Cog):
             description = "\n".join(description_parts)
 
             embed = discord.Embed(
-                color=EmbedColors.yellow,
+                color=EmbedColor.WARNING,
                 title=tanjunLocalizer.localize(locale, "logs.userUpdate.title"),
                 description=description,
             )
@@ -2290,7 +2283,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.memberBan.title"),
             description=description,
         )
@@ -2327,7 +2320,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.memberUnban.title"),
             description=description,
         )
@@ -2369,7 +2362,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.presenceUpdate.title"),
             description=description,
         )
@@ -2513,7 +2506,7 @@ class LogsCog(commands.Cog):
             description = description[:3000] + f" {truncated_notice}"  # type: ignore[possibly-undefined]
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.messageEdit.title"),
             description=description,
         )
@@ -2609,7 +2602,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.messageDelete.title"),
             description=description,
         )
@@ -2651,7 +2644,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.reactionAdd.title"),
             description=description,
         )
@@ -2691,7 +2684,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.reactionRemove.title"),
             description=description,
         )
@@ -2769,7 +2762,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.guildRoleCreate.title"),
             description=description,
         )
@@ -2848,7 +2841,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.guildRoleDelete.title"),
             description=description,
         )
@@ -2977,7 +2970,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.title"),
             description=description,
         )

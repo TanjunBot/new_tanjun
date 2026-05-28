@@ -8,6 +8,7 @@ from api import (
     get_xp_scaling,
 )
 from localizer import tanjunLocalizer
+from utility import get_level_for_xp_async, get_xp_for_level_async
 
 ITEMS_PER_PAGE = 10
 
@@ -45,9 +46,9 @@ async def leaderboard(command_info: utility.command_info, page: int = 1):
         for i, entry in enumerate(entries):
             user = entry.user_id
             xp = entry.xp
-            level = utility.get_level_for_xp(xp, scaling, custom_formula)
-            xp_from_last_level = xp - utility.get_xp_for_level(level - 1, scaling, custom_formula)
-            xp_till_next_level = utility.get_xp_for_level(level, scaling, custom_formula)
+            level = await get_level_for_xp_async(xp, scaling, custom_formula)
+            xp_from_last_level = xp - await get_xp_for_level_async(level - 1, scaling, custom_formula)
+            xp_till_next_level = await get_xp_for_level_async(level, scaling, custom_formula)
             description += (
                 f"\n{base_rank + i}. <@{user}> - "
                 f"{tanjunLocalizer.localize(command_info.locale, 'commands.level.leaderboard.data', level=level, xp_from_last_level=xp_from_last_level, xp_till_next_level=xp_till_next_level)}"

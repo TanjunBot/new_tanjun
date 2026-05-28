@@ -8,12 +8,13 @@ from api import (
 )
 from localizer import tanjunLocalizer
 from minigames._counting_common import counting as _counting_base
-from utility import tanjunEmbed
+from utility import EmbedColor, tanjunEmbed
 
 
 async def _challenge_failure(message: discord.Message, locale: str, _correct_number: int) -> None:
     await message.add_reaction("\U0001f480")
     embed = tanjunEmbed(
+        colour=EmbedColor.ERROR,
         title=tanjunLocalizer.localize(locale, "minigames.counting.failed.title"),
         description=tanjunLocalizer.localize(locale, "minigames.counting.failed.description"),
     )
@@ -24,6 +25,7 @@ async def _challenge_failure(message: discord.Message, locale: str, _correct_num
 async def _challenge_double_count(message: discord.Message, locale: str, _correct_number: int) -> None:
     await message.add_reaction("\U0001f480")
     embed = tanjunEmbed(
+        colour=EmbedColor.ERROR,
         title=tanjunLocalizer.localize(locale, "minigames.counting.failed_double.title"),
         description=tanjunLocalizer.localize(locale, "minigames.counting.failed_double.description"),
     )
