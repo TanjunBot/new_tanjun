@@ -46,8 +46,8 @@ async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:
     if await check_if_opted_out(message.author.id) or message.guild is None:
         return
     if await afk_service.is_afk(message.author.id):
-        mentions = await afk_service.get_mentions(message.author.id)
         locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
+        mentions = await afk_service.clear_and_notify(message.author.id)
         if not mentions:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(locale, "commands.utility.afk.removed_no_messages.title"),
@@ -57,7 +57,6 @@ async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:
                 ),
             )
             await message.channel.send(embed=embed)
-            await afk_service.remove_afk(message.author.id)
             return
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(locale, "commands.utility.afk.removed.title"),
@@ -72,7 +71,6 @@ async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:
                 ),
             ),
         )
-        await afk_service.remove_afk(message.author.id)
         await message.channel.send(embed=embed)
 
 

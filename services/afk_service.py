@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 
-from api import execute_action, execute_query_iter, safe_execute_query
+from api import execute_action, execute_query, execute_query_iter, safe_execute_query
 
 
 @dataclass
@@ -13,7 +14,7 @@ class AfkEntry:
 
     user_id: str
     reason: str | None = None
-    # created_at is stored in the DB but not loaded here for simplicity
+    created_at: datetime | None = None
 
 
 @dataclass
