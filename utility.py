@@ -44,7 +44,7 @@ from config import (
     bytebin_username,
     giphyAPIKey,
 )
-from utils.async_io import _io_executor
+from utils.async_io import run_blocking
 
 
 class EmbedColor(enum.IntEnum):
@@ -943,20 +943,12 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
         return []
 
 
-def missingLocalization(locale: str) -> None:
-    future = _io_executor.submit(_missingLocalization, locale)
-    future.add_done_callback(_handle_submit_exception)
+async def missingLocalization(locale: str) -> None:
+    """Create a GitHub issue reporting a missing localization."""
+    await run_blocking(_sync_create_missing_localization_issue, locale)
 
 
-def _handle_submit_exception(future) -> None:
-    """Exception handler for background executor tasks."""
-    try:
-        future.result()
-    except Exception:
-        logging.exception("Exception in background executor task")
-
-
-def _missingLocalization(locale: str) -> None:
+def _sync_create_missing_localization_issue(locale: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("missing localization")
@@ -967,12 +959,12 @@ def _missingLocalization(locale: str) -> None:
     )
 
 
-def addFeedback(content: str, author: str) -> None:
-    future = _io_executor.submit(_addFeedback, content, author)
-    future.add_done_callback(_handle_submit_exception)
+async def addFeedback(content: str, author: str) -> None:
+    """Create a GitHub issue with user feedback."""
+    await run_blocking(_sync_create_feedback_issue, content, author)
 
 
-def _addFeedback(content: str, author: str) -> None:
+def _sync_create_feedback_issue(content: str, author: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("Feedback")
