@@ -1499,52 +1499,39 @@ async def get_custom_formula(guild_id: str) -> str | None:
 
 
 async def add_level_role(guild_id: str, role_id: str, level: int) -> None:
-    query = """
-    INSERT INTO levelRole (guild_id, role_id, level)
-    VALUES (%s, %s, %s)
-    ON DUPLICATE KEY UPDATE role_id = VALUES(role_id)
-    """
-    params = (guild_id, role_id, level)
-    await execute_action(query, params)
+    """Assign a level role (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    await level_role_repo.assign(guild_id, role_id, level)
 
 
 async def get_level_roles(guild_id: str) -> AsyncIterator[LevelRoleModel]:
-    """Stream level roles for a guild.
+    """Stream level roles for a guild (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
 
-    Yields rows one at a time.
-    """
-    query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
-    params = (guild_id,)
-    async for row in LevelRoleModel.iter_rows(query, params):
+    async for row in level_role_repo.get_all(guild_id):
         yield row
 
 
 async def get_level_role(guild_id: str, role_id: str) -> int | None:
-    query = "SELECT level FROM levelRole WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
+    """Get level for a role (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    return await level_role_repo.get_by_role(guild_id, role_id)
 
 
-async def remove_level_role(guild_id: str, role_id: str) -> None:
-    query = """
-    DELETE FROM levelRole
-    WHERE guild_id = %s AND role_id = %s
-    """
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+async def remove_level_role(guild_id: str, role_id: str, _level: int | None = None) -> None:
+    """Remove a level role (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    await level_role_repo.unassign(guild_id, role_id)
 
 
 async def get_all_level_roles(guild_id: str) -> list[LevelRolesGroupModel]:
-    query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s ORDER BY level"
-    params = (guild_id,)
-    groups: dict[int, list[str]] = {}
-    async for row in execute_query_iter(query, params):
-        level, role_id = row
-        if level not in groups:
-            groups[level] = []
-        groups[level].append(role_id)
-    return [LevelRolesGroupModel(level=level, role_ids=roles) for level, roles in groups.items()]
+    """Get level roles grouped by level (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    return await level_role_repo.get_grouped_by_level(guild_id)
 
 
 async def add_role_boost(guild_id: str, role_id: str, boost: float, additive: bool) -> None:
