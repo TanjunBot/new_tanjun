@@ -7,7 +7,7 @@ import uuid
 from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 # import asyncmy
 from discord import Entitlement
@@ -968,12 +968,6 @@ def get_table_definitions() -> dict[str, str]:
 
 
 async def create_tables(bot=None) -> None:
-    tables = get_table_definitions()
-
-    return tables
-
-
-async def create_tables(bot=None) -> None:
     """Create all database tables using get_table_definitions()."""
     tables = get_table_definitions()
 
@@ -1023,7 +1017,7 @@ async def create_tables(bot=None) -> None:
 
 
 async def add_warning(
-    guild_id: str | int, user_id: str | int, reason: str, created_by: str | int, expiration_date: Optional[datetime] = None
+    guild_id: str | int, user_id: str | int, reason: str, created_by: str | int, expiration_date: datetime | None = None
 ) -> int:
     query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at, created_by) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, user_id, reason, expiration_date, created_by)

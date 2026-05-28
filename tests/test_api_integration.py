@@ -29,6 +29,7 @@ mock_config.patch_config_module()
 
 # Mock discord before importing any project modules
 import sys
+
 _discord_mock = MagicMock()
 _discord_mock.Entitlement = MagicMock()
 sys.modules["discord"] = _discord_mock
@@ -36,8 +37,8 @@ sys.modules["discord.ext"] = MagicMock()
 sys.modules["discord.ext.commands"] = MagicMock()
 sys.modules["discord.app_commands"] = MagicMock()
 
-import api
-from api import (
+import api  # noqa: E402
+from api import (  # noqa: E402
     add_channel_to_blacklist,
     add_level_role,
     add_role_to_blacklist,
@@ -45,7 +46,6 @@ from api import (
     check_pool_health,
     get_level_roles,
     get_level_system_status,
-    get_table_definitions,
     get_warnings,
     remove_level_role,
     remove_warning,
@@ -118,17 +118,16 @@ async def integration_pool():
 
     # Session cleanup: drop all created tables
     try:
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(
-                    "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') "
-                    "FROM information_schema.tables "
-                    "WHERE table_schema = %s",
-                    (TEST_DB_NAME,),
-                )
-                for (stmt,) in await cursor.fetchall():
-                    await cursor.execute(stmt)
-                await conn.commit()
+        async with pool.acquire() as conn, conn.cursor() as cursor:
+            await cursor.execute(
+                "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') "
+                "FROM information_schema.tables "
+                "WHERE table_schema = %s",
+                (TEST_DB_NAME,),
+            )
+            for (stmt,) in await cursor.fetchall():
+                await cursor.execute(stmt)
+            await conn.commit()
     except Exception:
         pass
 
@@ -515,7 +514,6 @@ async def test_pool_health_returns_true_when_db_is_reachable(integration_db_pool
 
 async def test_tables_are_created_via_create_tables(integration_db_pool):
     """Verify that create_tables creates all expected tables."""
-    import asyncmy
 
     pool = integration_db_pool
     async with pool.acquire() as conn, conn.cursor() as cursor:
@@ -579,7 +577,6 @@ async def test_remove_warning(integration_db_pool):
 
 async def test_channel_blacklist_round_trip(integration_db_pool):
     """Verify a channel can be blacklisted and the operation doesn't error."""
-    import asyncmy
 
     await add_channel_to_blacklist(TEST_GUILD, TEST_CHANNEL, "Integration test channel blacklist")
 
@@ -598,7 +595,6 @@ async def test_channel_blacklist_round_trip(integration_db_pool):
 
 async def test_role_blacklist_round_trip(integration_db_pool):
     """Verify a role can be blacklisted and the operation doesn't error."""
-    import asyncmy
 
     await add_role_to_blacklist(TEST_GUILD, TEST_ROLE, "Integration test role blacklist")
 
