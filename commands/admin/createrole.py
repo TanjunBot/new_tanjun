@@ -156,14 +156,38 @@ async def createrole(
         display_icon_data = await display_icon.read()
     elif isinstance(display_icon, str):
         display_icon_data = display_icon
-    role = await command_info.guild.create_role(
-        name=name,
-        color=color if color is not None else discord.Color.default(),  # type: ignore[arg-type]
-        reason=reason,
-        hoist=hoist,
-        mentionable=mentionable,
-        display_icon=display_icon_data,  # type: ignore[arg-type]
-    )
+
+    try:
+        role = await command_info.guild.create_role(
+            name=name,
+            color=color if color is not None else discord.Color.default(),  # type: ignore[arg-type]
+            reason=reason,
+            hoist=hoist,
+            mentionable=mentionable,
+            display_icon=display_icon_data,  # type: ignore[arg-type]
+        )
+    except discord.Forbidden:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.createrole.forbidden.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.createrole.forbidden.description"),
+        )
+        await command_info.reply(embed=embed)
+        return
+    except discord.HTTPException as e:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.createrole.http_error.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.createrole.http_error.description", status=e.status),
+        )
+        await command_info.reply(embed=embed)
+        return
+    except discord.NotFound:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.createrole.notfound.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.createrole.notfound.description"),
+        )
+        await command_info.reply(embed=embed)
+        return
+
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.createrole.success.title"),
         description=tanjunLocalizer.localize(
