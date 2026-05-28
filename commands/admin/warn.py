@@ -5,7 +5,6 @@ import discord
 import utility
 from api import add_warning, get_warn_config, get_warnings
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def warn_user(command_info: utility.CommandInfo, member: discord.Member, reason: str | None = None) -> None:
@@ -16,12 +15,14 @@ async def warn_user(command_info: utility.CommandInfo, member: discord.Member, r
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.missingPermission.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.missingPermission.description"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.admin.warn.missingPermission.description"
+            ),
         )
         await command_info.reply(embed=embed)
         return
 
-    if isinstance(command_info.user, discord.Member) and member.top_role >= CommandInfo.user.top_role:  # type: ignore[misc, union-attr]
+    if isinstance(command_info.user, discord.Member) and member.top_role >= command_info.user.top_role:  # type: ignore[misc, union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.targetTooHigh.description"),
@@ -30,7 +31,7 @@ async def warn_user(command_info: utility.CommandInfo, member: discord.Member, r
         return
 
     assert command_info.guild is not None
-    guild_id = CommandInfo.guild.id  # type: ignore[misc, union-attr]
+    guild_id = command_info.guild.id
     user_id = member.id
 
     warn_config = await get_warn_config(guild_id)
@@ -38,8 +39,9 @@ async def warn_user(command_info: utility.CommandInfo, member: discord.Member, r
     expire_date = datetime.now(UTC) + timedelta(days=warn_config.expiration_days)
 
     await add_warning(guild_id, user_id, reason, expire_date, command_info.user.id)  # type: ignore[arg-type]
-    warnings_list = [w async for w in get_warnings(guild_id, user_id)]  # type: ignore[arg-type]
-    warn_count = len(warnings_list)
+    warn_count = 0
+    async for _ in get_warnings(guild_id, user_id):  # type: ignore[arg-type]
+        warn_count += 1
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.success.title"),
@@ -48,7 +50,9 @@ async def warn_user(command_info: utility.CommandInfo, member: discord.Member, r
             "commands.admin.warn.success.description",
             user=member.name,
             reason=(
-                reason if reason else tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.noReasonProvided")
+                reason
+                if reason
+                else tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.noReasonProvided")
             ),
             count=warn_count,
         ),
