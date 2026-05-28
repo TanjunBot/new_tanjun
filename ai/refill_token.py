@@ -2,7 +2,7 @@ from datetime import datetime
 
 from discord import Client
 
-from api import resetToken
+from services.ai_service import AiService
 
 
 async def refill_ai_token(client: Client) -> None:
@@ -19,6 +19,6 @@ async def refill_ai_token(client: Client) -> None:
             plus_sku = sku
 
     if plus_sku:
-        await resetToken(plus_sku)  # type: ignore[arg-type]
+        await AiService.refill(plus_sku)  # type: ignore[arg-type]
     else:
-        await resetToken()
+        await AiService.refill()
