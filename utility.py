@@ -866,7 +866,7 @@ class CommandInfo(BaseModel):
     client: discord.Client
 
 
-command_info = CommandInfo()
+command_info: type[CommandInfo] = CommandInfo
 
 
 def cmp(a: int, b: int) -> int:
