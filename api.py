@@ -272,8 +272,9 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
     if pool is None:
         raise RuntimeError("Database pool is not initialized")
 
+    last_exception = None
+    safe_id = _query_safe_id(query)
     for attempt in range(_MAX_DB_RETRIES):
-        safe_id = str(uuid.uuid4())
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
             async with conn:
@@ -282,13 +283,28 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
                 await conn.commit()
             return
         except TimeoutError:
-            print(f"Timeout on execute_batch acquire attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
+            msg = f"Timeout on execute_batch attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}"
+            print(msg)
+            last_exception = TimeoutError(msg)
             if attempt < _MAX_DB_RETRIES - 1:
                 await asyncio.sleep(0.5 * (attempt + 1))
             continue
-        except Exception:
+        except Exception as e:
+            err_str = str(e).lower()
+            # Determine which errors are safe to retry (mirroring _execute_with_retry for write operations)
+            retryable = "deadlock" in err_str or "duplicate" in err_str or "abort" in err_str
+            if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                print(f"Transient error on execute_batch attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
+                await asyncio.sleep(0.5 * (attempt + 1))
+                last_exception = e
+                continue
+            # Non-retryable error or final attempt: raise instead of silently failing
+            print(f"Error during execute_batch: {e} — {safe_id}")
             raise
-    raise RuntimeError(f"Could not acquire database connection after {_MAX_DB_RETRIES} attempts [{safe_id}]")
+
+    if last_exception:
+        print(f"All retries exhausted for execute_batch: {safe_id}")
+        raise last_exception
 
 
 async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
