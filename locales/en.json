@@ -1,5 +1,117 @@
 [
   {
+    "identifier": "commands.admin.createrole.forbidden.description",
+    "source_string": "Der Bot konnte die Rolle nicht erstellen. Möglicherweise fehlen die erforderlichen Berechtigungen.",
+    "translation": "The bot could not create the role. The required permissions may be missing.",
+    "context": "commands -> admin -> createrole -> forbidden -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.createrole.forbidden.title",
+    "source_string": "Erstellen nicht möglich",
+    "translation": "Creation not possible",
+    "context": "commands -> admin -> createrole -> forbidden -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.createrole.http_error.description",
+    "source_string": "Beim Erstellen der Rolle ist ein Fehler aufgetreten (Code ${status}).",
+    "translation": "An error occurred while creating the role (code ${status}).",
+    "context": "commands -> admin -> createrole -> http_error -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.createrole.http_error.title",
+    "source_string": "Fehler beim Erstellen",
+    "translation": "Creation error",
+    "context": "commands -> admin -> createrole -> http_error -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.createrole.notfound.description",
+    "source_string": "Der Server wurde nicht gefunden. Möglicherweise wurde der Bot entfernt.",
+    "translation": "The server was not found. The bot may have been removed.",
+    "context": "commands -> admin -> createrole -> notfound -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.createrole.notfound.title",
+    "source_string": "Server nicht gefunden",
+    "translation": "Server not found",
+    "context": "commands -> admin -> createrole -> notfound -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.deleterole.forbidden.description",
+    "source_string": "Der Bot konnte die Rolle nicht löschen. Möglicherweise fehlen die erforderlichen Berechtigungen.",
+    "translation": "The bot could not delete the role. The required permissions may be missing.",
+    "context": "commands -> admin -> deleterole -> forbidden -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.deleterole.forbidden.title",
+    "source_string": "Löschen nicht möglich",
+    "translation": "Deletion not possible",
+    "context": "commands -> admin -> deleterole -> forbidden -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.deleterole.http_error.description",
+    "source_string": "Beim Löschen der Rolle ist ein Fehler aufgetreten (Code ${status}).",
+    "translation": "An error occurred while deleting the role (code ${status}).",
+    "context": "commands -> admin -> deleterole -> http_error -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.deleterole.http_error.title",
+    "source_string": "Fehler beim Löschen",
+    "translation": "Deletion error",
+    "context": "commands -> admin -> deleterole -> http_error -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.deleterole.notfound.description",
+    "source_string": "Die Rolle wurde nicht gefunden. Möglicherweise wurde sie bereits gelöscht.",
+    "translation": "The role was not found. It may have already been deleted.",
+    "context": "commands -> admin -> deleterole -> notfound -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.deleterole.notfound.title",
+    "source_string": "Rolle nicht gefunden",
+    "translation": "Role not found",
+    "context": "commands -> admin -> deleterole -> notfound -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.nuke.notfound.description",
+    "source_string": "Der Kanal wurde nicht gefunden. Möglicherweise wurde er bereits gelöscht.",
+    "translation": "The channel was not found. It may have already been deleted.",
+    "context": "commands -> admin -> nuke -> notfound -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.nuke.notfound.title",
+    "source_string": "Kanal nicht gefunden",
+    "translation": "Channel not found",
+    "context": "commands -> admin -> nuke -> notfound -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.help.select.placeholder",
     "source_string": "Befehls-Kategorie",
     "translation": "Command category",

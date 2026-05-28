@@ -128,3 +128,5 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
         await command_info.channel.send(tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.forbiddenError"))
     except discord.HTTPException:
         await command_info.channel.send(tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.httpError"))
+    except discord.NotFound:
+        await command_info.channel.send(tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.notfoundError"))

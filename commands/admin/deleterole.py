@@ -61,7 +61,30 @@ async def deleterole(command_info: utility.CommandInfo, role: discord.Role, reas
         return
 
     role_name: str = str(role.name)
-    await role.delete(reason=reason)
+    try:
+        await role.delete(reason=reason)
+    except discord.Forbidden:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.deleterole.forbidden.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.deleterole.forbidden.description"),
+        )
+        await command_info.reply(embed=embed)
+        return
+    except discord.HTTPException as e:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.deleterole.http_error.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.deleterole.http_error.description", status=e.status),
+        )
+        await command_info.reply(embed=embed)
+        return
+    except discord.NotFound:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.deleterole.notfound.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.deleterole.notfound.description"),
+        )
+        await command_info.reply(embed=embed)
+        return
+
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.deleterole.success.title"),
         description=tanjunLocalizer.localize(
