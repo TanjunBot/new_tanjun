@@ -1,5 +1,5 @@
 import utility
-from api import delete_giveaway, get_giveaway
+from services.giveaway_service import giveaway_service
 from commands.giveaway.utility import endGiveaway
 from localizer import tanjunLocalizer
 
@@ -22,7 +22,7 @@ async def end_giveaway(
         await command_info.reply(embed=embed)
         return
 
-    giveaway = await get_giveaway(giveaway_id)
+    giveaway = await giveaway_service.get(giveaway_id)
     if not giveaway:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -66,7 +66,7 @@ async def end_giveaway(
         return
 
     if not giveaway.started:
-        await delete_giveaway(giveaway_id)
+        await giveaway_service.delete(giveaway_id)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 command_info.locale,

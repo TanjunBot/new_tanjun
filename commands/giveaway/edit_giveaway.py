@@ -3,11 +3,9 @@ from discord import ui
 
 import commands.giveaway.start as start_giveaway
 import utility
-from api import (
-    get_giveaway,
-    get_giveaway_channel_requirements,
-    get_giveaway_role_requirements,
-    update_giveaway,
+from services.giveaway_service import (
+    GiveawayUpdateParams,
+    giveaway_service,
 )
 from commands.giveaway.utility import generateGiveawayEmbed, updateGiveawayMessage
 from localizer import tanjunLocalizer
@@ -29,12 +27,12 @@ class GiveawayEditor(ui.View):
         self.generator_message = None
 
     async def load_giveaway_data(self) -> None:
-        giveaway = await get_giveaway(self.giveaway_id)
+        giveaway = await giveaway_service.get(self.giveaway_id)
         if not giveaway:
-            return False  # type: ignore[return-value]
+            return
 
-        role_requirements = await get_giveaway_role_requirements(self.giveaway_id)
-        channel_requirements = await get_giveaway_channel_requirements(self.giveaway_id)
+        role_requirements = await giveaway_service.get_role_requirements(self.giveaway_id)
+        channel_requirements = await giveaway_service.get_channel_requirements(self.giveaway_id)
 
         self.giveaway_data = {
             "title": giveaway.title,
@@ -410,25 +408,27 @@ class GiveawayEditor(ui.View):
 
     async def confirm(self, interaction: discord.Interaction, button: ui.Button) -> None:  # type: ignore[type-arg]
         # Update the giveaway in the database
-        await update_giveaway(
+        await giveaway_service.update(
             giveaway_id=self.giveaway_id,
-            guild_id=str(self.command_info.guild.id),  # type: ignore[union-attr]
-            title=self.giveaway_data["title"],
-            description=self.giveaway_data["description"],
-            winners=self.giveaway_data["winners"],
-            with_button=self.giveaway_data["with_button"],
-            custom_name=self.giveaway_data["custom_name"],
-            sponsor=self.giveaway_data["sponsor"],
-            price=self.giveaway_data["price"],
-            message=self.giveaway_data["message"],
-            endtime=relativeTimeStrToDate(self.giveaway_data["end_time"]),
-            starttime=relativeTimeStrToDate(self.giveaway_data["start_time"]),
-            new_message_requirement=self.giveaway_data["new_message_requirement"],
-            day_requirement=self.giveaway_data["day_requirement"],
-            channel_requirements=self.giveaway_data["channel_requirements"],
-            role_requirement=self.giveaway_data["role_requirement"],
-            voice_requirement=self.giveaway_data["voice_requirement"],
-            channel_id=str(self.giveaway_data["target_channel"].id),
+            params=GiveawayUpdateParams(
+                guild_id=str(self.command_info.guild.id),  # type: ignore[union-attr]
+                title=self.giveaway_data["title"],
+                description=self.giveaway_data["description"],
+                winners=self.giveaway_data["winners"],
+                with_button=self.giveaway_data["with_button"],
+                custom_name=self.giveaway_data["custom_name"],
+                sponsor=self.giveaway_data["sponsor"],
+                price=self.giveaway_data["price"],
+                message=self.giveaway_data["message"],
+                end_time=relativeTimeStrToDate(self.giveaway_data["end_time"]),
+                start_time=relativeTimeStrToDate(self.giveaway_data["start_time"]),
+                new_message_requirement=self.giveaway_data["new_message_requirement"],
+                day_requirement=self.giveaway_data["day_requirement"],
+                channel_requirements=self.giveaway_data["channel_requirements"],
+                role_requirement=self.giveaway_data["role_requirement"],
+                voice_requirement=self.giveaway_data["voice_requirement"],
+                channel_id=str(self.giveaway_data["target_channel"].id),
+            ),
         )
 
         # Update the giveaway message

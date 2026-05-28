@@ -1,10 +1,5 @@
 import utility
-from api import (
-    get_giveaway_blacklisted_roles as get_blacklist_role_api,
-)
-from api import (
-    get_giveaway_blacklisted_users as get_blacklist_user_api,
-)
+from services.giveaway_service import giveaway_service
 from localizer import tanjunLocalizer
 
 
@@ -25,8 +20,8 @@ async def list_blacklist(
         await command_info.reply(embed=embed)
         return
 
-    blacklisted_roles = [role.entity_id for role in await get_blacklist_role_api(command_info.guild.id)]  # type: ignore[union-attr]
-    blacklisted_users = [user.entity_id for user in await get_blacklist_user_api(command_info.guild.id)]  # type: ignore[union-attr]
+    blacklisted_roles = [role.entity_id for role in await giveaway_service.get_blacklisted_roles(str(command_info.guild.id))]  # type: ignore[union-attr]
+    blacklisted_users = [user.entity_id for user in await giveaway_service.get_blacklisted_users(str(command_info.guild.id))]  # type: ignore[union-attr]
 
     if len(blacklisted_roles) == 0 and len(blacklisted_users) == 0:
         embed = utility.tanjunEmbed(
