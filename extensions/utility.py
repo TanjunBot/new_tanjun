@@ -9,7 +9,7 @@ from commands.utility.afk import afk as afkCommand
 from commands.utility.autopublish import autopublish as autopublishCommand
 from commands.utility.autopublish import autopublish_remove as autopublishRemoveCommand
 from commands.utility.avatar import avatar as avatarCommand
-from commands.utility.avatarDecoration import (
+from commands.utility.avatar_decoration import (
     avatarDecoration as avatarDecorationCommand,
 )
 from commands.utility.banner import banner as bannerCommand
@@ -22,16 +22,16 @@ from commands.utility.brawlstars.playerinfo import (
     player_info as brawlstarsPlayerInfoCommand,
 )
 from commands.utility.brawlstars.unlink import unlink as brawlstarsUnlinkCommand
-from commands.utility.claimBoosterChannel import (
+from commands.utility.claim_booster_channel import (
     claimBoosterChannel as claimboosterchannelCommand,
 )
-from commands.utility.claimBoosterRole import (
+from commands.utility.claim_booster_role import (
     claimBoosterRole as claimboosterroleCommand,
 )
-from commands.utility.deleteBoosterChannel import (
+from commands.utility.delete_booster_channel import (
     deleteBoosterChannel as deleteboosterchannelCommand,
 )
-from commands.utility.deleteBoosterRole import (
+from commands.utility.delete_booster_role import (
     deleteBoosterRole as deleteboosterroleCommand,
 )
 from commands.utility.feedback import feedback as feedbackCommand
@@ -46,16 +46,16 @@ from commands.utility.removescheduled import (
 )
 from commands.utility.report import report as reportCommand
 from commands.utility.schedulemessage import schedule_message as scheduleMessageCommand
-from commands.utility.setupBoosterChannel import (
+from commands.utility.setup_booster_channel import (
     setupBoosterChannel as setupboosterchannelCommand,
 )
-from commands.utility.setupBoosterRole import (
+from commands.utility.setup_booster_role import (
     setupBoosterRole as setupboosterroleCommand,
 )
-from commands.utility.twitch.addTwitchLiveNotification import (
+from commands.utility.twitch.add_twitch_live_notification import (
     addTwitchLiveNotification as addTwitchLiveNotificationCommand,
 )
-from commands.utility.twitch.seeTwitchLiveNotifications import (
+from commands.utility.twitch.see_twitch_live_notifications import (
     seeTwitchLiveNotifications as seeTwitchLiveNotificationsCommand,
 )
 from localizer import tanjunLocalizer

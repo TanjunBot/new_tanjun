@@ -7,19 +7,19 @@ from discord.ext import commands, tasks
 
 from ai.refill_token import refill_ai_token
 from api import get_all_twitch_notification_uuids
-from commands.utility.claimBoosterChannel import (
+from commands.utility.claim_booster_channel import (
     remove_claimed_booster_channels_that_are_expired,
 )
-from commands.utility.claimBoosterRole import (
+from commands.utility.claim_booster_role import (
     remove_claimed_booster_roles_that_are_expired,
 )
 from commands.utility.schedulemessage import send_scheduled_messages
-from commands.utility.twitch.twitchApi import getTwitchApi, notify_twitch_online
+from commands.utility.twitch.twitch_api import getTwitchApi, notify_twitch_online
 from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
 from loops.giveaway import checkVoiceUsers, endGiveaways, sendReadyGiveaways
 from loops.level import addXpToVoiceUsers
-from minigames.addLevelXp import clearNotifiedUsers
+from minigames.add_level_xp import clearNotifiedUsers
 
 embeds = {}  # type: ignore[var-annotated]
 

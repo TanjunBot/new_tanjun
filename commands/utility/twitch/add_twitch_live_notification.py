@@ -1,7 +1,7 @@
 import discord
 
 from api import set_twitch_online_notification
-from commands.utility.twitch.twitchApi import (
+from commands.utility.twitch.twitch_api import (
     get_uuid_by_twitch_name,
     subscribe_to_twitch_online_notification,
 )

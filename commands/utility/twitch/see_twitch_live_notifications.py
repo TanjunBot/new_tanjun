@@ -3,7 +3,7 @@ from typing import Any
 import discord
 
 from api import get_twitch_notification_by_guild_id, remove_twitch_online_notification
-from commands.utility.twitch.twitchApi import (
+from commands.utility.twitch.twitch_api import (
     parse_twitch_notification_message,
 )
 from localizer import tanjunLocalizer

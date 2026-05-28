@@ -14,10 +14,10 @@ from commands.admin.createemoji import create_emoji as createEmojiCommand
 from commands.admin.createrole import createrole as createroleCommand
 from commands.admin.deleterole import deleterole as deleteroleCommand
 from commands.admin.embedcreator import create_embed as createEmbedCommand
-from commands.admin.joinToCreate.jointocreatechannel import (
+from commands.admin.join_to_create.jointocreatechannel import (
     jointocreatechannel as jointoCreateChannelCommand,
 )
-from commands.admin.joinToCreate.removejointocreatechannel import (
+from commands.admin.join_to_create.removejointocreatechannel import (
     removejointocreatechannel as removeJoinToCreateChannelCommand,
 )
 from commands.admin.kick import kick as kickCommand
@@ -37,7 +37,7 @@ from commands.admin.reports.unblock_reporter import (
     unblock_reporter_cmd as unblockReporterCommand,
 )
 from commands.admin.say import say as sayCommand
-from commands.admin.setLocale import set_locale as setLocaleCommand
+from commands.admin.set_locale import set_locale as setLocaleCommand
 from commands.admin.slowmode import set_slowmode as setSlowmodeCommand
 from commands.admin.ticket.create_ticket import create_ticket as createTicketCommand
 from commands.admin.timeout import timeout as timeoutCommand

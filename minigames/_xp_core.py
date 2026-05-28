@@ -1,7 +1,7 @@
 """Shared XP calculation for both voice and message XP.
 
 The calculate_xp function was duplicated between loops/level.py and
-minigames/addLevelXp.py with nearly identical logic. This module provides
+minigames/add_level_xp.py with nearly identical logic. This module provides
 a single implementation that both can use.
 """
 

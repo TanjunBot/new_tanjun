@@ -26,7 +26,7 @@ sys.modules["localizer"].tanjunLocalizer = MagicMock()
 utility_mock = MagicMock()
 sys.modules["utility"] = utility_mock
 
-from minigames.countingmodes import (
+from minigames.counting_modes import (
     get_correct_next_number,
     get_first_number,
     get_goal,
@@ -203,7 +203,7 @@ class TestModeMap:
 
     def test_all_modes_have_goal_function(self):
         for mode_id in modeMap:
-            with patch("minigames.countingmodes.random.randint") as mock_randint:
+            with patch("minigames.counting_modes.random.randint") as mock_randint:
                 mock_randint.return_value = 50
                 if mode_id == 4:
                     # primes list has ~47 elements; index 7 = 17 is safe
