@@ -1372,7 +1372,10 @@ class SafeInteraction:
         if interaction.response.is_done():
             await interaction.followup.send(**kwargs)
         else:
-            await interaction.response.send_message(**kwargs)
+            try:
+                await interaction.response.send_message(**kwargs)
+            except discord.InteractionResponded:
+                await interaction.followup.send(**kwargs)
 
     @staticmethod
     async def defer(
@@ -1381,7 +1384,10 @@ class SafeInteraction:
     ) -> None:
         """Safely defer an interaction, skipping if already done."""
         if not interaction.response.is_done():
-            await interaction.response.defer(ephemeral=ephemeral)
+            try:
+                await interaction.response.defer(ephemeral=ephemeral)
+            except discord.InteractionResponded:
+                pass  # Already responded, silently ignore
 
     @staticmethod
     async def edit(
@@ -1406,7 +1412,10 @@ class SafeInteraction:
         if interaction.response.is_done():
             await interaction.edit_original_response(**kwargs)
         else:
-            await interaction.response.send_message(**kwargs)
+            try:
+                await interaction.response.send_message(**kwargs)
+            except discord.InteractionResponded:
+                await interaction.edit_original_response(**kwargs)
 
 
 tanjunEmbed = TanjunEmbed
