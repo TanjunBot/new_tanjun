@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 
 import discord
@@ -233,4 +234,4 @@ async def send_scheduled_messages(client: discord.Client) -> None:
                 await remove_scheduled_message(message_id)
 
         except Exception:
-            pass
+            logging.exception("Failed to send scheduled message %s", message_id)

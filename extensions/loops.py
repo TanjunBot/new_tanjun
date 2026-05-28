@@ -177,7 +177,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
                 if sent_message.guild:
                     await sent_message.publish()
         except Exception:
-            raise
+            logging.exception("Error in pokemon advertising loop")
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
