@@ -9,7 +9,6 @@ single GiveawayService class with Pydantic-validated parameter models.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -21,7 +20,6 @@ from api import (
     transaction,
 )
 from models import GiveawayBlacklistEntryModel, GiveawayChannelRequirementModel, GiveawayModel
-
 
 # ------------------------------------------------------------------ #
 # Pydantic models
@@ -96,7 +94,7 @@ class GiveawayService:
             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         )
         """
-        params = (
+        sql_params = (
             params.guild_id,
             params.title,
             params.description,
@@ -115,7 +113,7 @@ class GiveawayService:
         )
         try:
             async with transaction() as conn, conn.cursor() as cursor:
-                await cursor.execute(query, params)
+                await cursor.execute(query, sql_params)
                 await cursor.execute("SELECT LAST_INSERT_ID()")
                 last_id = await cursor.fetchone()
                 giveaway_id = last_id[0] if last_id else None
@@ -224,6 +222,7 @@ class GiveawayService:
                     )
         except Exception as e:
             print(f"Error during giveaway update for {giveaway_id}: {e}")
+            raise
 
     @staticmethod
     async def delete(giveaway_id: int) -> None:
@@ -284,7 +283,7 @@ class GiveawayService:
     # ------------------------------------------------------------------ #
 
     @staticmethod
-    async def set_message_id(giveaway_id: int, message_id: int) -> None:
+    async def set_message_id(giveaway_id: int, message_id: int | str) -> None:
         """Set the Discord message ID for a giveaway."""
         query = "UPDATE giveaway SET messageId = %s WHERE giveaway_id = %s"
         params = (message_id, giveaway_id)
@@ -295,6 +294,13 @@ class GiveawayService:
         """Mark a giveaway as started."""
         query = "UPDATE giveaway SET started = 1 WHERE giveaway_id = %s"
         params = (giveaway_id,)
+        await execute_action(query, params)
+
+    @staticmethod
+    async def mark_sent(giveaway_id: int, message_id: int) -> None:
+        """Atomically set both message_id and started for a giveaway."""
+        query = "UPDATE giveaway SET messageId = %s, started = 1 WHERE giveaway_id = %s"
+        params = (message_id, giveaway_id)
         await execute_action(query, params)
 
     @staticmethod
@@ -427,7 +433,7 @@ class GiveawayService:
         return result[0][0] if result else None
 
     @staticmethod
-    async def add_voice_minutes(user_id: Any, guild_id: Any) -> None:
+    async def add_voice_minutes(user_id: str, guild_id: str) -> None:
         """Increment voice minutes for active giveaways in a guild."""
         query = """
             INSERT INTO giveawayVoiceTime (giveaway_id, user_id, voiceMinutes)
@@ -438,7 +444,7 @@ class GiveawayService:
         await execute_action(query, (user_id, guild_id))
 
     @staticmethod
-    async def add_new_message(user_id: Any, guild_id: Any) -> None:
+    async def add_new_message(user_id: str, guild_id: str) -> None:
         """Increment message count for active giveaways in a guild."""
         query = """
             INSERT INTO giveawayNewMessage (giveaway_id, user_id, messages)
@@ -450,7 +456,7 @@ class GiveawayService:
 
     @staticmethod
     async def add_new_message_channel(
-        user_id: Any, guild_id: Any, channel_id: Any
+        user_id: str, guild_id: str, channel_id: str
     ) -> None:
         """Increment per-channel message count for active giveaways in a guild."""
         query = """

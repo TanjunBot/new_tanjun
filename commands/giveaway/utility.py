@@ -6,9 +6,9 @@ import random
 import discord
 
 from api import check_if_opted_out
-from services.giveaway_service import giveaway_service
 from localizer import tanjunLocalizer
 from models import GiveawayChannelRequirementModel, GiveawayModel
+from services.giveaway_service import giveaway_service
 from utility import relativeTimeStrToDate, tanjunEmbed
 
 
@@ -159,8 +159,7 @@ async def sendGiveaway(giveawayid, client) -> None:  # type: ignore[no-untyped-d
 
     message = await channel.send(giveaway.message, embed=embed, view=view)
 
-    await giveaway_service.set_message_id(giveawayid, message.id)
-    await giveaway_service.set_started(giveawayid)
+    await giveaway_service.mark_sent(giveawayid, message.id)
 
 
 async def updateGiveawayEmbed(giveawayid, client) -> None:  # type: ignore[no-untyped-def]
@@ -484,12 +483,10 @@ async def addMessageToGiveaway(message: discord.Message):  # type: ignore[no-unt
 async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-def]
     giveaway = await giveaway_service.get(giveaway_id)
 
-    if giveaway.ended:
+    if not giveaway:
         return
 
-    await giveaway_service.set_ended(giveaway_id)
-
-    if not giveaway:
+    if giveaway.ended:
         return
 
     guild_id = giveaway.guild_id
@@ -501,124 +498,131 @@ async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-d
 
     locale = str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US"
 
-    participants = await giveaway_service.get_participants(giveaway_id)
+    try:
+        participants = await giveaway_service.get_participants(giveaway_id)
 
-    if not participants:
+        if not participants:
+            embed = tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    locale,
+                    "commands.giveaway.endedGiveaway.no_participants.title",
+                ),
+                description=tanjunLocalizer.localize(
+                    locale,
+                    "commands.giveaway.endedGiveaway.no_participants.description",
+                ),
+            )
+            giveaway_channel = guild.get_channel(int(giveaway.channel_id))
+            if not giveaway_channel:
+                return
+            try:
+                giveawaymessage = await giveaway_channel.fetch_message(int(giveaway.message_id))
+            except Exception:
+                logging.exception("Failed to fetch giveaway message %s for no-participants path", giveaway.message_id)
+                return
+            if not giveawaymessage:
+                return
+
+            view = discord.ui.View()
+
+            btn = discord.ui.Button(  # type: ignore[var-annotated]
+                style=discord.ButtonStyle.primary,
+                label=tanjunLocalizer.localize(locale, "commands.giveaway.endedGiveaway.button_text", participants=0),
+                disabled=True,
+            )
+            view.add_item(btn)
+
+            await giveawaymessage.edit(view=view)
+            await giveawaymessage.reply(embed=embed)
+            await giveaway_service.set_ended(giveaway_id)
+            return
+
+        winners = []
+
+        if not participants:
+            participants = []
+
+        participant_amount = len(participants)
+
+        if giveaway.winners > participant_amount:
+            winners = participants
+        else:
+            for _i in range(giveaway.winners):
+                # nosec: B311
+                winner = random.choice(participants)
+                participants.remove(winner)
+                winners.append(winner)
+
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 locale,
-                "commands.giveaway.endedGiveaway.no_participants.title",
+                "commands.giveaway.endedGiveaway.title",
             ),
             description=tanjunLocalizer.localize(
                 locale,
-                "commands.giveaway.endedGiveaway.no_participants.description",
+                "commands.giveaway.endedGiveaway.description",
+                winners=", ".join(f"<@{winner}>" for winner in winners),
             ),
         )
+
+        for winner in winners:
+            await giveaway_service.remove_participant(giveaway_id, winner)
+            member = guild.get_member(winner)
+            if member:
+                with contextlib.suppress(Exception):
+                    await member.send(
+                        tanjunLocalizer.localize(
+                            locale,
+                            "commands.giveaway.endedGiveaway.winnerDM",
+                            guild_name=guild.name,
+                        )
+                    )
+
         giveaway_channel = guild.get_channel(int(giveaway.channel_id))
         if not giveaway_channel:
             return
         try:
             giveawaymessage = await giveaway_channel.fetch_message(int(giveaway.message_id))
         except Exception:
-            logging.exception("Failed to fetch giveaway message %s for no-participants path", giveaway.message_id)
+            logging.exception("Failed to fetch giveaway message %s for winner announcement path", giveaway.message_id)
             return
         if not giveawaymessage:
             return
 
         view = discord.ui.View()
 
-        btn = discord.ui.Button(  # type: ignore[var-annotated]
+        btn = discord.ui.Button(
             style=discord.ButtonStyle.primary,
-            label=tanjunLocalizer.localize(locale, "commands.giveaway.endedGiveaway.button_text", participants=0),
+            label=tanjunLocalizer.localize(
+                locale,
+                "commands.giveaway.endedGiveaway.button_text",
+                participants=participant_amount,
+            ),
             disabled=True,
         )
         view.add_item(btn)
 
         await giveawaymessage.edit(view=view)
         await giveawaymessage.reply(embed=embed)
-        return
 
-    winners = []
+        for winner in winners:
+            member = guild.get_member(winner)
 
-    if not participants:
-        participants = []
+            if not member:
+                continue
 
-    participant_amount = len(participants)
-
-    if giveaway.winners > participant_amount:
-        winners = participants
-    else:
-        for _i in range(giveaway.winners):
-            # nosec: B311
-            winner = random.choice(participants)
-            participants.remove(winner)
-            winners.append(winner)
-
-    embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            locale,
-            "commands.giveaway.endedGiveaway.title",
-        ),
-        description=tanjunLocalizer.localize(
-            locale,
-            "commands.giveaway.endedGiveaway.description",
-            winners=", ".join(f"<@{winner}>" for winner in winners),
-        ),
-    )
-
-    for winner in winners:
-        await giveaway_service.remove_participant(giveaway_id, winner)
-        member = guild.get_member(winner)
-        if member:
-            with contextlib.suppress(Exception):
-                await member.send(
-                    tanjunLocalizer.localize(
-                        locale,
-                        "commands.giveaway.endedGiveaway.winnerDM",
-                        guild_name=guild.name,
-                    )
+            await member.send(
+                tanjunLocalizer.localize(
+                    locale,
+                    "commands.giveaway.endedGiveaway.dm",
+                    guild_name=guild.name,
                 )
-
-    giveaway_channel = guild.get_channel(int(giveaway.channel_id))
-    if not giveaway_channel:
-        return
-    try:
-        giveawaymessage = await giveaway_channel.fetch_message(int(giveaway.message_id))
-    except Exception:
-        logging.exception("Failed to fetch giveaway message %s for winner announcement path", giveaway.message_id)
-        return
-    if not giveawaymessage:
-        return
-
-    view = discord.ui.View()
-
-    btn = discord.ui.Button(
-        style=discord.ButtonStyle.primary,
-        label=tanjunLocalizer.localize(
-            locale,
-            "commands.giveaway.endedGiveaway.button_text",
-            participants=participant_amount,
-        ),
-        disabled=True,
-    )
-    view.add_item(btn)
-
-    await giveawaymessage.edit(view=view)
-    await giveawaymessage.reply(embed=embed)
-
-    for winner in winners:
-        member = guild.get_member(winner)
-
-        if not member:
-            continue
-
-        await member.send(
-            tanjunLocalizer.localize(
-                locale,
-                "commands.giveaway.endedGiveaway.dm",
-                guild_name=guild.name,
             )
-        )
+
+        await giveaway_service.set_ended(giveaway_id)
+    except Exception:
+        logging.exception("Failed to end giveaway %s, will retry", giveaway_id)
+        raise
 
     return embed  # type: ignore[return-value]
 

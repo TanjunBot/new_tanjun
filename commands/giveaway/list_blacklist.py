@@ -1,6 +1,6 @@
 import utility
-from services.giveaway_service import giveaway_service
 from localizer import tanjunLocalizer
+from services.giveaway_service import giveaway_service
 
 
 async def list_blacklist(

@@ -3,8 +3,8 @@ import random
 import discord
 
 import utility
-from services.giveaway_service import giveaway_service
 from localizer import tanjunLocalizer
+from services.giveaway_service import giveaway_service
 
 
 async def reroll_giveaway(
@@ -90,6 +90,20 @@ async def reroll_giveaway(
         async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
             giveaway = await giveaway_service.get(self.giveaway_id)
+            if giveaway is None:
+                embed = utility.tanjunEmbed(
+                    title=tanjunLocalizer.localize(
+                        self.command_info.locale,
+                        "commands.giveaway.reroll_giveaway.error.notFound.title",
+                    ),
+                    description=tanjunLocalizer.localize(
+                        self.command_info.locale,
+                        "commands.giveaway.reroll_giveaway.error.notFound.description",
+                    ),
+                )
+                await self.command_info.reply(embed=embed)
+                self.stop()
+                return
             await perform_reroll(self.command_info, self.giveaway_id, giveaway.winners)
             self.stop()
 

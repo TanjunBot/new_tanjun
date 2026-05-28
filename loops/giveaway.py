@@ -1,6 +1,6 @@
-from services.giveaway_service import giveaway_service
 from commands.giveaway.utility import endGiveaway, sendGiveaway
 from loops._voice_tracker import voice_user_ids
+from services.giveaway_service import giveaway_service
 
 
 async def sendReadyGiveaways(client):

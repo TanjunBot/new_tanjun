@@ -1,7 +1,7 @@
 import utility
-from services.giveaway_service import giveaway_service
 from commands.giveaway.utility import endGiveaway
 from localizer import tanjunLocalizer
+from services.giveaway_service import giveaway_service
 
 
 async def end_giveaway(
