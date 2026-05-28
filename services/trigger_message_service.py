@@ -11,11 +11,12 @@ Pydantic-validated parameter models.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
 from typing import Annotated
 
-from api import execute_action, execute_query, execute_query_iter
-from models import TriggerMessageModel, TriggerMessageChannelModel
+from pydantic import BaseModel, Field
+
+from api import execute_action, execute_query
+from models import TriggerMessageChannelModel, TriggerMessageModel
 
 # ------------------------------------------------------------------ #
 # Pydantic models
@@ -53,11 +54,18 @@ class TriggerMessageService:
 
     async def create(self, guild_id: str, trigger: str, response: str, case_sensitive: bool = False) -> None:
         """Create a new trigger message."""
+        # Validate parameters using Pydantic model
+        validated = TriggerMessageCreateParams(
+            guild_id=guild_id,
+            trigger=trigger,
+            response=response,
+            case_sensitive=case_sensitive
+        )
         query = (
             "INSERT INTO triggerMessages (guild_id, `trigger`, response, case_sensitive) "
             "VALUES (%s, %s, %s, %s)"
         )
-        params = (guild_id, trigger, response, case_sensitive)
+        params = (validated.guild_id, validated.trigger, validated.response, validated.case_sensitive)
         await execute_action(query, params)
 
     async def delete(self, guild_id: str, trigger_id: int) -> None:
@@ -84,11 +92,17 @@ class TriggerMessageService:
 
     async def add_channel(self, guild_id: str, channel_id: str, trigger_id: int) -> None:
         """Restrict a trigger message to a specific channel."""
+        # Validate parameters using Pydantic model
+        validated = TriggerMessageChannelAddParams(
+            guild_id=guild_id,
+            channel_id=channel_id,
+            trigger_id=trigger_id
+        )
         query = (
             "INSERT INTO triggerMessagesChannel (guild_id, channel_id, triggerId) "
             "VALUES (%s, %s, %s)"
         )
-        params = (guild_id, channel_id, trigger_id)
+        params = (validated.guild_id, validated.channel_id, validated.trigger_id)
         await execute_action(query, params)
 
     async def remove_channel(self, guild_id: str, channel_id: str, trigger_id: int) -> None:
@@ -131,10 +145,34 @@ class TriggerMessageService:
     async def match(self, guild_id: str, content: str, channel_id: str) -> TriggerMessageModel | None:
         """Find a trigger message that matches the given content in the given channel.
 
-        Performs a LIKE query and double-checks case sensitivity via Python logic.
+        First checks for exact matches, then falls back to LIKE matching.
+        Double-checks case sensitivity via Python logic.
         Returns None if no match is found.
         """
-        query = """
+        # First try exact match
+        exact_query = """
+            SELECT t.id, t.guild_id, t.`trigger`, t.response, t.case_sensitive
+            FROM triggerMessages t
+            LEFT JOIN triggerMessagesChannel tc
+                ON t.id = tc.triggerId AND t.guild_id = tc.guild_id
+            WHERE t.guild_id = %s
+              AND t.`trigger` = %s
+              AND (tc.channel_id = %s)
+        """
+        exact_params = (guild_id, content, channel_id)
+        exact_result = await execute_query(exact_query, exact_params)
+
+        if exact_result and exact_result[0]:
+            trigger_message = TriggerMessageModel.from_row(exact_result[0])
+            if trigger_message.case_sensitive:
+                if content == trigger_message.trigger:
+                    return trigger_message
+            else:
+                if content.lower() == trigger_message.trigger.lower():
+                    return trigger_message
+
+        # Fall back to LIKE pattern matching
+        like_query = """
             SELECT t.id, t.guild_id, t.`trigger`, t.response, t.case_sensitive
             FROM triggerMessages t
             LEFT JOIN triggerMessagesChannel tc
@@ -143,22 +181,38 @@ class TriggerMessageService:
               AND t.`trigger` LIKE %s
               AND (tc.channel_id = %s)
         """
-        # Use %-based LIKE matching: %content%
         like_pattern = f"%{content}%"
-        params = (guild_id, like_pattern, channel_id)
-        result = await execute_query(query, params)
-        result = result[0] if result and result[0] else None
-        if not result:
+        like_params = (guild_id, like_pattern, channel_id)
+        like_results = await execute_query(like_query, like_params)
+
+        if not like_results:
             return None
 
-        trigger_message = TriggerMessageModel.from_row(result)
-        if trigger_message.case_sensitive:
-            if content != trigger_message.trigger:
-                return None
-        else:
-            if content.lower() != trigger_message.trigger.lower():
-                return None
-        return trigger_message
+        # Scan all results for exact match first
+        for row in like_results:
+            if not row:
+                continue
+            trigger_message = TriggerMessageModel.from_row(row)
+            if trigger_message.case_sensitive:
+                if content == trigger_message.trigger:
+                    return trigger_message
+            else:
+                if content.lower() == trigger_message.trigger.lower():
+                    return trigger_message
+
+        # If no exact match found in LIKE results, return first partial match that passes case check
+        for row in like_results:
+            if not row:
+                continue
+            trigger_message = TriggerMessageModel.from_row(row)
+            if trigger_message.case_sensitive:
+                if trigger_message.trigger in content:
+                    return trigger_message
+            else:
+                if trigger_message.trigger.lower() in content.lower():
+                    return trigger_message
+
+        return None
 
 
 # ------------------------------------------------------------------ #
