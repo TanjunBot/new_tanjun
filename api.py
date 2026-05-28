@@ -43,7 +43,7 @@ from models import (
     WelcomeChannelModel,
     XpBoostModel,
 )
-from utility import get_level_for_xp, get_xp_for_level
+from utility import get_level_for_xp_async, get_xp_for_level_async
 
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
@@ -1779,9 +1779,9 @@ async def get_user_level_info(guild_id: str, user_id: str) -> UserLevelInfoModel
         formula = custom_formula or ""
 
         xp, custom_background = result[0]
-        level = get_level_for_xp(xp, scaling, formula)
-        xp_needed = get_xp_for_level(level, scaling, formula)
-        xp_for_last_level_needed = get_xp_for_level(level - 1, scaling, formula)
+        level = await get_level_for_xp_async(xp, scaling, formula)
+        xp_needed = await get_xp_for_level_async(level, scaling, formula)
+        xp_for_last_level_needed = await get_xp_for_level_async(level - 1, scaling, formula)
         return UserLevelInfoModel(
             xp=xp - xp_for_last_level_needed,
             level=level,
