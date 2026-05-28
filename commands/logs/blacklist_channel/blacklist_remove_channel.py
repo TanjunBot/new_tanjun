@@ -1,12 +1,7 @@
 import discord
 
 import utility
-from api import (
-    add_log_blacklist_channel as add_log_blacklist_channel_api,
-)
-from api import (
-    is_log_channel_blacklisted as is_log_channel_blacklisted_api,
-)
+from api import LogBlacklistType
 from localizer import tanjunLocalizer
 
 
@@ -30,7 +25,7 @@ async def blacklist_remove_channel(command_info: utility.CommandInfo, channel: d
         return
 
     assert command_info.guild is not None
-    is_blacklisted = await is_log_channel_blacklisted_api(command_info.guild.id, channel.id)
+    is_blacklisted = await is_log_entity_blacklisted_api(command_info.guild.id, channel.id, LogBlacklistType.CHANNEL)
 
     if not is_blacklisted:
         embed = utility.tanjunEmbed(
@@ -44,7 +39,7 @@ async def blacklist_remove_channel(command_info: utility.CommandInfo, channel: d
             ),
         )
     else:
-        await add_log_blacklist_channel_api(command_info.guild.id, channel.id)
+        await add_log_blacklist_api(command_info.guild.id, channel.id, LogBlacklistType.CHANNEL)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.blacklistRemoveChannel.success.title"),
             description=tanjunLocalizer.localize(

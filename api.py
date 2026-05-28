@@ -7,6 +7,7 @@ import uuid
 from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
+from enum import Enum
 from typing import Any
 
 from discord import Entitlement
@@ -45,6 +46,60 @@ from models import (
     XpBoostModel,
 )
 from utility import get_level_for_xp, get_xp_for_level
+
+class LogBlacklistType(Enum):
+    """Enum representing the three log blacklist types with their table/column mapping."""
+
+    CHANNEL = ("logBlacklistChannel", "channel_id")
+    ROLE = ("logRoleBlacklist", "role_id")
+    USER = ("logUserBlacklist", "user_id")
+
+    @property
+    def table(self) -> str:
+        return self.value[0]
+
+    @property
+    def column(self) -> str:
+        return self.value[1]
+
+
+
+async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
+    """Add a log blacklist entry for the given entity type."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"INSERT INTO {table} (guild_id, {column}) VALUES (%s, %s)"
+    await execute_action(query, (guild_id, entity_id))
+
+
+async def remove_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
+    """Remove a log blacklist entry for the given entity type."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"DELETE FROM {table} WHERE guild_id = %s AND {column} = %s"
+    await execute_action(query, (guild_id, entity_id))
+
+
+async def get_log_blacklist(guild_id: str, blacklist_type: LogBlacklistType) -> list[str]:
+    """Retrieve all blacklisted entity IDs of a given type for a guild."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"SELECT {column} FROM {table} WHERE guild_id = %s"
+    entity_ids: list[str] = []
+    async for row in execute_query_iter(query, (guild_id,)):
+        entity_ids.append(row[0])
+    return entity_ids
+
+
+async def is_log_entity_blacklisted(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> str | None:
+    """Check whether a specific entity is blacklisted."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"SELECT {column} FROM {table} WHERE guild_id = %s AND {column} = %s"
+    result = await execute_query(query, (guild_id, entity_id))
+    return result[0] if result else None
+
+
 
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
@@ -2681,87 +2736,63 @@ async def remove_log_channel(guild_id: str) -> None:
 
 
 async def add_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
-    query = "INSERT INTO logBlacklistChannel (guild_id, channel_id) VALUES (%s, %s)"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    """Add a channel to the log blacklist. Thin wrapper around add_log_blacklist."""
+    await add_log_blacklist(guild_id, channel_id, LogBlacklistType.CHANNEL)
 
 
 async def remove_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
-    query = "DELETE FROM logBlacklistChannel WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    """Remove a channel from the log blacklist. Thin wrapper around remove_log_blacklist."""
+    await remove_log_blacklist(guild_id, channel_id, LogBlacklistType.CHANNEL)
 
 
 async def get_log_blacklist_channel(guild_id: str) -> list[str]:
-    query = "SELECT channel_id FROM logBlacklistChannel WHERE guild_id = %s"
-    params = (guild_id,)
-    channel_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        channel_ids.append(row[0])
-    return channel_ids
+    """Get all blacklisted channels for a guild. Thin wrapper around get_log_blacklist."""
+    return await get_log_blacklist(guild_id, LogBlacklistType.CHANNEL)
 
 
 async def is_log_channel_blacklisted(guild_id: str, channel_id: str) -> str | None:
-    query = "SELECT channel_id FROM logBlacklistChannel WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    result = await execute_query(query, params)
-    return result[0] if result else None
+    """Check if a channel is blacklisted. Thin wrapper around is_log_entity_blacklisted."""
+    return await is_log_entity_blacklisted(guild_id, channel_id, LogBlacklistType.CHANNEL)
 
 
 async def add_log_role_blacklist(guild_id: str, role_id: str) -> None:
-    query = "INSERT INTO logRoleBlacklist (guild_id, role_id) VALUES (%s, %s)"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    """Add a role to the log blacklist. Thin wrapper around add_log_blacklist."""
+    await add_log_blacklist(guild_id, role_id, LogBlacklistType.ROLE)
 
 
 async def remove_log_role_blacklist(guild_id: str, role_id: str) -> None:
-    query = "DELETE FROM logRoleBlacklist WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    """Remove a role from the log blacklist. Thin wrapper around remove_log_blacklist."""
+    await remove_log_blacklist(guild_id, role_id, LogBlacklistType.ROLE)
 
 
 async def get_log_role_blacklist(guild_id: str) -> list[str]:
-    query = "SELECT role_id FROM logRoleBlacklist WHERE guild_id = %s"
-    params = (guild_id,)
-    role_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        role_ids.append(row[0])
-    return role_ids
+    """Get all blacklisted roles for a guild. Thin wrapper around get_log_blacklist."""
+    return await get_log_blacklist(guild_id, LogBlacklistType.ROLE)
 
 
 async def is_log_role_blacklisted(guild_id: str, role_id: str) -> str | None:
-    query = "SELECT role_id FROM logRoleBlacklist WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    result = await execute_query(query, params)
-    return result[0] if result else None
+    """Check if a role is blacklisted. Thin wrapper around is_log_entity_blacklisted."""
+    return await is_log_entity_blacklisted(guild_id, role_id, LogBlacklistType.ROLE)
 
 
 async def add_log_user_blacklist(guild_id: str, user_id: str) -> None:
-    query = "INSERT INTO logUserBlacklist (guild_id, user_id) VALUES (%s, %s)"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
+    """Add a user to the log blacklist. Thin wrapper around add_log_blacklist."""
+    await add_log_blacklist(guild_id, user_id, LogBlacklistType.USER)
 
 
 async def remove_log_user_blacklist(guild_id: str, user_id: str) -> None:
-    query = "DELETE FROM logUserBlacklist WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
+    """Remove a user from the log blacklist. Thin wrapper around remove_log_blacklist."""
+    await remove_log_blacklist(guild_id, user_id, LogBlacklistType.USER)
 
 
 async def get_log_user_blacklist(guild_id: str) -> list[str]:
-    query = "SELECT user_id FROM logUserBlacklist WHERE guild_id = %s"
-    params = (guild_id,)
-    user_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        user_ids.append(row[0])
-    return user_ids
+    """Get all blacklisted users for a guild. Thin wrapper around get_log_blacklist."""
+    return await get_log_blacklist(guild_id, LogBlacklistType.USER)
 
 
 async def is_log_user_blacklisted(guild_id: str, user_id: str) -> str | None:
-    query = "SELECT user_id FROM logUserBlacklist WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    result = await execute_query(query, params)
-    return result[0] if result else None
+    """Check if a user is blacklisted. Thin wrapper around is_log_entity_blacklisted."""
+    return await is_log_entity_blacklisted(guild_id, user_id, LogBlacklistType.USER)
 
 
 async def get_log_channel(guild_id: str) -> str | None:
