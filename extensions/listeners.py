@@ -51,8 +51,7 @@ class ListenerCog(commands.Cog):
             await countingChallenge(message, config=challenge_config)
         if modes_config:
             await countingModes(message, config=modes_config)
-
-        # Independent handlers run concurrently via gather
+        # Everything else is independent — run concurrently with asyncio.gather
         await asyncio.gather(
             wordchain(message),
             addLevelXp(message),
