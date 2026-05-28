@@ -395,7 +395,11 @@ async def bulk_update_user_xp(
         print(f"Error during bulk XP update: {e} — {safe_id}")
 
 
-async def create_tables(bot=None) -> None:
+def get_table_definitions() -> dict[str, str]:
+    """Return the table DDL definitions used by create_tables.
+
+    Exported for testing purposes to avoid DDL duplication.
+    """
     tables = {}
     tables["warnings"] = (
         "CREATE TABLE IF NOT EXISTS `warnings` ("
@@ -960,6 +964,12 @@ async def create_tables(bot=None) -> None:
         PRIMARY KEY(`user_id`)
     ) ENGINE=InnoDB;
     """
+    return tables
+
+
+async def create_tables(bot=None) -> None:
+    """Create all database tables using get_table_definitions()."""
+    tables = get_table_definitions()
 
     pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
     if pool is None:
@@ -1007,11 +1017,12 @@ async def create_tables(bot=None) -> None:
 
 
 async def add_warning(
-    guild_id: str | int, user_id: str | int, reason: str, expiration_date: datetime, created_by: str | int
-) -> None:
+    guild_id: str | int, user_id: str | int, reason: str, created_by: str | int, expiration_date: datetime | None = None
+) -> int:
     query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at, created_by) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, user_id, reason, expiration_date, created_by)
-    await execute_action(query, params)
+    warning_id = await execute_insert_and_get_id(query, params)
+    return warning_id
 
 
 async def get_warnings(guild_id: str | int, user_id: str | int | None = None) -> AsyncIterator[WarningModel]:
