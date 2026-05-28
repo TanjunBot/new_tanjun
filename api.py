@@ -2807,6 +2807,10 @@ async def is_trigger_message(guild_id: str, trigger: str, channel_id: str) -> Tr
     return trigger_message
 
 
+# Ticket functions have been moved to TicketService in services/ticket_service.py
+# Import them from there for new code. Old aliases kept for backward compat.
+
+
 async def create_ticket_message(
     guild_id: str,
     channel_id: str,
@@ -2814,100 +2818,86 @@ async def create_ticket_message(
     ping_role: str,
     name: str,
     description: str,
-    summary_channel_id: str,
+    summary_channel_id: str | None = None,
 ) -> int | None:
-    query = "INSERT INTO ticketMessages (guild_id, channel_id, introduction, pingRole, name, description, summaryChannelId) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    params = (
-        guild_id,
-        channel_id,
-        introduction,
-        ping_role,
-        name,
-        description,
-        summary_channel_id,
+    from services.ticket_service import TicketMessageConfig
+    from services.ticket_service import ticket_service as _ticket_svc
+
+    return await _ticket_svc.create_config(
+        TicketMessageConfig(
+            guild_id=guild_id,
+            channel_id=channel_id,
+            introduction=introduction,
+            ping_role=ping_role,
+            name=name,
+            description=description,
+            summary_channel_id=summary_channel_id,
+        )
     )
-    return await execute_insert_and_get_id(query, params)
 
 
-async def delete_ticket_message(guild_id: str, ticket_message_id: str) -> None:
-    query = "DELETE FROM ticketMessages WHERE guild_id = %s AND id = %s"
-    params = (guild_id, ticket_message_id)
-    await execute_action(query, params)
+async def delete_ticket_message(guild_id: str, ticket_message_id: int) -> None:
+    from services.ticket_service import ticket_service as _ticket_svc
+
+    await _ticket_svc.delete_config(guild_id, ticket_message_id)
 
 
 async def get_ticket_messages(guild_id: str) -> list[TicketMessageModel]:
-    query = "SELECT id, guild_id, channel_id, introduction, pingRole, name, description, summaryChannelId FROM ticketMessages WHERE guild_id = %s"
-    params = (guild_id,)
-    rows: list[TicketMessageModel] = []
-    async for row in TicketMessageModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.ticket_service import ticket_service as _ticket_svc
+
+    return await _ticket_svc.get_configs(guild_id)
 
 
 async def get_ticket_messages_by_id(ticket_message_id: str) -> TicketMessageModel | None:
-    result = await execute_query(
-        "SELECT id, guild_id, channel_id, introduction, pingRole, name, description, summaryChannelId FROM ticketMessages WHERE id = %s",
-        (ticket_message_id,),
-    )
-    return TicketMessageModel.from_row(result[0]) if result else None
+    from services.ticket_service import ticket_service as _ticket_svc
+
+    try:
+        message_id = int(ticket_message_id)
+    except ValueError:
+        return None
+    return await _ticket_svc.get_config(message_id)
 
 
 async def open_ticket(guild_id: str, opener_id: str, ticket_message_id: str, channel_id: str) -> None:
-    query = "INSERT INTO tickets (guild_id, openerId, ticketMessageId, channel_id) VALUES (%s, %s, %s, %s)"
-    params = (guild_id, opener_id, ticket_message_id, channel_id)
-    await execute_action(query, params)
+    from services.ticket_service import ticket_service as _ticket_svc
+
+    try:
+        message_id = int(ticket_message_id)
+    except ValueError:
+        return None
+    await _ticket_svc.open(guild_id, opener_id, message_id, channel_id)
 
 
-async def close_ticket(guild_id: str, ticket_id: str) -> None:
-    query = "UPDATE tickets SET closed = 1, closedAt = NOW(), closedBy = %s WHERE guild_id = %s AND id = %s"
-    params = (guild_id, ticket_id)
-    await execute_action(query, params)
+async def close_ticket(guild_id: str, channel_id: str, closed_by: str) -> None:
+    from services.ticket_service import ticket_service as _ticket_svc
+
+    try:
+        cid = int(channel_id)
+    except ValueError:
+        return None
+    await _ticket_svc.close(guild_id, cid, closed_by)
 
 
 async def get_tickets(guild_id: str) -> list[TicketModel]:
-    query = """
-        SELECT guild_id, openerId,
-               UNIX_TIMESTAMP(openedAt) as openedAt,
-               closed,
-               UNIX_TIMESTAMP(closedAt) as closedAt,
-               closedBy, channel_id, ticketMessageId
-        FROM tickets WHERE guild_id = %s
-    """
-    params = (guild_id,)
-    rows: list[TicketModel] = []
-    async for row in TicketModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.ticket_service import ticket_service as _ticket_svc
+
+    return await _ticket_svc.get_tickets(guild_id)
 
 
 async def get_ticket_by_id(guild_id: str, ticket_id: str, channel_id: str) -> TicketModel | None:
-    query = """
-        SELECT guild_id, openerId,
-               UNIX_TIMESTAMP(openedAt) as openedAt,
-               closed,
-               UNIX_TIMESTAMP(closedAt) as closedAt,
-               closedBy, channel_id, ticketMessageId
-        FROM tickets
-        WHERE guild_id = %s AND ticketMessageId = %s AND channel_id = %s
-    """
-    params = (guild_id, ticket_id, channel_id)
-    result = await execute_query(query, params)
-    return TicketModel.from_row(result[0]) if result else None
+    from services.ticket_service import ticket_service as _ticket_svc
+
+    try:
+        tid = int(ticket_id)
+    except ValueError:
+        return None
+    return await _ticket_svc.get_by_config_and_channel(guild_id, tid, channel_id)
 
 
 async def get_ticket_by_channel_id(guild_id: str, channel_id: str) -> TicketModel | None:
-    query = """
-        SELECT guild_id, openerId,
-               UNIX_TIMESTAMP(openedAt) as openedAt,
-               closed,
-               UNIX_TIMESTAMP(closedAt) as closedAt,
-               closedBy, channel_id, ticketMessageId
-        FROM tickets
-        WHERE guild_id = %s AND channel_id = %s
-    """
-    params = (guild_id, channel_id)
-    result = await execute_query(query, params)
-    return TicketModel.from_row(result[0]) if result else None
+    from services.ticket_service import ticket_service as _ticket_svc
+
+    return await _ticket_svc.get_by_channel(guild_id, channel_id)
 
 
 async def get_join_to_create_channel(channel_id: str) -> bool:

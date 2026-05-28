@@ -1,8 +1,8 @@
 import discord
 
 import utility
-from api import create_ticket_message
 from localizer import tanjunLocalizer
+from services.ticket_service import TicketMessageConfig, ticket_service
 
 
 async def create_ticket(
@@ -47,15 +47,31 @@ async def create_ticket(
         await command_info.reply(embed=embed)
         return
 
-    ticket_id = await create_ticket_message(
-        guild_id=command_info.guild.id,
-        channel_id=channel.id,
-        name=name,
-        description=description,
-        ping_role=ping_role.id if ping_role is not None else None,  # type: ignore[arg-type]
-        summary_channel_id=summary_channel.id if summary_channel is not None else None,  # type: ignore[arg-type]
-        introduction=introduction,  # type: ignore[arg-type]
+    ticket_id = await ticket_service.create_config(
+        TicketMessageConfig(
+            guild_id=str(command_info.guild.id),
+            channel_id=str(channel.id),
+            name=name,
+            description=description,
+            ping_role=str(ping_role.id) if ping_role is not None else None,
+            summary_channel_id=str(summary_channel.id) if summary_channel is not None else None,
+            introduction=introduction,
+        )
     )
+
+    if ticket_id is None:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                command_info.locale,
+                "commands.admin.create_ticket.error.title",
+            ),
+            description=tanjunLocalizer.localize(
+                command_info.locale,
+                "commands.admin.create_ticket.error.description",
+            ),
+        )
+        await command_info.reply(embed=embed)
+        return
 
     view = discord.ui.View()
     label = tanjunLocalizer.localize(str(command_info.locale), "commands.admin.create_ticket.button.label")

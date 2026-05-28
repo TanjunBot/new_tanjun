@@ -3,8 +3,9 @@ from typing import Any
 import discord
 
 import utility
-from api import check_if_opted_out, get_ticket_messages_by_id, open_ticket
+from api import check_if_opted_out
 from localizer import tanjunLocalizer
+from services.ticket_service import ticket_service
 
 
 async def openTicket(interaction: discord.Interaction) -> None:
@@ -64,7 +65,7 @@ async def open_ticket_2(interaction: discord.Interaction) -> None:
     data: Any = interaction.data
     ticket_id = data["custom_id"].split(";")[1]
     print("ticket_id", ticket_id)
-    ticket = await get_ticket_messages_by_id(ticket_id)
+    ticket = await ticket_service.get_config(int(ticket_id))
 
     if not ticket:
         await interaction.response.send_message(
@@ -138,17 +139,34 @@ async def open_ticket_2(interaction: discord.Interaction) -> None:
 
     await thread.send(embed=embed, view=view)
 
+    try:
+        await ticket_service.open(
+            guild_id=str(interaction.guild.id),
+            opener_id=str(interaction.user.id),
+            config_id=int(ticket_id),
+            channel_id=str(thread.id),
+        )
+    except Exception as e:
+        # Rollback: delete the created thread
+        try:
+            await thread.delete()
+        except Exception:
+            pass  # Best effort cleanup
+
+        # Notify user of failure
+        await interaction.followup.send(
+            tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.admin.open_ticket.error.ticketNotCreated",
+            ),
+            ephemeral=True,
+        )
+        raise e
+
     await interaction.followup.send(
         tanjunLocalizer.localize(
             interaction.locale,
             "commands.admin.open_ticket.success.ticketCreated",
         ),
         ephemeral=True,
-    )
-
-    await open_ticket(
-        guild_id=interaction.guild.id,
-        opener_id=interaction.user.id,  # type: ignore[arg-type]
-        ticket_message_id=ticket_id,
-        channel_id=thread.id,
     )

@@ -4,7 +4,7 @@ from typing import Any
 import discord
 
 import utility
-from api import get_ticket_by_id, get_ticket_messages_by_id
+from services.ticket_service import ticket_service
 from localizer import tanjunLocalizer
 
 
@@ -24,7 +24,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         data["custom_id"].split(";")[2],
     )
 
-    ticket_message = await get_ticket_messages_by_id(ticket_id)
+    ticket_message = await ticket_service.get_config(int(ticket_id))
     if not ticket_message:
         await interaction.followup.send(
             tanjunLocalizer.localize(
@@ -34,7 +34,9 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         )
         return
 
-    ticket = await get_ticket_by_id(guild.id, ticket_id, ticket_channel_id)
+    ticket = await ticket_service.get_by_config_and_channel(
+        str(guild.id), int(ticket_id), ticket_channel_id
+    )
 
     if not ticket:
         await interaction.followup.send(
