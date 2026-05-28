@@ -20,6 +20,7 @@ from loops.create_database_backup import create_database_backup
 from loops.giveaway import checkVoiceUsers, endGiveaways, sendReadyGiveaways
 from loops.level import addXpToVoiceUsers
 from minigames.add_level_xp import clearNotifiedUsers
+from utility import EmbedColor
 
 embeds = {}  # type: ignore[var-annotated]
 
@@ -172,7 +173,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
             """
             channel = self.bot.get_channel(923337160600477777)
             if isinstance(channel, discord.TextChannel):
-                embed = discord.Embed(description=message, color=0xCB33F5, title="🐾Pokémon🐾")
+                embed = discord.Embed(description=message, color=EmbedColor.BRAND.value, title="🐾Pokémon🐾")
                 sent_message = await channel.send(embed=embed)
                 if sent_message.guild:
                     await sent_message.publish()

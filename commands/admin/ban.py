@@ -2,7 +2,7 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
+from utility import CommandInfo, EmbedColor
 
 
 async def ban(
@@ -17,6 +17,7 @@ async def ban(
         and not command_info.channel.permissions_for(command_info.user).ban_members
     ):
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.missingPermission.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.missingPermission.description"),
         )
@@ -26,6 +27,7 @@ async def ban(
     assert command_info.guild is not None
     if not command_info.guild.me.guild_permissions.ban_members:
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
@@ -37,6 +39,7 @@ async def ban(
 
     if isinstance(command_info.user, discord.Member) and target.top_role >= CommandInfo.user.top_role:  # type: ignore[misc, union-attr]
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.targetTooHigh.description"),
         )
@@ -46,6 +49,7 @@ async def ban(
     try:
         await target.ban(reason=reason, delete_message_days=delete_message_days)
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.success.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
@@ -61,12 +65,14 @@ async def ban(
         await command_info.reply(embed=embed)
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.forbidden.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.forbidden.description"),
         )
         await command_info.reply(embed=embed)
     except discord.HTTPException:
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.error.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.error.description"),
         )

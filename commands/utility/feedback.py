@@ -78,6 +78,7 @@ class FeedbackModal(ui.Modal):
         )
 
         embed = tanjunEmbed(
+            colour=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(
                 self.command_info.locale,
                 "commands.utility.feedback.modal.submitted.title",
