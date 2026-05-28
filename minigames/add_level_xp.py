@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 
 import discord
@@ -50,14 +51,16 @@ async def addLevelXp(message: discord.Message) -> None:
 
 
 async def fetch_xp_details(message: discord.Message, guild_id: str) -> tuple[str, str | None, int]:
-    scaling = await _get_cached_config(guild_id, "scaling", "medium")
-    custom_formula = await _get_cached_config(guild_id, "custom_formula")
-    xp_to_add = await calculate_xp(
+    scaling_task = _get_cached_config(guild_id, "scaling", "medium")
+    formula_task = _get_cached_config(guild_id, "custom_formula")
+    xp_task = calculate_xp(
         guild_id,
         str(message.author.id),
         str(message.channel.id),
         [str(role.id) for role in (message.author.roles if hasattr(message.author, "roles") else [])],
     )
+
+    scaling, custom_formula, xp_to_add = await asyncio.gather(scaling_task, formula_task, xp_task)
     return scaling, custom_formula, xp_to_add
 
 
