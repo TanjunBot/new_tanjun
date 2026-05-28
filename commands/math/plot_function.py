@@ -1,3 +1,4 @@
+import ast
 import asyncio
 import io
 import re
@@ -13,6 +14,88 @@ from sympy import Symbol, diff, parse_expr
 
 import utility
 from localizer import tanjunLocalizer
+
+
+_ALLOWED_NP_FUNCTIONS = {
+    "sin",
+    "cos",
+    "tan",
+    "exp",
+    "log",
+    "sqrt",
+    "abs",
+    "pi",
+    "e",
+    "inf",
+    "nan",
+    "array",
+    "full_like",
+    "linspace",
+    "where",
+    "minimum",
+    "maximum",
+    "clip",
+    "floor",
+    "ceil",
+    "round",
+    "sign",
+}
+
+
+def _safe_eval_node(node: ast.AST, x_val: np.ndarray | float) -> np.ndarray | float:
+    """Evaluate an AST node safely with only x and restricted numpy functions."""
+    if isinstance(node, ast.Constant):
+        return node.value
+    if isinstance(node, ast.Name):
+        if node.id == "x":
+            return x_val
+        raise ValueError(f"Unknown variable: {node.id}")
+    if isinstance(node, ast.BinOp):
+        left = _safe_eval_node(node.left, x_val)
+        right = _safe_eval_node(node.right, x_val)
+        if isinstance(node.op, ast.Add):
+            return left + right
+        if isinstance(node.op, ast.Sub):
+            return left - right
+        if isinstance(node.op, ast.Mult):
+            return left * right
+        if isinstance(node.op, ast.Div):
+            return left / right
+        if isinstance(node.op, ast.Pow):
+            return left ** right
+        if isinstance(node.op, ast.Mod):
+            return left % right
+        raise TypeError(f"Unsupported operator: {type(node.op).__name__}")
+    if isinstance(node, ast.UnaryOp):
+        operand = _safe_eval_node(node.operand, x_val)
+        if isinstance(node.op, ast.UAdd):
+            return +operand
+        if isinstance(node.op, ast.USub):
+            return -operand
+        raise TypeError(f"Unsupported unary operator: {type(node.op).__name__}")
+    if isinstance(node, ast.Attribute):
+        if isinstance(node.value, ast.Name) and node.value.id == "np":
+            attr_name = node.attr
+            if attr_name in _ALLOWED_NP_FUNCTIONS:
+                return getattr(np, attr_name)
+        raise TypeError(f"Unsupported attribute access: {ast.dump(node)}")
+    if isinstance(node, ast.Call):
+        if isinstance(node.func, ast.Attribute) and isinstance(node.func.value, ast.Name):
+            if node.func.value.id == "np":
+                func_name = node.func.attr
+                if func_name not in _ALLOWED_NP_FUNCTIONS:
+                    raise ValueError(f"np.{func_name}() is not allowed")
+                np_func = getattr(np, func_name)
+                args = [_safe_eval_node(arg, x_val) for arg in node.args]
+                return np_func(*args)
+        raise TypeError(f"Unsupported function call: {ast.dump(node.func)}")
+    raise TypeError(f"Unsupported expression: {ast.dump(node)}")
+
+
+def _safe_np_eval(expr: str, x_val: np.ndarray | float) -> np.ndarray | float:
+    """Parse and safely evaluate a numpy expression from user input."""
+    node = ast.parse(expr, mode="eval").body
+    return _safe_eval_node(node, x_val)
 
 
 async def plot_function_command(
