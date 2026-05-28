@@ -659,16 +659,15 @@ class LogEnableModel(BaseModel):
 
     @classmethod
     def from_row(cls, row: tuple) -> LogEnableModel:
-        guild_id = row[0]
-        field_names = [k for k in cls._OPTION_KEYS]
-        expected_count = len(field_names)
-        actual_values = row[1:]
-        if len(actual_values) != expected_count:
+        expected_count = len(cls._OPTION_KEYS) + 1
+        if len(row) != expected_count:
             raise ValueError(
-                f"Expected {expected_count} column values for LogEnableModel, "
-                f"got {len(actual_values)}. Row: {row[: expected_count + 1]!r}..."
+                f"{cls.__name__}.from_row expected {expected_count} columns, got {len(row)}. "
+                "Check query projection/order."
             )
-        values = {name: bool(v) for name, v in zip(field_names, actual_values, strict=False)}
+        guild_id = row[0]
+        actual_values = row[1:]
+        values = {name: bool(v) for name, v in zip(cls._OPTION_KEYS, actual_values, strict=True)}
         return cls(guild_id=guild_id, **values)
 
     @classmethod
