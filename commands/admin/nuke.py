@@ -5,6 +5,7 @@ from discord.ui import View
 
 import utility
 from localizer import tanjunLocalizer
+from utility import EmbedColor
 
 
 async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextChannel | None = None) -> None:
@@ -55,6 +56,7 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
         and not command_info.channel.permissions_for(command_info.user).manage_channels
     ):
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.missingPermission.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.missingPermission.description"),
         )
@@ -66,6 +68,7 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
 
     if not channel.guild.me.guild_permissions.manage_channels:  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
@@ -76,6 +79,7 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
         return
 
     embed = utility.tanjunEmbed(
+        colour=EmbedColor.WARNING,
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.confirmationTitle"),
         description=tanjunLocalizer.localize(
             command_info.locale,

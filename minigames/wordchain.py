@@ -2,12 +2,13 @@ import discord
 
 from api import check_if_opted_out, clear_wordchain, get_wordchain_last_user_id, get_wordchain_word, set_wordchain_word
 from localizer import tanjunLocalizer
-from utility import DiscordSafe, tanjunEmbed
+from utility import DiscordSafe, EmbedColor, tanjunEmbed
 
 
 async def wordchain(message: discord.Message) -> None:
     if message.guild is None:
         embed: discord.Embed = tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
             description=tanjunLocalizer.localize(
                 "en_US",
@@ -49,6 +50,7 @@ async def wordchain(message: discord.Message) -> None:
             await clear_wordchain(message.channel.id)
             await set_wordchain_word(channel_id=message.channel.id, guild_id=message.guild.id, word="", worder_id="nobody")
             embed = tanjunEmbed(
+                colour=EmbedColor.SUCCESS,
                 title=tanjunLocalizer.localize(locale, "minigames.wordchain.finished.title"),
                 description=tanjunLocalizer.localize(
                     locale,

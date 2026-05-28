@@ -31,7 +31,6 @@ from models import (
     LevelRolesGroupModel,
     LogEnableModel,
     ReportModel,
-    ScheduledMessageModel,
     TicketMessageModel,
     TicketModel,
     TokenOverviewModel,
@@ -44,7 +43,7 @@ from models import (
     WelcomeChannelModel,
     XpBoostModel,
 )
-from utility import get_level_for_xp, get_xp_for_level
+from utility import get_level_for_xp_async, get_xp_for_level_async
 
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
@@ -264,6 +263,50 @@ async def execute_action(query: str, params: Any = None, bot=None) -> Any:
         return cursor.rowcount
 
     return await _execute_with_retry("execute_action", _callback, query, params, bot, is_write=True)
+
+
+async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
+    """Execute a batch INSERT using executemany for bulk operations.
+
+    Reduces database round-trips by sending all rows in one query.
+    """
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        raise RuntimeError("Database pool is not initialized")
+
+    last_exception = None
+    safe_id = _query_safe_id(query)
+    for attempt in range(_MAX_DB_RETRIES):
+        try:
+            conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+            async with conn:
+                async with conn.cursor() as cursor:
+                    await asyncio.wait_for(cursor.executemany(query, params_list), timeout=_QUERY_TIMEOUT)
+                await conn.commit()
+            return
+        except TimeoutError:
+            msg = f"Timeout on execute_batch attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}"
+            print(msg)
+            last_exception = TimeoutError(msg)
+            if attempt < _MAX_DB_RETRIES - 1:
+                await asyncio.sleep(0.5 * (attempt + 1))
+            continue
+        except Exception as e:
+            err_str = str(e).lower()
+            # Determine which errors are safe to retry (mirroring _execute_with_retry for write operations)
+            retryable = "deadlock" in err_str or "duplicate" in err_str or "abort" in err_str
+            if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                print(f"Transient error on execute_batch attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
+                await asyncio.sleep(0.5 * (attempt + 1))
+                last_exception = e
+                continue
+            # Non-retryable error or final attempt: raise instead of silently failing
+            print(f"Error during execute_batch: {e} — {safe_id}")
+            raise
+
+    if last_exception:
+        print(f"All retries exhausted for execute_batch: {safe_id}")
+        raise last_exception
 
 
 async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
@@ -1736,9 +1779,9 @@ async def get_user_level_info(guild_id: str, user_id: str) -> UserLevelInfoModel
         formula = custom_formula or ""
 
         xp, custom_background = result[0]
-        level = get_level_for_xp(xp, scaling, formula)
-        xp_needed = get_xp_for_level(level, scaling, formula)
-        xp_for_last_level_needed = get_xp_for_level(level - 1, scaling, formula)
+        level = await get_level_for_xp_async(xp, scaling, formula)
+        xp_needed = await get_xp_for_level_async(level, scaling, formula)
+        xp_for_last_level_needed = await get_xp_for_level_async(level - 1, scaling, formula)
         return UserLevelInfoModel(
             xp=xp - xp_for_last_level_needed,
             level=level,
@@ -1864,16 +1907,19 @@ async def add_giveaway(
             if giveaway_id is None:
                 raise RuntimeError("Failed to get last insert ID for giveaway")
 
-            for ch_id, amount in channel_requirements.items():
-                await cursor.execute(
-                    "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)",
-                    (giveaway_id, ch_id, amount),
+            if channel_requirements:
+                channel_req_query = (
+                    "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)"
                 )
-            for role_id in role_requirement:
-                await cursor.execute(
-                    "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)",
-                    (role_id, giveaway_id),
+                channel_req_params = [(giveaway_id, ch_id, amount) for ch_id, amount in channel_requirements.items()]
+                await cursor.executemany(channel_req_query, channel_req_params)
+
+            if role_requirement:
+                role_req_query = (
+                    "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)"
                 )
+                role_req_params = [(role_id, giveaway_id) for role_id in role_requirement]
+                await cursor.executemany(role_req_query, role_req_params)
     except Exception as e:
         print(f"Error creating giveaway: {e}")
         return None
@@ -2854,91 +2900,6 @@ async def get_log_enable(guild_id: str | int) -> LogEnableModel:
         guild_role_delete=True,
         guild_role_update=True,
     )
-
-
-async def add_scheduled_message(
-    guild_id: str | None,
-    channel_id: str | None,
-    user_id: str,
-    content: str,
-    send_time: datetime,
-    repeat_interval: int | None = None,
-    repeat_amount: int | None = None,
-) -> None:
-    query = """
-    INSERT INTO scheduledMessages
-    (guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """
-    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval, repeat_amount)
-    await execute_action(query, params)
-
-
-async def get_scheduled_messages(user_id: str) -> list[ScheduledMessageModel]:
-    query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
-    FROM scheduledMessages
-    WHERE user_id = %s
-    ORDER BY send_time ASC
-    """
-    params = (user_id,)
-    rows: list[ScheduledMessageModel] = []
-    async for row in ScheduledMessageModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
-
-
-async def remove_scheduled_message(message_id: int) -> None:
-    query = "DELETE FROM scheduledMessages WHERE messageId = %s"
-    params = (message_id,)
-    await execute_action(query, params)
-
-
-async def get_user_scheduled_messages_in_timeframe(
-    user_id: str,
-    start_time: datetime,
-    end_time: datetime,
-    guild_id: str | None = None,
-) -> list[ScheduledMessageModel]:
-    query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
-    FROM scheduledMessages
-    WHERE user_id = %s
-    AND send_time BETWEEN %s AND %s
-    """
-    params: list[Any] = [user_id, start_time, end_time]
-
-    if guild_id:
-        query += " AND guild_id = %s"
-        params.append(guild_id)
-
-    rows: list[ScheduledMessageModel] = []
-    async for row in ScheduledMessageModel.iter_rows(query, tuple(params)):
-        rows.append(row)
-    return rows
-
-
-async def update_scheduled_message_content(message_id: int, new_content: str) -> None:
-    query = "UPDATE scheduledMessages SET content = %s WHERE messageId = %s"
-    params = (new_content, message_id)
-    await execute_action(query, params)
-
-
-async def update_scheduled_message_repeat_amount(message_id: int, repeat_amount: int) -> None:
-    query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE messageId = %s"
-    params = (repeat_amount, message_id)
-    await execute_action(query, params)
-
-
-async def get_ready_scheduled_messages() -> list[ScheduledMessageModel]:
-    query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
-    FROM scheduledMessages WHERE send_time <= NOW()
-    """
-    rows: list[ScheduledMessageModel] = []
-    async for row in ScheduledMessageModel.iter_rows(query):
-        rows.append(row)
-    return rows
 
 
 async def report_user(

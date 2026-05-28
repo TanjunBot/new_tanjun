@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from health.checks import HealthCheckResult, HealthStatus
+from utility import EmbedColor
 
 if TYPE_CHECKING:
     from discord.ext import commands
@@ -80,7 +81,7 @@ async def notify_health_failures(
         title = f"⚠️ Health Check Failure ({idx}/{len(chunks)})" if len(chunks) > 1 else "⚠️ Health Check Failure"
         embed = discord.Embed(
             title=title,
-            color=0xFF0000,
+            color=EmbedColor.ERROR.value,
             timestamp=datetime.now(UTC),
         )
 

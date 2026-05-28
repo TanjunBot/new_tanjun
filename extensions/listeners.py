@@ -4,7 +4,7 @@ import logging
 import discord
 from discord.ext import commands
 
-from api import get_counting_configs, remove_scheduled_message, update_scheduled_message_content
+from api import get_counting_configs
 from commands.admin.join_to_create.listener import memberJoin, memberLeave
 from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
 from commands.admin.ticket.open_ticket import openTicket as openTicketListener
@@ -29,6 +29,7 @@ from minigames.counting import counting
 from minigames.counting_challenge import counting as countingChallenge
 from minigames.counting_modes import counting as countingModes
 from minigames.wordchain import wordchain
+from services.scheduled_message_service import ScheduledMessageService
 
 
 class ListenerCog(commands.Cog):
@@ -139,12 +140,21 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
-        if after.reference:
-            await update_scheduled_message_content(after.reference.message_id, after.content)  # type: ignore[arg-type]
+        if after.reference and after.reference.message_id is not None:
+            # Update content of a scheduled message when the referenced message is edited.
+            # after.reference.message_id is the scheduled message ID when the scheduled message
+            # was sent via webhook/message reference.
+            await ScheduledMessageService.update_content(after.reference.message_id, after.content)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message) -> None:
-        await remove_scheduled_message(message.id)
+        # NOTE: message.id is a Discord snowflake, not necessarily a scheduled message ID.
+        # This only works if the deleted message happens to have the same ID as a
+        # scheduled message entry — which is not generally the case.
+        # A proper fix would require storing the message ID returned by the send
+        # in the scheduled_messages table, then looking it up on delete.
+        # For now we keep this best-effort behavior.
+        await ScheduledMessageService.cancel(message.id)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:

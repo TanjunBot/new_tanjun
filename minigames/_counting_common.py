@@ -4,7 +4,7 @@ import discord
 
 from api import check_if_opted_out
 from localizer import tanjunLocalizer
-from utility import DiscordSafe, tanjunEmbed
+from utility import DiscordSafe, EmbedColor, tanjunEmbed
 
 
 async def _handle_guild_check(message: discord.Message) -> bool:
@@ -13,6 +13,7 @@ async def _handle_guild_check(message: discord.Message) -> bool:
         return False
 
     embed: discord.Embed = tanjunEmbed(
+        colour=EmbedColor.ERROR,
         title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
         description=tanjunLocalizer.localize("en_US", "errors.guildonly.description"),
     )

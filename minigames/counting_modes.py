@@ -13,7 +13,7 @@ from api import (
     set_counting_mode_progress,
 )
 from localizer import tanjunLocalizer
-from utility import DiscordSafe, tanjunEmbed
+from utility import DiscordSafe, EmbedColor, tanjunEmbed
 
 modeMap = {
     1: "normal",
@@ -347,6 +347,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         new_mode = random.randint(1, len(modeMap))
         goal = get_goal(new_mode)
         embed = tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.failed.title"),
             description=tanjunLocalizer.localize(
                 locale,
@@ -383,6 +384,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         new_mode = random.randint(1, len(modeMap))
         goal = get_goal(new_mode)
         embed = tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.failed.title"),
             description=tanjunLocalizer.localize(
                 locale,
@@ -417,6 +419,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         new_mode = random.randint(1, len(modeMap))
         goal = get_goal(new_mode)
         embed = tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.failed.title"),
             description=tanjunLocalizer.localize(
                 locale,
@@ -454,6 +457,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         new_mode = random.randint(1, len(modeMap))
         goal = get_goal(new_mode)
         embed = tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.failed_double.title"),
             description=tanjunLocalizer.localize(
                 locale,
@@ -496,6 +500,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         if mode == 12:
             new_goal = romeal_to_number(new_goal)
         embed = tanjunEmbed(
+            colour=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "minigames.counting.modes.won.title"),
             description=tanjunLocalizer.localize(
                 locale,
