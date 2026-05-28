@@ -141,7 +141,7 @@ class ReportService:
     async def reject(guild_id: str, report_id: int | str, accepted_by: str | None = None) -> None:
         """Mark a report as rejected."""
         query = (
-            "UPDATE reports SET accepted = 0, accepted_at = NOW(), acceptedBy = %s "
+            "UPDATE reports SET accepted = 0, accepted_at = NOW(), acceptedBy = %s, resolved = 2 "
             "WHERE guild_id = %s AND id = %s"
         )
         params = (accepted_by, guild_id, report_id)
@@ -150,7 +150,7 @@ class ReportService:
     @staticmethod
     async def resolve(guild_id: str, report_id: int | str) -> None:
         """Mark a report as resolved."""
-        query = "UPDATE reports SET resolved = 1 WHERE guild_id = %s AND id = %s"
+        query = "UPDATE reports SET resolved = 1, resolved_at = NOW() WHERE guild_id = %s AND id = %s"
         params = (guild_id, report_id)
         await execute_action(query, params)
 
@@ -214,7 +214,7 @@ class ReportService:
         result = await execute_query(
             "SELECT channel_id FROM reportchannel WHERE guild_id = %s", (guild_id,)
         )
-        return result[0] if result else None
+        return result[0][0] if result else None
 
     @staticmethod
     async def remove_channel(guild_id: str) -> None:
