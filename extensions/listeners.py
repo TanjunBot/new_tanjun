@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import discord
@@ -50,15 +51,20 @@ class ListenerCog(commands.Cog):
             await countingChallenge(message, config=challenge_config)
         if modes_config:
             await countingModes(message, config=modes_config)
-        await wordchain(message)
-        await addLevelXp(message)
-        await addMessageToGiveaway(message)
-        await publish_message(message)
-        await checkIfAfkHasToBeRemoved(message)
-        await checkIfMentionsAreAfk(message)
-        await send_trigger_message(message)
-        await mediaChannelMessage(message)
-        await dynamicslowmodeMessage(message)
+
+        # Independent handlers run concurrently via gather
+        await asyncio.gather(
+            wordchain(message),
+            addLevelXp(message),
+            addMessageToGiveaway(message),
+            publish_message(message),
+            checkIfAfkHasToBeRemoved(message),
+            checkIfMentionsAreAfk(message),
+            send_trigger_message(message),
+            mediaChannelMessage(message),
+            dynamicslowmodeMessage(message),
+            return_exceptions=True,
+        )
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction) -> None:
