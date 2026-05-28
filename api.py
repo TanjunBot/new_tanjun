@@ -146,6 +146,9 @@ _GUILD_CONFIG_CACHE_TTL = 300  # 5 minutes
 
 _blacklist_cache: dict[str, tuple[Any, float]] = {}
 _guild_config_cache: dict[str, tuple[dict[str, Any], float]] = {}
+# In-memory cache for XP cooldowns: (guild_id, user_id) -> last_xp_gain_timestamp
+# Eliminates DB queries entirely when user is on cooldown
+_last_xp_gain_cache: dict[tuple[str, str], float] = {}
 
 
 def _is_cache_valid(entry: tuple[Any, float] | None, ttl: float) -> bool:
@@ -1767,23 +1770,20 @@ async def get_user_xp(guild_id: str, user_id: str) -> int | None:
 
 async def update_user_xp(guild_id: str, user_id: str, xp: int, respect_cooldown: bool = False) -> None:
     if respect_cooldown:
-        query = """
-    INSERT INTO level (guild_id, user_id, xp, last_xp_gain)
-    VALUES (%s, %s, %s, NOW())
-    ON DUPLICATE KEY UPDATE
-        xp = CASE
-            WHEN TIMESTAMPDIFF(SECOND, last_xp_gain, NOW()) >= GREATEST(1, COALESCE((SELECT textCooldown FROM levelConfig WHERE guild_id = %s), 1))
-            THEN xp + %s
-            ELSE xp
-        END,
-        last_xp_gain = CASE
-            WHEN TIMESTAMPDIFF(SECOND, last_xp_gain, NOW()) >= GREATEST(1, COALESCE((SELECT textCooldown FROM levelConfig WHERE guild_id = %s), 1))
-            THEN NOW()
-            ELSE last_xp_gain
-        END;
-        """
-        params = (guild_id, user_id, xp, guild_id, xp, guild_id)
+        cache_key = (guild_id, user_id)
+        now = time.time()
+        last_gain = _last_xp_gain_cache.get(cache_key)
+        # Fetch cooldown from cache (subquery eliminated)
+        cooldown_seconds = await _get_cached_config(guild_id, "text_cooldown", 60)
+        if cooldown_seconds < 1:
+            cooldown_seconds = 1  # Minimum 1-second floor
+        if last_gain and (now - last_gain) < cooldown_seconds:
+            return  # Still on cooldown — skip DB entirely
+        # Proceed with single atomic DB update
+        query = "INSERT INTO level (guild_id, user_id, xp, last_xp_gain) VALUES (%s, %s, %s, NOW()) ON DUPLICATE KEY UPDATE xp = xp + %s, last_xp_gain = NOW()"
+        params = (guild_id, user_id, xp, xp)
         await execute_action(query, params)
+        _last_xp_gain_cache[cache_key] = now
     else:
         query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s"
         params = (guild_id, user_id, xp, xp)
@@ -1792,23 +1792,20 @@ async def update_user_xp(guild_id: str, user_id: str, xp: int, respect_cooldown:
 
 async def update_user_xp_from_voice(guild_id: str, user_id: str, xp: int, respect_cooldown: bool = False) -> None:
     if respect_cooldown:
-        query = """
-        INSERT INTO level (guild_id, user_id, xp, last_voice_xp_gain)
-        VALUES (%s, %s, %s, NOW())
-        ON DUPLICATE KEY UPDATE
-            xp = CASE
-                WHEN TIMESTAMPDIFF(SECOND, last_voice_xp_gain, NOW()) >= GREATEST(5, (SELECT voiceCooldown FROM levelConfig WHERE guild_id = %s))
-                THEN xp + %s
-                ELSE xp
-            END,
-            last_voice_xp_gain = CASE
-                WHEN TIMESTAMPDIFF(SECOND, last_voice_xp_gain, NOW()) >= GREATEST(5, (SELECT voiceCooldown FROM levelConfig WHERE guild_id = %s))
-                THEN NOW()
-                ELSE last_voice_xp_gain
-            END;
-        """
-        params = (guild_id, user_id, xp, guild_id, xp, guild_id)
+        cache_key = (guild_id, user_id)
+        now = time.time()
+        last_gain = _last_xp_gain_cache.get(cache_key)
+        # Fetch cooldown from cache (subquery eliminated)
+        cooldown_seconds = await _get_cached_config(guild_id, "voice_cooldown", 60)
+        if cooldown_seconds < 5:
+            cooldown_seconds = 5  # Minimum 5-second floor for voice
+        if last_gain and (now - last_gain) < cooldown_seconds:
+            return  # Still on cooldown — skip DB entirely
+        # Proceed with single atomic DB update
+        query = "INSERT INTO level (guild_id, user_id, xp, last_voice_xp_gain) VALUES (%s, %s, %s, NOW()) ON DUPLICATE KEY UPDATE xp = xp + %s, last_voice_xp_gain = NOW()"
+        params = (guild_id, user_id, xp, xp)
         await execute_action(query, params)
+        _last_xp_gain_cache[cache_key] = now
     else:
         query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s"
         params = (guild_id, user_id, xp, xp)

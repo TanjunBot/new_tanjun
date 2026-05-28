@@ -264,7 +264,7 @@ def get_goal(mode: CountingMode):
         return random.randint(20, 100) * 100
     if mode == CountingMode.BINARY:
         # nosec: B311
-        return int(str(bin(random.randint(20, 100)))[2:])
+        return random.randint(20, 100)
     if mode == CountingMode.ROMEAN:
         # nosec: B311
         return number_to_romeal(random.randint(20, 100))
@@ -335,8 +335,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     if mode == CountingMode.ROMEAN:
         progress = number_to_romeal(progress)
 
-    if mode == CountingMode.BINARY:
-        progress = int(str(progress), 2)
+    # Binary mode stores progress as integer; no conversion needed
 
     if await check_if_opted_out(message.author.id):
         with contextlib.suppress(discord.Forbidden):
@@ -552,7 +551,13 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     # nosec: B311
     if random.randint(1, 100) == 1:
         correct_number = get_correct_next_number(mode, correct_number)
-        await message.channel.send(correct_number)
+        # Display next number in the correct format for the mode
+        display_number = (
+            bin(correct_number)[2:] if mode == CountingMode.BINARY else (
+                number_to_romeal(correct_number) if mode == CountingMode.ROMEAN else str(correct_number)
+            )
+        )
+        await message.channel.send(display_number)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=(romeal_to_number(correct_number) if mode == CountingMode.ROMEAN else correct_number),
