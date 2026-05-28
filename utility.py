@@ -1529,7 +1529,17 @@ class DiscordSafe:
         except discord.Forbidden:
             logging.warning("Cannot add reaction to %s: Forbidden", message.id)
         except discord.NotFound:
-            pass  # Message already deleted
-        except discord.HTTPException:
-            pass  # Invalid emoji or other transient error
+            logging.warning(
+                "Cannot add reaction '%s' to message %s: Message not found (already deleted)",
+                emoji,
+                message.id,
+            )
+        except discord.HTTPException as e:
+            logging.warning(
+                "HTTP error adding reaction '%s' to message %s: status=%s, text=%s",
+                emoji,
+                message.id,
+                e.status,
+                e.text,
+            )
         return False
