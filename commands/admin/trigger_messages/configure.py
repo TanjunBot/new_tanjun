@@ -3,15 +3,8 @@ from typing import Any
 import discord
 
 import utility
-from api import (
-    add_trigger_message,
-    add_trigger_message_channel,
-    get_trigger_message_channels,
-    get_trigger_messages,
-    remove_trigger_message,
-    remove_trigger_message_channel,
-)
 from localizer import tanjunLocalizer
+from services.trigger_message_service import trigger_message_service
 
 
 async def configure_trigger_messages(  # type: ignore[no-untyped-def]
@@ -36,7 +29,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         return
 
     assert command_info.guild is not None
-    trigger_messages = await get_trigger_messages(command_info.guild.id)
+    trigger_messages = await trigger_message_service.get_all(command_info.guild.id)
 
     if trigger_messages is None or len(trigger_messages) == 0:
         embed = utility.tanjunEmbed(
@@ -52,7 +45,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         await command_info.reply(embed=embed)
         return
 
-    channels = await get_trigger_message_channels(command_info.guild.id, trigger_messages[0].id)
+    channels = await trigger_message_service.get_trigger_channels(command_info.guild.id, trigger_messages[0].id)
     page = 0
     selected_channel = 0
 
@@ -175,11 +168,11 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             trigger = self.children[0].value.strip()  # type: ignore[attr-defined]
             response = self.children[1].value.strip()  # type: ignore[attr-defined]
             case_sensitive = self.children[2].value == "y"  # type: ignore[attr-defined]
-            await add_trigger_message(command_info.guild.id, trigger, response, case_sensitive)  # type: ignore[union-attr]
+            await trigger_message_service.create(command_info.guild.id, trigger, response, case_sensitive)  # type: ignore[union-attr]
             nonlocal trigger_messages
-            trigger_messages = await get_trigger_messages(command_info.guild.id)  # type: ignore[union-attr]
+            trigger_messages = await trigger_message_service.get_all(command_info.guild.id)  # type: ignore[union-attr]
             nonlocal channels
-            channels = await get_trigger_message_channels(
+            channels = await trigger_message_service.get_trigger_channels(
                 command_info.guild.id,
                 trigger_messages[0].id,
             )
@@ -208,13 +201,13 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
 
             data = cast(Any, interaction.data)
             nonlocal channels
-            await add_trigger_message_channel(
+            await trigger_message_service.add_channel(
                 command_info.guild.id,  # type: ignore[union-attr]
                 data["values"][0] if data is not None else "",
                 trigger_messages[page].id,
             )
             nonlocal channels
-            channels = await get_trigger_message_channels(
+            channels = await trigger_message_service.get_trigger_channels(
                 command_info.guild.id,
                 trigger_messages[page].id,
             )
@@ -241,7 +234,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             if page < 0:
                 page = len(trigger_messages) - 1  # type: ignore[arg-type]
             nonlocal channels
-            channels = await get_trigger_message_channels(
+            channels = await trigger_message_service.get_trigger_channels(
                 command_info.guild.id,
                 trigger_messages[page].id,
             )
@@ -259,13 +252,13 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         )
         async def remove(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             nonlocal trigger_messages
-            await remove_trigger_message(
+            await trigger_message_service.delete(
                 command_info.guild.id,
                 trigger_messages[page].id,
             )
-            trigger_messages = await get_trigger_messages(command_info.guild.id)  # type: ignore[union-attr]
+            trigger_messages = await trigger_message_service.get_all(command_info.guild.id)  # type: ignore[union-attr]
             nonlocal channels
-            channels = await get_trigger_message_channels(
+            channels = await trigger_message_service.get_trigger_channels(
                 command_info.guild.id,
                 trigger_messages[0].id,
             )
@@ -298,7 +291,7 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
             if page >= len(trigger_messages):  # type: ignore[arg-type]
                 page = 0
             nonlocal channels
-            channels = await get_trigger_message_channels(
+            channels = await trigger_message_service.get_trigger_channels(
                 command_info.guild.id,
                 trigger_messages[page].id,
             )
@@ -356,12 +349,12 @@ async def configure_trigger_messages(  # type: ignore[no-untyped-def]
         )
         async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             nonlocal channels
-            await remove_trigger_message_channel(
+            await trigger_message_service.remove_channel(
                 command_info.guild.id,  # type: ignore[union-attr]
                 channels[selected_channel].channel_id,
                 trigger_messages[page].id,
             )
-            channels = await get_trigger_message_channels(
+            channels = await trigger_message_service.get_trigger_channels(
                 command_info.guild.id,
                 trigger_messages[page].id,
             )
