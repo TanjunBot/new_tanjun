@@ -4,7 +4,9 @@ Replaces the previous existence-only tests with proper behavioral tests
 that verify SQL query generation, return types, error handling, and edge cases.
 """
 
+from collections.abc import Iterator
 from datetime import datetime
+from typing import Any, TypeVar
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -14,7 +16,7 @@ import tests.mock_config as mock_config
 mock_config.patch_config_module()
 
 # --- Mock Discord and aiohttp before importing api ---
-import sys
+import sys  # noqa: E402
 
 _discord_mock = MagicMock()
 _discord_mock.Entitlement = MagicMock()
@@ -24,7 +26,7 @@ sys.modules["discord.ext.commands"] = MagicMock()
 sys.modules["discord.app_commands"] = MagicMock()
 # -------------------------------------------------------
 
-from api import (
+from api import (  # noqa: E402
     add_channel_to_blacklist,
     add_level_role,
     add_role_boost,
@@ -83,22 +85,25 @@ from api import (
 # -------------------------------------------------------------------------
 # Helper: async iterator that yields from a list
 
+T = TypeVar('T')
+
+
 class AsyncIter:
     """Utility async iterator that yields items from a given list."""
 
-    def __init__(self, items: list):
+    def __init__(self, items: list) -> None:
         self._items = list(reversed(items))
 
-    def __aiter__(self):
+    def __aiter__(self) -> 'AsyncIter':
         return self
 
-    async def __anext__(self):
+    async def __anext__(self) -> object:
         if not self._items:
             raise StopAsyncIteration
         return self._items.pop()
 
 
-def make_mock_pool():
+def make_mock_pool() -> tuple[Any, Any, Any]:
     """Create a complete async mock pool that mimics asyncmy connection pool."""
     cursor = AsyncMock(name="cursor")
     cursor.fetchall = AsyncMock(return_value=[])
@@ -122,7 +127,7 @@ def make_mock_pool():
     return pool, conn, cursor
 
 
-def make_bot(pool=None):
+def make_bot(pool: object = None) -> tuple[MagicMock, object]:
     """Create a mock bot and set it as the global _bot."""
     if pool is None:
         pool, _, _ = make_mock_pool()
@@ -133,14 +138,14 @@ def make_bot(pool=None):
 
 
 @pytest.fixture
-def pool_conn_cursor():
+def pool_conn_cursor() -> tuple[Any, Any, Any]:
     """Fixture returning (pool, conn, cursor) tuple."""
     pool, conn, cursor = make_mock_pool()
     return pool, conn, cursor
 
 
 @pytest.fixture(autouse=True)
-def reset_globals():
+def reset_globals() -> Iterator[None]:
     """Reset global state in api.py between tests."""
     set_bot(None)
     from api import _blacklist_cache, _guild_config_cache
@@ -150,7 +155,7 @@ def reset_globals():
 
 
 @pytest.fixture
-def bot_with_pool(pool_conn_cursor):
+def bot_with_pool(pool_conn_cursor: tuple[Any, Any, Any]) -> tuple[Any, Any]:
     """Fixture that sets up a global bot and returns (bot, cursor)."""
     pool, conn, cursor = pool_conn_cursor
     bot = MagicMock(name="bot")
@@ -167,7 +172,7 @@ class TestExecuteQuery:
     """Tests for execute_query - core query execution."""
 
     @pytest.mark.asyncio
-    async def test_returns_fetchall_results(self, bot_with_pool):
+    async def test_returns_fetchall_results(self, bot_with_pool: tuple[MagicMock, AsyncMock]):
         """Should return rows from cursor.fetchall()."""
         _, cursor = bot_with_pool
         cursor.fetchall.return_value = [("active", 1)]
