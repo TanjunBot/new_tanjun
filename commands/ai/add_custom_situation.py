@@ -4,8 +4,8 @@ import discord
 
 import config
 import utility
-from api import addCustomSituation, getCustomSituation, getCustomSituationFromUser
 from localizer import tanjunLocalizer
+from services.ai_service import AiService, CreateSituationParams
 
 
 async def add_custom_situation(  # type: ignore[no-untyped-def]
@@ -96,7 +96,7 @@ async def add_custom_situation(  # type: ignore[no-untyped-def]
         await command_info.reply(embed=embed)
         return
 
-    custom_situation = await getCustomSituation(name=name)
+    custom_situation = await AiService.get_situation(name=name)
 
     is_admin = command_info.user.id in config.adminIds
 
@@ -111,7 +111,7 @@ async def add_custom_situation(  # type: ignore[no-untyped-def]
         await command_info.reply(embed=embed)
         return
 
-    user_custom_situation = await getCustomSituationFromUser(command_info.user.id)
+    user_custom_situation = await AiService.get_user_situation(command_info.user.id)
 
     if user_custom_situation and not is_admin:
         embed = utility.tanjunEmbed(
@@ -121,7 +121,7 @@ async def add_custom_situation(  # type: ignore[no-untyped-def]
         await command_info.reply(embed=embed)
         return
 
-    await addCustomSituation(
+    params = CreateSituationParams(
         name=name,
         user_id=(command_info.user.id if not is_admin else random.randint(100000000000000000, 999999999999999999)),
         situation=situation,
@@ -130,6 +130,7 @@ async def add_custom_situation(  # type: ignore[no-untyped-def]
         frequency_penalty=frequency_penalty,
         presence_penalty=presence_penalty,
     )
+    await AiService.create_situation(params)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.addcustom.success.title"),

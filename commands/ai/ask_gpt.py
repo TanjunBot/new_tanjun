@@ -3,9 +3,9 @@ import os
 from openai import AsyncOpenAI
 
 import utility
-from api import getToken, getTokenOverview, includeToToken, useToken
 from config import openAiKey
 from localizer import tanjunLocalizer
+from services.ai_service import AiService
 
 # Make OpenAI API key optional
 open_ai_key = openAiKey or os.getenv("OPENAI_API_KEY")
@@ -24,11 +24,11 @@ async def ask_gpt(
     frequency_penalty: float = 0,
     presence_penalty: float = 0,
 ) -> None:
-    token = await getToken(command_info.user.id)
+    token = await AiService.get_available_tokens(command_info.user.id)
 
     if not token:
-        await includeToToken(command_info.user.id)
-        token = await getToken(command_info.user.id)
+        await AiService.initialize_user(command_info.user.id)
+        token = await AiService.get_available_tokens(command_info.user.id)
 
     if token < 20:
         embed = utility.tanjunEmbed(
@@ -73,9 +73,16 @@ async def ask_gpt(
 
     token_cost = int(response.usage.total_tokens * 0.125)  # type: ignore[union-attr]
 
-    await useToken(command_info.user.id, token_cost)
+    consumed = await AiService.consume(command_info.user.id, token_cost)
+    if not consumed:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.notoken.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.notoken.description"),
+        )
+        await command_info.reply(embed=embed)
+        return
 
-    token_overview = await getTokenOverview(command_info.user.id)
+    token_overview = await AiService.get_token_overview(command_info.user.id)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.success.title", name=name),
@@ -88,9 +95,9 @@ async def ask_gpt(
             "commands.ai.ask.success.footer",
             cost=token_cost,
             token=token - token_cost if token - token_cost > 0 else 0,
-            free=token_overview.free_token,
-            plus=token_overview.plus_token,
-            paid=token_overview.paid_token,
+            free=token_overview.free_token if token_overview else 0,
+            plus=token_overview.plus_token if token_overview else 0,
+            paid=token_overview.paid_token if token_overview else 0,
         )
     )
     await command_info.reply(embed=embed)

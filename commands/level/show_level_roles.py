@@ -263,7 +263,7 @@ async def show_level_roles_command(command_info: command_info):
                                 level=group.level,
                                 role=f"{role_id}",
                             ),
-                            value=f"{level}|{role_id}",
+                            value=f"{group.level}|{role_id}",
                         )
                     )
 
