@@ -2,7 +2,7 @@ import discord
 
 from api import get_custom_formula, get_user_xp, get_xp_scaling, update_user_xp
 from localizer import tanjunLocalizer
-from utility import CommandInfo, get_level_for_xp, tanjunEmbed
+from utility import CommandInfo, get_level_for_xp_async, tanjunEmbed
 
 
 async def give_xp_command(command_info: CommandInfo, user: discord.Member, amount: int) -> None:
@@ -44,8 +44,8 @@ async def give_xp_command(command_info: CommandInfo, user: discord.Member, amoun
     scaling = await get_xp_scaling(str(command_info.guild.id))
     custom_formula = await get_custom_formula(str(command_info.guild.id))
 
-    old_level = get_level_for_xp(current_xp, scaling, custom_formula)
-    new_level = get_level_for_xp(new_xp, scaling, custom_formula)
+    old_level = await get_level_for_xp_async(current_xp, scaling, custom_formula)
+    new_level = await get_level_for_xp_async(new_xp, scaling, custom_formula)
 
     await update_user_xp(str(command_info.guild.id), str(user.id), new_xp)
 

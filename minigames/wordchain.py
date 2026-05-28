@@ -1,22 +1,21 @@
-import contextlib
-
 import discord
 
 from api import check_if_opted_out, clear_wordchain, get_wordchain_last_user_id, get_wordchain_word, set_wordchain_word
 from localizer import tanjunLocalizer
-from utility import tanjunEmbed
+from utility import DiscordSafe, EmbedColor, tanjunEmbed
 
 
 async def wordchain(message: discord.Message) -> None:
     if message.guild is None:
         embed: discord.Embed = tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
             description=tanjunLocalizer.localize(
                 "en_US",
                 "errors.guildonly.description",
             ),
         )
-        await message.channel.send(embed=embed)
+        await DiscordSafe.send(message.channel, embed=embed)
         return
 
     wordchain_word = await get_wordchain_word(message.channel.id)
@@ -26,23 +25,22 @@ async def wordchain(message: discord.Message) -> None:
     locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"
 
     if await check_if_opted_out(message.author.id):
-        with contextlib.suppress(discord.Forbidden):
-            await message.author.send(tanjunLocalizer.localize(locale, "minigames.wordchain.opted_out"))
-        await message.delete()
+        await DiscordSafe.send_dm(message.author, tanjunLocalizer.localize(locale, "minigames.wordchain.opted_out"))
+        await DiscordSafe.delete(message)
         return
 
     content = message.content
 
     if not content:
-        await message.delete()
+        await DiscordSafe.delete(message)
         return
 
     if content.count(" ") > 0:
-        await message.delete()
+        await DiscordSafe.delete(message)
         return
 
     if str(await get_wordchain_last_user_id(message.channel.id)) == str(message.author.id):
-        await message.delete()
+        await DiscordSafe.delete(message)
         return
 
     end_chars = (".", "?", "!", ";", ":")
@@ -52,6 +50,7 @@ async def wordchain(message: discord.Message) -> None:
             await clear_wordchain(message.channel.id)
             await set_wordchain_word(channel_id=message.channel.id, guild_id=message.guild.id, word="", worder_id="nobody")
             embed = tanjunEmbed(
+                colour=EmbedColor.SUCCESS,
                 title=tanjunLocalizer.localize(locale, "minigames.wordchain.finished.title"),
                 description=tanjunLocalizer.localize(
                     locale,
@@ -59,7 +58,7 @@ async def wordchain(message: discord.Message) -> None:
                     sentence=wordchain_word + content,
                 ),
             )
-            await message.channel.send(embed=embed)
+            await DiscordSafe.send(message.channel, embed=embed)
             return
 
     if content == ",":

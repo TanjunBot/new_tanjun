@@ -238,7 +238,7 @@ Update scripts for Linux (`update.sh`) and Windows (`update.bat`) are included i
 
 We welcome contributions! Please check the [issue tracker](https://github.com/TanjunBot/new_tanjun/issues) for open issues or feature requests.
 
-For setup instructions and guidelines, see CONTRIBUTING.md (coming soon).
+For setup instructions and guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Pre-commit Hooks
 

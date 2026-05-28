@@ -8,7 +8,7 @@ from localizer import tanjunLocalizer
 from utility import (
     LEVEL_SCALINGS,
     command_info,
-    get_xp_for_level,
+    get_xp_for_level_async,
     tanjunEmbed,
 )
 
@@ -106,7 +106,7 @@ async def change_xp_scaling_command(command_info: command_info, scaling: str, cu
     )
 
     # Add field to show XP required for first 5 levels
-    xp_examples = "\n".join([f"Level {i}: {get_xp_for_level(i, scaling, custom_formula)} XP" for i in range(1, 6)])
+    xp_examples = "\n".join([f"Level {i}: {await get_xp_for_level_async(i, scaling, custom_formula)} XP" for i in range(1, 6)])
     embed.add_field(
         name=tanjunLocalizer.localize(command_info.locale, "commands.level.changexpscaling.xp_examples"),
         value=xp_examples,
@@ -157,7 +157,7 @@ async def show_xp_scalings(command_info: command_info, start_level: int = 1, end
                         command_info.locale,
                         "commands.level.showxpscalings.data",
                         level=i,
-                        xp=get_xp_for_level(i, scaling, custom_formula if scaling == "custom" else None),
+                        xp=await get_xp_for_level_async(i, scaling, custom_formula if scaling == "custom" else None),
                     )
                     for i in range(current_start, current_end + 1)
                 ]

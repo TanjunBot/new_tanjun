@@ -1,8 +1,11 @@
+import asyncio
 import ast
 import bisect
 import collections
+import concurrent.futures
 import contextlib
 import datetime
+import enum
 import gzip
 import logging
 import math
@@ -41,7 +44,18 @@ from config import (
     bytebin_username,
     giphyAPIKey,
 )
-from utils.async_io import _io_executor
+from utils.async_io import run_blocking
+
+
+class EmbedColor(enum.IntEnum):
+    """Standardized embed colors for semantic use across the bot."""
+
+    BRAND = 0xCB33F5  # Default for info/neutral messages
+    SUCCESS = 0x4BB543  # Green: success confirmations
+    WARNING = 0xFFBF00  # Yellow: warnings, rate limits
+    ERROR = 0xE74C3C  # Red: errors, failures
+    INFO = 0x3498DB  # Blue: information
+    TIMEOUT = 0x95A5A6  # Gray: disabled/timeout
 
 
 class EmbedProxy:
@@ -175,8 +189,8 @@ class TanjunEmbed:
     def __init__(
         self,
         *,
-        colour: int | discord.Colour | None = 0xCB33F5,
-        color: int | discord.Colour | None = 0xCB33F5,
+        colour: int | discord.Colour | EmbedColor | None = None,
+        color: int | discord.Colour | EmbedColor | None = None,
         title: Any | None = None,
         type="rich",
         url: Any | None = None,
@@ -184,6 +198,8 @@ class TanjunEmbed:
         timestamp: datetime.datetime | None = None,
     ):
         self.colour = colour if colour is not None else color
+        if self.colour is None:
+            self.colour = EmbedColor.BRAND
         self.title: str | None = title
         self.type = type
         self.url: str | None = url
@@ -927,20 +943,12 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
         return []
 
 
-def missingLocalization(locale: str) -> None:
-    future = _io_executor.submit(_missingLocalization, locale)
-    future.add_done_callback(_handle_submit_exception)
+async def missingLocalization(locale: str) -> None:
+    """Create a GitHub issue reporting a missing localization."""
+    await run_blocking(_sync_create_missing_localization_issue, locale)
 
 
-def _handle_submit_exception(future) -> None:
-    """Exception handler for background executor tasks."""
-    try:
-        future.result()
-    except Exception:
-        logging.exception("Exception in background executor task")
-
-
-def _missingLocalization(locale: str) -> None:
+def _sync_create_missing_localization_issue(locale: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("missing localization")
@@ -951,12 +959,12 @@ def _missingLocalization(locale: str) -> None:
     )
 
 
-def addFeedback(content: str, author: str) -> None:
-    future = _io_executor.submit(_addFeedback, content, author)
-    future.add_done_callback(_handle_submit_exception)
+async def addFeedback(content: str, author: str) -> None:
+    """Create a GitHub issue with user feedback."""
+    await run_blocking(_sync_create_feedback_issue, content, author)
 
 
-def _addFeedback(content: str, author: str) -> None:
+def _sync_create_feedback_issue(content: str, author: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("Feedback")
@@ -1016,6 +1024,7 @@ class LevelThresholdCache:
     _thresholds: collections.OrderedDict[tuple[str, str | None], tuple[list[int], int]] = collections.OrderedDict()
     _MAX_LEVEL = 10000
     _MAX_ENTRIES = 50  # Prevent unbounded growth: ~50 scaling/formula combos max
+    _lock: asyncio.Lock = asyncio.Lock()
 
     @classmethod
     def get_level_for_xp(cls, xp: int, scaling: str, custom_formula: str | None = None) -> int:
@@ -1058,6 +1067,60 @@ class LevelThresholdCache:
                 cls._thresholds.popitem(last=False)
         return bisect.bisect_right(thresholds, xp)
 
+    @classmethod
+    async def get_level_for_xp_async(cls, xp: int, scaling: str, custom_formula: str | None = None) -> int:
+        """Async version that runs CPU-bound formula evaluation in a thread executor.
+
+        Only used for custom formulas (built-in scalings use the fast O(1) sync path).
+        """
+        # Only custom formulas reach here
+        effective_formula = custom_formula
+        key = (scaling, effective_formula)
+        entry = cls._thresholds.get(key)
+        thresholds: list[int] | None
+        max_level: int
+        if entry is not None:
+            thresholds, max_level = entry
+        else:
+            thresholds = None
+            max_level = cls._MAX_LEVEL
+
+        if thresholds is None or thresholds[-1] < xp:
+            # Build or extend thresholds if needed
+            async with cls._lock:
+                # Re-check after acquiring lock (another coroutine may have built it)
+                entry = cls._thresholds.get(key)
+                if entry is not None:
+                    thresholds, max_level = entry
+                    if thresholds is not None and thresholds[-1] >= xp:
+                        return bisect.bisect_right(thresholds, xp)
+
+                # Use local list to avoid mutating shared state during await
+                if thresholds is None:
+                    start_level = 1
+                    new_thresholds = []
+                    max_level = cls._MAX_LEVEL
+                else:
+                    # Extend from current; don't rebuild from scratch
+                    if max_level >= cls._MAX_LEVEL and thresholds[-1] >= xp:
+                        return bisect.bisect_right(thresholds, xp)
+                    start_level = len(thresholds) + 1
+                    new_thresholds = thresholds.copy()
+                    max_level = cls._MAX_LEVEL
+                for level in range(start_level, max_level + 1):
+                    xp_needed = await get_xp_for_level_async(level, scaling, effective_formula)
+                    new_thresholds.append(xp_needed)
+                    if new_thresholds[-1] > xp and level >= start_level + 10:
+                        max_level = level
+                        break
+                # Atomic assignment to shared cache
+                cls._thresholds[key] = (new_thresholds, max_level)
+                # Evict oldest entries if cache exceeds limit
+                while len(cls._thresholds) > cls._MAX_ENTRIES:
+                    cls._thresholds.popitem(last=False)
+                thresholds = new_thresholds
+        return bisect.bisect_right(thresholds, xp)
+
 
 operators = {
     ast.Add: op.add,
@@ -1077,6 +1140,16 @@ def sqrt_n(x: float, n: float = 2) -> float:
 
 def log_n(x: float, base: float = math.e) -> float:
     return math.log(x, base)
+
+
+# Thread pool executor for CPU-bound formula evaluation
+_eval_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+
+
+async def eval_expr_async(expr: str, variables=None) -> float:
+    """Async version of eval_expr that runs the CPU-bound AST evaluation in a thread executor."""
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(_eval_executor, eval_expr, expr, variables)
 
 
 def eval_expr(expr: str, variables=None) -> float:
@@ -1165,6 +1238,22 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None
     return math.floor(result)
 
 
+async def get_xp_for_level_async(level: int, scaling: str, custom_formula: str | None = None) -> int:
+    """Async version of get_xp_for_level that runs CPU-bound formula evaluation in a thread executor."""
+    if level <= 0:
+        return 0
+    if scaling == "custom" and custom_formula:
+        try:
+            result = await eval_expr_async(custom_formula.replace("level", str(level)))
+        except Exception:
+            return 0
+    else:
+        result = LEVEL_SCALINGS.get(scaling, LEVEL_SCALINGS["medium"])(level)
+    if isinstance(result, complex):
+        return 0
+    return math.floor(result)
+
+
 def get_level_for_xp(xp: int, scaling: str, custom_formula: str | None = None) -> int:
     """Get the level for a given XP value.
 
@@ -1172,6 +1261,17 @@ def get_level_for_xp(xp: int, scaling: str, custom_formula: str | None = None) -
     inversion of the formula. For custom formulas, binary search is used.
     """
     return LevelThresholdCache.get_level_for_xp(xp, scaling, custom_formula)
+
+
+async def get_level_for_xp_async(xp: int, scaling: str, custom_formula: str | None = None) -> int:
+    """Async version of get_level_for_xp for custom formulas.
+
+    For built-in scalings, delegates to the O(1) sync version.
+    For custom formulas, uses the async eval to prevent event loop blocking.
+    """
+    if scaling != "custom":
+        return get_level_for_xp(xp, scaling, custom_formula)
+    return await LevelThresholdCache.get_level_for_xp_async(xp, scaling, custom_formula)
 
 
 def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
@@ -1334,5 +1434,188 @@ def addThousandsSeparator(number: int) -> str:
     return f"{number:,}".replace(",", " ")
 
 
+class SafeInteraction:
+    """Helper for safely responding to Discord interactions, preventing double-respond errors.
+
+    Use instead of ``interaction.response.send_message()``,
+    ``interaction.response.defer()``, and ``interaction.edit_original_response()``
+    to handle race conditions when ``interaction_check`` or other code paths
+    may have already responded.
+
+    Usage::
+
+        embed = utility.tanjunEmbed(title="Done", description="Operation complete.")
+        await SafeInteraction.respond(interaction, embed=embed)
+    """
+
+    @staticmethod
+    async def respond(
+        interaction: discord.Interaction,
+        embed: discord.Embed | None = None,
+        content: str | None = None,
+        ephemeral: bool = False,
+        view: discord.ui.View | None = None,
+    ) -> None:
+        """Respond to an interaction, safely handling already-responded state.
+
+        If the interaction has already been responded to, this falls back to
+        ``interaction.followup.send()`` instead of raising.
+        """
+        kwargs: dict[str, Any] = {"ephemeral": ephemeral}
+        if embed is not None:
+            kwargs["embed"] = embed
+        if content is not None:
+            kwargs["content"] = content
+        if view is not None:
+            kwargs["view"] = view
+
+        if interaction.response.is_done():
+            await interaction.followup.send(**kwargs)
+        else:
+            try:
+                await interaction.response.send_message(**kwargs)
+            except discord.InteractionResponded:
+                await interaction.followup.send(**kwargs)
+
+    @staticmethod
+    async def defer(
+        interaction: discord.Interaction,
+        ephemeral: bool = False,
+    ) -> None:
+        """Safely defer an interaction, skipping if already done."""
+        if not interaction.response.is_done():
+            try:
+                await interaction.response.defer(ephemeral=ephemeral)
+            except discord.InteractionResponded:
+                pass  # Already responded, silently ignore
+
+    @staticmethod
+    async def edit(
+        interaction: discord.Interaction,
+        embed: discord.Embed | None = None,
+        content: str | None = None,
+        view: discord.ui.View | None = None,
+    ) -> None:
+        """Safely edit the original interaction response.
+
+        If the interaction has not yet been responded to, this sends an initial
+        message instead of trying to edit a non-existent response.
+        """
+        kwargs: dict[str, Any] = {}
+        if embed is not None:
+            kwargs["embed"] = embed
+        if content is not None:
+            kwargs["content"] = content
+        if view is not None:
+            kwargs["view"] = view
+
+        if interaction.response.is_done():
+            await interaction.edit_original_response(**kwargs)
+        else:
+            try:
+                await interaction.response.send_message(**kwargs)
+            except discord.InteractionResponded:
+                await interaction.edit_original_response(**kwargs)
+
+
 tanjunEmbed = TanjunEmbed
 #: Backward-compatible alias so that ``from utility import tanjunEmbed`` still works.
+
+
+class DiscordSafe:
+    """Safely call Discord API methods with proper error handling.
+
+    Wraps common Discord operations in try/except guards for Forbidden,
+    NotFound, and HTTPException so that minigames and other features don't
+    crash when permissions are revoked or network errors occur.
+    """
+
+    @staticmethod
+    async def send(
+        channel: discord.abc.Messageable,
+        content: str | None = None,
+        embed: discord.Embed | None = None,
+    ) -> discord.Message | None:
+        """Send a message, returning None if it fails."""
+        try:
+            kwargs: dict[str, str | discord.Embed] = {}
+            if content is not None:
+                kwargs["content"] = content
+            if embed is not None:
+                kwargs["embed"] = embed
+            return await channel.send(**kwargs)
+        except discord.Forbidden:
+            logging.warning("Cannot send message in %s: Forbidden", channel.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error sending message in %s: %s", channel.id, e.status)
+        return None
+
+    @staticmethod
+    async def send_dm(user: discord.User | discord.Member, content: str) -> bool:
+        """Send a DM, returning True on success."""
+        try:
+            await user.send(content)
+            return True
+        except discord.Forbidden:
+            logging.warning("Cannot send DM to %s: Forbidden", user.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error sending DM to %s: %s", user.id, e.status)
+        return False
+
+    @staticmethod
+    async def delete(message: discord.Message) -> bool:
+        """Delete a message, returning True if it was deleted or already gone."""
+        try:
+            await message.delete()
+            return True
+        except discord.NotFound:
+            return True  # Already deleted
+        except discord.Forbidden:
+            logging.warning("Cannot delete message %s: Forbidden", message.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error deleting message %s: %s", message.id, e.status)
+        return False
+
+    @staticmethod
+    async def reply(
+        message: discord.Message,
+        embed: discord.Embed | None = None,
+        content: str | None = None,
+    ) -> discord.Message | None:
+        """Reply to a message, returning None if it fails."""
+        try:
+            kwargs: dict[str, str | discord.Embed] = {}
+            if content is not None:
+                kwargs["content"] = content
+            if embed is not None:
+                kwargs["embed"] = embed
+            return await message.reply(**kwargs)
+        except discord.Forbidden:
+            logging.warning("Cannot reply to %s: Forbidden", message.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error replying to %s: %s", message.id, e.status)
+        return None
+
+    @staticmethod
+    async def add_reaction(message: discord.Message, emoji: str) -> bool:
+        """Add a reaction, returning True on success."""
+        try:
+            await message.add_reaction(emoji)
+            return True
+        except discord.Forbidden:
+            logging.warning("Cannot add reaction to %s: Forbidden", message.id)
+        except discord.NotFound:
+            logging.warning(
+                "Cannot add reaction '%s' to message %s: Message not found (already deleted)",
+                emoji,
+                message.id,
+            )
+        except discord.HTTPException as e:
+            logging.warning(
+                "HTTP error adding reaction '%s' to message %s: status=%s, text=%s",
+                emoji,
+                message.id,
+                e.status,
+                e.text,
+            )
+        return False
