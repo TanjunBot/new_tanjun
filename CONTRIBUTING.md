@@ -188,7 +188,7 @@ This project uses [Ruff](https://docs.astral.sh/ruff/) for both linting and form
 **Key settings:**
 - Target version: Python 3.12
 - Max line length: configured in `[tool.ruff.format]`
-- Selected lint rules include: `E`, `W`, `F`, `I` (import sorting), `C901` (complexity), `UP` (pyupgrade), `A` (flake8-annotations), `B` (flake8-bugbear), `SIM` (simplify), `TID` (tidy imports), `N` (naming), `ANN` (annotations)
+- Selected lint rules include: `E`, `W`, `F`, `I` (import sorting), `C901` (complexity), `UP` (pyupgrade), `A` (flake8-builtins), `B` (flake8-bugbear), `SIM` (simplify), `TID` (tidy imports), `N` (naming), `ANN` (flake8-annotations)
 
 **Running Ruff manually:**
 
