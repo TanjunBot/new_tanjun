@@ -181,9 +181,10 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        # Wait until the database pool is initialized
-        while not hasattr(self.bot, "_pool") or self.bot._pool is None:
-            await asyncio.sleep(1)
+        # Wait until the database pool is initialized (signaled via Event)
+        if not hasattr(self.bot, "_pool_ready"):
+            self.bot._pool_ready = asyncio.Event()
+        await self.bot._pool_ready.wait()
 
         self.pollTwitchStreams.start()  # type: ignore[unused-awaitable]
         self.sendSendReadyGiveaways.start()  # type: ignore[unused-awaitable]
