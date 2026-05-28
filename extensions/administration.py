@@ -85,7 +85,7 @@ class AdministrationCog(commands.Cog):
     async def feedback(self, ctx: commands.Context, *, content: str) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
-        addFeedback(content, ctx.author.name)
+        await addFeedback(content, ctx.author.name)
         await ctx.send(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.feedback.added"))
 
     @commands.command()
@@ -299,7 +299,7 @@ class AdministrationCog(commands.Cog):
     async def testgithubauthtoken(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
-        missingLocalization("JUSTATEST.IGNORETHIS.JUSTATEST")
+        await missingLocalization("JUSTATEST.IGNORETHIS.JUSTATEST")
         await ctx.send("jup gemacht :)")
 
     @commands.command()

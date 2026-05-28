@@ -8,11 +8,11 @@ from discord.ext import commands
 
 import utility
 from api import (
-    LogBlacklistTarget,
+    LogBlacklistType,
     get_log_blacklist,
     get_log_channel,
     get_log_enable,
-    is_log_blacklisted,
+    is_log_entity_blacklisted,
 )
 from commands.logs.blacklist_channel.blacklist_channel import blacklist_channel
 from commands.logs.blacklist_channel.blacklist_list_channel import (
@@ -31,16 +31,9 @@ from commands.logs.configure_logs import configure_logs
 from commands.logs.remove_log_channel import remove_log_channel
 from commands.logs.set_log_channel import set_log_channel
 from localizer import tanjunLocalizer
-from utility import upload_image_to_imgbb, upload_to_tanjun_logs
+from utility import EmbedColor, upload_image_to_imgbb, upload_to_tanjun_logs
 
 embeds = {}  # type: ignore[var-annotated]
-
-
-class EmbedColors:
-    green = 0x4BB543
-    yellow = 0xFFBF00
-    red = 0xFF0000
-
 
 _log_queue: asyncio.Queue[tuple[str, discord.Embed]] = asyncio.Queue(maxsize=200)
 
@@ -345,7 +338,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, rule.guild.id, str(rule.channel_id)):
+        if await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -499,7 +492,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.automodRuleCreate.title"),
             description=description,
         )
@@ -511,7 +504,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, rule.guild.id, str(rule.channel_id)):
+        if await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -666,7 +659,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.automodRuleUpdate.title"),
             description=description,
         )
@@ -679,7 +672,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, rule.guild.id, str(rule.channel_id)):
+        if await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -834,7 +827,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
@@ -846,7 +839,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, execution.guild.id, str(execution.channel.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(execution.guild.id, str(execution.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
             return
 
         locale = execution.guild.preferred_locale if hasattr(execution.guild, "preferred_locale") else "en_US"
@@ -918,7 +911,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.automodRuleDelete.title"),
             description=description,
         )
@@ -930,7 +923,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, channel.guild.id, str(channel.id)):
+        if await is_log_entity_blacklisted(channel.guild.id, str(channel.id), LogBlacklistType.CHANNEL):
             return
 
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
@@ -1012,7 +1005,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.guild_channelDelete.title"),
             description=description,
         )
@@ -1024,7 +1017,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, channel.guild.id, str(channel.id)):
+        if await is_log_entity_blacklisted(channel.guild.id, str(channel.id), LogBlacklistType.CHANNEL):
             return
 
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
@@ -1087,7 +1080,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.guild_channelCreate.title"),
             description=description,
         )
@@ -1099,7 +1092,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, after.guild.id, str(after.id)):
+        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.CHANNEL):
             return
 
         locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
@@ -1372,7 +1365,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.guild_channelUpdate.title"),
             description=description,
         )
@@ -1798,7 +1791,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.guildUpdate.title"),
             description=description,
         )
@@ -1810,10 +1803,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, invite.guild.id, str(invite.inviter.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(invite.guild.id, str(invite.inviter.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, invite.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(invite.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in invite.inviter.roles):  # type: ignore[union-attr]
                 return
@@ -1893,7 +1886,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.inviteCreate.title"),
             description=description,
         )
@@ -1905,10 +1898,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, invite.guild.id, str(invite.inviter.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(invite.guild.id, str(invite.inviter.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, invite.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(invite.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in invite.inviter.roles):  # type: ignore[union-attr]
                 return
@@ -1985,7 +1978,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.inviteDelete.title"),
             description=description,
         )
@@ -1997,10 +1990,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, member.guild.id, str(member.id)):
+        if await is_log_entity_blacklisted(member.guild.id, str(member.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, member.guild.id)
+        blacklisted_roles = await get_log_blacklist(member.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in member.roles):
                 return
@@ -2014,7 +2007,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
@@ -2026,10 +2019,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, member.guild.id, str(member.id)):
+        if await is_log_entity_blacklisted(member.guild.id, str(member.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, member.guild.id)
+        blacklisted_roles = await get_log_blacklist(member.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in member.roles):
                 return
@@ -2050,7 +2043,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.memberJoin.title"),
             description=description,
         )
@@ -2062,10 +2055,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, after.guild.id, str(after.id)):
+        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, after.guild.id)
+        blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in after.roles):
                 return
@@ -2184,7 +2177,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.memberUpdate.title"),
             description=description,
         )
@@ -2201,12 +2194,13 @@ class LogsCog(commands.Cog):
             if not log_enable:
                 continue
 
-            if await is_log_blacklisted(LogBlacklistTarget.USER, guild.id, str(before.id)):
+            if await is_log_entity_blacklisted(guild.id, str(before.id), LogBlacklistType.USER):
                 continue
 
-            blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, guild.id)
-            if any(any(str(role.id) == blacklisted_role for role in user.roles) for blacklisted_role in blacklisted_roles):
-                continue
+            blacklisted_roles = await get_log_blacklist(guild.id, LogBlacklistType.ROLE)
+            for blacklisted_role in blacklisted_roles:
+                if any(str(role.id) == blacklisted_role for role in user.roles):
+                    continue
 
             locale = str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US"
             description_parts = []
@@ -2253,7 +2247,7 @@ class LogsCog(commands.Cog):
             description = "\n".join(description_parts)
 
             embed = discord.Embed(
-                color=EmbedColors.yellow,
+                color=EmbedColor.WARNING,
                 title=tanjunLocalizer.localize(locale, "logs.userUpdate.title"),
                 description=description,
             )
@@ -2265,10 +2259,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, user.guild.id, str(user.id)):
+        if await is_log_entity_blacklisted(user.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, user.guild.id)
+        blacklisted_roles = await get_log_blacklist(user.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in user.roles):
                 return
@@ -2289,7 +2283,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.memberBan.title"),
             description=description,
         )
@@ -2301,7 +2295,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, guild.id, str(user.id)):
+        if await is_log_entity_blacklisted(guild.id, str(user.id), LogBlacklistType.USER):
             return
 
         locale = str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US"
@@ -2326,7 +2320,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.memberUnban.title"),
             description=description,
         )
@@ -2338,10 +2332,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, after.guild.id, str(after.id)):
+        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, after.guild.id)
+        blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in after.roles):
                 return
@@ -2368,7 +2362,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.presenceUpdate.title"),
             description=description,
         )
@@ -2380,13 +2374,13 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, after.guild.id, str(after.author.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(after.guild.id, str(after.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, after.guild.id, str(after.channel.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(after.guild.id, str(after.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, after.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in after.author.roles):  # type: ignore[union-attr]
                 return
@@ -2512,7 +2506,7 @@ class LogsCog(commands.Cog):
             description = description[:3000] + f" {truncated_notice}"  # type: ignore[possibly-undefined]
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.messageEdit.title"),
             description=description,
         )
@@ -2532,13 +2526,13 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, message.guild.id, str(message.author.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(message.guild.id, str(message.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, message.guild.id, str(message.channel.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(message.guild.id, str(message.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, message.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(message.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in message.author.roles):  # type: ignore[union-attr]
                 return
@@ -2608,7 +2602,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.messageDelete.title"),
             description=description,
         )
@@ -2622,13 +2616,13 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, reaction.guild.id, str(user.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, reaction.guild.id, str(reaction.message.channel.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, reaction.guild.id)
+        blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in user.roles):
                 return
@@ -2650,7 +2644,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.reactionAdd.title"),
             description=description,
         )
@@ -2662,13 +2656,13 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.USER, reaction.guild.id, str(user.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_blacklisted(LogBlacklistTarget.CHANNEL, reaction.guild.id, str(reaction.message.channel.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
             return
 
-        blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, reaction.guild.id)
+        blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
             if any(str(role.id) == blacklisted_role for role in user.roles):
                 return
@@ -2690,7 +2684,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.reactionRemove.title"),
             description=description,
         )
@@ -2768,7 +2762,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.green,
+            color=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(locale, "logs.guildRoleCreate.title"),
             description=description,
         )
@@ -2847,7 +2841,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.red,
+            color=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(locale, "logs.guildRoleDelete.title"),
             description=description,
         )
@@ -2976,7 +2970,7 @@ class LogsCog(commands.Cog):
         description = "\n".join(description_parts)
 
         embed = discord.Embed(
-            color=EmbedColors.yellow,
+            color=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.title"),
             description=description,
         )

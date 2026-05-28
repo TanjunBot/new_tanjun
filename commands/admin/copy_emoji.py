@@ -7,6 +7,7 @@ from aiohttp import ClientTimeout
 
 import utility
 from localizer import tanjunLocalizer
+from utility import EmbedColor
 
 
 async def copy_emoji(
@@ -19,6 +20,7 @@ async def copy_emoji(
         and not command_info.channel.permissions_for(command_info.user).manage_emojis
     ):
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copyEmoji.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
@@ -31,6 +33,7 @@ async def copy_emoji(
     assert command_info.guild is not None
     if not command_info.guild.me.guild_permissions.manage_emojis:
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(
                 command_info.locale,
                 "commands.admin.copyEmoji.missingPermissionBot.title",
@@ -49,6 +52,7 @@ async def copy_emoji(
 
     if not matches:
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copyEmoji.error.noEmojis.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
@@ -111,6 +115,7 @@ async def copy_emoji(
         # Handle different response scenarios
         if not successful_emojis:
             embed = utility.tanjunEmbed(
+                colour=EmbedColor.ERROR,
                 title=tanjunLocalizer.localize(
                     command_info.locale,
                     "commands.admin.copyEmoji.error.limitReached.title",
@@ -122,6 +127,7 @@ async def copy_emoji(
             )
         elif len(successful_emojis) == 1 and not failed_emojis:
             embed = utility.tanjunEmbed(
+                colour=EmbedColor.SUCCESS,
                 title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copyEmoji.success.title"),
                 description=tanjunLocalizer.localize(
                     command_info.locale,
@@ -147,6 +153,7 @@ async def copy_emoji(
                 )
 
             embed = utility.tanjunEmbed(
+                colour=EmbedColor.SUCCESS if not failed_emojis else EmbedColor.WARNING,
                 title=tanjunLocalizer.localize(
                     command_info.locale,
                     (
@@ -163,6 +170,7 @@ async def copy_emoji(
     except Exception:
         logging.exception("Unexpected error in copy_emoji command")
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copyEmoji.error.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copyEmoji.error.description"),
         )

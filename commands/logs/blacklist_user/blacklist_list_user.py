@@ -1,18 +1,7 @@
 import discord
 
 import utility
-from api import (
-    LogBlacklistTarget,
-)
-from api import (
-    add_log_blacklist as add_log_blacklist_api,
-)
-from api import (
-    get_log_blacklist as get_log_blacklist_api,
-)
-from api import (
-    remove_log_blacklist as remove_log_blacklist_api,
-)
+from api import LogBlacklistType, add_log_blacklist, get_log_blacklist, remove_log_blacklist
 from localizer import tanjunLocalizer
 
 
@@ -31,7 +20,7 @@ async def blacklist_list_user(command_info: utility.command_info):
         await command_info.reply(embed=embed)
         return
 
-    blacklisted_users = await get_log_blacklist_api(LogBlacklistTarget.USER, command_info.guild.id)
+    blacklisted_users = await get_log_blacklist(command_info.guild.id, LogBlacklistType.USER)
 
     class BlacklistView(discord.ui.View):
         def __init__(self, users: list, locale: str, guild: discord.Guild):
@@ -44,7 +33,7 @@ async def blacklist_list_user(command_info: utility.command_info):
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
         async def remove_user(self, interaction: discord.Interaction, button: discord.ui.Button):
             user_id = self.users[self.selected_index]
-            await remove_log_blacklist_api(LogBlacklistTarget.USER, self.guild.id, user_id)
+            await remove_log_blacklist(self.guild.id, user_id, LogBlacklistType.USER)
             self.users = tuple(x for x in self.users if x != user_id)
             await self.update_view(interaction)
 
@@ -61,7 +50,7 @@ async def blacklist_list_user(command_info: utility.command_info):
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             if interaction.data["component_type"] == 5:  # UserSelect
                 user_id = interaction.data["values"][0]
-                await add_log_blacklist_api(LogBlacklistTarget.USER, self.guild.id, user_id)
+                await add_log_blacklist(self.guild.id, user_id, LogBlacklistType.USER)
                 self.users += (user_id,)
                 await self.update_view(interaction)
             return True

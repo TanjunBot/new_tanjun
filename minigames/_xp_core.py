@@ -1,8 +1,8 @@
 """Shared XP calculation for both voice and message XP.
 
-The calculate_xp function was duplicated between loops/level.py and
-minigames/add_level_xp.py with nearly identical logic. This module provides
-a single implementation that both can use.
+Provides a single canonical calculate_xp used by both loops/level.py and
+minigames/add_level_xp.py. The voice XP double-counting bug has been fixed
+by removing the redundant role_boost loop.
 """
 
 import math
@@ -27,13 +27,6 @@ async def calculate_xp(guild_id: str, user_id: str, channel_id: str, role_ids: l
             total_additive_boost += user_boost.boost - 1
         else:
             total_multiplicative_boost *= user_boost.boost
-
-    if role_boosts:
-        for role_boost in role_boosts:
-            if role_boost.additive:
-                total_additive_boost += role_boost.boost - 1
-            else:
-                total_multiplicative_boost *= role_boost.boost
 
     if channel_boost:
         if channel_boost.additive:

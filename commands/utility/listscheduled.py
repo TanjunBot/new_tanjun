@@ -4,9 +4,9 @@ import discord
 from discord.ui import Button, View
 
 import utility
-from api import get_scheduled_messages
 from localizer import tanjunLocalizer
 from models import ScheduledMessageModel
+from services.scheduled_message_service import ScheduledMessageService
 
 MESSAGES_PER_PAGE = 1
 MAX_CONTENT_LENGTH = 1000  # Maximum length for message content preview
@@ -165,7 +165,7 @@ async def list_scheduled_messages(command_info: utility.CommandInfo) -> None:
             if self.message is not None:
                 await self.message.edit(view=discord.ui.View())
 
-    messages = await get_scheduled_messages(command_info.user.id)
+    messages = await ScheduledMessageService.get_user_messages(str(command_info.user.id))
 
     if not messages:
         embed = utility.tanjunEmbed(

@@ -31518,5 +31518,277 @@
     "context": "Generic fallback description for unhandled errors",
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "errors.permission.title",
+    "source_string": "Permission Denied",
+    "translation": "Zugriff verweigert",
+    "context": "Title for permission denied error embeds",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.description",
+    "source_string": "You don't have permission to use this command.",
+    "translation": "Du hast keine Berechtigung, diesen Befehl zu verwenden.",
+    "context": "Description for generic permission denied error",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.bot_cannot_send",
+    "source_string": "I don't have permission to send messages in that channel.",
+    "translation": "Ich habe keine Berechtigung, Nachrichten in diesem Kanal zu senden.",
+    "context": "Error when bot can't send messages",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.bot_cannot_embed",
+    "source_string": "I don't have permission to send embeds in that channel.",
+    "translation": "Ich habe keine Berechtigung, Embeds in diesem Kanal zu senden.",
+    "context": "Error when bot can't send embeds",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.bot_cannot_read",
+    "source_string": "I don't have permission to read messages in that channel.",
+    "translation": "Ich habe keine Berechtigung, Nachrichten in diesem Kanal zu lesen.",
+    "context": "Error when bot can't read messages",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.bot_cannot_react",
+    "source_string": "I don't have permission to add reactions in that channel.",
+    "translation": "Ich habe keine Berechtigung, Reaktionen in diesem Kanal hinzuzufügen.",
+    "context": "Error when bot can't add reactions",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.bot_needs_manage_roles",
+    "source_string": "I need the \"Manage Roles\" permission to do this.",
+    "translation": "Ich benötige die \"Rollen verwalten\"-Berechtigung, um dies zu tun.",
+    "context": "Error when bot needs manage roles permission",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.bot_needs_manage_channels",
+    "source_string": "I need the \"Manage Channels\" permission to do this.",
+    "translation": "Ich benötige die \"Kanäle verwalten\"-Berechtigung, um dies zu tun.",
+    "context": "Error when bot needs manage channels permission",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.bot_needs_ban",
+    "source_string": "I need the \"Ban Members\" permission to do this.",
+    "translation": "Ich benötige die \"Mitglieder bannen\"-Berechtigung, um dies zu tun.",
+    "context": "Error when bot needs ban permission",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.bot_needs_kick",
+    "source_string": "I need the \"Kick Members\" permission to do this.",
+    "translation": "Ich benötige die \"Mitglieder kicken\"-Berechtigung, um dies zu tun.",
+    "context": "Error when bot needs kick permission",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.user_needs_manage_messages",
+    "source_string": "You need the \"Manage Messages\" permission to do this.",
+    "translation": "Du benötigst die \"Nachrichten verwalten\"-Berechtigung, um dies zu tun.",
+    "context": "Error when user needs manage messages permission",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.user_needs_administrator",
+    "source_string": "You need Administrator permissions to do this.",
+    "translation": "Du benötigst Administrator-Berechtigungen, um dies zu tun.",
+    "context": "Error when user needs admin permission",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.permission.hierarchy",
+    "source_string": "You cannot manage this user/role — they are above you in the role hierarchy.",
+    "translation": "Du kannst diesen Benutzer/diese Rolle nicht verwalten — sie sind in der Rollenhierarchie über dir.",
+    "context": "Error when target is above user in hierarchy",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.not_found.title",
+    "source_string": "Not Found",
+    "translation": "Nicht gefunden",
+    "context": "Title for not found error embeds",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.not_found.description",
+    "source_string": "The requested resource was not found.",
+    "translation": "Die angeforderte Ressource wurde nicht gefunden.",
+    "context": "Description for generic not found error",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.not_found.user",
+    "source_string": "Could not find that user.",
+    "translation": "Dieser Benutzer konnte nicht gefunden werden.",
+    "context": "Error when user is not found",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.not_found.channel",
+    "source_string": "Could not find that channel.",
+    "translation": "Dieser Kanal konnte nicht gefunden werden.",
+    "context": "Error when channel is not found",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.not_found.role",
+    "source_string": "Could not find that role.",
+    "translation": "Diese Rolle konnte nicht gefunden werden.",
+    "context": "Error when role is not found",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.not_found.message",
+    "source_string": "Could not find that message — it may have been deleted.",
+    "translation": "Diese Nachricht konnte nicht gefunden werden — sie wurde möglicherweise gelöscht.",
+    "context": "Error when message is not found",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.not_found.guild",
+    "source_string": "Could not find that server.",
+    "translation": "Dieser Server konnte nicht gefunden werden.",
+    "context": "Error when guild is not found",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.http.title",
+    "source_string": "Discord API Error",
+    "translation": "Discord API-Fehler",
+    "context": "Title for Discord HTTP error embeds",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.http.description",
+    "source_string": "Discord returned an error (code $status). Please try again.",
+    "translation": "Discord hat einen Fehler zurückgegeben (Code $status). Bitte versuche es erneut.",
+    "context": "Description for HTTP error with status code",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.http.rate_limit",
+    "source_string": "Too many requests! Please wait $retry_after seconds.",
+    "translation": "Zu viele Anfragen! Bitte warte $retry_after Sekunden.",
+    "context": "Error when rate limited by Discord API",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.http.timeout",
+    "source_string": "The request timed out. Discord may be experiencing issues.",
+    "translation": "Die Anfrage hat das Zeitlimit überschritten. Discord hat möglicherweise Probleme.",
+    "context": "Error when Discord request times out",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.interaction.title",
+    "source_string": "Interaction Expired",
+    "translation": "Interaktion abgelaufen",
+    "context": "Title for interaction timeout errors",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.interaction.description",
+    "source_string": "This interaction timed out. Please try again.",
+    "translation": "Diese Interaktion ist abgelaufen. Bitte versuche es erneut.",
+    "context": "Description when interaction times out",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.interaction.already_responded",
+    "source_string": "This button/menu was already used.",
+    "translation": "Dieser Button/dieses Menü wurde bereits verwendet.",
+    "context": "Error when interaction was already responded to",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.validation.title",
+    "source_string": "Invalid Input",
+    "translation": "Ungültige Eingabe",
+    "context": "Title for validation error embeds",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.validation.description",
+    "source_string": "The value you provided is not valid.",
+    "translation": "Der von dir angegebene Wert ist nicht gültig.",
+    "context": "Description for generic validation error",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.validation.too_long",
+    "source_string": "That input is too long (max $max_length characters).",
+    "translation": "Diese Eingabe ist zu lang (max. $max_length Zeichen).",
+    "context": "Error when input exceeds max length",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.validation.too_short",
+    "source_string": "That input is too short (min $min_length characters).",
+    "translation": "Diese Eingabe ist zu kurz (min. $min_length Zeichen).",
+    "context": "Error when input is below min length",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.validation.invalid_number",
+    "source_string": "That is not a valid number.",
+    "translation": "Das ist keine gültige Zahl.",
+    "context": "Error when input is not a valid number",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.validation.invalid_choice",
+    "source_string": "That is not a valid option.",
+    "translation": "Das ist keine gültige Option.",
+    "context": "Error when input is not a valid choice",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.unexpected.bug_report",
+    "source_string": "If this keeps happening, please report it to the bot developers.",
+    "translation": "Wenn dies weiterhin passiert, melde es bitte den Bot-Entwicklern.",
+    "context": "Bug report prompt for unexpected errors",
+    "labels": "unassigned",
+    "max_length": null
   }
 ]
