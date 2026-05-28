@@ -191,7 +191,7 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
 
     cashed_slowmode_delay = config.cached_slowmode
 
-    if not cashed_slowmode_delay:
+    if cashed_slowmode_delay is None:
         await _ds_service.cache_current_slowmode(
             str(message.channel.id), message.channel.slowmode_delay  # type: ignore[union-attr]
         )
@@ -201,11 +201,16 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
 
     # Track in memory via service
     channel_id: int = message.channel.id  # type: ignore[assignment]
+
+    # Prune old timestamps before appending
+    cutoff = now - config.reset_after
+    while _ds_service._recent_messages[channel_id] and _ds_service._recent_messages[channel_id][0] <= cutoff:
+        _ds_service._recent_messages[channel_id].popleft()
+
     _ds_service._recent_messages[channel_id].append(now)
 
     # Count messages in the time window
-    cutoff = now - config.reset_after
-    messages_in_window = sum(1 for t in _ds_service._recent_messages[channel_id] if t > cutoff)
+    messages_in_window = len(_ds_service._recent_messages[channel_id])
 
     reason_locale = tanjunLocalizer.localize(
         (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]
@@ -218,9 +223,13 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
         "commands.channel.dynamicslowmode.resetReason",
     )
 
-    new_slowmode = int(messages_in_window / config.per)
-    if new_slowmode != message.channel.slowmode_delay and new_slowmode > cashed_slowmode_delay:  # type: ignore[union-attr]
-        await message.channel.edit(slowmode_delay=new_slowmode, reason=reason_locale)  # type: ignore[union-attr]
-    elif new_slowmode <= cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
+    # Check if throttling is needed based on config threshold
+    if messages_in_window > config.messages:
+        # Calculate new slowmode: excess messages scaled by the per interval
+        new_slowmode = int((messages_in_window - config.messages) * config.per / config.messages)
+        if new_slowmode != message.channel.slowmode_delay and new_slowmode > cashed_slowmode_delay:  # type: ignore[union-attr]
+            await message.channel.edit(slowmode_delay=new_slowmode, reason=reason_locale)  # type: ignore[union-attr]
+    elif message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
+        # Reset to cached baseline when below threshold
         await message.channel.edit(slowmode_delay=cashed_slowmode_delay, reason=reset_reason_locale)  # type: ignore[union-attr]
         await _ds_service.restore_slowmode(str(message.channel.id))

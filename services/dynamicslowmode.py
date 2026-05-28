@@ -5,7 +5,6 @@ from __future__ import annotations
 import time
 from collections import defaultdict, deque
 from datetime import datetime
-from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -47,9 +46,9 @@ class DynamicSlowmodeService:
 
     def __init__(self) -> None:
         # In-memory message tracking per channel
-        # Maps channel_id -> deque of timestamps (maxlen=100 to bound memory usage)
+        # Maps channel_id -> deque of timestamps (pruned by reset_after window)
         self._recent_messages: dict[int, deque[float]] = defaultdict(
-            lambda: deque(maxlen=100)
+            lambda: deque()
         )
 
     # ------------------------------------------------------------------
@@ -84,6 +83,14 @@ class DynamicSlowmodeService:
     ) -> None:
         """Add a new dynamic slowmode configuration."""
         from api import add_dynamicslowmode
+
+        # Validate inputs before writing to database
+        if messages <= 0:
+            raise ValueError(f"messages must be positive (got {messages})")
+        if per <= 0:
+            raise ValueError(f"per must be positive (got {per})")
+        if reset_after <= 0:
+            raise ValueError(f"reset_after must be positive (got {reset_after})")
 
         await add_dynamicslowmode(guild_id, channel_id, messages, per, reset_after)
 
