@@ -1,11 +1,10 @@
-import contextlib
 import random
 
 import discord
 
 from api import check_if_opted_out
 from localizer import tanjunLocalizer
-from utility import tanjunEmbed
+from utility import DiscordSafe, tanjunEmbed
 
 
 async def _handle_guild_check(message: discord.Message) -> bool:
@@ -17,7 +16,7 @@ async def _handle_guild_check(message: discord.Message) -> bool:
         title=tanjunLocalizer.localize("en_US", "errors.guildonly.title"),
         description=tanjunLocalizer.localize("en_US", "errors.guildonly.description"),
     )
-    await message.channel.send(embed=embed)
+    await DiscordSafe.send(message.channel, embed=embed)
     return True
 
 
@@ -30,9 +29,8 @@ async def _handle_opted_out(message: discord.Message, locale: str) -> bool:
     if not await check_if_opted_out(message.author.id):
         return False
 
-    with contextlib.suppress(discord.Forbidden):
-        await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
-    await message.delete()
+    await DiscordSafe.send_dm(message.author, tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
+    await DiscordSafe.delete(message)
     return True
 
 
@@ -84,14 +82,14 @@ async def counting(
         if on_failure:
             await on_failure(message, locale, progress + 1 if progress is not None else 0)
         else:
-            await message.delete()
+            await DiscordSafe.delete(message)
         return
 
     if not content.isdigit():
         if on_failure:
             await on_failure(message, locale, progress + 1 if progress is not None else 0)
         else:
-            await message.delete()
+            await DiscordSafe.delete(message)
         return
 
     number = int(content)
@@ -100,7 +98,7 @@ async def counting(
         if on_failure:
             await on_failure(message, locale, progress + 1)
         else:
-            await message.delete()
+            await DiscordSafe.delete(message)
         return
 
     if config is not None:
@@ -112,11 +110,11 @@ async def counting(
         if on_double_count:
             await on_double_count(message, locale, progress + 1)
         else:
-            await message.delete()
+            await DiscordSafe.delete(message)
         return
 
     await increase_progress_func(message.channel.id, message.author.id)
     # nosec: B311
     if random.randint(1, 100) == 1:
-        await message.channel.send(str(progress + 2))
+        await DiscordSafe.send(message.channel, content=str(progress + 2))
         await increase_progress_func(message.channel.id, "me")

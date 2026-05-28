@@ -1336,3 +1336,92 @@ def addThousandsSeparator(number: int) -> str:
 
 tanjunEmbed = TanjunEmbed
 #: Backward-compatible alias so that ``from utility import tanjunEmbed`` still works.
+
+
+class DiscordSafe:
+    """Safely call Discord API methods with proper error handling.
+
+    Wraps common Discord operations in try/except guards for Forbidden,
+    NotFound, and HTTPException so that minigames and other features don't
+    crash when permissions are revoked or network errors occur.
+    """
+
+    @staticmethod
+    async def send(
+        channel: discord.abc.Messageable,
+        content: str | None = None,
+        embed: discord.Embed | None = None,
+    ) -> discord.Message | None:
+        """Send a message, returning None if it fails."""
+        try:
+            kwargs: dict[str, str | discord.Embed] = {}
+            if content is not None:
+                kwargs["content"] = content
+            if embed is not None:
+                kwargs["embed"] = embed
+            return await channel.send(**kwargs)
+        except discord.Forbidden:
+            logging.warning("Cannot send message in %s: Forbidden", channel.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error sending message in %s: %s", channel.id, e.status)
+        return None
+
+    @staticmethod
+    async def send_dm(user: discord.User | discord.Member, content: str) -> bool:
+        """Send a DM, returning True on success."""
+        try:
+            await user.send(content)
+            return True
+        except discord.Forbidden:
+            logging.warning("Cannot send DM to %s: Forbidden", user.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error sending DM to %s: %s", user.id, e.status)
+        return False
+
+    @staticmethod
+    async def delete(message: discord.Message) -> bool:
+        """Delete a message, returning True if it was deleted or already gone."""
+        try:
+            await message.delete()
+            return True
+        except discord.NotFound:
+            return True  # Already deleted
+        except discord.Forbidden:
+            logging.warning("Cannot delete message %s: Forbidden", message.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error deleting message %s: %s", message.id, e.status)
+        return False
+
+    @staticmethod
+    async def reply(
+        message: discord.Message,
+        embed: discord.Embed | None = None,
+        content: str | None = None,
+    ) -> discord.Message | None:
+        """Reply to a message, returning None if it fails."""
+        try:
+            kwargs: dict[str, str | discord.Embed] = {}
+            if content is not None:
+                kwargs["content"] = content
+            if embed is not None:
+                kwargs["embed"] = embed
+            return await message.reply(**kwargs)
+        except discord.Forbidden:
+            logging.warning("Cannot reply to %s: Forbidden", message.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error replying to %s: %s", message.id, e.status)
+        return None
+
+    @staticmethod
+    async def add_reaction(message: discord.Message, emoji: str) -> bool:
+        """Add a reaction, returning True on success."""
+        try:
+            await message.add_reaction(emoji)
+            return True
+        except discord.Forbidden:
+            logging.warning("Cannot add reaction to %s: Forbidden", message.id)
+        except discord.NotFound:
+            pass  # Message already deleted
+        except discord.HTTPException:
+            pass  # Invalid emoji or other transient error
+        return False
