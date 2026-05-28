@@ -78,14 +78,13 @@ class StatusIcon(enum.StrEnum):
     DISABLED = "❌"
 
 
-# Map of meaningful names to custom guild emoji IDs (from issue #1248).
-# Replace the placeholder IDs below with the actual emoji IDs from your
-# Discord server once they are created.
+# Map of friendly keys to guild emoji names (from issue #1332).
+# Maps friendly keys to the actual guild emoji names used in the Discord server.
 EMOJI_MAP: dict[str, str] = {
-    "checkmark": "<:check:PLACEHOLDER_ID>",
-    "cross": "<:cross:PLACEHOLDER_ID>",
-    "loading": "<a:loading:PLACEHOLDER_ID>",
-    "info": "<:info:PLACEHOLDER_ID>",
+    "checkmark": "check",
+    "cross": "cross",
+    "loading": "loading",
+    "info": "info",
 }
 
 
@@ -95,8 +94,10 @@ async def get_icon_emoji(
     *,
     fallback: str | None = None,
 ) -> str:
-    """Get a Discord guild emoji by name, falling back to a Unicode icon.
+    """Get a Discord guild emoji by friendly key, falling back to a Unicode icon.
 
+    Looks up the friendly key in ``EMOJI_MAP`` to find the actual guild emoji name.
+    If the key is not in the map, uses the key directly as the emoji name.
     If the guild emoji is not found (or the bot object is unavailable),
     ``fallback`` is returned; if ``fallback`` is ``None``, ``StatusIcon.INFO``
     is used as the ultimate default.
@@ -106,7 +107,7 @@ async def get_icon_emoji(
     bot:
         The bot client (used to look up ``bot.emojis``).
     emoji_name:
-        The name of the guild emoji to look up (e.g. ``"checkmark"``).
+        The friendly key to look up (e.g. ``"checkmark"``), or a direct emoji name.
     fallback:
         Unicode fallback when the guild emoji isn't available.
         ``None`` means ``StatusIcon.INFO.value``.
@@ -117,7 +118,10 @@ async def get_icon_emoji(
         A string safe for use in embed titles, field values, or
         message content.
     """
-    if emoji := discord.utils.get(bot.emojis, name=emoji_name):
+    # Look up the emoji name from the map, falling back to using the key directly
+    actual_emoji_name = EMOJI_MAP.get(emoji_name, emoji_name)
+
+    if emoji := discord.utils.get(bot.emojis, name=actual_emoji_name):
         return str(emoji)
     if fallback is not None:
         return fallback
