@@ -31689,16 +31689,16 @@
   },
   {
     "identifier": "errors.http.description",
-    "source_string": "Discord returned an error (code {status}). Please try again.",
-    "translation": "Discord hat einen Fehler zurückgegeben (Code {status}). Bitte versuche es erneut.",
+    "source_string": "Discord returned an error (code $status). Please try again.",
+    "translation": "Discord hat einen Fehler zurückgegeben (Code $status). Bitte versuche es erneut.",
     "context": "Description for HTTP error with status code",
     "labels": "unassigned",
     "max_length": null
   },
   {
     "identifier": "errors.http.rate_limit",
-    "source_string": "Too many requests! Please wait {retry_after} seconds.",
-    "translation": "Zu viele Anfragen! Bitte warte {retry_after} Sekunden.",
+    "source_string": "Too many requests! Please wait $retry_after seconds.",
+    "translation": "Zu viele Anfragen! Bitte warte $retry_after Sekunden.",
     "context": "Error when rate limited by Discord API",
     "labels": "unassigned",
     "max_length": null
@@ -31753,16 +31753,16 @@
   },
   {
     "identifier": "errors.validation.too_long",
-    "source_string": "That input is too long (max {max_length} characters).",
-    "translation": "Diese Eingabe ist zu lang (max. {max_length} Zeichen).",
+    "source_string": "That input is too long (max $max_length characters).",
+    "translation": "Diese Eingabe ist zu lang (max. $max_length Zeichen).",
     "context": "Error when input exceeds max length",
     "labels": "unassigned",
     "max_length": null
   },
   {
     "identifier": "errors.validation.too_short",
-    "source_string": "That input is too short (min {min_length} characters).",
-    "translation": "Diese Eingabe ist zu kurz (min. {min_length} Zeichen).",
+    "source_string": "That input is too short (min $min_length characters).",
+    "translation": "Diese Eingabe ist zu kurz (min. $min_length Zeichen).",
     "context": "Error when input is below min length",
     "labels": "unassigned",
     "max_length": null
