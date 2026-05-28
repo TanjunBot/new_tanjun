@@ -1,5 +1,3 @@
-# Unused imports:
-# from typing import Union
 import contextlib
 import random
 from math import sqrt

@@ -231,25 +231,6 @@ async def plot_function_command(
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             return interaction.user.id == self.plotter.author_id
 
-        # async def on_error(
-        #     self,
-        #     interaction: discord.Interaction,
-        #     error: Exception,
-        #     item: discord.ui.Item,
-        # ):
-        #     embed = utility.tanjunEmbed(
-        #         title=tanjunLocalizer.localize(
-        #             locale = self.plotter.command_info.locale,
-        #             key = "commands.math.plotfunction.error.title"
-        #         ),
-        #         description=tanjunLocalizer.localize(
-        #             locale = self.plotter.command_info.locale,
-        #             key = "commands.math.plotfunction.error.description",
-        #             er=str(error)
-        #         )
-        #     )
-        #     await interaction.response.send_message(embed=embed, ephemeral=True)
-
         # Zoom and move controls
         async def handle_zoom(self, interaction: discord.Interaction, factor: float) -> None:
             self.plotter.x_min *= factor  # type: ignore[assignment]

@@ -1,6 +1,3 @@
-# Unused imports:
-# from typing import List
-# import os
 import asyncio
 import difflib
 
@@ -2217,43 +2214,10 @@ class LogsCog(commands.Cog):
             description_parts.append(tanjunLocalizer.localize(locale, "logs.userUpdate.name", user=before.mention))
 
             if before.avatar != after.avatar:
-                # default_avatar_url = "https://cdn.discordapp.com/embed/avatars/0.png"
-                # url_locale = tanjunLocalizer.localize(
-                #     locale, "logs.userUpdate.guildAvatarLocales.url"
-                # )
-                # Upload old avatar to ImgBB
-                # avatar_bytes = (
-                #     await before.display_avatar.read()
-                #     if before.display_avatar
-                #     else None
-                # )  # Read the old avatar as bytes
-                # avatar_upload_response = (
-                #     await utility.upload_image_to_imgbb(avatar_bytes, "png")
-                #     if avatar_bytes
-                #     else {}
-                # )
-                # avatar_url_before = avatar_upload_response.get("data", {}).get(
-                #     "url", default_avatar_url
-                # )
-                # # Upload new avatar to ImgBB
-                # new_avatar_bytes = (
-                #     await after.display_avatar.read() if after.display_avatar else None
-                # )  # Read the new avatar as bytes
-                # new_avatar_upload_response = (
-                #     await utility.upload_image_to_imgbb(new_avatar_bytes, "png")
-                #     if new_avatar_bytes
-                #     else {}
-                # )
-                # new_avatar_url = new_avatar_upload_response.get("data", {}).get(
-                #     "url", default_avatar_url
-                # )
-
                 description_parts.append(
                     tanjunLocalizer.localize(
                         locale,
                         "logs.userUpdate.avatar",
-                        # before=f"[{url_locale}]({avatar_url_before})",
-                        # after=f"[{url_locale}]({new_avatar_url})",
                     )
                 )
 
@@ -2264,11 +2228,6 @@ class LogsCog(commands.Cog):
                 banner_bytes = await before.banner.read() if before.banner else None  # Read the old banner as bytes
                 banner_upload_response = await utility.upload_image_to_imgbb(banner_bytes, "png") if banner_bytes else {}
                 banner_url_before = banner_upload_response.get("data", {}).get("url", none_locale)  # type: ignore[union-attr]
-                """ Unused:
-                banner_url_after = (
-                    after.banner.url if after.banner else none_locale
-                )  # New banner URL
-                """
 
                 # Upload new banner to ImgBB
                 if after.banner:

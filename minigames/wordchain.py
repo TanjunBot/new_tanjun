@@ -1,5 +1,3 @@
-# Unused imports:
-# import random
 import contextlib
 
 import discord
