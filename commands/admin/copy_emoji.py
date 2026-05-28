@@ -1,3 +1,4 @@
+import logging
 import re
 
 import aiohttp
@@ -103,8 +104,9 @@ async def copy_emoji(
                 else:
                     static_count += 1
 
-            except Exception:
-                failed_emojis.append(match.group(0))
+        except Exception:
+            logging.exception("Failed to copy emoji %s (id=%s)", name, emoji_id)
+            failed_emojis.append(match.group(0))
 
         # Handle different response scenarios
         if not successful_emojis:
@@ -159,6 +161,7 @@ async def copy_emoji(
         await command_info.reply(embed=embed)
 
     except Exception:
+        logging.exception("Unexpected error in copy_emoji command")
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copyEmoji.error.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copyEmoji.error.description"),

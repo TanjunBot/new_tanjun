@@ -539,6 +539,7 @@ async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-d
         try:
             giveawaymessage = await giveaway_channel.fetch_message(int(giveaway.message_id))
         except Exception:
+            logging.exception("Failed to fetch giveaway message %s for no-participants path", giveaway.message_id)
             return
         if not giveawaymessage:
             return
@@ -603,6 +604,7 @@ async def endGiveaway(giveaway_id, client) -> None:  # type: ignore[no-untyped-d
     try:
         giveawaymessage = await giveaway_channel.fetch_message(int(giveaway.message_id))
     except Exception:
+        logging.exception("Failed to fetch giveaway message %s for winner announcement path", giveaway.message_id)
         return
     if not giveawaymessage:
         return

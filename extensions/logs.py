@@ -1,5 +1,6 @@
 import asyncio
 import difflib
+import logging
 
 import discord
 from discord import app_commands
@@ -72,7 +73,7 @@ async def log_event_consumer(bot: commands.Bot) -> None:
                 continue
             await destination_channel.send(embed=embed)
         except Exception:
-            pass  # Log failure but do not crash consumer
+            logging.exception("Error in log event consumer loop processing guild %s", guild_id)
 
 
 class ChannelBlacklistCommands(discord.app_commands.Group):
