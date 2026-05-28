@@ -667,7 +667,7 @@ class LogEnableModel(BaseModel):
             )
         guild_id = row[0]
         actual_values = row[1:]
-        values = {name: bool(v) for name, v in zip(cls._OPTION_KEYS, actual_values, strict=True)}
+        values = dict(zip(cls._OPTION_KEYS, actual_values, strict=True))
         return cls(guild_id=guild_id, **values)
 
     @classmethod
