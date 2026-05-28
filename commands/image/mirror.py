@@ -1,48 +1,42 @@
-import io
-from io import BytesIO
+"""Image mirror command — thin wrapper around ImageService."""
+
+from __future__ import annotations
 
 import discord
-from PIL import Image
 
-import utility
 from localizer import tanjunLocalizer
+from services.image_service import ImageOperation, ImageService
+from utility import CommandInfo, tanjunEmbed
 
 
-async def mirror(command_info: utility.CommandInfo, image: discord.Attachment, axis: str):  # type: ignore[no-untyped-def]
-    if isinstance(image, discord.Attachment) and not image.filename.endswith((".png", ".jpg", ".jpeg")):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.typenotsupported.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.typenotsupported.description"),
-        )
-        await command_info.reply(embed=embed)
-        return
-
-    if image.size > 8 * 1024 * 1024:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.filesize.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.filesize.description"),
-        )
-        await command_info.reply(embed=embed)
-        return
-
-    image = await image.read()  # type: ignore[assignment]
-    image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
-    if axis == "x":
-        image = image.transpose(Image.FLIP_LEFT_RIGHT)  # type: ignore[attr-defined]
-    elif axis == "y":
-        image = image.transpose(Image.FLIP_TOP_BOTTOM)  # type: ignore[attr-defined]
-    else:
-        embed = utility.tanjunEmbed(
+async def mirror(command_info: CommandInfo, image: discord.Attachment, axis: str) -> None:
+    """Mirror an image horizontally (x) or vertically (y)."""
+    if axis not in ("x", "y"):
+        embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.mirror.invalidaxis.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.mirror.invalidaxis.description"),
         )
         await command_info.reply(embed=embed)
         return
 
-    buffer = BytesIO()
-    image.save(buffer, format="png")  # type: ignore[call-arg, unused-coroutine]
-    buffer.seek(0)
-    embed = utility.tanjunEmbed(
+    error = ImageService.validate_attachment(image)
+    if error is not None:
+        embed = ImageService.format_error_embed(
+            str(command_info.locale),
+            error,
+            locale_prefix="image",
+        )
+        await command_info.reply(embed=embed)
+        return
+
+    image_bytes = await image.read()
+    operation = ImageOperation(mirror_axis=axis)
+    result_bytes = await ImageService.process(image_bytes, operation)
+
+    from io import BytesIO  # noqa: PLC0415
+
+    buffer = BytesIO(result_bytes)
+    embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.resize.success.title"),
         description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.resize.success.description"),
     )
