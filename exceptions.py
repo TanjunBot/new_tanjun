@@ -39,5 +39,9 @@ class RateLimitError(TanjunError):
     """Rate limit exceeded on an external API."""
 
 
-class TimeoutError(TanjunError):
+class OperationTimeoutError(TanjunError):
     """Operation timed out."""
+
+
+# Backward compatibility alias — deprecated, use OperationTimeoutError instead.
+TimeoutError = OperationTimeoutError

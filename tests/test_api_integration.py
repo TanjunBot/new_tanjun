@@ -130,7 +130,7 @@ async def integration_pool():
             for (stmt,) in await cursor.fetchall():
                 await cursor.execute(stmt)
             await conn.commit()
-    except DatabaseError:
+    except (DatabaseError, Exception):
         pass
 
     pool.close()
