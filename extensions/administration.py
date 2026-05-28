@@ -410,7 +410,7 @@ Das Tanjun-Team
                 continue
             sent_owners.append(owner.id)
 
-            with contextlib.suppress(Exception):
+            with contextlib.suppress(discord.Forbidden, discord.HTTPException):
                 await owner.send(
                     embed=tanjunEmbed(
                         title="Tanjun Update",
@@ -491,7 +491,7 @@ Das Tanjun-Team
             if not owner:
                 continue
 
-            with contextlib.suppress(Exception):
+            with contextlib.suppress(discord.Forbidden, discord.HTTPException):
                 await owner.send(
                     embed=tanjunEmbed(
                         title="Tanjun Update",

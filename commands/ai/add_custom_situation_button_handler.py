@@ -1,4 +1,6 @@
-import contextlib
+import logging
+
+import discord
 
 import utility
 from localizer import tanjunLocalizer
@@ -29,9 +31,8 @@ async def approve_custom_situation(interaction) -> None:  # type: ignore[no-unty
     await AiService.unlock_situation(situation_id)
     try:
         await situation_creator.send(embed=embed)
-    # flake8: noqa: E722
-    except:
-        pass
+    except (discord.Forbidden, discord.HTTPException):
+        logging.exception("Failed to send approval DM to situation creator")
     await interaction.channel.send("Situation wurde freigeschaltet!", delete_after=25)
 
 
@@ -58,6 +59,8 @@ async def deny_custom_situation(interaction) -> None:  # type: ignore[no-untyped
     )
 
     await AiService.delete_situation(situation_id)
-    with contextlib.suppress(BaseException):
+    try:
         await situation_creator.send(embed=embed)
+    except (discord.Forbidden, discord.HTTPException):
+        logging.exception("Failed to send denial DM to situation creator")
     await interaction.channel.send("Situation wurde gelöscht!", delete_after=25)

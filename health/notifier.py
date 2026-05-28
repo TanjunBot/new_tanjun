@@ -66,7 +66,7 @@ async def notify_health_failures(
     if channel is None:
         try:
             channel = await bot.fetch_channel(channel_id)
-        except Exception:
+        except (discord.Forbidden, discord.NotFound, discord.HTTPException):
             channel = None
 
     if channel is None:
