@@ -1815,7 +1815,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, invite.guild.id)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in invite.inviter.roles:  # type: ignore[union-attr]
+            if any(str(role.id) == blacklisted_role for role in invite.inviter.roles):  # type: ignore[union-attr]
                 return
 
         locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"  # type: ignore[union-attr]
@@ -1910,7 +1910,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, invite.guild.id)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in invite.inviter.roles:  # type: ignore[union-attr]
+            if any(str(role.id) == blacklisted_role for role in invite.inviter.roles):  # type: ignore[union-attr]
                 return
 
         locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"  # type: ignore[union-attr]
@@ -2002,7 +2002,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, member.guild.id)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in member.roles:
+            if any(str(role.id) == blacklisted_role for role in member.roles):
                 return
 
         locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
@@ -2031,7 +2031,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, member.guild.id)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in member.roles:
+            if any(str(role.id) == blacklisted_role for role in member.roles):
                 return
 
         locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
@@ -2067,7 +2067,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, after.guild.id)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in after.roles:
+            if any(str(role.id) == blacklisted_role for role in after.roles):
                 return
 
         locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
@@ -2205,9 +2205,8 @@ class LogsCog(commands.Cog):
                 continue
 
             blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, guild.id)
-            for blacklisted_role in blacklisted_roles:
-                if blacklisted_role in user.roles:
-                    continue
+            if any(any(str(role.id) == blacklisted_role for role in user.roles) for blacklisted_role in blacklisted_roles):
+                continue
 
             locale = str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US"
             description_parts = []
@@ -2271,7 +2270,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, user.guild.id)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in user.roles:
+            if any(str(role.id) == blacklisted_role for role in user.roles):
                 return
 
         locale = user.guild.preferred_locale if hasattr(user.guild, "preferred_locale") else "en_US"
@@ -2344,7 +2343,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, after.guild.id)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in after.roles:
+            if any(str(role.id) == blacklisted_role for role in after.roles):
                 return
 
         locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
@@ -2389,7 +2388,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, after.guild.id)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in after.author.roles:  # type: ignore[union-attr]
+            if any(str(role.id) == blacklisted_role for role in after.author.roles):  # type: ignore[union-attr]
                 return
 
         locale = after.guild.preferred_locale if hasattr(after, "preferred_locale") else "en_US"  # type: ignore[union-attr]
@@ -2541,7 +2540,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, message.guild.id)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in message.author.roles:  # type: ignore[union-attr]
+            if any(str(role.id) == blacklisted_role for role in message.author.roles):  # type: ignore[union-attr]
                 return
 
         locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"  # type: ignore[union-attr]
@@ -2631,7 +2630,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, reaction.guild.id)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in user.roles:
+            if any(str(role.id) == blacklisted_role for role in user.roles):
                 return
 
         locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
@@ -2671,7 +2670,7 @@ class LogsCog(commands.Cog):
 
         blacklisted_roles = await get_log_blacklist(LogBlacklistTarget.ROLE, reaction.guild.id)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in user.roles:
+            if any(str(role.id) == blacklisted_role for role in user.roles):
                 return
 
         locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"

@@ -3,8 +3,14 @@ import discord
 import utility
 from api import (
     LogBlacklistTarget,
+)
+from api import (
     add_log_blacklist as add_log_blacklist_api,
+)
+from api import (
     get_log_blacklist as get_log_blacklist_api,
+)
+from api import (
     remove_log_blacklist as remove_log_blacklist_api,
 )
 from localizer import tanjunLocalizer

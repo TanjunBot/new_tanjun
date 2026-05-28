@@ -2700,7 +2700,7 @@ async def add_log_blacklist(
 ) -> None:
     """Add an entity to a log blacklist."""
     table, column = _LOGBLACKLIST_TABLE_MAP[target]
-    query = f"INSERT INTO {table} (guild_id, {column}) VALUES (%s, %s)"
+    query = f"INSERT INTO {table} (guild_id, {column}) VALUES (%s, %s) ON CONFLICT (guild_id, {column}) DO NOTHING"
     await execute_action(query, (guild_id, entity_id))
 
 
@@ -2734,7 +2734,7 @@ async def is_log_blacklisted(
     query = f"SELECT {column} FROM {table} WHERE guild_id = %s AND {column} = %s"
     params = (guild_id, entity_id)
     result = await execute_query(query, params)
-    return result[0] if result else None
+    return result[0][0] if result else None
 
 
 
