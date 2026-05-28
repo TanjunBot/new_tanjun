@@ -87,20 +87,46 @@ class VoiceUserManager:
         2 participants are removed.
         """
         if await check_if_opted_out(user.id):
+            self.remove(user.id, user.guild.id)
             return
 
-        channel_members = after.channel.members if after.channel else []
-        active_members = [
+        channel_members_before = before.channel.members if before.channel else []
+        channel_members_after = after.channel.members if after.channel else []
+
+        # Get active members from both channels
+        active_members_before = [
             member
-            for member in channel_members
+            for member in channel_members_before
+            if not (member.voice.self_mute or member.voice.self_deaf)
+        ]
+        active_members_after = [
+            member
+            for member in channel_members_after
             if not (member.voice.self_mute or member.voice.self_deaf)
         ]
 
-        if len(active_members) < 2:
-            for member in channel_members:
-                self.remove(member.id, member.guild.id)
+        # Collect all affected active member IDs
+        all_active_ids = set()
+
+        # Handle before channel
+        if len(active_members_before) >= 2:
+            all_active_ids.update((m.id, m.guild.id) for m in active_members_before)
         else:
-            self._synchronize([(m.id, m.guild.id) for m in active_members])
+            # Remove members from before channel if it drops below 2 active
+            for member in channel_members_before:
+                self.remove(member.id, member.guild.id)
+
+        # Handle after channel
+        if len(active_members_after) >= 2:
+            all_active_ids.update((m.id, m.guild.id) for m in active_members_after)
+        else:
+            # Remove members from after channel if it drops below 2 active
+            for member in channel_members_after:
+                self.remove(member.id, member.guild.id)
+
+        # Synchronize with all active members from both channels
+        if all_active_ids:
+            self._synchronize(list(all_active_ids))
 
 
 # ------------------------------------------------------------------
@@ -115,7 +141,7 @@ voice_user_manager = VoiceUserManager()
 voice_user_ids: set[tuple[int, int]] = voice_user_manager._users  # noqa: SLF001 — temporary compat shim
 
 
-async def handleVoiceChange(
+async def handle_voice_change(
     user: discord.Member,
     before: discord.VoiceState,
     after: discord.VoiceState,
@@ -124,16 +150,16 @@ async def handleVoiceChange(
     await voice_user_manager.handle_voice_change(user, before, after)
 
 
-def addVoiceUser(user_id: int, guild_id: int) -> None:
+def add_voice_user(user_id: int, guild_id: int) -> None:
     """Deprecated: prefer ``voice_user_manager.add(...)``."""
     voice_user_manager.add(user_id, guild_id)
 
 
-def removeVoiceUser(user_id: int, guild_id: int) -> None:
+def remove_voice_user(user_id: int, guild_id: int) -> None:
     """Deprecated: prefer ``voice_user_manager.remove(...)``."""
     voice_user_manager.remove(user_id, guild_id)
 
 
-def updateVoiceUsers(active_user_ids: list[tuple[int, int]]) -> None:
+def update_voice_users(active_user_ids: list[tuple[int, int]]) -> None:
     """Deprecated: prefer ``voice_user_manager._synchronize(...)``."""
     voice_user_manager._synchronize(active_user_ids)  # noqa: SLF001
