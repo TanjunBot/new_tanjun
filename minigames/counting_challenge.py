@@ -1,14 +1,11 @@
 import discord
 
-from api import (
-    get_counting_challenge_progress,
-    get_last_challenge_counter_id,
-    increase_counting_challenge_progress,
-    set_counting_challenge_progress,
-)
 from localizer import tanjunLocalizer
 from minigames._counting_common import counting as _counting_base
+from services.counting_repository import CountingMode, CountingRepository
 from utility import DiscordSafe, EmbedColor, tanjunEmbed
+
+_repo = CountingRepository
 
 
 async def _challenge_failure(message: discord.Message, locale: str, _correct_number: int) -> None:
@@ -19,7 +16,7 @@ async def _challenge_failure(message: discord.Message, locale: str, _correct_num
         description=tanjunLocalizer.localize(locale, "minigames.counting.failed.description"),
     )
     await DiscordSafe.reply(message, embed=embed)
-    await set_counting_challenge_progress(message.channel.id, 0)
+    await _repo.set_progress(CountingMode.CHALLENGE, message.channel.id, 0, 0)
 
 
 async def _challenge_double_count(message: discord.Message, locale: str, _correct_number: int) -> None:
@@ -30,16 +27,16 @@ async def _challenge_double_count(message: discord.Message, locale: str, _correc
         description=tanjunLocalizer.localize(locale, "minigames.counting.failed_double.description"),
     )
     await DiscordSafe.reply(message, embed=embed)
-    await set_counting_challenge_progress(message.channel.id, 0)
+    await _repo.set_progress(CountingMode.CHALLENGE, message.channel.id, 0, 0)
 
 
 async def counting(message, config: dict | None = None) -> None:
     """Counting challenge handler. Accepts optional pre-fetched config to skip a DB query."""
     await _counting_base(
         message,
-        get_progress_func=get_counting_challenge_progress,
-        get_last_counter_id_func=get_last_challenge_counter_id,
-        increase_progress_func=increase_counting_challenge_progress,
+        get_progress_func=lambda cid: _repo.get_progress(CountingMode.CHALLENGE, cid),
+        get_last_counter_id_func=lambda cid: _repo.get_last_counter_id(CountingMode.CHALLENGE, cid),
+        increase_progress_func=lambda cid, uid: _repo.increment_progress(CountingMode.CHALLENGE, cid, uid),
         on_failure=_challenge_failure,
         on_double_count=_challenge_double_count,
         config=config,

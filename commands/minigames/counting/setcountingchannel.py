@@ -1,6 +1,6 @@
 import discord
 
-from api import set_counting_progress
+from services.counting_repository import CountingMode, CountingRepository
 from commands.minigames._counting_common import (
     require_bot_permissions,
     require_moderate_members,
@@ -9,6 +9,7 @@ from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
 LOCALE_KEY = "minigames.setcountingchannel"
+_repo = CountingRepository
 
 
 async def setCountingChannel(command_info: CommandInfo, channel: discord.TextChannel) -> None:
@@ -21,7 +22,7 @@ async def setCountingChannel(command_info: CommandInfo, channel: discord.TextCha
     if await require_bot_permissions(command_info, channel):
         return
 
-    await set_counting_progress(channel_id=channel.id, guild_id=command_info.guild.id, progress=0)
+    await _repo.set_progress(CountingMode.NORMAL, channel_id=channel.id, guild_id=command_info.guild.id, progress=0)
 
     introduction_embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), f"{LOCALE_KEY}.introduction.title"),
