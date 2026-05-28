@@ -1018,6 +1018,7 @@ class LevelThresholdCache:
     _thresholds: collections.OrderedDict[tuple[str, str | None], tuple[list[int], int]] = collections.OrderedDict()
     _MAX_LEVEL = 10000
     _MAX_ENTRIES = 50  # Prevent unbounded growth: ~50 scaling/formula combos max
+    _lock: asyncio.Lock = asyncio.Lock()
 
     @classmethod
     def get_level_for_xp(cls, xp: int, scaling: str, custom_formula: str | None = None) -> int:
@@ -1080,26 +1081,38 @@ class LevelThresholdCache:
 
         if thresholds is None or thresholds[-1] < xp:
             # Build or extend thresholds if needed
-            if thresholds is None:
-                start_level = 1
-                thresholds = []
-                max_level = cls._MAX_LEVEL
-            else:
-                # Extend from current; don't rebuild from scratch
-                if max_level >= cls._MAX_LEVEL and thresholds[-1] >= xp:
-                    return bisect.bisect_right(thresholds, xp)
-                start_level = len(thresholds) + 1
-                max_level = cls._MAX_LEVEL
-            for level in range(start_level, max_level + 1):
-                xp_needed = await get_xp_for_level_async(level, scaling, effective_formula)
-                thresholds.append(xp_needed)
-                if thresholds[-1] > xp and level >= start_level + 10:
-                    max_level = level
-                    break
-            cls._thresholds[key] = (thresholds, max_level)
-            # Evict oldest entries if cache exceeds limit
-            while len(cls._thresholds) > cls._MAX_ENTRIES:
-                cls._thresholds.popitem(last=False)
+            async with cls._lock:
+                # Re-check after acquiring lock (another coroutine may have built it)
+                entry = cls._thresholds.get(key)
+                if entry is not None:
+                    thresholds, max_level = entry
+                    if thresholds is not None and thresholds[-1] >= xp:
+                        return bisect.bisect_right(thresholds, xp)
+
+                # Use local list to avoid mutating shared state during await
+                if thresholds is None:
+                    start_level = 1
+                    new_thresholds = []
+                    max_level = cls._MAX_LEVEL
+                else:
+                    # Extend from current; don't rebuild from scratch
+                    if max_level >= cls._MAX_LEVEL and thresholds[-1] >= xp:
+                        return bisect.bisect_right(thresholds, xp)
+                    start_level = len(thresholds) + 1
+                    new_thresholds = thresholds.copy()
+                    max_level = cls._MAX_LEVEL
+                for level in range(start_level, max_level + 1):
+                    xp_needed = await get_xp_for_level_async(level, scaling, effective_formula)
+                    new_thresholds.append(xp_needed)
+                    if new_thresholds[-1] > xp and level >= start_level + 10:
+                        max_level = level
+                        break
+                # Atomic assignment to shared cache
+                cls._thresholds[key] = (new_thresholds, max_level)
+                # Evict oldest entries if cache exceeds limit
+                while len(cls._thresholds) > cls._MAX_ENTRIES:
+                    cls._thresholds.popitem(last=False)
+                thresholds = new_thresholds
         return bisect.bisect_right(thresholds, xp)
 
 

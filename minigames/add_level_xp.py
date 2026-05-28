@@ -15,7 +15,7 @@ from api import (
 )
 from localizer import tanjunLocalizer
 from minigames._xp_core import calculate_xp, is_entity_blacklisted
-from utility import get_level_for_xp_async, get_xp_for_level_async
+from utility import get_level_for_xp_async
 
 notifiedUsers: set[int] = set()
 _MAX_NOTIFIED_USERS = 10_000
