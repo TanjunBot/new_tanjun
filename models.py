@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
+from enum import IntEnum
 from typing import Any, ClassVar
 
 from pydantic import BaseModel, model_validator
@@ -741,6 +742,25 @@ class ChannelOverwriteModel:
 
         async for row in execute_query_iter(query, params):
             yield cls.from_row(row)
+
+
+class CountingMode(IntEnum):
+    """Type-safe enum for counting modes."""
+
+    NORMAL = 1
+    NEGATIVE = 2
+    REVERSE = 3
+    PRIME = 4
+    EVEN = 5
+    ODD = 6
+    FIBONACCI = 7
+    DOUBLE = 8
+    TRIPLE = 9
+    HUNDREDS = 10
+    BINARY = 11
+    ROMEAN = 12
+    SQUARE = 13
+    CUBE = 14
 
 
 @dataclass

@@ -19,6 +19,7 @@ from models import (
     ChannelOverwriteModel,
     ClaimedBoosterChannelModel,
     ClaimedBoosterRoleModel,
+    CountingMode,
     DetailedWarningModel,
     DynamicSlowmodeMessageModel,
     DynamicSlowmodeModel,
@@ -1261,7 +1262,7 @@ async def get_counting_challenge_channel_amount(guild_id: Any) -> int:
     return result[0][0] if result else 0
 
 
-async def set_counting_mode(channel_id: Any, progress: Any, mode: Any, guild_id: Any) -> None:
+async def set_counting_mode(channel_id: Any, progress: Any, mode: CountingMode, guild_id: Any) -> None:
     query = "INSERT INTO counting_modes (channel_id, progress, mode, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress), mode = VALUES(mode)"
     params = (channel_id, progress, mode, guild_id)
     await execute_action(query, params)
@@ -1287,15 +1288,17 @@ async def clear_counting_mode(channel_id: Any) -> None:
     await execute_action(query, params)
 
 
-async def get_counting_mode_mode(channel_id: str | int) -> int | None:
+async def get_counting_mode_mode(channel_id: str | int) -> CountingMode | None:
     query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
-    return result[0][0] if result else None
+    if result and result[0][0] is not None:
+        return CountingMode(result[0][0])
+    return None
 
 
 async def set_counting_mode_progress(
-    channel_id: Any, progress: Any, guild_id: Any, mode: Any, goal: Any, counter_id: Any
+    channel_id: Any, progress: Any, guild_id: Any, mode: CountingMode, goal: Any, counter_id: Any
 ) -> None:
     query = "INSERT INTO counting_modes (channel_id, progress, guild_id, mode, goal, last_counter_id) VALUES (%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s, last_counter_id = %s"
     params = (
