@@ -128,7 +128,26 @@ async def main():
     pool_task = asyncio.create_task(_init_database_pool())
 
     # Wait for the pool first so we can start table creation while extensions finish.
-    pool = await pool_task
+    # Use fail-fast: if pool_task or ext_task raises, cancel the other.
+    done, pending = await asyncio.wait(
+        {ext_task, pool_task},
+        return_when=asyncio.FIRST_EXCEPTION
+    )
+
+    # Check if any task raised an exception
+    exception_to_raise = None
+    for task in done:
+        if task.exception() is not None:
+            exception_to_raise = task.exception()
+            # Cancel all pending tasks
+            for ptask in pending:
+                ptask.cancel()
+            # Await pending tasks to propagate cancellations
+            await asyncio.gather(*pending, return_exceptions=True)
+            raise exception_to_raise
+
+    # Both tasks completed successfully, extract pool result
+    pool = pool_task.result()
     bot._pool = pool
     bot._pool_ready.set()  # Signal waiting tasks that pool is ready
 
@@ -140,8 +159,23 @@ async def main():
     from api import create_tables
 
     table_task = asyncio.create_task(create_tables(bot))
-    await ext_task  # Extensions must finish before translation loading
-    await table_task
+
+    # Wait for both ext_task and table_task with fail-fast behavior
+    done, pending = await asyncio.wait(
+        {ext_task, table_task},
+        return_when=asyncio.FIRST_EXCEPTION
+    )
+
+    # Check if any task raised an exception
+    for task in done:
+        if task.exception() is not None:
+            exception_to_raise = task.exception()
+            # Cancel all pending tasks
+            for ptask in pending:
+                ptask.cancel()
+            # Await pending tasks to propagate cancellations
+            await asyncio.gather(*pending, return_exceptions=True)
+            raise exception_to_raise
 
     # Step 3: Preload guild configs into cache to avoid cold-start latency.
     from api import preload_guild_configs
