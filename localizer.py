@@ -99,10 +99,21 @@ class Localizer:
             if locale_str not in reported_locales:
                 reported_locales.append(locale_str)
                 try:
-                    asyncio.create_task(missingLocalization(locale_str))
+                    task = asyncio.create_task(missingLocalization(locale_str))
+
+                    def _handle_task_exception(t: asyncio.Task[Any]) -> None:
+                        try:
+                            t.exception()
+                        except Exception as e:
+                            print(f"Exception in missingLocalization task for locale '{locale_str}': {e}")
+
+                    task.add_done_callback(_handle_task_exception)
                 except RuntimeError:
                     # No running loop — fall back to blocking call
-                    pass
+                    try:
+                        asyncio.run(missingLocalization(locale_str))
+                    except Exception as e:
+                        print(f"Exception in missingLocalization for locale '{locale_str}': {e}")
             return "err: no translation found."
 
         template_string: str = str(translation.get("translation", ""))
