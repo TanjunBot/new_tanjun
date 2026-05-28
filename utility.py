@@ -1,6 +1,8 @@
+import asyncio
 import ast
 import bisect
 import collections
+import concurrent.futures
 import contextlib
 import datetime
 import gzip
@@ -1058,6 +1060,48 @@ class LevelThresholdCache:
                 cls._thresholds.popitem(last=False)
         return bisect.bisect_right(thresholds, xp)
 
+    @classmethod
+    async def get_level_for_xp_async(cls, xp: int, scaling: str, custom_formula: str | None = None) -> int:
+        """Async version that runs CPU-bound formula evaluation in a thread executor.
+
+        Only used for custom formulas (built-in scalings use the fast O(1) sync path).
+        """
+        # Only custom formulas reach here
+        effective_formula = custom_formula
+        key = (scaling, effective_formula)
+        entry = cls._thresholds.get(key)
+        thresholds: list[int] | None
+        max_level: int
+        if entry is not None:
+            thresholds, max_level = entry
+        else:
+            thresholds = None
+            max_level = cls._MAX_LEVEL
+
+        if thresholds is None or thresholds[-1] < xp:
+            # Build or extend thresholds if needed
+            if thresholds is None:
+                start_level = 1
+                thresholds = []
+                max_level = cls._MAX_LEVEL
+            else:
+                # Extend from current; don't rebuild from scratch
+                if max_level >= cls._MAX_LEVEL and thresholds[-1] >= xp:
+                    return bisect.bisect_right(thresholds, xp)
+                start_level = len(thresholds) + 1
+                max_level = cls._MAX_LEVEL
+            for level in range(start_level, max_level + 1):
+                xp_needed = await get_xp_for_level_async(level, scaling, effective_formula)
+                thresholds.append(xp_needed)
+                if thresholds[-1] > xp and level >= start_level + 10:
+                    max_level = level
+                    break
+            cls._thresholds[key] = (thresholds, max_level)
+            # Evict oldest entries if cache exceeds limit
+            while len(cls._thresholds) > cls._MAX_ENTRIES:
+                cls._thresholds.popitem(last=False)
+        return bisect.bisect_right(thresholds, xp)
+
 
 operators = {
     ast.Add: op.add,
@@ -1077,6 +1121,16 @@ def sqrt_n(x: float, n: float = 2) -> float:
 
 def log_n(x: float, base: float = math.e) -> float:
     return math.log(x, base)
+
+
+# Thread pool executor for CPU-bound formula evaluation
+_eval_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+
+
+async def eval_expr_async(expr: str, variables=None) -> float:
+    """Async version of eval_expr that runs the CPU-bound AST evaluation in a thread executor."""
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(_eval_executor, eval_expr, expr, variables)
 
 
 def eval_expr(expr: str, variables=None) -> float:
@@ -1165,6 +1219,22 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None
     return math.floor(result)
 
 
+async def get_xp_for_level_async(level: int, scaling: str, custom_formula: str | None = None) -> int:
+    """Async version of get_xp_for_level that runs CPU-bound formula evaluation in a thread executor."""
+    if level <= 0:
+        return 0
+    if scaling == "custom" and custom_formula:
+        try:
+            result = await eval_expr_async(custom_formula.replace("level", str(level)))
+        except Exception:
+            return 0
+    else:
+        result = LEVEL_SCALINGS.get(scaling, LEVEL_SCALINGS["medium"])(level)
+    if isinstance(result, complex):
+        return 0
+    return math.floor(result)
+
+
 def get_level_for_xp(xp: int, scaling: str, custom_formula: str | None = None) -> int:
     """Get the level for a given XP value.
 
@@ -1172,6 +1242,17 @@ def get_level_for_xp(xp: int, scaling: str, custom_formula: str | None = None) -
     inversion of the formula. For custom formulas, binary search is used.
     """
     return LevelThresholdCache.get_level_for_xp(xp, scaling, custom_formula)
+
+
+async def get_level_for_xp_async(xp: int, scaling: str, custom_formula: str | None = None) -> int:
+    """Async version of get_level_for_xp for custom formulas.
+
+    For built-in scalings, delegates to the O(1) sync version.
+    For custom formulas, uses the async eval to prevent event loop blocking.
+    """
+    if scaling != "custom":
+        return get_level_for_xp(xp, scaling, custom_formula)
+    return await LevelThresholdCache.get_level_for_xp_async(xp, scaling, custom_formula)
 
 
 def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
