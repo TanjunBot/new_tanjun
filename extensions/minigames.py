@@ -14,22 +14,22 @@ from commands.minigames.counting.setcountingchannel import (
 from commands.minigames.counting.setcountingprogress import (
     setCountingProgress as setCountingProgressCommand,
 )
-from commands.minigames.countingChallenge.removecountingchannel import (
+from commands.minigames.counting_challenge.removecountingchannel import (
     removecountingchallengechannel as removeCountingChallengeChannelCommand,
 )
-from commands.minigames.countingChallenge.setcountingchannel import (
+from commands.minigames.counting_challenge.setcountingchannel import (
     setCountingChannel as setCountingChallengeChannelCommand,
 )
-from commands.minigames.countingChallenge.setcountingprogress import (
+from commands.minigames.counting_challenge.setcountingprogress import (
     setCountingProgress as setCountingChallengeProgressCommand,
 )
-from commands.minigames.countingModes.removecountingchannel import (
+from commands.minigames.counting_modes.removecountingchannel import (
     removecountingmodeschannel as removeCountingModesChannelCommand,
 )
-from commands.minigames.countingModes.setcountingchannel import (
+from commands.minigames.counting_modes.setcountingchannel import (
     setCountingChannel as setCountingModesChannelCommand,
 )
-from commands.minigames.countingModes.setcountingprogress import (
+from commands.minigames.counting_modes.setcountingprogress import (
     setCountingProgress as setCountingModesProgressCommand,
 )
 from commands.minigames.wordchain.removewordchainchannel import (

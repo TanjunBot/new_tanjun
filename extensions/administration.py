@@ -17,7 +17,7 @@ from discord.ext import commands
 
 import config
 from api import feedbackBlockUser, feedbackUnblockUser
-from commands.admin.joinToCreate.joinToCreateListener import (
+from commands.admin.join_to_create.listener import (
     removeAllJoinToCreateChannels,
 )
 from commands.channel.farewell import farewellUser
@@ -25,8 +25,8 @@ from commands.channel.welcome import welcomeNewUser
 from extensions.logs import send_logEmbeds
 from localizer import tanjunLocalizer
 from loops.create_database_backup import create_database_backup
-from minigames.addLevelXp import update_user_roles
-from minigames.countingmodes import get_correct_next_number, get_first_number
+from minigames.add_level_xp import update_user_roles
+from minigames.counting_modes import get_correct_next_number, get_first_number
 
 # Import test functions only if they exist
 try:

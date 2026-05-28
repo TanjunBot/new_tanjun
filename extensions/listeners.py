@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from api import get_counting_configs, remove_scheduled_message, update_scheduled_message_content
-from commands.admin.joinToCreate.joinToCreateListener import memberJoin, memberLeave
+from commands.admin.join_to_create.listener import memberJoin, memberLeave
 from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
 from commands.admin.ticket.open_ticket import openTicket as openTicketListener
 from commands.admin.trigger_messages.send import send_trigger_message
@@ -23,10 +23,10 @@ from commands.utility.report import report_btn_click
 from config import adminIds
 from localizer import tanjunLocalizer
 from loops._voice_tracker import handleVoiceChange
-from minigames.addLevelXp import addLevelXp
+from minigames.add_level_xp import addLevelXp
 from minigames.counting import counting
-from minigames.countingChallenge import counting as countingChallenge
-from minigames.countingmodes import counting as countingModes
+from minigames.counting_challenge import counting as countingChallenge
+from minigames.counting_modes import counting as countingModes
 from minigames.wordchain import wordchain
 
 
