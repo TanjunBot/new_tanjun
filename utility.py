@@ -1504,6 +1504,83 @@ def addThousandsSeparator(number: int) -> str:
     return f"{number:,}".replace(",", " ")
 
 
+def embed_or_wrap(
+    text: str,
+    title: str | None = None,
+    colour: int | discord.Colour | EmbedColor | None = None,
+) -> TanjunEmbed:
+    """Wrap a plain-text message in a standard embed.
+
+    Use this when migrating plain ``ctx.send(content=...)`` or
+    ``channel.send(content=...)`` calls to embeds.
+
+    Args:
+        text: The message content to embed.
+        title: Optional embed title.
+        colour: Embed color. Defaults to ``EmbedColor.INFO``.
+
+    Returns:
+        A configured ``TanjunEmbed`` instance.
+    """
+    if colour is None:
+        colour = EmbedColor.BRAND
+    return TanjunEmbed(title=title, description=text, colour=colour)
+
+
+def error_embed(
+    description: str,
+    title: str | None = None,
+) -> TanjunEmbed:
+    """Create a standardised error embed with red colouring.
+
+    Args:
+        description: The error description.
+        title: Optional error title. Defaults to "Error".
+
+    Returns:
+        A ``TanjunEmbed`` with error colouring.
+    """
+    if title is None:
+        title = "Error"
+    return TanjunEmbed(title=title, description=description, colour=EmbedColor.ERROR)
+
+
+def success_embed(
+    description: str,
+    title: str | None = None,
+) -> TanjunEmbed:
+    """Create a standardised success embed with green colouring.
+
+    Args:
+        description: The success message.
+        title: Optional title. Defaults to "Success".
+
+    Returns:
+        A ``TanjunEmbed`` with success colouring.
+    """
+    if title is None:
+        title = "Success"
+    return TanjunEmbed(title=title, description=description, colour=EmbedColor.SUCCESS)
+
+
+def warning_embed(
+    description: str,
+    title: str | None = None,
+) -> TanjunEmbed:
+    """Create a standardised warning embed with yellow colouring.
+
+    Args:
+        description: The warning message.
+        title: Optional title. Defaults to "Warning".
+
+    Returns:
+        A ``TanjunEmbed`` with warning colouring.
+    """
+    if title is None:
+        title = "Warning"
+    return TanjunEmbed(title=title, description=description, colour=EmbedColor.WARNING)
+
+
 class SafeInteraction:
     """Helper for safely responding to Discord interactions, preventing double-respond errors.
 
