@@ -4,7 +4,7 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from typing import Any, ClassVar
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 
 @dataclass
@@ -743,7 +743,6 @@ class ChannelOverwriteModel:
             yield cls.from_row(row)
 
 
-@dataclass
-class LevelRolesGroupModel:
-    level: int
+class LevelRolesGroupModel(BaseModel):
+    level: int = Field(ge=0)
     role_ids: list[str]
