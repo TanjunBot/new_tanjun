@@ -96,10 +96,18 @@
     "max_length": null
   },
   {
-    "identifier": "commands.admin.nuke.notfoundError",
+    "identifier": "commands.admin.nuke.notfound.description",
     "source_string": "Der Kanal wurde nicht gefunden. Möglicherweise wurde er bereits gelöscht.",
     "translation": "Der Kanal wurde nicht gefunden. Möglicherweise wurde er bereits gelöscht.",
-    "context": "commands -> admin -> nuke -> notfoundError -> description",
+    "context": "commands -> admin -> nuke -> notfound -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.nuke.notfound.title",
+    "source_string": "Kanal nicht gefunden",
+    "translation": "Kanal nicht gefunden",
+    "context": "commands -> admin -> nuke -> notfound -> title",
     "labels": "unassigned",
     "max_length": null
   },
