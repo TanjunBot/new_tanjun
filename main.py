@@ -87,24 +87,16 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
 
 
-async def main():
-    print("starting bot...")
-    print("discord.py version: ", discord.__version__)
-
-    # Create pool-ready event before loading extensions
-    # so LoopCog.on_ready can wait on it asyncio.Event-style instead of polling
-    bot._pool_ready = asyncio.Event()
-
-    # Load all extensions
+async def _load_all_extensions(bot: commands.AutoShardedBot) -> None:
+    """Load all extensions from the extensions directory."""
     for filename in os.listdir("extensions"):
         if filename.endswith(".py") and not filename.startswith("__"):
             extension = filename.replace(".py", "")
             await loadextension(bot, extension)
 
-    # Load translator
-    await loadTranslator(bot)
 
-    # Initialize the database pool
+async def _init_database_pool() -> asyncmy.Pool | None:
+    """Initialize and return the database connection pool."""
     try:
         pool = await asyncmy.create_pool(
             host=database_ip,
@@ -115,28 +107,51 @@ async def main():
             maxsize=10,
             minsize=1,
         )
-        bot._pool = pool
-        bot._pool_ready.set()  # Signal waiting tasks that pool is ready
         print("Database pool initialized successfully!")
+        return pool
     except Exception as e:
         print(f"Failed to initialize database pool: {e}")
         raise
+
+
+async def main():
+    print("starting bot...")
+    print("discord.py version: ", discord.__version__)
+
+    # Create pool-ready event before any tasks start
+    # so LoopCog.on_ready can wait on it asyncio.Event-style instead of polling
+    bot._pool_ready = asyncio.Event()
+
+    # Step 1: Load extensions and initialize database pool in parallel.
+    # Extensions don't need the DB at load time, so these are independent.
+    ext_task = asyncio.create_task(_load_all_extensions(bot))
+    pool_task = asyncio.create_task(_init_database_pool())
+
+    # Wait for the pool first so we can start table creation while extensions finish.
+    pool = await pool_task
+    bot._pool = pool
+    bot._pool_ready.set()  # Signal waiting tasks that pool is ready
 
     from api import set_bot
 
     set_bot(bot)
 
-    # Create database tables
+    # Step 2: Create tables concurrently with remaining extension loading.
     from api import create_tables
 
-    await create_tables(bot)
+    table_task = asyncio.create_task(create_tables(bot))
+    await ext_task  # Extensions must finish before translation loading
+    await table_task
 
-    # Preload guild configs into cache to avoid cold-start latency
+    # Step 3: Preload guild configs into cache to avoid cold-start latency.
     from api import preload_guild_configs
 
     await preload_guild_configs(bot)
 
-    # Run startup health checks
+    # Step 4: Load translator (depends on extensions being loaded for tree).
+    await loadTranslator(bot)
+
+    # Step 5: Run startup health checks.
     health_manager = HealthCheckManager(bot)
     health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
     health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
@@ -161,7 +176,7 @@ async def main():
     # Start periodic health checks
     asyncio.create_task(health_manager.start_periodic_checks(interval=300))
 
-    # Start the bot
+    # Step 6: Start the bot
     await bot.start(config.token)  # type: ignore[arg-type]
 
 
