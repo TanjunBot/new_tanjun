@@ -29,14 +29,14 @@ class LoopCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def sendSendReadyGiveaways(self) -> None:
         try:
             await sendReadyGiveaways(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
             logging.exception("Error in loop")
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def endGiveawaysLoop(self) -> None:
         try:
             await endGiveaways(self.bot)  # type: ignore[no-untyped-call]
@@ -50,14 +50,14 @@ class LoopCog(commands.Cog):
         except Exception:
             logging.exception("Error in loop")
 
-    @tasks.loop(seconds=5)
+    @tasks.loop(seconds=60)
     async def clearNotifiedUsersLoop(self) -> None:
         try:
             clearNotifiedUsers(self.bot)
         except Exception:
             logging.exception("Error in loop")
 
-    @tasks.loop(seconds=5)
+    @tasks.loop(seconds=30)
     async def addVoiceUserLoop(self) -> None:
         try:
             await addXpToVoiceUsers(self.bot)  # type: ignore[no-untyped-call]
@@ -71,7 +71,7 @@ class LoopCog(commands.Cog):
         except Exception:
             logging.exception("Error in loop")
 
-    @tasks.loop(seconds=5)
+    @tasks.loop(seconds=60)
     async def pingServerLoop(self) -> None:
         try:
             await ping_server(self.bot)
@@ -85,28 +85,28 @@ class LoopCog(commands.Cog):
         except Exception:
             logging.exception("Error in loop")
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def removeExpiredClaimedBoosterRoles(self) -> None:
         try:
             await remove_claimed_booster_roles_that_are_expired(self.bot)
         except Exception:
             logging.exception("Error in loop")
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def removeExpiredClaimedBoosterChannels(self) -> None:
         try:
             await remove_claimed_booster_channels_that_are_expired(self.bot)
         except Exception:
             logging.exception("Error in loop")
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def sendScheduledMessages(self) -> None:
         try:
             await send_scheduled_messages(self.bot)
         except Exception:
             logging.exception("Error in loop")
 
-    @tasks.loop(seconds=60)  # Reduced from 10s to 60s to respect Twitch API rate limits
+    @tasks.loop(seconds=60)  # Twitch API rate limits
     async def pollTwitchStreams(self) -> None:
         try:
             twitch_api = getTwitchApi()
