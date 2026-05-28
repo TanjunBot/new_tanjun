@@ -1580,99 +1580,158 @@ async def get_all_level_roles(guild_id: str) -> list[LevelRolesGroupModel]:
     return await level_role_repo.get_grouped_by_level(guild_id)
 
 
-async def add_role_boost(guild_id: str, role_id: str, boost: float, additive: bool) -> None:
-    query = """
-    INSERT INTO roleXpBoost (guild_id, role_id, boost, additive)
-    VALUES (%s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
+from enum import Enum
+
+
+class BoostTarget(Enum):
+    """Type-safe enum for XP boost target types, mapping to DB table and entity column."""
+    ROLE = ("roleXpBoost", "role_id")
+    CHANNEL = ("channelXpBoost", "channel_id")
+    USER = ("userXpBoost", "user_id")
+
+    @property
+    def table(self) -> str:
+        return self.value[0]
+
+    @property
+    def entity_column(self) -> str:
+        return self.value[1]
+
+
+class XpBoostRepository:
+    """Consolidated XP boost CRUD using BoostTarget enum.
+
+    Replaces the 9+ individual add/remove/get functions for role, channel, and user boosts.
     """
-    params = (guild_id, role_id, boost, additive)
-    await execute_action(query, params)
+
+    @staticmethod
+    async def add_boost(
+        guild_id: str,
+        entity_id: str,
+        boost: float,
+        additive: bool,
+        target: BoostTarget = BoostTarget.USER,
+    ) -> None:
+        """Add or update an XP boost entry."""
+        query = f"""
+        INSERT INTO {target.table} (guild_id, {target.entity_column}, boost, additive)
+        VALUES (%s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
+        """
+        params = (guild_id, entity_id, boost, additive)
+        await execute_action(query, params)
+
+    @staticmethod
+    async def remove_boost(
+        guild_id: str,
+        entity_id: str,
+        target: BoostTarget = BoostTarget.USER,
+    ) -> None:
+        """Remove an XP boost entry."""
+        query = f"DELETE FROM {target.table} WHERE guild_id = %s AND {target.entity_column} = %s"
+        params = (guild_id, entity_id)
+        await execute_action(query, params)
+
+    @staticmethod
+    async def get_boost(
+        guild_id: str,
+        entity_id: str,
+        target: BoostTarget = BoostTarget.USER,
+    ) -> XpBoostModel | None:
+        """Get a specific XP boost entry by entity ID."""
+        query = f"SELECT boost, additive FROM {target.table} WHERE guild_id = %s AND {target.entity_column} = %s"
+        params = (guild_id, entity_id)
+        result = await execute_query(query, params)
+        return XpBoostModel.from_row(result[0]) if result else None
+
+    @staticmethod
+    async def get_boosts_for_target(
+        guild_id: str,
+        entity_ids: list[str],
+        target: BoostTarget = BoostTarget.ROLE,
+    ) -> list[XpBoostModel]:
+        """Get all boost entries for a list of entity IDs under a target type."""
+        if not entity_ids:
+            return []
+        query = f"SELECT boost, additive FROM {target.table} WHERE guild_id = %s AND {target.entity_column} IN %s"
+        params = (guild_id, tuple(entity_ids))
+        rows: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(query, params):
+            rows.append(row)
+        return rows
+
+    @staticmethod
+    async def get_all_boosts(guild_id: str) -> dict[str, list[XpBoostModel]]:
+        """Get all boosts for a guild, grouped by target type."""
+        role_query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s"
+        channel_query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s"
+        user_query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s"
+
+        roles: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(role_query, (guild_id,)):
+            roles.append(row)
+
+        channels: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(channel_query, (guild_id,)):
+            channels.append(row)
+
+        users: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(user_query, (guild_id,)):
+            users.append(row)
+
+        return {
+            "roles": roles,
+            "channels": channels,
+            "users": users,
+        }
+
+
+# --- Legacy wrapper functions (backward compatible) ---
+
+
+async def add_role_boost(guild_id: str, role_id: str, boost: float, additive: bool) -> None:
+    await XpBoostRepository.add_boost(guild_id, role_id, boost, additive, BoostTarget.ROLE)
 
 
 async def add_channel_boost(guild_id: str, channel_id: str, boost: float, additive: bool) -> None:
-    query = """
-    INSERT INTO channelXpBoost (guild_id, channel_id, boost, additive)
-    VALUES (%s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
-    """
-    params = (guild_id, channel_id, boost, additive)
-    await execute_action(query, params)
+    await XpBoostRepository.add_boost(guild_id, channel_id, boost, additive, BoostTarget.CHANNEL)
 
 
 async def add_user_boost(guild_id: str, user_id: str, boost: float, additive: bool) -> None:
-    query = """
-    INSERT INTO userXpBoost (guild_id, user_id, boost, additive)
-    VALUES (%s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
-    """
-    params = (guild_id, user_id, boost, additive)
-    await execute_action(query, params)
+    await XpBoostRepository.add_boost(guild_id, user_id, boost, additive, BoostTarget.USER)
 
 
 async def remove_role_boost(guild_id: str, role_id: str) -> None:
-    query = "DELETE FROM roleXpBoost WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    await XpBoostRepository.remove_boost(guild_id, role_id, BoostTarget.ROLE)
 
 
 async def remove_channel_boost(guild_id: str, channel_id: str) -> None:
-    query = "DELETE FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    await XpBoostRepository.remove_boost(guild_id, channel_id, BoostTarget.CHANNEL)
 
 
 async def remove_user_boost(guild_id: str, user_id: str) -> None:
-    query = "DELETE FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
+    await XpBoostRepository.remove_boost(guild_id, user_id, BoostTarget.USER)
 
 
 async def get_all_boosts(guild_id: str) -> dict[str, list[XpBoostModel]]:
-    role_query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s"
-    channel_query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s"
-    user_query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s"
-
-    roles: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(role_query, (guild_id,)):
-        roles.append(row)
-
-    channels: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(channel_query, (guild_id,)):
-        channels.append(row)
-
-    users: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(user_query, (guild_id,)):
-        users.append(row)
-
-    return {
-        "roles": roles,
-        "channels": channels,
-        "users": users,
-    }
+    return await XpBoostRepository.get_all_boosts(guild_id)
 
 
 async def get_user_boost(guild_id: str, user_id: str) -> XpBoostModel | None:
-    query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    result = await safe_execute_query(query, params)
-    return XpBoostModel.from_row(result[0]) if result else None
+    return await XpBoostRepository.get_boost(guild_id, user_id, BoostTarget.USER)
 
 
 async def get_user_roles_boosts(guild_id: str, role_ids: list[str]) -> list[XpBoostModel]:
-    query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
-    params = (guild_id, tuple(role_ids))
-    rows: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    return await XpBoostRepository.get_boosts_for_target(guild_id, role_ids, BoostTarget.ROLE)
 
 
 async def get_channel_boost(guild_id: str, channel_id: str) -> XpBoostModel | None:
-    query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    result = await execute_query(query, params)
-    return XpBoostModel.from_row(result[0]) if result else None
+    return await XpBoostRepository.get_boost(guild_id, channel_id, BoostTarget.CHANNEL)
+
+
+async def get_role_boost(guild_id: str, role_id: str) -> XpBoostModel | None:
+    """Get a specific role XP boost. Added for consistency with user/channel boost pattern."""
+    return await XpBoostRepository.get_boost(guild_id, role_id, BoostTarget.ROLE)
 
 
 async def add_channel_to_blacklist(guild_id: str, channel_id: str, reason: str | None = None) -> None:
