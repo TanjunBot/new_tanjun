@@ -91,6 +91,10 @@ async def main():
     print("starting bot...")
     print("discord.py version: ", discord.__version__)
 
+    # Create pool-ready event before loading extensions
+    # so LoopCog.on_ready can wait on it asyncio.Event-style instead of polling
+    bot._pool_ready = asyncio.Event()
+
     # Load all extensions
     for filename in os.listdir("extensions"):
         if filename.endswith(".py") and not filename.startswith("__"):
@@ -112,6 +116,7 @@ async def main():
             minsize=1,
         )
         bot._pool = pool
+        bot._pool_ready.set()  # Signal waiting tasks that pool is ready
         print("Database pool initialized successfully!")
     except Exception as e:
         print(f"Failed to initialize database pool: {e}")
