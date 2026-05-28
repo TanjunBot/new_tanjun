@@ -4,11 +4,11 @@ from datetime import datetime, timedelta
 import discord
 
 import utility
+from localizer import tanjunLocalizer
 from services.scheduled_message_service import (
     ScheduledMessageService,
     ScheduleMessageParams,
 )
-from localizer import tanjunLocalizer
 
 
 async def schedule_message(
@@ -150,6 +150,20 @@ async def schedule_message(
             await command_info.reply(embed=embed)
             return
 
+    # Convert Discord attachments to our Attachment model if provided
+    from services.scheduled_message_service import Attachment
+    attachment_models = None
+    if attachments:
+        attachment_models = [
+            Attachment(
+                filename=att.filename,
+                content_type=att.content_type,
+                size=att.size,
+                url=att.url,
+            )
+            for att in attachments
+        ]
+
     params = ScheduleMessageParams(
         guild_id=str(command_info.guild.id) if channel and command_info.guild else None,
         channel_id=str(channel.id) if channel else None,
@@ -158,6 +172,7 @@ async def schedule_message(
         send_time=send_time,
         repeat_interval=utility.relativeTimeToSeconds(repeat) if repeat else None,
         repeat_amount=repeat_amount,
+        attachments=attachment_models,
     )
     await ScheduledMessageService.schedule(params)
 

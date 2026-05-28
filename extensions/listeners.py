@@ -3,7 +3,7 @@ import logging
 import discord
 from discord.ext import commands
 
-from services.scheduled_message_service import ScheduledMessageService
+from api import get_counting_configs
 from commands.admin.join_to_create.listener import memberJoin, memberLeave
 from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
 from commands.admin.ticket.open_ticket import openTicket as openTicketListener
@@ -28,6 +28,7 @@ from minigames.counting import counting
 from minigames.counting_challenge import counting as countingChallenge
 from minigames.counting_modes import counting as countingModes
 from minigames.wordchain import wordchain
+from services.scheduled_message_service import ScheduledMessageService
 
 
 class ListenerCog(commands.Cog):
@@ -134,11 +135,11 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
-        if after.reference:
+        if after.reference and after.reference.message_id is not None:
             # Update content of a scheduled message when the referenced message is edited.
             # after.reference.message_id is the scheduled message ID when the scheduled message
             # was sent via webhook/message reference.
-            await ScheduledMessageService.update_content(after.reference.message_id, after.content)  # type: ignore[arg-type]
+            await ScheduledMessageService.update_content(after.reference.message_id, after.content)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message) -> None:

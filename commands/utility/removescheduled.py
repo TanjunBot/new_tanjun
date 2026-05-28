@@ -2,9 +2,9 @@ import discord
 from discord.ui import Select, View
 
 import utility
-from services.scheduled_message_service import ScheduledMessageService
 from localizer import tanjunLocalizer
 from models import ScheduledMessageModel
+from services.scheduled_message_service import ScheduledMessageService
 
 
 class MessageSelectView(View):

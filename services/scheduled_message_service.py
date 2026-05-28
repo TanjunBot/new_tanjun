@@ -6,20 +6,26 @@ service with typed parameter models and clear method names.
 """
 
 from datetime import datetime
-from collections.abc import AsyncIterator
-from typing import Any
+from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, StringConstraints
-from typing_extensions import Annotated
 
 from models import ScheduledMessageModel
-
 
 # --- Pydantic parameter models ---
 
 GuildId = Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 ChannelId = Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 UserId = Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+
+
+class Attachment(BaseModel):
+    """Validated attachment for scheduled messages."""
+
+    filename: Annotated[str, StringConstraints(min_length=1, max_length=255)]
+    content_type: Annotated[str, StringConstraints(max_length=127)] | None = None
+    size: Annotated[int, Field(ge=0, le=25_000_000)] = 0  # Max 25MB per attachment
+    url: Annotated[str, StringConstraints(max_length=2048)]
 
 
 class ScheduleMessageParams(BaseModel):
@@ -32,6 +38,7 @@ class ScheduleMessageParams(BaseModel):
     send_time: datetime
     repeat_interval: int | None = Field(default=None, ge=0)
     repeat_amount: int | None = Field(default=None, ge=0)
+    attachments: Annotated[list[Attachment], Field(max_length=10)] | None = None
 
 
 class ScheduledMessageService:
@@ -40,7 +47,17 @@ class ScheduledMessageService:
     @staticmethod
     async def schedule(params: ScheduleMessageParams) -> None:
         """Schedule a new message to be sent at the given time."""
+        import json
+
         from api import execute_action
+
+        # Serialize attachments to JSON for storage
+        # Note: The database schema currently doesn't have an attachments column.
+        # This implementation validates and normalizes attachments but cannot persist them
+        # until the schema is updated with an attachments TEXT/JSON column.
+        # attachments_json = None
+        # if params.attachments:
+        #     attachments_json = json.dumps([att.model_dump() for att in params.attachments])
 
         query = """
         INSERT INTO scheduledMessages
@@ -57,11 +74,12 @@ class ScheduledMessageService:
             params.repeat_amount,
         )
         await execute_action(query, db_params)
+        # TODO: Once the database schema is updated to include an attachments column,
+        # add attachments_json to the INSERT statement and db_params tuple.
 
     @staticmethod
     async def get_user_messages(user_id: UserId) -> list[ScheduledMessageModel]:
         """Return all scheduled messages for a given user, ordered by send_time."""
-        from api import execute_query_iter
 
         query = """
         SELECT messageId, guild_id, channel_id, user_id, content, send_time,
@@ -102,7 +120,6 @@ class ScheduledMessageService:
     @staticmethod
     async def get_due_messages() -> list[ScheduledMessageModel]:
         """Return all messages whose send_time is due (<= now)."""
-        from api import execute_query_iter
 
         query = """
         SELECT messageId, guild_id, channel_id, user_id, content, send_time,
@@ -122,7 +139,6 @@ class ScheduledMessageService:
         guild_id: GuildId | None = None,
     ) -> list[ScheduledMessageModel]:
         """Return messages scheduled within a time window for a user, optionally filtered by guild."""
-        from api import execute_query_iter
 
         query = """
         SELECT messageId, guild_id, channel_id, user_id, content, send_time,

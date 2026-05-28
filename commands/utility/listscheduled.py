@@ -4,9 +4,9 @@ import discord
 from discord.ui import Button, View
 
 import utility
-from services.scheduled_message_service import ScheduledMessageService
 from localizer import tanjunLocalizer
 from models import ScheduledMessageModel
+from services.scheduled_message_service import ScheduledMessageService
 
 MESSAGES_PER_PAGE = 1
 MAX_CONTENT_LENGTH = 1000  # Maximum length for message content preview
