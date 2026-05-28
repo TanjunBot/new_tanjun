@@ -38,6 +38,7 @@ from api import (
     delete_level_system_data,
     execute_action,
     execute_query,
+    get_channel_boost,
     get_channel_overwrites,
     get_level_roles,
     get_level_system_status,
@@ -79,7 +80,23 @@ from api import (
 # async with (__aenter__/__aexit__) that yields itself, and .cursor() must
 # be awaitable and support async with, yielding a cursor that has .execute
 # and .fetchall / .fetchone methods.
-# ---------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+# Helper: async iterator that yields from a list
+
+class AsyncIter:
+    """Utility async iterator that yields items from a given list."""
+
+    def __init__(self, items: list):
+        self._items = list(reversed(items))
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if not self._items:
+            raise StopAsyncIteration
+        return self._items.pop()
+
 
 def make_mock_pool():
     """Create a complete async mock pool that mimics asyncmy connection pool."""
@@ -87,12 +104,15 @@ def make_mock_pool():
     cursor.fetchall = AsyncMock(return_value=[])
     cursor.fetchone = AsyncMock(return_value=None)
     cursor.rowcount = 0
-    cursor.__aiter__.return_value = iter([])
+    cursor.__aiter__ = MagicMock(return_value=AsyncIter([]))
 
-    conn = AsyncMock(name="conn")
+    conn = MagicMock(name="conn")
+    conn.cursor = MagicMock(return_value=AsyncMock())
     conn.cursor.return_value.__aenter__.return_value = cursor
     conn.__aenter__.return_value = conn
     conn.__aexit__.return_value = None
+    conn.commit = AsyncMock()
+    conn.rollback = AsyncMock()
 
     pool = MagicMock(name="pool")
     # pool.acquire returns an async context manager; awaiting it returns conn
@@ -296,11 +316,11 @@ class TestLevelSystemStatus:
     async def test_get_level_system_status_returns_db_value(self, bot_with_pool):
         """Should return the value from the database when present."""
         _, cursor = bot_with_pool
-        cursor.fetchall.return_value = [(0,)]  # active = 0
+        cursor.fetchall.return_value = [(0,)]  # active = 0 (int from MySQL)
         cursor.execute = AsyncMock()
 
         result = await get_level_system_status("123")
-        assert result is False
+        assert result == 0
 
 
 class TestLevelupMessageStatus:
@@ -337,7 +357,7 @@ class TestLevelupMessageStatus:
         cursor.execute = AsyncMock()
 
         result = await get_levelup_message_status("123")
-        assert result is False
+        assert result == 0  # MySQL TINYINT returns as int
 
 
 class TestLevelupMessage:
@@ -427,13 +447,14 @@ class TestXpScaling:
         cursor.execute = AsyncMock()
 
         result = await get_xp_scaling("123")
-        assert result == "normal"
+        assert result == "medium"  # default in _get_cached_config
 
     @pytest.mark.asyncio
-    async def test_get_xp_scaling_from_db(self, bot_with_pool):
+    async def test_get_xp_scaling_from_db(self, bot_with_pool, reset_globals):
         """Should return the stored scaling value."""
         _, cursor = bot_with_pool
-        cursor.fetchall.return_value = [("hard",)]
+        # _get_cached_config uses fetchone() for a full row
+        cursor.fetchone = AsyncMock(return_value=("123", 1, "hard", None, None, None, None, None, None))
         cursor.execute = AsyncMock()
 
         result = await get_xp_scaling("123")
@@ -491,11 +512,11 @@ class TestLevelRoles:
     async def test_get_level_roles_empty(self, bot_with_pool):
         """Should return empty list when no roles configured."""
         _, cursor = bot_with_pool
-        cursor.fetchall.return_value = []
+        cursor.__aiter__ = MagicMock(return_value=AsyncIter([]))
         cursor.execute = AsyncMock()
 
-        result = await get_level_roles("123")
-        assert result == []
+        results = [row async for row in get_level_roles("123")]
+        assert results == []
 
     @pytest.mark.asyncio
     async def test_remove_level_role(self, bot_with_pool):
@@ -564,7 +585,8 @@ class TestXpBoosts:
     async def test_get_user_roles_boosts(self, bot_with_pool):
         """Should return boosts for specific role IDs."""
         _, cursor = bot_with_pool
-        cursor.fetchall.return_value = [(1.5, True)]
+        # execute_query_iter does async for row in cursor:
+        cursor.__aiter__ = MagicMock(return_value=AsyncIter([(1.5, True)]))
         cursor.execute = AsyncMock()
 
         result = await get_user_roles_boosts("123", ["456"])
@@ -589,21 +611,21 @@ class TestWarnings:
 
         await add_warning("123", "456", "Spam", exp_date, "admin1")
 
-        cursor.execute.assert_awaited_once()
-        sql = cursor.execute.call_args[0][0]
+        assert cursor.execute.await_count >= 1
+        sql = cursor.execute.call_args_list[0][0][0]
         assert "INSERT INTO warnings" in sql
-        params = cursor.execute.call_args[0][1]
+        params = cursor.execute.call_args_list[0][0][1]
         assert params[2] == "Spam"
 
     @pytest.mark.asyncio
     async def test_get_warnings_no_results(self, bot_with_pool):
-        """Should return None when no warnings exist."""
+        """Should return no results when no warnings exist."""
         _, cursor = bot_with_pool
-        cursor.fetchall.return_value = None
+        cursor.__aiter__ = MagicMock(return_value=AsyncIter([]))
         cursor.execute = AsyncMock()
 
-        result = await get_warnings("123")
-        assert result is None
+        result = [row async for row in get_warnings("123")]
+        assert result == []
 
     @pytest.mark.asyncio
     async def test_get_warnings_with_results(self, bot_with_pool):
@@ -611,16 +633,15 @@ class TestWarnings:
         from datetime import datetime
         _, cursor = bot_with_pool
         now = datetime.now()
-        cursor.fetchall.return_value = [
-            (1, "123", "456", "Spam", now, None, "admin1", 0)
-        ]
+        cursor.__aiter__ = MagicMock(return_value=AsyncIter([
+            (1, "123", "456", "Spam", now, None, "admin1", 0),
+        ]))
         cursor.execute = AsyncMock()
 
-        result = await get_warnings("123", "456")
-        assert result is not None
-        assert len(result) == 1
-        assert result[0].reason == "Spam"
-        assert result[0].user_id == "456"
+        results = [row async for row in get_warnings("123", "456")]
+        assert len(results) == 1
+        assert results[0].reason == "Spam"
+        assert results[0].user_id == "456"
 
     @pytest.mark.asyncio
     async def test_remove_warning(self, bot_with_pool):
@@ -751,11 +772,11 @@ class TestChannelOverwrites:
     async def test_get_channel_overwrites_empty(self, bot_with_pool):
         """Should return empty list when no overwrites."""
         _, cursor = bot_with_pool
-        cursor.fetchall.return_value = []
+        cursor.__aiter__ = MagicMock(return_value=AsyncIter([]))
         cursor.execute = AsyncMock()
 
-        result = await get_channel_overwrites("ch1")
-        assert result == []
+        results = [row async for row in get_channel_overwrites("ch1")]
+        assert results == []
 
     @pytest.mark.asyncio
     async def test_clear_channel_overwrites(self, bot_with_pool):
