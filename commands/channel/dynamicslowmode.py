@@ -1,3 +1,4 @@
+import asyncio
 import time
 from collections import defaultdict, deque
 
@@ -17,6 +18,7 @@ from localizer import tanjunLocalizer
 # In-memory message tracking per channel
 # Maps channel_id -> deque of timestamps (maxlen=100 to bound memory usage)
 _recent_messages: dict[int, deque[float]] = defaultdict(lambda: deque(maxlen=100))
+_recent_messages_lock = asyncio.Lock()
 
 
 async def addDynamicslowmode(
@@ -122,7 +124,8 @@ async def removeDynamicslowmode(command_info: utility.CommandInfo, channel: disc
 
     await remove_dynamicslowmode(command_info.guild.id, channel.id)  # type: ignore[union-attr]
     # Clean up in-memory tracking
-    _recent_messages.pop(int(channel.id), None)
+    async with _recent_messages_lock:
+        _recent_messages.pop(int(channel.id), None)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -204,12 +207,13 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
     channel_id: int = message.channel.id  # type: ignore[assignment]
     now = time.time()
 
-    # Track in memory
-    _recent_messages[channel_id].append(now)
+    # Track in memory (protected by lock to avoid race conditions)
+    async with _recent_messages_lock:
+        _recent_messages[channel_id].append(now)
 
-    # Count messages in the time window
-    cutoff = now - dynamic_slowmode_channel.reset_after
-    messages_in_window = sum(1 for t in _recent_messages[channel_id] if t > cutoff)
+        # Count messages in the time window
+        cutoff = now - dynamic_slowmode_channel.reset_after
+        messages_in_window = sum(1 for t in _recent_messages[channel_id] if t > cutoff)
 
     reason_locale = tanjunLocalizer.localize(
         (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]

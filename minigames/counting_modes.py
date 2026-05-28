@@ -1,4 +1,3 @@
-import contextlib
 import random
 from math import sqrt
 
@@ -14,7 +13,7 @@ from api import (
     set_counting_mode_progress,
 )
 from localizer import tanjunLocalizer
-from utility import EmbedColor, tanjunEmbed
+from utility import DiscordSafe, EmbedColor, tanjunEmbed
 
 modeMap = {
     1: "normal",
@@ -331,9 +330,8 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     # Binary mode stores progress as integer; no conversion needed
 
     if await check_if_opted_out(message.author.id):
-        with contextlib.suppress(discord.Forbidden):
-            await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
-        await message.delete()
+        await DiscordSafe.send_dm(message.author, tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
+        await DiscordSafe.delete(message)
         return
 
     content = message.content
@@ -344,7 +342,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         correct_number = get_correct_next_number(mode, progress)
 
     if not content:
-        await message.add_reaction("💀")
+        await DiscordSafe.add_reaction(message, "💀")
         # nosec: B311
         new_mode = random.randint(1, len(modeMap))
         goal = get_goal(new_mode)
@@ -375,13 +373,13 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
     try:
         number = int(content, 2) if mode == 11 else (int(content) if mode != 12 else content)
     except ValueError:
-        await message.add_reaction("💀")
+        await DiscordSafe.add_reaction(message, "💀")
         # nosec: B311
         new_mode = random.randint(1, len(modeMap))
         goal = get_goal(new_mode)
@@ -412,11 +410,11 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
     if number != correct_number:
-        await message.add_reaction("💀")
+        await DiscordSafe.add_reaction(message, "💀")
         # nosec: B311
         new_mode = random.randint(1, len(modeMap))
         goal = get_goal(new_mode)
@@ -447,14 +445,14 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
     if config is None:
         last_counter_id = await get_last_mode_counter_id(message.channel.id)
 
     if last_counter_id == str(message.author.id):
-        await message.add_reaction("💀")
+        await DiscordSafe.add_reaction(message, "💀")
         # nosec: B311
         new_mode = random.randint(1, len(modeMap))
         goal = get_goal(new_mode)
@@ -485,7 +483,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
     if config is None or goal is None:
@@ -495,7 +493,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         number = romeal_to_number(number)
 
     if number == goal:
-        await message.add_reaction("🎉")
+        await DiscordSafe.add_reaction(message, "🎉")
         # nosec: B311
         new_mode = random.randint(1, len(modeMap))
         new_goal = get_goal(new_mode)
@@ -528,7 +526,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
     if mode == 12:
@@ -545,15 +543,10 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     # nosec: B311
     if random.randint(1, 100) == 1:
         correct_number = get_correct_next_number(mode, correct_number)
-        # Display next number in the correct format for the mode
-        display_number = (
-            bin(correct_number)[2:] if mode == 11 else (
-                number_to_romeal(correct_number) if mode == 12 else (
-                    str(correct_number) if mode != 12 else correct_number
-                )
-            )
+        display_number = bin(correct_number)[2:] if mode == 11 else (
+            number_to_romeal(correct_number) if mode == 12 else str(correct_number)
         )
-        await message.channel.send(display_number)
+        await DiscordSafe.send(message.channel, content=display_number)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
             progress=(romeal_to_number(correct_number) if mode == 12 else correct_number),
