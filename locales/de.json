@@ -31422,5 +31422,101 @@
     "context": "Generic error message for unexpected exceptions during interaction handling",
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "errors.cooldown.title",
+    "source_string": "Cooldown aktiv",
+    "translation": "Cooldown aktiv",
+    "context": "Title for cooldown error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.cooldown.description",
+    "source_string": "Dieser Befehl hat eine Abklingzeit. Versuche es in $retry_after Sekunden erneut.",
+    "translation": "Dieser Befehl hat eine Abklingzeit. Versuche es in $retry_after Sekunden erneut.",
+    "context": "Description when command is on cooldown",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.missing_permissions.title",
+    "source_string": "Fehlende Berechtigungen",
+    "translation": "Fehlende Berechtigungen",
+    "context": "Title for missing permissions error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.missing_permissions.description",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Fehlende Berechtigungen: $missing_permissions",
+    "translation": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Fehlende Berechtigungen: $missing_permissions",
+    "context": "Description when user lacks permissions",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.forbidden.title",
+    "source_string": "Kein Zugriff",
+    "translation": "Kein Zugriff",
+    "context": "Title for forbidden/403 error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.forbidden.description",
+    "source_string": "Ich habe keine Berechtigung, diese Aktion auszuführen.",
+    "translation": "Ich habe keine Berechtigung, diese Aktion auszuführen.",
+    "context": "Description when the bot is forbidden from performing an action",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.http_error.title",
+    "source_string": "Discord API-Fehler",
+    "translation": "Discord API-Fehler",
+    "context": "Title for HTTP error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.http_error.description",
+    "source_string": "Ein API-Fehler ist aufgetreten (Code $status_code). Bitte versuche es später erneut.",
+    "translation": "Ein API-Fehler ist aufgetreten (Code $status_code). Bitte versuche es später erneut.",
+    "context": "Description for HTTP errors with status code",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.transformer_error.title",
+    "source_string": "Ungültige Eingabe",
+    "translation": "Ungültige Eingabe",
+    "context": "Title for transformer/argument conversion error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.transformer_error.description",
+    "source_string": "Ein übergebener Wert konnte nicht verarbeitet werden. Bitte überprüfe deine Eingabe.",
+    "translation": "Ein übergebener Wert konnte nicht verarbeitet werden. Bitte überprüfe deine Eingabe.",
+    "context": "Description when argument transformation fails",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.unexpected_error.title",
+    "source_string": "Unerwarteter Fehler",
+    "translation": "Unerwarteter Fehler",
+    "context": "Title for unexpected/catch-all error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.unexpected_error.description",
+    "source_string": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut oder kontaktiere den Support.",
+    "translation": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut oder kontaktiere den Support.",
+    "context": "Generic fallback description for unhandled errors",
+    "labels": "unassigned",
+    "max_length": null
   }
 ]

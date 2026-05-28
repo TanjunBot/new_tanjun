@@ -89,6 +89,8 @@ class Localizer:
         locale_str: str = str(locale)
         if locale_str in ["en", "en-US", "en-GB"]:
             locale_str = "en"
+        elif locale_str.startswith("de"):
+            locale_str = "de"
         translations: list[dict[str, object]] = self.load_translations(locale_str)
         translation: dict[str, object] | None = self.get_translation(translations, key)
         if translation is None:

@@ -31470,5 +31470,101 @@
     "context": "Generic error message for unexpected exceptions during interaction handling",
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "errors.cooldown.title",
+    "source_string": "Cooldown aktiv",
+    "translation": "Cooldown active",
+    "context": "Title for cooldown error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.cooldown.description",
+    "source_string": "Dieser Befehl hat eine Abklingzeit. Versuche es in $retry_after Sekunden erneut.",
+    "translation": "This command is on cooldown. Try again in $retry_after seconds.",
+    "context": "Description when command is on cooldown",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.missing_permissions.title",
+    "source_string": "Fehlende Berechtigungen",
+    "translation": "Missing permissions",
+    "context": "Title for missing permissions error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.missing_permissions.description",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Fehlende Berechtigungen: $missing_permissions",
+    "translation": "You do not have the required permissions to use this command. Missing permissions: $missing_permissions",
+    "context": "Description when user lacks permissions",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.forbidden.title",
+    "source_string": "Kein Zugriff",
+    "translation": "Access denied",
+    "context": "Title for forbidden/403 error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.forbidden.description",
+    "source_string": "Ich habe keine Berechtigung, diese Aktion auszuführen.",
+    "translation": "I do not have permission to perform this action.",
+    "context": "Description when the bot is forbidden from performing an action",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.http_error.title",
+    "source_string": "Discord API-Fehler",
+    "translation": "Discord API error",
+    "context": "Title for HTTP error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.http_error.description",
+    "source_string": "Ein API-Fehler ist aufgetreten (Code $status_code). Bitte versuche es später erneut.",
+    "translation": "An API error occurred (code $status_code). Please try again later.",
+    "context": "Description for HTTP errors with status code",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.transformer_error.title",
+    "source_string": "Ungültige Eingabe",
+    "translation": "Invalid input",
+    "context": "Title for transformer/argument conversion error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.transformer_error.description",
+    "source_string": "Ein übergebener Wert konnte nicht verarbeitet werden. Bitte überprüfe deine Eingabe.",
+    "translation": "A provided value could not be processed. Please check your input.",
+    "context": "Description when argument transformation fails",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.unexpected_error.title",
+    "source_string": "Unerwarteter Fehler",
+    "translation": "Unexpected error",
+    "context": "Title for unexpected/catch-all error embed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.unexpected_error.description",
+    "source_string": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut oder kontaktiere den Support.",
+    "translation": "An unexpected error occurred. Please try again or contact support.",
+    "context": "Generic fallback description for unhandled errors",
+    "labels": "unassigned",
+    "max_length": null
   }
 ]
