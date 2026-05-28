@@ -1,8 +1,7 @@
 """LevelRoleRepository: Consolidated CRUD for level role assignments."""
 
-from collections.abc import AsyncIterator, Sequence
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
-from typing import Any
 
 from models import LevelRoleModel, LevelRolesGroupModel
 
@@ -21,7 +20,7 @@ class LevelRoleRepository:
         query = """
         INSERT INTO levelRole (guild_id, role_id, level)
         VALUES (%s, %s, %s)
-        ON DUPLICATE KEY UPDATE role_id = VALUES(role_id)
+        ON DUPLICATE KEY UPDATE role_id = VALUES(role_id), level = VALUES(level)
         """
         params = (guild_id, role_id, level)
         await execute_action(query, params)
@@ -55,14 +54,8 @@ class LevelRoleRepository:
 
     async def get_grouped_by_level(self, guild_id: str) -> list[LevelRolesGroupModel]:
         """Get level roles grouped by level, ordered by level."""
-        query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s ORDER BY level"
-        params = (guild_id,)
-        groups: dict[int, list[str]] = {}
-        async for row in LevelRoleModel.iter_rows(query, params):
-            if row.level not in groups:
-                groups[row.level] = []
-            groups[row.level].append(row.role_id)
-        return [LevelRolesGroupModel(level=level, role_ids=roles) for level, roles in groups.items()]
+        roles = [role async for role in self.get_all(guild_id)]
+        return self.group_by_level(roles)
 
     async def get_roles_for_level(self, guild_id: str, level: int) -> list[str]:
         """Get all role IDs assigned to a specific level."""
