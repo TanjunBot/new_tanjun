@@ -1434,6 +1434,90 @@ def addThousandsSeparator(number: int) -> str:
     return f"{number:,}".replace(",", " ")
 
 
+class SafeInteraction:
+    """Helper for safely responding to Discord interactions, preventing double-respond errors.
+
+    Use instead of ``interaction.response.send_message()``,
+    ``interaction.response.defer()``, and ``interaction.edit_original_response()``
+    to handle race conditions when ``interaction_check`` or other code paths
+    may have already responded.
+
+    Usage::
+
+        embed = utility.tanjunEmbed(title="Done", description="Operation complete.")
+        await SafeInteraction.respond(interaction, embed=embed)
+    """
+
+    @staticmethod
+    async def respond(
+        interaction: discord.Interaction,
+        embed: discord.Embed | None = None,
+        content: str | None = None,
+        ephemeral: bool = False,
+        view: discord.ui.View | None = None,
+    ) -> None:
+        """Respond to an interaction, safely handling already-responded state.
+
+        If the interaction has already been responded to, this falls back to
+        ``interaction.followup.send()`` instead of raising.
+        """
+        kwargs: dict[str, Any] = {"ephemeral": ephemeral}
+        if embed is not None:
+            kwargs["embed"] = embed
+        if content is not None:
+            kwargs["content"] = content
+        if view is not None:
+            kwargs["view"] = view
+
+        if interaction.response.is_done():
+            await interaction.followup.send(**kwargs)
+        else:
+            try:
+                await interaction.response.send_message(**kwargs)
+            except discord.InteractionResponded:
+                await interaction.followup.send(**kwargs)
+
+    @staticmethod
+    async def defer(
+        interaction: discord.Interaction,
+        ephemeral: bool = False,
+    ) -> None:
+        """Safely defer an interaction, skipping if already done."""
+        if not interaction.response.is_done():
+            try:
+                await interaction.response.defer(ephemeral=ephemeral)
+            except discord.InteractionResponded:
+                pass  # Already responded, silently ignore
+
+    @staticmethod
+    async def edit(
+        interaction: discord.Interaction,
+        embed: discord.Embed | None = None,
+        content: str | None = None,
+        view: discord.ui.View | None = None,
+    ) -> None:
+        """Safely edit the original interaction response.
+
+        If the interaction has not yet been responded to, this sends an initial
+        message instead of trying to edit a non-existent response.
+        """
+        kwargs: dict[str, Any] = {}
+        if embed is not None:
+            kwargs["embed"] = embed
+        if content is not None:
+            kwargs["content"] = content
+        if view is not None:
+            kwargs["view"] = view
+
+        if interaction.response.is_done():
+            await interaction.edit_original_response(**kwargs)
+        else:
+            try:
+                await interaction.response.send_message(**kwargs)
+            except discord.InteractionResponded:
+                await interaction.edit_original_response(**kwargs)
+
+
 tanjunEmbed = TanjunEmbed
 #: Backward-compatible alias so that ``from utility import tanjunEmbed`` still works.
 
