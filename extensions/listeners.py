@@ -23,7 +23,7 @@ from commands.utility.autopublish import publish_message
 from commands.utility.report import report_btn_click
 from config import adminIds
 from localizer import tanjunLocalizer
-from loops._voice_tracker import handleVoiceChange
+from loops._voice_tracker import voice_user_manager
 from minigames.add_level_xp import addLevelXp
 from minigames.counting import counting
 from minigames.counting_challenge import counting as countingChallenge
@@ -158,7 +158,7 @@ class ListenerCog(commands.Cog):
     async def on_voice_state_update(self, user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
         await memberLeave(before)
         await memberJoin(after, user)
-        await handleVoiceChange(user, before, after)  # type: ignore[no-untyped-call]
+        await voice_user_manager.handle_voice_change(user, before, after)
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:

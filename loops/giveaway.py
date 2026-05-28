@@ -1,5 +1,5 @@
 from commands.giveaway.utility import endGiveaway, sendGiveaway
-from loops._voice_tracker import voice_user_ids
+from loops._voice_tracker import voice_user_manager
 from services.giveaway_service import giveaway_service
 
 
@@ -11,7 +11,7 @@ async def sendReadyGiveaways(client):
 
 
 async def checkVoiceUsers(client):
-    for user_id, guild_id in list(voice_user_ids):
+    for user_id, guild_id in voice_user_manager.get_active_users():
         await giveaway_service.add_voice_minutes(user_id, guild_id)
 
 
