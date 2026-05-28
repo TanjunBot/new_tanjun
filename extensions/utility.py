@@ -5,7 +5,6 @@ from discord import app_commands
 from discord.ext import commands
 
 import utility
-from utility import EmbedColor
 from commands.utility.afk import afk as afkCommand
 from commands.utility.autopublish import autopublish as autopublishCommand
 from commands.utility.autopublish import autopublish_remove as autopublishRemoveCommand
@@ -60,6 +59,7 @@ from commands.utility.twitch.see_twitch_live_notifications import (
     seeTwitchLiveNotifications as seeTwitchLiveNotificationsCommand,
 )
 from localizer import tanjunLocalizer
+from utility import EmbedColor
 
 
 class MessageTrackingCommands(discord.app_commands.Group):

@@ -47,7 +47,6 @@ class ScheduledMessageService:
     @staticmethod
     async def schedule(params: ScheduleMessageParams) -> None:
         """Schedule a new message to be sent at the given time."""
-        import json
 
         from api import execute_action
 
