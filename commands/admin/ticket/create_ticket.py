@@ -1,7 +1,7 @@
 import discord
 
 import utility
-from api import create_ticket_message
+from services.ticket_service import TicketMessageConfig, ticket_service
 from localizer import tanjunLocalizer
 
 
@@ -47,14 +47,16 @@ async def create_ticket(
         await command_info.reply(embed=embed)
         return
 
-    ticket_id = await create_ticket_message(
-        guild_id=command_info.guild.id,
-        channel_id=channel.id,
-        name=name,
-        description=description,
-        ping_role=ping_role.id if ping_role is not None else None,  # type: ignore[arg-type]
-        summary_channel_id=summary_channel.id if summary_channel is not None else None,  # type: ignore[arg-type]
-        introduction=introduction,  # type: ignore[arg-type]
+    ticket_id = await ticket_service.create_config(
+        TicketMessageConfig(
+            guild_id=str(command_info.guild.id),
+            channel_id=str(channel.id),
+            name=name,
+            description=description,
+            ping_role=str(ping_role.id) if ping_role is not None else None,
+            summary_channel_id=str(summary_channel.id) if summary_channel is not None else None,
+            introduction=introduction,
+        )
     )
 
     view = discord.ui.View()
