@@ -203,8 +203,8 @@ class TicketMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    guild_id: str
-    channel_id: str
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
     introduction: Annotated[str | None, StringConstraints(max_length=1024)] = None
     ping_role: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
     name: Annotated[str | None, StringConstraints(max_length=128)] = None
@@ -305,7 +305,7 @@ class DetailedWarningModel(BaseModel):
     reason: Annotated[str | None, StringConstraints(max_length=255)] = None
     created_at: datetime
     expires_at: datetime | None
-    created_by: str
+    created_by: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 
     @classmethod
     def from_row(cls, row: tuple) -> DetailedWarningModel:
@@ -840,4 +840,4 @@ class CountingMode(IntEnum):
 
 class LevelRolesGroupModel(BaseModel):
     level: int = Field(ge=0)
-    role_ids: Annotated[list[str], Field(min_length=1)]
+    role_ids: Annotated[list[Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]], Field(min_length=1)]
