@@ -1,8 +1,3 @@
-# Unused imports:
-# import discord
-# import utility
-# from discord import app_commands
-# from localizer import tanjunLocalizer
 import asyncio
 import logging
 from datetime import time

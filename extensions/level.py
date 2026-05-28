@@ -1,6 +1,3 @@
-# Unused imports:
-# from localizer import tanjunLocalizer
-
 import discord
 from discord import app_commands
 from discord.ext import commands

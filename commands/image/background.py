@@ -4,7 +4,6 @@ from io import BytesIO
 import discord
 from PIL import Image
 
-# from rembg import remove as removeBackground  # type: ignore[import-not-found]
 import utility
 from localizer import tanjunLocalizer
 

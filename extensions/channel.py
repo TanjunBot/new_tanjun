@@ -1,5 +1,3 @@
-# Unused imports:
-# from localizer import tanjunLocalizer
 from typing import cast
 
 import discord

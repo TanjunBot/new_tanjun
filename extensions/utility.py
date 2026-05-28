@@ -1,5 +1,3 @@
-# Unused imports:
-# from typing import List, Optional
 from typing import Any
 
 import discord
