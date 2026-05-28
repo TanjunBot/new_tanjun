@@ -2,10 +2,9 @@ import discord
 from discord.ui import Select, View
 
 import utility
-from api import get_scheduled_messages
-from api import remove_scheduled_message as remove_message
 from localizer import tanjunLocalizer
 from models import ScheduledMessageModel
+from services.scheduled_message_service import ScheduledMessageService
 
 
 class MessageSelectView(View):
@@ -41,7 +40,7 @@ class MessageSelectView(View):
 
 
 async def remove_scheduled_message(command_info: utility.CommandInfo, message_id: int | None = None) -> None:
-    messages = await get_scheduled_messages(command_info.user.id)
+    messages = await ScheduledMessageService.get_user_messages(str(command_info.user.id))
 
     if not messages:
         embed = utility.tanjunEmbed(
@@ -90,7 +89,7 @@ async def remove_scheduled_message(command_info: utility.CommandInfo, message_id
         await command_info.reply(embed=embed)
         return
 
-    await remove_message(message_id)
+    await ScheduledMessageService.cancel(message_id)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.removescheduled.success.title"),

@@ -5,6 +5,7 @@ from discord import app_commands
 from discord.ext import commands
 
 import utility
+from utility import EmbedColor
 from commands.utility.afk import afk as afkCommand
 from commands.utility.autopublish import autopublish as autopublishCommand
 from commands.utility.autopublish import autopublish_remove as autopublishRemoveCommand
@@ -198,6 +199,7 @@ class BoosterRoleCommands(discord.app_commands.Group):
         )
 
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.INFO,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.boosterroleinfo.info.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.boosterroleinfo.info.description"),
         )
@@ -287,6 +289,7 @@ class BoosterChannelCommands(discord.app_commands.Group):
         )
 
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.INFO,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.boosterchannelinfo.info.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,

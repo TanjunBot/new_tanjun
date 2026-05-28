@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 
 import discord
@@ -15,7 +16,7 @@ from api import (
 )
 from localizer import tanjunLocalizer
 from minigames._xp_core import calculate_xp, is_entity_blacklisted
-from utility import get_level_for_xp
+from utility import get_level_for_xp_async
 
 notifiedUsers: set[int] = set()
 _MAX_NOTIFIED_USERS = 10_000
@@ -39,10 +40,10 @@ async def addLevelXp(message: discord.Message) -> None:
     scaling, custom_formula, xp_to_add = await fetch_xp_details(message, guild_id)
 
     current_xp = await get_user_xp(guild_id, str(message.author.id)) or 0
-    current_level = get_level_for_xp(current_xp, scaling, custom_formula)
+    current_level = await get_level_for_xp_async(current_xp, scaling, custom_formula)
 
     new_xp = current_xp + xp_to_add
-    new_level = get_level_for_xp(new_xp, scaling, custom_formula)
+    new_level = await get_level_for_xp_async(new_xp, scaling, custom_formula)
 
     await update_user_xp(guild_id, str(message.author.id), xp_to_add, respect_cooldown=True)
     if new_level > current_level:
@@ -50,14 +51,16 @@ async def addLevelXp(message: discord.Message) -> None:
 
 
 async def fetch_xp_details(message: discord.Message, guild_id: str) -> tuple[str, str | None, int]:
-    scaling = await _get_cached_config(guild_id, "scaling", "medium")
-    custom_formula = await _get_cached_config(guild_id, "custom_formula")
-    xp_to_add = await calculate_xp(
+    scaling_task = _get_cached_config(guild_id, "scaling", "medium")
+    formula_task = _get_cached_config(guild_id, "custom_formula")
+    xp_task = calculate_xp(
         guild_id,
         str(message.author.id),
         str(message.channel.id),
         [str(role.id) for role in (message.author.roles if hasattr(message.author, "roles") else [])],
     )
+
+    scaling, custom_formula, xp_to_add = await asyncio.gather(scaling_task, formula_task, xp_task)
     return scaling, custom_formula, xp_to_add
 
 

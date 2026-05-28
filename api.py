@@ -31,7 +31,6 @@ from models import (
     LevelRolesGroupModel,
     LogEnableModel,
     ReportModel,
-    ScheduledMessageModel,
     TicketMessageModel,
     TicketModel,
     TokenOverviewModel,
@@ -44,7 +43,7 @@ from models import (
     WelcomeChannelModel,
     XpBoostModel,
 )
-from utility import get_level_for_xp, get_xp_for_level
+from utility import get_level_for_xp_async, get_xp_for_level_async
 
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
@@ -145,6 +144,9 @@ _GUILD_CONFIG_CACHE_TTL = 300  # 5 minutes
 
 _blacklist_cache: dict[str, tuple[Any, float]] = {}
 _guild_config_cache: dict[str, tuple[dict[str, Any], float]] = {}
+# In-memory cache for XP cooldowns: (guild_id, user_id) -> last_xp_gain_timestamp
+# Eliminates DB queries entirely when user is on cooldown
+_last_xp_gain_cache: dict[tuple[str, str], float] = {}
 
 
 def _is_cache_valid(entry: tuple[Any, float] | None, ttl: float) -> bool:
@@ -261,6 +263,50 @@ async def execute_action(query: str, params: Any = None, bot=None) -> Any:
         return cursor.rowcount
 
     return await _execute_with_retry("execute_action", _callback, query, params, bot, is_write=True)
+
+
+async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
+    """Execute a batch INSERT using executemany for bulk operations.
+
+    Reduces database round-trips by sending all rows in one query.
+    """
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        raise RuntimeError("Database pool is not initialized")
+
+    last_exception = None
+    safe_id = _query_safe_id(query)
+    for attempt in range(_MAX_DB_RETRIES):
+        try:
+            conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+            async with conn:
+                async with conn.cursor() as cursor:
+                    await asyncio.wait_for(cursor.executemany(query, params_list), timeout=_QUERY_TIMEOUT)
+                await conn.commit()
+            return
+        except TimeoutError:
+            msg = f"Timeout on execute_batch attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}"
+            print(msg)
+            last_exception = TimeoutError(msg)
+            if attempt < _MAX_DB_RETRIES - 1:
+                await asyncio.sleep(0.5 * (attempt + 1))
+            continue
+        except Exception as e:
+            err_str = str(e).lower()
+            # Determine which errors are safe to retry (mirroring _execute_with_retry for write operations)
+            retryable = "deadlock" in err_str or "duplicate" in err_str or "abort" in err_str
+            if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                print(f"Transient error on execute_batch attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
+                await asyncio.sleep(0.5 * (attempt + 1))
+                last_exception = e
+                continue
+            # Non-retryable error or final attempt: raise instead of silently failing
+            print(f"Error during execute_batch: {e} — {safe_id}")
+            raise
+
+    if last_exception:
+        print(f"All retries exhausted for execute_batch: {safe_id}")
+        raise last_exception
 
 
 async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
@@ -1499,147 +1545,193 @@ async def get_custom_formula(guild_id: str) -> str | None:
 
 
 async def add_level_role(guild_id: str, role_id: str, level: int) -> None:
-    query = """
-    INSERT INTO levelRole (guild_id, role_id, level)
-    VALUES (%s, %s, %s)
-    ON DUPLICATE KEY UPDATE role_id = VALUES(role_id)
-    """
-    params = (guild_id, role_id, level)
-    await execute_action(query, params)
+    """Assign a level role (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    await level_role_repo.assign(guild_id, role_id, level)
 
 
 async def get_level_roles(guild_id: str) -> AsyncIterator[LevelRoleModel]:
-    """Stream level roles for a guild.
+    """Stream level roles for a guild (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
 
-    Yields rows one at a time.
-    """
-    query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
-    params = (guild_id,)
-    async for row in LevelRoleModel.iter_rows(query, params):
+    async for row in level_role_repo.get_all(guild_id):
         yield row
 
 
 async def get_level_role(guild_id: str, role_id: str) -> int | None:
-    query = "SELECT level FROM levelRole WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
+    """Get level for a role (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    return await level_role_repo.get_by_role(guild_id, role_id)
 
 
-async def remove_level_role(guild_id: str, role_id: str) -> None:
-    query = """
-    DELETE FROM levelRole
-    WHERE guild_id = %s AND role_id = %s
-    """
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+async def remove_level_role(guild_id: str, role_id: str, _level: int | None = None) -> None:
+    """Remove a level role (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    await level_role_repo.unassign(guild_id, role_id)
 
 
 async def get_all_level_roles(guild_id: str) -> list[LevelRolesGroupModel]:
-    query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s ORDER BY level"
-    params = (guild_id,)
-    groups: dict[int, list[str]] = {}
-    async for row in execute_query_iter(query, params):
-        level, role_id = row
-        if level not in groups:
-            groups[level] = []
-        groups[level].append(role_id)
-    return [LevelRolesGroupModel(level=level, role_ids=roles) for level, roles in groups.items()]
+    """Get level roles grouped by level (delegates to LevelRoleRepository)."""
+    from repositories.level_role_repository import level_role_repo
+
+    return await level_role_repo.get_grouped_by_level(guild_id)
+
+
+from enum import Enum
+
+
+class BoostTarget(Enum):
+    """Type-safe enum for XP boost target types, mapping to DB table and entity column."""
+    ROLE = ("roleXpBoost", "role_id")
+    CHANNEL = ("channelXpBoost", "channel_id")
+    USER = ("userXpBoost", "user_id")
+
+    @property
+    def table(self) -> str:
+        return self.value[0]
+
+    @property
+    def entity_column(self) -> str:
+        return self.value[1]
+
+
+class XpBoostRepository:
+    """Consolidated XP boost CRUD using BoostTarget enum.
+
+    Replaces the 9+ individual add/remove/get functions for role, channel, and user boosts.
+    """
+
+    @staticmethod
+    async def add_boost(
+        guild_id: str,
+        entity_id: str,
+        boost: float,
+        additive: bool,
+        target: BoostTarget = BoostTarget.USER,
+    ) -> None:
+        """Add or update an XP boost entry."""
+        query = f"""
+        INSERT INTO {target.table} (guild_id, {target.entity_column}, boost, additive)
+        VALUES (%s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
+        """
+        params = (guild_id, entity_id, boost, additive)
+        await execute_action(query, params)
+
+    @staticmethod
+    async def remove_boost(
+        guild_id: str,
+        entity_id: str,
+        target: BoostTarget = BoostTarget.USER,
+    ) -> None:
+        """Remove an XP boost entry."""
+        query = f"DELETE FROM {target.table} WHERE guild_id = %s AND {target.entity_column} = %s"
+        params = (guild_id, entity_id)
+        await execute_action(query, params)
+
+    @staticmethod
+    async def get_boost(
+        guild_id: str,
+        entity_id: str,
+        target: BoostTarget = BoostTarget.USER,
+    ) -> XpBoostModel | None:
+        """Get a specific XP boost entry by entity ID."""
+        query = f"SELECT boost, additive FROM {target.table} WHERE guild_id = %s AND {target.entity_column} = %s"
+        params = (guild_id, entity_id)
+        result = await execute_query(query, params)
+        return XpBoostModel.from_row(result[0]) if result else None
+
+    @staticmethod
+    async def get_boosts_for_target(
+        guild_id: str,
+        entity_ids: list[str],
+        target: BoostTarget = BoostTarget.ROLE,
+    ) -> list[XpBoostModel]:
+        """Get all boost entries for a list of entity IDs under a target type."""
+        if not entity_ids:
+            return []
+        query = f"SELECT boost, additive FROM {target.table} WHERE guild_id = %s AND {target.entity_column} IN %s"
+        params = (guild_id, tuple(entity_ids))
+        rows: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(query, params):
+            rows.append(row)
+        return rows
+
+    @staticmethod
+    async def get_all_boosts(guild_id: str) -> dict[str, list[XpBoostModel]]:
+        """Get all boosts for a guild, grouped by target type."""
+        role_query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s"
+        channel_query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s"
+        user_query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s"
+
+        roles: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(role_query, (guild_id,)):
+            roles.append(row)
+
+        channels: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(channel_query, (guild_id,)):
+            channels.append(row)
+
+        users: list[XpBoostModel] = []
+        async for row in XpBoostModel.iter_rows(user_query, (guild_id,)):
+            users.append(row)
+
+        return {
+            "roles": roles,
+            "channels": channels,
+            "users": users,
+        }
+
+
+# --- Legacy wrapper functions (backward compatible) ---
 
 
 async def add_role_boost(guild_id: str, role_id: str, boost: float, additive: bool) -> None:
-    query = """
-    INSERT INTO roleXpBoost (guild_id, role_id, boost, additive)
-    VALUES (%s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
-    """
-    params = (guild_id, role_id, boost, additive)
-    await execute_action(query, params)
+    await XpBoostRepository.add_boost(guild_id, role_id, boost, additive, BoostTarget.ROLE)
 
 
 async def add_channel_boost(guild_id: str, channel_id: str, boost: float, additive: bool) -> None:
-    query = """
-    INSERT INTO channelXpBoost (guild_id, channel_id, boost, additive)
-    VALUES (%s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
-    """
-    params = (guild_id, channel_id, boost, additive)
-    await execute_action(query, params)
+    await XpBoostRepository.add_boost(guild_id, channel_id, boost, additive, BoostTarget.CHANNEL)
 
 
 async def add_user_boost(guild_id: str, user_id: str, boost: float, additive: bool) -> None:
-    query = """
-    INSERT INTO userXpBoost (guild_id, user_id, boost, additive)
-    VALUES (%s, %s, %s, %s)
-    ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
-    """
-    params = (guild_id, user_id, boost, additive)
-    await execute_action(query, params)
+    await XpBoostRepository.add_boost(guild_id, user_id, boost, additive, BoostTarget.USER)
 
 
 async def remove_role_boost(guild_id: str, role_id: str) -> None:
-    query = "DELETE FROM roleXpBoost WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    await XpBoostRepository.remove_boost(guild_id, role_id, BoostTarget.ROLE)
 
 
 async def remove_channel_boost(guild_id: str, channel_id: str) -> None:
-    query = "DELETE FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    await XpBoostRepository.remove_boost(guild_id, channel_id, BoostTarget.CHANNEL)
 
 
 async def remove_user_boost(guild_id: str, user_id: str) -> None:
-    query = "DELETE FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
+    await XpBoostRepository.remove_boost(guild_id, user_id, BoostTarget.USER)
 
 
 async def get_all_boosts(guild_id: str) -> dict[str, list[XpBoostModel]]:
-    role_query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s"
-    channel_query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s"
-    user_query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s"
-
-    roles: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(role_query, (guild_id,)):
-        roles.append(row)
-
-    channels: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(channel_query, (guild_id,)):
-        channels.append(row)
-
-    users: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(user_query, (guild_id,)):
-        users.append(row)
-
-    return {
-        "roles": roles,
-        "channels": channels,
-        "users": users,
-    }
+    return await XpBoostRepository.get_all_boosts(guild_id)
 
 
 async def get_user_boost(guild_id: str, user_id: str) -> XpBoostModel | None:
-    query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    result = await safe_execute_query(query, params)
-    return XpBoostModel.from_row(result[0]) if result else None
+    return await XpBoostRepository.get_boost(guild_id, user_id, BoostTarget.USER)
 
 
 async def get_user_roles_boosts(guild_id: str, role_ids: list[str]) -> list[XpBoostModel]:
-    query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
-    params = (guild_id, tuple(role_ids))
-    rows: list[XpBoostModel] = []
-    async for row in XpBoostModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    return await XpBoostRepository.get_boosts_for_target(guild_id, role_ids, BoostTarget.ROLE)
 
 
 async def get_channel_boost(guild_id: str, channel_id: str) -> XpBoostModel | None:
-    query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    result = await execute_query(query, params)
-    return XpBoostModel.from_row(result[0]) if result else None
+    return await XpBoostRepository.get_boost(guild_id, channel_id, BoostTarget.CHANNEL)
+
+
+async def get_role_boost(guild_id: str, role_id: str) -> XpBoostModel | None:
+    """Get a specific role XP boost. Added for consistency with user/channel boost pattern."""
+    return await XpBoostRepository.get_boost(guild_id, role_id, BoostTarget.ROLE)
 
 
 async def add_channel_to_blacklist(guild_id: str, channel_id: str, reason: str | None = None) -> None:
@@ -1733,9 +1825,9 @@ async def get_user_level_info(guild_id: str, user_id: str) -> UserLevelInfoModel
         formula = custom_formula or ""
 
         xp, custom_background = result[0]
-        level = get_level_for_xp(xp, scaling, formula)
-        xp_needed = get_xp_for_level(level, scaling, formula)
-        xp_for_last_level_needed = get_xp_for_level(level - 1, scaling, formula)
+        level = await get_level_for_xp_async(xp, scaling, formula)
+        xp_needed = await get_xp_for_level_async(level, scaling, formula)
+        xp_for_last_level_needed = await get_xp_for_level_async(level - 1, scaling, formula)
         return UserLevelInfoModel(
             xp=xp - xp_for_last_level_needed,
             level=level,
@@ -1764,23 +1856,20 @@ async def get_user_xp(guild_id: str, user_id: str) -> int | None:
 
 async def update_user_xp(guild_id: str, user_id: str, xp: int, respect_cooldown: bool = False) -> None:
     if respect_cooldown:
-        query = """
-    INSERT INTO level (guild_id, user_id, xp, last_xp_gain)
-    VALUES (%s, %s, %s, NOW())
-    ON DUPLICATE KEY UPDATE
-        xp = CASE
-            WHEN TIMESTAMPDIFF(SECOND, last_xp_gain, NOW()) >= GREATEST(1, COALESCE((SELECT textCooldown FROM levelConfig WHERE guild_id = %s), 1))
-            THEN xp + %s
-            ELSE xp
-        END,
-        last_xp_gain = CASE
-            WHEN TIMESTAMPDIFF(SECOND, last_xp_gain, NOW()) >= GREATEST(1, COALESCE((SELECT textCooldown FROM levelConfig WHERE guild_id = %s), 1))
-            THEN NOW()
-            ELSE last_xp_gain
-        END;
-        """
-        params = (guild_id, user_id, xp, guild_id, xp, guild_id)
+        cache_key = (guild_id, user_id)
+        now = time.time()
+        last_gain = _last_xp_gain_cache.get(cache_key)
+        # Fetch cooldown from cache (subquery eliminated)
+        cooldown_seconds = await _get_cached_config(guild_id, "text_cooldown", 60)
+        if cooldown_seconds < 1:
+            cooldown_seconds = 1  # Minimum 1-second floor
+        if last_gain and (now - last_gain) < cooldown_seconds:
+            return  # Still on cooldown — skip DB entirely
+        # Proceed with single atomic DB update
+        query = "INSERT INTO level (guild_id, user_id, xp, last_xp_gain) VALUES (%s, %s, %s, NOW()) ON DUPLICATE KEY UPDATE xp = xp + %s, last_xp_gain = NOW()"
+        params = (guild_id, user_id, xp, xp)
         await execute_action(query, params)
+        _last_xp_gain_cache[cache_key] = now
     else:
         query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s"
         params = (guild_id, user_id, xp, xp)
@@ -1789,23 +1878,20 @@ async def update_user_xp(guild_id: str, user_id: str, xp: int, respect_cooldown:
 
 async def update_user_xp_from_voice(guild_id: str, user_id: str, xp: int, respect_cooldown: bool = False) -> None:
     if respect_cooldown:
-        query = """
-        INSERT INTO level (guild_id, user_id, xp, last_voice_xp_gain)
-        VALUES (%s, %s, %s, NOW())
-        ON DUPLICATE KEY UPDATE
-            xp = CASE
-                WHEN TIMESTAMPDIFF(SECOND, last_voice_xp_gain, NOW()) >= GREATEST(5, (SELECT voiceCooldown FROM levelConfig WHERE guild_id = %s))
-                THEN xp + %s
-                ELSE xp
-            END,
-            last_voice_xp_gain = CASE
-                WHEN TIMESTAMPDIFF(SECOND, last_voice_xp_gain, NOW()) >= GREATEST(5, (SELECT voiceCooldown FROM levelConfig WHERE guild_id = %s))
-                THEN NOW()
-                ELSE last_voice_xp_gain
-            END;
-        """
-        params = (guild_id, user_id, xp, guild_id, xp, guild_id)
+        cache_key = (guild_id, user_id)
+        now = time.time()
+        last_gain = _last_xp_gain_cache.get(cache_key)
+        # Fetch cooldown from cache (subquery eliminated)
+        cooldown_seconds = await _get_cached_config(guild_id, "voice_cooldown", 60)
+        if cooldown_seconds < 5:
+            cooldown_seconds = 5  # Minimum 5-second floor for voice
+        if last_gain and (now - last_gain) < cooldown_seconds:
+            return  # Still on cooldown — skip DB entirely
+        # Proceed with single atomic DB update
+        query = "INSERT INTO level (guild_id, user_id, xp, last_voice_xp_gain) VALUES (%s, %s, %s, NOW()) ON DUPLICATE KEY UPDATE xp = xp + %s, last_voice_xp_gain = NOW()"
+        params = (guild_id, user_id, xp, xp)
         await execute_action(query, params)
+        _last_xp_gain_cache[cache_key] = now
     else:
         query = "INSERT INTO level (guild_id, user_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s"
         params = (guild_id, user_id, xp, xp)
@@ -1867,16 +1953,19 @@ async def add_giveaway(
             if giveaway_id is None:
                 raise RuntimeError("Failed to get last insert ID for giveaway")
 
-            for ch_id, amount in channel_requirements.items():
-                await cursor.execute(
-                    "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)",
-                    (giveaway_id, ch_id, amount),
+            if channel_requirements:
+                channel_req_query = (
+                    "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)"
                 )
-            for role_id in role_requirement:
-                await cursor.execute(
-                    "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)",
-                    (role_id, giveaway_id),
+                channel_req_params = [(giveaway_id, ch_id, amount) for ch_id, amount in channel_requirements.items()]
+                await cursor.executemany(channel_req_query, channel_req_params)
+
+            if role_requirement:
+                role_req_query = (
+                    "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)"
                 )
+                role_req_params = [(role_id, giveaway_id) for role_id in role_requirement]
+                await cursor.executemany(role_req_query, role_req_params)
     except Exception as e:
         print(f"Error creating giveaway: {e}")
         return None

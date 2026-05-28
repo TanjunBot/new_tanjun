@@ -2,7 +2,7 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
+from utility import CommandInfo, EmbedColor
 
 
 async def kick(command_info: utility.CommandInfo, target: discord.Member, reason: str | None = None) -> None:
@@ -12,6 +12,7 @@ async def kick(command_info: utility.CommandInfo, target: discord.Member, reason
         and not command_info.channel.permissions_for(command_info.user).kick_members
     ):
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.missingPermission.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.missingPermission.description"),
         )
@@ -21,6 +22,7 @@ async def kick(command_info: utility.CommandInfo, target: discord.Member, reason
     assert command_info.guild is not None
     if not command_info.guild.me.guild_permissions.kick_members:
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
@@ -32,6 +34,7 @@ async def kick(command_info: utility.CommandInfo, target: discord.Member, reason
 
     if isinstance(command_info.user, discord.Member) and target.top_role >= CommandInfo.user.top_role:  # type: ignore[misc, union-attr]
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.targetTooHigh.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.targetTooHigh.description"),
         )
@@ -41,6 +44,7 @@ async def kick(command_info: utility.CommandInfo, target: discord.Member, reason
     try:
         await target.kick(reason=reason)
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.SUCCESS,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.success.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
@@ -56,12 +60,14 @@ async def kick(command_info: utility.CommandInfo, target: discord.Member, reason
         await command_info.reply(embed=embed)
     except discord.Forbidden:
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.forbidden.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.forbidden.description"),
         )
         await command_info.reply(embed=embed)
     except discord.HTTPException:
         embed = utility.tanjunEmbed(
+            colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.error.title"),
             description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.error.description"),
         )
