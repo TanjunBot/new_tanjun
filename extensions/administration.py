@@ -38,7 +38,7 @@ except ImportError:
     print("Warning: Test functions not available in tests module")
 import contextlib
 
-from utility import addFeedback, missingLocalization, tanjunEmbed
+from utility import addFeedback, embed_or_wrap, error_embed, missingLocalization, success_embed, tanjunEmbed, warning_embed
 
 
 def _mysql_defaults_file(user: str, password: str, host: str, port: int) -> str:
@@ -573,13 +573,13 @@ Das Tanjun-Team
             with open("temp_import.sql", "wb") as f:
                 f.write(content)
         except Exception as e:
-                await status_msg.edit(
-                    embed=error_embed(
-                        tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.download_error", error=e),
-                        title="Database Sync",
-                    )
+            await status_msg.edit(
+                embed=error_embed(
+                    tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.download_error", error=e),
+                    title="Database Sync",
                 )
-                return
+            )
+            return
 
         await status_msg.edit(embed=embed_or_wrap(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.database_sync.analyzing"), title="Database Sync"))
 

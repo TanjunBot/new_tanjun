@@ -1517,7 +1517,7 @@ def embed_or_wrap(
     Args:
         text: The message content to embed.
         title: Optional embed title.
-        colour: Embed color. Defaults to ``EmbedColor.INFO``.
+        colour: Embed color. Defaults to ``EmbedColor.BRAND``.
 
     Returns:
         A configured ``TanjunEmbed`` instance.
