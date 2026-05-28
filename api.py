@@ -1449,25 +1449,17 @@ async def clear_wordchain(channel_id: Any) -> None:
 
 
 async def set_level_system_status(guild_id: str, active: bool) -> None:
-    query = """
-    INSERT INTO levelConfig (guild_id, active)
-    VALUES (%s, %s)
-    ON DUPLICATE KEY UPDATE active = VALUES(active)
-    """
-    params = (guild_id, active)
-    await execute_action(query, params)
-    _invalidate_guild_cache(guild_id)
+    from repositories.level_config_repository import level_config_repo
+
+    await level_config_repo.update_field(guild_id, active=active)
 
 
 async def get_level_system_status(guild_id: str) -> bool:
     """Check if the level system is enabled for a guild, using cached config when available."""
-    cached_value = await _get_cached_config(guild_id, "active")
-    if cached_value is not None:
-        return cached_value
-    query = "SELECT active FROM levelConfig WHERE guild_id = %s"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    return result[0][0] if result else True
+    from repositories.level_config_repository import level_config_repo
+
+    config = await level_config_repo.get_config(guild_id)
+    return config.active
 
 
 async def delete_level_system_data(guild_id: str) -> None:
@@ -1505,101 +1497,73 @@ async def delete_level_system_data(guild_id: str) -> None:
 
 
 async def set_levelup_message_status(guild_id: str, status: bool) -> None:
-    query = """
-    INSERT INTO levelConfig (guild_id, level_up_messageActive)
-    VALUES (%s, %s)
-    ON DUPLICATE KEY UPDATE level_up_messageActive = VALUES(level_up_messageActive)
-    """
-    params = (guild_id, status)
-    await execute_action(query, params)
-    _invalidate_guild_cache(guild_id)
+    from repositories.level_config_repository import level_config_repo
+
+    await level_config_repo.update_field(guild_id, level_up_message_active=status)
 
 
 async def get_levelup_message_status(guild_id: str) -> bool:
     """Get the level-up message status for a guild, using cached config when available."""
-    cached_value = await _get_cached_config(guild_id, "level_up_message_active")
-    if cached_value is not None:
-        return cached_value
-    query = "SELECT level_up_messageActive FROM levelConfig WHERE guild_id = %s"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    return result[0][0] if result else True
+    from repositories.level_config_repository import level_config_repo
+
+    config = await level_config_repo.get_config(guild_id)
+    return config.level_up_message_active
 
 
 async def set_levelup_message(guild_id: str, message: str) -> None:
-    query = """
-    INSERT INTO levelConfig (guild_id, level_up_message)
-    VALUES (%s, %s)
-    ON DUPLICATE KEY UPDATE level_up_message = VALUES(level_up_message)
-    """
-    params = (guild_id, message)
-    await execute_action(query, params)
-    _invalidate_guild_cache(guild_id)
+    from repositories.level_config_repository import level_config_repo
+
+    await level_config_repo.update_field(guild_id, level_up_message=message)
 
 
 async def get_levelup_message(guild_id: str) -> str | None:
     """Get the level-up message for a guild, using cached config when available."""
-    cached_value = await _get_cached_config(guild_id, "level_up_message")
-    if cached_value is not None:
-        return cached_value
-    query = "SELECT level_up_message FROM levelConfig WHERE guild_id = %s"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
+    from repositories.level_config_repository import level_config_repo
+
+    config = await level_config_repo.get_config(guild_id)
+    return config.level_up_message
 
 
 async def set_levelup_channel(guild_id: str, channel_id: str | None) -> None:
-    query = """
-    INSERT INTO levelConfig (guild_id, level_up_channel_id)
-    VALUES (%s, %s)
-    ON DUPLICATE KEY UPDATE level_up_channel_id = VALUES(level_up_channel_id)
-    """
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
-    _invalidate_guild_cache(guild_id)
+    from repositories.level_config_repository import level_config_repo
+
+    await level_config_repo.update_field(guild_id, level_up_channel_id=channel_id)
 
 
 async def get_levelup_channel(guild_id: str) -> str | None:
     """Get the level-up channel for a guild, using cached config when available."""
-    cached_value = await _get_cached_config(guild_id, "level_up_channel_id")
-    if cached_value is not None:
-        return cached_value
-    query = "SELECT level_up_channel_id FROM levelConfig WHERE guild_id = %s"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
+    from repositories.level_config_repository import level_config_repo
+
+    config = await level_config_repo.get_config(guild_id)
+    return config.level_up_channel_id
 
 
 async def set_xp_scaling(guild_id: str, scaling: str) -> None:
-    query = """
-    INSERT INTO levelConfig (guild_id, difficulty)
-    VALUES (%s, %s)
-    ON DUPLICATE KEY UPDATE difficulty = VALUES(difficulty)
-    """
-    params = (guild_id, scaling)
-    await execute_action(query, params)
-    _invalidate_guild_cache(guild_id)
+    from repositories.level_config_repository import level_config_repo
+
+    await level_config_repo.update_field(guild_id, difficulty=scaling)
 
 
 async def get_xp_scaling(guild_id: str) -> str:
     """Get the XP scaling for a guild, using cached config when available."""
-    return await _get_cached_config(guild_id, "scaling", "medium")
+    from repositories.level_config_repository import level_config_repo
+
+    config = await level_config_repo.get_config(guild_id)
+    return config.difficulty
 
 
 async def set_custom_formula(guild_id: str, formula: str) -> None:
-    query = """
-    INSERT INTO levelConfig (guild_id, customFormula)
-    VALUES (%s, %s)
-    ON DUPLICATE KEY UPDATE customFormula = VALUES(customFormula)
-    """
-    params = (guild_id, formula)
-    await execute_action(query, params)
-    _invalidate_guild_cache(guild_id)
+    from repositories.level_config_repository import level_config_repo
+
+    await level_config_repo.update_field(guild_id, custom_formula=formula, difficulty="custom")
 
 
 async def get_custom_formula(guild_id: str) -> str | None:
     """Get the custom XP formula for a guild, using cached config when available."""
-    return await _get_cached_config(guild_id, "custom_formula", None)
+    from repositories.level_config_repository import level_config_repo
+
+    config = await level_config_repo.get_config(guild_id)
+    return config.custom_formula
 
 
 async def add_level_role(guild_id: str, role_id: str, level: int) -> None:
@@ -2218,35 +2182,31 @@ async def update_giveaway(
 
 
 async def set_text_cooldown(guild_id: str, cooldown: int) -> None:
-    query = """
-    INSERT INTO levelConfig (guild_id, textCooldown)
-    VALUES (%s, %s)
-    ON DUPLICATE KEY UPDATE textCooldown = VALUES(textCooldown)
-    """
-    params = (guild_id, cooldown)
-    await execute_action(query, params)
-    _invalidate_guild_cache(guild_id)
+    from repositories.level_config_repository import level_config_repo
+
+    await level_config_repo.update_field(guild_id, text_cooldown=cooldown)
 
 
 async def set_voice_cooldown(guild_id: str, cooldown: int) -> None:
-    query = """
-    INSERT INTO levelConfig (guild_id, voiceCooldown)
-    VALUES (%s, %s)
-    ON DUPLICATE KEY UPDATE voiceCooldown = VALUES(voiceCooldown)
-    """
-    params = (guild_id, cooldown)
-    await execute_action(query, params)
-    _invalidate_guild_cache(guild_id)
+    from repositories.level_config_repository import level_config_repo
+
+    await level_config_repo.update_field(guild_id, voice_cooldown=cooldown)
 
 
 async def get_text_cooldown(guild_id: str) -> int:
     """Get the text XP cooldown for a guild, using cached config when available."""
-    return await _get_cached_config(guild_id, "text_cooldown", 60)
+    from repositories.level_config_repository import level_config_repo
+
+    config = await level_config_repo.get_config(guild_id)
+    return config.text_cooldown
 
 
 async def get_voice_cooldown(guild_id: str) -> int:
     """Get the voice XP cooldown for a guild, using cached config when available."""
-    return await _get_cached_config(guild_id, "voice_cooldown", 60)
+    from repositories.level_config_repository import level_config_repo
+
+    config = await level_config_repo.get_config(guild_id)
+    return config.voice_cooldown
 
 
 async def useToken(user_id: str, amount: int) -> None:

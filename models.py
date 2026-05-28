@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from enum import IntEnum
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -742,6 +742,47 @@ class ChannelOverwriteModel:
 
         async for row in execute_query_iter(query, params):
             yield cls.from_row(row)
+
+
+class LevelConfig(BaseModel):
+    """Pydantic model for a guild's level configuration."""
+    guild_id: str
+    active: bool = True
+    difficulty: Literal['easy', 'medium', 'hard', 'extreme', 'custom'] = "medium"
+    custom_formula: str | None = None
+    level_up_message_active: bool = True
+    level_up_message: str | None = None
+    level_up_channel_id: str | None = None
+    text_cooldown: int = Field(default=60, ge=0)
+    voice_cooldown: int = Field(default=60, ge=0)
+
+    # Column -> field mapping for DB result rows (in SELECT order)
+    _COLUMN_ORDER: ClassVar[list[str]] = [
+        "guild_id", "active", "difficulty", "custom_formula",
+        "level_up_message_active", "level_up_message",
+        "level_up_channel_id", "text_cooldown", "voice_cooldown",
+    ]
+
+    @classmethod
+    def from_row(cls, row: tuple) -> LevelConfig:
+        """Create a LevelConfig from a DB result row."""
+        if not isinstance(row, (list, tuple)) or len(row) < 9:
+            raise ValueError(
+                f"LevelConfig.from_row expects a row with at least 9 columns, "
+                f"got {len(row) if isinstance(row, (list, tuple)) else 'non-sequence'}. "
+                f"Check query projection/order."
+            )
+        return cls(
+            guild_id=row[0],
+            active=bool(row[1]),
+            difficulty=row[2],
+            custom_formula=row[3],
+            level_up_message_active=bool(row[4]),
+            level_up_message=row[5],
+            level_up_channel_id=row[6],
+            text_cooldown=row[7],
+            voice_cooldown=row[8],
+        )
 
 
 class CountingMode(IntEnum):
