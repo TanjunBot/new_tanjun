@@ -2944,6 +2944,10 @@ async def get_ready_scheduled_messages() -> list[ScheduledMessageModel]:
     return rows
 
 
+# Report functions have been moved to ReportService in services/report_service.py
+# Import them from there for new code. Old aliases kept for backward compat.
+
+
 async def report_user(
     guild_id: str,
     user_id: str,
@@ -2951,133 +2955,97 @@ async def report_user(
     reason: str,
     is_moderator: bool = False,
 ) -> int | None:
-    if is_moderator:
-        query = "INSERT INTO reports (guild_id, user_id, reporterId, reason, accepted, accepted_at, acceptedBy) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        params: Any = (
-            guild_id,
-            user_id,
-            reporter_id,
-            reason,
-            1,
-            datetime.now(),
-            reporter_id,
+    from services.report_service import ReportCreateParams
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.create(
+        ReportCreateParams(
+            guild_id=guild_id,
+            user_id=user_id,
+            reporter_id=reporter_id,
+            reason=reason,
+            is_moderator=is_moderator,
         )
-    else:
-        query = "INSERT INTO reports (guild_id, user_id, reporterId, reason) VALUES (%s, %s, %s, %s)"
-        params = (guild_id, user_id, reporter_id, reason)
-    report_id = await execute_action(query, params)
-    return report_id
+    )
 
 
 async def accept_report(guild_id: str, report_id: str) -> None:
-    query = "UPDATE reports SET accepted = 1, accepted_at = NOW(), acceptedBy = %s WHERE id = %s"
-    params = (guild_id, report_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.accept(guild_id, report_id, accepted_by=None)
 
 
 async def reject_report(guild_id: str, report_id: str) -> None:
-    query = "UPDATE reports SET accepted = 0, accepted_at = NOW(), acceptedBy = %s WHERE id = %s"
-    params = (guild_id, report_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.reject(guild_id, report_id, accepted_by=None)
 
 
 async def resolve_report(guild_id: str, report_id: str) -> None:
-    query = "UPDATE reports SET resolved = 1 WHERE guild_id = %s AND id = %s"
-    params = (guild_id, report_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.resolve(guild_id, report_id)
 
 
 async def delete_report(guild_id: str, report_id: str) -> None:
-    query = "DELETE FROM reports WHERE guild_id = %s AND id = %s"
-    params = (guild_id, report_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.delete(guild_id, report_id)
 
 
 async def get_reports(guild_id: str, user_id: str | None = None) -> list[ReportModel]:
-    query = """
-        SELECT id, guild_id, user_id, reporterId, reason,
-               UNIX_TIMESTAMP(created_at) as created_at,
-               accepted,
-               UNIX_TIMESTAMP(accepted_at) as accepted_at,
-               acceptedBy,
-               resolved,
-               UNIX_TIMESTAMP(resolved_at) as resolved_at,
-               resolvedBy
-        FROM reports WHERE guild_id = %s
-    """
-    params: list[Any] = [guild_id]
-    if user_id:
-        query += " AND user_id = %s"
-        params.append(user_id)
+    from services.report_service import ReportFilter
+    from services.report_service import report_service as _report_svc
 
-    rows: list[ReportModel] = []
-    async for row in ReportModel.iter_rows(query, tuple(params)):
-        rows.append(row)
-    return rows
+    return await _report_svc.get(ReportFilter(guild_id=guild_id, user_id=user_id))
 
 
 async def get_reports_by_reporter(guild_id: str, reporter_id: str) -> list[ReportModel]:
-    query = """
-        SELECT id, guild_id, user_id, reporterId, reason,
-               UNIX_TIMESTAMP(created_at) as created_at,
-               accepted,
-               UNIX_TIMESTAMP(accepted_at) as accepted_at,
-               acceptedBy,
-               resolved,
-               UNIX_TIMESTAMP(resolved_at) as resolved_at,
-               resolvedBy
-        FROM reports WHERE guild_id = %s AND reporterId = %s
-    """
-    params = (guild_id, reporter_id)
-    rows: list[ReportModel] = []
-    async for row in ReportModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.get_by_reporter(guild_id, reporter_id)
 
 
 async def block_reporter(guild_id: str, reporter_id: str) -> None:
-    query = "INSERT INTO blockedReporters (guild_id, user_id) VALUES (%s, %s)"
-    params = (guild_id, reporter_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.block_reporter(guild_id, reporter_id)
 
 
 async def unblock_reporter(guild_id: str, reporter_id: str) -> None:
-    query = "DELETE FROM blockedReporters WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, reporter_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.unblock_reporter(guild_id, reporter_id)
 
 
 async def get_blocked_reporters(guild_id: str) -> list[BlockedReporterModel]:
-    query = "SELECT guild_id, user_id FROM blockedReporters WHERE guild_id = %s"
-    params = (guild_id,)
-    rows: list[BlockedReporterModel] = []
-    async for row in BlockedReporterModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.get_blocked_reporters(guild_id)
 
 
 async def check_if_reporter_is_blocked(guild_id: str, reporter_id: str) -> bool:
-    query = "SELECT 1 FROM blockedReporters WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, reporter_id)
-    result = await execute_query(query, params)
-    return bool(result)
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.is_blocked(guild_id, reporter_id)
 
 
 async def get_report_channel(guild_id: str) -> str | None:
-    result = await execute_query("SELECT channel_id FROM reportchannel WHERE guild_id = %s", (guild_id,))
-    return result[0] if result else None
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.get_channel(guild_id)
 
 
 async def set_report_channel(guild_id: str, channel_id: str) -> None:
-    query = "INSERT INTO reportchannel (guild_id, channel_id) VALUES (%s, %s)"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.set_channel(guild_id, channel_id)
 
 
 async def remove_report_channel(guild_id: str) -> None:
-    query = "DELETE FROM reportchannel WHERE guild_id = %s"
-    params = (guild_id,)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.remove_channel(guild_id)
 
 
 async def get_trigger_messages(guild_id: str) -> list[TriggerMessageModel]:
