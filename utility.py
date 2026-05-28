@@ -1332,3 +1332,7 @@ def similar(a, b):
 
 def addThousandsSeparator(number: int) -> str:
     return f"{number:,}".replace(",", " ")
+
+
+tanjunEmbed = TanjunEmbed
+#: Backward-compatible alias so that ``from utility import tanjunEmbed`` still works.
