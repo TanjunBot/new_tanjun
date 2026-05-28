@@ -19,6 +19,7 @@ from models import (
     ChannelOverwriteModel,
     ClaimedBoosterChannelModel,
     ClaimedBoosterRoleModel,
+    CountingMode,
     DetailedWarningModel,
     DynamicSlowmodeMessageModel,
     DynamicSlowmodeModel,
@@ -1362,7 +1363,7 @@ async def get_counting_challenge_channel_amount(guild_id: Any) -> int:
     return result[0][0] if result else 0
 
 
-async def set_counting_mode(channel_id: Any, progress: Any, mode: Any, guild_id: Any) -> None:
+async def set_counting_mode(channel_id: Any, progress: Any, mode: CountingMode, guild_id: Any) -> None:
     query = "INSERT INTO counting_modes (channel_id, progress, mode, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress), mode = VALUES(mode)"
     params = (channel_id, progress, mode, guild_id)
     await execute_action(query, params)
@@ -1388,15 +1389,17 @@ async def clear_counting_mode(channel_id: Any) -> None:
     await execute_action(query, params)
 
 
-async def get_counting_mode_mode(channel_id: str | int) -> int | None:
+async def get_counting_mode_mode(channel_id: str | int) -> CountingMode | None:
     query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
-    return result[0][0] if result else None
+    if result and result[0][0] is not None:
+        return CountingMode(result[0][0])
+    return None
 
 
 async def set_counting_mode_progress(
-    channel_id: Any, progress: Any, guild_id: Any, mode: Any, goal: Any, counter_id: Any
+    channel_id: Any, progress: Any, guild_id: Any, mode: CountingMode, goal: Any, counter_id: Any
 ) -> None:
     query = "INSERT INTO counting_modes (channel_id, progress, guild_id, mode, goal, last_counter_id) VALUES (%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s, last_counter_id = %s"
     params = (
@@ -2735,64 +2738,6 @@ async def remove_log_channel(guild_id: str) -> None:
     await execute_action(query, params)
 
 
-async def add_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
-    """Add a channel to the log blacklist. Thin wrapper around add_log_blacklist."""
-    await add_log_blacklist(guild_id, channel_id, LogBlacklistType.CHANNEL)
-
-
-async def remove_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
-    """Remove a channel from the log blacklist. Thin wrapper around remove_log_blacklist."""
-    await remove_log_blacklist(guild_id, channel_id, LogBlacklistType.CHANNEL)
-
-
-async def get_log_blacklist_channel(guild_id: str) -> list[str]:
-    """Get all blacklisted channels for a guild. Thin wrapper around get_log_blacklist."""
-    return await get_log_blacklist(guild_id, LogBlacklistType.CHANNEL)
-
-
-async def is_log_channel_blacklisted(guild_id: str, channel_id: str) -> str | None:
-    """Check if a channel is blacklisted. Thin wrapper around is_log_entity_blacklisted."""
-    return await is_log_entity_blacklisted(guild_id, channel_id, LogBlacklistType.CHANNEL)
-
-
-async def add_log_role_blacklist(guild_id: str, role_id: str) -> None:
-    """Add a role to the log blacklist. Thin wrapper around add_log_blacklist."""
-    await add_log_blacklist(guild_id, role_id, LogBlacklistType.ROLE)
-
-
-async def remove_log_role_blacklist(guild_id: str, role_id: str) -> None:
-    """Remove a role from the log blacklist. Thin wrapper around remove_log_blacklist."""
-    await remove_log_blacklist(guild_id, role_id, LogBlacklistType.ROLE)
-
-
-async def get_log_role_blacklist(guild_id: str) -> list[str]:
-    """Get all blacklisted roles for a guild. Thin wrapper around get_log_blacklist."""
-    return await get_log_blacklist(guild_id, LogBlacklistType.ROLE)
-
-
-async def is_log_role_blacklisted(guild_id: str, role_id: str) -> str | None:
-    """Check if a role is blacklisted. Thin wrapper around is_log_entity_blacklisted."""
-    return await is_log_entity_blacklisted(guild_id, role_id, LogBlacklistType.ROLE)
-
-
-async def add_log_user_blacklist(guild_id: str, user_id: str) -> None:
-    """Add a user to the log blacklist. Thin wrapper around add_log_blacklist."""
-    await add_log_blacklist(guild_id, user_id, LogBlacklistType.USER)
-
-
-async def remove_log_user_blacklist(guild_id: str, user_id: str) -> None:
-    """Remove a user from the log blacklist. Thin wrapper around remove_log_blacklist."""
-    await remove_log_blacklist(guild_id, user_id, LogBlacklistType.USER)
-
-
-async def get_log_user_blacklist(guild_id: str) -> list[str]:
-    """Get all blacklisted users for a guild. Thin wrapper around get_log_blacklist."""
-    return await get_log_blacklist(guild_id, LogBlacklistType.USER)
-
-
-async def is_log_user_blacklisted(guild_id: str, user_id: str) -> str | None:
-    """Check if a user is blacklisted. Thin wrapper around is_log_entity_blacklisted."""
-    return await is_log_entity_blacklisted(guild_id, user_id, LogBlacklistType.USER)
 
 
 async def get_log_channel(guild_id: str) -> str | None:
