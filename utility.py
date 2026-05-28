@@ -58,6 +58,72 @@ class EmbedColor(enum.IntEnum):
     TIMEOUT = 0x95A5A6  # Gray: disabled/timeout
 
 
+class StatusIcon(enum.StrEnum):
+    """Standardized status icons used across all embeds and messages.
+
+    Use these instead of hardcoded Unicode emojis to keep icon usage
+    consistent.  All values are Unicode fallbacks that render in any
+    Discord client without needing Nitro or a guild emoji slot.
+    """
+
+    SUCCESS = "✅"
+    ERROR = "❌"
+    WARNING = "⚠️"
+    INFO = "ℹ️"
+    LOCK = "🔒"
+    PENDING = "⏳"
+    DENIED = "🚫"
+    CROSS = "❌"
+    ENABLED = "✅"
+    DISABLED = "❌"
+
+
+# Map of meaningful names to custom guild emoji IDs (from issue #1248).
+# Replace the placeholder IDs below with the actual emoji IDs from your
+# Discord server once they are created.
+EMOJI_MAP: dict[str, str] = {
+    "checkmark": "<:check:PLACEHOLDER_ID>",
+    "cross": "<:cross:PLACEHOLDER_ID>",
+    "loading": "<a:loading:PLACEHOLDER_ID>",
+    "info": "<:info:PLACEHOLDER_ID>",
+}
+
+
+async def get_icon_emoji(
+    bot: discord.Client | discord.ext.commands.Bot,
+    emoji_name: str,
+    *,
+    fallback: str | None = None,
+) -> str:
+    """Get a Discord guild emoji by name, falling back to a Unicode icon.
+
+    If the guild emoji is not found (or the bot object is unavailable),
+    ``fallback`` is returned; if ``fallback`` is ``None``, ``StatusIcon.INFO``
+    is used as the ultimate default.
+
+    Parameters
+    ----------
+    bot:
+        The bot client (used to look up ``bot.emojis``).
+    emoji_name:
+        The name of the guild emoji to look up (e.g. ``"checkmark"``).
+    fallback:
+        Unicode fallback when the guild emoji isn't available.
+        ``None`` means ``StatusIcon.INFO.value``.
+
+    Returns
+    -------
+    str:
+        A string safe for use in embed titles, field values, or
+        message content.
+    """
+    if emoji := discord.utils.get(bot.emojis, name=emoji_name):
+        return str(emoji)
+    if fallback is not None:
+        return fallback
+    return StatusIcon.INFO.value
+
+
 class EmbedProxy:
     def __init__(self, layer: dict[str, Any]):
         self.__dict__.update(layer)
