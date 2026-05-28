@@ -2331,105 +2331,95 @@ async def feedbackIsBlocked(user_id: str) -> bool:
 
 
 async def add_booster_channel(guild_id: str, channel_id: str) -> None:
-    query = "INSERT INTO booster_channel (guild_id, channel_id) VALUES (%s, %s)"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import BoosterType, booster_service
+
+    await booster_service.add(BoosterType.CHANNEL, guild_id, channel_id)
 
 
 async def delete_booster_channel(guild_id: str, channel_id: str) -> None:
-    query = "DELETE FROM booster_channel WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import BoosterType, booster_service
+
+    await booster_service.delete(BoosterType.CHANNEL, guild_id, entity_id=channel_id)
 
 
 async def get_booster_channel(guild_id: str) -> str | None:
-    query = "SELECT channel_id FROM booster_channel WHERE guild_id = %s"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import BoosterType, booster_service
+
+    return await booster_service.get(BoosterType.CHANNEL, guild_id)
 
 
 async def claim_booster_channel(user_id: str, channel_id: str, guild_id: str) -> None:
-    query = "INSERT INTO claimedBoosterChannel (user_id, channel_id, guild_id) VALUES (%s, %s, %s)"
-    params = (user_id, channel_id, guild_id)
-    await execute_action(query, params)
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import ClaimedBoosterType, booster_service
+
+    await booster_service.claim(ClaimedBoosterType.CHANNEL, user_id, channel_id, guild_id)
 
 
 async def remove_claimed_booster_channel(user_id: str, guild_id: str) -> None:
-    query = "DELETE FROM claimedBoosterChannel WHERE user_id = %s AND guild_id = %s"
-    params = (user_id, guild_id)
-    await execute_action(query, params)
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import ClaimedBoosterType, booster_service
+
+    await booster_service.unclaim(ClaimedBoosterType.CHANNEL, user_id, guild_id)
 
 
 async def get_claimed_booster_channel(
     user_id: str | None = None, guild_id: str | None = None
 ) -> str | list[ClaimedBoosterChannelModel] | None:
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import ClaimedBoosterType, booster_service
+
     if user_id:
-        query = (
-            "SELECT channel_id FROM claimedBoosterChannel WHERE user_id = %s AND guild_id = %s"
-            if guild_id
-            else "SELECT user_id, channel_id, guild_id FROM claimedBoosterChannel WHERE user_id = %s"
-        )
-        params = (user_id, guild_id) if guild_id else (user_id,)
-        result = await safe_execute_query(query, params)
-        if not result:
-            return None
-        return result[0][0] if guild_id else [ClaimedBoosterChannelModel.from_row(row) for row in result]
-    else:
-        query = "SELECT user_id, channel_id, guild_id FROM claimedBoosterChannel"
-        result = await safe_execute_query(query)
-        return [ClaimedBoosterChannelModel.from_row(row) for row in result]
+        return await booster_service.get_user_claims(ClaimedBoosterType.CHANNEL, user_id) or None
+    return await booster_service.get_all_claims(ClaimedBoosterType.CHANNEL) or None
 
 
 async def add_booster_role(guild_id: str, role_id: str) -> None:
-    query = "INSERT INTO boosterRole (guild_id, role_id) VALUES (%s, %s)"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import BoosterType, booster_service
+
+    await booster_service.add(BoosterType.ROLE, guild_id, role_id)
 
 
 async def get_booster_role(guild_id: str) -> str | None:
-    query = "SELECT role_id FROM boosterRole WHERE guild_id = %s"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import BoosterType, booster_service
+
+    return await booster_service.get(BoosterType.ROLE, guild_id)
 
 
 async def delete_booster_role(guild_id: str) -> None:
-    query = "DELETE FROM boosterRole WHERE guild_id = %s"
-    params = (guild_id,)
-    await execute_action(query, params)
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import BoosterType, booster_service
+
+    await booster_service.delete(BoosterType.ROLE, guild_id)
 
 
 async def add_claimed_booster_role(user_id: str, role_id: str, guild_id: str) -> None:
-    query = "INSERT INTO claimedBoosterRole (user_id, role_id, guild_id) VALUES (%s, %s, %s)"
-    params = (user_id, role_id, guild_id)
-    await execute_action(query, params)
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import ClaimedBoosterType, booster_service
+
+    await booster_service.claim(ClaimedBoosterType.ROLE, user_id, role_id, guild_id)
 
 
 async def remove_claimed_booster_role(user_id: str, guild_id: str) -> None:
-    query = "DELETE FROM claimedBoosterRole WHERE user_id = %s AND guild_id = %s"
-    params = (user_id, guild_id)
-    await execute_action(query, params)
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import ClaimedBoosterType, booster_service
+
+    await booster_service.unclaim(ClaimedBoosterType.ROLE, user_id, guild_id)
 
 
 async def get_claimed_booster_role(
     user_id: str | None = None, guild_id: str | None = None
 ) -> str | list[ClaimedBoosterRoleModel] | None:
+    """Backward-compatible wrapper around BoosterService."""
+    from services.booster_service import ClaimedBoosterType, booster_service
+
     if user_id:
-        query = (
-            "SELECT role_id FROM claimedBoosterRole WHERE user_id = %s AND guild_id = %s"
-            if guild_id
-            else "SELECT user_id, role_id, guild_id FROM claimedBoosterRole WHERE user_id = %s"
-        )
-        params = (user_id, guild_id) if guild_id else (user_id,)
-        result = await safe_execute_query(query, params)
-        if not result:
-            return None
-        return result[0][0] if guild_id else [ClaimedBoosterRoleModel.from_row(row) for row in result]
-    else:
-        query = "SELECT user_id, role_id, guild_id FROM claimedBoosterRole"
-        result = await safe_execute_query(query)
-        return [ClaimedBoosterRoleModel.from_row(row) for row in result]
+        return await booster_service.get_user_claims(ClaimedBoosterType.ROLE, user_id) or None
+    return await booster_service.get_all_claims(ClaimedBoosterType.ROLE) or None
 
 
 async def set_log_channel(guild_id: str, channel_id: str) -> None:

@@ -1,7 +1,7 @@
 import discord
 
 import utility
-from api import add_booster_channel, get_booster_channel
+from services.booster_service import BoosterType, booster_service
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
@@ -35,7 +35,7 @@ async def setupBoosterChannel(command_info: CommandInfo, category: discord.Categ
         await command_info.reply(embed=embed)
         return
 
-    booster_channel = await get_booster_channel(command_info.guild.id)
+    booster_channel = await booster_service.get(BoosterType.CHANNEL, str(command_info.guild.id))
     if booster_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -50,7 +50,7 @@ async def setupBoosterChannel(command_info: CommandInfo, category: discord.Categ
         await command_info.reply(embed=embed)
         return
 
-    await add_booster_channel(command_info.guild.id, category.id)
+    await booster_service.add(BoosterType.CHANNEL, str(command_info.guild.id), str(category.id))
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.setupboosterchannel.success.title"),

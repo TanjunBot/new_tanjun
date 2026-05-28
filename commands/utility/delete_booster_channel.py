@@ -1,7 +1,7 @@
 import discord
 
 import utility
-from api import delete_booster_channel, get_booster_channel
+from services.booster_service import BoosterType, booster_service
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
@@ -52,7 +52,7 @@ async def deleteBoosterChannel(command_info: CommandInfo) -> None:
         await command_info.reply(embed=embed)
         return
 
-    booster_channel = await get_booster_channel(command_info.guild.id)
+    booster_channel = await booster_service.get(BoosterType.CHANNEL, str(command_info.guild.id))
     if not booster_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -67,7 +67,7 @@ async def deleteBoosterChannel(command_info: CommandInfo) -> None:
         await command_info.reply(embed=embed)
         return
 
-    await delete_booster_channel(command_info.guild.id, booster_channel)
+    await booster_service.delete(BoosterType.CHANNEL, str(command_info.guild.id), entity_id=booster_channel)
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.deleteboosterchannel.success.title"),
