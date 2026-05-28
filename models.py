@@ -822,9 +822,10 @@ class LevelConfig(BaseModel):
     @classmethod
     def from_row(cls, row: tuple) -> LevelConfig:
         """Create a LevelConfig from a DB result row."""
-        if not isinstance(row, (list, tuple)) or len(row) < 9:
+        expected_count = len(cls._COLUMN_ORDER)
+        if not isinstance(row, (list, tuple)) or len(row) != expected_count:
             raise ValueError(
-                f"LevelConfig.from_row expects a row with at least 9 columns, "
+                f"LevelConfig.from_row expects exactly {expected_count} columns, "
                 f"got {len(row) if isinstance(row, (list, tuple)) else 'non-sequence'}. "
                 f"Check query projection/order."
             )
