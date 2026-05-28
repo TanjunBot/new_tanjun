@@ -6,6 +6,7 @@ from commands.minigames._counting_common import (
     require_moderate_members,
 )
 from localizer import tanjunLocalizer
+from models import CountingMode
 from utility import CommandInfo, tanjunEmbed
 
 LOCALE_KEY = "minigames.setcountingchannel"
@@ -26,7 +27,7 @@ async def setCountingChannel(command_info: CommandInfo, channel: discord.TextCha
         channel_id=channel.id,
         guild_id=command_info.guild.id,
         progress=1,
-        mode=8,
+        mode=CountingMode.DOUBLE,
         goal=128,
         counter_id="nobody",
     )
