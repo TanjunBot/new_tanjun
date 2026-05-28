@@ -5,7 +5,7 @@ import sys
 from typing import ClassVar
 
 from dotenv import load_dotenv
-from pydantic import Field, computed_field
+from pydantic import Field, SecretStr, ValidationError, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
@@ -25,34 +25,34 @@ class Settings(BaseSettings, cli_parse_args=False):
     )
 
     # ── Bot fundamentals ──────────────────────────────────────────────────────
-    token: str
+    token: SecretStr
     application_id: str = Field(alias="applicationId")
-    admin_ids_raw: str = Field(default="", alias="adminIds")
+    admin_ids_raw: str = Field(alias="adminIds")
     prefix: str
 
     # ── Database ──────────────────────────────────────────────────────────────
     database_ip: str
     database_port: int = 3306
-    database_password: str
+    database_password: SecretStr
     database_user: str
     database_schema: str
 
     # ── External API keys ─────────────────────────────────────────────────────
-    giphy_api_key: str = Field(default="", alias="giphyAPIKey")
-    github_auth_token: str = Field(default="", alias="GithubAuthToken")
-    imgbb_api_key: str = Field(default="", alias="ImgBBApiKey")
-    open_ai_key: str = Field(default="", alias="openAIKey")
-    brawlstars_token: str = Field(default="", alias="brawlstarsToken")
-    twitch_secret: str = Field(default="", alias="twitchSecret")
+    giphy_api_key: SecretStr = Field(default=SecretStr(""), alias="giphyAPIKey")
+    github_auth_token: SecretStr = Field(default=SecretStr(""), alias="GithubAuthToken")
+    imgbb_api_key: SecretStr = Field(default=SecretStr(""), alias="ImgBBApiKey")
+    open_ai_key: SecretStr = Field(default=SecretStr(""), alias="openAIKey")
+    brawlstars_token: SecretStr = Field(default=SecretStr(""), alias="brawlstarsToken")
+    twitch_secret: SecretStr = Field(default=SecretStr(""), alias="twitchSecret")
     twitch_id: str = Field(default="", alias="twitchId")
 
     # ── Bytebin ───────────────────────────────────────────────────────────────
     bytebin_url: str = ""
-    bytebin_password: str = ""
+    bytebin_password: SecretStr = SecretStr("")
     bytebin_username: str = ""
 
     # ── OpenRouter ────────────────────────────────────────────────────────────
-    openrouter_api_key: str = Field(default="", alias="OPENROUTER_API_KEY")
+    openrouter_api_key: SecretStr = Field(default=SecretStr(""), alias="OPENROUTER_API_KEY")
     openrouter_model: str = Field(
         default="deepseek/deepseek-v4-flash:free", alias="OPENROUTER_MODEL"
     )
@@ -69,7 +69,11 @@ class Settings(BaseSettings, cli_parse_args=False):
         return [int(x) for x in raw.split(",") if x.strip()] if raw.strip() else []
 
 
-settings = Settings()
+try:
+    settings = Settings()
+except ValidationError as e:
+    print(f"Configuration validation error: {e}", file=sys.stderr)
+    sys.exit(1)
 
 # ── Compatibility aliases ─────────────────────────────────────────────────────
 # These preserve the original names so that every existing ``from config import
@@ -77,27 +81,27 @@ settings = Settings()
 # ``from config import settings`` and use ``settings.<snake_case_name>``.
 
 version = "1.1.4"
-token: str = settings.token  # type: ignore[assignment]
+token: str = settings.token.get_secret_value()  # type: ignore[assignment]
 applicationId: str = settings.application_id  # type: ignore[assignment]
 adminIds: list[int] = settings.admin_ids
 activity: str = settings.activity
 database_ip: str = settings.database_ip  # type: ignore[assignment]
 database_port: int = settings.database_port
-database_password: str = settings.database_password  # type: ignore[assignment]
+database_password: str = settings.database_password.get_secret_value()  # type: ignore[assignment]
 database_user: str = settings.database_user  # type: ignore[assignment]
 database_schema: str = settings.database_schema  # type: ignore[assignment]
-giphyAPIKey: str = settings.giphy_api_key  # type: ignore[assignment]
-GithubAuthToken: str = settings.github_auth_token  # type: ignore[assignment]
-ImgBBApiKey: str = settings.imgbb_api_key  # type: ignore[assignment]
-openAiKey: str = settings.open_ai_key  # type: ignore[assignment]
+giphyAPIKey: str = settings.giphy_api_key.get_secret_value()  # type: ignore[assignment]
+GithubAuthToken: str = settings.github_auth_token.get_secret_value()  # type: ignore[assignment]
+ImgBBApiKey: str = settings.imgbb_api_key.get_secret_value()  # type: ignore[assignment]
+openAiKey: str = settings.open_ai_key.get_secret_value()  # type: ignore[assignment]
 bytebin_url: str = settings.bytebin_url  # type: ignore[assignment]
-bytebin_password: str = settings.bytebin_password  # type: ignore[assignment]
+bytebin_password: str = settings.bytebin_password.get_secret_value()  # type: ignore[assignment]
 bytebin_username: str = settings.bytebin_username  # type: ignore[assignment]
-brawlstarsToken: str = settings.brawlstars_token  # type: ignore[assignment]
-twitchSecret: str = settings.twitch_secret  # type: ignore[assignment]
+brawlstarsToken: str = settings.brawlstars_token.get_secret_value()  # type: ignore[assignment]
+twitchSecret: str = settings.twitch_secret.get_secret_value()  # type: ignore[assignment]
 twitchId: str = settings.twitch_id  # type: ignore[assignment]
 prefix: str = settings.prefix  # type: ignore[assignment]
-OPENROUTER_API_KEY: str = settings.openrouter_api_key
+OPENROUTER_API_KEY: str = settings.openrouter_api_key.get_secret_value()
 OPENROUTER_MODEL: str = settings.openrouter_model
 
 
