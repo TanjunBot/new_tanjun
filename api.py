@@ -12,7 +12,6 @@ from typing import Any
 from discord import Entitlement
 
 from models import (
-    AfkMessageModel,
     AISituationModel,
     BlacklistEntryModel,
     BlockedReporterModel,
@@ -2511,55 +2510,6 @@ async def feedbackIsBlocked(user_id: str) -> bool:
     params = (user_id,)
     result = await execute_query(query, params)
     return result is not None and len(result) > 0
-
-
-async def setAfk(user_id: str, reason: str) -> None:
-    query = """
-    INSERT INTO afk_users (user_id, reason)
-    VALUES (%s, %s)
-    """
-    params = (user_id, reason)
-    await execute_action(query, params)
-
-
-async def removeAfk(user_id: str) -> None:
-    query = "DELETE FROM afk_users WHERE user_id = %s"
-    params = (user_id,)
-    await execute_action(query, params)
-    query = "DELETE FROM afkMessages WHERE user_id = %s"
-    await execute_action(query, params)
-
-
-async def checkIfUserIsAfk(user_id: str) -> bool:
-    query = "SELECT * FROM afk_users WHERE user_id = %s"
-    params = (user_id,)
-    result = await safe_execute_query(query, params)
-    return result is not None and len(result) > 0
-
-
-async def addAfkMessage(user_id: str, message_id: str, channel_id: str) -> None:
-    query = """
-    INSERT INTO afkMessages (user_id, messageId, channel_id)
-    VALUES (%s, %s, %s)
-    """
-    params = (user_id, message_id, channel_id)
-    await execute_action(query, params)
-
-
-async def getAfkMessages(user_id: str) -> list[AfkMessageModel]:
-    query = "SELECT messageId, channel_id FROM afkMessages WHERE user_id = %s"
-    params = (user_id,)
-    rows: list[AfkMessageModel] = []
-    async for row in AfkMessageModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
-
-
-async def getAfkReason(user_id: str) -> str | None:
-    query = "SELECT reason FROM afk_users WHERE user_id = %s"
-    params = (user_id,)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
 
 
 async def add_booster_channel(guild_id: str, channel_id: str) -> None:
