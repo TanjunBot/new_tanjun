@@ -312,7 +312,7 @@ async def execute_query(
     return await _execute_with_retry("execute_query", _callback, query, params, bot)
 
 
-async def execute_action(query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None) -> int:
+async def execute_action(query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None) -> int | None:
     async def _callback(cursor, connection):
         await connection.commit()
         return cursor.rowcount
