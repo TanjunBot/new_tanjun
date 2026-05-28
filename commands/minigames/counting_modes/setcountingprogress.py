@@ -1,26 +1,27 @@
 """Set counting challenge progress (matching original behavior under counting_modes directory)."""
+
 import discord
 
-from services.counting_repository import CountingMode, CountingRepository
 from commands.minigames._counting_common import (
     require_counting_channel,
     require_moderate_members,
     require_valid_progress,
 )
 from localizer import tanjunLocalizer
+from services.counting_repository import CountingMode, CountingRepository
 from utility import CommandInfo, tanjunEmbed
 
 LOCALE_KEY = "minigames.setcountingchallengeprogress"
 _repo = CountingRepository
 
 
-async def setCountingProgress(command_info: CommandInfo, channel, progress: int) -> None:
+async def set_counting_progress(command_info: CommandInfo, channel: discord.TextChannel, progress: int) -> None:
     if await require_moderate_members(command_info, LOCALE_KEY):
         return
 
     current_progress = await require_counting_channel(
         command_info, channel.id,
-        lambda cid: _repo.get_progress(CountingMode.CHALLENGE, cid),
+        lambda cid: _repo.get_progress(CountingMode.MODES, cid),
         LOCALE_KEY,
     )
     if current_progress is None:
@@ -29,7 +30,7 @@ async def setCountingProgress(command_info: CommandInfo, channel, progress: int)
     if await require_valid_progress(command_info, progress, LOCALE_KEY):
         return
 
-    await _repo.set_challenge_progress(CountingMode.CHALLENGE, channel.id, progress)
+    await _repo.set_challenge_progress(CountingMode.MODES, channel.id, progress)
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), f"{LOCALE_KEY}.success.title"),

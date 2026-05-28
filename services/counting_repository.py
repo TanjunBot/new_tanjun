@@ -4,7 +4,6 @@ Replaces 21 individual API functions in api.py with a single typed service.
 """
 
 from enum import IntEnum
-from typing import Any
 
 from api import execute_action, execute_query
 
@@ -139,7 +138,11 @@ class CountingRepository:
             "(channel_id, progress, guild_id, mode, goal, last_counter_id) "
             "VALUES (%s, %s, %s, %s, %s, %s) "
             "ON DUPLICATE KEY UPDATE "
-            "progress = %s, last_counter_id = %s"
+            "guild_id = VALUES(guild_id), "
+            "mode = VALUES(mode), "
+            "goal = VALUES(goal), "
+            "progress = VALUES(progress), "
+            "last_counter_id = VALUES(last_counter_id)"
         )
         await execute_action(
             query,
@@ -149,8 +152,6 @@ class CountingRepository:
                 guild_id,
                 mode,
                 goal,
-                counter_id,
-                progress,
                 counter_id,
             ),
         )
