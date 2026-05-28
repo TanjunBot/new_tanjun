@@ -743,6 +743,41 @@ class ChannelOverwriteModel:
             yield cls.from_row(row)
 
 
+class LevelConfig(BaseModel):
+    """Pydantic model for a guild's level configuration."""
+    guild_id: str
+    active: bool = True
+    difficulty: str = "medium"
+    custom_formula: str | None = None
+    level_up_message_active: bool = True
+    level_up_message: str | None = None
+    level_up_channel_id: str | None = None
+    text_cooldown: int = 60
+    voice_cooldown: int = 60
+
+    # Column -> field mapping for DB result rows (in SELECT order)
+    _COLUMN_ORDER: ClassVar[list[str]] = [
+        "guild_id", "active", "difficulty", "custom_formula",
+        "level_up_message_active", "level_up_message",
+        "level_up_channel_id", "text_cooldown", "voice_cooldown",
+    ]
+
+    @classmethod
+    def from_row(cls, row: tuple) -> LevelConfig:
+        """Create a LevelConfig from a DB result row."""
+        return cls(
+            guild_id=row[0],
+            active=bool(row[1]),
+            difficulty=row[2],
+            custom_formula=row[3],
+            level_up_message_active=bool(row[4]),
+            level_up_message=row[5],
+            level_up_channel_id=row[6],
+            text_cooldown=row[7],
+            voice_cooldown=row[8],
+        )
+
+
 class LevelRolesGroupModel(BaseModel):
     level: int = Field(ge=0)
     role_ids: list[str]
