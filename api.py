@@ -263,6 +263,34 @@ async def execute_action(query: str, params: Any = None, bot=None) -> Any:
     return await _execute_with_retry("execute_action", _callback, query, params, bot, is_write=True)
 
 
+async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
+    """Execute a batch INSERT using executemany for bulk operations.
+
+    Reduces database round-trips by sending all rows in one query.
+    """
+    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    if pool is None:
+        raise RuntimeError("Database pool is not initialized")
+
+    for attempt in range(_MAX_DB_RETRIES):
+        safe_id = str(uuid.uuid4())
+        try:
+            conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+            async with conn:
+                async with conn.cursor() as cursor:
+                    await asyncio.wait_for(cursor.executemany(query, params_list), timeout=_QUERY_TIMEOUT)
+                await conn.commit()
+            return
+        except TimeoutError:
+            print(f"Timeout on execute_batch acquire attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
+            if attempt < _MAX_DB_RETRIES - 1:
+                await asyncio.sleep(0.5 * (attempt + 1))
+            continue
+        except Exception:
+            raise
+    raise RuntimeError(f"Could not acquire database connection after {_MAX_DB_RETRIES} attempts [{safe_id}]")
+
+
 async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
     async def _callback(cursor, connection):
         await connection.commit()
@@ -1867,16 +1895,19 @@ async def add_giveaway(
             if giveaway_id is None:
                 raise RuntimeError("Failed to get last insert ID for giveaway")
 
-            for ch_id, amount in channel_requirements.items():
-                await cursor.execute(
-                    "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)",
-                    (giveaway_id, ch_id, amount),
+            if channel_requirements:
+                channel_req_query = (
+                    "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)"
                 )
-            for role_id in role_requirement:
-                await cursor.execute(
-                    "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)",
-                    (role_id, giveaway_id),
+                channel_req_params = [(giveaway_id, ch_id, amount) for ch_id, amount in channel_requirements.items()]
+                await cursor.executemany(channel_req_query, channel_req_params)
+
+            if role_requirement:
+                role_req_query = (
+                    "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)"
                 )
+                role_req_params = [(role_id, giveaway_id) for role_id in role_requirement]
+                await cursor.executemany(role_req_query, role_req_params)
     except Exception as e:
         print(f"Error creating giveaway: {e}")
         return None
