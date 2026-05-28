@@ -4,12 +4,9 @@ from datetime import datetime, timedelta
 import discord
 
 import utility
-from api import (
-    add_scheduled_message,
-    get_ready_scheduled_messages,
-    get_user_scheduled_messages_in_timeframe,
-    remove_scheduled_message,
-    update_scheduled_message_repeat_amount,
+from services.scheduled_message_service import (
+    ScheduledMessageService,
+    ScheduleMessageParams,
 )
 from localizer import tanjunLocalizer
 
@@ -132,8 +129,11 @@ async def schedule_message(
     ):
         start_time = send_time - timedelta(hours=1)
         end_time = send_time + timedelta(hours=1)
-        existing_messages = await get_user_scheduled_messages_in_timeframe(
-            command_info.user.id, start_time, end_time, command_info.guild.id
+        existing_messages = await ScheduledMessageService.get_upcoming(
+            user_id=str(command_info.user.id),
+            start_time=start_time,
+            end_time=end_time,
+            guild_id=str(command_info.guild.id),
         )
 
         if existing_messages:
@@ -150,15 +150,16 @@ async def schedule_message(
             await command_info.reply(embed=embed)
             return
 
-    await add_scheduled_message(
-        guild_id=command_info.guild.id if channel and command_info.guild else None,
-        channel_id=channel.id if channel else None,
-        user_id=command_info.user.id,
+    params = ScheduleMessageParams(
+        guild_id=str(command_info.guild.id) if channel and command_info.guild else None,
+        channel_id=str(channel.id) if channel else None,
+        user_id=str(command_info.user.id),
         content=content,
         send_time=send_time,
         repeat_interval=utility.relativeTimeToSeconds(repeat) if repeat else None,
         repeat_amount=repeat_amount,
     )
+    await ScheduledMessageService.schedule(params)
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.schedulemessage.success.title"),
@@ -174,7 +175,7 @@ async def schedule_message(
 
 async def send_scheduled_messages(client: discord.Client) -> None:
     """Send all scheduled messages that are ready to be sent"""
-    ready_messages = await get_ready_scheduled_messages()
+    ready_messages = await ScheduledMessageService.get_due_messages()
 
     if ready_messages is None:
         return
@@ -226,12 +227,12 @@ async def send_scheduled_messages(client: discord.Client) -> None:
             if repeat_amount and repeat_amount != 0:
                 repeat_amount -= 1
                 if repeat_amount == 0:
-                    await remove_scheduled_message(message_id)
+                    await ScheduledMessageService.cancel(message_id)
                 else:
-                    await update_scheduled_message_repeat_amount(message_id, repeat_amount)
+                    await ScheduledMessageService.update_repeat(message_id, repeat_amount)
 
             if not repeat_interval or not repeat_amount:
-                await remove_scheduled_message(message_id)
+                await ScheduledMessageService.cancel(message_id)
 
         except Exception:
             logging.exception("Failed to send scheduled message %s", message_id)

@@ -31,7 +31,6 @@ from models import (
     LevelRolesGroupModel,
     LogEnableModel,
     ReportModel,
-    ScheduledMessageModel,
     TicketMessageModel,
     TicketModel,
     TokenOverviewModel,
@@ -2857,91 +2856,6 @@ async def get_log_enable(guild_id: str | int) -> LogEnableModel:
         guild_role_delete=True,
         guild_role_update=True,
     )
-
-
-async def add_scheduled_message(
-    guild_id: str | None,
-    channel_id: str | None,
-    user_id: str,
-    content: str,
-    send_time: datetime,
-    repeat_interval: int | None = None,
-    repeat_amount: int | None = None,
-) -> None:
-    query = """
-    INSERT INTO scheduledMessages
-    (guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """
-    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval, repeat_amount)
-    await execute_action(query, params)
-
-
-async def get_scheduled_messages(user_id: str) -> list[ScheduledMessageModel]:
-    query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
-    FROM scheduledMessages
-    WHERE user_id = %s
-    ORDER BY send_time ASC
-    """
-    params = (user_id,)
-    rows: list[ScheduledMessageModel] = []
-    async for row in ScheduledMessageModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
-
-
-async def remove_scheduled_message(message_id: int) -> None:
-    query = "DELETE FROM scheduledMessages WHERE messageId = %s"
-    params = (message_id,)
-    await execute_action(query, params)
-
-
-async def get_user_scheduled_messages_in_timeframe(
-    user_id: str,
-    start_time: datetime,
-    end_time: datetime,
-    guild_id: str | None = None,
-) -> list[ScheduledMessageModel]:
-    query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
-    FROM scheduledMessages
-    WHERE user_id = %s
-    AND send_time BETWEEN %s AND %s
-    """
-    params: list[Any] = [user_id, start_time, end_time]
-
-    if guild_id:
-        query += " AND guild_id = %s"
-        params.append(guild_id)
-
-    rows: list[ScheduledMessageModel] = []
-    async for row in ScheduledMessageModel.iter_rows(query, tuple(params)):
-        rows.append(row)
-    return rows
-
-
-async def update_scheduled_message_content(message_id: int, new_content: str) -> None:
-    query = "UPDATE scheduledMessages SET content = %s WHERE messageId = %s"
-    params = (new_content, message_id)
-    await execute_action(query, params)
-
-
-async def update_scheduled_message_repeat_amount(message_id: int, repeat_amount: int) -> None:
-    query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE messageId = %s"
-    params = (repeat_amount, message_id)
-    await execute_action(query, params)
-
-
-async def get_ready_scheduled_messages() -> list[ScheduledMessageModel]:
-    query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
-    FROM scheduledMessages WHERE send_time <= NOW()
-    """
-    rows: list[ScheduledMessageModel] = []
-    async for row in ScheduledMessageModel.iter_rows(query):
-        rows.append(row)
-    return rows
 
 
 async def report_user(

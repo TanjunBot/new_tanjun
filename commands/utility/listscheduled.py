@@ -4,7 +4,7 @@ import discord
 from discord.ui import Button, View
 
 import utility
-from api import get_scheduled_messages
+from services.scheduled_message_service import ScheduledMessageService
 from localizer import tanjunLocalizer
 from models import ScheduledMessageModel
 
@@ -165,7 +165,7 @@ async def list_scheduled_messages(command_info: utility.CommandInfo) -> None:
             if self.message is not None:
                 await self.message.edit(view=discord.ui.View())
 
-    messages = await get_scheduled_messages(command_info.user.id)
+    messages = await ScheduledMessageService.get_user_messages(str(command_info.user.id))
 
     if not messages:
         embed = utility.tanjunEmbed(
