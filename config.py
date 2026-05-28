@@ -73,6 +73,7 @@ CALC_DIVIDE = os.environ.get("CALC_DIVIDE", "math_divide:1254373636224323644")
 CALC_BACKSPACE = os.environ.get("CALC_BACKSPACE", "math_backspace:1254371946695757854")
 
 # Emoji ID for welcome command (numeric Discord emoji ID)
-WELCOME_EMOJI_ID = int(os.environ.get("WELCOME_EMOJI_ID", "1266369876524666920"))
+_welcome_emoji_raw = os.environ.get("WELCOME_EMOJI_ID", "1266369876524666920")
+WELCOME_EMOJI_ID = int(_welcome_emoji_raw) if _welcome_emoji_raw.isdigit() else None
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "deepseek/deepseek-v4-flash:free")
