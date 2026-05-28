@@ -19,6 +19,7 @@ async def refill_ai_token(client: Client) -> None:
             plus_sku = sku
 
     if plus_sku:
-        await AiService.refill(plus_sku)  # type: ignore[arg-type]
+        entitlements = await client.entitlements(skus=[plus_sku]).flatten()
+        await AiService.refill(entitlements)
     else:
         await AiService.refill()

@@ -73,7 +73,14 @@ async def ask_gpt(
 
     token_cost = int(response.usage.total_tokens * 0.125)  # type: ignore[union-attr]
 
-    await AiService.consume(command_info.user.id, token_cost)
+    consumed = await AiService.consume(command_info.user.id, token_cost)
+    if not consumed:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.notoken.title"),
+            description=tanjunLocalizer.localize(str(command_info.locale), "commands.ai.ask.notoken.description"),
+        )
+        await command_info.reply(embed=embed)
+        return
 
     token_overview = await AiService.get_token_overview(command_info.user.id)
 

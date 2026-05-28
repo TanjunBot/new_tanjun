@@ -12,15 +12,19 @@ from __future__ import annotations
 
 import os
 from collections.abc import AsyncIterator
+from typing import Annotated
 
-from pydantic import BaseModel, Field, StringConstraints
-from typing_extensions import Annotated
+from pydantic import BaseModel, BeforeValidator, Field, StringConstraints
 
 from config import openAiKey
 
 # --- Type aliases ---
 
-UserId = Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+UserId = Annotated[
+    str,
+    BeforeValidator(lambda v: str(v) if isinstance(v, int) else v),
+    StringConstraints(pattern=r"^\d{17,20}$"),
+]
 
 
 # --- Pydantic models ---
@@ -116,48 +120,42 @@ class AiService:
         Tries freeToken first, then plusToken, then paidToken.
         Returns ``True`` if tokens were consumed, ``False`` if insufficient.
         """
-        from api import execute_action
+        from api import execute_action, execute_query
 
-        # This mirrors the original useToken logic: three UPDATEs that only
-        # fire when the preceding pool is exhausted.
-        query = """
-        UPDATE aiToken
-        SET freeToken = CASE
-                            WHEN freeToken >= %s THEN freeToken - %s
-                            ELSE freeToken
-                        END,
-            usedToken = CASE
-                            WHEN freeToken >= %s THEN usedToken + %s
-                            ELSE usedToken
-                        END
-        WHERE user_id = %s AND freeToken >= %s;
-        UPDATE aiToken
-        SET plusToken = CASE
-                            WHEN freeToken < %s AND plusToken >= %s THEN plusToken - %s
-                            ELSE plusToken
-                        END,
-            usedToken = CASE
-                            WHEN freeToken < %s AND plusToken >= %s THEN usedToken + %s
-                            ELSE usedToken
-                        END
-        WHERE user_id = %s AND freeToken < %s AND plusToken >= %s;
-        UPDATE aiToken
-        SET paidToken = CASE
-                            WHEN freeToken < %s AND plusToken < %s AND paidToken >= %s THEN paidToken - %s
-                            ELSE paidToken
-                        END,
-            usedToken = CASE
-                            WHEN freeToken < %s AND plusToken < %s AND paidToken >= %s THEN usedToken + %s
-                            ELSE usedToken
-                        END
-        WHERE user_id = %s AND freeToken < %s AND plusToken < %s AND paidToken >= %s;
+        # Atomic drain: SELECT FOR UPDATE, compute new balances, single UPDATE
+        select_query = """
+        SELECT freeToken, plusToken, paidToken
+        FROM aiToken
+        WHERE user_id = %s
+        FOR UPDATE
         """
-        params = (
-            amount, amount, amount, amount, user_id, amount,  # 1st UPDATE
-            amount, amount, amount, amount, amount, amount, amount, user_id, amount, amount, amount,  # 2nd UPDATE
-            amount, amount, amount, amount, amount, amount, amount, amount, amount, amount, amount, amount, user_id, amount, amount, amount,  # 3rd UPDATE
-        )
-        rows_affected = await execute_action(query, params)
+        result = await execute_query(select_query, (user_id,))
+        if not result:
+            return False
+
+        free_token, plus_token, paid_token = result[0]
+        total_available = free_token + plus_token + paid_token
+
+        if total_available < amount:
+            return False
+
+        # Drain from free -> plus -> paid
+        from_free = min(free_token, amount)
+        remaining = amount - from_free
+        from_plus = min(plus_token, remaining)
+        remaining -= from_plus
+        from_paid = min(paid_token, remaining)
+
+        new_free = free_token - from_free
+        new_plus = plus_token - from_plus
+        new_paid = paid_token - from_paid
+
+        update_query = """
+        UPDATE aiToken
+        SET freeToken = %s, plusToken = %s, paidToken = %s, usedToken = usedToken + %s
+        WHERE user_id = %s
+        """
+        rows_affected = await execute_action(update_query, (new_free, new_plus, new_paid, amount, user_id))
         return rows_affected is not None and rows_affected > 0
 
     @staticmethod
@@ -174,7 +172,7 @@ class AiService:
         """Insert a default token row for a new user if one doesn't exist."""
         from api import execute_action
 
-        query = "INSERT INTO aiToken (user_id) VALUES (%s)"
+        query = "INSERT IGNORE INTO aiToken (user_id) VALUES (%s)"
         await execute_action(query, (user_id,))
 
     @staticmethod
@@ -199,7 +197,11 @@ class AiService:
         if entitlements is not None:
             for entitlement in entitlements:
                 await execute_action(
-                    "UPDATE aiToken SET plusToken = 2000 WHERE user_id = %s",
+                    """
+                    INSERT INTO aiToken (user_id, plusToken)
+                    VALUES (%s, 2000)
+                    ON DUPLICATE KEY UPDATE plusToken = 2000
+                    """,
                     (str(entitlement.user_id),),
                 )
 
@@ -221,15 +223,27 @@ class AiService:
     # ── Custom situations ─────────────────────────────────────────────────
 
     @staticmethod
-    async def get_situation(name: str) -> AiSituation | None:
-        """Look up a situation by its name."""
+    async def get_situation(name: str, require_unlocked: bool = False) -> AiSituation | None:
+        """Look up a situation by its name.
+
+        Args:
+            name: The name of the situation to look up.
+            require_unlocked: If True, only return unlocked (public) situations.
+        """
         from api import execute_query
 
-        query = (
-            "SELECT user_id, situation, name, created_at, temperature, top_p, "
-            "frequency_penalty, presence_penalty, unlocked "
-            "FROM aiSituations WHERE name = %s"
-        )
+        if require_unlocked:
+            query = (
+                "SELECT user_id, situation, name, created_at, temperature, top_p, "
+                "frequency_penalty, presence_penalty, unlocked "
+                "FROM aiSituations WHERE name = %s AND unlocked = 1"
+            )
+        else:
+            query = (
+                "SELECT user_id, situation, name, created_at, temperature, top_p, "
+                "frequency_penalty, presence_penalty, unlocked "
+                "FROM aiSituations WHERE name = %s"
+            )
         result = await execute_query(query, (name,))
         if not result:
             return None

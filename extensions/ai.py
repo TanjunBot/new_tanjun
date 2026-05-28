@@ -17,9 +17,10 @@ async def aiCustomSituationAutocomplete(
     async for name in AiService.get_public_situations_iterator():
         if current.lower() in name.lower():
             situations.append(name)
-    filtered_situations = [name for name in situations if current.lower() in name.lower()]
+            if len(situations) >= 25:
+                break
 
-    return [app_commands.Choice(name=situation, value=situation) for situation in filtered_situations[:25]]
+    return [app_commands.Choice(name=situation, value=situation) for situation in situations]
 
 
 class CustomSituationCommands(discord.app_commands.Group):
@@ -131,7 +132,7 @@ class AiCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        situation = await AiService.get_situation(personality)
+        situation = await AiService.get_situation(personality, require_unlocked=True)
 
         await ask_gpt(
             command_info,
