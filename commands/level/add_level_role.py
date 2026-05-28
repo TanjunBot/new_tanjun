@@ -1,4 +1,3 @@
-from typing import cast
 
 import discord
 
@@ -41,8 +40,8 @@ async def add_level_role_command(command_info: CommandInfo, role: discord.Role, 
         return
 
     assert command_info.guild is not None
-    level_roles = cast(list[tuple[int, int]], await get_level_roles(str(command_info.guild.id)))
-    if role.id in [role_id for _, role_id in level_roles]:
+    level_roles = [lr async for lr in get_level_roles(str(command_info.guild.id))]
+    if role.id in [int(lr.role_id) for lr in level_roles]:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
                 str(command_info.locale),

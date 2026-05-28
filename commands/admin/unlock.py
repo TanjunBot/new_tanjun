@@ -41,7 +41,7 @@ async def unlock_channel(command_info: utility.CommandInfo, channel: discord.Tex
 
     try:
         # Retrieve saved overwrites
-        saved_overwrites = await get_channel_overwrites(channel.id)
+        saved_overwrites = [o async for o in get_channel_overwrites(channel.id)]
 
         if not saved_overwrites:
             embed = utility.tanjunEmbed(

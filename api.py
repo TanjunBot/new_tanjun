@@ -1014,30 +1014,35 @@ async def add_warning(
     await execute_action(query, params)
 
 
-async def get_warnings(guild_id: str | int, user_id: str | int | None = None) -> list[WarningModel] | None:
+async def get_warnings(guild_id: str | int, user_id: str | int | None = None) -> AsyncIterator[WarningModel]:
+    """Stream all active warnings for a guild (or a specific user).
+
+    Yields rows one at a time so that only one row is held in memory
+    at a time, even when the result set contains thousands of warnings.
+    """
     if user_id:
         query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id, user_id)
-        result = await safe_execute_query(query, params)
-        return [WarningModel.from_row(row) for row in result] if result else []
     else:
         query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
         params = (guild_id,)
-        result = await safe_execute_query(query, params)
-        return [WarningModel.from_row(row) for row in result] if result else []
+    async for row in WarningModel.iter_rows(query, params):
+        yield row
 
 
-async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> list[DetailedWarningModel] | None:
+async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> AsyncIterator[DetailedWarningModel]:
+    """Stream detailed warnings for a specific user in a guild.
+
+    Yields rows one at a time, ordered by creation date descending.
+    """
     query = (
         "SELECT id, reason, created_at, expires_at, created_by "
         "FROM warnings WHERE guild_id = %s AND user_id = %s "
         "ORDER BY created_at DESC"
     )
     params = (guild_id, user_id)
-    result = await safe_execute_query(query, params)
-    if result is None:
-        return None
-    return [DetailedWarningModel.from_row(row) for row in result]
+    async for row in DetailedWarningModel.iter_rows(query, params):
+        yield row
 
 
 async def remove_warning(warning_id: int) -> None:
@@ -1093,13 +1098,15 @@ async def save_channel_overwrites(channel_id: str | int, role_id: str | int, ove
     await execute_action(query, params)
 
 
-async def get_channel_overwrites(channel_id: str | int) -> list[ChannelOverwriteModel]:
+async def get_channel_overwrites(channel_id: str | int) -> AsyncIterator[ChannelOverwriteModel]:
+    """Stream channel permission overwrites for a specific channel.
+
+    Yields rows one at a time.
+    """
     query = "SELECT role_id, overwrites FROM channel_overwrites WHERE channel_id = %s"
     params = (channel_id,)
-    result = await safe_execute_query(query, params)
-    if result is None:
-        return []
-    return [ChannelOverwriteModel.from_row(row) for row in result]
+    async for row in ChannelOverwriteModel.iter_rows(query, params):
+        yield row
 
 
 async def clear_channel_overwrites(channel_id: str | int) -> None:
@@ -1491,11 +1498,15 @@ async def add_level_role(guild_id: str, role_id: str, level: int) -> None:
     await execute_action(query, params)
 
 
-async def get_level_roles(guild_id: str) -> list[LevelRoleModel]:
+async def get_level_roles(guild_id: str) -> AsyncIterator[LevelRoleModel]:
+    """Stream level roles for a guild.
+
+    Yields rows one at a time.
+    """
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [LevelRoleModel.from_row(row) for row in result]
+    async for row in LevelRoleModel.iter_rows(query, params):
+        yield row
 
 
 async def get_level_role(guild_id: str, role_id: str) -> int | None:
@@ -1517,11 +1528,9 @@ async def remove_level_role(guild_id: str, role_id: str) -> None:
 async def get_all_level_roles(guild_id: str) -> list[LevelRolesGroupModel]:
     query = "SELECT level, role_id FROM levelRole WHERE guild_id = %s ORDER BY level"
     params = (guild_id,)
-    result = await execute_query(query, params)
-    if result is None:
-        return []
     groups: dict[int, list[str]] = {}
-    for level, role_id in result:
+    async for row in execute_query_iter(query, params):
+        level, role_id = row
         if level not in groups:
             groups[level] = []
         groups[level].append(role_id)
@@ -1581,14 +1590,22 @@ async def get_all_boosts(guild_id: str) -> dict[str, list[XpBoostModel]]:
     channel_query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s"
     user_query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s"
 
-    roles = await safe_execute_query(role_query, (guild_id,))
-    channels = await safe_execute_query(channel_query, (guild_id,))
-    users = await safe_execute_query(user_query, (guild_id,))
+    roles: list[XpBoostModel] = []
+    async for row in XpBoostModel.iter_rows(role_query, (guild_id,)):
+        roles.append(row)
+
+    channels: list[XpBoostModel] = []
+    async for row in XpBoostModel.iter_rows(channel_query, (guild_id,)):
+        channels.append(row)
+
+    users: list[XpBoostModel] = []
+    async for row in XpBoostModel.iter_rows(user_query, (guild_id,)):
+        users.append(row)
 
     return {
-        "roles": [XpBoostModel.from_row(row) for row in roles],
-        "channels": [XpBoostModel.from_row(row) for row in channels],
-        "users": [XpBoostModel.from_row(row) for row in users],
+        "roles": roles,
+        "channels": channels,
+        "users": users,
     }
 
 
@@ -1602,8 +1619,10 @@ async def get_user_boost(guild_id: str, user_id: str) -> XpBoostModel | None:
 async def get_user_roles_boosts(guild_id: str, role_ids: list[str]) -> list[XpBoostModel]:
     query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s AND role_id IN %s"
     params = (guild_id, tuple(role_ids))
-    result = await safe_execute_query(query, params)
-    return [XpBoostModel.from_row(row) for row in result]
+    rows: list[XpBoostModel] = []
+    async for row in XpBoostModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def get_channel_boost(guild_id: str, channel_id: str) -> XpBoostModel | None:
@@ -1672,14 +1691,22 @@ async def get_blacklist(guild_id: str) -> dict[str, list[BlacklistEntryModel]]:
     roles_query = "SELECT role_id, reason FROM blacklisted_role WHERE guild_id = %s"
     users_query = "SELECT user_id, reason FROM blacklistedUser WHERE guild_id = %s"
 
-    channels = await safe_execute_query(channels_query, (guild_id,))
-    roles = await safe_execute_query(roles_query, (guild_id,))
-    users = await safe_execute_query(users_query, (guild_id,))
+    channels: list[BlacklistEntryModel] = []
+    async for row in BlacklistEntryModel.iter_rows(channels_query, (guild_id,)):
+        channels.append(row)
+
+    roles: list[BlacklistEntryModel] = []
+    async for row in BlacklistEntryModel.iter_rows(roles_query, (guild_id,)):
+        roles.append(row)
+
+    users: list[BlacklistEntryModel] = []
+    async for row in BlacklistEntryModel.iter_rows(users_query, (guild_id,)):
+        users.append(row)
 
     return {
-        "channels": [BlacklistEntryModel.from_row(row) for row in channels],
-        "roles": [BlacklistEntryModel.from_row(row) for row in roles],
-        "users": [BlacklistEntryModel.from_row(row) for row in users],
+        "channels": channels,
+        "roles": roles,
+        "users": users,
     }
 
 
@@ -1869,17 +1896,19 @@ async def get_giveaway(giveaway_id: int) -> GiveawayModel | None:
 async def get_giveaway_channel_requirements(giveaway_id: int) -> list[GiveawayChannelRequirementModel]:
     query = "SELECT channel_id, amount FROM giveaway_channelRequirement WHERE giveaway_id = %s"
     params = (giveaway_id,)
-    result = await safe_execute_query(query, params)
-    return [GiveawayChannelRequirementModel.from_row(row) for row in result]
+    rows: list[GiveawayChannelRequirementModel] = []
+    async for row in GiveawayChannelRequirementModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def get_giveaway_role_requirements(giveaway_id: int) -> list[str]:
     query = "SELECT role_id FROM giveawayRoleRequirement WHERE giveaway_id = %s"
     params = (giveaway_id,)
-    result = await safe_execute_query(query, params)
-    if result is None:
-        return []
-    return [row[0] for row in result]
+    role_ids: list[str] = []
+    async for row in execute_query_iter(query, params):
+        role_ids.append(row[0])
+    return role_ids
 
 
 async def set_giveaway_started(giveaway_id: int) -> None:
@@ -1924,10 +1953,10 @@ async def delete_old_giveaways() -> None:
 async def get_giveaway_participants(giveaway_id: int) -> list[str]:
     query = "SELECT user_id FROM giveawayParticipant WHERE giveaway_id = %s"
     params = (giveaway_id,)
-    result = await safe_execute_query(query, params)
-    if result is None:
-        return []
-    return [row[0] for row in result]
+    user_ids: list[str] = []
+    async for row in execute_query_iter(query, params):
+        user_ids.append(row[0])
+    return user_ids
 
 
 async def get_new_messages(giveaway_id: int, user_id: str) -> int | None:
@@ -1954,8 +1983,10 @@ async def get_voice_time(giveaway_id: int, user_id: str) -> int | None:
 async def get_blacklisted_roles(guild_id: str) -> list[GiveawayBlacklistEntryModel]:
     query = "SELECT role_id, reason FROM giveawayBlacklistedRole WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [GiveawayBlacklistEntryModel.from_row(row) for row in result]
+    rows: list[GiveawayBlacklistEntryModel] = []
+    async for row in GiveawayBlacklistEntryModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def check_if_user_blacklisted(guild_id: str, user_id: str) -> bool:
@@ -1986,8 +2017,10 @@ async def add_giveaway_participant(giveaway_id: int, user_id: str) -> None:
 
 async def get_send_ready_giveaways() -> list[int]:
     query = "SELECT giveaway_id FROM giveaway WHERE started = 0 AND starttime < NOW()"
-    result = await safe_execute_query(query)
-    return [row[0] for row in result]
+    giveaway_ids: list[int] = []
+    async for row in execute_query_iter(query):
+        giveaway_ids.append(row[0])
+    return giveaway_ids
 
 
 async def add_giveaway_voice_minutes_if_needed(user_id: Any, guild_id: Any) -> None:
@@ -2022,8 +2055,10 @@ async def add_giveaway_new_message_channel_if_needed(user_id: Any, guild_id: Any
 
 async def get_end_ready_giveaways() -> list[int]:
     query = "SELECT giveaway_id FROM giveaway WHERE ended = 0 AND endtime < NOW() AND started = 1 AND messageId <> 'pending'"
-    result = await safe_execute_query(query)
-    return [row[0] for row in result]
+    giveaway_ids: list[int] = []
+    async for row in execute_query_iter(query):
+        giveaway_ids.append(row[0])
+    return giveaway_ids
 
 
 async def add_giveaway_blacklisted_user(guild_id: str, user_id: str) -> None:
@@ -2053,15 +2088,19 @@ async def remove_giveaway_blacklisted_role(guild_id: str, role_id: str) -> None:
 async def get_giveaway_blacklisted_users(guild_id: str) -> list[GiveawayBlacklistEntryModel]:
     query = "SELECT user_id, reason FROM giveawayBlacklistedUser WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [GiveawayBlacklistEntryModel.from_row(row) for row in result]
+    rows: list[GiveawayBlacklistEntryModel] = []
+    async for row in GiveawayBlacklistEntryModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def get_giveaway_blacklisted_roles(guild_id: str) -> list[GiveawayBlacklistEntryModel]:
     query = "SELECT role_id, reason FROM giveawayBlacklistedRole WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [GiveawayBlacklistEntryModel.from_row(row) for row in result]
+    rows: list[GiveawayBlacklistEntryModel] = []
+    async for row in GiveawayBlacklistEntryModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def delete_giveaway(giveaway_id: int) -> None:
@@ -2320,11 +2359,15 @@ async def consumePaidToken(user_id: str, amount: int) -> None:
     await execute_action(query, params)
 
 
-async def getLevelLeaderboard(guild_id: str) -> list[LevelLeaderboardEntryModel]:
+async def getLevelLeaderboard(guild_id: str) -> AsyncIterator[LevelLeaderboardEntryModel]:
+    """Stream the full level leaderboard for a guild.
+
+    Yields rows one at a time, ordered by XP descending.
+    """
     query = "SELECT user_id, xp FROM level WHERE guild_id = %s ORDER BY xp DESC"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [LevelLeaderboardEntryModel.from_row(row) for row in result]
+    async for row in LevelLeaderboardEntryModel.iter_rows(query, params):
+        yield row
 
 
 async def get_level_leaderboard_paginated(
@@ -2348,8 +2391,10 @@ async def get_level_leaderboard_paginated(
         LIMIT %s OFFSET %s
     """
     params = (guild_id, limit, offset)
-    result = await safe_execute_query(query, params)
-    return [LevelLeaderboardEntryModel.from_row(row) for row in result]
+    rows: list[LevelLeaderboardEntryModel] = []
+    async for row in LevelLeaderboardEntryModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def get_level_leaderboard_count(guild_id: str) -> int:
@@ -2494,8 +2539,10 @@ async def addAfkMessage(user_id: str, message_id: str, channel_id: str) -> None:
 async def getAfkMessages(user_id: str) -> list[AfkMessageModel]:
     query = "SELECT messageId, channel_id FROM afkMessages WHERE user_id = %s"
     params = (user_id,)
-    result = await safe_execute_query(query, params)
-    return [AfkMessageModel.from_row(row) for row in result]
+    rows: list[AfkMessageModel] = []
+    async for row in AfkMessageModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def getAfkReason(user_id: str) -> str | None:
@@ -2638,8 +2685,10 @@ async def remove_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
 async def get_log_blacklist_channel(guild_id: str) -> list[str]:
     query = "SELECT channel_id FROM logBlacklistChannel WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [row[0] for row in result]
+    channel_ids: list[str] = []
+    async for row in execute_query_iter(query, params):
+        channel_ids.append(row[0])
+    return channel_ids
 
 
 async def is_log_channel_blacklisted(guild_id: str, channel_id: str) -> str | None:
@@ -2664,8 +2713,10 @@ async def remove_log_role_blacklist(guild_id: str, role_id: str) -> None:
 async def get_log_role_blacklist(guild_id: str) -> list[str]:
     query = "SELECT role_id FROM logRoleBlacklist WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [row[0] for row in result]
+    role_ids: list[str] = []
+    async for row in execute_query_iter(query, params):
+        role_ids.append(row[0])
+    return role_ids
 
 
 async def is_log_role_blacklisted(guild_id: str, role_id: str) -> str | None:
@@ -2690,8 +2741,10 @@ async def remove_log_user_blacklist(guild_id: str, user_id: str) -> None:
 async def get_log_user_blacklist(guild_id: str) -> list[str]:
     query = "SELECT user_id FROM logUserBlacklist WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [row[0] for row in result]
+    user_ids: list[str] = []
+    async for row in execute_query_iter(query, params):
+        user_ids.append(row[0])
+    return user_ids
 
 
 async def is_log_user_blacklisted(guild_id: str, user_id: str) -> str | None:
@@ -2822,8 +2875,10 @@ async def get_scheduled_messages(user_id: str) -> list[ScheduledMessageModel]:
     ORDER BY send_time ASC
     """
     params = (user_id,)
-    result = await safe_execute_query(query, params)
-    return [ScheduledMessageModel.from_row(row) for row in result]
+    rows: list[ScheduledMessageModel] = []
+    async for row in ScheduledMessageModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def remove_scheduled_message(message_id: int) -> None:
@@ -2850,8 +2905,10 @@ async def get_user_scheduled_messages_in_timeframe(
         query += " AND guild_id = %s"
         params.append(guild_id)
 
-    result = await safe_execute_query(query, tuple(params))
-    return [ScheduledMessageModel.from_row(row) for row in result]
+    rows: list[ScheduledMessageModel] = []
+    async for row in ScheduledMessageModel.iter_rows(query, tuple(params)):
+        rows.append(row)
+    return rows
 
 
 async def update_scheduled_message_content(message_id: int, new_content: str) -> None:
@@ -2871,8 +2928,10 @@ async def get_ready_scheduled_messages() -> list[ScheduledMessageModel]:
     SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
     FROM scheduledMessages WHERE send_time <= NOW()
     """
-    res = await safe_execute_query(query)
-    return [ScheduledMessageModel.from_row(row) for row in res]
+    rows: list[ScheduledMessageModel] = []
+    async for row in ScheduledMessageModel.iter_rows(query):
+        rows.append(row)
+    return rows
 
 
 async def report_user(
@@ -2941,8 +3000,10 @@ async def get_reports(guild_id: str, user_id: str | None = None) -> list[ReportM
         query += " AND user_id = %s"
         params.append(user_id)
 
-    result = await safe_execute_query(query, tuple(params))
-    return [ReportModel.from_row(row) for row in result]
+    rows: list[ReportModel] = []
+    async for row in ReportModel.iter_rows(query, tuple(params)):
+        rows.append(row)
+    return rows
 
 
 async def get_reports_by_reporter(guild_id: str, reporter_id: str) -> list[ReportModel]:
@@ -2958,8 +3019,10 @@ async def get_reports_by_reporter(guild_id: str, reporter_id: str) -> list[Repor
         FROM reports WHERE guild_id = %s AND reporterId = %s
     """
     params = (guild_id, reporter_id)
-    result = await safe_execute_query(query, params)
-    return [ReportModel.from_row(row) for row in result]
+    rows: list[ReportModel] = []
+    async for row in ReportModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def block_reporter(guild_id: str, reporter_id: str) -> None:
@@ -2977,8 +3040,10 @@ async def unblock_reporter(guild_id: str, reporter_id: str) -> None:
 async def get_blocked_reporters(guild_id: str) -> list[BlockedReporterModel]:
     query = "SELECT guild_id, user_id FROM blockedReporters WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [BlockedReporterModel.from_row(row) for row in result]
+    rows: list[BlockedReporterModel] = []
+    async for row in BlockedReporterModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def check_if_reporter_is_blocked(guild_id: str, reporter_id: str) -> bool:
@@ -3008,8 +3073,10 @@ async def remove_report_channel(guild_id: str) -> None:
 async def get_trigger_messages(guild_id: str) -> list[TriggerMessageModel]:
     query = "SELECT id, guild_id, `trigger`, response, case_sensitive FROM triggerMessages WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [TriggerMessageModel.from_row(row) for row in result]
+    rows: list[TriggerMessageModel] = []
+    async for row in TriggerMessageModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def add_trigger_message(guild_id: str, trigger: str, response: str, case_sensitive: bool = False) -> None:
@@ -3027,15 +3094,19 @@ async def remove_trigger_message(guild_id: str, trigger: str) -> None:
 async def get_trigger_message_channels(guild_id: str, trigger_id: int) -> list[TriggerMessageChannelModel]:
     query = "SELECT guild_id, channel_id, triggerId FROM triggerMessagesChannel WHERE guild_id = %s AND triggerId = %s"
     params = (guild_id, trigger_id)
-    result = await safe_execute_query(query, params)
-    return [TriggerMessageChannelModel.from_row(row) for row in result]
+    rows: list[TriggerMessageChannelModel] = []
+    async for row in TriggerMessageChannelModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def get_trigger_messages_by_channel(guild_id: str, channel_id: str) -> list[TriggerMessageChannelModel]:
     query = "SELECT guild_id, channel_id, triggerId FROM triggerMessagesChannel WHERE guild_id = %s AND channel_id = %s"
     params = (guild_id, channel_id)
-    result = await safe_execute_query(query, params)
-    return [TriggerMessageChannelModel.from_row(row) for row in result]
+    rows: list[TriggerMessageChannelModel] = []
+    async for row in TriggerMessageChannelModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def add_trigger_message_channel(guild_id: str, channel_id: str, trigger_id: int) -> None:
@@ -3103,8 +3174,10 @@ async def delete_ticket_message(guild_id: str, ticket_message_id: str) -> None:
 async def get_ticket_messages(guild_id: str) -> list[TicketMessageModel]:
     query = "SELECT id, guild_id, channel_id, introduction, pingRole, name, description, summaryChannelId FROM ticketMessages WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [TicketMessageModel.from_row(row) for row in result]
+    rows: list[TicketMessageModel] = []
+    async for row in TicketMessageModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def get_ticket_messages_by_id(ticket_message_id: str) -> TicketMessageModel | None:
@@ -3137,8 +3210,10 @@ async def get_tickets(guild_id: str) -> list[TicketModel]:
         FROM tickets WHERE guild_id = %s
     """
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [TicketModel.from_row(row) for row in result]
+    rows: list[TicketModel] = []
+    async for row in TicketModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def get_ticket_by_id(guild_id: str, ticket_id: str, channel_id: str) -> TicketModel | None:
@@ -3250,8 +3325,10 @@ async def remove_leave_channel(guild_id: str) -> None:
 async def get_dynamicslowmode_channels(guild_id: str) -> list[DynamicSlowmodeModel]:
     query = "SELECT guild_id, channel_id, messages, per, resetafter, cashedSlowmode FROM dynamicslowmode WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [DynamicSlowmodeModel.from_row(row) for row in result]
+    rows: list[DynamicSlowmodeModel] = []
+    async for row in DynamicSlowmodeModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def add_dynamicslowmode(guild_id: str, channel_id: str, messages: int, per: int, resetafter: int) -> None:
@@ -3289,8 +3366,10 @@ async def clear_old_dynamicslowmode_messages(channel_id: str, send_time: datetim
 async def get_dynamicslowmode_messages(channel_id: str) -> list[DynamicSlowmodeMessageModel]:
     query = "SELECT id, channel_id, messageId, send_time FROM dynamicslowmode_messages WHERE channel_id = %s"
     params = (channel_id,)
-    result = await safe_execute_query(query, params)
-    return [DynamicSlowmodeMessageModel.from_row(row) for row in result]
+    rows: list[DynamicSlowmodeMessageModel] = []
+    async for row in DynamicSlowmodeMessageModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def cash_slowmode_delay(channel_id: str, slowmode_delay: int) -> None:
@@ -3308,8 +3387,10 @@ async def remove_cashed_slowmode_delay(channel_id: str) -> None:
 async def get_twitch_online_notification(channel_id: str) -> list[TwitchOnlineNotificationModel]:
     query = "SELECT id, channel_id, guild_id, twitchUuid, twitchName, notification_message FROM twitchOnlineNotification WHERE channel_id = %s"
     params = (channel_id,)
-    result = await safe_execute_query(query, params)
-    return [TwitchOnlineNotificationModel.from_row(row) for row in result]
+    rows: list[TwitchOnlineNotificationModel] = []
+    async for row in TwitchOnlineNotificationModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def set_twitch_online_notification(
@@ -3341,15 +3422,19 @@ async def get_twitch_online_notification_by_twitch_uuid(twitch_uuid: str) -> Twi
 
 async def get_all_twitch_notification_uuids() -> list[str]:
     query = "SELECT twitchUuid FROM twitchOnlineNotification"
-    result = await safe_execute_query(query, ())
-    return [row[0] for row in result]
+    uuids: list[str] = []
+    async for row in execute_query_iter(query):
+        uuids.append(row[0])
+    return uuids
 
 
 async def get_twitch_notification_by_guild_id(guild_id: str) -> list[TwitchOnlineNotificationModel]:
     query = "SELECT id, channel_id, guild_id, twitchUuid, twitchName, notification_message FROM twitchOnlineNotification WHERE guild_id = %s"
     params = (guild_id,)
-    result = await safe_execute_query(query, params)
-    return [TwitchOnlineNotificationModel.from_row(row) for row in result]
+    rows: list[TwitchOnlineNotificationModel] = []
+    async for row in TwitchOnlineNotificationModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
 
 
 async def get_brawlstars_linked_account(user_id: str) -> str | None:

@@ -102,8 +102,7 @@ async def format_level_up_message(guild_id: str, user_mention: str, new_level: i
 async def update_user_roles(message: discord.Message, new_level: int, guild_id: str) -> None:
     if message.guild is None or not isinstance(message.author, discord.Member):
         return
-    level_roles = await get_level_roles(guild_id)
-    for lr in level_roles:
+    async for lr in get_level_roles(guild_id):
         if lr.level <= new_level:
             role = message.guild.get_role(int(lr.role_id))
             if role and role not in message.author.roles:
