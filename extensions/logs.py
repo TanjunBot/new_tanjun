@@ -8,11 +8,11 @@ from discord.ext import commands
 
 import utility
 from api import (
+    LogBlacklistType,
+    get_log_blacklist,
     get_log_channel,
     get_log_enable,
-    get_log_role_blacklist,
-    is_log_channel_blacklisted,
-    is_log_user_blacklisted,
+    is_log_entity_blacklisted,
 )
 from commands.logs.blacklist_channel.blacklist_channel import blacklist_channel
 from commands.logs.blacklist_channel.blacklist_list_channel import (
@@ -338,7 +338,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
+        if await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -504,7 +504,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
+        if await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -672,7 +672,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_channel_blacklisted(rule.guild.id, str(rule.channel_id)):
+        if await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -839,7 +839,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_channel_blacklisted(execution.guild.id, str(execution.channel.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(execution.guild.id, str(execution.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
             return
 
         locale = execution.guild.preferred_locale if hasattr(execution.guild, "preferred_locale") else "en_US"
@@ -923,7 +923,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
+        if await is_log_entity_blacklisted(channel.guild.id, str(channel.id), LogBlacklistType.CHANNEL):
             return
 
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
@@ -1017,7 +1017,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_channel_blacklisted(channel.guild.id, str(channel.id)):
+        if await is_log_entity_blacklisted(channel.guild.id, str(channel.id), LogBlacklistType.CHANNEL):
             return
 
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
@@ -1092,7 +1092,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_channel_blacklisted(after.guild.id, str(after.id)):
+        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.CHANNEL):
             return
 
         locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
@@ -1803,12 +1803,12 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(invite.guild.id, str(invite.inviter.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(invite.guild.id, str(invite.inviter.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_role_blacklist(invite.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(invite.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in invite.inviter.roles:  # type: ignore[union-attr]
+            if any(str(role.id) == blacklisted_role for role in invite.inviter.roles):  # type: ignore[union-attr]
                 return
 
         locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"  # type: ignore[union-attr]
@@ -1898,12 +1898,12 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(invite.guild.id, str(invite.inviter.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(invite.guild.id, str(invite.inviter.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_role_blacklist(invite.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(invite.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in invite.inviter.roles:  # type: ignore[union-attr]
+            if any(str(role.id) == blacklisted_role for role in invite.inviter.roles):  # type: ignore[union-attr]
                 return
 
         locale = invite.guild.preferred_locale if hasattr(invite.guild, "preferred_locale") else "en_US"  # type: ignore[union-attr]
@@ -1990,12 +1990,12 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(member.guild.id, str(member.id)):
+        if await is_log_entity_blacklisted(member.guild.id, str(member.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_role_blacklist(member.guild.id)
+        blacklisted_roles = await get_log_blacklist(member.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in member.roles:
+            if any(str(role.id) == blacklisted_role for role in member.roles):
                 return
 
         locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
@@ -2019,12 +2019,12 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(member.guild.id, str(member.id)):
+        if await is_log_entity_blacklisted(member.guild.id, str(member.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_role_blacklist(member.guild.id)
+        blacklisted_roles = await get_log_blacklist(member.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in member.roles:
+            if any(str(role.id) == blacklisted_role for role in member.roles):
                 return
 
         locale = member.guild.preferred_locale if hasattr(member.guild, "preferred_locale") else "en_US"
@@ -2055,12 +2055,12 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(after.guild.id, str(after.id)):
+        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_role_blacklist(after.guild.id)
+        blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in after.roles:
+            if any(str(role.id) == blacklisted_role for role in after.roles):
                 return
 
         locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
@@ -2194,12 +2194,12 @@ class LogsCog(commands.Cog):
             if not log_enable:
                 continue
 
-            if await is_log_user_blacklisted(guild.id, str(before.id)):
+            if await is_log_entity_blacklisted(guild.id, str(before.id), LogBlacklistType.USER):
                 continue
 
-            blacklisted_roles = await get_log_role_blacklist(guild.id)
+            blacklisted_roles = await get_log_blacklist(guild.id, LogBlacklistType.ROLE)
             for blacklisted_role in blacklisted_roles:
-                if blacklisted_role in user.roles:
+                if any(str(role.id) == blacklisted_role for role in user.roles):
                     continue
 
             locale = str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US"
@@ -2259,12 +2259,12 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(user.guild.id, str(user.id)):
+        if await is_log_entity_blacklisted(user.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_role_blacklist(user.guild.id)
+        blacklisted_roles = await get_log_blacklist(user.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in user.roles:
+            if any(str(role.id) == blacklisted_role for role in user.roles):
                 return
 
         locale = user.guild.preferred_locale if hasattr(user.guild, "preferred_locale") else "en_US"
@@ -2295,7 +2295,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(guild.id, str(user.id)):
+        if await is_log_entity_blacklisted(guild.id, str(user.id), LogBlacklistType.USER):
             return
 
         locale = str(guild.preferred_locale) if hasattr(guild, "preferred_locale") else "en_US"
@@ -2332,12 +2332,12 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(after.guild.id, str(after.id)):
+        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.USER):
             return
 
-        blacklisted_roles = await get_log_role_blacklist(after.guild.id)
+        blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in after.roles:
+            if any(str(role.id) == blacklisted_role for role in after.roles):
                 return
 
         locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
@@ -2374,15 +2374,15 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(after.guild.id, str(after.author.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(after.guild.id, str(after.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_channel_blacklisted(after.guild.id, str(after.channel.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(after.guild.id, str(after.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_role_blacklist(after.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in after.author.roles:  # type: ignore[union-attr]
+            if any(str(role.id) == blacklisted_role for role in after.author.roles):  # type: ignore[union-attr]
                 return
 
         locale = after.guild.preferred_locale if hasattr(after, "preferred_locale") else "en_US"  # type: ignore[union-attr]
@@ -2526,15 +2526,15 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(message.guild.id, str(message.author.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(message.guild.id, str(message.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_channel_blacklisted(message.guild.id, str(message.channel.id)):  # type: ignore[union-attr]
+        if await is_log_entity_blacklisted(message.guild.id, str(message.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
             return
 
-        blacklisted_roles = await get_log_role_blacklist(message.guild.id)  # type: ignore[union-attr]
+        blacklisted_roles = await get_log_blacklist(message.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in message.author.roles:  # type: ignore[union-attr]
+            if any(str(role.id) == blacklisted_role for role in message.author.roles):  # type: ignore[union-attr]
                 return
 
         locale = str(message.guild.preferred_locale) if hasattr(message.guild, "preferred_locale") else "en_US"  # type: ignore[union-attr]
@@ -2616,15 +2616,15 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
             return
 
-        blacklisted_roles = await get_log_role_blacklist(reaction.guild.id)
+        blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in user.roles:
+            if any(str(role.id) == blacklisted_role for role in user.roles):
                 return
 
         locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"
@@ -2656,15 +2656,15 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_user_blacklisted(reaction.guild.id, str(user.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_channel_blacklisted(reaction.guild.id, str(reaction.message.channel.id)):
+        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
             return
 
-        blacklisted_roles = await get_log_role_blacklist(reaction.guild.id)
+        blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)
         for blacklisted_role in blacklisted_roles:
-            if blacklisted_role in user.roles:
+            if any(str(role.id) == blacklisted_role for role in user.roles):
                 return
 
         locale = reaction.guild.preferred_locale if hasattr(reaction.guild, "preferred_locale") else "en_US"

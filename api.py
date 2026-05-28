@@ -7,18 +7,19 @@ import uuid
 from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
+from enum import Enum
 from typing import Any
 
 from discord import Entitlement
 
 from models import (
-    AfkMessageModel,
     AISituationModel,
     BlacklistEntryModel,
     BlockedReporterModel,
     ChannelOverwriteModel,
     ClaimedBoosterChannelModel,
     ClaimedBoosterRoleModel,
+    CountingMode,
     DetailedWarningModel,
     DynamicSlowmodeMessageModel,
     DynamicSlowmodeModel,
@@ -44,6 +45,61 @@ from models import (
     XpBoostModel,
 )
 from utility import get_level_for_xp_async, get_xp_for_level_async
+
+
+class LogBlacklistType(Enum):
+    """Enum representing the three log blacklist types with their table/column mapping."""
+
+    CHANNEL = ("logBlacklistChannel", "channel_id")
+    ROLE = ("logRoleBlacklist", "role_id")
+    USER = ("logUserBlacklist", "user_id")
+
+    @property
+    def table(self) -> str:
+        return self.value[0]
+
+    @property
+    def column(self) -> str:
+        return self.value[1]
+
+
+
+async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
+    """Add a log blacklist entry for the given entity type."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"INSERT INTO {table} (guild_id, {column}) VALUES (%s, %s)"
+    await execute_action(query, (guild_id, entity_id))
+
+
+async def remove_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
+    """Remove a log blacklist entry for the given entity type."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"DELETE FROM {table} WHERE guild_id = %s AND {column} = %s"
+    await execute_action(query, (guild_id, entity_id))
+
+
+async def get_log_blacklist(guild_id: str, blacklist_type: LogBlacklistType) -> list[str]:
+    """Retrieve all blacklisted entity IDs of a given type for a guild."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"SELECT {column} FROM {table} WHERE guild_id = %s"
+    entity_ids: list[str] = []
+    async for row in execute_query_iter(query, (guild_id,)):
+        entity_ids.append(row[0])
+    return entity_ids
+
+
+async def is_log_entity_blacklisted(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> str | None:
+    """Check whether a specific entity is blacklisted."""
+    table = blacklist_type.table
+    column = blacklist_type.column
+    query = f"SELECT {column} FROM {table} WHERE guild_id = %s AND {column} = %s"
+    result = await execute_query(query, (guild_id, entity_id))
+    return result[0] if result else None
+
+
 
 # Remove global pool and set_pool functions
 # The pool will be accessed from the bot object
@@ -1307,7 +1363,7 @@ async def get_counting_challenge_channel_amount(guild_id: Any) -> int:
     return result[0][0] if result else 0
 
 
-async def set_counting_mode(channel_id: Any, progress: Any, mode: Any, guild_id: Any) -> None:
+async def set_counting_mode(channel_id: Any, progress: Any, mode: CountingMode, guild_id: Any) -> None:
     query = "INSERT INTO counting_modes (channel_id, progress, mode, guild_id) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = VALUES(progress), mode = VALUES(mode)"
     params = (channel_id, progress, mode, guild_id)
     await execute_action(query, params)
@@ -1333,15 +1389,17 @@ async def clear_counting_mode(channel_id: Any) -> None:
     await execute_action(query, params)
 
 
-async def get_counting_mode_mode(channel_id: str | int) -> int | None:
+async def get_counting_mode_mode(channel_id: str | int) -> CountingMode | None:
     query = "SELECT mode FROM counting_modes WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
-    return result[0][0] if result else None
+    if result and result[0][0] is not None:
+        return CountingMode(result[0][0])
+    return None
 
 
 async def set_counting_mode_progress(
-    channel_id: Any, progress: Any, guild_id: Any, mode: Any, goal: Any, counter_id: Any
+    channel_id: Any, progress: Any, guild_id: Any, mode: CountingMode, goal: Any, counter_id: Any
 ) -> None:
     query = "INSERT INTO counting_modes (channel_id, progress, guild_id, mode, goal, last_counter_id) VALUES (%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s, last_counter_id = %s"
     params = (
@@ -1917,315 +1975,202 @@ async def add_giveaway(
     role_requirement: list[str],
     voice_requirement: int | None,
 ) -> int | None:
-    query = """
-    INSERT INTO giveaway (
-        guild_id, title, description, winners, withButton, customName, sponsor, price, message,
-        endtime, starttime, newMessageRequirement, dayRequirement, voiceRequirement, channel_id
+    from services.giveaway_service import GiveawayCreateParams, giveaway_service
+
+    params = GiveawayCreateParams(
+        guild_id=guild_id,
+        title=title,
+        description=description,
+        winners=winners,
+        with_button=with_button,
+        channel_id=channel_id,
+        custom_name=custom_name,
+        sponsor=sponsor,
+        price=price,
+        message=message,
+        end_time=endtime,
+        start_time=starttime,
+        new_message_requirement=new_message_requirement,
+        day_requirement=day_requirement,
+        channel_requirements=channel_requirements,
+        role_requirement=role_requirement,
+        voice_requirement=voice_requirement,
     )
-    VALUES (
-        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-    )
-
-    """
-    params = (
-        guild_id,
-        title,
-        description,
-        winners,
-        with_button,
-        custom_name,
-        sponsor,
-        price,
-        message,
-        endtime,
-        starttime,
-        new_message_requirement,
-        day_requirement,
-        voice_requirement,
-        channel_id,
-    )
-    try:
-        async with transaction() as conn, conn.cursor() as cursor:
-            await cursor.execute(query, params)
-            await cursor.execute("SELECT LAST_INSERT_ID()")
-            last_id = await cursor.fetchone()
-            giveaway_id = last_id[0] if last_id else None
-            if giveaway_id is None:
-                raise RuntimeError("Failed to get last insert ID for giveaway")
-
-            if channel_requirements:
-                channel_req_query = (
-                    "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)"
-                )
-                channel_req_params = [(giveaway_id, ch_id, amount) for ch_id, amount in channel_requirements.items()]
-                await cursor.executemany(channel_req_query, channel_req_params)
-
-            if role_requirement:
-                role_req_query = (
-                    "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)"
-                )
-                role_req_params = [(role_id, giveaway_id) for role_id in role_requirement]
-                await cursor.executemany(role_req_query, role_req_params)
-    except Exception as e:
-        print(f"Error creating giveaway: {e}")
-        return None
-
-    return giveaway_id
+    return await giveaway_service.create(params)
 
 
 async def set_giveaway_message_id(giveaway_id: int, message_id: int) -> None:
-    query = "UPDATE giveaway SET messageId = %s WHERE giveaway_id = %s"
-    params = (message_id, giveaway_id)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.set_message_id(giveaway_id, message_id)
 
 
 async def get_giveaway(giveaway_id: int) -> GiveawayModel | None:
-    query = (
-        "SELECT giveaway_id, guild_id, title, description, winners, withButton, "
-        "customName, sponsor, price, message, endtime, starttime, started, ended, "
-        "newMessageRequirement, dayRequirement, voiceRequirement, sendFailed, "
-        "channel_id, messageId, created_at "
-        "FROM giveaway WHERE giveaway_id = %s"
-    )
-    params = (giveaway_id,)
-    result = await safe_execute_query(query, params)
-    return GiveawayModel.from_row(result[0]) if result else None
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get(giveaway_id)
 
 
 async def get_giveaway_channel_requirements(giveaway_id: int) -> list[GiveawayChannelRequirementModel]:
-    query = "SELECT channel_id, amount FROM giveaway_channelRequirement WHERE giveaway_id = %s"
-    params = (giveaway_id,)
-    rows: list[GiveawayChannelRequirementModel] = []
-    async for row in GiveawayChannelRequirementModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_channel_requirements(giveaway_id)
 
 
 async def get_giveaway_role_requirements(giveaway_id: int) -> list[str]:
-    query = "SELECT role_id FROM giveawayRoleRequirement WHERE giveaway_id = %s"
-    params = (giveaway_id,)
-    role_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        role_ids.append(row[0])
-    return role_ids
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_role_requirements(giveaway_id)
 
 
 async def set_giveaway_started(giveaway_id: int) -> None:
-    query = "UPDATE giveaway SET started = 1 WHERE giveaway_id = %s"
-    params = (giveaway_id,)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.set_started(giveaway_id)
 
 
 async def set_giveaway_ended(giveaway_id: int) -> None:
-    query = "UPDATE giveaway SET ended = 1 WHERE giveaway_id = %s"
-    params = (giveaway_id,)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.set_ended(giveaway_id)
 
 
 async def delete_old_giveaways() -> None:
-    """Delete old ended giveaways and their related data in a single transaction."""
-    try:
-        async with transaction() as conn, conn.cursor() as cursor:
-            # Find old giveaways first
-            await cursor.execute("SELECT giveaway_id FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK")
-            old_ids = [row[0] for row in await cursor.fetchall()]
-            if not old_ids:
-                return
+    from services.giveaway_service import giveaway_service
 
-            related_tables = [
-                "giveaway_channelRequirement",
-                "giveawayRoleRequirement",
-                "giveawayParticipant",
-                "giveawayVoiceTime",
-                "giveawayNewMessage",
-                "giveaway_channelMessages",
-            ]
-            for give_id in old_ids:
-                for table in related_tables:
-                    await cursor.execute(f"DELETE FROM {table} WHERE giveaway_id = %s", (give_id,))
-            await cursor.execute("DELETE FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK")
-    except Exception as e:
-        print(f"Error deleting old giveaways: {e}")
-        raise
+    await giveaway_service.delete_old()
 
 
 async def get_giveaway_participants(giveaway_id: int) -> list[str]:
-    query = "SELECT user_id FROM giveawayParticipant WHERE giveaway_id = %s"
-    params = (giveaway_id,)
-    user_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        user_ids.append(row[0])
-    return user_ids
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_participants(giveaway_id)
 
 
 async def get_new_messages(giveaway_id: int, user_id: str) -> int | None:
-    query = "SELECT messages FROM giveawayNewMessage WHERE giveaway_id = %s AND user_id = %s"
-    params = (giveaway_id, user_id)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_new_messages(giveaway_id, user_id)
 
 
 async def get_new_messages_channel(giveaway_id: int, channel_id: str, user_id: str) -> int | None:
-    query = "SELECT amount FROM giveaway_channelMessages WHERE giveaway_id = %s AND channel_id = %s AND user_id = %s"
-    params = (giveaway_id, channel_id, user_id)
-    result = await safe_execute_query(query, params)
-    return result[0][0] if result else None
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_new_messages_channel(giveaway_id, channel_id, user_id)
 
 
 async def get_voice_time(giveaway_id: int, user_id: str) -> int | None:
-    query = "SELECT voiceMinutes FROM giveawayVoiceTime WHERE giveaway_id = %s AND user_id = %s"
-    params = (giveaway_id, user_id)
-    result = await safe_execute_query(query, params)
-    return result[0][0] if result else None
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_voice_time(giveaway_id, user_id)
 
 
 async def get_blacklisted_roles(guild_id: str) -> list[GiveawayBlacklistEntryModel]:
-    query = "SELECT role_id, reason FROM giveawayBlacklistedRole WHERE guild_id = %s"
-    params = (guild_id,)
-    rows: list[GiveawayBlacklistEntryModel] = []
-    async for row in GiveawayBlacklistEntryModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_blacklisted_roles(guild_id)
 
 
 async def check_if_user_blacklisted(guild_id: str, user_id: str) -> bool:
-    query = "SELECT * FROM giveawayBlacklistedUser WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    result = await execute_query(query, params)
-    return result is not None and len(result) > 0
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.is_user_blacklisted(guild_id, user_id)
 
 
 async def check_if_giveaway_participant(giveaway_id: int, user_id: str) -> bool:
-    query = "SELECT * FROM giveawayParticipant WHERE giveaway_id = %s AND user_id = %s"
-    params = (giveaway_id, user_id)
-    result = await safe_execute_query(query, params)
-    return result is not None and len(result) > 0
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.is_participant(giveaway_id, user_id)
 
 
 async def remove_giveaway_participant(giveaway_id: int, user_id: str) -> None:
-    query = "DELETE FROM giveawayParticipant WHERE giveaway_id = %s AND user_id = %s"
-    params = (giveaway_id, user_id)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.remove_participant(giveaway_id, user_id)
 
 
 async def add_giveaway_participant(giveaway_id: int, user_id: str) -> None:
-    query = "INSERT INTO giveawayParticipant (user_id, giveaway_id) VALUES (%s, %s)"
-    params = (user_id, giveaway_id)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.add_participant(giveaway_id, user_id)
 
 
 async def get_send_ready_giveaways() -> list[int]:
-    query = "SELECT giveaway_id FROM giveaway WHERE started = 0 AND starttime < NOW()"
-    giveaway_ids: list[int] = []
-    async for row in execute_query_iter(query):
-        giveaway_ids.append(row[0])
-    return giveaway_ids
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_send_ready()
 
 
 async def add_giveaway_voice_minutes_if_needed(user_id: Any, guild_id: Any) -> None:
-    query = """
-        INSERT INTO giveawayVoiceTime (giveaway_id, user_id, voiceMinutes)
-        SELECT giveaway_id, %s, 1 FROM giveaway
-        WHERE guild_id = %s AND voiceRequirement IS NOT NULL
-        ON DUPLICATE KEY UPDATE voiceMinutes = voiceMinutes + 1
-    """
-    await execute_action(query, (user_id, guild_id))
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.add_voice_minutes(user_id, guild_id)
 
 
 async def add_giveaway_new_message_if_needed(user_id: Any, guild_id: Any) -> None:
-    query = """
-        INSERT INTO giveawayNewMessage (giveaway_id, user_id, messages)
-        SELECT giveaway_id, %s, 1 FROM giveaway
-        WHERE guild_id = %s AND newMessageRequirement IS NOT NULL
-        ON DUPLICATE KEY UPDATE messages = messages + 1
-    """
-    await execute_action(query, (user_id, guild_id))
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.add_new_message(user_id, guild_id)
 
 
 async def add_giveaway_new_message_channel_if_needed(user_id: Any, guild_id: Any, channel_id: Any) -> None:
-    query = """
-        INSERT INTO giveaway_channelMessages (giveaway_id, channel_id, user_id, amount)
-        SELECT giveaway_id, %s, %s, 1 FROM giveaway
-        WHERE guild_id = %s AND newMessageRequirement IS NOT NULL
-        ON DUPLICATE KEY UPDATE amount = amount + 1
-    """
-    await execute_action(query, (channel_id, user_id, guild_id))
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.add_new_message_channel(user_id, guild_id, channel_id)
 
 
 async def get_end_ready_giveaways() -> list[int]:
-    query = "SELECT giveaway_id FROM giveaway WHERE ended = 0 AND endtime < NOW() AND started = 1 AND messageId <> 'pending'"
-    giveaway_ids: list[int] = []
-    async for row in execute_query_iter(query):
-        giveaway_ids.append(row[0])
-    return giveaway_ids
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_end_ready()
 
 
 async def add_giveaway_blacklisted_user(guild_id: str, user_id: str) -> None:
-    query = "INSERT INTO giveawayBlacklistedUser (guild_id, user_id) VALUES (%s, %s)"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.add_blacklisted_user(guild_id, user_id)
 
 
 async def add_giveaway_blacklisted_role(guild_id: str, role_id: str) -> None:
-    query = "INSERT INTO giveawayBlacklistedRole (guild_id, role_id) VALUES (%s, %s)"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.add_blacklisted_role(guild_id, role_id)
 
 
 async def remove_giveaway_blacklisted_user(guild_id: str, user_id: str) -> None:
-    query = "DELETE FROM giveawayBlacklistedUser WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.remove_blacklisted_user(guild_id, user_id)
 
 
 async def remove_giveaway_blacklisted_role(guild_id: str, role_id: str) -> None:
-    query = "DELETE FROM giveawayBlacklistedRole WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.remove_blacklisted_role(guild_id, role_id)
 
 
 async def get_giveaway_blacklisted_users(guild_id: str) -> list[GiveawayBlacklistEntryModel]:
-    query = "SELECT user_id, reason FROM giveawayBlacklistedUser WHERE guild_id = %s"
-    params = (guild_id,)
-    rows: list[GiveawayBlacklistEntryModel] = []
-    async for row in GiveawayBlacklistEntryModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_blacklisted_users(guild_id)
 
 
 async def get_giveaway_blacklisted_roles(guild_id: str) -> list[GiveawayBlacklistEntryModel]:
-    query = "SELECT role_id, reason FROM giveawayBlacklistedRole WHERE guild_id = %s"
-    params = (guild_id,)
-    rows: list[GiveawayBlacklistEntryModel] = []
-    async for row in GiveawayBlacklistEntryModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.giveaway_service import giveaway_service
+
+    return await giveaway_service.get_blacklisted_roles(guild_id)
 
 
 async def delete_giveaway(giveaway_id: int) -> None:
-    """Delete a giveaway and all related data in a single transaction."""
-    related_tables = [
-        "giveaway_channelRequirement",
-        "giveawayRoleRequirement",
-        "giveawayParticipant",
-        "giveawayVoiceTime",
-        "giveawayNewMessage",
-        "giveaway_channelMessages",
-    ]
-    try:
-        async with transaction() as conn, conn.cursor() as cursor:
-            for table in related_tables:
-                await cursor.execute(f"DELETE FROM {table} WHERE giveaway_id = %s", (giveaway_id,))
-            await cursor.execute("DELETE FROM giveaway WHERE giveaway_id = %s", (giveaway_id,))
-    except Exception as e:
-        print(f"Error deleting giveaway {giveaway_id}: {e}")
-        raise
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.delete(giveaway_id)
 
 
 async def set_giveaway_endtime(giveaway_id: int, endtime: datetime) -> None:
-    query = "UPDATE giveaway SET endtime = %s WHERE giveaway_id = %s"
-    params = (endtime, giveaway_id)
-    await execute_action(query, params)
+    from services.giveaway_service import giveaway_service
+
+    await giveaway_service.set_endtime(giveaway_id, endtime)
 
 
 async def update_giveaway(
@@ -2248,67 +2193,28 @@ async def update_giveaway(
     voice_requirement: int | None,
     channel_id: str,
 ) -> None:
-    query = """
-    UPDATE giveaway SET
-        guild_id = %s,
-        title = %s,
-        description = %s,
-        winners = %s,
-        withButton = %s,
-        customName = %s,
-        sponsor = %s,
-        price = %s,
-        message = %s,
-        endtime = %s,
-        starttime = %s,
-        newMessageRequirement = %s,
-        dayRequirement = %s,
-        voiceRequirement = %s,
-        channel_id = %s
-    WHERE giveaway_id = %s
-    """
-    params = (
-        guild_id,
-        title,
-        description,
-        winners,
-        with_button,
-        custom_name,
-        sponsor,
-        price,
-        message,
-        endtime,
-        starttime,
-        new_message_requirement,
-        day_requirement,
-        voice_requirement,
-        channel_id,
-        giveaway_id,
+    from services.giveaway_service import GiveawayUpdateParams, giveaway_service
+
+    params = GiveawayUpdateParams(
+        guild_id=guild_id,
+        title=title,
+        description=description,
+        winners=winners,
+        with_button=with_button,
+        custom_name=custom_name,
+        sponsor=sponsor,
+        price=price,
+        message=message,
+        end_time=endtime,
+        start_time=starttime,
+        new_message_requirement=new_message_requirement,
+        day_requirement=day_requirement,
+        channel_requirements=channel_requirements,
+        role_requirement=role_requirement,
+        voice_requirement=voice_requirement,
+        channel_id=channel_id,
     )
-    try:
-        async with transaction() as conn, conn.cursor() as cursor:
-            await cursor.execute(query, params)
-            await cursor.execute(
-                "DELETE FROM giveaway_channelRequirement WHERE giveaway_id = %s",
-                (giveaway_id,),
-            )
-            if channel_requirements is not None and len(channel_requirements) > 0 and channel_requirements != {}:
-                for ch_id, amount in channel_requirements.items():
-                    await cursor.execute(
-                        "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)",
-                        (giveaway_id, ch_id, amount),
-                    )
-            await cursor.execute(
-                "DELETE FROM giveawayRoleRequirement WHERE giveaway_id = %s",
-                (giveaway_id,),
-            )
-            for role_id in role_requirement:
-                await cursor.execute(
-                    "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)",
-                    (role_id, giveaway_id),
-                )
-    except Exception as e:
-        print(f"Error during giveaway update for {giveaway_id}: {e}")
+    await giveaway_service.update(giveaway_id, params)
 
 
 async def set_text_cooldown(guild_id: str, cooldown: int) -> None:
@@ -2602,55 +2508,6 @@ async def feedbackIsBlocked(user_id: str) -> bool:
     return result is not None and len(result) > 0
 
 
-async def setAfk(user_id: str, reason: str) -> None:
-    query = """
-    INSERT INTO afk_users (user_id, reason)
-    VALUES (%s, %s)
-    """
-    params = (user_id, reason)
-    await execute_action(query, params)
-
-
-async def removeAfk(user_id: str) -> None:
-    query = "DELETE FROM afk_users WHERE user_id = %s"
-    params = (user_id,)
-    await execute_action(query, params)
-    query = "DELETE FROM afkMessages WHERE user_id = %s"
-    await execute_action(query, params)
-
-
-async def checkIfUserIsAfk(user_id: str) -> bool:
-    query = "SELECT * FROM afk_users WHERE user_id = %s"
-    params = (user_id,)
-    result = await safe_execute_query(query, params)
-    return result is not None and len(result) > 0
-
-
-async def addAfkMessage(user_id: str, message_id: str, channel_id: str) -> None:
-    query = """
-    INSERT INTO afkMessages (user_id, messageId, channel_id)
-    VALUES (%s, %s, %s)
-    """
-    params = (user_id, message_id, channel_id)
-    await execute_action(query, params)
-
-
-async def getAfkMessages(user_id: str) -> list[AfkMessageModel]:
-    query = "SELECT messageId, channel_id FROM afkMessages WHERE user_id = %s"
-    params = (user_id,)
-    rows: list[AfkMessageModel] = []
-    async for row in AfkMessageModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
-
-
-async def getAfkReason(user_id: str) -> str | None:
-    query = "SELECT reason FROM afk_users WHERE user_id = %s"
-    params = (user_id,)
-    result = await execute_query(query, params)
-    return result[0][0] if result else None
-
-
 async def add_booster_channel(guild_id: str, channel_id: str) -> None:
     query = "INSERT INTO booster_channel (guild_id, channel_id) VALUES (%s, %s)"
     params = (guild_id, channel_id)
@@ -2769,88 +2626,6 @@ async def remove_log_channel(guild_id: str) -> None:
     await execute_action(query, params)
 
 
-async def add_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
-    query = "INSERT INTO logBlacklistChannel (guild_id, channel_id) VALUES (%s, %s)"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
-
-
-async def remove_log_blacklist_channel(guild_id: str, channel_id: str) -> None:
-    query = "DELETE FROM logBlacklistChannel WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
-
-
-async def get_log_blacklist_channel(guild_id: str) -> list[str]:
-    query = "SELECT channel_id FROM logBlacklistChannel WHERE guild_id = %s"
-    params = (guild_id,)
-    channel_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        channel_ids.append(row[0])
-    return channel_ids
-
-
-async def is_log_channel_blacklisted(guild_id: str, channel_id: str) -> str | None:
-    query = "SELECT channel_id FROM logBlacklistChannel WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    result = await execute_query(query, params)
-    return result[0] if result else None
-
-
-async def add_log_role_blacklist(guild_id: str, role_id: str) -> None:
-    query = "INSERT INTO logRoleBlacklist (guild_id, role_id) VALUES (%s, %s)"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
-
-
-async def remove_log_role_blacklist(guild_id: str, role_id: str) -> None:
-    query = "DELETE FROM logRoleBlacklist WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    await execute_action(query, params)
-
-
-async def get_log_role_blacklist(guild_id: str) -> list[str]:
-    query = "SELECT role_id FROM logRoleBlacklist WHERE guild_id = %s"
-    params = (guild_id,)
-    role_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        role_ids.append(row[0])
-    return role_ids
-
-
-async def is_log_role_blacklisted(guild_id: str, role_id: str) -> str | None:
-    query = "SELECT role_id FROM logRoleBlacklist WHERE guild_id = %s AND role_id = %s"
-    params = (guild_id, role_id)
-    result = await execute_query(query, params)
-    return result[0] if result else None
-
-
-async def add_log_user_blacklist(guild_id: str, user_id: str) -> None:
-    query = "INSERT INTO logUserBlacklist (guild_id, user_id) VALUES (%s, %s)"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
-
-
-async def remove_log_user_blacklist(guild_id: str, user_id: str) -> None:
-    query = "DELETE FROM logUserBlacklist WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    await execute_action(query, params)
-
-
-async def get_log_user_blacklist(guild_id: str) -> list[str]:
-    query = "SELECT user_id FROM logUserBlacklist WHERE guild_id = %s"
-    params = (guild_id,)
-    user_ids: list[str] = []
-    async for row in execute_query_iter(query, params):
-        user_ids.append(row[0])
-    return user_ids
-
-
-async def is_log_user_blacklisted(guild_id: str, user_id: str) -> str | None:
-    query = "SELECT user_id FROM logUserBlacklist WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, user_id)
-    result = await execute_query(query, params)
-    return result[0] if result else None
 
 
 async def get_log_channel(guild_id: str) -> str | None:
@@ -2948,6 +2723,95 @@ async def get_log_enable(guild_id: str | int) -> LogEnableModel:
     )
 
 
+async def add_scheduled_message(
+    guild_id: str | None,
+    channel_id: str | None,
+    user_id: str,
+    content: str,
+    send_time: datetime,
+    repeat_interval: int | None = None,
+    repeat_amount: int | None = None,
+) -> None:
+    query = """
+    INSERT INTO scheduledMessages
+    (guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval, repeat_amount)
+    await execute_action(query, params)
+
+
+async def get_scheduled_messages(user_id: str) -> list[ScheduledMessageModel]:
+    query = """
+    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
+    FROM scheduledMessages
+    WHERE user_id = %s
+    ORDER BY send_time ASC
+    """
+    params = (user_id,)
+    rows: list[ScheduledMessageModel] = []
+    async for row in ScheduledMessageModel.iter_rows(query, params):
+        rows.append(row)
+    return rows
+
+
+async def remove_scheduled_message(message_id: int) -> None:
+    query = "DELETE FROM scheduledMessages WHERE messageId = %s"
+    params = (message_id,)
+    await execute_action(query, params)
+
+
+async def get_user_scheduled_messages_in_timeframe(
+    user_id: str,
+    start_time: datetime,
+    end_time: datetime,
+    guild_id: str | None = None,
+) -> list[ScheduledMessageModel]:
+    query = """
+    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
+    FROM scheduledMessages
+    WHERE user_id = %s
+    AND send_time BETWEEN %s AND %s
+    """
+    params: list[Any] = [user_id, start_time, end_time]
+
+    if guild_id:
+        query += " AND guild_id = %s"
+        params.append(guild_id)
+
+    rows: list[ScheduledMessageModel] = []
+    async for row in ScheduledMessageModel.iter_rows(query, tuple(params)):
+        rows.append(row)
+    return rows
+
+
+async def update_scheduled_message_content(message_id: int, new_content: str) -> None:
+    query = "UPDATE scheduledMessages SET content = %s WHERE messageId = %s"
+    params = (new_content, message_id)
+    await execute_action(query, params)
+
+
+async def update_scheduled_message_repeat_amount(message_id: int, repeat_amount: int) -> None:
+    query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE messageId = %s"
+    params = (repeat_amount, message_id)
+    await execute_action(query, params)
+
+
+async def get_ready_scheduled_messages() -> list[ScheduledMessageModel]:
+    query = """
+    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
+    FROM scheduledMessages WHERE send_time <= NOW()
+    """
+    rows: list[ScheduledMessageModel] = []
+    async for row in ScheduledMessageModel.iter_rows(query):
+        rows.append(row)
+    return rows
+
+
+# Report functions have been moved to ReportService in services/report_service.py
+# Import them from there for new code. Old aliases kept for backward compat.
+
+
 async def report_user(
     guild_id: str,
     user_id: str,
@@ -2955,133 +2819,97 @@ async def report_user(
     reason: str,
     is_moderator: bool = False,
 ) -> int | None:
-    if is_moderator:
-        query = "INSERT INTO reports (guild_id, user_id, reporterId, reason, accepted, accepted_at, acceptedBy) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        params: Any = (
-            guild_id,
-            user_id,
-            reporter_id,
-            reason,
-            1,
-            datetime.now(),
-            reporter_id,
+    from services.report_service import ReportCreateParams
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.create(
+        ReportCreateParams(
+            guild_id=guild_id,
+            user_id=user_id,
+            reporter_id=reporter_id,
+            reason=reason,
+            is_moderator=is_moderator,
         )
-    else:
-        query = "INSERT INTO reports (guild_id, user_id, reporterId, reason) VALUES (%s, %s, %s, %s)"
-        params = (guild_id, user_id, reporter_id, reason)
-    report_id = await execute_action(query, params)
-    return report_id
+    )
 
 
 async def accept_report(guild_id: str, report_id: str) -> None:
-    query = "UPDATE reports SET accepted = 1, accepted_at = NOW(), acceptedBy = %s WHERE id = %s"
-    params = (guild_id, report_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.accept(guild_id, report_id, accepted_by=None)
 
 
 async def reject_report(guild_id: str, report_id: str) -> None:
-    query = "UPDATE reports SET accepted = 0, accepted_at = NOW(), acceptedBy = %s WHERE id = %s"
-    params = (guild_id, report_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.reject(guild_id, report_id, accepted_by=None)
 
 
 async def resolve_report(guild_id: str, report_id: str) -> None:
-    query = "UPDATE reports SET resolved = 1 WHERE guild_id = %s AND id = %s"
-    params = (guild_id, report_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.resolve(guild_id, report_id)
 
 
 async def delete_report(guild_id: str, report_id: str) -> None:
-    query = "DELETE FROM reports WHERE guild_id = %s AND id = %s"
-    params = (guild_id, report_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.delete(guild_id, report_id)
 
 
 async def get_reports(guild_id: str, user_id: str | None = None) -> list[ReportModel]:
-    query = """
-        SELECT id, guild_id, user_id, reporterId, reason,
-               UNIX_TIMESTAMP(created_at) as created_at,
-               accepted,
-               UNIX_TIMESTAMP(accepted_at) as accepted_at,
-               acceptedBy,
-               resolved,
-               UNIX_TIMESTAMP(resolved_at) as resolved_at,
-               resolvedBy
-        FROM reports WHERE guild_id = %s
-    """
-    params: list[Any] = [guild_id]
-    if user_id:
-        query += " AND user_id = %s"
-        params.append(user_id)
+    from services.report_service import ReportFilter
+    from services.report_service import report_service as _report_svc
 
-    rows: list[ReportModel] = []
-    async for row in ReportModel.iter_rows(query, tuple(params)):
-        rows.append(row)
-    return rows
+    return await _report_svc.get(ReportFilter(guild_id=guild_id, user_id=user_id))
 
 
 async def get_reports_by_reporter(guild_id: str, reporter_id: str) -> list[ReportModel]:
-    query = """
-        SELECT id, guild_id, user_id, reporterId, reason,
-               UNIX_TIMESTAMP(created_at) as created_at,
-               accepted,
-               UNIX_TIMESTAMP(accepted_at) as accepted_at,
-               acceptedBy,
-               resolved,
-               UNIX_TIMESTAMP(resolved_at) as resolved_at,
-               resolvedBy
-        FROM reports WHERE guild_id = %s AND reporterId = %s
-    """
-    params = (guild_id, reporter_id)
-    rows: list[ReportModel] = []
-    async for row in ReportModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.get_by_reporter(guild_id, reporter_id)
 
 
 async def block_reporter(guild_id: str, reporter_id: str) -> None:
-    query = "INSERT INTO blockedReporters (guild_id, user_id) VALUES (%s, %s)"
-    params = (guild_id, reporter_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.block_reporter(guild_id, reporter_id)
 
 
 async def unblock_reporter(guild_id: str, reporter_id: str) -> None:
-    query = "DELETE FROM blockedReporters WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, reporter_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.unblock_reporter(guild_id, reporter_id)
 
 
 async def get_blocked_reporters(guild_id: str) -> list[BlockedReporterModel]:
-    query = "SELECT guild_id, user_id FROM blockedReporters WHERE guild_id = %s"
-    params = (guild_id,)
-    rows: list[BlockedReporterModel] = []
-    async for row in BlockedReporterModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.get_blocked_reporters(guild_id)
 
 
 async def check_if_reporter_is_blocked(guild_id: str, reporter_id: str) -> bool:
-    query = "SELECT 1 FROM blockedReporters WHERE guild_id = %s AND user_id = %s"
-    params = (guild_id, reporter_id)
-    result = await execute_query(query, params)
-    return bool(result)
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.is_blocked(guild_id, reporter_id)
 
 
 async def get_report_channel(guild_id: str) -> str | None:
-    result = await execute_query("SELECT channel_id FROM reportchannel WHERE guild_id = %s", (guild_id,))
-    return result[0] if result else None
+    from services.report_service import report_service as _report_svc
+
+    return await _report_svc.get_channel(guild_id)
 
 
 async def set_report_channel(guild_id: str, channel_id: str) -> None:
-    query = "INSERT INTO reportchannel (guild_id, channel_id) VALUES (%s, %s)"
-    params = (guild_id, channel_id)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.set_channel(guild_id, channel_id)
 
 
 async def remove_report_channel(guild_id: str) -> None:
-    query = "DELETE FROM reportchannel WHERE guild_id = %s"
-    params = (guild_id,)
-    await execute_action(query, params)
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.remove_channel(guild_id)
 
 
 async def get_trigger_messages(guild_id: str) -> list[TriggerMessageModel]:

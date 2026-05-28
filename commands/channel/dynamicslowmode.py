@@ -1,22 +1,16 @@
+"""Dynamic slowmode commands — manage per-channel adaptive slowmode."""
+
+
 import time
-from collections import defaultdict, deque
 
 import discord
 
 import utility
-from api import (
-    add_dynamicslowmode,
-    cash_slowmode_delay,
-    get_dynamicslowmode,
-    get_dynamicslowmode_channels,
-    remove_cashed_slowmode_delay,
-    remove_dynamicslowmode,
-)
 from localizer import tanjunLocalizer
+from services.dynamicslowmode import DynamicSlowmodeService
 
-# In-memory message tracking per channel
-# Maps channel_id -> deque of timestamps (maxlen=100 to bound memory usage)
-_recent_messages: dict[int, deque[float]] = defaultdict(lambda: deque(maxlen=100))
+# Shared service instance
+_ds_service = DynamicSlowmodeService()
 
 
 async def addDynamicslowmode(
@@ -62,7 +56,7 @@ async def addDynamicslowmode(
         await command_info.reply(embed=embed)
         return
 
-    if await get_dynamicslowmode(channel.id):
+    if await _ds_service.get_config(str(channel.id)):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 command_info.locale,
@@ -76,7 +70,9 @@ async def addDynamicslowmode(
         await command_info.reply(embed=embed)
         return
 
-    await add_dynamicslowmode(command_info.guild.id, channel.id, messages, per, resetafter)  # type: ignore[union-attr]
+    await _ds_service.configure(
+        str(command_info.guild.id), str(channel.id), messages, per, resetafter
+    )  # type: ignore[union-attr]
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.channel.dynamicslowmode.success.title"),
         description=tanjunLocalizer.localize(
@@ -106,7 +102,7 @@ async def removeDynamicslowmode(command_info: utility.CommandInfo, channel: disc
         await command_info.reply(embed=embed)
         return
 
-    if not await get_dynamicslowmode(channel.id):
+    if not await _ds_service.get_config(str(channel.id)):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 command_info.locale,
@@ -120,9 +116,7 @@ async def removeDynamicslowmode(command_info: utility.CommandInfo, channel: disc
         await command_info.reply(embed=embed)
         return
 
-    await remove_dynamicslowmode(command_info.guild.id, channel.id)  # type: ignore[union-attr]
-    # Clean up in-memory tracking
-    _recent_messages.pop(int(channel.id), None)
+    await _ds_service.remove(str(command_info.guild.id), str(channel.id))  # type: ignore[union-attr]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(
@@ -156,7 +150,7 @@ async def getDynamicslowmode_channels(command_info: utility.CommandInfo) -> None
         await command_info.reply(embed=embed)
         return
 
-    channels = await get_dynamicslowmode_channels(command_info.guild.id)  # type: ignore[union-attr]
+    channels = await _ds_service.get_all_configs(str(command_info.guild.id))  # type: ignore[union-attr]
     if not channels:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -172,14 +166,14 @@ async def getDynamicslowmode_channels(command_info: utility.CommandInfo) -> None
         return
 
     description = ""
-    for channel in channels:
+    for config in channels:
         description += tanjunLocalizer.localize(
             command_info.locale,
             "commands.channel.dynamicslowmode.channels.description",
-            channel_id=channel.channel_id,
-            messages=channel.messages,
-            per=channel.per,
-            resetafter=channel.reset_after,
+            channel_id=config.channel_id,
+            messages=config.messages,
+            per=config.per,
+            resetafter=config.reset_after,
         )
 
     embed = utility.tanjunEmbed(
@@ -191,40 +185,51 @@ async def getDynamicslowmode_channels(command_info: utility.CommandInfo) -> None
 
 async def dynamicslowmodeMessage(message: discord.Message) -> None:
     """Track messages in-memory and adjust slowmode when thresholds are exceeded."""
-    dynamic_slowmode_channel = await get_dynamicslowmode(message.channel.id)
-    if not dynamic_slowmode_channel:
+    config = await _ds_service.get_config(str(message.channel.id))
+    if not config:
         return
 
-    cashed_slowmode_delay = dynamic_slowmode_channel.cached_slowmode
+    cashed_slowmode_delay = config.cached_slowmode
 
-    if not cashed_slowmode_delay:
-        await cash_slowmode_delay(message.channel.id, message.channel.slowmode_delay)  # type: ignore[union-attr, arg-type]
+    if cashed_slowmode_delay is None:
+        await _ds_service.cache_current_slowmode(
+            str(message.channel.id), message.channel.slowmode_delay  # type: ignore[union-attr]
+        )
         cashed_slowmode_delay = message.channel.slowmode_delay  # type: ignore[union-attr]
 
-    channel_id: int = message.channel.id  # type: ignore[assignment]
     now = time.time()
 
-    # Track in memory
-    _recent_messages[channel_id].append(now)
+    # Track in memory via service
+    channel_id: int = message.channel.id  # type: ignore[assignment]
+
+    # Prune old timestamps before appending
+    cutoff = now - config.reset_after
+    while _ds_service._recent_messages[channel_id] and _ds_service._recent_messages[channel_id][0] <= cutoff:
+        _ds_service._recent_messages[channel_id].popleft()
+
+    _ds_service._recent_messages[channel_id].append(now)
 
     # Count messages in the time window
-    cutoff = now - dynamic_slowmode_channel.reset_after
-    messages_in_window = sum(1 for t in _recent_messages[channel_id] if t > cutoff)
+    messages_in_window = len(_ds_service._recent_messages[channel_id])
 
     reason_locale = tanjunLocalizer.localize(
         (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]
         "commands.channel.dynamicslowmode.reason",
         messages=messages_in_window,
-        per=dynamic_slowmode_channel.per,
+        per=config.per,
     )
     reset_reason_locale = tanjunLocalizer.localize(
         (message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en-US"),  # type: ignore[union-attr]
         "commands.channel.dynamicslowmode.resetReason",
     )
 
-    new_slowmode = int(messages_in_window / dynamic_slowmode_channel.per)
-    if new_slowmode != message.channel.slowmode_delay and new_slowmode > cashed_slowmode_delay:  # type: ignore[union-attr]
-        await message.channel.edit(slowmode_delay=new_slowmode, reason=reason_locale)  # type: ignore[union-attr]
-    elif new_slowmode <= cashed_slowmode_delay and message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
+    # Check if throttling is needed based on config threshold
+    if messages_in_window > config.messages:
+        # Calculate new slowmode: excess messages scaled by the per interval
+        new_slowmode = int((messages_in_window - config.messages) * config.per / config.messages)
+        if new_slowmode != message.channel.slowmode_delay and new_slowmode > cashed_slowmode_delay:  # type: ignore[union-attr]
+            await message.channel.edit(slowmode_delay=new_slowmode, reason=reason_locale)  # type: ignore[union-attr]
+    elif message.channel.slowmode_delay != cashed_slowmode_delay:  # type: ignore[union-attr]
+        # Reset to cached baseline when below threshold
         await message.channel.edit(slowmode_delay=cashed_slowmode_delay, reason=reset_reason_locale)  # type: ignore[union-attr]
-        await remove_cashed_slowmode_delay(message.channel.id)
+        await _ds_service.restore_slowmode(str(message.channel.id))

@@ -1,5 +1,5 @@
-import asyncio
 import ast
+import asyncio
 import bisect
 import collections
 import concurrent.futures
@@ -1434,5 +1434,188 @@ def addThousandsSeparator(number: int) -> str:
     return f"{number:,}".replace(",", " ")
 
 
+class SafeInteraction:
+    """Helper for safely responding to Discord interactions, preventing double-respond errors.
+
+    Use instead of ``interaction.response.send_message()``,
+    ``interaction.response.defer()``, and ``interaction.edit_original_response()``
+    to handle race conditions when ``interaction_check`` or other code paths
+    may have already responded.
+
+    Usage::
+
+        embed = utility.tanjunEmbed(title="Done", description="Operation complete.")
+        await SafeInteraction.respond(interaction, embed=embed)
+    """
+
+    @staticmethod
+    async def respond(
+        interaction: discord.Interaction,
+        embed: discord.Embed | None = None,
+        content: str | None = None,
+        ephemeral: bool = False,
+        view: discord.ui.View | None = None,
+    ) -> None:
+        """Respond to an interaction, safely handling already-responded state.
+
+        If the interaction has already been responded to, this falls back to
+        ``interaction.followup.send()`` instead of raising.
+        """
+        kwargs: dict[str, Any] = {"ephemeral": ephemeral}
+        if embed is not None:
+            kwargs["embed"] = embed
+        if content is not None:
+            kwargs["content"] = content
+        if view is not None:
+            kwargs["view"] = view
+
+        if interaction.response.is_done():
+            await interaction.followup.send(**kwargs)
+        else:
+            try:
+                await interaction.response.send_message(**kwargs)
+            except discord.InteractionResponded:
+                await interaction.followup.send(**kwargs)
+
+    @staticmethod
+    async def defer(
+        interaction: discord.Interaction,
+        ephemeral: bool = False,
+    ) -> None:
+        """Safely defer an interaction, skipping if already done."""
+        if not interaction.response.is_done():
+            try:
+                await interaction.response.defer(ephemeral=ephemeral)
+            except discord.InteractionResponded:
+                pass  # Already responded, silently ignore
+
+    @staticmethod
+    async def edit(
+        interaction: discord.Interaction,
+        embed: discord.Embed | None = None,
+        content: str | None = None,
+        view: discord.ui.View | None = None,
+    ) -> None:
+        """Safely edit the original interaction response.
+
+        If the interaction has not yet been responded to, this sends an initial
+        message instead of trying to edit a non-existent response.
+        """
+        kwargs: dict[str, Any] = {}
+        if embed is not None:
+            kwargs["embed"] = embed
+        if content is not None:
+            kwargs["content"] = content
+        if view is not None:
+            kwargs["view"] = view
+
+        if interaction.response.is_done():
+            await interaction.edit_original_response(**kwargs)
+        else:
+            try:
+                await interaction.response.send_message(**kwargs)
+            except discord.InteractionResponded:
+                await interaction.edit_original_response(**kwargs)
+
+
 tanjunEmbed = TanjunEmbed
 #: Backward-compatible alias so that ``from utility import tanjunEmbed`` still works.
+
+
+class DiscordSafe:
+    """Safely call Discord API methods with proper error handling.
+
+    Wraps common Discord operations in try/except guards for Forbidden,
+    NotFound, and HTTPException so that minigames and other features don't
+    crash when permissions are revoked or network errors occur.
+    """
+
+    @staticmethod
+    async def send(
+        channel: discord.abc.Messageable,
+        content: str | None = None,
+        embed: discord.Embed | None = None,
+    ) -> discord.Message | None:
+        """Send a message, returning None if it fails."""
+        try:
+            kwargs: dict[str, str | discord.Embed] = {}
+            if content is not None:
+                kwargs["content"] = content
+            if embed is not None:
+                kwargs["embed"] = embed
+            return await channel.send(**kwargs)
+        except discord.Forbidden:
+            logging.warning("Cannot send message in %s: Forbidden", channel.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error sending message in %s: %s", channel.id, e.status)
+        return None
+
+    @staticmethod
+    async def send_dm(user: discord.User | discord.Member, content: str) -> bool:
+        """Send a DM, returning True on success."""
+        try:
+            await user.send(content)
+            return True
+        except discord.Forbidden:
+            logging.warning("Cannot send DM to %s: Forbidden", user.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error sending DM to %s: %s", user.id, e.status)
+        return False
+
+    @staticmethod
+    async def delete(message: discord.Message) -> bool:
+        """Delete a message, returning True if it was deleted or already gone."""
+        try:
+            await message.delete()
+            return True
+        except discord.NotFound:
+            return True  # Already deleted
+        except discord.Forbidden:
+            logging.warning("Cannot delete message %s: Forbidden", message.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error deleting message %s: %s", message.id, e.status)
+        return False
+
+    @staticmethod
+    async def reply(
+        message: discord.Message,
+        embed: discord.Embed | None = None,
+        content: str | None = None,
+    ) -> discord.Message | None:
+        """Reply to a message, returning None if it fails."""
+        try:
+            kwargs: dict[str, str | discord.Embed] = {}
+            if content is not None:
+                kwargs["content"] = content
+            if embed is not None:
+                kwargs["embed"] = embed
+            return await message.reply(**kwargs)
+        except discord.Forbidden:
+            logging.warning("Cannot reply to %s: Forbidden", message.id)
+        except discord.HTTPException as e:
+            logging.error("HTTP error replying to %s: %s", message.id, e.status)
+        return None
+
+    @staticmethod
+    async def add_reaction(message: discord.Message, emoji: str) -> bool:
+        """Add a reaction, returning True on success."""
+        try:
+            await message.add_reaction(emoji)
+            return True
+        except discord.Forbidden:
+            logging.warning("Cannot add reaction to %s: Forbidden", message.id)
+        except discord.NotFound:
+            logging.warning(
+                "Cannot add reaction '%s' to message %s: Message not found (already deleted)",
+                emoji,
+                message.id,
+            )
+        except discord.HTTPException as e:
+            logging.warning(
+                "HTTP error adding reaction '%s' to message %s: status=%s, text=%s",
+                emoji,
+                message.id,
+                e.status,
+                e.text,
+            )
+        return False

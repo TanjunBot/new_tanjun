@@ -1,4 +1,3 @@
-import contextlib
 import random
 from math import sqrt
 
@@ -14,23 +13,24 @@ from api import (
     set_counting_mode_progress,
 )
 from localizer import tanjunLocalizer
-from utility import EmbedColor, tanjunEmbed
+from models import CountingMode
+from utility import DiscordSafe, EmbedColor, tanjunEmbed
 
 modeMap = {
-    1: "normal",
-    2: "negative",
-    3: "reverse",
-    4: "prime",
-    5: "even",
-    6: "odd",
-    7: "fibonacci",
-    8: "double",
-    9: "triple",
-    10: "houndreds",
-    11: "binary",
-    12: "romean",
-    13: "square",
-    14: "cube",
+    CountingMode.NORMAL: "normal",
+    CountingMode.NEGATIVE: "negative",
+    CountingMode.REVERSE: "reverse",
+    CountingMode.PRIME: "prime",
+    CountingMode.EVEN: "even",
+    CountingMode.ODD: "odd",
+    CountingMode.FIBONACCI: "fibonacci",
+    CountingMode.DOUBLE: "double",
+    CountingMode.TRIPLE: "triple",
+    CountingMode.HUNDREDS: "houndreds",
+    CountingMode.BINARY: "binary",
+    CountingMode.ROMEAN: "romean",
+    CountingMode.SQUARE: "square",
+    CountingMode.CUBE: "cube",
 }
 
 primes = [
@@ -184,20 +184,20 @@ def number_to_romeal(number):
     return "".join(roman_numeral)
 
 
-def get_correct_next_number(mode: int, number: int):
-    if mode == 1:
+def get_correct_next_number(mode: CountingMode, number: int | str):
+    if mode == CountingMode.NORMAL:
         return number + 1
-    if mode == 2:
+    if mode == CountingMode.NEGATIVE:
         return number - 1
-    if mode == 3:
+    if mode == CountingMode.REVERSE:
         return number - 1
-    if mode == 4:
+    if mode == CountingMode.PRIME:
         return primes[primes.index(number) + 1]
-    if mode == 5:
+    if mode == CountingMode.EVEN:
         return number + 2
-    if mode == 6:
+    if mode == CountingMode.ODD:
         return number + 2
-    if mode == 7:
+    if mode == CountingMode.FIBONACCI:
         if number == -1:
             return 0
         if number == 0:
@@ -206,101 +206,101 @@ def get_correct_next_number(mode: int, number: int):
             return 1  # Return 1 again for the second 1
         idx = fibonacci.index(number)
         return int(fibonacci[idx + 1])
-    if mode == 8:
+    if mode == CountingMode.DOUBLE:
         return number * 2
-    if mode == 9:
+    if mode == CountingMode.TRIPLE:
         return number * 3
-    if mode == 10:
+    if mode == CountingMode.HUNDREDS:
         return number + 100
-    if mode == 11:
+    if mode == CountingMode.BINARY:
         return number + 1
-    if mode == 12:
+    if mode == CountingMode.ROMEAN:
         return number_to_romeal(number + 1) if number != 0 else "I"
-    if mode == 13:
+    if mode == CountingMode.SQUARE:
         if number == 0:
             return 1
         next_num = int(sqrt(number)) + 1
         return next_num * next_num
-    if mode == 14:
+    if mode == CountingMode.CUBE:
         if number == 0:
             return 1
         next_num = int(number ** (1 / 3)) + 1
         return next_num**3
 
 
-def get_goal(mode: int):
-    if mode == 1:
+def get_goal(mode: CountingMode):
+    if mode == CountingMode.NORMAL:
         # nosec: B311
         return random.randint(20, 100)
-    if mode == 2:
+    if mode == CountingMode.NEGATIVE:
         # nosec: B311
         return random.randint(-100, -20)
-    if mode == 3:
+    if mode == CountingMode.REVERSE:
         # nosec: B311
         return random.randint(5, 80)
-    if mode == 4:
+    if mode == CountingMode.PRIME:
         # nosec: B311
         return primes[random.randint(5, len(primes) - 1)]
-    if mode == 5:
+    if mode == CountingMode.EVEN:
         # nosec: B311
         number = random.randint(20, 100)
         return number if number % 2 == 0 else number + 1
-    if mode == 6:
+    if mode == CountingMode.ODD:
         # nosec: B311
         number = random.randint(20, 100)
         return number if number % 2 != 0 else number + 1
-    if mode == 7:
+    if mode == CountingMode.FIBONACCI:
         # nosec: B311
         return fibonacci[random.randint(5, len(fibonacci) - 1)]
-    if mode == 8:
+    if mode == CountingMode.DOUBLE:
         # nosec: B311
         return 2 ** random.randint(5, 20)
-    if mode == 9:
+    if mode == CountingMode.TRIPLE:
         # nosec: B311
         return 3 ** random.randint(5, 10)
-    if mode == 10:
+    if mode == CountingMode.HUNDREDS:
         # nosec: B311
         return random.randint(20, 100) * 100
-    if mode == 11:
+    if mode == CountingMode.BINARY:
         # nosec: B311
         return random.randint(20, 100)
-    if mode == 12:
+    if mode == CountingMode.ROMEAN:
         # nosec: B311
         return number_to_romeal(random.randint(20, 100))
-    if mode == 13:
+    if mode == CountingMode.SQUARE:
         return random.randint(20, 100) ** 2
-    if mode == 14:
+    if mode == CountingMode.CUBE:
         return random.randint(20, 100) ** 3
 
 
-def get_first_number(mode: int) -> int | None:
-    if mode == 1:
+def get_first_number(mode: CountingMode) -> int | None:
+    if mode == CountingMode.NORMAL:
         return 0
-    if mode == 2:
+    if mode == CountingMode.NEGATIVE:
         return 0
-    if mode == 3:
+    if mode == CountingMode.REVERSE:
         return 101
-    if mode == 4:
+    if mode == CountingMode.PRIME:
         return 0
-    if mode == 5:
+    if mode == CountingMode.EVEN:
         return 0
-    if mode == 6:
+    if mode == CountingMode.ODD:
         return -1
-    if mode == 7:
+    if mode == CountingMode.FIBONACCI:
         return -1
-    if mode == 8:
+    if mode == CountingMode.DOUBLE:
         return 1
-    if mode == 9:
+    if mode == CountingMode.TRIPLE:
         return 1
-    if mode == 10:
+    if mode == CountingMode.HUNDREDS:
         return 0
-    if mode == 11:
+    if mode == CountingMode.BINARY:
         return 0
-    if mode == 12:
+    if mode == CountingMode.ROMEAN:
         return 0
-    if mode == 13:
+    if mode == CountingMode.SQUARE:
         return 0
-    if mode == 14:
+    if mode == CountingMode.CUBE:
         return 0
 
 
@@ -311,42 +311,47 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
     """
     if config is not None:
         progress = config.get("progress")
-        mode = config.get("mode")
+        mode_raw = config.get("mode")
         goal = config.get("goal")
         last_counter_id = config.get("last_counter_id")
     else:
         progress = await get_counting_mode_progress(message.channel.id)
-        mode = await get_counting_mode_mode(message.channel.id)
+        mode_raw = await get_counting_mode_mode(message.channel.id)
         goal = None  # Fetched later if needed
         last_counter_id = None
+
+    # Normalize mode to CountingMode enum
+    if isinstance(mode_raw, int):
+        mode = CountingMode(mode_raw)
+    else:
+        mode = mode_raw
 
     locale = message.guild.preferred_locale if hasattr(message.guild, "preferred_locale") else "en_US"
 
     if not progress and progress != 0:
         return
 
-    if mode == 12:
+    if mode == CountingMode.ROMEAN:
         progress = number_to_romeal(progress)
 
     # Binary mode stores progress as integer; no conversion needed
 
     if await check_if_opted_out(message.author.id):
-        with contextlib.suppress(discord.Forbidden):
-            await message.author.send(tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
-        await message.delete()
+        await DiscordSafe.send_dm(message.author, tanjunLocalizer.localize(locale, "minigames.counting.opted_out"))
+        await DiscordSafe.delete(message)
         return
 
     content = message.content
 
-    if mode == 12:
+    if mode == CountingMode.ROMEAN:
         correct_number = get_correct_next_number(mode, romeal_to_number(progress))
     else:
         correct_number = get_correct_next_number(mode, progress)
 
     if not content:
-        await message.add_reaction("💀")
+        await DiscordSafe.add_reaction(message, "💀")
         # nosec: B311
-        new_mode = random.randint(1, len(modeMap))
+        new_mode = random.choice(list(modeMap))
         goal = get_goal(new_mode)
         embed = tanjunEmbed(
             colour=EmbedColor.ERROR,
@@ -364,7 +369,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if mode == 12:
+        if mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
         starter = get_first_number(new_mode)
         await set_counting_mode_progress(
@@ -375,15 +380,19 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
     try:
-        number = int(content, 2) if mode == 11 else (int(content) if mode != 12 else content)
+        number = (
+            int(content, 2)
+            if mode == CountingMode.BINARY
+            else (int(content) if mode != CountingMode.ROMEAN else content)
+        )
     except ValueError:
-        await message.add_reaction("💀")
+        await DiscordSafe.add_reaction(message, "💀")
         # nosec: B311
-        new_mode = random.randint(1, len(modeMap))
+        new_mode = random.choice(list(modeMap))
         goal = get_goal(new_mode)
         embed = tanjunEmbed(
             colour=EmbedColor.ERROR,
@@ -401,7 +410,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if mode == 12:
+        if mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
         starter = get_first_number(new_mode)
         await set_counting_mode_progress(
@@ -412,13 +421,13 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
     if number != correct_number:
-        await message.add_reaction("💀")
+        await DiscordSafe.add_reaction(message, "💀")
         # nosec: B311
-        new_mode = random.randint(1, len(modeMap))
+        new_mode = random.choice(list(modeMap))
         goal = get_goal(new_mode)
         embed = tanjunEmbed(
             colour=EmbedColor.ERROR,
@@ -436,7 +445,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if new_mode == 12:
+        if new_mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
         starter = get_first_number(new_mode)
         await set_counting_mode_progress(
@@ -447,16 +456,16 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
     if config is None:
         last_counter_id = await get_last_mode_counter_id(message.channel.id)
 
     if last_counter_id == str(message.author.id):
-        await message.add_reaction("💀")
+        await DiscordSafe.add_reaction(message, "💀")
         # nosec: B311
-        new_mode = random.randint(1, len(modeMap))
+        new_mode = random.choice(list(modeMap))
         goal = get_goal(new_mode)
         embed = tanjunEmbed(
             colour=EmbedColor.ERROR,
@@ -474,7 +483,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if mode == 12:
+        if mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
         starter = get_first_number(new_mode)
         await set_counting_mode_progress(
@@ -485,21 +494,21 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
     if config is None or goal is None:
         goal = await get_count_mode_goal(message.channel.id)
 
-    if mode == 12:
+    if mode == CountingMode.ROMEAN:
         number = romeal_to_number(number)
 
     if number == goal:
-        await message.add_reaction("🎉")
+        await DiscordSafe.add_reaction(message, "🎉")
         # nosec: B311
-        new_mode = random.randint(1, len(modeMap))
+        new_mode = random.choice(list(modeMap))
         new_goal = get_goal(new_mode)
-        if mode == 12:
+        if mode == CountingMode.ROMEAN:
             new_goal = romeal_to_number(new_goal)
         embed = tanjunEmbed(
             colour=EmbedColor.SUCCESS,
@@ -517,7 +526,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             ),
         )
         await clear_counting_mode(message.channel.id)
-        if mode == 12:
+        if mode == CountingMode.ROMEAN:
             new_goal = romeal_to_number(new_goal)
         starter = get_first_number(new_mode)
         await set_counting_mode_progress(
@@ -528,15 +537,15 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
             counter_id="nobody",
             guild_id=message.guild.id,
         )
-        await message.reply(embed=embed)
+        await DiscordSafe.reply(message, embed=embed)
         return
 
-    if mode == 12:
+    if mode == CountingMode.ROMEAN:
         correct_number = romeal_to_number(correct_number)
 
     await set_counting_mode_progress(
         channel_id=message.channel.id,
-        progress=(-15 if (mode == 7 and number == 1 and progress == 0) else correct_number),
+        progress=(-15 if (mode == CountingMode.FIBONACCI and number == 1 and progress == 0) else correct_number),
         mode=mode,
         counter_id=message.author.id,
         guild_id=message.guild.id,
@@ -547,16 +556,14 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         correct_number = get_correct_next_number(mode, correct_number)
         # Display next number in the correct format for the mode
         display_number = (
-            bin(correct_number)[2:] if mode == 11 else (
-                number_to_romeal(correct_number) if mode == 12 else (
-                    str(correct_number) if mode != 12 else correct_number
-                )
+            bin(correct_number)[2:] if mode == CountingMode.BINARY else (
+                number_to_romeal(correct_number) if mode == CountingMode.ROMEAN else str(correct_number)
             )
         )
-        await message.channel.send(display_number)
+        await DiscordSafe.send(message.channel, content=display_number)
         await set_counting_mode_progress(
             channel_id=message.channel.id,
-            progress=(romeal_to_number(correct_number) if mode == 12 else correct_number),
+            progress=(romeal_to_number(correct_number) if mode == CountingMode.ROMEAN else correct_number),
             mode=mode,
             counter_id="me",
             guild_id=message.guild.id,

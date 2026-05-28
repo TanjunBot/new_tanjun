@@ -3,8 +3,8 @@ import random
 import discord
 
 import utility
-from api import get_giveaway, get_giveaway_participants
 from localizer import tanjunLocalizer
+from services.giveaway_service import giveaway_service
 
 
 async def reroll_giveaway(
@@ -25,7 +25,7 @@ async def reroll_giveaway(
         await command_info.reply(embed=embed)
         return
 
-    giveaway = await get_giveaway(giveaway_id)
+    giveaway = await giveaway_service.get(giveaway_id)
     if not giveaway:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -89,7 +89,21 @@ async def reroll_giveaway(
         )
         async def reroll_all(self, interaction: discord.Interaction, button: discord.ui.Button):
             await interaction.response.defer()
-            giveaway = await get_giveaway(self.giveaway_id)
+            giveaway = await giveaway_service.get(self.giveaway_id)
+            if giveaway is None:
+                embed = utility.tanjunEmbed(
+                    title=tanjunLocalizer.localize(
+                        self.command_info.locale,
+                        "commands.giveaway.reroll_giveaway.error.notFound.title",
+                    ),
+                    description=tanjunLocalizer.localize(
+                        self.command_info.locale,
+                        "commands.giveaway.reroll_giveaway.error.notFound.description",
+                    ),
+                )
+                await self.command_info.reply(embed=embed)
+                self.stop()
+                return
             await perform_reroll(self.command_info, self.giveaway_id, giveaway.winners)
             self.stop()
 
@@ -124,7 +138,7 @@ async def reroll_giveaway(
 
 
 async def perform_reroll(command_info: utility.command_info, giveaway_id: int, reroll_count: int):
-    participants = await get_giveaway_participants(giveaway_id)
+    participants = await giveaway_service.get_participants(giveaway_id)
 
     if not participants:
         embed = utility.tanjunEmbed(

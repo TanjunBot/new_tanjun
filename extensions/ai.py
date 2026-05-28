@@ -3,20 +3,24 @@ from discord import app_commands
 from discord.ext import commands
 
 import utility
-from api import getCustomSituation, getCustomSituations
 from commands.ai.add_custom_situation import add_custom_situation
 from commands.ai.ask_gpt import ask_gpt
 from commands.ai.delete_custom_situation import delete_custom_situation
+from services.ai_service import AiService
 
 
 async def aiCustomSituationAutocomplete(
     interaction: discord.Interaction,
     current: str,
 ) -> list[app_commands.Choice[str]]:
-    situations = await getCustomSituations()
-    filtered_situations = [situation for situation in situations if current.lower() in situation.lower()]
+    situations = []
+    async for name in AiService.get_public_situations_iterator():
+        if current.lower() in name.lower():
+            situations.append(name)
+            if len(situations) >= 25:
+                break
 
-    return [app_commands.Choice(name=situation, value=situation) for situation in filtered_situations[:25]]
+    return [app_commands.Choice(name=situation, value=situation) for situation in situations]
 
 
 class CustomSituationCommands(discord.app_commands.Group):
@@ -128,17 +132,17 @@ class AiCommands(discord.app_commands.Group):
             client=interaction.client,
         )
 
-        situation = await getCustomSituation(personality)
+        situation = await AiService.get_situation(personality, require_unlocked=True)
 
         await ask_gpt(
             command_info,
             name=personality,
-            situation=situation.situation,
+            situation=situation.situation if situation else "",
             prompt=prompt,
-            temperature=situation.temperature,
-            top_p=situation.top_p,
-            frequency_penalty=situation.frequency_penalty,
-            presence_penalty=situation.presence_penalty,
+            temperature=situation.temperature if situation else 1.0,
+            top_p=situation.top_p if situation else 1.0,
+            frequency_penalty=situation.frequency_penalty if situation else 0.0,
+            presence_penalty=situation.presence_penalty if situation else 0.0,
         )
 
     @app_commands.command(

@@ -4,9 +4,9 @@ import discord
 from discord import ui
 
 import utility
-from api import add_giveaway
 from commands.giveaway.utility import generateGiveawayEmbed, sendGiveaway
 from localizer import tanjunLocalizer
+from services.giveaway_service import GiveawayCreateParams, giveaway_service
 
 
 class GiveawayBuilderButton(ui.Button):
@@ -1338,24 +1338,26 @@ class GiveawayBuilder(ui.View):
         channel_requirements = self.giveaway_data["channel_requirements"]
         target_channel = self.giveaway_data["target_channel"]
 
-        giveaway_id = await add_giveaway(
-            self.command_info.guild.id,
-            title=title,
-            description=description,
-            winners=winners,
-            with_button=with_button,
-            custom_name=custom_name,
-            sponsor=sponsor,
-            price=price,
-            message=message,
-            endtime=end_time,
-            starttime=start_time,
-            new_message_requirement=new_message_requirement,
-            day_requirement=day_requirement,
-            role_requirement=role_requirement,
-            voice_requirement=voice_requirement,
-            channel_requirements=channel_requirements,
-            channel_id=target_channel.id,
+        giveaway_id = await giveaway_service.create(
+            GiveawayCreateParams(
+                guild_id=str(self.command_info.guild.id),
+                title=title,
+                description=description,
+                winners=winners,
+                with_button=with_button,
+                custom_name=custom_name,
+                sponsor=sponsor,
+                price=price,
+                message=message,
+                end_time=end_time,
+                start_time=start_time,
+                new_message_requirement=new_message_requirement,
+                day_requirement=day_requirement,
+                role_requirement=role_requirement,
+                voice_requirement=voice_requirement,
+                channel_requirements=channel_requirements,
+                channel_id=str(target_channel.id),
+            )
         )
 
         self.giveaway_data["id"] = giveaway_id

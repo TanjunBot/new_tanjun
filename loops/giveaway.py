@@ -1,10 +1,10 @@
-from api import add_giveaway_voice_minutes_if_needed, get_end_ready_giveaways, get_send_ready_giveaways
 from commands.giveaway.utility import endGiveaway, sendGiveaway
 from loops._voice_tracker import voice_user_manager
+from services.giveaway_service import giveaway_service
 
 
 async def sendReadyGiveaways(client):
-    ready_giveaways = await get_send_ready_giveaways()
+    ready_giveaways = await giveaway_service.get_send_ready()
     if ready_giveaways:
         for giveaway_id in ready_giveaways:
             await sendGiveaway(giveawayid=giveaway_id, client=client)
@@ -12,11 +12,11 @@ async def sendReadyGiveaways(client):
 
 async def checkVoiceUsers(client):
     for user_id, guild_id in voice_user_manager.get_active_users():
-        await add_giveaway_voice_minutes_if_needed(user_id, guild_id)
+        await giveaway_service.add_voice_minutes(user_id, guild_id)
 
 
 async def endGiveaways(client):
-    ready_giveaways = await get_end_ready_giveaways()
+    ready_giveaways = await giveaway_service.get_end_ready()
     if ready_giveaways:
         for giveaway_id in ready_giveaways:
             await endGiveaway(giveaway_id=giveaway_id, client=client)

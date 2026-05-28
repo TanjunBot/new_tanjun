@@ -1,13 +1,13 @@
 import contextlib
 
 import utility
-from api import deleteCustomSituation, getCustomSituationFromUser, unlockCustomSituation
 from localizer import tanjunLocalizer
+from services.ai_service import AiService
 
 
 async def approve_custom_situation(interaction) -> None:  # type: ignore[no-untyped-def]
     situation_id = interaction.data["custom_id"].split(";")[1]
-    situation = await getCustomSituationFromUser(situation_id)
+    situation = await AiService.get_user_situation(situation_id)
     if not situation:
         await interaction.response.send_message("Situation wurde denke gelöscht oder so :/")
         return
@@ -26,7 +26,7 @@ async def approve_custom_situation(interaction) -> None:  # type: ignore[no-unty
         description=tanjunLocalizer.localize(locale, "commands.ai.approvecustom.success.description"),
     )
 
-    await unlockCustomSituation(situation_id)
+    await AiService.unlock_situation(situation_id)
     try:
         await situation_creator.send(embed=embed)
     # flake8: noqa: E722
@@ -37,7 +37,7 @@ async def approve_custom_situation(interaction) -> None:  # type: ignore[no-unty
 
 async def deny_custom_situation(interaction) -> None:  # type: ignore[no-untyped-def]
     situation_id = interaction.data["custom_id"].split(";")[1]
-    situation = await getCustomSituationFromUser(situation_id)
+    situation = await AiService.get_user_situation(situation_id)
     if not situation:
         await interaction.response.send_message("Situation wurde denke gelöscht oder so :/")
         return
@@ -57,7 +57,7 @@ async def deny_custom_situation(interaction) -> None:  # type: ignore[no-untyped
         description=tanjunLocalizer.localize(locale, "commands.ai.dencustom.success.description"),
     )
 
-    await deleteCustomSituation(situation_id)
+    await AiService.delete_situation(situation_id)
     with contextlib.suppress(BaseException):
         await situation_creator.send(embed=embed)
     await interaction.channel.send("Situation wurde gelöscht!", delete_after=25)
