@@ -3,9 +3,9 @@ from typing import Any
 import discord
 
 import utility
-from services.ticket_service import ticket_service
 from api import check_if_opted_out
 from localizer import tanjunLocalizer
+from services.ticket_service import ticket_service
 
 
 async def openTicket(interaction: discord.Interaction) -> None:
@@ -139,17 +139,34 @@ async def open_ticket_2(interaction: discord.Interaction) -> None:
 
     await thread.send(embed=embed, view=view)
 
+    try:
+        await ticket_service.open(
+            guild_id=str(interaction.guild.id),
+            opener_id=str(interaction.user.id),
+            config_id=int(ticket_id),
+            channel_id=str(thread.id),
+        )
+    except Exception as e:
+        # Rollback: delete the created thread
+        try:
+            await thread.delete()
+        except Exception:
+            pass  # Best effort cleanup
+
+        # Notify user of failure
+        await interaction.followup.send(
+            tanjunLocalizer.localize(
+                interaction.locale,
+                "commands.admin.open_ticket.error.ticketNotCreated",
+            ),
+            ephemeral=True,
+        )
+        raise e
+
     await interaction.followup.send(
         tanjunLocalizer.localize(
             interaction.locale,
             "commands.admin.open_ticket.success.ticketCreated",
         ),
         ephemeral=True,
-    )
-
-    await ticket_service.open(
-        guild_id=str(interaction.guild.id),
-        opener_id=str(interaction.user.id),
-        config_id=int(ticket_id),
-        channel_id=str(thread.id),
     )

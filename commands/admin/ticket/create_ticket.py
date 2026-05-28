@@ -1,8 +1,8 @@
 import discord
 
 import utility
-from services.ticket_service import TicketMessageConfig, ticket_service
 from localizer import tanjunLocalizer
+from services.ticket_service import TicketMessageConfig, ticket_service
 
 
 async def create_ticket(
@@ -58,6 +58,20 @@ async def create_ticket(
             introduction=introduction,
         )
     )
+
+    if ticket_id is None:
+        embed = utility.tanjunEmbed(
+            title=tanjunLocalizer.localize(
+                command_info.locale,
+                "commands.admin.create_ticket.error.title",
+            ),
+            description=tanjunLocalizer.localize(
+                command_info.locale,
+                "commands.admin.create_ticket.error.description",
+            ),
+        )
+        await command_info.reply(embed=embed)
+        return
 
     view = discord.ui.View()
     label = tanjunLocalizer.localize(str(command_info.locale), "commands.admin.create_ticket.button.label")

@@ -2851,19 +2851,31 @@ async def get_ticket_messages(guild_id: str) -> list[TicketMessageModel]:
 async def get_ticket_messages_by_id(ticket_message_id: str) -> TicketMessageModel | None:
     from services.ticket_service import ticket_service as _ticket_svc
 
-    return await _ticket_svc.get_config(int(ticket_message_id))  # type: ignore[arg-type]
+    try:
+        message_id = int(ticket_message_id)
+    except ValueError:
+        return None
+    return await _ticket_svc.get_config(message_id)
 
 
 async def open_ticket(guild_id: str, opener_id: str, ticket_message_id: str, channel_id: str) -> None:
     from services.ticket_service import ticket_service as _ticket_svc
 
-    await _ticket_svc.open(guild_id, opener_id, int(ticket_message_id), channel_id)
+    try:
+        message_id = int(ticket_message_id)
+    except ValueError:
+        return None
+    await _ticket_svc.open(guild_id, opener_id, message_id, channel_id)
 
 
-async def close_ticket(guild_id: str, ticket_id: str) -> None:
+async def close_ticket(guild_id: str, channel_id: str, closed_by: str) -> None:
     from services.ticket_service import ticket_service as _ticket_svc
 
-    await _ticket_svc.close(guild_id, int(ticket_id))
+    try:
+        cid = int(channel_id)
+    except ValueError:
+        return None
+    await _ticket_svc.close(guild_id, cid, closed_by)
 
 
 async def get_tickets(guild_id: str) -> list[TicketModel]:
@@ -2875,7 +2887,11 @@ async def get_tickets(guild_id: str) -> list[TicketModel]:
 async def get_ticket_by_id(guild_id: str, ticket_id: str, channel_id: str) -> TicketModel | None:
     from services.ticket_service import ticket_service as _ticket_svc
 
-    return await _ticket_svc.get_by_config_and_channel(guild_id, int(ticket_id), channel_id)
+    try:
+        tid = int(ticket_id)
+    except ValueError:
+        return None
+    return await _ticket_svc.get_by_config_and_channel(guild_id, tid, channel_id)
 
 
 async def get_ticket_by_channel_id(guild_id: str, channel_id: str) -> TicketModel | None:

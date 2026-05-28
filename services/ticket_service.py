@@ -13,7 +13,6 @@ from pydantic import BaseModel, Field
 from api import execute_action, execute_insert_and_get_id, execute_query
 from models import TicketMessageModel, TicketModel
 
-
 # ------------------------------------------------------------------ #
 # Pydantic models
 # ------------------------------------------------------------------ #
@@ -111,13 +110,13 @@ class TicketService:
         await execute_action(query, (guild_id, opener_id, config_id, channel_id))
 
     @staticmethod
-    async def close(guild_id: str, ticket_id: int) -> None:
+    async def close(guild_id: str, channel_id: int, closed_by: str) -> None:
         """Close a ticket instance."""
         query = (
             "UPDATE tickets SET closed = 1, closedAt = NOW(), closedBy = %s "
-            "WHERE guild_id = %s AND id = %s"
+            "WHERE guild_id = %s AND channel_id = %s"
         )
-        await execute_action(query, (guild_id, ticket_id))
+        await execute_action(query, (closed_by, guild_id, channel_id))
 
     @staticmethod
     async def get_tickets(guild_id: str) -> list[TicketModel]:
