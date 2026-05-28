@@ -312,7 +312,7 @@ async def execute_query(
     return await _execute_with_retry("execute_query", _callback, query, params, bot)
 
 
-async def execute_action(query: str, params: Any = None, bot=None) -> Any:
+async def execute_action(query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None) -> int:
     async def _callback(cursor, connection):
         await connection.commit()
         return cursor.rowcount
@@ -364,7 +364,7 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
         raise last_exception
 
 
-async def execute_insert_and_get_id(query: str, params: Any = None, bot=None) -> int | None:
+async def execute_insert_and_get_id(query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None) -> int | None:
     async def _callback(cursor, connection):
         await connection.commit()
         await cursor.execute("SELECT LAST_INSERT_ID()")
