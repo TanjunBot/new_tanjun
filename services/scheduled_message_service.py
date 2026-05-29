@@ -7,17 +7,12 @@ service with typed parameter models and clear method names.
 
 import json
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Any
 
 from pydantic import BaseModel, Field, StringConstraints
 
 from models import ScheduledMessageModel
-
-# --- Pydantic parameter models ---
-
-GuildId = Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-ChannelId = Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-UserId = Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+from tanjun_types import GuildId, ChannelId, UserId
 
 
 class Attachment(BaseModel):

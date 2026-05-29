@@ -6,6 +6,8 @@ from enum import IntEnum
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from tanjun_types import GuildId, UserId, ChannelId, MessageId, RoleId, DiscordId, OptionalGuildId, OptionalUserId, OptionalChannelId, OptionalMessageId, OptionalRoleId, OptionalDiscordId
+
 
 
 def _from_row(cls, row: tuple):
@@ -36,7 +38,7 @@ class GiveawayModel(BaseModel):
 
     # Matches SELECT column order from giveaway table
     giveaway_id: int
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
     title: Annotated[str, StringConstraints(max_length=128)]
     description: Annotated[str | None, StringConstraints(max_length=1024)] = None
     winners: int = Field(ge=1)
@@ -53,8 +55,8 @@ class GiveawayModel(BaseModel):
     day_requirement: int | None = None
     voice_requirement: int | None = None
     send_failed: bool
-    channel_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
-    message_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: OptionalChannelId = None
+    message_id: MessageId
     created_at: datetime | None
 
     @classmethod
@@ -72,7 +74,7 @@ class GiveawayModel(BaseModel):
 class GiveawayChannelRequirementModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: ChannelId
     amount: int = Field(gt=0)
 
     @classmethod
@@ -90,7 +92,7 @@ class GiveawayChannelRequirementModel(BaseModel):
 class GiveawayBlacklistEntryModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    entity_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    entity_id: DiscordId
     reason: Annotated[str | None, StringConstraints(max_length=255)] = None
 
     @classmethod
@@ -110,17 +112,17 @@ class ReportModel(BaseModel):
 
     # Matches SELECT order from get_reports()
     id: int
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    reporter_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
+    user_id: UserId
+    reporter_id: UserId
     reason: Annotated[str | None, StringConstraints(max_length=500)] = None
     created_at: int  # UNIX_TIMESTAMP
     accepted: bool
     accepted_at: int | None  # UNIX_TIMESTAMP
-    accepted_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    accepted_by: OptionalUserId = None
     resolved: bool
     resolved_at: int | None  # UNIX_TIMESTAMP
-    resolved_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    resolved_by: OptionalUserId = None
 
     @classmethod
     def from_row(cls, row: tuple) -> ReportModel:
@@ -139,9 +141,9 @@ class ScheduledMessageModel(BaseModel):
 
     # Matches SELECT column order from scheduledMessages table
     message_id: int
-    guild_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
-    channel_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
-    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: OptionalGuildId = None
+    channel_id: OptionalChannelId = None
+    user_id: UserId
     content: Annotated[str, StringConstraints(max_length=2000)]
     send_time: datetime
     repeat_interval: int | None
@@ -165,8 +167,8 @@ class TwitchOnlineNotificationModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: ChannelId
+    guild_id: GuildId
     twitch_uuid: Annotated[str, StringConstraints(min_length=1, max_length=64)]
     twitch_name: Annotated[str, StringConstraints(min_length=1, max_length=64)]
     notification_message: Annotated[str | None, StringConstraints(max_length=500)] = None
@@ -187,7 +189,7 @@ class TriggerMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
     trigger: Annotated[str, StringConstraints(max_length=128)]
     response: Annotated[str, StringConstraints(max_length=1024)]
     case_sensitive: bool
@@ -207,8 +209,8 @@ class TriggerMessageModel(BaseModel):
 class TriggerMessageChannelModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
+    channel_id: ChannelId
     trigger_id: int
 
     @classmethod
@@ -227,13 +229,13 @@ class TicketMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
+    channel_id: ChannelId
     introduction: Annotated[str | None, StringConstraints(max_length=1024)] = None
-    ping_role: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    ping_role: OptionalRoleId = None
     name: Annotated[str | None, StringConstraints(max_length=128)] = None
     description: Annotated[str | None, StringConstraints(max_length=1024)] = None
-    summary_channel_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    summary_channel_id: OptionalChannelId = None
 
     @classmethod
     def from_row(cls, row: tuple) -> TicketMessageModel:
@@ -251,13 +253,13 @@ class TicketModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     # Matches explicit SELECT order from get_tickets()
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    opener_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
+    opener_id: UserId
     opened_at: int  # UNIX_TIMESTAMP
     closed: bool
     closed_at: int | None  # UNIX_TIMESTAMP
-    closed_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    closed_by: OptionalUserId = None
+    channel_id: ChannelId
     ticket_message_id: int
 
     @classmethod
@@ -275,7 +277,7 @@ class TicketModel(BaseModel):
 class AISituationModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    user_id: UserId
     situation: Annotated[str | None, StringConstraints(max_length=2000)] = None
     name: Annotated[str | None, StringConstraints(max_length=15)] = None
     created_at: datetime
@@ -301,12 +303,12 @@ class WarningModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
+    user_id: UserId
     reason: Annotated[str | None, StringConstraints(max_length=255)] = None
     created_at: datetime
     expires_at: datetime | None
-    created_by: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    created_by: UserId
     escalation_level: int = Field(ge=0)
 
     @classmethod
@@ -329,7 +331,7 @@ class DetailedWarningModel(BaseModel):
     reason: Annotated[str | None, StringConstraints(max_length=255)] = None
     created_at: datetime
     expires_at: datetime | None
-    created_by: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    created_by: UserId
 
     @classmethod
     def from_row(cls, row: tuple) -> DetailedWarningModel:
@@ -386,7 +388,7 @@ class XpBoostModel(BaseModel):
 class BlacklistEntryModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    entity_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    entity_id: DiscordId
     reason: Annotated[str | None, StringConstraints(max_length=255)] = None
 
     @classmethod
@@ -405,7 +407,7 @@ class LevelRoleModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     level: int = Field(ge=0)
-    role_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    role_id: RoleId
 
     @classmethod
     def from_row(cls, row: tuple) -> LevelRoleModel:
@@ -422,8 +424,8 @@ class LevelRoleModel(BaseModel):
 class DynamicSlowmodeModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
+    channel_id: ChannelId
     messages: int = Field(gt=0)
     per: int = Field(gt=0)
     reset_after: int = Field(gt=0)
@@ -444,8 +446,8 @@ class DynamicSlowmodeModel(BaseModel):
 class AfkMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    message_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    message_id: MessageId
+    channel_id: ChannelId
 
     @classmethod
     def from_row(cls, row: tuple) -> AfkMessageModel:
@@ -462,8 +464,8 @@ class AfkMessageModel(BaseModel):
 class LogBlacklistEntryModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    entity_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
+    entity_id: DiscordId
 
     @classmethod
     def from_row(cls, row: tuple) -> LogBlacklistEntryModel:
@@ -480,8 +482,8 @@ class LogBlacklistEntryModel(BaseModel):
 class WelcomeChannelModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: ChannelId
+    guild_id: GuildId
     message: Annotated[str | None, StringConstraints(max_length=1024)] = None
     image_background: str | None
 
@@ -500,8 +502,8 @@ class WelcomeChannelModel(BaseModel):
 class LeaveChannelModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: ChannelId
+    guild_id: GuildId
     message: Annotated[str | None, StringConstraints(max_length=1024)] = None
     image_background: str | None
 
@@ -521,8 +523,8 @@ class DynamicSlowmodeMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    message_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: ChannelId
+    message_id: MessageId
     send_time: datetime
 
     @classmethod
@@ -560,7 +562,7 @@ class TokenOverviewModel(BaseModel):
 class LogEnableModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
     automod_rule_create: bool = True
     automod_rule_update: bool = True
     automod_rule_delete: bool = True
@@ -698,9 +700,9 @@ class LogEnableModel(BaseModel):
 class ClaimedBoosterChannelModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    user_id: UserId
+    channel_id: ChannelId
+    guild_id: GuildId
 
     @classmethod
     def from_row(cls, row: tuple) -> ClaimedBoosterChannelModel:
@@ -717,9 +719,9 @@ class ClaimedBoosterChannelModel(BaseModel):
 class ClaimedBoosterRoleModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    role_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    user_id: UserId
+    role_id: RoleId
+    guild_id: GuildId
 
     @classmethod
     def from_row(cls, row: tuple) -> ClaimedBoosterRoleModel:
@@ -736,8 +738,8 @@ class ClaimedBoosterRoleModel(BaseModel):
 class BlockedReporterModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
+    user_id: UserId
 
     @classmethod
     def from_row(cls, row: tuple) -> BlockedReporterModel:
@@ -754,7 +756,7 @@ class BlockedReporterModel(BaseModel):
 class LevelLeaderboardEntryModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    user_id: UserId
     xp: int = Field(ge=0)
 
     @classmethod
@@ -781,7 +783,7 @@ class UserLevelInfoModel(BaseModel):
 class ChannelOverwriteModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    role_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    role_id: RoleId
     overwrites: dict
 
     @classmethod
@@ -802,13 +804,13 @@ class LevelConfig(BaseModel):
     """Pydantic model for a guild's level configuration."""
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: GuildId
     active: bool = True
     difficulty: Literal['easy', 'medium', 'hard', 'extreme', 'custom'] = "medium"
     custom_formula: Annotated[str | None, StringConstraints(max_length=255)] = None
     level_up_message_active: bool = True
     level_up_message: Annotated[str | None, StringConstraints(max_length=1024)] = None
-    level_up_channel_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    level_up_channel_id: OptionalChannelId = None
     text_cooldown: int = Field(default=60, ge=0)
     voice_cooldown: int = Field(default=60, ge=0)
 
@@ -865,4 +867,4 @@ class LevelRolesGroupModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     level: int = Field(ge=0)
-    role_ids: Annotated[list[Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]], Field(min_length=1)]
+    role_ids: list[RoleId]
