@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     import asyncmy
     from discord.ext import commands
 
+    from api import DatabaseManager
     from services.afk_service import AfkService
     from services.ai_service import AiService
     from services.counting_repository import CountingRepository
@@ -41,6 +42,7 @@ class BotServices(BaseModel):
     # ── Core infrastructure ──────────────────────────────────────────────
     bot: "commands.AutoShardedBot | None" = None
     pool: "asyncmy.Pool | None" = None
+    db_manager: "DatabaseManager | None" = None
 
     # ── Services ─────────────────────────────────────────────────────────
     afk_service: "AfkService | None" = None

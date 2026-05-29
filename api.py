@@ -101,22 +101,147 @@ async def is_log_entity_blacklisted(guild_id: str, entity_id: str, blacklist_typ
 
 
 
-# Remove global pool and set_pool functions
-# The pool will be accessed from the bot object
-
 logger = logging.getLogger(__name__)
 
+
+class DatabaseManager:
+    """Central database connection manager.
+
+    Owns the connection pool and provides lifecycle management.
+    All database operations in api.py resolve their pool through
+    this manager instead of relying on global ``_bot`` state.
+    """
+
+    def __init__(self, pool: Any | None = None) -> None:
+        self._pool: Any | None = pool
+
+    @property
+    def is_ready(self) -> bool:
+        """Check whether the pool has been initialized."""
+        return self._pool is not None
+
+    def set_pool(self, pool: Any) -> None:
+        """Set or replace the connection pool."""
+        self._pool = pool
+
+    # ── High-level query methods ────────────────────────────────────────
+
+    async def execute_query(
+        self,
+        query: str,
+        params: Sequence[Any] | dict[str, Any] | None = None,
+    ) -> list[tuple[Any, ...]] | None:
+        """Execute a SELECT query and return all result rows."""
+        if not self.is_ready:
+            return None
+
+        async def _callback(cursor: Any, conn: Any) -> list[tuple[Any, ...]]:
+            return await cursor.fetchall()
+
+        return await _execute_with_retry(
+            "execute_query", _callback, query, params
+        )
+
+    async def execute_action(
+        self,
+        query: str,
+        params: Sequence[Any] | dict[str, Any] | None = None,
+    ) -> int | None:
+        """Execute a write query (INSERT/UPDATE/DELETE) and return rowcount."""
+        if not self.is_ready:
+            return None
+
+        async def _callback(cursor: Any, conn: Any) -> int:
+            return cursor.rowcount
+
+        return await _execute_with_retry(
+            "execute_action", _callback, query, params, is_write=True
+        )
+
+    async def execute_batch(
+        self,
+        query: str,
+        params_list: list[tuple],
+    ) -> None:
+        """Execute a batch INSERT using executemany for bulk operations."""
+        if not self.is_ready:
+            raise RuntimeError("Database pool is not initialized")
+
+        async def _callback(cursor: Any, conn: Any) -> None:
+            await cursor.executemany(query, params_list)
+            return None
+
+        await _execute_with_retry(
+            "execute_batch", _callback, query, is_write=True
+        )
+
+    async def execute_insert_and_get_id(
+        self,
+        query: str,
+        params: Sequence[Any] | dict[str, Any] | None = None,
+    ) -> int | None:
+        """Execute an INSERT and return the last inserted row ID."""
+        if not self.is_ready:
+            return None
+
+        async def _callback(cursor: Any, conn: Any) -> int | None:
+            await conn.commit()
+            return cursor.lastrowid
+
+        return await _execute_with_retry(
+            "execute_insert_and_get_id", _callback, query, params, is_write=True
+        )
+
+    async def check_health(self) -> bool:
+        """Check if the database pool is healthy by running SELECT 1."""
+        if not self.is_ready:
+            return False
+        return await check_pool_health()
+
+    async def create_tables(self) -> None:
+        """Create all database tables."""
+        if not self.is_ready:
+            return
+        await create_tables()
+
+
+# Module-level singleton — all DB functions resolve pools through this instance.
+db_manager = DatabaseManager()
+
+# Backward-compatible aliases so existing code continues to work.
+# New code should use ``from api import db_manager`` and access
+# ``db_manager._pool`` / ``db_manager.is_ready`` directly.
 _bot = None
 
 
 def set_bot(bot) -> None:
+    """Set the pool from a bot object (backward-compat).
+
+    Extracts ``bot._pool`` and stores it in the global
+    ``DatabaseManager`` singleton.  Also keeps the old
+    ``_bot`` reference for code that checks ``_bot`` directly.
+    """
     global _bot
     _bot = bot
+    if bot is not None and hasattr(bot, "_pool") and bot._pool is not None:
+        db_manager._pool = bot._pool
+    elif bot is None:
+        # Clear the manager's pool when clearing _bot so test resets work
+        db_manager._pool = None
 
 
 def _get_pool():
-    if _bot and hasattr(_bot, "_pool") and _bot._pool is not None:
-        return _bot._pool
+    """Return the shared connection pool.
+
+    Delegates to ``db_manager._pool`` so that all functions
+    automatically use the DatabaseManager singleton.
+    Falls back to the old ``_bot._pool`` path for safety.
+    """
+    if db_manager.is_ready:
+        return db_manager._pool
+    if _bot is not None and hasattr(_bot, "_pool") and _bot._pool is not None:
+        db_manager._pool = _bot._pool
+        return db_manager._pool
     return None
 
 
@@ -150,9 +275,8 @@ async def _execute_with_retry(
     """Execute a DB operation with retry logic for transient failures.
 
     For write operations (is_write=True), only retries on deadlock/server-abort
-    signals that are safe to replay.  Reads retry on connection/timeout/deadlock.
     """
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    pool = _get_pool()
     if pool is None:
         print(f"Tried to execute {operation} without pool. Pool is not yet initialized. {_sanitize_for_log(query)}")
         return None
@@ -216,7 +340,7 @@ def _invalidate_guild_cache(guild_id: str) -> None:
     _guild_config_cache.pop(guild_id, None)
 
 
-async def preload_guild_configs(bot) -> None:
+async def preload_guild_configs(bot=None) -> None:
     """Fetch all guild-level configs at startup to warm the cache.
 
     Single bulk query replaces ~12+ individual queries per guild on first message.
@@ -226,7 +350,7 @@ async def preload_guild_configs(bot) -> None:
            level_up_message, level_up_channel_id, textCooldown, voiceCooldown
     FROM levelConfig
     """
-    pool = bot._pool if bot is not None and hasattr(bot, "_pool") and bot._pool is not None else _get_pool()
+    pool = _get_pool()
     if pool is None:
         return
     global _guild_config_cache
@@ -326,7 +450,7 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
 
     Reduces database round-trips by sending all rows in one query.
     """
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    pool = _get_pool()
     if pool is None:
         raise RuntimeError("Database pool is not initialized")
 
@@ -379,7 +503,7 @@ async def execute_query_iter(
     query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
 ) -> AsyncIterator[tuple[Any, ...]]:
     """Async generator that yields rows one at a time for large result sets."""
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    pool = _get_pool()
     if pool is None:
         print(f"Tried to execute_query_iter without pool. {_sanitize_for_log(query)}")
         return
@@ -433,7 +557,7 @@ async def safe_execute_query(
 @asynccontextmanager
 async def transaction(bot=None):
     """Async context manager for DB transactions with automatic rollback on error."""
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    pool = _get_pool()
     if pool is None:
         raise RuntimeError("Database pool is not initialized")
 
@@ -461,7 +585,7 @@ async def transaction(bot=None):
 
 async def check_pool_health(bot=None) -> bool:
     """Check if the database pool is healthy by running SELECT 1."""
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    pool = _get_pool()
     if pool is None:
         return False
     for attempt in range(_MAX_DB_RETRIES):
@@ -1073,7 +1197,7 @@ async def create_tables(bot=None) -> None:
     """Create all database tables using get_table_definitions()."""
     tables = get_table_definitions()
 
-    pool = _get_pool() if bot is None else (bot._pool if hasattr(bot, "_pool") else None)
+    pool = _get_pool()
     if pool is None:
         return
     try:
