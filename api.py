@@ -1103,6 +1103,20 @@ def get_table_definitions() -> dict[str, str]:
         PRIMARY KEY(`channel_id`)
     ) ENGINE=InnoDB;
     """
+    tables["wordle_stats"] = """
+    CREATE TABLE IF NOT EXISTS `wordle_stats` (
+        `user_id` VARCHAR(20) NOT NULL,
+        `guild_id` VARCHAR(20) NOT NULL,
+        `games_played` INT UNSIGNED DEFAULT 0,
+        `games_won` INT UNSIGNED DEFAULT 0,
+        `current_streak` INT UNSIGNED DEFAULT 0,
+        `max_streak` INT UNSIGNED DEFAULT 0,
+        `guess_distribution` VARCHAR(64) DEFAULT '0,0,0,0,0,0',
+        `hard_mode_games_played` INT UNSIGNED DEFAULT 0,
+        `hard_mode_games_won` INT UNSIGNED DEFAULT 0,
+        PRIMARY KEY (`user_id`, `guild_id`)
+    ) ENGINE=InnoDB;
+    """
     tables["welcome_channel"] = """
     CREATE TABLE IF NOT EXISTS `welcome_channel` (
         `channel_id` VARCHAR(20),
@@ -1322,6 +1336,95 @@ async def opt_in(user_id: str | int) -> None:
     query = "DELETE FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     await execute_action(query, params)
+
+
+async def get_wordle_stats(user_id: str, guild_id: str) -> dict | None:
+    """Fetch Wordle stats for a user in a guild."""
+    from models import WordleStatsModel
+
+    query = "SELECT * FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"
+    rows = await execute_query(query, (user_id, guild_id))
+    if not rows:
+        return None
+    return WordleStatsModel.from_row(rows[0]).model_dump()
+
+
+async def upsert_wordle_stats(
+    user_id: str,
+    guild_id: str,
+    won: bool,
+    guesses: int,
+    hard_mode: bool = False,
+) -> dict:
+    """Update or insert Wordle stats after a game completes."""
+    from models import WordleStatsModel
+
+    query = "SELECT * FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"
+    rows = await execute_query(query, (user_id, guild_id))
+
+    if rows:
+        stats = WordleStatsModel.from_row(rows[0])
+    else:
+        stats = WordleStatsModel(
+            user_id=user_id,
+            guild_id=guild_id,
+            games_played=0,
+            games_won=0,
+            current_streak=0,
+            max_streak=0,
+            guess_distribution="0,0,0,0,0,0",
+            hard_mode_games_played=0,
+            hard_mode_games_won=0,
+        )
+
+    stats.games_played += 1
+    if hard_mode:
+        stats.hard_mode_games_played += 1
+
+    if won:
+        stats.games_won += 1
+        stats.current_streak += 1
+        if stats.current_streak > stats.max_streak:
+            stats.max_streak = stats.current_streak
+        # Update guess distribution (1-indexed, capped at 6)
+        dist = [int(x) for x in stats.guess_distribution.split(",")]
+        idx = min(guesses - 1, 5)
+        dist[idx] += 1
+        stats.guess_distribution = ",".join(str(d) for d in dist)
+        if hard_mode:
+            stats.hard_mode_games_won += 1
+    else:
+        stats.current_streak = 0
+
+    upsert_query = """
+        INSERT INTO `wordle_stats`
+            (user_id, guild_id, games_played, games_won, current_streak,
+             max_streak, guess_distribution, hard_mode_games_played, hard_mode_games_won)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            games_played = VALUES(games_played),
+            games_won = VALUES(games_won),
+            current_streak = VALUES(current_streak),
+            max_streak = VALUES(max_streak),
+            guess_distribution = VALUES(guess_distribution),
+            hard_mode_games_played = VALUES(hard_mode_games_played),
+            hard_mode_games_won = VALUES(hard_mode_games_won)
+    """
+    await execute_action(
+        upsert_query,
+        (
+            stats.user_id,
+            stats.guild_id,
+            stats.games_played,
+            stats.games_won,
+            stats.current_streak,
+            stats.max_streak,
+            stats.guess_distribution,
+            stats.hard_mode_games_played,
+            stats.hard_mode_games_won,
+        ),
+    )
+    return stats.model_dump()
 
 
 async def get_counting_configs(channel_id: str | int) -> tuple[dict | None, dict | None, dict | None]:
