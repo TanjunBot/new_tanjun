@@ -327,6 +327,10 @@ _guild_config_cache: dict[str, tuple[dict[str, Any], float]] = {}
 # In-memory cache for XP cooldowns: (guild_id, user_id) -> last_xp_gain_timestamp
 # Eliminates DB queries entirely when user is on cooldown
 _last_xp_gain_cache: dict[tuple[str, str], float] = {}
+# In-memory cache for counting configs: channel_id -> (counting_config, challenge_config, modes_config, timestamp)
+# Reduces 3 DB queries per message to in-memory lookup
+_COUNTING_CACHE_TTL = 30  # seconds
+_counting_cache: dict[str, tuple[dict | None, dict | None, dict | None, float]] = {}
 
 
 def _is_cache_valid(entry: tuple[Any, float] | None, ttl: float) -> bool:
@@ -338,6 +342,11 @@ def _is_cache_valid(entry: tuple[Any, float] | None, ttl: float) -> bool:
 def _invalidate_guild_cache(guild_id: str) -> None:
     _blacklist_cache.pop(guild_id, None)
     _guild_config_cache.pop(guild_id, None)
+
+
+def invalidate_counting_cache(channel_id: str | int) -> None:
+    """Remove the counting config cache entry for a specific channel."""
+    _counting_cache.pop(str(channel_id), None)
 
 
 async def preload_guild_configs(bot=None) -> None:
@@ -1391,11 +1400,19 @@ async def opt_in(user_id: str | int) -> None:
 
 
 async def get_counting_configs(channel_id: str | int) -> tuple[dict | None, dict | None, dict | None]:
-    """Fetch all counting configs (normal, challenge, modes) for a channel in a single query.
+    """Fetch all counting configs (normal, challenge, modes) for a channel.
+
+    Uses an in-memory cache with a short TTL to avoid 3 DB queries per message.
+    Cache is invalidated via invalidate_counting_cache() when configs are mutated.
 
     Returns (counting_config, challenge_config, modes_config) where each is a dict
     with keys like 'progress', 'last_counter_id', 'guild_id', or None if not configured.
     """
+    key = str(channel_id)
+    cached = _counting_cache.get(key)
+    if cached is not None and _is_cache_valid((cached, cached[3]), _COUNTING_CACHE_TTL):
+        return cached[0], cached[1], cached[2]
+
     counting_query = "SELECT progress, last_counter_id, guild_id FROM counting WHERE channel_id = %s"
     challenge_query = "SELECT progress, last_counter_id, guild_id FROM counting_challenge WHERE channel_id = %s"
     modes_query = "SELECT progress, mode, goal, last_counter_id, guild_id FROM counting_modes WHERE channel_id = %s"
@@ -1426,6 +1443,7 @@ async def get_counting_configs(channel_id: str | int) -> tuple[dict | None, dict
         if modes_result
         else None
     )
+    _counting_cache[key] = (counting_config, challenge_config, modes_config, time.time())
     return counting_config, challenge_config, modes_config
 
 
