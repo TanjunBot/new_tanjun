@@ -268,14 +268,24 @@ async def send_scheduled_messages(client: discord.Client) -> None:
                 send_kwargs["files"] = files
             await target.send(**send_kwargs)
 
-            if repeat_amount and repeat_amount != 0:
-                repeat_amount -= 1
-                if repeat_amount == 0:
-                    await ScheduledMessageService.cancel(message_id)
-                else:
-                    await ScheduledMessageService.update_repeat(message_id, repeat_amount)
+            # --- Repeat logic ---
+            if repeat_interval and repeat_interval > 0:
+                # This is a repeating message — advance send_time
+                next_send_time = msg.send_time + timedelta(seconds=repeat_interval)
 
-            if not repeat_interval or not repeat_amount:
+                if repeat_amount is not None:
+                    # Finite repeats: decrement count
+                    if repeat_amount > 0:
+                        new_amount = repeat_amount - 1
+                        await ScheduledMessageService.update_repeat_and_send_time(message_id, new_amount, next_send_time)
+                    else:
+                        # repeat_amount == 0: no more repeats, cancel
+                        await ScheduledMessageService.cancel(message_id)
+                else:
+                    # Infinite repeats (repeat_amount is None): keep going forever
+                    await ScheduledMessageService.update_send_time(message_id, next_send_time)
+            else:
+                # No repeat interval — one-shot message, always cancel
                 await ScheduledMessageService.cancel(message_id)
 
         except Exception:
