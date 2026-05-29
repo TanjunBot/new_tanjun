@@ -33,7 +33,7 @@ class WarningRepository:
         self, guild_id: str | int, user_id: str | int | None = None
     ) -> AsyncIterator[WarningModel]:
         """Stream all active warnings for a guild (or a specific user)."""
-        if user_id:
+        if user_id is not None:
             query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
             params = (guild_id, user_id)
         else:

@@ -87,8 +87,6 @@ class XpBoostRepository:
         """Get all boost entries for a list of entity IDs under a target type."""
         if not entity_ids:
             return []
-        from api import execute_query_iter
-
         query = f"SELECT boost, additive FROM {target.table} WHERE guild_id = %s AND {target.entity_column} IN %s"
         params = (guild_id, tuple(entity_ids))
         rows: list[XpBoostModel] = []

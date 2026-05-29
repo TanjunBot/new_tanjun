@@ -1548,7 +1548,7 @@ async def get_all_level_roles(guild_id: str) -> list[LevelRolesGroupModel]:
 
 
 # ── XP Boost (delegated to XpBoostRepository) ──────────────────────────────────
-from repositories.xp_boost_repository import BoostTarget, XpBoostRepository, xp_boost_repo
+from repositories.xp_boost_repository import BoostTarget, XpBoostRepository
 
 # --- Legacy wrapper functions (backward compatible) ---
 
