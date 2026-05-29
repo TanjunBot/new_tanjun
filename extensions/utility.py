@@ -776,7 +776,7 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         )
 
         attachments: list[discord.Attachment] = [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
-                                        attachment6, attachment7, attachment8, attachment9, attachment10] if a is not None]
+                                                             attachment6, attachment7, attachment8, attachment9, attachment10] if a is not None]
 
         await scheduleMessageCommand(
             command_info=command_info,
