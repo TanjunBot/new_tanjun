@@ -117,5 +117,5 @@ async def counting(
     await increase_progress_func(message.channel.id, message.author.id)
     # nosec: B311
     if random.randint(1, 100) == 1:
-        await DiscordSafe.send(message.channel, content=str(progress + 2))
+        await DiscordSafe.send(message.channel, embed=tanjunEmbed(description=str(progress + 2)))
         await increase_progress_func(message.channel.id, "me")

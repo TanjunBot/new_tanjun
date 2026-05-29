@@ -5,7 +5,7 @@ Replaces 21 individual API functions in api.py with a single typed service.
 
 from enum import IntEnum
 
-from api import execute_action, execute_query
+from api import execute_action, execute_query, invalidate_counting_cache
 
 
 class CountingMode(IntEnum):
@@ -50,6 +50,7 @@ class CountingRepository:
             "VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
         )
         await execute_action(query, (channel_id, progress, guild_id, progress))
+        invalidate_counting_cache(channel_id)
 
     @staticmethod
     async def get_progress(
@@ -97,6 +98,7 @@ class CountingRepository:
             "WHERE channel_id = %s"
         )
         await execute_action(query, (last_counter_id, channel_id))
+        invalidate_counting_cache(channel_id)
 
     # ── Clear ────────────────────────────────────────────────
 
@@ -106,6 +108,7 @@ class CountingRepository:
         table = _TABLE_MAP[mode]
         query = f"DELETE FROM {table} WHERE channel_id = %s"
         await execute_action(query, (channel_id,))
+        invalidate_counting_cache(channel_id)
 
     # ── Mode-specific (only applies to CountingMode.MODES) ───
 
@@ -155,6 +158,7 @@ class CountingRepository:
                 counter_id,
             ),
         )
+        invalidate_counting_cache(channel_id)
 
     @staticmethod
     async def set_challenge_progress(
@@ -174,6 +178,7 @@ class CountingRepository:
             "VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
         )
         await execute_action(query, (channel_id, progress, guild_id, progress))
+        invalidate_counting_cache(channel_id)
 
     # ── Batch helpers for listeners ──────────────────────────
 

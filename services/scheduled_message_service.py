@@ -5,9 +5,9 @@ Consolidates the loose scheduled-message functions from api.py into a single
 service with typed parameter models and clear method names.
 """
 
+import json
 from datetime import datetime
 from typing import Annotated, Any
-import json
 
 from pydantic import BaseModel, Field, StringConstraints
 
@@ -112,6 +112,22 @@ class ScheduledMessageService:
 
         query = "UPDATE scheduledMessages SET repeatAmount = %s WHERE messageId = %s"
         await execute_action(query, (repeat_amount, message_id))
+
+    @staticmethod
+    async def update_send_time(message_id: int, send_time: datetime) -> None:
+        """Update the send time of a scheduled message (for repeat advancement)."""
+        from api import execute_action
+
+        query = "UPDATE scheduledMessages SET send_time = %s WHERE messageId = %s"
+        await execute_action(query, (send_time, message_id))
+
+    @staticmethod
+    async def update_repeat_and_send_time(message_id: int, repeat_amount: int, send_time: datetime) -> None:
+        """Atomically update both repeat amount and send time in a single query."""
+        from api import execute_action
+
+        query = "UPDATE scheduledMessages SET repeatAmount = %s, send_time = %s WHERE messageId = %s"
+        await execute_action(query, (repeat_amount, send_time, message_id))
 
     @staticmethod
     async def get_due_messages() -> list[ScheduledMessageModel]:

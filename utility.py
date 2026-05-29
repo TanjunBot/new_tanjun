@@ -16,8 +16,6 @@ from collections.abc import Callable, Coroutine, Mapping
 from difflib import SequenceMatcher
 from typing import Annotated, Any, Self, TypeVar
 
-from pydantic import BaseModel, ConfigDict
-
 import discord
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from pyparsing import (
@@ -75,6 +73,81 @@ class StatusIcon(enum.StrEnum):
     CROSS = "❌"
     ENABLED = "✅"
     DISABLED = "❌"
+
+
+class ErrorEmbedCategory(enum.IntEnum):
+    """Categories for error embeds, mapped to distinct colors for visual distinction."""
+
+    PERMISSION = 0xE74C3C
+    NOT_FOUND = 0xE67E22
+    RATE_LIMIT = 0xF39C12
+    VALIDATION = 0x9B59B6
+    UNEXPECTED = 0xE74C3C
+    TIMEOUT = 0x95A5A6
+
+
+def error_embed(
+    category: ErrorEmbedCategory,
+    title: str,
+    description: str,
+) -> "TanjunEmbed":
+    """Build a standardized error embed with proper color for the given category.
+
+    Parameters
+    ----------
+    category:
+        The error category determining the embed colour.
+    title:
+        The embed title (may be localized string).
+    description:
+        The embed description (may be localized string).
+
+    Returns
+    -------
+    TanjunEmbed:
+        A pre-configured error embed.
+    """
+    return TanjunEmbed(
+        colour=category.value,
+        title=title,
+        description=description,
+    )
+
+
+def success_embed(
+    title: str,
+    description: str,
+) -> "TanjunEmbed":
+    """Build a standardized success embed."""
+    return TanjunEmbed(
+        colour=EmbedColor.SUCCESS,
+        title=title,
+        description=description,
+    )
+
+
+def warning_embed(
+    title: str,
+    description: str,
+) -> "TanjunEmbed":
+    """Build a standardized warning embed."""
+    return TanjunEmbed(
+        colour=EmbedColor.WARNING,
+        title=title,
+        description=description,
+    )
+
+
+def info_embed(
+    title: str,
+    description: str,
+) -> "TanjunEmbed":
+    """Build a standardized info embed."""
+    return TanjunEmbed(
+        colour=EmbedColor.INFO,
+        title=title,
+        description=description,
+    )
 
 
 # Map of friendly keys to guild emoji names (from issue #1332).
@@ -794,6 +867,7 @@ operators = {
     ast.Sub: op.sub,
     ast.Mult: op.mul,
     ast.Div: op.truediv,
+    ast.FloorDiv: op.floordiv,
     ast.Pow: op.pow,
     ast.BitXor: op.xor,
     ast.USub: op.neg,
@@ -823,9 +897,10 @@ def eval_expr(expr: str, variables=None) -> float:
     if variables is None:
         variables = {}
 
-    # Replace mathematical constants
-    expr = expr.replace("pi", str(math.pi))
-    expr = expr.replace("e", str(math.e))
+    # Replace mathematical constants — use word boundaries so "e" doesn't
+    # clobber substrings inside variable names (e.g. "level" → "l2.71828..vel")
+    expr = re.sub(r"\bpi\b", str(math.pi), expr)
+    expr = re.sub(r"\be\b", str(math.e), expr)
 
     # Handle special functions with base notation
     expr = re.sub(r"log\[(\d+)\]\((.*?)\)", r"log_n(\2,\1)", expr)

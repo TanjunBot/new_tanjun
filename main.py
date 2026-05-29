@@ -82,9 +82,11 @@ bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.app
 
 
 @bot.event
-async def on_ready():
+async def on_ready() -> None:
     Path(tempfile.gettempdir(), "bot_ready").touch()
-    print(f"Logged in as {bot.user} (ID: {bot.user.id})")
+    user = bot.user
+    if user is not None:
+        print(f"Logged in as {user} (ID: {user.id})")
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
 
 
@@ -115,7 +117,7 @@ async def _init_database_pool() -> asyncmy.Pool | None:
         raise
 
 
-async def main():
+async def main() -> None:
     print("starting bot...")
     print("discord.py version: ", discord.__version__)
 
@@ -145,7 +147,9 @@ async def main():
                 ptask.cancel()
             # Await pending tasks to propagate cancellations
             await asyncio.gather(*pending, return_exceptions=True)
-            raise exception_to_raise
+            if exception_to_raise is not None:
+                raise exception_to_raise
+            raise RuntimeError("A task failed with no exception information")
 
     # Both tasks completed successfully, extract pool result
     pool = pool_task.result()
@@ -185,7 +189,9 @@ async def main():
                 ptask.cancel()
             # Await pending tasks to propagate cancellations
             await asyncio.gather(*pending, return_exceptions=True)
-            raise exception_to_raise
+            if exception_to_raise is not None:
+                raise exception_to_raise
+            raise RuntimeError("A task failed with no exception information")
 
     # Step 3: Preload guild configs into cache to avoid cold-start latency.
     from api import preload_guild_configs

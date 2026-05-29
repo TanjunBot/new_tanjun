@@ -6,7 +6,7 @@ from api import (
     set_level_system_status,
 )
 from localizer import tanjunLocalizer
-from utility import command_info, tanjunEmbed
+from utility import ErrorEmbedCategory, command_info, error_embed, success_embed, tanjunEmbed
 
 
 async def disable_level_system(command_info: command_info):
@@ -33,7 +33,8 @@ async def disable_level_system(command_info: command_info):
             self.stop()
 
     if not command_info.user.guild_permissions.administrator:
-        embed = tanjunEmbed(
+        embed = error_embed(
+            ErrorEmbedCategory.PERMISSION,
             title=tanjunLocalizer.localize(
                 command_info.locale,
                 "commands.level.disablelevelsystem.error.no_permission.title",
@@ -49,7 +50,8 @@ async def disable_level_system(command_info: command_info):
     current_status = await get_level_system_status(str(command_info.guild.id))
 
     if not current_status:
-        embed = tanjunEmbed(
+        embed = error_embed(
+            ErrorEmbedCategory.NOT_FOUND,
             title=tanjunLocalizer.localize(
                 command_info.locale,
                 "commands.level.disablelevelsystem.error.already_disabled.title",
@@ -81,14 +83,14 @@ async def disable_level_system(command_info: command_info):
         await delete_level_system_data(str(command_info.guild.id))
         await set_level_system_status(str(command_info.guild.id), False)
 
-        success_embed = tanjunEmbed(
+        embed = success_embed(
             title=tanjunLocalizer.localize(command_info.locale, "commands.level.disablelevelsystem.success.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
                 "commands.level.disablelevelsystem.success.description",
             ),
         )
-        await message.edit(embed=success_embed, view=None)
+        await message.edit(embed=embed, view=None)
     else:
         cancel_embed = tanjunEmbed(
             title=tanjunLocalizer.localize(command_info.locale, "commands.level.disablelevelsystem.cancel.title"),

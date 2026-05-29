@@ -1,8 +1,8 @@
 import discord
 
 import utility
-from services.booster_service import BoosterType, booster_service
 from localizer import tanjunLocalizer
+from services.booster_service import BoosterType, booster_service
 from utility import CommandInfo, tanjunEmbed
 
 

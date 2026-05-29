@@ -14,12 +14,12 @@ from commands.utility.claim_booster_role import (
 )
 from commands.utility.schedulemessage import send_scheduled_messages
 from commands.utility.twitch.twitch_api import notify_twitch_online
-from services.twitch_service import get_twitch_service
 from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
 from loops.giveaway import checkVoiceUsers, endGiveaways, sendReadyGiveaways
 from loops.level import addXpToVoiceUsers
 from minigames.add_level_xp import clearNotifiedUsers
+from services.twitch_service import get_twitch_service
 from utility import EmbedColor
 
 embeds = {}  # type: ignore[var-annotated]
