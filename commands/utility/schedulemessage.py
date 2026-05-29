@@ -244,19 +244,21 @@ async def send_scheduled_messages(client: discord.Client) -> None:
             if msg.attachments:
                 try:
                     attachment_data: list[dict] = json.loads(msg.attachments)
-                    for att_data in attachment_data:
-                        url = att_data.get("url", "")
-                        filename = att_data.get("filename", "file")
+                    timeout = aiohttp.ClientTimeout(total=30)
+                    async with aiohttp.ClientSession(timeout=timeout) as session:
+                        for att_data in attachment_data:
+                            url = att_data.get("url", "")
+                            filename = att_data.get("filename", "file")
 
-                        async with aiohttp.ClientSession() as session, session.get(url) as resp:
-                            if resp.status == 200:
-                                file_bytes = await resp.read()
-                                files.append(
-                                    discord.File(
-                                        io.BytesIO(file_bytes),
-                                        filename=filename,
+                            async with session.get(url) as resp:
+                                if resp.status == 200:
+                                    file_bytes = await resp.read()
+                                    files.append(
+                                        discord.File(
+                                            io.BytesIO(file_bytes),
+                                            filename=filename,
+                                        )
                                     )
-                                )
                 except (json.JSONDecodeError, Exception):
                     logging.exception("Failed to parse attachments for scheduled message %s", message_id)
 
