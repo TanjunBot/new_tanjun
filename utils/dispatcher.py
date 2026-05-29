@@ -9,8 +9,8 @@ does not prevent others from running).
 from __future__ import annotations
 
 import asyncio
-import inspect
 import logging
+import time
 from dataclasses import dataclass, field
 from typing import Any, Awaitable, Callable
 
@@ -144,6 +144,20 @@ def register(
 # ---------------------------------------------------------------------------
 
 
+async def _invoke_handler(handler: MessageHandler, message: discord.Message) -> Any:  # noqa: ANN401
+    """Invoke a single handler with timing instrumentation."""
+    _t0 = time.monotonic()
+    result = await handler.callback(message)
+    _elapsed = (time.monotonic() - _t0) * 1000
+    log.debug(
+        "Handler '%s' completed in %.1f ms for message %s",
+        handler.name,
+        _elapsed,
+        message.id,
+    )
+    return result
+
+
 async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
     """Run all registered handlers whose filters match *message*.
 
@@ -169,7 +183,7 @@ async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
         return []
 
     names: list[str] = [h.name for h in matched]
-    coros: list[Awaitable[Any]] = [h.callback(message) for h in matched]
+    coros: list[Awaitable[Any]] = [_invoke_handler(h, message) for h in matched]
 
     log.debug("Dispatching %d handler(s): %s", len(matched), names)
 

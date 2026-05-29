@@ -17,8 +17,6 @@ from collections.abc import Callable, Coroutine, Mapping
 from difflib import SequenceMatcher
 from typing import Annotated, Any, Self, TypeVar
 
-from pydantic import BaseModel, ConfigDict
-
 import aiohttp
 import discord
 from aiohttp import ClientTimeout
@@ -901,6 +899,7 @@ operators = {
     ast.Sub: op.sub,
     ast.Mult: op.mul,
     ast.Div: op.truediv,
+    ast.FloorDiv: op.floordiv,
     ast.Pow: op.pow,
     ast.BitXor: op.xor,
     ast.USub: op.neg,
@@ -930,9 +929,10 @@ def eval_expr(expr: str, variables=None) -> float:
     if variables is None:
         variables = {}
 
-    # Replace mathematical constants
-    expr = expr.replace("pi", str(math.pi))
-    expr = expr.replace("e", str(math.e))
+    # Replace mathematical constants — use word boundaries so "e" doesn't
+    # clobber substrings inside variable names (e.g. "level" → "l2.71828..vel")
+    expr = re.sub(r"\bpi\b", str(math.pi), expr)
+    expr = re.sub(r"\be\b", str(math.e), expr)
 
     # Handle special functions with base notation
     expr = re.sub(r"log\[(\d+)\]\((.*?)\)", r"log_n(\2,\1)", expr)
