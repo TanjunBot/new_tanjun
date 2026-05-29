@@ -1032,6 +1032,7 @@ def get_table_definitions() -> dict[str, str]:
         `repeatInterval` MEDIUMINT UNSIGNED,
         `repeatAmount` MEDIUMINT UNSIGNED,
         `attachments` TEXT,
+        `discord_message_id` VARCHAR(20),
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX `idx_sendtime` (send_time),
         INDEX `idx_user` (user_id),
@@ -1256,6 +1257,10 @@ async def create_tables(bot=None) -> None:
         """ALTER TABLE `scheduledMessages`
          ADD COLUMN `attachments` TEXT DEFAULT NULL
          AFTER `repeatAmount`""",
+        # Add discord_message_id column for exact-match deletion
+        """ALTER TABLE `scheduledMessages`
+         ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
+         AFTER `attachments`""",
     ]
     for migration in migrations:
         try:
