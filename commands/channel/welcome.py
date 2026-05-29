@@ -123,7 +123,9 @@ async def removeWelcomeChannel(command_info: utility.CommandInfo) -> None:
     if not await get_welcome_channel(command_info.guild.id):  # type: ignore[union-attr]
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.channel.welcome.notSet.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.channel.welcome.notSet.description"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.admin.channel.welcome.notSet.description"
+            ),
         )
         await command_info.reply(embed=embed)
         return
@@ -144,6 +146,7 @@ def _process_welcome_image_sync(
     background_frames: list[Image.Image],
     avatar_frames: list[Image.Image],
     user: discord.Member,
+    duration: int,
 ) -> io.BytesIO:
     num_frames = max(len(background_frames), len(avatar_frames))
     background_frames *= (num_frames // len(background_frames)) + 1
@@ -164,6 +167,11 @@ def _process_welcome_image_sync(
 
     mask = create_circular_mask((150, 150))
 
+    # Create overlay and fonts once before the loop
+    overlay = create_overlay((600, 400), (0, 0, 0, 100))
+    username_font = load_font("assets/fonts/Arial.ttf", 36)
+    info_font = load_font("assets/fonts/Arial.ttf", 24)
+
     result_frames: list[Image.Image] = []
 
     for frame_index in range(num_frames):
@@ -172,11 +180,7 @@ def _process_welcome_image_sync(
 
         frame = bg_frame.copy()
 
-        overlay = create_overlay(frame.size, (0, 0, 0, 100))
         frame = Image.alpha_composite(frame, overlay)
-
-        username_font = load_font("assets/fonts/Arial.ttf", 36)
-        info_font = load_font("assets/fonts/Arial.ttf", 24)
 
         draw = ImageDraw.Draw(frame)
 
@@ -213,7 +217,6 @@ def _process_welcome_image_sync(
 
         result_frames.append(frame)
 
-    duration = background_frames[0].info.get("duration", 100)
     return save_optimized_gif(result_frames, duration)
 
 
@@ -228,16 +231,20 @@ async def welcomeNewUser(member: discord.Member) -> None:
         background_frames = []
 
     avatar_url = str(member.display_avatar.url)
-    avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
+    avatar_frames, avatar_duration = await get_image_or_gif_frames(avatar_url)
 
     if not background_frames or not avatar_frames:
         return
+
+    # Use avatar duration for the final GIF timing
+    duration = avatar_duration if avatar_duration > 0 else 100
 
     img_byte_arr = await run_in_executor(
         _process_welcome_image_sync,
         background_frames,
         avatar_frames,
         member,
+        duration,
     )
 
     file = discord.File(img_byte_arr, filename="bg.gif")

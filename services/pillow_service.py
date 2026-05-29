@@ -18,7 +18,7 @@ from typing import Any
 
 import aiohttp
 from aiohttp import ClientTimeout
-from PIL import Image, ImageDraw, ImageFont, ImageSequence
+from PIL import Image, ImageDraw, ImageFont, ImageSequence, UnidentifiedImageError
 
 _PILLOW_SERVICE_EXECUTOR = ThreadPoolExecutor(max_workers=2, thread_name_prefix="pillow")
 
@@ -61,11 +61,10 @@ def draw_rounded_rectangle(
 async def fetch_image(url: str, timeout: int = 10) -> io.BytesIO | None:
     """Asynchronously fetch an image from a URL and return it as a BytesIO buffer."""
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, timeout=ClientTimeout(total=timeout)) as response:
-                if response.status != 200:
-                    return None
-                return io.BytesIO(await response.read())
+        async with aiohttp.ClientSession() as session, session.get(url, timeout=ClientTimeout(total=timeout)) as response:
+            if response.status != 200:
+                return None
+            return io.BytesIO(await response.read())
     except (TimeoutError, aiohttp.ClientError):
         return None
 
@@ -80,17 +79,21 @@ def get_frames(image_data: io.BytesIO) -> tuple[list[Image.Image], int, bool]:
 
     Returns (frames, duration_ms, is_animated).
     For static images a single-frame list is returned.
+    Returns ([], 0, False) on decoding errors.
     """
-    image = Image.open(image_data)
-    is_animated = _is_animated(image)
-    duration = int(image.info.get("duration", 100))
+    try:
+        image = Image.open(image_data)
+        is_animated = _is_animated(image)
+        duration = int(image.info.get("duration", 100))
 
-    if is_animated:
-        frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
-    else:
-        frames = [image.convert("RGBA")]
+        if is_animated:
+            frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
+        else:
+            frames = [image.convert("RGBA")]
 
-    return frames, duration, is_animated
+        return frames, duration, is_animated
+    except (UnidentifiedImageError, OSError, ValueError):
+        return [], 0, False
 
 
 async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
@@ -147,17 +150,18 @@ def _quantize_frames(frames: list[Image.Image], palette_size: int = 256) -> list
 
     When there are frames, convert to 'P' mode with a shared adaptive palette
     so the GIF is smaller and renders consistently across viewers.
+    Uses FASTOCTREE for RGBA-safe quantization.
     """
     if len(frames) <= 1:
         return frames
-    # Build a shared palette from the first frame
-    pal = frames[0].quantize(colors=min(palette_size, 256), method=Image.Quantize.MEDIANCUT)
+    # Build a shared palette from the first frame using FASTOCTREE (RGBA-safe)
+    pal = frames[0].quantize(colors=min(palette_size, 256), method=Image.Quantize.FASTOCTREE)
     palette_data = pal.getpalette()
     if palette_data is None:
         return frames
     quantized: list[Image.Image] = []
     for frame in frames:
-        q = frame.quantize(colors=min(palette_size, 256), palette=pal, method=Image.Quantize.MEDIANCUT)
+        q = frame.quantize(colors=min(palette_size, 256), palette=pal, method=Image.Quantize.FASTOCTREE)
         quantized.append(q)
     return quantized
 

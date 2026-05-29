@@ -11,7 +11,6 @@ from services.pillow_service import (
     create_circular_mask,
     create_overlay,
     draw_rounded_rectangle,
-    fetch_image,
     get_image_or_gif_frames,
     load_font,
     run_in_executor,
@@ -84,16 +83,35 @@ async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], com
     custom_bg = user_info.custom_background
     if custom_bg:
         background_frames, _ = await get_image_or_gif_frames(str(custom_bg))
+        # Guard against empty background frames
+        if not background_frames:
+            background_frames = [Image.open("assets/rankCard.png").convert("RGBA")]
     else:
         background_frames = [Image.open("assets/rankCard.png").convert("RGBA")]
 
     # Load user avatar frames
     avatar_url = str(user.display_avatar.url)
-    avatar_frames, _ = await get_image_or_gif_frames(avatar_url)
+    avatar_frames, avatar_duration = await get_image_or_gif_frames(avatar_url)
+
+    # Guard against empty avatar frames
+    if not avatar_frames:
+        embed = tanjunEmbed(
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.level.rank.error.no_data.title"),
+            description="Failed to load avatar image.",
+        )
+        await command_info.reply(embed=embed)
+        return io.BytesIO()
+
     avatar_decoration_frames: list[Image.Image] | None = None
     avatar_decoration_url = str(user.avatar_decoration.url) if user.avatar_decoration else None
     if avatar_decoration_url:
         avatar_decoration_frames, _ = await get_image_or_gif_frames(avatar_decoration_url)
+        # Guard against empty decoration frames - treat as None
+        if not avatar_decoration_frames:
+            avatar_decoration_frames = None
+
+    # Use avatar duration for the final GIF timing
+    duration = avatar_duration if avatar_duration > 0 else 100
 
     # Process image in executor
     img_byte_arr = await run_in_executor(
@@ -104,6 +122,7 @@ async def generate_rankcard(user: discord.Member, user_info: dict[str, Any], com
         user,
         user_info,
         command_info,
+        duration,
     )
 
     if not isinstance(img_byte_arr, io.BytesIO):
@@ -119,6 +138,7 @@ def _process_image_sync(
     user: discord.Member,
     user_info: UserLevelInfoModel,
     command_info: CommandInfo,
+    duration: int,
 ) -> io.BytesIO:
     decoration_size_multiplier = 1.2
 
@@ -155,6 +175,11 @@ def _process_image_sync(
 
     mask = create_circular_mask((200, 200))
 
+    # Create overlay and fonts once before the loop
+    overlay = create_overlay((1000, 300), (0, 0, 0, 100))
+    username_font = load_font("assets/fonts/Arial.ttf", 40)
+    info_font = load_font("assets/fonts/Arial.ttf", 30)
+
     result_frames: list[Image.Image] = []
 
     for frame_index in range(num_frames):
@@ -162,11 +187,7 @@ def _process_image_sync(
         frame = bg_frame.copy()
 
         # Draw a semi-transparent black rectangle over the background
-        overlay = create_overlay(frame.size, (0, 0, 0, 100))
         frame = Image.alpha_composite(frame, overlay)
-
-        username_font = load_font("assets/fonts/Arial.ttf", 40)
-        info_font = load_font("assets/fonts/Arial.ttf", 30)
 
         draw = ImageDraw.Draw(frame)
 
@@ -241,5 +262,4 @@ def _process_image_sync(
 
         result_frames.append(frame)
 
-    duration = int(background_frames[0].info.get("duration", 100))
     return save_optimized_gif(result_frames, duration)
