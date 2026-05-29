@@ -3,7 +3,6 @@ import asyncio
 import bisect
 import collections
 import concurrent.futures
-import contextlib
 import datetime
 import enum
 import gzip
@@ -18,12 +17,11 @@ from collections.abc import Callable, Coroutine, Mapping
 from difflib import SequenceMatcher
 from typing import Annotated, Any, Self, TypeVar
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
-
 import aiohttp
 import discord
 from aiohttp import ClientTimeout
 from github import Github
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from pyparsing import (
     CaselessLiteral,
     Combine,
@@ -182,7 +180,7 @@ class EmbedProvider(BaseModel):
 class EmbedAuthor(BaseModel):
     """Author section of a Discord embed."""
 
-    name: str = ""
+    name: Annotated[str, StringConstraints(max_length=256)] = ""
     url: str | None = None
     icon_url: str | None = None
     proxy_icon_url: str | None = None
@@ -409,7 +407,7 @@ class TanjunEmbed(BaseModel):
 
     # --- Fluent-style builder methods ---
 
-    def set_footer(self, *, text: Any | None = None, icon_url: Any | None = None) -> Self:
+    def set_footer(self, *, text: object | None = None, icon_url: object | None = None) -> Self:
         """Set the footer for the embed content."""
         kwargs: dict[str, Any] = {}
         if text is not None:
@@ -483,13 +481,9 @@ class TanjunEmbed(BaseModel):
 
     def set_field_at(self, index: int, *, name: Any, value: Any, inline: bool | Any = True) -> Self:
         """Modify a field at the specified index."""
-        try:
-            field = self.fields[index]
-        except IndexError:
+        if index < 0 or index >= len(self.fields):
             raise IndexError("field index out of range")
-        field.name = str(name)
-        field.value = str(value)
-        field.inline = bool(inline)
+        self.fields[index] = EmbedField(name=str(name), value=str(value), inline=bool(inline))
         return self
 
 
