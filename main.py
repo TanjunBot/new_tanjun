@@ -202,6 +202,11 @@ async def main():
     services.trigger_message_service = trigger_message_service
     services.xp_calculator = xp_calculator
 
+    # Step 3.5: Initialize Twitch service.
+    from services.twitch_service import init_twitch_service
+
+    await init_twitch_service()
+
     # Step 4: Load translator (depends on extensions being loaded for tree).
     await loadTranslator(bot)
 

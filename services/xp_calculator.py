@@ -12,6 +12,7 @@ import random
 
 from api import BoostTarget, XpBoostRepository
 
+
 class XpCalculator:
     """Service for calculating XP gains based on user, role, and channel boosts.
 

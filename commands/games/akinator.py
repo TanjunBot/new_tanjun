@@ -198,7 +198,7 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
             command_info.locale,
             "commands.games.akinator.description",
             question=aki.question,
-            lastAnswer="No Answer",
+            lastAnswer=tanjunLocalizer.localize(str(command_info.locale), "commands.games.akinator.no_answer"),
             progress=int(aki.progression),
         ),
     )

@@ -1,7 +1,7 @@
 import discord
 
 import utility
-from api import add_booster_role, get_booster_role
+from services.booster_service import BoosterType, booster_service
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
@@ -35,7 +35,7 @@ async def setupBoosterRole(command_info: CommandInfo, role: discord.Role) -> Non
         await command_info.reply(embed=embed)
         return
 
-    booster_role = await get_booster_role(command_info.guild.id)
+    booster_role = await booster_service.get(BoosterType.ROLE, str(command_info.guild.id))
     if booster_role:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -50,7 +50,7 @@ async def setupBoosterRole(command_info: CommandInfo, role: discord.Role) -> Non
         await command_info.reply(embed=embed)
         return
 
-    await add_booster_role(command_info.guild.id, role.id)
+    await booster_service.add(BoosterType.ROLE, str(command_info.guild.id), str(role.id))
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.setupboosterrole.success.title"),

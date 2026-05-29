@@ -1,17 +1,12 @@
 import discord
 
-from api import (
-    claim_booster_channel,
-    get_booster_channel,
-    get_claimed_booster_channel,
-    remove_claimed_booster_channel,
-)
 from localizer import tanjunLocalizer
+from services.booster_service import BoosterType, ClaimedBoosterType, booster_service
 from utility import command_info, tanjunEmbed
 
 
 async def claimBoosterChannel(command_info: command_info, name: str):
-    booster_channel = await get_booster_channel(command_info.guild.id)
+    booster_channel = await booster_service.get(BoosterType.CHANNEL, str(command_info.guild.id))
     if not booster_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -40,7 +35,9 @@ async def claimBoosterChannel(command_info: command_info, name: str):
         await command_info.reply(embed=embed)
         return
 
-    claimed_booster_channel = await get_claimed_booster_channel(command_info.user.id)
+    claimed_booster_channel = await booster_service.get_claim_for_user(
+        ClaimedBoosterType.CHANNEL, str(command_info.user.id), str(command_info.guild.id)
+    )
     if claimed_booster_channel:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -78,7 +75,9 @@ async def claimBoosterChannel(command_info: command_info, name: str):
     new_channel = await command_info.guild.create_voice_channel(
         name=name, reason=reason, category=channel, overwrites=overwrites
     )
-    await claim_booster_channel(command_info.user.id, new_channel.id, command_info.guild.id)
+    await booster_service.claim(
+        ClaimedBoosterType.CHANNEL, str(command_info.user.id), str(new_channel.id), str(command_info.guild.id)
+    )
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(command_info.locale, "commands.utility.claimboosterchannel.success.title"),
         description=tanjunLocalizer.localize(
@@ -90,13 +89,23 @@ async def claimBoosterChannel(command_info: command_info, name: str):
 
 
 async def remove_claimed_booster_channels_that_are_expired(client: discord.Client):
-    claimed_booster_channels = await get_claimed_booster_channel()
+    claimed_booster_channels = await booster_service.get_all_claims(ClaimedBoosterType.CHANNEL)
     for entry in claimed_booster_channels:
         guild = client.get_guild(int(entry.guild_id))
+        if not guild:
+            # Guild no longer exists, clean up the claim
+            await booster_service.unclaim(ClaimedBoosterType.CHANNEL, str(entry.user_id), str(entry.guild_id))
+            continue
+
         user = guild.get_member(int(entry.user_id))
+        if not user:
+            # User no longer in guild, clean up the claim
+            await booster_service.unclaim(ClaimedBoosterType.CHANNEL, str(entry.user_id), str(entry.guild_id))
+            continue
+
         channel = guild.get_channel(int(entry.channel_id))
         if not user.premium_since and channel:
-            await remove_claimed_booster_channel(user.id, entry.guild_id)
+            await booster_service.unclaim(ClaimedBoosterType.CHANNEL, str(entry.user_id), str(entry.guild_id))
             await channel.delete(
                 reason=tanjunLocalizer.localize(
                     guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US",
@@ -104,4 +113,4 @@ async def remove_claimed_booster_channels_that_are_expired(client: discord.Clien
                 )
             )
         if not channel:
-            await remove_claimed_booster_channel(user.id, entry.guild_id)
+            await booster_service.unclaim(ClaimedBoosterType.CHANNEL, str(entry.user_id), str(entry.guild_id))
