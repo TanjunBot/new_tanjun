@@ -79,7 +79,7 @@ class ScheduledMessageService:
 
         query = """
         SELECT messageId, guild_id, channel_id, user_id, content, send_time,
-               repeatInterval, repeatAmount, attachments, created_at
+               repeatInterval, repeatAmount, attachments, discord_message_id, created_at
         FROM scheduledMessages
         WHERE user_id = %s
         ORDER BY send_time ASC
@@ -114,12 +114,20 @@ class ScheduledMessageService:
         await execute_action(query, (repeat_amount, message_id))
 
     @staticmethod
+    async def update_discord_message_id(message_id: int, discord_message_id: str) -> None:
+        """Store the Discord message ID after a scheduled message is sent."""
+        from api import execute_action
+
+        query = "UPDATE scheduledMessages SET discord_message_id = %s WHERE messageId = %s"
+        await execute_action(query, (discord_message_id, message_id))
+
+    @staticmethod
     async def get_due_messages() -> list[ScheduledMessageModel]:
         """Return all messages whose send_time is due (<= now)."""
 
         query = """
         SELECT messageId, guild_id, channel_id, user_id, content, send_time,
-               repeatInterval, repeatAmount, attachments, created_at
+               repeatInterval, repeatAmount, attachments, discord_message_id, created_at
         FROM scheduledMessages WHERE send_time <= NOW()
         """
         rows: list[ScheduledMessageModel] = []
@@ -138,7 +146,7 @@ class ScheduledMessageService:
 
         query = """
         SELECT messageId, guild_id, channel_id, user_id, content, send_time,
-               repeatInterval, repeatAmount, attachments, created_at
+               repeatInterval, repeatAmount, attachments, discord_message_id, created_at
         FROM scheduledMessages
         WHERE user_id = %s
         AND send_time BETWEEN %s AND %s

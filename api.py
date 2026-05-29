@@ -1032,10 +1032,12 @@ def get_table_definitions() -> dict[str, str]:
         `repeatInterval` MEDIUMINT UNSIGNED,
         `repeatAmount` MEDIUMINT UNSIGNED,
         `attachments` TEXT,
+        `discord_message_id` VARCHAR(20) DEFAULT NULL,
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX `idx_sendtime` (send_time),
         INDEX `idx_user` (user_id),
-        INDEX `idx_guild` (guild_id)
+        INDEX `idx_guild` (guild_id),
+        INDEX `idx_discord_message` (discord_message_id)
     ) ENGINE=InnoDB;
     """
     tables["reports"] = """
@@ -1256,6 +1258,11 @@ async def create_tables(bot=None) -> None:
         """ALTER TABLE `scheduledMessages`
          ADD COLUMN `attachments` TEXT DEFAULT NULL
          AFTER `repeatAmount`""",
+        # Add discord_message_id column to scheduledMessages for exact-match deletion
+        """ALTER TABLE `scheduledMessages`
+         ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
+         AFTER `attachments`,
+         ADD INDEX `idx_discord_message` (`discord_message_id`)""",
     ]
     for migration in migrations:
         try:
@@ -2733,7 +2740,7 @@ async def add_scheduled_message(
 
 async def get_scheduled_messages(user_id: str) -> list[ScheduledMessageModel]:
     query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments, created_at
+    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments, discord_message_id, created_at
     FROM scheduledMessages
     WHERE user_id = %s
     ORDER BY send_time ASC
@@ -2758,7 +2765,7 @@ async def get_user_scheduled_messages_in_timeframe(
     guild_id: str | None = None,
 ) -> list[ScheduledMessageModel]:
     query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments, created_at
+    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments, discord_message_id, created_at
     FROM scheduledMessages
     WHERE user_id = %s
     AND send_time BETWEEN %s AND %s
@@ -2789,7 +2796,7 @@ async def update_scheduled_message_repeat_amount(message_id: int, repeat_amount:
 
 async def get_ready_scheduled_messages() -> list[ScheduledMessageModel]:
     query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments, created_at
+    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments, discord_message_id, created_at
     FROM scheduledMessages WHERE send_time <= NOW()
     """
     rows: list[ScheduledMessageModel] = []
