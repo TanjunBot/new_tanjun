@@ -7,13 +7,19 @@ import os
 import time
 from collections.abc import Callable
 from pathlib import Path
-from typing import Optional
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+# ---------------------------------------------------------------------------
+# Fix the broken discord mock from conftest
+# ---------------------------------------------------------------------------
+# conftest.py replaces sys.modules["discord"] with a MagicMock, so
+# localizer.discord.Locale is a MagicMock and isinstance(x, MagicMock) fails.
+# We patch it to a real base class here so isinstance checks work.
+import localizer as _loc_mod
 import tests.mock_config  # noqa: F401 – side-effect import
-
+import translator as _tr_mod
 from localizer import (
     CACHE_TTL,
     TRANSLATION_NOT_FOUND,
@@ -22,16 +28,6 @@ from localizer import (
     tanjunLocalizer,
 )
 from translator import TanjunTranslator
-
-# ---------------------------------------------------------------------------
-# Fix the broken discord mock from conftest
-# ---------------------------------------------------------------------------
-# conftest.py replaces sys.modules["discord"] with a MagicMock, so
-# localizer.discord.Locale is a MagicMock and isinstance(x, MagicMock) fails.
-# We patch it to a real base class here so isinstance checks work.
-
-import localizer as _loc_mod
-import translator as _tr_mod
 
 
 class _LocaleBase:
@@ -438,7 +434,7 @@ class _FakeTranslator:
     def __init__(self, svc: LocalizerService) -> None:
         self._localizer = svc
 
-    async def translate(self, string: object, locale: object, context: object) -> Optional[str]:
+    async def translate(self, string: object, locale: object, context: object) -> str | None:
         from localizer import TRANSLATION_NOT_FOUND
         key_str = str(string).replace("_", ".")
         current = self._localizer.localize(locale, key_str)
@@ -514,8 +510,9 @@ class TestGlobalInstance:
         assert isinstance(tanjunLocalizer, LocalizerService)
 
     def test_singleton(self):
-        from localizer import tanjunLocalizer as tanjun_localizer
-        assert tanjun_localizer is tanjunLocalizer
+        # tanjunLocalizer is a singleton - verify two imports return the same instance
+        import localizer as _localizer_mod
+        assert tanjunLocalizer is _localizer_mod.tanjunLocalizer
 
 
 # ===================================================================

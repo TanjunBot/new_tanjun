@@ -152,6 +152,7 @@ line-length = 127
 # ANN = flake8-annotations (for type hint checking)
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "C901", "UP", "A", "B", "SIM", "TID", "N", "ANN"]
+ignore = ["UP047"]
 
 # dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
