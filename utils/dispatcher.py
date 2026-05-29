@@ -176,6 +176,9 @@ def register(
 # Resilient execution with timing
 # ---------------------------------------------------------------------------
 
+Handler = Callable[..., Awaitable[Any]]
+"""Type alias for an async handler callable."""
+
 
 async def _execute_with_logging(
     name: str,
@@ -278,9 +281,6 @@ async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
 # ---------------------------------------------------------------------------
 # Utility execution modes
 # ---------------------------------------------------------------------------
-
-Handler = Callable[..., Awaitable[Any]]
-"""Type alias for an async handler callable."""
 
 
 async def run_handlers_safe(
