@@ -266,7 +266,11 @@ async def send_scheduled_messages(client: discord.Client) -> None:
             send_kwargs: dict = {"content": content, "embed": embed}
             if files:
                 send_kwargs["files"] = files
-            await target.send(**send_kwargs)
+            sent_message = await target.send(**send_kwargs)
+
+            # Store the Discord message ID for exact-match deletion
+            if sent_message:
+                await ScheduledMessageService.update_discord_message_id(message_id, str(sent_message.id))
 
             # --- Repeat logic ---
             if repeat_interval and repeat_interval > 0:
