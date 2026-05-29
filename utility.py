@@ -93,7 +93,7 @@ def error_embed(
     category: ErrorEmbedCategory,
     title: str,
     description: str,
-) -> TanjunEmbed:
+) -> "TanjunEmbed":
     """Build a standardized error embed with proper color for the given category.
 
     Parameters
@@ -120,7 +120,7 @@ def error_embed(
 def success_embed(
     title: str,
     description: str,
-) -> TanjunEmbed:
+) -> "TanjunEmbed":
     """Build a standardized success embed."""
     return TanjunEmbed(
         colour=EmbedColor.SUCCESS,
@@ -132,7 +132,7 @@ def success_embed(
 def warning_embed(
     title: str,
     description: str,
-) -> TanjunEmbed:
+) -> "TanjunEmbed":
     """Build a standardized warning embed."""
     return TanjunEmbed(
         colour=EmbedColor.WARNING,
@@ -144,7 +144,7 @@ def warning_embed(
 def info_embed(
     title: str,
     description: str,
-) -> TanjunEmbed:
+) -> "TanjunEmbed":
     """Build a standardized info embed."""
     return TanjunEmbed(
         colour=EmbedColor.INFO,
