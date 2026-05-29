@@ -25,7 +25,7 @@ class LevelConfigRepository:
 
         # Check cache first
         cache_entry = _guild_config_cache.get(guild_id)
-        if _is_cache_valid(cache_entry, _GUILD_CONFIG_CACHE_TTL):
+        if _is_cache_valid(cache_entry, _GUILD_CONFIG_CACHE_TTL) and cache_entry is not None:
             # Reconstruct LevelConfig from cached dict
             data = cache_entry[0]
             if data:  # Non-empty cache entry means we have config
@@ -105,7 +105,7 @@ class LevelConfigRepository:
         await execute_action(query, params)
         self._invalidate(guild_id=config.guild_id)
 
-    async def update_field(self, guild_id: str, **kwargs) -> None:
+    async def update_field(self, guild_id: str, **kwargs: object) -> None:
         """Update specific fields on an existing config row.
 
         Only the provided kwargs are written; other columns are preserved.
@@ -167,9 +167,11 @@ class LevelConfigRepository:
             params.append(value)
 
         set_str = ", ".join(set_clauses)
+        columns = [field_map[k] for k in kwargs]
+        placeholders = ["%s"] * len(kwargs)
         query = f"""
-        INSERT INTO levelConfig (guild_id, {', '.join(field_map.get(k) for k in kwargs)})
-        VALUES (%s, {', '.join(['%s'] * len(kwargs))})
+        INSERT INTO levelConfig (guild_id, {', '.join(columns)})
+        VALUES (%s, {', '.join(placeholders)})
         ON DUPLICATE KEY UPDATE {set_str}
         """
         vals = tuple([guild_id] + list(params))
