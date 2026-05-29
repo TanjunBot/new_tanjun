@@ -1,6 +1,6 @@
 from aiohttp import ClientError, ClientSession
 
-from health_check import HealthCheck, HealthCheckResult, HealthStatus
+from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 
 
 class OpenAIHealthCheck(HealthCheck):
