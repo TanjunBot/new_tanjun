@@ -18,6 +18,8 @@ from collections.abc import Callable, Coroutine, Mapping
 from difflib import SequenceMatcher
 from typing import Any, Protocol, Self, TypeVar
 
+from pydantic import BaseModel, ConfigDict
+
 import aiohttp
 import discord
 from aiohttp import ClientTimeout
@@ -850,31 +852,21 @@ class TanjunEmbed:
         return result  # type: ignore # This payload is equivalent to the EmbedData type
 
 
-class CommandInfo:
-    def __init__(
-        self,
-        user: discord.abc.User,
-        channel: discord.abc.GuildChannel,
-        guild: discord.Guild,
-        command: discord.app_commands.Command,
-        locale: str,
-        message: discord.Message,
-        permissions: discord.Permissions,
-        reply: Callable[..., Coroutine[Any, Any, Any]],
-        client: discord.Client,
-    ):
-        self.user = user
-        self.channel = channel
-        self.guild = guild
-        self.command = command
-        self.locale = locale
-        self.message = message
-        self.permissions = permissions
-        self.reply = reply
-        self.client = client
+class CommandInfo(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    user: discord.abc.User
+    channel: discord.abc.GuildChannel
+    guild: discord.Guild
+    command: discord.app_commands.Command
+    locale: discord.Locale
+    message: discord.Message | None = None
+    permissions: discord.Permissions = discord.Permissions()
+    reply: Callable[..., Coroutine[Any, Any, Any]] | None = None
+    client: discord.Client
 
 
-command_info = CommandInfo
+command_info: type[CommandInfo] = CommandInfo
 
 
 def cmp(a: int, b: int) -> int:
