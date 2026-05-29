@@ -52,15 +52,15 @@ if _orig_discord is not None:
     ) else _orig_discord.app_commands
     _orig_discord.app_commands.Translator = _TranslatorBase
 
-import tests.mock_config  # noqa: F401 – side-effect import
-from localizer import (
+import tests.mock_config  # noqa: F401, E402 – side-effect import
+from localizer import (  # noqa: E402
     CACHE_TTL,
     TRANSLATION_NOT_FOUND,
     LocalizerService,
     TranslationEntry,
     tanjunLocalizer,
 )
-from translator import TanjunTranslator
+from translator import TanjunTranslator  # noqa: E402
 
 FAKE_DE = _Locale("de")
 FAKE_EN_US = _Locale("en-US")
@@ -504,7 +504,7 @@ class TestTanjunTranslator:
         finally:
             restore()
 
-    def test_translate_with_locale_enum(self, service: LocalizerService, locale_dir):
+    def test_translate_with_locale_enum(self, service: LocalizerService, locale_dir: Path):
         """translate() works with a discord.Locale-like enum object (not just strings)."""
         restore = _chdir(locale_dir)
         try:
@@ -520,7 +520,7 @@ class TestTanjunTranslator:
         finally:
             restore()
 
-    def test_translate_fallback_locale(self, service: LocalizerService, locale_dir):
+    def test_translate_fallback_locale(self, service: LocalizerService, locale_dir: Path):
         """translate() falls back to English for unsupported locale values."""
         restore = _chdir(locale_dir)
         try:
@@ -537,7 +537,7 @@ class TestTanjunTranslator:
         finally:
             restore()
 
-    def test_translate_returns_none_for_missing(self, service: LocalizerService, locale_dir):
+    def test_translate_returns_none_for_missing(self, service: LocalizerService, locale_dir: Path):
         """translate() returns None for missing keys (not TRANSLATION_NOT_FOUND)."""
         restore = _chdir(locale_dir)
         try:
