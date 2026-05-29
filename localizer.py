@@ -144,10 +144,13 @@ class LocalizerService:
             task = asyncio.create_task(missingLocalization(locale_str))
 
             def _handle_task_exception(t: asyncio.Task[Any]) -> None:
-                try:
-                    t.exception()
-                except Exception as e:
-                    print(f"Exception in missingLocalization task for locale '{locale_str}': {e}")
+                if t.cancelled():
+                    return
+                exc = t.exception()
+                if exc is not None:
+                    print(f"Exception in missingLocalization task for locale '{locale_str}': {exc}")
+                    import traceback
+                    traceback.print_exception(type(exc), exc, exc.__traceback__)
 
             task.add_done_callback(_handle_task_exception)
         except RuntimeError:
@@ -173,13 +176,13 @@ class LocalizerService:
         """
         return self._load_sync(locale)
 
-    def load_translations_async(self, locale: str) -> list[TranslationEntry]:
+    async def load_translations_async(self, locale: str) -> list[TranslationEntry]:
         """Async wrapper for backward compatibility.
 
         .. deprecated::
             Use :meth:`load_locale`.
         """
-        return self._load_sync(locale)
+        return await run_blocking(self._load_sync, locale)
 
     def get_translation(
         self,
