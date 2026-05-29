@@ -29,7 +29,6 @@ from config import (
     database_user,
     prefix,
 )
-from DatabaseHealthCheck import DatabaseHealthCheck
 from di import services
 from external_api_health_checks import (
     BrawlStarsHealthCheck,
@@ -38,11 +37,12 @@ from external_api_health_checks import (
     GitHubAPIHealthCheck,
     ImgBBHealthCheck,
 )
+from health.checks.database_check import DatabaseHealthCheck
+from health.checks.openai_check import OpenAIHealthCheck
+from health.checks.twitch_check import TwitchAPIHealthCheck
 from health.manager import HealthCheckManager
 from locale_file_health_check import LocaleFileHealthCheck
-from OpenAIHealthCheck import OpenAIHealthCheck
 from translator import TanjunTranslator
-from TwitchAPIHealthCheck import TwitchAPIHealthCheck
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -227,14 +227,11 @@ async def main() -> None:
     health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
     health_manager.register(DatabaseHealthCheck())  # Uses default 5-minute interval
     health_manager.register(TwitchAPIHealthCheck())  # Uses default 5-minute interval
-    health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
     health_manager.register(GIPHYHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(BrawlStarsHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(ImgBBHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(BytebinHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(GitHubAPIHealthCheck(), interval=3600)  # 60 minutes
-    health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
-    health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
     ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.

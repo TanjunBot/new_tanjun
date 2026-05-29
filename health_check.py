@@ -10,11 +10,11 @@ Defines the base classes for all health checks:
 New code should import from the ``health`` package directly.
 """
 
-from DatabaseHealthCheck import DatabaseHealthCheck
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
+from health.checks.database_check import DatabaseHealthCheck
+from health.checks.openai_check import OpenAIHealthCheck
+from health.checks.twitch_check import TwitchAPIHealthCheck
 from locale_file_health_check import LocaleFileHealthCheck
-from OpenAIHealthCheck import OpenAIHealthCheck
-from TwitchAPIHealthCheck import TwitchAPIHealthCheck
 
 __all__ = [
     "DatabaseHealthCheck",
