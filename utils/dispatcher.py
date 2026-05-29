@@ -269,7 +269,7 @@ async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
     results = await asyncio.gather(*coros)
 
     outcomes: list[tuple[str, Any]] = []
-    for handler, result in zip(matched, results):
+    for handler, result in zip(matched, results, strict=True):
         outcomes.append((handler.name, result))
 
     return outcomes

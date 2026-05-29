@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import MagicMock
 
 import pytest
 
 from utils.dispatcher import (
     MessageFilters,
-    MessageHandler,
     Priority,
     clear,
     dispatch,
@@ -86,14 +85,8 @@ class TestRegistrationOrderByPriority:
         register(background_handler, name="background", priority=Priority.BACKGROUND)
 
         mock_msg = _make_message(guild=MagicMock())
-        # dispatch calls asyncio.gather which doesn't guarantee order,
-        # but the matched list itself should be ordered correctly
-        matched = [
-            h.name
-            for h in registered_handlers()
-            if h.filters.check(mock_msg)
-        ]
-        assert matched == ["critical", "normal", "background"], f"Expected critical → normal → background, got {matched}"
+        await dispatch(mock_msg)
+        assert execution_order == ["critical", "normal", "background"], f"Expected critical → normal → background, got {execution_order}"
 
     async def test_same_priority_preserves_insertion_order(self) -> None:
         """Handlers with same priority should maintain insertion order."""
@@ -197,26 +190,22 @@ class TestDispatch:
         """Handler should not run when its filter rejects the message."""
         processed = False
 
-        async def handler(_m: object) -> None:
-            nonlocal processed
-            processed = True
-
-        register(handler, name="dm_only",
-                 filters=MessageFilters(only_guilds=False))
-        # DM (guild=None) should pass
-        dm_msg = _make_message(guild=None)
-        await dispatch(dm_msg)
-        assert processed, "Handler should have run for DM"
-
         async def guild_only(_m: object) -> None:
             nonlocal processed
             processed = True
 
         register(guild_only, name="guild_only",
                  filters=MessageFilters(only_guilds=True))
-        # Guild msg should pass for guild_only
-        await dispatch(_make_message(guild=MagicMock()))
-        assert processed  # second handler didn't need to run for DM, but first handler did
+
+        # DM message should be blocked by guild_only filter
+        dm_msg = _make_message(guild=None)
+        await dispatch(dm_msg)
+        assert processed is False, "Handler should not have run for DM message"
+
+        # Guild message should pass the filter
+        guild_msg = _make_message(guild=MagicMock())
+        await dispatch(guild_msg)
+        assert processed is True, "Handler should have run for guild message"
 
     async def test_handler_exception_does_not_block_others(self) -> None:
         """A handler that raises should not prevent other handlers from running."""
