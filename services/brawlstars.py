@@ -3,11 +3,14 @@ BrawlStarsService: Typed client for Brawl Stars API with Pydantic response model
 
 Consolidates raw API calls across commands/utility/brawlstars/* into a single
 service class with validated Pydantic models. Reuses one aiohttp session and
-centralizes rate-limit handling.
+centralizes rate-limit handling with retry logic and exponential backoff.
 """
 
 from __future__ import annotations
 
+import asyncio
+import logging
+import random
 from typing import Any
 
 import aiohttp
@@ -15,6 +18,8 @@ from aiohttp import ClientTimeout
 from pydantic import BaseModel, Field
 
 from config import brawlstarsToken
+
+logger = logging.getLogger(__name__)
 
 # ---- Pydantic response models ----
 
@@ -78,9 +83,6 @@ class BrawlStarsPlayer(BaseModel):
     x3vs3_victories: int = 0
     club: BrawlStarsClub | None = None
     brawlers: list[BrawlerInfo] = Field(default_factory=list)
-
-    class Config:
-        alias_generator = lambda s: s  # accept both camelCase and snake_case
 
 
 class BattleBrawler(BaseModel):
@@ -198,27 +200,66 @@ class BrawlStarsService:
         self,
         path: str,
         params: dict[str, str] | None = None,
+        max_retries: int = 3,
     ) -> dict[str, Any] | list[dict[str, Any]] | None:
-        """Make an authenticated GET request to the Brawl Stars API."""
+        """Make an authenticated GET request to the Brawl Stars API with retry logic.
+
+        Implements exponential backoff with jitter for rate limits (HTTP 429) and
+        server errors (HTTP 503). Respects Retry-After header when present.
+        """
         if not self._token:
             return None
         session = await self._ensure_session()
         url = f"{self.BASE_URL}/{path}"
         headers = {"Authorization": f"Bearer {self._token}"}
-        async with session.get(
-            url,
-            headers=headers,
-            params=params,
-            timeout=ClientTimeout(total=10),
-        ) as response:
-            if response.status != 200:
+
+        for attempt in range(max_retries + 1):
+            async with session.get(
+                url,
+                headers=headers,
+                params=params,
+                timeout=ClientTimeout(total=10),
+            ) as response:
+                if response.status == 200:
+                    raw: Any = await response.json()
+                    if isinstance(raw, dict):
+                        return raw
+                    if isinstance(raw, list):
+                        return raw
+                    return None
+
+                # Read response body for logging
+                try:
+                    body = await response.text()
+                except Exception:
+                    body = "<unable to read body>"
+
+                # Handle rate limits and server errors with retry
+                if response.status in (429, 503) and attempt < max_retries:
+                    # Check for Retry-After header
+                    retry_after = response.headers.get("Retry-After")
+                    if retry_after and retry_after.isdigit():
+                        delay = int(retry_after)
+                    else:
+                        # Exponential backoff with jitter: 2^attempt * (0.5 to 1.5)
+                        base_delay = 2 ** attempt
+                        jitter = random.uniform(0.5, 1.5)
+                        delay = base_delay * jitter
+
+                    logger.warning(
+                        f"Rate limit/server error on {path} (attempt {attempt + 1}/{max_retries + 1}): "
+                        f"HTTP {response.status}. Retrying in {delay:.2f}s"
+                    )
+                    await asyncio.sleep(delay)
+                    continue
+
+                # Log and return None for all error cases after retries exhausted
+                logger.error(
+                    f"Request to {path} failed with HTTP {response.status}: {body[:200]}"
+                )
                 return None
-            raw: Any = await response.json()
-            if isinstance(raw, dict):
-                return raw
-            if isinstance(raw, list):
-                return raw
-            return None
+
+        return None
 
     async def close(self) -> None:
         """Close the underlying aiohttp session."""
@@ -245,7 +286,7 @@ class BrawlStarsService:
             ),
             solo_victories=data.get("soloVictories", data.get("solo_victories", 0)),
             duo_victories=data.get("duoVictories", data.get("duo_victories", 0)),
-            x3vs3_victories=data.get("x3v3Victories", data.get("x3vs3_victories", 0)),
+            x3vs3_victories=data.get("3vs3Victories", data.get("x3v3Victories", 0)),
             club=BrawlStarsClub(
                 tag=data.get("club", {}).get("tag", ""),
                 name=data.get("club", {}).get("name", ""),
@@ -283,7 +324,13 @@ class BrawlStarsService:
         data = await self._request(f"players/%23{clean_tag}/battlelog")
         if data is None:
             return None
-        items = data.get("items", [])
+        # Handle both dict response with "items" key and direct list response
+        if isinstance(data, list):
+            items = data
+        elif isinstance(data, dict):
+            items = data.get("items", [])
+        else:
+            items = []
         if not items:
             return []
         return [

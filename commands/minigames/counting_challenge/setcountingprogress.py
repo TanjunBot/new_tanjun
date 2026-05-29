@@ -1,12 +1,12 @@
 import discord
 
-from services.counting_repository import CountingMode, CountingRepository
 from commands.minigames._counting_common import (
     require_counting_channel,
     require_moderate_members,
     require_valid_progress,
 )
 from localizer import tanjunLocalizer
+from services.counting_repository import CountingMode, CountingRepository
 from utility import CommandInfo, tanjunEmbed
 
 LOCALE_KEY = "minigames.setcountingchallengeprogress"
