@@ -1,9 +1,12 @@
+from typing import Any
+
 import discord
 from discord import ui
 
 import config
 import utility
 from localizer import tanjunLocalizer
+from services.math import MathService
 
 ADDEMOJI = config.CALC_ADD
 SUBSTRACTEMOJI = config.CALC_SUBTRACT
@@ -12,7 +15,7 @@ DIVIDEEMOJI = config.CALC_DIVIDE
 BACKSPACEEMOJI = config.CALC_BACKSPACE
 
 
-from typing import Any
+math_service = MathService()
 
 
 class CalculatorButton(ui.Button[Any]):
@@ -53,7 +56,6 @@ class CalculatorView(ui.View):
         self.message: discord.Message | None = None
         self.current_page = 0
         self.create_buttons()
-        self.nsp = utility.NumericStringParser()
 
     def set_message(self, message: discord.Message) -> None:
         self.message = message
@@ -269,7 +271,8 @@ class CalculatorView(ui.View):
             self.result = ""
         elif button_id == "equals":
             try:
-                self.result = str(round(self.nsp.eval(self.equation), 5))
+                expr_result = math_service.evaluate(self.equation)
+                self.result = str(round(expr_result.result, 5)) if not expr_result.error else "Error"
                 self.history.append(f"{self.display_equation} = {self.result}")
                 self.variables["ans"] = float(self.result)
                 self.display_equation = self.result
@@ -339,8 +342,12 @@ class CalculatorView(ui.View):
             if len(parts) == 2:
                 var_name, var_value = parts
                 try:
-                    self.variables[var_name.strip()] = self.nsp.eval(var_value.strip())
-                    self.result = f"{var_name} = {self.variables[var_name]}"
+                    var_result = math_service.evaluate(var_value.strip())
+                    if not var_result.error:
+                        self.variables[var_name.strip()] = var_result.result
+                        self.result = f"{var_name.strip()} = {self.variables[var_name.strip()]}"
+                    else:
+                        self.result = var_result.error
                 except Exception as e:
                     self.result = tanjunLocalizer.localize(
                         self.command_info.locale,
