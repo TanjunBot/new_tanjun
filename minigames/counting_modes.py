@@ -557,7 +557,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
                 number_to_romeal(correct_number) if mode == CountingMode.ROMEAN else str(correct_number)
             )
         )
-        await DiscordSafe.send(message.channel, content=display_number)
+        await DiscordSafe.send(message.channel, embed=tanjunEmbed(description=display_number))
         await repo.set_mode_progress(
             channel_id=message.channel.id,
             progress=(romeal_to_number(correct_number) if mode == CountingMode.ROMEAN else correct_number),
