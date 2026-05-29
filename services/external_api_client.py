@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 import gzip
-
+import logging
 from typing import Any
 
 import aiohttp
 from aiohttp import ClientTimeout
-from github import Github
-from pydantic import BaseModel
+from github import Github, GithubException
+from pydantic import BaseModel, ValidationError
+
+logger = logging.getLogger(__name__)
 
 
 class ImgBBResponse(BaseModel):
@@ -149,7 +151,10 @@ class ExternalApiClient:
 
         if not isinstance(raw, dict):
             return None
-        return GiphyResponse.model_validate(raw)
+        try:
+            return GiphyResponse.model_validate(raw)
+        except ValidationError:
+            return None
 
     async def upload_to_bytebin(self, data: str) -> str | None:
         """Upload compressed content to Bytebin and return the URL.
@@ -194,10 +199,13 @@ class ExternalApiClient:
         """
         if not self.github_token:
             return
-        g = Github(self.github_token)
-        repo = g.get_repo("TanjunBot/new_tanjun")
-        label_objects = [repo.get_label(label) for label in labels]
-        repo.create_issue(title=title, body=body, labels=label_objects)
+        try:
+            g = Github(self.github_token)
+            repo = g.get_repo("TanjunBot/new_tanjun")
+            label_objects = [repo.get_label(label) for label in labels]
+            repo.create_issue(title=title, body=body, labels=label_objects)
+        except (GithubException, Exception) as e:
+            logger.error("Failed to create GitHub issue: %s", e)
 
     async def close(self) -> None:
         """Close the aiohttp session if open."""

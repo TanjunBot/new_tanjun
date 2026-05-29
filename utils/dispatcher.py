@@ -15,7 +15,7 @@ import logging
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Any, Union
+from typing import Any
 
 import discord
 
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 Handler = Callable[..., Awaitable[Any]]
 """Type alias for an async handler callable."""
 
-CallbackType = Callable[..., Union[Awaitable[None], None]]
+CallbackType = Callable[..., Awaitable[None] | None]
 """Type alias for message handler callbacks (sync or async)."""
 
 

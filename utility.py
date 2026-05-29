@@ -689,24 +689,30 @@ class NumericStringParser:
 
 async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
     client = ExternalApiClient(giphy_key=giphyAPIKey)
-    response = await client.search_giphy(query, limit)
-    if response is None:
-        return []
-    results = response.data
-    if not results:
-        return []
-    # nosec: B311
-    random.shuffle(results)
-    return [
-        results[i].images.get("downsized_medium", {}).get("url", results[i].url)
-        for i in range(min(amount, len(results)))
-    ]
+    try:
+        response = await client.search_giphy(query, limit)
+        if response is None:
+            return []
+        results = response.data
+        if not results:
+            return []
+        # nosec: B311
+        random.shuffle(results)
+        return [
+            results[i].images.get("downsized_medium", {}).get("url", results[i].url)
+            for i in range(min(amount, len(results)))
+        ]
+    finally:
+        await client.close()
 
 
 async def missingLocalization(locale: str) -> None:
     """Create a GitHub issue reporting a missing localization."""
     client = ExternalApiClient(github_token=GithubAuthToken)
-    await run_blocking(client.create_github_issue, "Missing localization", f"Missing localization for {locale}", ["missing localization"])
+    title = "Missing localization"
+    body = f"Missing localization for {locale}"
+    labels = ["missing localization"]
+    await run_blocking(client.create_github_issue, title, body, labels)
 
 
 async def addFeedback(content: str, author: str) -> None:
@@ -1111,10 +1117,13 @@ def date_time_to_timestamp(date: datetime.datetime) -> int:
 
 async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict:
     client = ExternalApiClient(imgbb_key=ImgBBApiKey)
-    result = await client.upload_to_imgbb(image_bytes, file_extension)
-    if result is None:
-        return {}
-    return {"data": result.model_dump(exclude_none=True)}
+    try:
+        result = await client.upload_to_imgbb(image_bytes, file_extension)
+        if result is None:
+            return {}
+        return {"data": result.model_dump(exclude_none=True)}
+    finally:
+        await client.close()
 
 
 async def upload_to_tanjun_logs(content: str) -> str:
@@ -1123,7 +1132,10 @@ async def upload_to_tanjun_logs(content: str) -> str:
         bytebin_username=bytebin_username,
         bytebin_password=bytebin_password,
     )
-    return await client.upload_to_bytebin(content)
+    try:
+        return await client.upload_to_bytebin(content)
+    finally:
+        await client.close()
 
 
 def check_if_str_is_hex_color(color: str) -> bool:
@@ -1149,12 +1161,16 @@ def isoTimeToDate(isoTime: str) -> datetime.datetime:
     return datetime.datetime.fromisoformat(isoTime)
 
 
-def similar(a, b):
+def similar(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
 
 
-def addThousandsSeparator(number: int) -> str:
+def add_thousands_separator(number: int) -> str:
     return f"{number:,}".replace(",", " ")
+
+
+# Backward-compatible alias
+addThousandsSeparator = add_thousands_separator  # noqa: N816
 
 
 def embed_or_wrap(
@@ -1180,58 +1196,6 @@ def embed_or_wrap(
     return TanjunEmbed(title=title, description=text, colour=colour)
 
 
-def error_embed(
-    description: str,
-    title: str | None = None,
-) -> TanjunEmbed:
-    """Create a standardised error embed with red colouring.
-
-    Args:
-        description: The error description.
-        title: Optional error title. Defaults to "Error".
-
-    Returns:
-        A ``TanjunEmbed`` with error colouring.
-    """
-    if title is None:
-        title = "Error"
-    return TanjunEmbed(title=title, description=description, colour=EmbedColor.ERROR)
-
-
-def success_embed(
-    description: str,
-    title: str | None = None,
-) -> TanjunEmbed:
-    """Create a standardised success embed with green colouring.
-
-    Args:
-        description: The success message.
-        title: Optional title. Defaults to "Success".
-
-    Returns:
-        A ``TanjunEmbed`` with success colouring.
-    """
-    if title is None:
-        title = "Success"
-    return TanjunEmbed(title=title, description=description, colour=EmbedColor.SUCCESS)
-
-
-def warning_embed(
-    description: str,
-    title: str | None = None,
-) -> TanjunEmbed:
-    """Create a standardised warning embed with yellow colouring.
-
-    Args:
-        description: The warning message.
-        title: Optional title. Defaults to "Warning".
-
-    Returns:
-        A ``TanjunEmbed`` with warning colouring.
-    """
-    if title is None:
-        title = "Warning"
-    return TanjunEmbed(title=title, description=description, colour=EmbedColor.WARNING)
 
 
 class SafeInteraction:
@@ -1284,10 +1248,10 @@ class SafeInteraction:
     ) -> None:
         """Safely defer an interaction, skipping if already done."""
         if not interaction.response.is_done():
-            try:
+            from contextlib import suppress
+
+            with suppress(discord.InteractionResponded):
                 await interaction.response.defer(ephemeral=ephemeral)
-            except discord.InteractionResponded:
-                pass  # Already responded, silently ignore
 
     @staticmethod
     async def edit(
@@ -1318,7 +1282,7 @@ class SafeInteraction:
                 await interaction.edit_original_response(**kwargs)
 
 
-tanjunEmbed = TanjunEmbed
+tanjunEmbed = TanjunEmbed  # noqa: N816
 #: Backward-compatible alias so that ``from utility import tanjunEmbed`` still works.
 
 
