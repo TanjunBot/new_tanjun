@@ -36,24 +36,26 @@ class BotServices(BaseModel):
     refactored away from module-level globals.
     """
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config = ConfigDict(arbitrary_types_allowed=True, defer_build=True)
 
     # ── Core infrastructure ──────────────────────────────────────────────
-    bot: commands.AutoShardedBot | None = None
-    pool: asyncmy.Pool | None = None
+    bot: "commands.AutoShardedBot | None" = None
+    pool: "asyncmy.Pool | None" = None
 
     # ── Services ─────────────────────────────────────────────────────────
-    afk_service: AfkService | None = None
-    ai_service: AiService | None = None
-    counting_repository: CountingRepository | None = None
-    dynamic_slowmode_service: DynamicSlowmodeService | None = None
-    giveaway_service: GiveawayService | None = None
-    report_service: ReportService | None = None
-    scheduled_message_service: ScheduledMessageService | None = None
-    ticket_service: TicketService | None = None
-    trigger_message_service: TriggerMessageService | None = None
-    xp_calculator: XpCalculator | None = None
+    afk_service: "AfkService | None" = None
+    ai_service: "AiService | None" = None
+    counting_repository: "CountingRepository | None" = None
+    dynamic_slowmode_service: "DynamicSlowmodeService | None" = None
+    giveaway_service: "GiveawayService | None" = None
+    report_service: "ReportService | None" = None
+    scheduled_message_service: "ScheduledMessageService | None" = None
+    ticket_service: "TicketService | None" = None
+    trigger_message_service: "TriggerMessageService | None" = None
+    xp_calculator: "XpCalculator | None" = None
 
+
+BotServices.model_rebuild()
 
 # Module-level singleton — populated by main.py once all services are initialized.
 services: BotServices = BotServices()
