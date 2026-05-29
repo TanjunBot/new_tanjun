@@ -80,6 +80,81 @@ class StatusIcon(enum.StrEnum):
     DISABLED = "❌"
 
 
+class ErrorEmbedCategory(enum.IntEnum):
+    """Categories for error embeds, mapped to distinct colors for visual distinction."""
+
+    PERMISSION = 0xE74C3C
+    NOT_FOUND = 0xE67E22
+    RATE_LIMIT = 0xF39C12
+    VALIDATION = 0x9B59B6
+    UNEXPECTED = 0xE74C3C
+    TIMEOUT = 0x95A5A6
+
+
+def error_embed(
+    category: ErrorEmbedCategory,
+    title: str,
+    description: str,
+) -> "TanjunEmbed":
+    """Build a standardized error embed with proper color for the given category.
+
+    Parameters
+    ----------
+    category:
+        The error category determining the embed colour.
+    title:
+        The embed title (may be localized string).
+    description:
+        The embed description (may be localized string).
+
+    Returns
+    -------
+    TanjunEmbed:
+        A pre-configured error embed.
+    """
+    return TanjunEmbed(
+        colour=category.value,
+        title=title,
+        description=description,
+    )
+
+
+def success_embed(
+    title: str,
+    description: str,
+) -> "TanjunEmbed":
+    """Build a standardized success embed."""
+    return TanjunEmbed(
+        colour=EmbedColor.SUCCESS,
+        title=title,
+        description=description,
+    )
+
+
+def warning_embed(
+    title: str,
+    description: str,
+) -> "TanjunEmbed":
+    """Build a standardized warning embed."""
+    return TanjunEmbed(
+        colour=EmbedColor.WARNING,
+        title=title,
+        description=description,
+    )
+
+
+def info_embed(
+    title: str,
+    description: str,
+) -> "TanjunEmbed":
+    """Build a standardized info embed."""
+    return TanjunEmbed(
+        colour=EmbedColor.INFO,
+        title=title,
+        description=description,
+    )
+
+
 # Map of friendly keys to guild emoji names (from issue #1332).
 # Maps friendly keys to the actual guild emoji names used in the Discord server.
 EMOJI_MAP: dict[str, str] = {
