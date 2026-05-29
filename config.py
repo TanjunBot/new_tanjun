@@ -86,7 +86,7 @@ class Settings(BaseSettings, cli_parse_args=False):
 
 
 try:
-    settings = Settings()
+    settings = Settings()  # type: ignore[call-arg]
 except ValidationError as e:
     print(f"Configuration validation error: {e}", file=sys.stderr)
     sys.exit(1)

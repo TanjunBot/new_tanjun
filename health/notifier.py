@@ -76,6 +76,16 @@ async def notify_health_failures(
         )
         return
 
+    # Narrow type to a channel that supports .send()
+    if not hasattr(channel, "send"):
+        logger.warning(
+            "Channel %s does not support sending messages, cannot notify failures",
+            channel_id,
+        )
+        return
+
+    sendable: discord.abc.Messageable = channel  # type: ignore[assignment]
+
     chunks = [failures[i : i + 25] for i in range(0, len(failures), 25)]
     for idx, chunk in enumerate(chunks, start=1):
         title = f"⚠️ Health Check Failure ({idx}/{len(chunks)})" if len(chunks) > 1 else "⚠️ Health Check Failure"
@@ -95,7 +105,7 @@ async def notify_health_failures(
 
         content = f"<@{user_id}>" if idx == 1 else None
         try:
-            await channel.send(
+            await sendable.send(
                 content=content,
                 embed=embed,
             )
