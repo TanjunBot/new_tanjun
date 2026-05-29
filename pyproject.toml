@@ -35,7 +35,7 @@ dependencies = [
     "httpx==0.28.1",
     "idna==3.17",
     "matplotlib==3.10.9",
-    "mpmath>=1.1.0,<1.4",
+    "mpmath>=1.1.0,<1.5.0",
     "multidict==6.7.1",
     "mysql-connector-python==9.7.0",
     "num2words==0.5.14",
