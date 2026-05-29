@@ -24,7 +24,6 @@ from unittest.mock import MagicMock
 import pytest
 
 import tests.mock_config as mock_config
-
 from exceptions import DatabaseError
 
 mock_config.patch_config_module()

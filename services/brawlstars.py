@@ -14,13 +14,11 @@ Usage:
 
 from __future__ import annotations
 
-import asyncio
 import json
 from typing import Any
 
 import aiohttp
 from pydantic import AliasPath, BaseModel, ConfigDict, Field
-
 
 # ── Pydantic Models ──────────────────────────────────────────────────────────
 
@@ -56,7 +54,7 @@ class BrawlStarsClub(BrawlStarsBaseModel):
     badge_id: int | None = None
     required_trophies: int = 0
     trophies: int | None = None
-    members: list["BrawlStarsClubMember"] = Field(default_factory=list)
+    members: list[BrawlStarsClubMember] = Field(default_factory=list)
 
 
 class BrawlStarsClubMember(BrawlStarsBaseModel):
@@ -108,6 +106,15 @@ class BrawlerInfo(BrawlStarsBaseModel):
     star_powers: list[BrawlerStarPower] = Field(default_factory=list)
 
 
+class BattleBrawler(BrawlStarsBaseModel):
+    """Minimal brawler data from battle log payloads."""
+
+    id: int
+    name: str
+    power: int
+    trophies: int
+
+
 class BrawlStarsPlayer(BrawlStarsBaseModel):
     """Full player model returned by the Brawl Stars API."""
 
@@ -147,7 +154,7 @@ class BrawlStarsEvent(BrawlStarsBaseModel):
 
     start_time: str
     end_time: str
-    event: "BrawlStarsEventDetail"
+    event: BrawlStarsEventDetail
 
 
 class BrawlStarsEventDetail(BrawlStarsBaseModel):
@@ -169,7 +176,7 @@ class BattlePlayer(BrawlStarsBaseModel):
 
     tag: str
     name: str
-    brawler: BrawlerInfo | None = None
+    brawler: BattleBrawler | None = None
 
 
 class BrawlStarsBattle(BrawlStarsBaseModel):
@@ -258,7 +265,7 @@ class BrawlStarsService:
                 if isinstance(data, dict):
                     return data
                 return None
-        except (aiohttp.ClientError, asyncio.TimeoutError, json.JSONDecodeError, ValueError):
+        except (TimeoutError, aiohttp.ClientError, json.JSONDecodeError, ValueError):
             return None
 
     async def _get_list(self, path: str) -> list[dict[str, Any]]:
@@ -279,7 +286,7 @@ class BrawlStarsService:
                 if isinstance(data, list):
                     return data
                 return []
-        except (aiohttp.ClientError, asyncio.TimeoutError, json.JSONDecodeError, ValueError):
+        except (TimeoutError, aiohttp.ClientError, json.JSONDecodeError, ValueError):
             return []
 
     # ── Player endpoints ────────────────────────────────────────────────────

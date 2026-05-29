@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from services.brawlstars import get_brawlstars_service
 from api import get_brawlstars_linked_account
 from localizer import tanjunLocalizer
+from services.brawlstars import get_brawlstars_service
 from utility import CommandInfo, tanjunEmbed
 
 
