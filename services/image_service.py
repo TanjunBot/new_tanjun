@@ -7,7 +7,7 @@ from enum import Enum
 from io import BytesIO
 from typing import Any
 
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from PIL import ImageFilter as PILImageFilter
 
 from localizer import tanjunLocalizer
@@ -29,13 +29,13 @@ class ImageFilter(Enum):
     def to_pil(self, radius: int = 3) -> PILImageFilter:
         """Convert this filter enum value to a PIL ImageFilter instance."""
         mapping: dict[ImageFilter, Any] = {
-            ImageFilter.CONTOUR: PILImageFilter.CONTOUR(),
-            ImageFilter.DETAIL: PILImageFilter.DETAIL(),
-            ImageFilter.EDGE_ENHANCE: PILImageFilter.EDGE_ENHANCE(),
-            ImageFilter.EMBOSS: PILImageFilter.EMBOSS(),
-            ImageFilter.FIND_EDGES: PILImageFilter.FIND_EDGES(),
-            ImageFilter.SHARPEN: PILImageFilter.SHARPEN(),
-            ImageFilter.SMOOTH: PILImageFilter.SMOOTH(),
+            ImageFilter.CONTOUR: PILImageFilter.CONTOUR,
+            ImageFilter.DETAIL: PILImageFilter.DETAIL,
+            ImageFilter.EDGE_ENHANCE: PILImageFilter.EDGE_ENHANCE,
+            ImageFilter.EMBOSS: PILImageFilter.EMBOSS,
+            ImageFilter.FIND_EDGES: PILImageFilter.FIND_EDGES,
+            ImageFilter.SHARPEN: PILImageFilter.SHARPEN,
+            ImageFilter.SMOOTH: PILImageFilter.SMOOTH,
             ImageFilter.GAUSSIAN_BLUR: PILImageFilter.GaussianBlur(radius),
             ImageFilter.BOX_BLUR: PILImageFilter.BoxBlur(radius),
         }
@@ -126,7 +126,22 @@ class ImageService:
     @staticmethod
     async def process(image_data: bytes, operation: ImageOperation) -> bytes:
         """Apply an ImageOperation to raw image bytes and return result bytes."""
-        pil_image: Image.Image = Image.open(io.BytesIO(image_data))
+        # Early return if no transformations are requested
+        if (
+            operation.filter_name is None
+            and operation.resize is None
+            and operation.scale is None
+            and operation.mirror_axis is None
+            and operation.compress_quality is None
+            and not operation.remove_background
+        ):
+            return image_data
+
+        try:
+            pil_image: Image.Image = Image.open(io.BytesIO(image_data))
+        except (UnidentifiedImageError, OSError) as e:
+            msg = f"Failed to open image: {e}"
+            raise ValueError(msg) from e
 
         # Convert palette/P modes for JPEG output compatibility
         if operation.compress_quality is not None and pil_image.mode in ("RGBA", "P"):
@@ -171,7 +186,11 @@ class ImageService:
             save_kwargs = {"format": fmt}
 
         buffer = BytesIO()
-        pil_image.save(buffer, **save_kwargs)  # type: ignore[call-arg]
+        try:
+            pil_image.save(buffer, **save_kwargs)  # type: ignore[call-arg]
+        except (OSError, ValueError) as e:
+            msg = f"Failed to save image: {e}"
+            raise ValueError(msg) from e
         buffer.seek(0)
         return buffer.getvalue()
 

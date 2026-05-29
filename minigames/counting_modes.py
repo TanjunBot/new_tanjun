@@ -3,10 +3,11 @@ from math import sqrt
 
 import discord
 
-from services.counting_repository import CountingMode as _CountingDBMode, CountingRepository
 from api import check_if_opted_out
 from localizer import tanjunLocalizer
 from models import CountingMode
+from services.counting_repository import CountingMode as _CountingDBMode
+from services.counting_repository import CountingRepository
 from utility import DiscordSafe, EmbedColor, tanjunEmbed
 
 repo = CountingRepository

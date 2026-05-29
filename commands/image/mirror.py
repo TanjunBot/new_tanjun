@@ -37,8 +37,8 @@ async def mirror(command_info: CommandInfo, image: discord.Attachment, axis: str
 
     buffer = BytesIO(result_bytes)
     embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.resize.success.title"),
-        description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.resize.success.description"),
+        title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.mirror.success.title"),
+        description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.mirror.success.description"),
     )
     embed.set_image(url="attachment://image.png")
     await command_info.reply(embed=embed, file=discord.File(fp=buffer, filename="image.png"))
