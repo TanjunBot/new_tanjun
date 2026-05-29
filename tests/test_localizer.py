@@ -1,7 +1,6 @@
 """Tests for the LocalizerService and TranslationEntry classes."""
 
 import asyncio
-import contextlib
 import json
 import os
 import time
@@ -17,17 +16,10 @@ import pytest
 # conftest.py replaces sys.modules["discord"] with a MagicMock, so
 # localizer.discord.Locale is a MagicMock and isinstance(x, MagicMock) fails.
 # We patch it to a real base class here so isinstance checks work.
-import localizer as _loc_mod
-import tests.mock_config  # noqa: F401 – side-effect import
-import translator as _tr_mod
-from localizer import (
-    CACHE_TTL,
-    TRANSLATION_NOT_FOUND,
-    LocalizerService,
-    TranslationEntry,
-    tanjunLocalizer,
-)
-from translator import TanjunTranslator
+
+# Create real base classes for discord.Locale and app_commands.Translator
+# BEFORE importing the tanjun modules so the real TanjunTranslator class
+# inherits from a proper Translator base (not a MagicMock).
 
 
 class _LocaleBase:
@@ -41,17 +33,38 @@ class _Locale(_LocaleBase):
         self.value = v
 
 
-_loc_mod.discord.Locale = _LocaleBase
-with contextlib.suppress(Exception):
-    _tr_mod.discord.Locale = _LocaleBase
+class _TranslatorBase:
+    """Stands in for discord.app_commands.Translator – real base class for isinstance checks."""
+    async def load(self) -> None:
+        pass
+    async def translate(self, string: object, locale: object, context: object) -> str | None:  # noqa: ANN001
+        return None
+    async def unload(self) -> None:
+        pass
+
+
+# Patch the discord mock BEFORE importing localizer/translator modules
+_orig_discord = __import__("sys").modules.get("discord")
+if _orig_discord is not None:
+    _orig_discord.Locale = _LocaleBase
+    _orig_discord.app_commands = MagicMock() if isinstance(
+        _orig_discord.app_commands, MagicMock
+    ) else _orig_discord.app_commands
+    _orig_discord.app_commands.Translator = _TranslatorBase
+
+import tests.mock_config  # noqa: F401 – side-effect import
+from localizer import (
+    CACHE_TTL,
+    TRANSLATION_NOT_FOUND,
+    LocalizerService,
+    TranslationEntry,
+    tanjunLocalizer,
+)
+from translator import TanjunTranslator
 
 FAKE_DE = _Locale("de")
 FAKE_EN_US = _Locale("en-US")
 FAKE_EN_GB = _Locale("en-GB")
-
-# Also need app_commands.Translator to be a real object so TanjunTranslator()
-# can be instantiated.  We patch it at the module level.
-_tr_mod.discord.app_commands.Translator = object
 
 
 # ---------------------------------------------------------------------------
@@ -329,7 +342,7 @@ class TestTestLocalize:
             restore()
 
     def test_returns_found_not_de(self, service: LocalizerService, locale_dir):
-        """_load_sync('fr') falls back to English, finds key → returns English, not de."""
+        """_load_sync('fr') falls back to English, finds key -> returns English, not de."""
         restore = _chdir(locale_dir)
         try:
             assert service.test_localize("fr", "common.success") == "Operation successful."
@@ -429,29 +442,36 @@ class TestReportMissing:
 # TanjunTranslator
 # ===================================================================
 
-class _FakeTranslator:
-    """Mimics TanjunTranslator.translate() without inheriting from the broken mock base."""
-    def __init__(self, svc: LocalizerService) -> None:
-        self._localizer = svc
-
-    async def translate(self, string: object, locale: object, context: object) -> str | None:
-        from localizer import TRANSLATION_NOT_FOUND
-        key_str = str(string).replace("_", ".")
-        current = self._localizer.localize(locale, key_str)
-        if current == TRANSLATION_NOT_FOUND:
-            return None
-        return current
-
-
 class TestTanjunTranslator:
+    """Tests for the real TanjunTranslator class (not a fake)."""
+
+    def test_importable(self):
+        """TanjunTranslator should be importable (non-None)."""
+        assert TanjunTranslator is not None
+
+    def test_default_localizer(self):
+        """TanjunTranslator() uses the global tanjunLocalizer by default."""
+        t = TanjunTranslator()
+        assert t._localizer is tanjunLocalizer
+
+    def test_custom_localizer(self, service: LocalizerService):
+        """TanjunTranslator(localizer=svc) uses the provided localizer."""
+        t = TanjunTranslator(localizer=service)
+        assert t._localizer is service
+
+    def test_is_translator_subclass(self):
+        """TanjunTranslator is a proper subclass of app_commands.Translator."""
+        assert issubclass(TanjunTranslator, _TranslatorBase)
+
     def test_found(self, service: LocalizerService, locale_dir):
         restore = _chdir(locale_dir)
         try:
-            t = _FakeTranslator(service)
+            t = TanjunTranslator(localizer=service)
             s = MagicMock()
             s.__str__ = lambda self: "common.success"
+            context = MagicMock()
             loop = asyncio.new_event_loop()
-            r = loop.run_until_complete(t.translate(s, MagicMock(), MagicMock()))
+            r = loop.run_until_complete(t.translate(s, MagicMock(), context))
             loop.close()
             assert r == "Operation successful."
         finally:
@@ -460,7 +480,7 @@ class TestTanjunTranslator:
     def test_not_found(self, service: LocalizerService, locale_dir):
         restore = _chdir(locale_dir)
         try:
-            t = _FakeTranslator(service)
+            t = TanjunTranslator(localizer=service)
             s = MagicMock()
             s.__str__ = lambda self: "xyz"
             with patch.object(service, "_report_missing"):
@@ -474,7 +494,7 @@ class TestTanjunTranslator:
     def test_underscore_to_dot(self, service: LocalizerService, locale_dir):
         restore = _chdir(locale_dir)
         try:
-            t = _FakeTranslator(service)
+            t = TanjunTranslator(localizer=service)
             s = MagicMock()
             s.__str__ = lambda self: "commands_ping_name"
             loop = asyncio.new_event_loop()
@@ -484,9 +504,53 @@ class TestTanjunTranslator:
         finally:
             restore()
 
-    def test_type_importable(self):
-        """TanjunTranslator should be importable (non-None)."""
-        assert TanjunTranslator is not None
+    def test_translate_with_locale_enum(self, service: LocalizerService, locale_dir):
+        """translate() works with a discord.Locale-like enum object (not just strings)."""
+        restore = _chdir(locale_dir)
+        try:
+            t = TanjunTranslator(localizer=service)
+            s = MagicMock()
+            s.__str__ = lambda self: "common.success"
+            locale_obj = FAKE_DE  # _Locale("de")
+            loop = asyncio.new_event_loop()
+            r = loop.run_until_complete(t.translate(s, locale_obj, MagicMock()))
+            loop.close()
+            # FAKE_DE has value "de", so it finds the German translation
+            assert r == "Vorgang erfolgreich."
+        finally:
+            restore()
+
+    def test_translate_fallback_locale(self, service: LocalizerService, locale_dir):
+        """translate() falls back to English for unsupported locale values."""
+        restore = _chdir(locale_dir)
+        try:
+            t = TanjunTranslator(localizer=service)
+            s = MagicMock()
+            s.__str__ = lambda self: "common.success"
+            unsupported_locale = _Locale("fr")
+            loop = asyncio.new_event_loop()
+            r = loop.run_until_complete(t.translate(s, unsupported_locale, MagicMock()))
+            loop.close()
+            # '_normalize_locale("fr")' returns "fr", which has no locale file,
+            # so _load_sync falls back to English -> "Operation successful."
+            assert r == "Operation successful."
+        finally:
+            restore()
+
+    def test_translate_returns_none_for_missing(self, service: LocalizerService, locale_dir):
+        """translate() returns None for missing keys (not TRANSLATION_NOT_FOUND)."""
+        restore = _chdir(locale_dir)
+        try:
+            t = TanjunTranslator(localizer=service)
+            s = MagicMock()
+            s.__str__ = lambda self: "nonexistent.key"
+            with patch.object(service, "_report_missing"):
+                loop = asyncio.new_event_loop()
+                r = loop.run_until_complete(t.translate(s, MagicMock(), MagicMock()))
+                loop.close()
+                assert r is None
+        finally:
+            restore()
 
 
 # ===================================================================
