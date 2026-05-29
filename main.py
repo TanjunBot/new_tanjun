@@ -152,6 +152,10 @@ async def main():
     bot._pool = pool
     bot._pool_ready.set()  # Signal waiting tasks that pool is ready
 
+    from api import db_manager
+
+    db_manager.set_pool(pool)
+
     from api import set_bot
 
     set_bot(bot)
@@ -159,6 +163,7 @@ async def main():
     # Populate DI container with core infrastructure.
     services.bot = bot
     services.pool = pool
+    services.db_manager = db_manager
 
     # Step 2: Create tables concurrently with remaining extension loading.
     from api import create_tables
