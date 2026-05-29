@@ -1,7 +1,7 @@
 import discord
 
 import utility
-from api import delete_booster_role, get_booster_role
+from services.booster_service import BoosterType, booster_service
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
@@ -52,7 +52,7 @@ async def deleteBoosterRole(command_info: CommandInfo) -> None:
         await command_info.reply(embed=embed)
         return
 
-    booster_role = await get_booster_role(command_info.guild.id)
+    booster_role = await booster_service.get(BoosterType.ROLE, str(command_info.guild.id))
     if not booster_role:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -67,7 +67,7 @@ async def deleteBoosterRole(command_info: CommandInfo) -> None:
         await command_info.reply(embed=embed)
         return
 
-    await delete_booster_role(command_info.guild.id)
+    await booster_service.delete(BoosterType.ROLE, str(command_info.guild.id))
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.deleteboosterrole.success.title"),
