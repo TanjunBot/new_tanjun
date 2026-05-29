@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import os
 import sys
-from typing import ClassVar, Optional
+from typing import ClassVar
 
 from dotenv import load_dotenv
 from pydantic import Field, SecretStr, ValidationError, computed_field
@@ -80,13 +79,13 @@ class Settings(BaseSettings, cli_parse_args=False):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def welcome_emoji_id(self) -> Optional[int]:
+    def welcome_emoji_id(self) -> int | None:
         raw = self.welcome_emoji_id_raw
         return int(raw) if raw.isdigit() else None
 
 
 try:
-    settings = Settings()
+    settings = Settings()  # type: ignore[call-arg]
 except ValidationError as e:
     print(f"Configuration validation error: {e}", file=sys.stderr)
     sys.exit(1)
@@ -130,7 +129,7 @@ CALC_DIVIDE: str = settings.calc_divide
 CALC_BACKSPACE: str = settings.calc_backspace
 
 # Emoji ID for welcome command (numeric Discord emoji ID)
-WELCOME_EMOJI_ID: Optional[int] = settings.welcome_emoji_id
+WELCOME_EMOJI_ID: int | None = settings.welcome_emoji_id
 
 
 # ── Startup validation ───────────────────────────────────────────────────────

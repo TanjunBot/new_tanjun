@@ -1,19 +1,21 @@
-"""
-Message handler dispatcher with priority-based execution ordering.
+"""Message handler dispatcher with priority-based execution ordering.
 
 Extensions register their message handlers with a priority value;
 critical handlers (e.g. counting) run before less urgent ones (e.g.
 levels).  Handlers are dispatched in priority order, and a single
 failing handler does not prevent others from running.
+
+Provides automatic exception isolation and structured timing logs.
 """
 
 from __future__ import annotations
 
 import asyncio
-import inspect
 import logging
+import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Any, Awaitable, Callable
+from typing import Any
 
 import discord
 
@@ -171,6 +173,56 @@ def register(
 
 
 # ---------------------------------------------------------------------------
+# Resilient execution with timing
+# ---------------------------------------------------------------------------
+
+
+async def _execute_with_logging(
+    name: str,
+    fn: Callable[[discord.Message], Awaitable[Any]],
+    message: discord.Message,
+) -> Any:  # noqa: ANN401
+    """Execute a handler with timing and exception logging.
+
+    Parameters
+    ----------
+    name:
+        Handler name for logging.
+    fn:
+        The async handler callable.
+    message:
+        The Discord message for context logging.
+
+    Returns
+    -------
+        The handler result, or the ``Exception`` instance if it failed.
+    """
+    _t0 = time.monotonic()
+    try:
+        result = await fn(message)
+        _elapsed = (time.monotonic() - _t0) * 1000
+        log.debug(
+            "Handler '%s' completed in %.1f ms for message %s",
+            name,
+            _elapsed,
+            message.id,
+        )
+        return result
+    except Exception as exc:
+        _elapsed = (time.monotonic() - _t0) * 1000
+        log.exception(
+            "Handler '%s' raised an exception after %.1f ms "
+            "(message %s, channel %s): %s",
+            name,
+            _elapsed,
+            message.id,
+            message.channel.id,
+            exc,
+        )
+        return exc
+
+
+# ---------------------------------------------------------------------------
 # Dispatch
 # ---------------------------------------------------------------------------
 
@@ -180,8 +232,10 @@ async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
 
     Handlers are dispatched in priority order (lowest priority value
     first) and executed concurrently via ``asyncio.gather`` with
-    ``return_exceptions=True`` so that a single failing handler does
-    not prevent others from running.
+    exception isolation so that a single failing handler does not
+    prevent others from running.
+
+    Each handler execution is timed and logged for observability.
 
     Parameters
     ----------
@@ -206,26 +260,142 @@ async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
         return []
 
     names: list[str] = [h.name for h in matched]
-    coros: list[Awaitable[Any]] = [h.callback(message) for h in matched]
-
     log.debug("Dispatching %d handler(s) by priority: %s", len(matched), names)
 
-    results = await asyncio.gather(*coros, return_exceptions=True)
+    # Execute all matched handlers concurrently with timing and exception isolation
+    coros: list[Awaitable[Any]] = [
+        _execute_with_logging(h.name, h.callback, message) for h in matched
+    ]
+    results = await asyncio.gather(*coros)
 
     outcomes: list[tuple[str, Any]] = []
     for handler, result in zip(matched, results):
         outcomes.append((handler.name, result))
-        if isinstance(result, Exception):
-            log.exception(
-                "Handler '%s' raised an exception for message %s in channel %s: %s",
-                handler.name,
-                message.id,
-                message.channel.id,
-                result,
-                exc_info=result,
-            )
 
     return outcomes
+
+
+# ---------------------------------------------------------------------------
+# Utility execution modes
+# ---------------------------------------------------------------------------
+
+Handler = Callable[..., Awaitable[Any]]
+"""Type alias for an async handler callable."""
+
+
+async def run_handlers_safe(
+    handlers: list[tuple[str, Handler, tuple[Any, ...], dict[str, Any]]],
+    message: discord.Message,
+) -> list[Any]:
+    """Run multiple handlers concurrently with exception isolation and logging.
+
+    Each handler runs as an independent task so that a crash in one does
+    not affect the others.  Handlers are logged with timing info and
+    any exceptions are captured and logged at error level.
+
+    Parameters
+    ----------
+    handlers:
+        List of ``(name, callable, args, kwargs)`` tuples.
+    message:
+        The Discord message that triggered these handlers (used for context).
+
+    Returns
+    -------
+        Results from each handler (may include ``Exception`` instances).
+    """
+
+    async def _execute_generic(
+        name: str,
+        fn: Handler,
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+    ) -> Any:  # noqa: ANN401
+        _t0 = time.monotonic()
+        try:
+            result = await fn(*args, **kwargs)
+            _elapsed = (time.monotonic() - _t0) * 1000
+            log.debug(
+                "Handler '%s' completed in %.1f ms for message %s",
+                name,
+                _elapsed,
+                message.id,
+            )
+            return result
+        except Exception as exc:
+            _elapsed = (time.monotonic() - _t0) * 1000
+            log.exception(
+                "Handler '%s' raised an exception after %.1f ms "
+                "(message %s, channel %s): %s",
+                name,
+                _elapsed,
+                message.id,
+                message.channel.id,
+                exc,
+            )
+            return exc
+
+    tasks = [_execute_generic(name, fn, args, kwargs) for name, fn, args, kwargs in handlers]
+    return await asyncio.gather(*tasks)
+
+
+async def run_handlers_sequential(
+    handlers: list[tuple[str, Handler, tuple[Any, ...], dict[str, Any]]],
+    message: discord.Message,
+) -> list[Any]:
+    """Run handlers sequentially with exception isolation and logging.
+
+    Each handler runs in order.  If one fails, subsequent handlers
+    still run.  Exceptions are caught and logged; an ``Exception``
+    instance is returned in place of the normal result.
+
+    Parameters
+    ----------
+    handlers:
+        List of ``(name, callable, args, kwargs)`` tuples.
+    message:
+        The Discord message that triggered these handlers (used for context).
+
+    Returns
+    -------
+        Results from each handler (may include ``Exception`` instances).
+    """
+
+    async def _execute_generic(
+        name: str,
+        fn: Handler,
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+    ) -> Any:  # noqa: ANN401
+        _t0 = time.monotonic()
+        try:
+            result = await fn(*args, **kwargs)
+            _elapsed = (time.monotonic() - _t0) * 1000
+            log.debug(
+                "Handler '%s' completed in %.1f ms for message %s",
+                name,
+                _elapsed,
+                message.id,
+            )
+            return result
+        except Exception as exc:
+            _elapsed = (time.monotonic() - _t0) * 1000
+            log.exception(
+                "Handler '%s' raised an exception after %.1f ms "
+                "(message %s, channel %s): %s",
+                name,
+                _elapsed,
+                message.id,
+                message.channel.id,
+                exc,
+            )
+            return exc
+
+    results: list[Any] = []
+    for name, fn, args, kwargs in handlers:
+        result = await _execute_generic(name, fn, args, kwargs)
+        results.append(result)
+    return results
 
 
 # ---------------------------------------------------------------------------

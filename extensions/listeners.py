@@ -1,4 +1,3 @@
-import asyncio
 import logging
 
 import discord
@@ -30,6 +29,9 @@ from minigames.counting_challenge import counting as countingChallenge
 from minigames.counting_modes import counting as countingModes
 from minigames.wordchain import wordchain
 from services.scheduled_message_service import ScheduledMessageService
+from utils.dispatcher import run_handlers_safe, run_handlers_sequential
+
+logger = logging.getLogger(__name__)
 
 
 class ListenerCog(commands.Cog):
@@ -46,47 +48,32 @@ class ListenerCog(commands.Cog):
 
         # Single DB check for all counting configs — skip all 3 handlers if none
         counting_config, challenge_config, modes_config = await get_counting_configs(message.channel.id)
+
+        # Build handler list — counting handlers are sequential (order matters)
+        # but each is individually guarded from the others.
+        # Everything else runs concurrently via run_handlers_safe.
+        counting_handlers = []
         if counting_config:
-            await counting(message, config=counting_config)
+            counting_handlers.append(("counting", counting, (message,), {"config": counting_config}))
         if challenge_config:
-            await countingChallenge(message, config=challenge_config)
+            counting_handlers.append(("counting_challenge", countingChallenge, (message,), {"config": challenge_config}))
         if modes_config:
-            await countingModes(message, config=modes_config)
-        # Everything else is independent — run concurrently with asyncio.gather
-        results = await asyncio.gather(
-            wordchain(message),
-            addLevelXp(message),
-            addMessageToGiveaway(message),
-            publish_message(message),
-            checkIfAfkHasToBeRemoved(message),
-            checkIfMentionsAreAfk(message),
-            send_trigger_message(message),
-            mediaChannelMessage(message),
-            dynamicslowmodeMessage(message),
-            return_exceptions=True,
-        )
-        # Log any exceptions from handlers
-        handler_names = [
-            "wordchain",
-            "addLevelXp",
-            "addMessageToGiveaway",
-            "publish_message",
-            "checkIfAfkHasToBeRemoved",
-            "checkIfMentionsAreAfk",
-            "send_trigger_message",
-            "mediaChannelMessage",
-            "dynamicslowmodeMessage",
+            counting_handlers.append(("counting_modes", countingModes, (message,), {"config": modes_config}))
+
+        concurrent_handlers = [
+            ("wordchain", wordchain, (message,), {}),
+            ("addLevelXp", addLevelXp, (message,), {}),
+            ("addMessageToGiveaway", addMessageToGiveaway, (message,), {}),
+            ("publish_message", publish_message, (message,), {}),
+            ("checkIfAfkHasToBeRemoved", checkIfAfkHasToBeRemoved, (message,), {}),
+            ("checkIfMentionsAreAfk", checkIfMentionsAreAfk, (message,), {}),
+            ("send_trigger_message", send_trigger_message, (message,), {}),
+            ("mediaChannelMessage", mediaChannelMessage, (message,), {}),
+            ("dynamicslowmodeMessage", dynamicslowmodeMessage, (message,), {}),
         ]
-        for handler_name, result in zip(handler_names, results):
-            if isinstance(result, Exception):
-                logging.exception(
-                    "Exception in message handler '%s' for message %s in channel %s: %s",
-                    handler_name,
-                    message.id,
-                    message.channel.id,
-                    result,
-                    exc_info=result,
-                )
+
+        await run_handlers_sequential(counting_handlers, message)
+        await run_handlers_safe(concurrent_handlers, message)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction) -> None:
