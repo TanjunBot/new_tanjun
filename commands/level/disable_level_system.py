@@ -6,7 +6,7 @@ from api import (
     set_level_system_status,
 )
 from localizer import tanjunLocalizer
-from utility import command_info, error_embed, success_embed, tanjunEmbed, ErrorEmbedCategory
+from utility import ErrorEmbedCategory, command_info, error_embed, success_embed, tanjunEmbed
 
 
 async def disable_level_system(command_info: command_info):
