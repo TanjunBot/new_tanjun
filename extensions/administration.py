@@ -186,7 +186,7 @@ class AdministrationCog(commands.Cog):
     ) -> None:
         if ctx.author.id not in config.adminIds:
             return
-        emoji = ctx.bot.get_emoji(1266369876524666920)
+        emoji = ctx.bot.get_emoji(config.WELCOME_EMOJI_ID)
         await ctx.send(embed=tanjunEmbed(description=f"{emoji} One thing about me ich fahr Auto seit vier Jahn'. Eines Tages woll ich in den Club Fahrn'. Ich stand an einer roten Ampel und ich war ganz allein, hinter mir war ein bus, und er fier mir rein. Er hupte mich an HUP HUP und ich stieg aus, schau mir an was passiert ist und er kommt raus."))
 
     async def getBrawlers(self) -> dict[str, Any]:

@@ -64,11 +64,16 @@ for _port_name, _port_var in (("database_port", database_port),):
 
 # Validate boolean/env flag vars (future-proof placeholder)
 
-# Emoji identifiers for calculator
-CALC_ADD = "math_add:1254372629456883793"
-CALC_SUBTRACT = "math_substract:1254372627766837248"
-CALC_MULTIPLY = "math_multiply:1254372798319558768"
-CALC_DIVIDE = "math_divide:1254373636224323644"
-CALC_BACKSPACE = "math_backspace:1254371946695757854"
+# Emoji identifiers (loaded from env with sensible defaults)
+# Format: name:id or empty string if not configured
+CALC_ADD = os.environ.get("CALC_ADD", "math_add:1254372629456883793")
+CALC_SUBTRACT = os.environ.get("CALC_SUBTRACT", "math_substract:1254372627766837248")
+CALC_MULTIPLY = os.environ.get("CALC_MULTIPLY", "math_multiply:1254372798319558768")
+CALC_DIVIDE = os.environ.get("CALC_DIVIDE", "math_divide:1254373636224323644")
+CALC_BACKSPACE = os.environ.get("CALC_BACKSPACE", "math_backspace:1254371946695757854")
+
+# Emoji ID for welcome command (numeric Discord emoji ID)
+_welcome_emoji_raw = os.environ.get("WELCOME_EMOJI_ID", "1266369876524666920")
+WELCOME_EMOJI_ID = int(_welcome_emoji_raw) if _welcome_emoji_raw.isdigit() else None
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "deepseek/deepseek-v4-flash:free")
