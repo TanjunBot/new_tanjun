@@ -13,6 +13,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from localizer import tanjunLocalizer
+from utility import ErrorEmbedCategory
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +54,8 @@ class ErrorHandlerCog(commands.Cog):
     async def _build_error_embed(
         self,
         interaction: discord.Interaction,
-        locale_key: str,
+        category: ErrorEmbedCategory = ErrorEmbedCategory.UNEXPECTED,
+        locale_key: str = "errors.unexpected_error",
         **kwargs: Any,
     ) -> discord.Embed:
         """Build a localized error embed for the given translation key.
@@ -62,6 +64,8 @@ class ErrorHandlerCog(commands.Cog):
         ----------
         interaction:
             The interaction to derive the locale and guild from.
+        category:
+            The error category to determine embed colour.
         locale_key:
             The dot-notation localizer key (e.g. ``"errors.cooldown"``).
         **kwargs:
@@ -78,7 +82,7 @@ class ErrorHandlerCog(commands.Cog):
         embed = discord.Embed(
             title=title if "no translation found" not in title.lower() else "Error",
             description=description if "no translation found" not in description.lower() else "An unexpected error occurred.",
-            colour=0xFF6B6B,  # Soft red for errors
+            colour=category.value,
         )
         return embed
 
@@ -96,6 +100,7 @@ class ErrorHandlerCog(commands.Cog):
         if isinstance(original, app_commands.CommandOnCooldown):
             embed = await self._build_error_embed(
                 interaction,
+                ErrorEmbedCategory.RATE_LIMIT,
                 "errors.cooldown",
                 retry_after=round(original.retry_after, 1),
             )
@@ -111,6 +116,7 @@ class ErrorHandlerCog(commands.Cog):
 
             embed = await self._build_error_embed(
                 interaction,
+                ErrorEmbedCategory.PERMISSION,
                 "errors.missing_permissions",
                 missing_permissions=missing_permissions or "Unknown",
             )
@@ -118,12 +124,14 @@ class ErrorHandlerCog(commands.Cog):
         elif isinstance(original, discord.Forbidden):
             embed = await self._build_error_embed(
                 interaction,
+                ErrorEmbedCategory.PERMISSION,
                 "errors.forbidden",
             )
 
         elif isinstance(original, discord.HTTPException):
             embed = await self._build_error_embed(
                 interaction,
+                ErrorEmbedCategory.UNEXPECTED,
                 "errors.http_error",
                 status_code=original.status,
             )
@@ -135,6 +143,7 @@ class ErrorHandlerCog(commands.Cog):
         elif isinstance(original, app_commands.TransformerError):
             embed = await self._build_error_embed(
                 interaction,
+                ErrorEmbedCategory.VALIDATION,
                 "errors.transformer_error",
             )
 
@@ -143,6 +152,7 @@ class ErrorHandlerCog(commands.Cog):
             traceback.print_exception(type(original), original, original.__traceback__)
             embed = await self._build_error_embed(
                 interaction,
+                ErrorEmbedCategory.UNEXPECTED,
                 "errors.unexpected_error",
             )
 
@@ -156,6 +166,7 @@ class ErrorHandlerCog(commands.Cog):
             traceback.print_exception(type(original), original, original.__traceback__)
             embed = await self._build_error_embed(
                 interaction,
+                ErrorEmbedCategory.UNEXPECTED,
                 "errors.unexpected_error",
             )
 
