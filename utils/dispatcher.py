@@ -15,7 +15,7 @@ import logging
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Union
 
 import discord
 
@@ -23,6 +23,9 @@ logger = logging.getLogger(__name__)
 
 Handler = Callable[..., Awaitable[Any]]
 """Type alias for an async handler callable."""
+
+CallbackType = Callable[..., Union[Awaitable[None], None]]
+"""Type alias for message handler callbacks (sync or async)."""
 
 
 @dataclass
@@ -34,7 +37,7 @@ class MessageHandler:
     name:
         Human-readable name for logging / debugging.
     callback:
-        Async callable that accepts ``(message, **kwargs)``.
+        Callable (sync or async) that accepts ``(message, **kwargs)``.
     priority:
         Lower numbers run first.  Default is 100.
     only_guilds:
@@ -48,7 +51,7 @@ class MessageHandler:
     """
 
     name: str
-    callback: Any
+    callback: CallbackType
     priority: int = 100
     only_guilds: bool = True
     ignore_bots: bool = True
@@ -257,8 +260,8 @@ def register_handler(
     ignore_bots: bool = True,
     channel_whitelist: set[int] | None = None,
     **kwargs: object,
-) -> Callable[..., Awaitable[None]]:
-    """Decorator that registers an async function as a message handler.
+) -> Callable[[CallbackType], CallbackType]:
+    """Decorator that registers a callable as a message handler.
 
     Example
     -------
@@ -269,7 +272,7 @@ def register_handler(
             ...
     """
 
-    def decorator(func: Callable[..., Awaitable[None]]) -> Callable[..., Awaitable[None]]:
+    def decorator(func: CallbackType) -> CallbackType:
         handler = MessageHandler(
             name=name or func.__name__,
             callback=func,

@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from utils.dispatcher import HandlerRegistry, MessageHandler
+from utils.dispatcher import HandlerRegistry, MessageHandler, register_handler
 from utils.dispatcher import registry as _global_registry
 
 # ------------------------------------------------------------------
@@ -208,49 +208,62 @@ class TestRegisterHandlerDecorator:
     """Tests for the @register_handler decorator."""
 
     def test_decorator_registers_handler(self) -> None:
-        local_registry = HandlerRegistry()
+        initial_count = _global_registry.count
 
-        # We need to temporarily patch the global registry — simulate with local
+        @register_handler()
         async def my_handler(m: object) -> None: ...
-        original_callback = my_handler
 
-        # Manually simulate decorator behavior
-        handler = MessageHandler(name="my_handler", callback=original_callback)
-        local_registry.register(handler)
-
-        assert local_registry.count == 1
+        assert _global_registry.count == initial_count + 1
         guild = MagicMock()
         msg = _make_message(guild=guild)
-        handlers = local_registry.get_handlers(msg)
-        assert handlers[0].callback is original_callback
+        handlers = _global_registry.get_handlers(msg)
+        # Find the handler we just registered
+        registered = [h for h in handlers if h.name == "my_handler"]
+        assert len(registered) == 1
+        assert registered[0].callback is my_handler
+
+        # Clean up
+        _global_registry._handlers = [
+            h for h in _global_registry._handlers if h.name != "my_handler"
+        ]
 
     def test_decorator_custom_name(self) -> None:
-        local_registry = HandlerRegistry()
+        initial_count = _global_registry.count
 
+        @register_handler(name="custom_name", priority=5)
         async def my_handler(m: object) -> None: ...
-        handler = MessageHandler(name="custom_name", callback=my_handler, priority=5)
-        local_registry.register(handler)
 
-        assert local_registry.count == 1
+        assert _global_registry.count == initial_count + 1
         guild = MagicMock()
         msg = _make_message(guild=guild)
-        handlers = local_registry.get_handlers(msg)
-        assert handlers[0].name == "custom_name"
-        assert handlers[0].priority == 5
+        handlers = _global_registry.get_handlers(msg)
+        # Find the handler we just registered
+        registered = [h for h in handlers if h.name == "custom_name"]
+        assert len(registered) == 1
+        assert registered[0].name == "custom_name"
+        assert registered[0].priority == 5
+
+        # Clean up
+        _global_registry._handlers = [
+            h for h in _global_registry._handlers if h.name != "custom_name"
+        ]
 
     def test_decorator_with_kwargs(self) -> None:
-        local_registry = HandlerRegistry()
+        initial_count = _global_registry.count
 
+        @register_handler(name="test_kwargs", extra="value")
         async def my_handler(m: object, **kw: object) -> None: ...
-        handler = MessageHandler(
-            name="test_kwargs",
-            callback=my_handler,
-            kwargs={"extra": "value"},
-        )
-        local_registry.register(handler)
 
-        assert local_registry.count == 1
-        assert local_registry._handlers[0].kwargs == {"extra": "value"}
+        assert _global_registry.count == initial_count + 1
+        # Find the handler we just registered
+        registered = [h for h in _global_registry._handlers if h.name == "test_kwargs"]
+        assert len(registered) == 1
+        assert registered[0].kwargs == {"extra": "value"}
+
+        # Clean up
+        _global_registry._handlers = [
+            h for h in _global_registry._handlers if h.name != "test_kwargs"
+        ]
 
 
 # ------------------------------------------------------------------
@@ -265,15 +278,17 @@ class TestGlobalRegistry:
 
     def test_global_registry_can_register(self) -> None:
         async def handler(m: object) -> None: ...
-        _global_registry.register(MessageHandler(
-            name="_test_global",
-            callback=handler,
-            only_guilds=True,
-            ignore_bots=True,
-        ))
-        found = [h for h in _global_registry._handlers if h.name == "_test_global"]
-        assert len(found) == 1
-        # Clean up so we don't pollute other tests
-        _global_registry._handlers = [
-            h for h in _global_registry._handlers if h.name != "_test_global"
-        ]
+        try:
+            _global_registry.register(MessageHandler(
+                name="_test_global",
+                callback=handler,
+                only_guilds=True,
+                ignore_bots=True,
+            ))
+            found = [h for h in _global_registry._handlers if h.name == "_test_global"]
+            assert len(found) == 1
+        finally:
+            # Clean up so we don't pollute other tests
+            _global_registry._handlers = [
+                h for h in _global_registry._handlers if h.name != "_test_global"
+            ]
