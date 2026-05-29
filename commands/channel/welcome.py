@@ -1,13 +1,9 @@
 from __future__ import annotations
 
-import asyncio
 import io
-from concurrent.futures import ThreadPoolExecutor
 
-import aiohttp
 import discord
-from aiohttp import ClientTimeout
-from PIL import Image, ImageDraw, ImageFont, ImageSequence
+from PIL import Image, ImageDraw
 
 import utility
 from api import (
@@ -16,9 +12,15 @@ from api import (
     set_welcome_channel,
 )
 from localizer import tanjunLocalizer
+from services.pillow_service import (
+    create_circular_mask,
+    create_overlay,
+    get_image_or_gif_frames,
+    load_font,
+    run_in_executor,
+    save_optimized_gif,
+)
 from utility import draw_text_with_outline
-
-executor = ThreadPoolExecutor()
 
 
 async def setWelcomeChannel(
@@ -138,31 +140,11 @@ async def removeWelcomeChannel(command_info: utility.CommandInfo) -> None:
     await command_info.reply(embed=embed)
 
 
-async def fetch_image(url: str) -> io.BytesIO | None:
-    try:
-        async with (
-            aiohttp.ClientSession() as session,
-            session.get(url, timeout=ClientTimeout(total=10)) as response,
-        ):
-            if response.status != 200:
-                return None
-            image_data = io.BytesIO(await response.read())
-            return image_data
-    except (TimeoutError, aiohttp.ClientError):
-        return None
-
-
-async def get_image_or_gif_frames(url: str) -> tuple[list[Image.Image], int]:
-    image_data = await fetch_image(url)
-    if image_data is None:
-        return [], 0
-    image = Image.open(image_data)  # type: ignore[arg-type]
-    frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(image)]
-    duration = image.info.get("duration", 100)
-    return frames, duration
-
-
-def process_image(background_frames, avatar_frames, user) -> None:  # type: ignore[no-untyped-def]
+def _process_welcome_image_sync(
+    background_frames: list[Image.Image],
+    avatar_frames: list[Image.Image],
+    user: discord.Member,
+) -> io.BytesIO:
     num_frames = max(len(background_frames), len(avatar_frames))
     background_frames *= (num_frames // len(background_frames)) + 1
     avatar_frames *= (num_frames // len(avatar_frames)) + 1
@@ -180,26 +162,21 @@ def process_image(background_frames, avatar_frames, user) -> None:  # type: igno
     for i in range(len(avatar_frames)):
         avatar_frames[i] = avatar_frames[i].resize((150, 150))
 
-    mask = Image.new("L", (150, 150), 0)
-    mask_draw = ImageDraw.Draw(mask)
-    mask_draw.ellipse((0, 0, 150, 150), fill=255)
+    mask = create_circular_mask((150, 150))
 
-    result_frames = []
+    result_frames: list[Image.Image] = []
 
     for frame_index in range(num_frames):
         bg_frame = background_frames[frame_index]
         avatar_frame = avatar_frames[frame_index]
 
         frame = bg_frame.copy()
-        draw = ImageDraw.Draw(frame)
 
-        overlay = Image.new("RGBA", frame.size, (0, 0, 0, 0))
-        overlay_draw = ImageDraw.Draw(overlay)
-        overlay_draw.rectangle([0, 0, 600, 400], fill=(0, 0, 0, 100))
+        overlay = create_overlay(frame.size, (0, 0, 0, 100))
         frame = Image.alpha_composite(frame, overlay)
 
-        username_font = ImageFont.truetype("assets/fonts/Arial.ttf", 36)
-        info_font = ImageFont.truetype("assets/fonts/Arial.ttf", 24)
+        username_font = load_font("assets/fonts/Arial.ttf", 36)
+        info_font = load_font("assets/fonts/Arial.ttf", 24)
 
         draw = ImageDraw.Draw(frame)
 
@@ -236,18 +213,8 @@ def process_image(background_frames, avatar_frames, user) -> None:  # type: igno
 
         result_frames.append(frame)
 
-    img_byte_arr = io.BytesIO()
-    result_frames[0].save(
-        img_byte_arr,
-        format="GIF",
-        save_all=True,
-        append_images=result_frames[1:],
-        loop=0,
-        duration=background_frames[0].info.get("duration", 100),
-    )
-    img_byte_arr.seek(0)
-
-    return img_byte_arr  # type: ignore[return-value]
+    duration = background_frames[0].info.get("duration", 100)
+    return save_optimized_gif(result_frames, duration)
 
 
 async def welcomeNewUser(member: discord.Member) -> None:
@@ -266,16 +233,14 @@ async def welcomeNewUser(member: discord.Member) -> None:
     if not background_frames or not avatar_frames:
         return
 
-    loop = asyncio.get_event_loop()
-    img_byte_arr = await loop.run_in_executor(  # type: ignore[func-returns-value]
-        executor,
-        process_image,
-        background_frames,  # type: ignore[has-type]
-        avatar_frames,  # type: ignore[has-type]
+    img_byte_arr = await run_in_executor(
+        _process_welcome_image_sync,
+        background_frames,
+        avatar_frames,
         member,
     )
 
-    file = discord.File(img_byte_arr, filename="bg.gif")  # type: ignore[arg-type]
+    file = discord.File(img_byte_arr, filename="bg.gif")
 
     description = welcome_channel.message
 
