@@ -7,6 +7,7 @@ service with typed parameter models and clear method names.
 
 from datetime import datetime
 from typing import Annotated, Any
+import json
 
 from pydantic import BaseModel, Field, StringConstraints
 
@@ -51,17 +52,14 @@ class ScheduledMessageService:
         from api import execute_action
 
         # Serialize attachments to JSON for storage
-        # Note: The database schema currently doesn't have an attachments column.
-        # This implementation validates and normalizes attachments but cannot persist them
-        # until the schema is updated with an attachments TEXT/JSON column.
-        # attachments_json = None
-        # if params.attachments:
-        #     attachments_json = json.dumps([att.model_dump() for att in params.attachments])
+        attachments_json = None
+        if params.attachments:
+            attachments_json = json.dumps([att.model_dump() for att in params.attachments])
 
         query = """
         INSERT INTO scheduledMessages
-        (guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        (guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         db_params = (
             params.guild_id,
@@ -71,10 +69,9 @@ class ScheduledMessageService:
             params.send_time,
             params.repeat_interval,
             params.repeat_amount,
+            attachments_json,
         )
         await execute_action(query, db_params)
-        # TODO: Once the database schema is updated to include an attachments column,
-        # add attachments_json to the INSERT statement and db_params tuple.
 
     @staticmethod
     async def get_user_messages(user_id: UserId) -> list[ScheduledMessageModel]:
@@ -82,7 +79,7 @@ class ScheduledMessageService:
 
         query = """
         SELECT messageId, guild_id, channel_id, user_id, content, send_time,
-               repeatInterval, repeatAmount, created_at
+               repeatInterval, repeatAmount, attachments, created_at
         FROM scheduledMessages
         WHERE user_id = %s
         ORDER BY send_time ASC
@@ -122,7 +119,7 @@ class ScheduledMessageService:
 
         query = """
         SELECT messageId, guild_id, channel_id, user_id, content, send_time,
-               repeatInterval, repeatAmount, created_at
+               repeatInterval, repeatAmount, attachments, created_at
         FROM scheduledMessages WHERE send_time <= NOW()
         """
         rows: list[ScheduledMessageModel] = []
@@ -141,7 +138,7 @@ class ScheduledMessageService:
 
         query = """
         SELECT messageId, guild_id, channel_id, user_id, content, send_time,
-               repeatInterval, repeatAmount, created_at
+               repeatInterval, repeatAmount, attachments, created_at
         FROM scheduledMessages
         WHERE user_id = %s
         AND send_time BETWEEN %s AND %s

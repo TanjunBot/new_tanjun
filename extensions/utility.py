@@ -732,6 +732,16 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         channel=app_commands.locale_str("utility_schedulemessage_params_channel_description"),
         repeatinterval=app_commands.locale_str("utility_schedulemessage_params_repeat_description"),
         repeatamount=app_commands.locale_str("utility_schedulemessage_params_repeatamount_description"),
+        attachment1=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
+        attachment2=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
+        attachment3=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
+        attachment4=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
+        attachment5=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
+        attachment6=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
+        attachment7=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
+        attachment8=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
+        attachment9=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
+        attachment10=app_commands.locale_str("utility_schedulemessage_params_attachment_description"),
     )
     async def schedulemessage(  # type: ignore[no-untyped-def]
         self,
@@ -741,16 +751,16 @@ class ScheduledMessageCommands(discord.app_commands.Group):
         channel: discord.TextChannel = None,  # type: ignore[assignment]
         repeatinterval: app_commands.Range[str, 0, 15] = None,  # type: ignore[assignment]
         repeatamount: app_commands.Range[int, 0, 1000] = None,  # type: ignore[assignment]
-        # attachment1: discord.Attachment = None,
-        # attachment2: discord.Attachment = None,
-        # attachment3: discord.Attachment = None,
-        # attachment4: discord.Attachment = None,
-        # attachment5: discord.Attachment = None,
-        # attachment6: discord.Attachment = None,
-        # attachment7: discord.Attachment = None,
-        # attachment8: discord.Attachment = None,
-        # attachment9: discord.Attachment = None,
-        # attachment10: discord.Attachment = None,
+        attachment1: discord.Attachment = None,  # type: ignore[assignment]
+        attachment2: discord.Attachment = None,  # type: ignore[assignment]
+        attachment3: discord.Attachment = None,  # type: ignore[assignment]
+        attachment4: discord.Attachment = None,  # type: ignore[assignment]
+        attachment5: discord.Attachment = None,  # type: ignore[assignment]
+        attachment6: discord.Attachment = None,  # type: ignore[assignment]
+        attachment7: discord.Attachment = None,  # type: ignore[assignment]
+        attachment8: discord.Attachment = None,  # type: ignore[assignment]
+        attachment9: discord.Attachment = None,  # type: ignore[assignment]
+        attachment10: discord.Attachment = None,  # type: ignore[assignment]
     ) -> None:
         await ctx.response.defer()
         command_info = utility.CommandInfo(
@@ -765,8 +775,8 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        attachments: list[Any] = []  # [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
-        #                          attachment6, attachment7, attachment8, attachment9, attachment10] if a is not None]
+        attachments: list[discord.Attachment] = [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
+                                        attachment6, attachment7, attachment8, attachment9, attachment10] if a is not None]
 
         await scheduleMessageCommand(
             command_info=command_info,

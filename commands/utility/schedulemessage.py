@@ -1,11 +1,14 @@
+import io
 import logging
 from datetime import datetime, timedelta
 
+import aiohttp
 import discord
 
 import utility
 from localizer import tanjunLocalizer
 from services.scheduled_message_service import (
+    Attachment,
     ScheduledMessageService,
     ScheduleMessageParams,
 )
@@ -151,7 +154,6 @@ async def schedule_message(
             return
 
     # Convert Discord attachments to our Attachment model if provided
-    from services.scheduled_message_service import Attachment
     attachment_models = None
     if attachments:
         attachment_models = [
@@ -236,8 +238,33 @@ async def send_scheduled_messages(client: discord.Client) -> None:
             if isinstance(target, (discord.CategoryChannel, discord.ForumChannel)):
                 return
 
+            # Parse and send attachments if present
+            files: list[discord.File] = []
+            if msg.attachments:
+                try:
+                    attachment_data: list[dict] = json.loads(msg.attachments)
+                    for att_data in attachment_data:
+                        url = att_data.get("url", "")
+                        filename = att_data.get("filename", "file")
+
+                        async with aiohttp.ClientSession() as session:
+                            async with session.get(url) as resp:
+                                if resp.status == 200:
+                                    file_bytes = await resp.read()
+                                    files.append(
+                                        discord.File(
+                                            io.BytesIO(file_bytes),
+                                            filename=filename,
+                                        )
+                                    )
+                except (json.JSONDecodeError, Exception):
+                    logging.exception("Failed to parse attachments for scheduled message %s", message_id)
+
             embed = utility.tanjunEmbed(description=content)
-            await target.send(content=content, embed=embed)
+            send_kwargs: dict = {"content": content, "embed": embed}
+            if files:
+                send_kwargs["files"] = files
+            await target.send(**send_kwargs)
 
             if repeat_amount and repeat_amount != 0:
                 repeat_amount -= 1
