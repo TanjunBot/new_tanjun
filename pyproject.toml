@@ -33,7 +33,7 @@ dependencies = [
     "h11==0.16.0",
     "httpcore==1.0.9",
     "httpx==0.28.1",
-    "idna==3.16",
+    "idna==3.17",
     "matplotlib==3.10.9",
     "mpmath>=1.4.1,<1.5",
     "multidict==6.7.1",
