@@ -95,10 +95,8 @@ class LocaleFileHealthCheck(HealthCheck):
             }
             missing_from_de = en_ids - de_ids
             if missing_from_de:
-                # Filter out None values (shouldn't happen based on comprehension above, but satisfy type checker)
-                valid_missing: set[str] = {s for s in missing_from_de if s is not None}  # type: ignore[arg-type]
                 # Limit to first 20 to avoid absurdly long messages
-                sample = sorted(valid_missing)[:20]
+                sample = sorted(missing_from_de)[:20]
                 if len(missing_from_de) > 20:
                     warnings.append(
                         f"en.json has {len(missing_from_de)} entries not in de.json (showing first 20): {', '.join(sample)}"
