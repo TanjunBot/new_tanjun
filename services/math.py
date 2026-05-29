@@ -10,10 +10,13 @@ behind a typed interface, so all math commands go through one service.
 
 from __future__ import annotations
 
+import functools
 import math
 import operator as op
+import re
 from typing import Any
 
+from pydantic import BaseModel
 from pyparsing import (
     CaselessLiteral,
     Combine,
@@ -25,8 +28,6 @@ from pyparsing import (
     alphas,
     nums,
 )
-from pydantic import BaseModel, Field
-
 
 # --- Type aliases ---
 
@@ -66,7 +67,7 @@ class MathError(Exception):
     """Base exception for all math-service errors."""
 
 
-class SyntaxError(MathError):
+class MathSyntaxError(MathError):
     """Raised when the expression cannot be parsed."""
 
 
@@ -109,8 +110,8 @@ class MathService:
         try:
             value = self._eval(expression, variables or {})
             return MathResult(expression=expression, result=round(value, 10), error=None)
-        except MathError:
-            raise
+        except MathError as math_error:
+            return MathResult(expression=expression, result=0.0, error=str(math_error))
         except Exception as exc:
             return MathResult(expression=expression, result=0.0, error=str(exc))
 
@@ -149,34 +150,7 @@ class MathService:
     # -- Internal parser implementation --
 
     def _build_parser(self) -> None:
-        """Set up the pyparsing grammar."""
-        point = Literal(".")
-        e = CaselessLiteral("E")
-        fnumber = Combine(
-            Word("+-" + nums, nums) + Opt(point + Opt(Word(nums))) + Opt(e + Word("+-" + nums, nums))
-        )
-        ident = Word(alphas, alphas + nums + "_$")
-
-        plus, minus, mult, div = map(Literal, "+-*/")
-        lpar, rpar = map(Literal, "()")
-        addop = plus | minus
-        multop = mult | div
-        expop = Literal("^")
-
-        expr = Forward()
-        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(self._push_first) | (
-            lpar + expr.suppress() + rpar
-        ).setParseAction(self._push_uminus)
-
-        factor = Forward()
-        factor << atom + ZeroOrMore((expop + factor).setParseAction(self._push_first))
-
-        term = factor + ZeroOrMore((multop + factor).setParseAction(self._push_first))
-        expr << term + ZeroOrMore((addop + term).setParseAction(self._push_first))
-
-        self._bnf = expr
-        self._expr_stack: list[Any] = []
-
+        """Set up the pyparsing grammar (function and operator maps only)."""
         # Function map
         self._fn: dict[str, Any] = {
             "sin": math.sin,
@@ -220,15 +194,15 @@ class MathService:
         }
 
     @staticmethod
-    def _cmp(a: int, b: int) -> int:
+    def _cmp(a: float, b: float) -> int:
         return (a > b) - (a < b)
 
-    def _push_first(self, _strg: str, _loc: int, toks: Any) -> None:
-        self._expr_stack.append(toks[0])
+    def _push_first(self, stack: list[Any], _strg: str, _loc: int, toks: Any) -> None:
+        stack.append(toks[0])
 
-    def _push_uminus(self, _strg: str, _loc: int, toks: Any) -> None:
+    def _push_uminus(self, stack: list[Any], _strg: str, _loc: int, toks: Any) -> None:
         if toks and toks[0] == "-":
-            self._expr_stack.append("unary -")
+            stack.append("unary -")
 
     def _evaluate_stack(self, s: list[Any]) -> float:
         op = s.pop()
@@ -257,20 +231,49 @@ class MathService:
         vars_dict = variables or {}
 
         if vars_dict:
-            # Substitute variable names with their values
+            # Substitute variable names with their values using word boundaries
             substituted = expression
             for name, value in vars_dict.items():
-                substituted = substituted.replace(name, str(value))
+                pattern = r'\b' + re.escape(name) + r'\b'
+                substituted = re.sub(pattern, str(value), substituted)
             expression = substituted
 
-        self._expr_stack = []
-        try:
-            parsed = self._bnf.parseString(expression, parseAll=True)
-        except Exception as exc:
-            raise SyntaxError(f"Failed to parse expression: {exc}") from exc
+        expr_stack: list[Any] = []
+
+        # Create a temporary parser with local stack bindings
+        point = Literal(".")
+        e_lit = CaselessLiteral("E")
+        fnumber = Combine(
+            Word("+-" + nums, nums) + Opt(point + Opt(Word(nums))) + Opt(e_lit + Word("+-" + nums, nums))
+        )
+        ident = Word(alphas, alphas + nums + "_$")
+
+        plus, minus, mult, div = map(Literal, "+-*/")
+        lpar, rpar = map(Literal, "()")
+        addop = plus | minus
+        multop = mult | div
+        expop = Literal("^")
+
+        expr = Forward()
+        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(
+            functools.partial(self._push_first, expr_stack)
+        ) | (lpar + expr.suppress() + rpar).setParseAction(
+            functools.partial(self._push_uminus, expr_stack)
+        )
+
+        factor = Forward()
+        factor << atom + ZeroOrMore((expop + factor).setParseAction(functools.partial(self._push_first, expr_stack)))
+
+        term = factor + ZeroOrMore((multop + factor).setParseAction(functools.partial(self._push_first, expr_stack)))
+        expr << term + ZeroOrMore((addop + term).setParseAction(functools.partial(self._push_first, expr_stack)))
 
         try:
-            return self._evaluate_stack(self._expr_stack[:])
+            _ = expr.parseString(expression, parseAll=True)
+        except Exception as exc:
+            raise MathSyntaxError(f"Failed to parse expression: {exc}") from exc
+
+        try:
+            return self._evaluate_stack(expr_stack[:])
         except ZeroDivisionError as exc:
             raise EvaluationError(f"Division by zero: {exc}") from exc
         except OverflowError as exc:

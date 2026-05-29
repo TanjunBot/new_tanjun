@@ -19,8 +19,9 @@ class LevelConfigRepository:
 
     async def get_config(self, guild_id: str) -> LevelConfig:
         """Load the full LevelConfig for a guild, returning defaults if none exists."""
-        from api import _guild_config_cache, _is_cache_valid, _GUILD_CONFIG_CACHE_TTL, execute_query
         import time
+
+        from api import _GUILD_CONFIG_CACHE_TTL, _guild_config_cache, _is_cache_valid, execute_query
 
         # Check cache first
         cache_entry = _guild_config_cache.get(guild_id)

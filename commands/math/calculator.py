@@ -1,7 +1,7 @@
+from typing import Any
+
 import discord
 from discord import ui
-
-from typing import Any
 
 import config
 import utility
@@ -345,7 +345,9 @@ class CalculatorView(ui.View):
                     var_result = math_service.evaluate(var_value.strip())
                     if not var_result.error:
                         self.variables[var_name.strip()] = var_result.result
-                    self.result = f"{var_name} = {self.variables[var_name]}"
+                        self.result = f"{var_name.strip()} = {self.variables[var_name.strip()]}"
+                    else:
+                        self.result = var_result.error
                 except Exception as e:
                     self.result = tanjunLocalizer.localize(
                         self.command_info.locale,

@@ -20,7 +20,7 @@ async def calc(command_info: "utility.CommandInfo", expression: str) -> None:  #
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.math.calc.success.title"),
             description=tanjunLocalizer.localize(
-                command_info.locale,
+                str(command_info.locale),
                 "commands.math.calc.success.description",
                 expression=expression,
                 result=result.result,
