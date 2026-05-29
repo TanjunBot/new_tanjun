@@ -20,6 +20,57 @@ Handler = Callable[..., Awaitable[Any]]
 """Type alias for an async handler callable."""
 
 
+async def _execute_with_logging(
+    name: str,
+    fn: Handler,
+    args: tuple[Any, ...],
+    kwargs: dict[str, Any],
+    message: discord.Message,
+) -> Any:  # noqa: ANN401
+    """Execute a handler with timing and exception logging.
+
+    Parameters
+    ----------
+    name:
+        Handler name for logging.
+    fn:
+        The async handler callable.
+    args:
+        Positional arguments to pass to the handler.
+    kwargs:
+        Keyword arguments to pass to the handler.
+    message:
+        The Discord message for context logging.
+
+    Returns
+    -------
+        The handler result, or the ``Exception`` instance if it failed.
+    """
+    _t0 = time.monotonic()
+    try:
+        result = await fn(*args, **kwargs)
+        _elapsed = (time.monotonic() - _t0) * 1000
+        logger.debug(
+            "Handler '%s' completed in %.1f ms for message %s",
+            name,
+            _elapsed,
+            message.id,
+        )
+        return result
+    except Exception as exc:
+        _elapsed = (time.monotonic() - _t0) * 1000
+        logger.exception(
+            "Handler '%s' raised an exception after %.1f ms "
+            "(message %s, channel %s): %s",
+            name,
+            _elapsed,
+            message.id,
+            message.channel.id,
+            exc,
+        )
+        return exc
+
+
 async def run_handlers_safe(
     handlers: list[tuple[str, Handler, tuple[Any, ...], dict[str, Any]]],
     message: discord.Message,
@@ -42,30 +93,8 @@ async def run_handlers_safe(
         Results from each handler (may include ``Exception`` instances).
     """
 
-    async def _run_one(name: str, fn: Handler, *args: Any, **kwargs: Any) -> Any:
-        _t0 = time.monotonic()
-        try:
-            result = await fn(*args, **kwargs)
-            _elapsed = (time.monotonic() - _t0) * 1000
-            logger.debug(
-                "Handler '%s' completed in %.1f ms for message %s",
-                name,
-                _elapsed,
-                message.id,
-            )
-            return result
-        except Exception as exc:
-            _elapsed = (time.monotonic() - _t0) * 1000
-            logger.exception(
-                "Handler '%s' raised an exception after %.1f ms "
-                "(message %s, channel %s): %s",
-                name,
-                _elapsed,
-                message.id,
-                message.channel.id,
-                exc,
-            )
-            return exc
+    async def _run_one(name: str, fn: Handler, *args: object, **kwargs: object) -> Any:  # noqa: ANN401
+        return await _execute_with_logging(name, fn, args, kwargs, message)
 
     tasks = [
         _run_one(name, fn, *args, **kwargs)
@@ -97,27 +126,6 @@ async def run_handlers_sequential(
     """
     results: list[Any] = []
     for name, fn, args, kwargs in handlers:
-        _t0 = time.monotonic()
-        try:
-            result = await fn(*args, **kwargs)
-            _elapsed = (time.monotonic() - _t0) * 1000
-            logger.debug(
-                "Handler '%s' completed in %.1f ms for message %s",
-                name,
-                _elapsed,
-                message.id,
-            )
-            results.append(result)
-        except Exception as exc:
-            _elapsed = (time.monotonic() - _t0) * 1000
-            logger.exception(
-                "Handler '%s' raised an exception after %.1f ms "
-                "(message %s, channel %s): %s",
-                name,
-                _elapsed,
-                message.id,
-                message.channel.id,
-                exc,
-            )
-            results.append(exc)
+        result = await _execute_with_logging(name, fn, args, kwargs, message)
+        results.append(result)
     return results

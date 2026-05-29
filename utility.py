@@ -17,8 +17,6 @@ from collections.abc import Callable, Coroutine, Mapping
 from difflib import SequenceMatcher
 from typing import Annotated, Any, Self, TypeVar
 
-from pydantic import BaseModel, ConfigDict
-
 import aiohttp
 import discord
 from aiohttp import ClientTimeout
