@@ -321,3 +321,39 @@ def register_handler(
 # Module-level singleton – imported by listener cog and extensions
 # ------------------------------------------------------------------
 registry: HandlerRegistry = HandlerRegistry()
+
+
+# ------------------------------------------------------------------
+# Module-level functional API (wrappers for the singleton)
+# ------------------------------------------------------------------
+
+
+def register(handler: MessageHandler) -> None:
+    """Register a single message handler in the global registry."""
+    registry.register(handler)
+
+
+def clear() -> None:
+    """Remove all handlers from the global registry."""
+    registry._handlers.clear()
+
+
+def registered_handlers() -> list[MessageHandler]:
+    """Return a list of all handlers in the global registry."""
+    return registry._handlers
+
+
+def freeze() -> None:
+    """No-op for backward compatibility."""
+    pass
+
+
+async def dispatch(message: discord.Message) -> None:
+    """Dispatch message to all matching global handlers concurrently."""
+    handlers = registry.get_handlers(message)
+    # Convert MessageHandler objects to the tuple format expected by run_handlers_safe
+    to_run = [
+        (h.name, h.callback, (message,), h.kwargs)  # type: ignore[arg-type]
+        for h in handlers
+    ]
+    await run_handlers_safe(to_run, message)
