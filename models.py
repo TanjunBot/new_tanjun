@@ -867,3 +867,58 @@ class LevelRolesGroupModel(BaseModel):
 
     level: int = Field(ge=0)
     role_ids: Annotated[list[Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]], Field(min_length=1)]
+
+
+# ── Counting Models ──────────────────────────────────────────────────────────
+
+
+class CountingConfigModel(BaseModel):
+    """Counting progress and last counter state for normal/challenge tables."""
+
+    progress: int = Field(ge=0)
+    last_counter_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+
+    @classmethod
+    def from_row(cls, row: tuple) -> CountingConfigModel:
+        return cls(progress=row[0], last_counter_id=row[1], guild_id=row[2])
+
+
+class CountingModesConfigModel(BaseModel):
+    """Counting progress and state for the counting_modes table (includes mode & goal)."""
+
+    progress: int = Field(ge=0)
+    mode: int
+    goal: int = Field(ge=0)
+    last_counter_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+
+    @classmethod
+    def from_row(cls, row: tuple) -> CountingModesConfigModel:
+        return cls(
+            progress=row[0], mode=row[1], goal=row[2],
+            last_counter_id=row[3], guild_id=row[4],
+        )
+
+
+# ── Twitch Models ────────────────────────────────────────────────────────────
+
+
+class TwitchUserModel(BaseModel):
+    """A Twitch user returned by the Helix API /users endpoint."""
+
+    id: str
+    login: str
+    display_name: str
+    type: str = ""
+    broadcaster_type: str = ""
+    description: str = ""
+    profile_image_url: str = ""
+    offline_image_url: str = ""
+    view_count: int = 0
+    created_at: str = ""
+
+    @classmethod
+    def from_api_response(cls, data: dict[str, str]) -> TwitchUserModel:
+        """Create a TwitchUserModel from a raw Helix API user dict."""
+        return cls(**data)
