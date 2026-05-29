@@ -14,22 +14,39 @@ Usage:
 
 from __future__ import annotations
 
+import asyncio
+import json
 from typing import Any
 
 import aiohttp
-from pydantic import BaseModel, Field
+from pydantic import AliasPath, BaseModel, ConfigDict, Field
 
 
 # ── Pydantic Models ──────────────────────────────────────────────────────────
 
 
-class BrawlStarsIcon(BaseModel):
+def to_camel_case(snake_str: str) -> str:
+    """Convert snake_case to camelCase."""
+    components = snake_str.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
+
+
+class BrawlStarsBaseModel(BaseModel):
+    """Base model with camelCase alias support for all Brawl Stars models."""
+
+    model_config = ConfigDict(
+        alias_generator=to_camel_case,
+        populate_by_name=True,
+    )
+
+
+class BrawlStarsIcon(BrawlStarsBaseModel):
     """Represents an icon/avatar in Brawl Stars API responses."""
 
     id: int | None = None
 
 
-class BrawlStarsClub(BaseModel):
+class BrawlStarsClub(BrawlStarsBaseModel):
     """Represents a club associated with a player or queried directly."""
 
     tag: str = ""
@@ -42,7 +59,7 @@ class BrawlStarsClub(BaseModel):
     members: list["BrawlStarsClubMember"] = Field(default_factory=list)
 
 
-class BrawlStarsClubMember(BaseModel):
+class BrawlStarsClubMember(BrawlStarsBaseModel):
     """Represents a single member within a club."""
 
     tag: str
@@ -55,7 +72,7 @@ class BrawlStarsClubMember(BaseModel):
     club_rank: int | None = None
 
 
-class BrawlerGear(BaseModel):
+class BrawlerGear(BrawlStarsBaseModel):
     """A gear equipped on a brawler."""
 
     id: int
@@ -63,21 +80,21 @@ class BrawlerGear(BaseModel):
     level: int
 
 
-class BrawlerGadget(BaseModel):
+class BrawlerGadget(BrawlStarsBaseModel):
     """A gadget equipped on a brawler."""
 
     id: int
     name: str
 
 
-class BrawlerStarPower(BaseModel):
+class BrawlerStarPower(BrawlStarsBaseModel):
     """A star power equipped on a brawler."""
 
     id: int
     name: str
 
 
-class BrawlerInfo(BaseModel):
+class BrawlerInfo(BrawlStarsBaseModel):
     """Detailed info for a single brawler a player owns."""
 
     id: int
@@ -91,7 +108,7 @@ class BrawlerInfo(BaseModel):
     star_powers: list[BrawlerStarPower] = Field(default_factory=list)
 
 
-class BrawlStarsPlayer(BaseModel):
+class BrawlStarsPlayer(BrawlStarsBaseModel):
     """Full player model returned by the Brawl Stars API."""
 
     tag: str
@@ -112,20 +129,20 @@ class BrawlStarsPlayer(BaseModel):
     icon: BrawlStarsIcon | None = None
 
 
-class BrawlStarPlayerBrawler(BaseModel):
+class BrawlStarPlayerBrawler(BrawlStarsBaseModel):
     """Minimal brawler data from the /v1/brawlers endpoint."""
 
     id: int
     name: str
 
 
-class BrawlStarsBrawlerList(BaseModel):
+class BrawlStarsBrawlerList(BrawlStarsBaseModel):
     """Response from the /v1/brawlers list endpoint."""
 
     items: list[BrawlStarPlayerBrawler] = Field(default_factory=list)
 
 
-class BrawlStarsEvent(BaseModel):
+class BrawlStarsEvent(BrawlStarsBaseModel):
     """A single event in the current rotation."""
 
     start_time: str
@@ -133,7 +150,7 @@ class BrawlStarsEvent(BaseModel):
     event: "BrawlStarsEventDetail"
 
 
-class BrawlStarsEventDetail(BaseModel):
+class BrawlStarsEventDetail(BrawlStarsBaseModel):
     """Details of a single event slot."""
 
     id: int
@@ -141,13 +158,13 @@ class BrawlStarsEventDetail(BaseModel):
     map: str
 
 
-class BrawlStarsEventRotation(BaseModel):
+class BrawlStarsEventRotation(BrawlStarsBaseModel):
     """Wrapper for the event rotation endpoint (list in response)."""
 
     items: list[BrawlStarsEvent] = Field(default_factory=list)
 
 
-class BattlePlayer(BaseModel):
+class BattlePlayer(BrawlStarsBaseModel):
     """Player info within a battle."""
 
     tag: str
@@ -155,22 +172,22 @@ class BattlePlayer(BaseModel):
     brawler: BrawlerInfo | None = None
 
 
-class BrawlStarsBattle(BaseModel):
+class BrawlStarsBattle(BrawlStarsBaseModel):
     """A single battle entry from the battle log."""
 
-    battle_time: str
-    mode: str
-    type: str
-    result: str | None = None
-    duration: int | None = None
-    trophy_change: int | None = None
-    star_player: BattlePlayer | None = None
-    teams: list[list[BattlePlayer]] | None = None
-    players: list[BattlePlayer] | None = None
-    map: str | None = None
+    battle_time: str = Field(validation_alias="battleTime")
+    mode: str = Field(validation_alias=AliasPath("event", "mode"))
+    type: str = Field(validation_alias=AliasPath("battle", "type"))
+    result: str | None = Field(default=None, validation_alias=AliasPath("battle", "result"))
+    duration: int | None = Field(default=None, validation_alias=AliasPath("battle", "duration"))
+    trophy_change: int | None = Field(default=None, validation_alias=AliasPath("battle", "trophyChange"))
+    star_player: BattlePlayer | None = Field(default=None, validation_alias=AliasPath("battle", "starPlayer"))
+    teams: list[list[BattlePlayer]] | None = Field(default=None, validation_alias=AliasPath("battle", "teams"))
+    players: list[BattlePlayer] | None = Field(default=None, validation_alias=AliasPath("battle", "players"))
+    map: str | None = Field(default=None, validation_alias=AliasPath("event", "map"))
 
 
-class BrawlStarsBattleLog(BaseModel):
+class BrawlStarsBattleLog(BrawlStarsBaseModel):
     """Response from the battle log endpoint."""
 
     items: list[BrawlStarsBattle] = Field(default_factory=list)
@@ -199,17 +216,19 @@ class BrawlStarsService:
 
         self._token: str = token or brawlstarsToken
         self._session: aiohttp.ClientSession | None = session
+        self._owns_session: bool = session is None
 
     # ── Session management ──────────────────────────────────────────────────
 
     async def _get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession()
+            self._owns_session = True
         return self._session
 
     async def close(self) -> None:
         """Close the underlying session if owned by this service."""
-        if self._session is not None and not self._session.closed:
+        if self._session is not None and not self._session.closed and self._owns_session:
             await self._session.close()
 
     async def __aenter__(self) -> BrawlStarsService:
@@ -224,34 +243,43 @@ class BrawlStarsService:
         """Perform a GET request to the Brawl Stars API.
 
         Returns the parsed JSON dict on success (HTTP 200), or ``None`` on
-        any non-200 status.
+        any non-200 status, network errors, timeouts, or JSON parsing errors.
         """
-        session = await self._get_session()
-        async with session.get(
-            f"{self.BASE_URL}{path}",
-            headers={"Authorization": f"Bearer {self._token}"},
-            timeout=aiohttp.ClientTimeout(total=10),
-        ) as response:
-            if response.status != 200:
+        try:
+            session = await self._get_session()
+            async with session.get(
+                f"{self.BASE_URL}{path}",
+                headers={"Authorization": f"Bearer {self._token}"},
+                timeout=aiohttp.ClientTimeout(total=10),
+            ) as response:
+                if response.status != 200:
+                    return None
+                data: Any = await response.json()
+                if isinstance(data, dict):
+                    return data
                 return None
-            data: Any = await response.json()
-            if isinstance(data, dict):
-                return data
+        except (aiohttp.ClientError, asyncio.TimeoutError, json.JSONDecodeError, ValueError):
             return None
 
     async def _get_list(self, path: str) -> list[dict[str, Any]]:
-        """Perform a GET request that returns a list (e.g. event rotation)."""
-        session = await self._get_session()
-        async with session.get(
-            f"{self.BASE_URL}{path}",
-            headers={"Authorization": f"Bearer {self._token}"},
-            timeout=aiohttp.ClientTimeout(total=10),
-        ) as response:
-            if response.status != 200:
+        """Perform a GET request that returns a list (e.g. event rotation).
+
+        Returns an empty list on network errors, timeouts, or JSON parsing errors.
+        """
+        try:
+            session = await self._get_session()
+            async with session.get(
+                f"{self.BASE_URL}{path}",
+                headers={"Authorization": f"Bearer {self._token}"},
+                timeout=aiohttp.ClientTimeout(total=10),
+            ) as response:
+                if response.status != 200:
+                    return []
+                data: Any = await response.json()
+                if isinstance(data, list):
+                    return data
                 return []
-            data: Any = await response.json()
-            if isinstance(data, list):
-                return data
+        except (aiohttp.ClientError, asyncio.TimeoutError, json.JSONDecodeError, ValueError):
             return []
 
     # ── Player endpoints ────────────────────────────────────────────────────
@@ -296,13 +324,13 @@ class BrawlStarsService:
 
     # ── Events endpoints ────────────────────────────────────────────────────
 
-    async def get_events(self) -> list[dict[str, Any]]:
+    async def get_events(self) -> list[BrawlStarsEvent]:
         """Fetch the current event rotation.
 
-        Returns raw dicts because the event rotation schema is a list at the
-        top level. Callers can access ``event["event"]["map"]`` etc.
+        Returns parsed BrawlStarsEvent model instances.
         """
-        return await self._get_list("/events/rotation")
+        data = await self._get_list("/events/rotation")
+        return [BrawlStarsEvent.model_validate(event) for event in data]
 
 
 # Module-level singleton for convenient import

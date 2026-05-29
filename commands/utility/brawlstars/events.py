@@ -23,16 +23,16 @@ async def events(command_info: command_info):
 
     async def generate_page(page_num: int) -> discord.Embed:
         event = event_rotation[page_num]
-        start_time = event["start_time"]
+        start_time = event.start_time
         start_timestamp = date_time_to_timestamp(isoTimeToDate(start_time))
-        end_time = event["end_time"]
+        end_time = event.end_time
         end_timestamp = date_time_to_timestamp(isoTimeToDate(end_time))
-        map_ = event["event"]["map"]
+        map_ = event.event.map
         map_locale = tanjunLocalizer.localize(
             command_info.locale,
             f"commands.utility.brawlstars.maps.{map_}",
         )
-        mode = event["event"]["mode"]
+        mode = event.event.mode
         mode_locale = tanjunLocalizer.localize(
             command_info.locale,
             f"commands.utility.brawlstars.game_modes.{mode}",

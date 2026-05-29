@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any
-
 from services.brawlstars import get_brawlstars_service
 from api import get_brawlstars_linked_account
 from localizer import tanjunLocalizer
