@@ -13136,54 +13136,6 @@
     "max_length": null
   },
   {
-    "identifier": "commands.image.background.disabled.title",
-    "source_string": "Hintergrundentfernung deaktiviert",
-    "translation": "Background removal is temporarily disabled.",
-    "context": "commands -> image -> background -> disabled -> title",
-    "labels": "de.json",
-    "max_length": null
-  },
-  {
-    "identifier": "commands.image.background.disabled.description",
-    "source_string": "Die Hintergrundentfernung ist derzeit nicht verfügbar.",
-    "translation": "Background removal functionality is temporarily unavailable.",
-    "context": "commands -> image -> background -> disabled -> description",
-    "labels": "de.json",
-    "max_length": null
-  },
-  {
-    "identifier": "commands.ai.ask.noapi.title",
-    "source_string": "API-Schlüssel nicht verfügbar",
-    "translation": "OpenAI API Key not available",
-    "context": "commands -> ai -> ask -> noapi -> title",
-    "labels": "de.json",
-    "max_length": null
-  },
-  {
-    "identifier": "commands.ai.ask.noapi.description",
-    "source_string": "Die OpenAI API ist derzeit nicht verfügbar. Bitte versuche es später nochmal.",
-    "translation": "OpenAI API is currently unavailable. Please try again later.",
-    "context": "commands -> ai -> ask -> noapi -> description",
-    "labels": "de.json",
-    "max_length": null
-  },
-  {
-    "identifier": "commands.ai.ask.noapi.title",
-    "source_string": "API-Schlüssel nicht verfügbar",
-    "translation": "OpenAI API Key not available",
-    "context": "commands -> ai -> ask -> noapi -> title",
-    "labels": "de.json",
-    "max_length": null
-  },
-  {
-    "identifier": "commands.ai.ask.noapi.description",
-    "source_string": "Die OpenAI API ist derzeit nicht verfügbar. Bitte versuche es später nochmal.",
-    "translation": "OpenAI API is currently unavailable. Please try again later.",
-    "context": "commands -> ai -> ask -> noapi -> description",
-    "labels": "de.json",
-    "max_length": null
-  },
-  {
     "identifier": "commands.image.edgeenhance.success.title",
     "source_string": "Kanten verbessert",
     "translation": "Edges improved",
@@ -29488,22 +29440,6 @@
     "max_length": 100
   },
   {
-    "identifier": "admin.triggermessages.name",
-    "source_string": "triggernachrichten",
-    "translation": "trigger news",
-    "context": "the name of the triggermessages command group. Only lowercase characters and no spaces allowed",
-    "labels": "command_name, unassigned",
-    "max_length": 32
-  },
-  {
-    "identifier": "admin.triggermessages.description",
-    "source_string": "Verwalte die Triggernachrichten",
-    "translation": "Manage the trigger messages",
-    "context": "The description of the Trigger messages command group",
-    "labels": "command_description, unassigned",
-    "max_length": 100
-  },
-  {
     "identifier": "admin.jointocreate.name",
     "source_string": "jointocreate",
     "translation": "jointocreate",
@@ -29526,14 +29462,6 @@
     "context": "The name of the Fun command group. Only lowercase characters and no spaces allowed",
     "labels": "command_name, unassigned",
     "max_length": 32
-  },
-  {
-    "identifier": "fun.description",
-    "source_string": "Interagiere mit anderen Usern",
-    "translation": "Interact with other users",
-    "context": "The description of the Fun command Group.",
-    "labels": "command_description, unassigned",
-    "max_length": 100
   },
   {
     "identifier": "games.name",
@@ -29596,22 +29524,6 @@
     "source_string": "Das Level System des Servers",
     "translation": "The level system of the server",
     "context": "The description of the level command group",
-    "labels": "command_description, unassigned",
-    "max_length": 100
-  },
-  {
-    "identifier": "math.name",
-    "source_string": "mathe",
-    "translation": "math",
-    "context": "The name of the math command group. Only lowercase characters and no spaces allowed",
-    "labels": "command_name, unassigned",
-    "max_length": 32
-  },
-  {
-    "identifier": "math.description",
-    "source_string": "Mathe Befehle",
-    "translation": "Math commands",
-    "context": "The description of the math command group",
     "labels": "command_description, unassigned",
     "max_length": 100
   },
@@ -29976,26 +29888,10 @@
     "max_length": 32
   },
   {
-    "identifier": "utility.bs.link.params.tag.description",
-    "source_string": "Dein Brawl Stars Tag",
-    "translation": "Your Brawl Stars tag",
-    "context": "The description of the tag param in the bs link command",
-    "labels": "command_description, unassigned",
-    "max_length": 100
-  },
-  {
     "identifier": "utility.twitch.add.params.twitch.name.description",
     "source_string": "der Name des Twitch Kanals",
     "translation": "the name of the Twitch channel",
     "context": "The description of the name param in the twitch add command",
-    "labels": "command_description, unassigned",
-    "max_length": 100
-  },
-  {
-    "identifier": "utility.twitch.add.params.channel.description",
-    "source_string": "Der Kanal in den die Benachrichtigung gesendet werden soll",
-    "translation": "The channel to which the notification is to be sent",
-    "context": "The description from the channel param in the twitch add command.",
     "labels": "command_description, unassigned",
     "max_length": 100
   },
@@ -30224,14 +30120,6 @@
     "max_length": 4096
   },
   {
-    "identifier": "user",
-    "source_string": "nutzer",
-    "translation": "user",
-    "context": "the user param used in some commands. Only lowercase characters and no spaces allowed.",
-    "labels": "command_name, unassigned",
-    "max_length": 32
-  },
-  {
     "identifier": "admin.setlocale.name",
     "source_string": "sprache_setzen",
     "translation": "set_language",
@@ -30260,14 +30148,6 @@
     "source_string": "sprache",
     "translation": "language",
     "context": "The name of the locale param. Only lowercase characters and no spaces allowed.",
-    "labels": "command_name, unassigned",
-    "max_length": 32
-  },
-  {
-    "identifier": "locale",
-    "source_string": "sprache",
-    "translation": "language",
-    "context": "the locale param used in some commands. only lowercase characters and no strings allowed",
     "labels": "command_name, unassigned",
     "max_length": 32
   },
@@ -31836,6 +31716,334 @@
     "source_string": "If this keeps happening, please report it to the bot developers.",
     "translation": "If this keeps happening, please report it to the bot developers.",
     "context": "Bug report prompt for unexpected errors",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.ai.ask.noapi.description",
+    "source_string": "OpenAI API is currently unavailable. Please try again later.",
+    "translation": "OpenAI API is currently unavailable. Please try again later.",
+    "context": "commands -> ai -> ask -> noapi -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.ai.ask.noapi.title",
+    "source_string": "OpenAI API Key not available",
+    "translation": "OpenAI API Key not available",
+    "context": "commands -> ai -> ask -> noapi -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.background.disabled.description",
+    "source_string": "Background removal functionality is temporarily unavailable.",
+    "translation": "Background removal functionality is temporarily unavailable.",
+    "context": "commands -> image -> background -> disabled -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.background.disabled.title",
+    "source_string": "Background removal is temporarily disabled.",
+    "translation": "Background removal is temporarily disabled.",
+    "context": "commands -> image -> background -> disabled -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.createEmoji.role_select",
+    "source_string": "Select the roles that should receive the emoji:",
+    "translation": "Select the roles that should receive the emoji:",
+    "context": "commands -> admin -> createEmoji -> role_select",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.createEmoji.role_selectPlaceholder",
+    "source_string": "Select roles...",
+    "translation": "Select roles...",
+    "context": "commands -> admin -> createEmoji -> role_selectPlaceholder",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.editor.pro_required",
+    "source_string": "You need to be a Pro user to edit giveaways.",
+    "translation": "You need to be a Pro user to edit giveaways.",
+    "context": "commands -> giveaway -> editor -> pro_required",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.level.disablelevelsystem.cancel.title",
+    "source_string": "Cancelled",
+    "translation": "Cancelled",
+    "context": "commands -> level -> disablelevelsystem -> cancel -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs",
+    "source_string": "Logs",
+    "translation": "Logs",
+    "context": "commands -> logs",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.activated",
+    "source_string": "Activated",
+    "translation": "Activated",
+    "context": "commands -> logs -> configureLogs -> configuration_embed -> activated",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.deactivated",
+    "source_string": "Deactivated",
+    "translation": "Deactivated",
+    "context": "commands -> logs -> configureLogs -> configuration_embed -> deactivated",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.timeout.title",
+    "source_string": "Timeout",
+    "translation": "Timeout",
+    "context": "commands -> utility -> removescheduled -> error -> timeout -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.guildonly.description",
+    "source_string": "This command can only be used in a server.",
+    "translation": "This command can only be used in a server.",
+    "context": "errors -> guildonly -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.guildonly.title",
+    "source_string": "Server only",
+    "translation": "Server only",
+    "context": "errors -> guildonly -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.created_by",
+    "source_string": "Erstellt von ${creator}",
+    "translation": "Created by ${creator}",
+    "context": "logs -> guildChannelCreate -> created_by",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.name",
+    "source_string": "Name: ${name}",
+    "translation": "Name: ${name}",
+    "context": "logs -> guildChannelCreate -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.permissionOverwrites",
+    "source_string": "Berechtigungen:",
+    "translation": "Authorizations:",
+    "context": "logs -> guildChannelCreate -> permissionOverwrites",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.title",
+    "source_string": "Kanal erstellt",
+    "translation": "Channel created",
+    "context": "logs -> guildChannelCreate -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.topic",
+    "source_string": "Thema: ${topic}",
+    "translation": "Topic: ${topic}",
+    "context": "logs -> guildChannelCreate -> topic",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.deleted_by",
+    "source_string": "Gelöscht von ${deleter}",
+    "translation": "Deleted from ${deleter}",
+    "context": "logs -> guildChannelDelete -> deleted_by",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.name",
+    "source_string": "Name: ${name}",
+    "translation": "Name: ${name}",
+    "context": "logs -> guildChannelDelete -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.permissionOverwrites",
+    "source_string": "Berechtigungen:",
+    "translation": "Authorizations:",
+    "context": "logs -> guildChannelDelete -> permissionOverwrites",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.title",
+    "source_string": "Kanal gelöscht",
+    "translation": "Channel deleted",
+    "context": "logs -> guildChannelDelete -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.topic",
+    "source_string": "Thema: ${topic}",
+    "translation": "Topic: ${topic}",
+    "context": "logs -> guildChannelDelete -> topic",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.mention",
+    "source_string": "Kanal Erwähnung: ${mention}",
+    "translation": "Channel Mention: ${mention}",
+    "context": "logs -> guildChannelUpdate -> mention",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.no",
+    "source_string": "Nein",
+    "translation": "No",
+    "context": "logs -> guildChannelUpdate -> no",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.title",
+    "source_string": "Kanal aktualisiert",
+    "translation": "Channel updated",
+    "context": "logs -> guildChannelUpdate -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.updated_by",
+    "source_string": "Aktualisiert von ${updater}",
+    "translation": "Updated from ${updater}",
+    "context": "logs -> guildChannelUpdate -> updated_by",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.yes",
+    "source_string": "Ja",
+    "translation": "Yes",
+    "context": "logs -> guildChannelUpdate -> yes",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildUpdate.defaultNotificationsLocales.all_members",
+    "source_string": "Alle Mitglieder",
+    "translation": "All members",
+    "context": "logs -> guildUpdate -> defaultNotificationsLocales -> allMembers",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildUpdate.explicitContentFilterLocales.all_members",
+    "source_string": "Alle Mitglieder",
+    "translation": "All members",
+    "context": "logs -> guildUpdate -> explicitContentFilterLocales -> allMembers",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildUpdate.explicitContentFilterLocales.no_role",
+    "source_string": "Keine Rolle",
+    "translation": "No role",
+    "context": "logs -> guildUpdate -> explicitContentFilterLocales -> noRole",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildUpdate.premiumProgressBarEnabled.activated",
+    "source_string": "Boost-Fortschrittsleiste wurde aktiviert",
+    "translation": "Boost progress bar has been activated",
+    "context": "logs -> guildUpdate -> premiumProgressBarLocales -> activated",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildUpdate.premiumProgressBarEnabled.deactivated",
+    "source_string": "Boost-Fortschrittsleiste wurde deaktiviert",
+    "translation": "Boost progress bar has been deactivated",
+    "context": "logs -> guildUpdate -> premiumProgressBarLocales -> deactivated",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.messageDelete.url_not_available_locale",
+    "source_string": "Anhang konnte leider nicht gespeichert werden.",
+    "translation": "Sorry, attachment could not be saved.",
+    "context": "logs -> messageDelete -> url_not_available_locale",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.messageEdit.url_not_available_locale",
+    "source_string": "Anhang konnte leider nicht gespeichert werden.",
+    "translation": "Sorry, attachment could not be saved.",
+    "context": "logs -> messageEdit -> url_not_available_locale",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.types.",
+    "source_string": "Typ:",
+    "translation": "Type:",
+    "context": "logs -> guild_channelCreate -> types",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.types.",
+    "source_string": "Typ:",
+    "translation": "Type:",
+    "context": "logs -> guild_channelDelete -> types",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.types.",
+    "source_string": "Typ:",
+    "translation": "Type:",
+    "context": "logs -> guild_channelUpdate -> types",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.automodRuleCreate.",
+    "source_string": "Automod-Regel",
+    "translation": "Automod rule",
+    "context": "logs -> automodRuleCreate",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.permissions.",
+    "source_string": "Berechtigungen",
+    "translation": "Permissions",
+    "context": "logs -> permissions",
     "labels": "unassigned",
     "max_length": null
   }
