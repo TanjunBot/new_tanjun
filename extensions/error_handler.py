@@ -12,10 +12,49 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from config import sentry_dsn
 from localizer import tanjunLocalizer
 from utility import ErrorEmbedCategory
 
 logger = logging.getLogger(__name__)
+
+
+# ── Sentry scope helpers ─────────────────────────────────────────────────────
+def _set_sentry_context(interaction: discord.Interaction, error: Exception) -> None:
+    """Attach user, guild, and command context to Sentry events.
+
+    This is a no-op when ``sentry_dsn`` is empty.
+    """
+    if not sentry_dsn:
+        return
+    try:
+        import sentry_sdk
+
+        with sentry_sdk.configure_scope() as scope:
+            # User context — User ID + guild ID provide enough info to triage.
+            scope.set_user({
+                "id": str(interaction.user.id),
+                "username": str(interaction.user),
+            })
+
+            # Guild context
+            if interaction.guild:
+                scope.set_tag("guild_id", str(interaction.guild.id))
+                scope.set_tag("guild_name", interaction.guild.name)
+
+            # Command context
+            command = interaction.command
+            if command:
+                scope.set_tag("command", command.qualified_name)
+
+            # Extra context
+            scope.set_extra("interaction_id", str(interaction.id))
+            scope.set_extra("channel_id", str(interaction.channel_id))
+
+            # Set the error as the current exception so Sentry groups correctly
+            scope._set_attr("exc_info", (type(error), error, error.__traceback__))
+    except Exception:
+        logger.debug("Failed to set Sentry context", exc_info=True)
 
 
 def _get_locale(interaction: discord.Interaction) -> str:
@@ -164,6 +203,10 @@ class ErrorHandlerCog(commands.Cog):
                 original,
             )
             traceback.print_exception(type(original), original, original.__traceback__)
+
+            # Attach user/guild/command context to Sentry for real errors.
+            _set_sentry_context(interaction, original)
+
             embed = await self._build_error_embed(
                 interaction,
                 ErrorEmbedCategory.UNEXPECTED,

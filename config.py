@@ -56,6 +56,9 @@ class Settings(BaseSettings, cli_parse_args=False):
         default="deepseek/deepseek-v4-flash:free", alias="OPENROUTER_MODEL"
     )
 
+    # ── Sentry ─────────────────────────────────────────────────────────────────
+    sentry_dsn: str = Field(default="", alias="sentry_dsn")
+
     # ── Activity ──────────────────────────────────────────────────────────────
     activity: str = "Tanjun {version}"
 
@@ -118,6 +121,7 @@ twitchId: str = settings.twitch_id  # type: ignore[assignment]
 prefix: str = settings.prefix  # type: ignore[assignment]
 OPENROUTER_API_KEY: str = settings.openrouter_api_key.get_secret_value()
 OPENROUTER_MODEL: str = settings.openrouter_model
+sentry_dsn: str = settings.sentry_dsn
 
 
 # ── Emoji identifiers for calculator ─────────────────────────────────────────

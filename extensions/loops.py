@@ -5,7 +5,23 @@ from datetime import time
 import discord
 from discord.ext import commands, tasks
 
-from ai.refill_token import refill_ai_token
+from config import sentry_dsn
+
+logger = logging.getLogger(__name__)
+
+
+# ── Sentry helper ────────────────────────────────────────────────────────────
+def _log_loop_error(task_name: str) -> None:
+    """Log a background loop exception and report to Sentry (if configured)."""
+    logger.exception("Error in loop task %s", task_name)
+    if sentry_dsn:
+        try:
+            import sentry_sdk
+
+            sentry_sdk.set_tag("loop_task", task_name)
+            sentry_sdk.capture_exception()
+        except Exception:
+            pass  # Don't let Sentry itself break the loop
 from commands.utility.claim_booster_channel import (
     remove_claimed_booster_channels_that_are_expired,
 )
@@ -34,77 +50,77 @@ class LoopCog(commands.Cog):
         try:
             await sendReadyGiveaways(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("sendSendReadyGiveaways")
 
     @tasks.loop(seconds=30)
     async def endGiveawaysLoop(self) -> None:
         try:
             await endGiveaways(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("endGiveawaysLoop")
 
     @tasks.loop(seconds=60)
     async def checkVoiceUsers(self) -> None:
         try:
             await checkVoiceUsers(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("checkVoiceUsers")
 
     @tasks.loop(seconds=60)
     async def clearNotifiedUsersLoop(self) -> None:
         try:
             clearNotifiedUsers(self.bot)
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("clearNotifiedUsersLoop")
 
     @tasks.loop(seconds=30)
     async def addVoiceUserLoop(self) -> None:
         try:
             await addXpToVoiceUsers(self.bot)  # type: ignore[no-untyped-call]
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("addVoiceUserLoop")
 
     @tasks.loop(seconds=60)
     async def refillAiTokenLoop(self) -> None:
         try:
             await refill_ai_token(self.bot)
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("refillAiTokenLoop")
 
     @tasks.loop(seconds=60)
     async def pingServerLoop(self) -> None:
         try:
             await ping_server(self.bot)
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("pingServerLoop")
 
     @tasks.loop(hours=1)
     async def backupDatabaseLoop(self) -> None:
         try:
             await create_database_backup(self.bot)
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("backupDatabaseLoop")
 
     @tasks.loop(seconds=30)
     async def removeExpiredClaimedBoosterRoles(self) -> None:
         try:
             await remove_claimed_booster_roles_that_are_expired(self.bot)
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("removeExpiredClaimedBoosterRoles")
 
     @tasks.loop(seconds=30)
     async def removeExpiredClaimedBoosterChannels(self) -> None:
         try:
             await remove_claimed_booster_channels_that_are_expired(self.bot)
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("removeExpiredClaimedBoosterChannels")
 
     @tasks.loop(seconds=30)
     async def sendScheduledMessages(self) -> None:
         try:
             await send_scheduled_messages(self.bot)
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("sendScheduledMessages")
 
     @tasks.loop(seconds=60)  # Twitch API rate limits
     async def pollTwitchStreams(self) -> None:
@@ -145,7 +161,7 @@ class LoopCog(commands.Cog):
                 twitch_service.stream_status[uuid] = uuid in live_streams
 
         except Exception:
-            logging.exception("Error in loop")
+            _log_loop_error("pollTwitchStreams")
 
     @tasks.loop(time=[time(hour=2), time(hour=8), time(hour=14), time(hour=20)])
     async def sendPokemonWerbung(self) -> None:
@@ -181,7 +197,7 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
                 if sent_message.guild:
                     await sent_message.publish()
         except Exception:
-            logging.exception("Error in pokemon advertising loop")
+            _log_loop_error("sendPokemonWerbung")
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
