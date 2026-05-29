@@ -7,8 +7,8 @@ Delegates to XpCalculator service for the actual boost formula.
 The XpCalculator service class is also exported for direct use.
 """
 
-from services.xp_calculator import XpCalculator, xp_calculator
 from api import _get_cached_blacklist
+from services.xp_calculator import XpCalculator, xp_calculator
 
 # Re-export for callers that want to use the service directly
 __all__ = ["XpCalculator", "xp_calculator", "calculate_xp", "is_entity_blacklisted"]
