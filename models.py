@@ -6,7 +6,7 @@ from enum import IntEnum
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
-from tanjun_types import GuildId, UserId, ChannelId, MessageId, RoleId, DiscordId, OptionalGuildId, OptionalUserId, OptionalChannelId, OptionalMessageId, OptionalRoleId, OptionalDiscordId
+from tanjun_types import GuildId, UserId, ChannelId, MessageId, RoleId, DiscordId, OptionalGuildId, OptionalUserId, OptionalChannelId, OptionalRoleId
 
 
 
