@@ -234,7 +234,7 @@ class MathService:
             # Substitute variable names with their values using word boundaries
             substituted = expression
             for name, value in vars_dict.items():
-                pattern = r'\b' + re.escape(name) + r'\b'
+                pattern = r"\b" + re.escape(name) + r"\b"
                 substituted = re.sub(pattern, str(value), substituted)
             expression = substituted
 
@@ -243,9 +243,7 @@ class MathService:
         # Create a temporary parser with local stack bindings
         point = Literal(".")
         e_lit = CaselessLiteral("E")
-        fnumber = Combine(
-            Word("+-" + nums, nums) + Opt(point + Opt(Word(nums))) + Opt(e_lit + Word("+-" + nums, nums))
-        )
+        fnumber = Combine(Word("+-" + nums, nums) + Opt(point + Opt(Word(nums))) + Opt(e_lit + Word("+-" + nums, nums)))
         ident = Word(alphas, alphas + nums + "_$")
 
         plus, minus, mult, div = map(Literal, "+-*/")
@@ -255,10 +253,10 @@ class MathService:
         expop = Literal("^")
 
         expr = Forward()
-        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(
-            functools.partial(self._push_first, expr_stack)
-        ) | (lpar + expr.suppress() + rpar).setParseAction(
+        atom = (Literal("-") + (ident + lpar + expr + rpar | fnumber | lpar + expr.suppress() + rpar)).setParseAction(
             functools.partial(self._push_uminus, expr_stack)
+        ) | (ident + lpar + expr + rpar | fnumber | lpar + expr.suppress() + rpar).setParseAction(
+            functools.partial(self._push_first, expr_stack)
         )
 
         factor = Forward()
