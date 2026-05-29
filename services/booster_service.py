@@ -105,23 +105,29 @@ class BoosterService:
         self,
         claimed_type: ClaimedBoosterType,
         user_id: str,
-        guild_id: str | None = None,
+        guild_id: str,
     ) -> str | None:
-        """Get a single claimed entity id for a user.
+        """Get a single claimed entity id for a user in a specific guild.
 
-        If guild_id is given, returns the entity_id (channel_id or role_id) directly.
-        If guild_id is not given, returns None if no claim exists.
+        Returns the entity_id (channel_id or role_id) for the user in the guild, or None if no claim exists.
         """
         id_column = "channel_id" if claimed_type == ClaimedBoosterType.CHANNEL else "role_id"
-        if guild_id:
-            query = f"SELECT {id_column} FROM {claimed_type.value} WHERE user_id = %s AND guild_id = %s"
-            result = await safe_execute_query(query, (user_id, guild_id))
-            return result[0][0] if result else None
-        else:
-            # Check if user has any claim at all
-            query = f"SELECT 1 FROM {claimed_type.value} WHERE user_id = %s LIMIT 1"
-            result = await safe_execute_query(query, (user_id,))
-            return id_column if result else None  # non-None truthy marker
+        query = f"SELECT {id_column} FROM {claimed_type.value} WHERE user_id = %s AND guild_id = %s"
+        result = await safe_execute_query(query, (user_id, guild_id))
+        return result[0][0] if result else None
+
+    async def has_claim(
+        self,
+        claimed_type: ClaimedBoosterType,
+        user_id: str,
+    ) -> bool:
+        """Check if a user has any claim of the given type across all guilds.
+
+        Returns True if the user has at least one claim, False otherwise.
+        """
+        query = f"SELECT 1 FROM {claimed_type.value} WHERE user_id = %s LIMIT 1"
+        result = await safe_execute_query(query, (user_id,))
+        return bool(result)
 
     async def get_user_claims(
         self,

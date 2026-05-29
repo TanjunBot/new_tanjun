@@ -2372,7 +2372,14 @@ async def get_claimed_booster_channel(
     from services.booster_service import ClaimedBoosterType, booster_service
 
     if user_id:
-        return await booster_service.get_user_claims(ClaimedBoosterType.CHANNEL, user_id) or None
+        claims = await booster_service.get_user_claims(ClaimedBoosterType.CHANNEL, user_id)
+        if guild_id:
+            # Filter to the specific guild and return the channel_id or None
+            for claim in claims:
+                if claim.guild_id == guild_id:
+                    return claim.channel_id
+            return None
+        return claims or None
     return await booster_service.get_all_claims(ClaimedBoosterType.CHANNEL) or None
 
 
@@ -2418,7 +2425,14 @@ async def get_claimed_booster_role(
     from services.booster_service import ClaimedBoosterType, booster_service
 
     if user_id:
-        return await booster_service.get_user_claims(ClaimedBoosterType.ROLE, user_id) or None
+        claims = await booster_service.get_user_claims(ClaimedBoosterType.ROLE, user_id)
+        if guild_id:
+            # Filter to the specific guild and return the role_id or None
+            for claim in claims:
+                if claim.guild_id == guild_id:
+                    return claim.role_id
+            return None
+        return claims or None
     return await booster_service.get_all_claims(ClaimedBoosterType.ROLE) or None
 
 

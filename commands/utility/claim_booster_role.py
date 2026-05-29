@@ -1,8 +1,8 @@
 import discord
 
 import utility
-from services.booster_service import BoosterType, ClaimedBoosterType, booster_service
 from localizer import tanjunLocalizer
+from services.booster_service import BoosterType, ClaimedBoosterType, booster_service
 from utility import command_info, tanjunEmbed
 
 
@@ -33,7 +33,9 @@ async def claimBoosterRole(command_info: command_info, name: str, color: discord
         await command_info.reply(embed=embed)
         return
 
-    claimed_booster_role = await booster_service.get_user_claims(ClaimedBoosterType.ROLE, str(command_info.user.id))
+    claimed_booster_role = await booster_service.get_claim_for_user(
+        ClaimedBoosterType.ROLE, str(command_info.user.id), str(command_info.guild.id)
+    )
     if claimed_booster_role:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -91,7 +93,9 @@ async def claimBoosterRole(command_info: command_info, name: str, color: discord
         reason=reason,
     )
     await new_role.edit(position=role.position + 1)
-    await booster_service.claim(ClaimedBoosterType.ROLE, str(command_info.user.id), str(new_role.id), str(command_info.guild.id))
+    await booster_service.claim(
+        ClaimedBoosterType.ROLE, str(command_info.user.id), str(new_role.id), str(command_info.guild.id)
+    )
     await command_info.user.add_roles(new_role)
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(command_info.locale, "commands.utility.claimboosterrole.success.title"),
@@ -104,16 +108,23 @@ async def remove_claimed_booster_roles_that_are_expired(client: discord.Client):
     claimed_booster_roles = await booster_service.get_all_claims(ClaimedBoosterType.ROLE)
     for entry in claimed_booster_roles:
         guild = client.get_guild(int(entry.guild_id))
+        if not guild:
+            # Guild no longer exists, clean up the claim
+            await booster_service.unclaim(ClaimedBoosterType.ROLE, str(entry.user_id), str(entry.guild_id))
+            continue
+
         user = guild.get_member(int(entry.user_id))
         role = guild.get_role(int(entry.role_id))
-        if not user.premium_since and role:
+
+        if user and role and not user.premium_since:
             await user.remove_roles(role)
-            await booster_service.unclaim(ClaimedBoosterType.ROLE, str(user.id), str(entry.guild_id))
+            await booster_service.unclaim(ClaimedBoosterType.ROLE, str(entry.user_id), str(entry.guild_id))
             await role.delete(
                 reason=tanjunLocalizer.localize(
                     guild.preferred_locale if hasattr(guild, "preferred_locale") else "en_US",
                     "commands.utility.claimboosterrole.expired.reason",
                 )
             )
-        if not role:
-            await booster_service.unclaim(ClaimedBoosterType.ROLE, str(user.id), str(entry.guild_id))
+        elif not user or not role:
+            # User or role no longer exists, clean up the claim
+            await booster_service.unclaim(ClaimedBoosterType.ROLE, str(entry.user_id), str(entry.guild_id))
