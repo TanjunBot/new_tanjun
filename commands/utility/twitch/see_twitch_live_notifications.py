@@ -89,9 +89,14 @@ async def seeTwitchLiveNotifications(command_info: CommandInfo) -> None:
                 )
                 return
             twitch_service = get_twitch_service()
-            if twitch_service is not None:
-                await twitch_service.remove_notification(self.notifications[self.current_page].id)
-                self.notifications = await twitch_service.get_notifications_by_guild(str(command_info.guild.id))  # type: ignore[union-attr]
+            if twitch_service is None:
+                await interaction.response.send_message(
+                    "Twitch service is not available. Cannot delete notification.",
+                    ephemeral=True,
+                )
+                return
+            await twitch_service.remove_notification(self.notifications[self.current_page].id)
+            self.notifications = await twitch_service.get_notifications_by_guild(str(command_info.guild.id))  # type: ignore[union-attr]
             if not self.notifications:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(

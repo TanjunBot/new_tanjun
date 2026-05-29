@@ -107,7 +107,8 @@ class TwitchService:
 
     async def _setup_headers(self) -> None:
         """Set up HTTP headers for Twitch API requests."""
-        if self.client_id is None or self.client_secret is None:
+        if self.client_id is None or self.client_secret is None or not self.access_token:
+            self.headers = None
             return
 
         self.headers = {
@@ -130,7 +131,7 @@ class TwitchService:
                 return data["data"][0]
             return None
 
-    async def get_streams(self, user_ids: list[str]) -> list[dict[str, str]]:
+    async def get_streams(self, user_ids: list[str]) -> list[LiveStreamInfo]:
         """Get live stream data for the given user IDs."""
         if not user_ids or self.session is None:
             return []
@@ -140,8 +141,8 @@ class TwitchService:
 
         try:
             async with self.session.get(url, headers=self.headers, params=params, timeout=ClientTimeout(total=10)) as response:
-                data: dict[str, list[dict[str, str]]] = await response.json()
-                return data.get("data", [])
+                data: dict[str, list[dict[str, Any]]] = await response.json()
+                return [LiveStreamInfo.from_api_data(item) for item in data.get("data", [])]
         except (TimeoutError, aiohttp.ClientError):
             return []
 
@@ -152,7 +153,7 @@ class TwitchService:
 
         streams = await self.get_streams(user_ids)
         for uuid in user_ids:
-            self.stream_status[uuid] = any(stream["user_id"] == uuid for stream in streams)
+            self.stream_status[uuid] = any(stream.user_id == uuid for stream in streams)
         self.initial_check_done = True
 
     # --- Notification CRUD ---
@@ -192,8 +193,8 @@ class TwitchService:
         params = (notification_id,)
         await execute_action(query, params)
 
-    async def get_notification_by_twitch_uuid(self, twitch_uuid: str) -> TwitchNotification | None:
-        """Get a Twitch notification by the Twitch user UUID."""
+    async def get_notification_by_twitch_uuid(self, twitch_uuid: str) -> list[TwitchNotification]:
+        """Get all Twitch notifications for the given Twitch user UUID."""
         query = (
             "SELECT id, channel_id, guild_id, twitchUuid, twitchName, notification_message "
             "FROM twitchOnlineNotification WHERE twitchUuid = %s"
@@ -201,12 +202,12 @@ class TwitchService:
         params = (twitch_uuid,)
         result = await safe_execute_query(query, params)
         if result:
-            return TwitchNotification(*result[0])
-        return None
+            return [TwitchNotification(*row) for row in result]
+        return []
 
     async def get_all_notification_uuids(self) -> list[str]:
         """Get all unique Twitch UUIDs that have active notifications."""
-        query = "SELECT twitchUuid FROM twitchOnlineNotification"
+        query = "SELECT DISTINCT twitchUuid FROM twitchOnlineNotification"
         uuids: list[str] = []
         async for row in execute_query_iter(query):
             uuids.append(row[0])
@@ -232,34 +233,35 @@ class TwitchService:
         twitch_uuid: str,
         stream_data: dict[str, Any],
     ) -> None:
-        """Send a Twitch live notification to the configured channel."""
-        notification = await self.get_notification_by_twitch_uuid(twitch_uuid)
-        if notification is None:
+        """Send Twitch live notifications to all configured channels for this user."""
+        notifications = await self.get_notification_by_twitch_uuid(twitch_uuid)
+        if not notifications:
             return
 
-        channel_id = notification.channel_id
-        notification_message = notification.notification_message
-        guild_id = notification.guild_id
+        for notification in notifications:
+            channel_id = notification.channel_id
+            notification_message = notification.notification_message
+            guild_id = notification.guild_id
 
-        guild = client.get_guild(int(guild_id))
-        if guild is None:
-            return
+            guild = client.get_guild(int(guild_id))
+            if guild is None:
+                continue
 
-        message = self._parse_notification_message(
-            notification_message,
-            str(guild.preferred_locale),
-            stream_data["user_name"],
-        )
+            message = self.parse_notification_message(
+                notification_message,
+                str(guild.preferred_locale),
+                stream_data["user_name"],
+            )
 
-        channel = guild.get_channel(int(channel_id))
-        if channel is None or isinstance(channel, (discord.ForumChannel, discord.CategoryChannel)):
-            return
+            channel = guild.get_channel(int(channel_id))
+            if channel is None or isinstance(channel, (discord.ForumChannel, discord.CategoryChannel)):
+                continue
 
-        embed = tanjunEmbed(description=f"[{stream_data['title']}](https://www.twitch.tv/{stream_data['user_name']})")
-        embed.set_image(url=stream_data["thumbnail_url"].replace("{width}", "1920").replace("{height}", "1080"))
-        await channel.send(message, embed=embed)
+            embed = tanjunEmbed(description=f"[{stream_data['title']}](https://www.twitch.tv/{stream_data['user_name']})")
+            embed.set_image(url=stream_data["thumbnail_url"].replace("{width}", "1920").replace("{height}", "1080"))
+            await channel.send(message, embed=embed)
 
-    def _parse_notification_message(self, message: str | None, locale: str, twitch_name: str) -> str:
+    def parse_notification_message(self, message: str | None, locale: str, twitch_name: str) -> str:
         """Parse a notification message template, replacing {name} with the Twitch user's name."""
         if not message:
             return tanjunLocalizer.localize(
@@ -276,6 +278,8 @@ async def init_twitch_service() -> TwitchService:
     """Initialize and return the global TwitchService singleton."""
     global _twitch_service
     print("Initiating Twitch Service...")
+    if _twitch_service is not None:
+        await _twitch_service.close()
     _twitch_service = TwitchService()
     await _twitch_service.init()
     print("Twitch Service initiated!")

@@ -66,14 +66,21 @@ async def addTwitchLiveNotification(
         return
 
     service = get_twitch_service()
-    if service is not None:
-        await service.add_notification(
-            str(command_info.guild.id),  # type: ignore[union-attr]
-            str(channel.id),
-            uuid,
-            twitch_name,
-            notification_message,
+    if service is None:
+        embed = tanjunEmbed(
+            title="Service Unavailable",
+            description="Twitch service is not initialized.",
         )
+        await command_info.reply(embed=embed)
+        return
+
+    await service.add_notification(
+        str(command_info.guild.id),  # type: ignore[union-attr]
+        str(channel.id),
+        uuid,
+        twitch_name,
+        notification_message,
+    )
 
     await subscribe_to_twitch_online_notification(uuid)
 

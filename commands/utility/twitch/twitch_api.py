@@ -50,4 +50,4 @@ def parse_twitch_notification_message(message: str | None, locale: str, twitch_n
                 locale, "commands.utility.twitch.defaultNotificationMessage"
             ).replace("{name}", twitch_name)
         return message.replace("{name}", twitch_name)
-    return service._parse_notification_message(message, locale, twitch_name)
+    return service.parse_notification_message(message, locale, twitch_name)
