@@ -86,7 +86,8 @@ class TestRegistrationOrderByPriority:
 
         mock_msg = _make_message(guild=MagicMock())
         await dispatch(mock_msg)
-        assert execution_order == ["critical", "normal", "background"], f"Expected critical → normal → background, got {execution_order}"
+        expected = ["critical", "normal", "background"]
+        assert execution_order == expected, f"Wrong order: {execution_order}"
 
     async def test_same_priority_preserves_insertion_order(self) -> None:
         """Handlers with same priority should maintain insertion order."""
