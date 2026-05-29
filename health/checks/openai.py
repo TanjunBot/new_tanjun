@@ -1,9 +1,18 @@
+"""OpenAI API health check for Tanjun bot.
+
+Verifies the OpenAI API key is configured and the API is reachable.
+"""
+
+from __future__ import annotations
+
 from aiohttp import ClientError, ClientSession
 
-from health_check import HealthCheck, HealthCheckResult, HealthStatus
+from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 
 
 class OpenAIHealthCheck(HealthCheck):
+    """Health check for the OpenAI API."""
+
     @property
     def name(self) -> str:
         return "OpenAI API"

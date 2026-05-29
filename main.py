@@ -29,20 +29,20 @@ from config import (
     database_user,
     prefix,
 )
-from DatabaseHealthCheck import DatabaseHealthCheck
 from di import services
-from external_api_health_checks import (
+from health import (
     BrawlStarsHealthCheck,
     BytebinHealthCheck,
+    DatabaseHealthCheck,
     GIPHYHealthCheck,
     GitHubAPIHealthCheck,
     ImgBBHealthCheck,
+    LocaleFileHealthCheck,
+    OpenAIHealthCheck,
+    TwitchAPIHealthCheck,
 )
 from health.manager import HealthCheckManager
-from locale_file_health_check import LocaleFileHealthCheck
-from OpenAIHealthCheck import OpenAIHealthCheck
 from translator import TanjunTranslator
-from TwitchAPIHealthCheck import TwitchAPIHealthCheck
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
