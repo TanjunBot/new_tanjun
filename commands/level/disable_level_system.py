@@ -6,7 +6,7 @@ from api import (
     set_level_system_status,
 )
 from localizer import tanjunLocalizer
-from utility import ErrorEmbedCategory, command_info, error_embed, success_embed, tanjunEmbed
+from utility import ErrorEmbedCategory, categorized_error_embed, categorized_success_embed, command_info, tanjunEmbed
 
 
 async def disable_level_system(command_info: command_info):
@@ -33,7 +33,7 @@ async def disable_level_system(command_info: command_info):
             self.stop()
 
     if not command_info.user.guild_permissions.administrator:
-        embed = error_embed(
+        embed = categorized_error_embed(
             ErrorEmbedCategory.PERMISSION,
             title=tanjunLocalizer.localize(
                 command_info.locale,
@@ -50,7 +50,7 @@ async def disable_level_system(command_info: command_info):
     current_status = await get_level_system_status(str(command_info.guild.id))
 
     if not current_status:
-        embed = error_embed(
+        embed = categorized_error_embed(
             ErrorEmbedCategory.NOT_FOUND,
             title=tanjunLocalizer.localize(
                 command_info.locale,
@@ -83,7 +83,7 @@ async def disable_level_system(command_info: command_info):
         await delete_level_system_data(str(command_info.guild.id))
         await set_level_system_status(str(command_info.guild.id), False)
 
-        embed = success_embed(
+        embed = categorized_success_embed(
             title=tanjunLocalizer.localize(command_info.locale, "commands.level.disablelevelsystem.success.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
