@@ -1,159 +1,53 @@
-from collections.abc import Mapping
+"""Twitch API helpers.
+
+Provides convenience functions for working with the TwitchService.
+The service itself is in services/twitch_service.py.
+"""
+
+from __future__ import annotations
+
 from typing import Any
 
-import aiohttp
 import discord
-from aiohttp import ClientTimeout
 
-from api import get_twitch_online_notification_by_twitch_uuid
-from config import twitchId, twitchSecret
-from localizer import tanjunLocalizer
-from utility import tanjunEmbed
-
-
-class TwitchAPI:
-    def __init__(self) -> None:
-        self.client_id = twitchId
-        self.client_secret = twitchSecret
-        self.access_token = None
-        self.session: aiohttp.ClientSession | None = None
-        self.headers: Mapping[str, str] | None = None
-        self.base_url = "https://api.twitch.tv/helix"
-        self.stream_status: dict[str, bool] = {}  # Keep track of stream status
-        self.initial_check_done = False
-
-    async def init(self) -> None:
-        self.session = aiohttp.ClientSession()
-        await self.get_app_access_token()
-        await self.setup_headers()
-
-    async def get_app_access_token(self) -> None:
-        auth_url = "https://id.twitch.tv/oauth2/token"
-        if self.session is None or self.client_id is None or self.client_secret is None:
-            return
-
-        params: Mapping[str, str] = {
-            "client_id": self.client_id,
-            "client_secret": self.client_secret,
-            "grant_type": "client_credentials",
-        }
-
-        try:
-            async with self.session.post(url=auth_url, params=params, timeout=ClientTimeout(total=10)) as response:
-                data = await response.json()
-                self.access_token = data["access_token"]
-        except (TimeoutError, aiohttp.ClientError) as e:
-            print(f"Error getting Twitch access token: {e}")
-            self.access_token = None
-        except Exception as e:
-            print(f"Unexpected error getting Twitch access token: {e}")
-            self.access_token = None
-
-    async def setup_headers(self) -> None:
-        if self.client_id is None or self.client_secret is None:
-            return
-
-        self.headers = {
-            "Client-ID": self.client_id,
-            "Authorization": f"Bearer {self.access_token}",
-            "Content-Type": "application/json",
-        }
-
-    async def get_user_by_login(self, login_name: str) -> dict[str, str] | None:
-        if self.session is None:
-            return None
-
-        url = f"{self.base_url}/users"
-        params = {"login": login_name}
-
-        async with self.session.get(url, headers=self.headers, params=params, timeout=ClientTimeout(total=10)) as response:
-            data: dict[str, list[dict[str, str]]] = await response.json()
-            if data["data"]:
-                return data["data"][0]
-            return None
-
-    async def get_streams(self, user_ids: list[str]) -> list[dict[str, str]]:
-        if not user_ids or self.session is None:
-            return []
-
-        url = f"{self.base_url}/streams"
-        params = {"user_id": user_ids}
-
-        try:
-            async with self.session.get(url, headers=self.headers, params=params, timeout=ClientTimeout(total=10)) as response:
-                data: dict[str, list[dict[str, str]]] = await response.json()
-                return data.get("data", [])
-        except (TimeoutError, aiohttp.ClientError):
-            return []
-
-    async def initialize_stream_status(self, user_ids: list[str]) -> None:
-        if not user_ids:
-            return
-
-        streams = await self.get_streams(user_ids)
-        for uuid in user_ids:
-            self.stream_status[uuid] = any(stream["user_id"] == uuid for stream in streams)
-        self.initial_check_done = True
-
-
-twitch_api: TwitchAPI | None = None
-
-
-async def initTwitch() -> TwitchAPI:
-    global twitch_api
-    print("initiating Twitch API...")
-    twitch_api = TwitchAPI()
-    await twitch_api.init()
-    print("Twitch API initiated!")
-    return twitch_api
-
-
-def getTwitchApi() -> TwitchAPI | None:
-    global twitch_api
-    return twitch_api
+from services.twitch_service import get_twitch_service
 
 
 async def notify_twitch_online(client: discord.Client, uuid: str, data: dict[str, Any]) -> None:
-    datas = await get_twitch_online_notification_by_twitch_uuid(uuid)
-    if datas is None:
+    """Send a Twitch live notification using the TwitchService."""
+    service = get_twitch_service()
+    if service is None:
         return
-    channel_id = datas.channel_id
-    notification_message = datas.notification_message
-    guild_id = datas.guild_id
-    guild = client.get_guild(int(guild_id))
-    if guild is None:
-        return
-    message = parse_twitch_notification_message(
-        notification_message,
-        str(guild.preferred_locale),
-        data["user_name"],
-    )
-    channel = guild.get_channel(int(channel_id))
-    if channel is None or isinstance(channel, (discord.ForumChannel, discord.CategoryChannel)):
-        return
-    embed = tanjunEmbed(description=f"[{data['title']}](https://www.twitch.tv/{data['user_name']})")
-    embed.set_image(url=data["thumbnail_url"].replace("{width}", "1920").replace("{height}", "1080"))
-    await channel.send(message, embed=embed)
-    return
+    await service.send_live_notification(client, uuid, data)
 
 
 async def get_uuid_by_twitch_name(twitch_name: str) -> str | None:
-    if not twitch_api:
+    """Look up a Twitch user UUID by their login name."""
+    service = get_twitch_service()
+    if service is None:
         return None
-    user = await twitch_api.get_user_by_login(twitch_name)
+    user = await service.get_user_by_login(twitch_name)
     return user["id"] if user else None
 
 
 async def subscribe_to_twitch_online_notification(twitch_uuid: str) -> None:
-    if not twitch_uuid or not twitch_api:
+    """Track a new Twitch UUID in the stream status map."""
+    service = get_twitch_service()
+    if not twitch_uuid or service is None:
         return
-    # Just add to the status tracking
-    twitch_api.stream_status[twitch_uuid] = False
+    service.stream_status[twitch_uuid] = False
 
 
-def parse_twitch_notification_message(message: str, locale: str, twitch_name: str) -> str:
-    if not message:
-        return tanjunLocalizer.localize(locale, "commands.utility.twitch.defaultNotificationMessage").replace(
-            "{name}", twitch_name
-        )
-    return message.replace("{name}", twitch_name)
+def parse_twitch_notification_message(message: str | None, locale: str, twitch_name: str) -> str:
+    """Parse a notification message template, replacing {name} with the Twitch user's name."""
+    service = get_twitch_service()
+    if service is None:
+        # Fallback if service not initialized
+        if not message:
+            from localizer import tanjunLocalizer
+
+            return tanjunLocalizer.localize(
+                locale, "commands.utility.twitch.defaultNotificationMessage"
+            ).replace("{name}", twitch_name)
+        return message.replace("{name}", twitch_name)
+    return service._parse_notification_message(message, locale, twitch_name)

@@ -2,11 +2,11 @@ from typing import Any
 
 import discord
 
-from api import get_twitch_notification_by_guild_id, remove_twitch_online_notification
 from commands.utility.twitch.twitch_api import (
     parse_twitch_notification_message,
 )
 from localizer import tanjunLocalizer
+from services.twitch_service import get_twitch_service
 from utility import CommandInfo, tanjunEmbed
 
 
@@ -29,7 +29,16 @@ async def seeTwitchLiveNotifications(command_info: CommandInfo) -> None:
         await command_info.reply(embed=embed)
         return
 
-    notifications = await get_twitch_notification_by_guild_id(command_info.guild.id)  # type: ignore[union-attr]
+    service = get_twitch_service()
+    if service is None:
+        embed = tanjunEmbed(
+            title="Service Unavailable",
+            description="Twitch service is not initialized.",
+        )
+        await command_info.reply(embed=embed)
+        return
+
+    notifications = await service.get_notifications_by_guild(str(command_info.guild.id))  # type: ignore[union-attr]
 
     if not notifications:
         embed = tanjunEmbed(
@@ -79,9 +88,10 @@ async def seeTwitchLiveNotifications(command_info: CommandInfo) -> None:
                     ephemeral=True,
                 )
                 return
-            global notifications
-            await remove_twitch_online_notification(self.notifications[self.current_page].id)
-            self.notifications = await get_twitch_notification_by_guild_id(command_info.guild.id)  # type: ignore[assignment, union-attr]
+            twitch_service = get_twitch_service()
+            if twitch_service is not None:
+                await twitch_service.remove_notification(self.notifications[self.current_page].id)
+                self.notifications = await twitch_service.get_notifications_by_guild(str(command_info.guild.id))  # type: ignore[union-attr]
             if not self.notifications:
                 embed = tanjunEmbed(
                     title=tanjunLocalizer.localize(
