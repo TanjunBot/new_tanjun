@@ -1,12 +1,12 @@
 import discord
 
-from services.counting_repository import CountingRepository
 from commands.minigames._counting_common import (
     require_bot_permissions,
     require_moderate_members,
 )
 from localizer import tanjunLocalizer
 from models import CountingMode
+from services.counting_repository import CountingRepository
 from utility import CommandInfo, tanjunEmbed
 
 LOCALE_KEY = "minigames.setcountingchannel"

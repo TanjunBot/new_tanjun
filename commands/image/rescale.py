@@ -1,38 +1,34 @@
-import io
-from io import BytesIO
+"""Image rescale command — thin wrapper around ImageService."""
+
+from __future__ import annotations
 
 import discord
-from PIL import Image
 
-import utility
 from localizer import tanjunLocalizer
+from services.image_service import ImageOperation, ImageService
+from utility import CommandInfo, tanjunEmbed
 
 
-async def rescale(command_info: utility.CommandInfo, image: discord.Attachment, factor: float):  # type: ignore[no-untyped-def]
-    if isinstance(image, discord.Attachment) and not image.filename.endswith((".png", ".jpg", ".jpeg")):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.typenotsupported.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.typenotsupported.description"),
+async def rescale(command_info: CommandInfo, image: discord.Attachment, factor: float) -> None:
+    """Rescale an image by a factor."""
+    error = ImageService.validate_attachment(image)
+    if error is not None:
+        embed = ImageService.format_error_embed(
+            str(command_info.locale),
+            error,
+            locale_prefix="image",
         )
         await command_info.reply(embed=embed)
         return
 
-    if image.size > 8 * 1024 * 1024:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.filesize.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.filesize.description"),
-        )
-        await command_info.reply(embed=embed)
-        return
+    image_bytes = await image.read()
+    operation = ImageOperation(scale=factor)
+    result_bytes = await ImageService.process(image_bytes, operation)
 
-    image = await image.read()  # type: ignore[assignment]
-    image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
-    image = image.resize((int(image.width * factor), int(image.height * factor)))  # type: ignore[attr-defined, operator]
+    from io import BytesIO  # noqa: PLC0415
 
-    buffer = BytesIO()
-    image.save(buffer, format="png")  # type: ignore[call-arg, unused-coroutine]
-    buffer.seek(0)
-    embed = utility.tanjunEmbed(
+    buffer = BytesIO(result_bytes)
+    embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.rescale.success.title"),
         description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.rescale.success.description"),
     )

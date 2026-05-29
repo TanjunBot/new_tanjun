@@ -5,7 +5,9 @@ from discord import app_commands
 from discord.ext import commands
 
 import utility
-from commands.image._filter import apply_filter
+from commands.image._filter import (
+    apply_filter,
+)
 from commands.image.background import background
 from commands.image.compress import compress
 from commands.image.mirror import mirror

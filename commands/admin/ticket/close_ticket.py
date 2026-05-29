@@ -4,8 +4,8 @@ from typing import Any
 import discord
 
 import utility
-from services.ticket_service import ticket_service
 from localizer import tanjunLocalizer
+from services.ticket_service import ticket_service
 
 
 async def close_ticket(interaction: discord.Interaction) -> None:

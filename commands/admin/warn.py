@@ -59,20 +59,22 @@ async def warn_user(command_info: utility.CommandInfo, member: discord.Member, r
     )
     await command_info.reply(embed=embed)
 
+    locale_str = str(command_info.locale)
+
     # Check for escalated actions based on warn count
     if warn_config:
         if warn_count >= warn_config.ban_threshold:
             # Ban the user
-            await member.ban(reason=f"Reached {warn_count} warnings")
+            await member.ban(reason=tanjunLocalizer.localize(locale_str, "commands.admin.warn.reason.reached_warnings", count=warn_count))
         elif warn_count >= warn_config.kick_threshold:
             # Kick the user
-            await member.kick(reason=f"Reached {warn_count} warnings")
+            await member.kick(reason=tanjunLocalizer.localize(locale_str, "commands.admin.warn.reason.reached_warnings", count=warn_count))
         elif warn_count >= warn_config.timeout_threshold:
             # Timeout the user
             timeout_duration = warn_config.timeout_duration
             duration = timedelta(minutes=timeout_duration)
             until = discord.utils.utcnow() + duration
-            await member.timeout(until, reason=f"Reached {warn_count} warnings")
+            await member.timeout(until, reason=tanjunLocalizer.localize(locale_str, "commands.admin.warn.reason.reached_warnings", count=warn_count))
 
     # DM the warned user
     try:
