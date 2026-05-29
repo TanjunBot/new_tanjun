@@ -10,13 +10,14 @@ from services.ai_service import AiService
 async def approve_custom_situation(interaction) -> None:  # type: ignore[no-untyped-def]
     situation_id = interaction.data["custom_id"].split(";")[1]
     situation = await AiService.get_user_situation(situation_id)
+    locale = interaction.data["custom_id"].split(";")[2]
     if not situation:
-        await interaction.response.send_message("Situation wurde denke gelöscht oder so :/")
+        await interaction.response.send_message(tanjunLocalizer.localize(locale, "commands.admin.administration.situation_not_found"))
         return
     situation_creator = interaction.client.get_user(int(situation_id))
     if not situation_creator:
         await interaction.channel.send(
-            "Der typ der die Situation erstellt hat ist nicht mehr am tanjun nutzen :c",
+            tanjunLocalizer.localize(locale, "commands.admin.administration.situation_creator_gone"),
             delete_after=25,
         )
         return
@@ -33,20 +34,21 @@ async def approve_custom_situation(interaction) -> None:  # type: ignore[no-unty
         await situation_creator.send(embed=embed)
     except (discord.Forbidden, discord.HTTPException):
         logging.exception("Failed to send approval DM to situation creator")
-    await interaction.channel.send("Situation wurde freigeschaltet!", delete_after=25)
+    await interaction.channel.send(tanjunLocalizer.localize(locale, "commands.admin.administration.situation_approved"), delete_after=25)
 
 
 async def deny_custom_situation(interaction) -> None:  # type: ignore[no-untyped-def]
     situation_id = interaction.data["custom_id"].split(";")[1]
     situation = await AiService.get_user_situation(situation_id)
+    locale = interaction.data["custom_id"].split(";")[2]
     if not situation:
-        await interaction.response.send_message("Situation wurde denke gelöscht oder so :/")
+        await interaction.response.send_message(tanjunLocalizer.localize(locale, "commands.admin.administration.situation_not_found"))
         return
 
     situation_creator = interaction.bot.get_user(int(situation_id))
     if not situation_creator:
         await interaction.channel.send(
-            "Der typ der die Situation erstellt hat ist nicht mehr am tanjun nutzen :c",
+            tanjunLocalizer.localize(locale, "commands.admin.administration.situation_creator_gone"),
             delete_after=25,
         )
         return
@@ -63,4 +65,4 @@ async def deny_custom_situation(interaction) -> None:  # type: ignore[no-untyped
         await situation_creator.send(embed=embed)
     except (discord.Forbidden, discord.HTTPException):
         logging.exception("Failed to send denial DM to situation creator")
-    await interaction.channel.send("Situation wurde gelöscht!", delete_after=25)
+    await interaction.channel.send(tanjunLocalizer.localize(locale, "commands.admin.administration.situation_deleted"), delete_after=25)
