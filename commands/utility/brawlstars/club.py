@@ -1,31 +1,16 @@
-import aiohttp
 import discord
-from aiohttp import ClientTimeout
 
-from config import brawlstarsToken
 from localizer import tanjunLocalizer
+from services.brawlstars import get_brawlstars_service
 from utility import addThousandsSeparator, command_info, similar, tanjunEmbed
-
-
-async def getClubInfo(club_tag: str):
-    headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with (
-        aiohttp.ClientSession() as session,
-        session.get(
-            f"https://api.brawlstars.com/v1/clubs/%23{club_tag[1:]}",
-            headers=headers,
-            timeout=ClientTimeout(total=10),
-        ) as response,
-    ):
-        if response.status != 200:
-            return None
-        return await response.json()
 
 
 async def club(command_info: command_info, club_tag: str):
     if not club_tag.startswith("#"):
         club_tag = f"#{club_tag}"
-    club_info = await getClubInfo(club_tag)
+
+    service = get_brawlstars_service()
+    club_info = await service.get_club(club_tag)
     if not club_info:
         return await command_info.reply(
             tanjunLocalizer.localize(
@@ -34,13 +19,13 @@ async def club(command_info: command_info, club_tag: str):
             )
         )
 
-    club_name = club_info["name"]
-    club_description = club_info["description"]
-    required_trophies = club_info["required_trophies"]
-    trophies = club_info["trophies"]
-    members = club_info["members"]
+    club_name = club_info.name
+    club_description = club_info.description or ""
+    required_trophies = club_info.required_trophies
+    trophies = club_info.trophies or 0
+    members = club_info.members
     role_order = {"president": 4, "vicePresident": 3, "senior": 2, "member": 1}
-    members = sorted(members, key=lambda x: (role_order[x["role"]], x["trophies"]), reverse=True)
+    members = sorted(members, key=lambda x: (role_order.get(x.role, 0), x.trophies), reverse=True)
 
     base_description = ""
     base_description += tanjunLocalizer.localize(
@@ -58,10 +43,10 @@ async def club(command_info: command_info, club_tag: str):
         description += tanjunLocalizer.localize(
             command_info.locale,
             "commands.utility.brawlstars.club.description.member",
-            name=member["name"],
-            tag=member["tag"],
-            trophies=addThousandsSeparator(member["trophies"]),
-            role=member["role"],
+            name=member.name,
+            tag=member.tag,
+            trophies=addThousandsSeparator(member.trophies),
+            role=member.role,
         )
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -69,7 +54,7 @@ async def club(command_info: command_info, club_tag: str):
                 "commands.utility.brawlstars.club.title",
                 name=club_name,
                 tag=club_tag,
-                role=member["role"],
+                role=member.role,
                 current_page=i + 1,
                 total_pages=len(members),
             ),
@@ -157,11 +142,11 @@ async def club(command_info: command_info, club_tag: str):
                 desired_page = 0
                 best_similarity = -100
                 for i, member in enumerate(members):
-                    similarity = similar(member["name"].lower(), member_name.lower())
+                    similarity = similar(member.name.lower(), member_name.lower())
                     if similarity > best_similarity:
                         best_similarity = similarity
                         desired_page = i
-                    similarity = similar(member["tag"].lower(), member_name.lower())
+                    similarity = similar(member.tag.lower(), member_name.lower())
                     if similarity > best_similarity:
                         best_similarity = similarity
                         desired_page = i

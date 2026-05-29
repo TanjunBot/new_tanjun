@@ -1,9 +1,7 @@
-import aiohttp
 import discord
-from aiohttp import ClientTimeout
 
-from config import brawlstarsToken
 from localizer import tanjunLocalizer
+from services.brawlstars import get_brawlstars_service
 from utility import (
     command_info,
     date_time_to_timestamp,
@@ -12,23 +10,9 @@ from utility import (
 )
 
 
-async def getEventRotation():
-    headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with (
-        aiohttp.ClientSession() as session,
-        session.get(
-            "https://api.brawlstars.com/v1/events/rotation",
-            headers=headers,
-            timeout=ClientTimeout(total=10),
-        ) as response,
-    ):
-        if response.status != 200:
-            return None
-        return await response.json()
-
-
 async def events(command_info: command_info):
-    event_rotation = await getEventRotation()
+    service = get_brawlstars_service()
+    event_rotation = await service.get_events()
     if not event_rotation:
         return await command_info.reply(
             tanjunLocalizer.localize(

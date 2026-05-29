@@ -1,8 +1,6 @@
 import json
 
-import aiohttp
 import discord
-from aiohttp import ClientTimeout
 
 from api import get_brawlstars_linked_account
 from commands.utility.brawlstars.bshelper import (
@@ -12,24 +10,9 @@ from commands.utility.brawlstars.bshelper import (
     getStarPowerEmoji,
     parseName,
 )
-from config import brawlstarsToken
 from localizer import tanjunLocalizer
+from services.brawlstars import get_brawlstars_service
 from utility import command_info, similar, tanjunEmbed
-
-
-async def getPlayerInfo(player_tag: str):
-    headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with (
-        aiohttp.ClientSession() as session,
-        session.get(
-            f"https://api.brawlstars.com/v1/players/%23{player_tag[1:]}",
-            headers=headers,
-            timeout=ClientTimeout(total=10),
-        ) as response,
-    ):
-        if response.status != 200:
-            return None
-        return await response.json()
 
 
 async def brawlers(command_info: command_info, player_tag: str = None):
@@ -66,7 +49,9 @@ async def brawlers(command_info: command_info, player_tag: str = None):
                 ),
             )
         )
-    player_info = await getPlayerInfo(player_tag)
+
+    service = get_brawlstars_service()
+    player_info = await service.get_player(player_tag)
     if not player_info:
         return await command_info.reply(
             tanjunLocalizer.localize(
@@ -75,20 +60,20 @@ async def brawlers(command_info: command_info, player_tag: str = None):
             )
         )
 
-    player_name = player_info["name"]
-    total_brawlers = len(player_info["brawlers"])
+    player_name = player_info.name
+    total_brawlers = len(player_info.brawlers)
 
     async def generate_page(page_number: int) -> discord.Embed:
-        brawler = player_info["brawlers"][page_number]
-        id = brawler["id"]
-        name = parseName(brawler["name"])
-        power = brawler["power"]
-        rank = brawler["rank"]
-        trophies = brawler["trophies"]
-        highest_trophies = brawler["highest_trophies"]
-        gears = brawler["gears"]
-        gadgets = brawler["gadgets"]
-        star_powers = brawler["star_powers"]
+        brawler = player_info.brawlers[page_number]
+        id = brawler.id
+        name = parseName(brawler.name)
+        power = brawler.power
+        rank = brawler.rank
+        trophies = brawler.trophies
+        highest_trophies = brawler.highest_trophies
+        gears = brawler.gears
+        gadgets = brawler.gadgets
+        star_powers = brawler.star_powers
         level_emoji = getLevelEmoji(rank)
 
         if rank <= 50:
@@ -124,7 +109,7 @@ async def brawlers(command_info: command_info, player_tag: str = None):
             description += "\n"
 
             for star_power in star_powers:
-                name = f" {getStarPowerEmoji(star_power['id'])} {parseName(star_power['name'])}"
+                name = f" {getStarPowerEmoji(star_power.id)} {parseName(star_power.name)}"
                 description += tanjunLocalizer.localize(
                     command_info.locale,
                     "commands.utility.brawlstars.brawlers.description.star_power",
@@ -142,7 +127,7 @@ async def brawlers(command_info: command_info, player_tag: str = None):
             description += "\n"
 
             for gadget in gadgets:
-                name = f" {getGadgetEmoji(gadget['id'])} {parseName(gadget['name'])}"
+                name = f" {getGadgetEmoji(gadget.id)} {parseName(gadget.name)}"
                 description += tanjunLocalizer.localize(
                     command_info.locale,
                     "commands.utility.brawlstars.brawlers.description.gadget",
@@ -159,7 +144,7 @@ async def brawlers(command_info: command_info, player_tag: str = None):
             description += "\n"
 
             for gear in gears:
-                name = f" {getGearEmoji(gear['id'])} {parseName(gear['name'])}"
+                name = f" {getGearEmoji(gear.id)} {parseName(gear.name)}"
                 description += tanjunLocalizer.localize(
                     command_info.locale,
                     "commands.utility.brawlstars.brawlers.description.gear",
@@ -171,7 +156,7 @@ async def brawlers(command_info: command_info, player_tag: str = None):
 
         if command_info.user.id == 1295625022454370346 and command_info.guild.id == 947219439764521060:
             description += "\n"
-            description += f"raw: \n```json\n{json.dumps(brawler, indent=4)}\n```"
+            description += f"raw: \n```json\n{json.dumps(brawler.model_dump(), indent=4)}\n```"
 
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -274,8 +259,8 @@ async def brawlers(command_info: command_info, player_tag: str = None):
 
                 desired_page = 0
                 best_similarity = -100
-                for i, brawler in enumerate(player_info["brawlers"]):
-                    similarity = similar(brawler["name"].lower(), brawler_name.lower())
+                for i, brawler in enumerate(player_info.brawlers):
+                    similarity = similar(brawler.name.lower(), brawler_name.lower())
                     if similarity > best_similarity:
                         best_similarity = similarity
                         desired_page = i

@@ -1,44 +1,11 @@
+from __future__ import annotations
+
 from typing import Any
 
-import aiohttp
-from aiohttp import ClientTimeout
-
+from services.brawlstars import get_brawlstars_service
 from api import get_brawlstars_linked_account
-from config import brawlstarsToken
 from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
-
-
-async def fetch_player_data(player_tag: str) -> dict[str, Any] | None:
-    """Fetch player data directly from Brawl Stars API."""
-    headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    url = "https://api.brawlstars.com/v1/players"
-    params = {"tag": player_tag}
-    async with (
-        aiohttp.ClientSession() as session,
-        session.get(url, headers=headers, params=params, timeout=ClientTimeout(total=10)) as response,
-    ):
-        if response.status != 200:
-            return None
-        return await response.json()
-
-
-async def getAllBrawlers() -> dict[str, Any] | None:
-    headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with (
-        aiohttp.ClientSession() as session,
-        session.get(
-            "https://api.brawlstars.com/v1/brawlers",
-            headers=headers,
-            timeout=ClientTimeout(total=10),
-        ) as response,
-    ):
-        if response.status != 200:
-            return None
-        json_data: Any = await response.json()
-        if isinstance(json_data, dict):
-            return json_data
-        return None
 
 
 async def player_info(command_info: CommandInfo, player_tag: str | None = None) -> None:
@@ -79,8 +46,9 @@ async def player_info(command_info: CommandInfo, player_tag: str | None = None) 
         )
         return
 
-    player_data = await fetch_player_data(player_tag)
-    if not player_data or "items" not in player_data or not player_data["items"]:
+    service = get_brawlstars_service()
+    player = await service.get_player(player_tag)
+    if not player:
         await command_info.reply(
             tanjunLocalizer.localize(
                 command_info.locale,
@@ -89,68 +57,59 @@ async def player_info(command_info: CommandInfo, player_tag: str | None = None) 
         )
         return
 
-    player = player_data["items"][0]
-
     description = ""
     description += tanjunLocalizer.localize(
         command_info.locale,
         "commands.utility.brawlstars.playerinfo.description.trophies",
-        trophies=player.get("trophies", 0),
+        trophies=player.trophies,
     )
     description += "\n"
     description += tanjunLocalizer.localize(
         command_info.locale,
         "commands.utility.brawlstars.playerinfo.description.highest_trophies",
-        highest_trophies=player.get("highest_trophies", 0),
+        highest_trophies=player.highest_trophies,
     )
     description += "\n"
     description += tanjunLocalizer.localize(
         command_info.locale,
         "commands.utility.brawlstars.playerinfo.description.expLevel",
-        expLevel=player.get("expLevel", 0),
+        expLevel=player.exp_level,
     )
 
-    club = player.get("club", {})
-    if club:
+    if player.club:
         description += "\n"
         description += tanjunLocalizer.localize(
             command_info.locale,
             "commands.utility.brawlstars.playerinfo.description.club",
-            tag=club.get("tag", "N/A"),
-            name=club.get("name", "N/A"),
+            tag=player.club.tag,
+            name=player.club.name,
         )
     description += "\n"
-    victories_3v3 = player.get("x3vs3_victories", 0)
-    if victories_3v3 != 0:
+    if player.x3vs3_victories != 0:
         description += tanjunLocalizer.localize(
             command_info.locale,
             "commands.utility.brawlstars.playerinfo.description.3v3Victories",
-            victories=victories_3v3,
+            victories=player.x3vs3_victories,
         )
     description += "\n"
-    solo_victories = player.get("solo_victories", 0)
-    if solo_victories != 0:
+    if player.solo_victories != 0:
         description += tanjunLocalizer.localize(
             command_info.locale,
             "commands.utility.brawlstars.playerinfo.description.soloVictories",
-            victories=solo_victories,
+            victories=player.solo_victories,
         )
     description += "\n"
-    duo_victories = player.get("duo_victories", 0)
-    if duo_victories != 0:
+    if player.duo_victories != 0:
         description += tanjunLocalizer.localize(
             command_info.locale,
             "commands.utility.brawlstars.playerinfo.description.duoVictories",
-            victories=duo_victories,
+            victories=player.duo_victories,
         )
     description += "\n"
     description += "\n"
-    all_brawlers = await getAllBrawlers()
-    brawlers_count = 0
-    if all_brawlers and "items" in all_brawlers:
-        brawlers_count = len(all_brawlers["items"])
-
-    owned_count = len(player.get("brawlers", []))
+    all_brawlers = await service.get_brawler_list()
+    brawlers_count = len(all_brawlers)
+    owned_count = len(player.brawlers)
     description += tanjunLocalizer.localize(
         command_info.locale,
         "commands.utility.brawlstars.playerinfo.description.brawlers",
@@ -161,10 +120,10 @@ async def player_info(command_info: CommandInfo, player_tag: str | None = None) 
         title=tanjunLocalizer.localize(
             command_info.locale,
             "commands.utility.brawlstars.playerinfo.title",
-            player_name=player.get("name", "Unknown"),
+            player_name=player.name,
             tag=player_tag,
         ),
         description=description,
-        color=player.get("nameColor", 0xFFFFFF),
+        color=player.name_color or 0xFFFFFF,
     )
     await command_info.reply(embed=embed)
