@@ -3,14 +3,15 @@
 Extracted from ``utility.py`` as part of refactoring (issue #1608).
 """
 
-import asyncio
 import ast
+import asyncio
 import bisect
 import collections
 import concurrent.futures
 import math
 import operator as op
 import re
+from collections.abc import Mapping
 
 # Thread pool executor for CPU-bound formula evaluation (module-level singleton)
 _eval_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
@@ -52,15 +53,15 @@ class NumericStringParser:
         expop = Literal("^")
 
         expr = Forward()
-        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(self.pushFirst) | (
+        atom = (Opt("-") + (ident + lpar + expr + rpar | fnumber)).setParseAction(self.push_first) | (
             lpar + expr.suppress() + rpar
-        ).setParseAction(self.pushUMinus)
+        ).setParseAction(self.push_uminus)
 
         factor = Forward()
-        factor << atom + ZeroOrMore((expop + factor).setParseAction(self.pushFirst))
+        factor << atom + ZeroOrMore((expop + factor).setParseAction(self.push_first))
 
-        term = factor + ZeroOrMore((multop + factor).setParseAction(self.pushFirst))
-        expr << term + ZeroOrMore((addop + term).setParseAction(self.pushFirst))
+        term = factor + ZeroOrMore((multop + factor).setParseAction(self.push_first))
+        expr << term + ZeroOrMore((addop + term).setParseAction(self.push_first))
 
         self.bnf = expr
 
@@ -106,36 +107,36 @@ class NumericStringParser:
             "^": op.pow,
         }
 
-    def pushFirst(self, strg, loc, toks) -> None:
-        self.exprStack.append(toks[0])
+    def push_first(self, strg: str, loc: int, toks: object) -> None:
+        self.exprStack.append(toks[0])  # type: ignore[index]
 
-    def pushUMinus(self, strg, loc, toks):
-        if toks and toks[0] == "-":
+    def push_uminus(self, strg: str, loc: int, toks: object) -> None:
+        if toks and toks[0] == "-":  # type: ignore[index]
             self.exprStack.append("unary -")
 
-    def evaluateStack(self, s):
+    def evaluate_stack(self, s: list) -> float:
         op_token = s.pop()
         if op_token == "unary -":
-            return -self.evaluateStack(s)
+            return -self.evaluate_stack(s)
         if op_token in "+-*/^":
-            op2 = self.evaluateStack(s)
-            op1 = self.evaluateStack(s)
+            op2 = self.evaluate_stack(s)
+            op1 = self.evaluate_stack(s)
             return self.opn[op_token](op1, op2)
         elif op_token == "PI":
             return math.pi
         elif op_token == "E":
             return math.e
         elif op_token in self.fn:
-            return self.fn[op_token](self.evaluateStack(s))
+            return self.fn[op_token](self.evaluate_stack(s))
         elif op_token[0].isalpha():
             raise Exception(f"Invalid identifier: {op_token}")
         else:
             return float(op_token)
 
-    def eval(self, num_string, parseAll=True):
+    def eval(self, num_string: str, parse_all: bool = True) -> float:
         self.exprStack = []
-        self.bnf.parseString(num_string, parseAll)
-        val = self.evaluateStack(self.exprStack[:])
+        self.bnf.parseString(num_string, parseAll=parse_all)
+        val = self.evaluate_stack(self.exprStack[:])
         return val
 
 
@@ -164,40 +165,52 @@ def log_n(x: float, base: float = math.e) -> float:
     return math.log(x, base)
 
 
-async def eval_expr_async(expr: str, variables=None) -> float:
+async def eval_expr_async(expr: str, variables: Mapping[str, float] | None = None) -> float:
     """Async version of eval_expr that runs the CPU-bound AST evaluation in a thread executor."""
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(_eval_executor, eval_expr, expr, variables)
 
 
-def eval_expr(expr: str, variables=None) -> float:
+def eval_expr(expr: str, variables: Mapping[str, float] | None = None) -> float:
     if variables is None:
         variables = {}
 
     expr = re.sub(r"\bpi\b", str(math.pi), expr)
     expr = re.sub(r"\be\b", str(math.e), expr)
 
-    expr = re.sub(r"log\[(\d+)\]\((.*?)\)", r"log_n(\2,\1)", expr)
-    expr = re.sub(r"sqrt\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
-    expr = re.sub(r"sqrt\((.*?)\)", r"sqrt_n(\1)", expr)
-    expr = re.sub(r"nthroot\[(\d+)\]\((.*?)\)", r"sqrt_n(\2,\1)", expr)
-    expr = re.sub(r"log2\((.*?)\)", r"log_n(\1,2)", expr)
-    expr = re.sub(r"log10\((.*?)\)", r"log_n(\1,10)", expr)
-    expr = re.sub(r"ln\((.*?)\)", r"log_n(\1)", expr)
-    expr = re.sub(r"sin\((.*?)\)", r"math.sin(\1)", expr)
-    expr = re.sub(r"cos\((.*?)\)", r"math.cos(\1)", expr)
-    expr = re.sub(r"tan\((.*?)\)", r"math.tan(\1)", expr)
-    expr = re.sub(r"asin\((.*?)\)", r"math.asin(\1)", expr)
-    expr = re.sub(r"acos\((.*?)\)", r"math.acos(\1)", expr)
-    expr = re.sub(r"atan\((.*?)\)", r"math.atan(\1)", expr)
-    expr = re.sub(r"floor\((.*?)\)", r"math.floor(\1)", expr)
-    expr = re.sub(r"ceil\((.*?)\)", r"math.ceil(\1)", expr)
-    expr = re.sub(r"abs\((.*?)\)", r"abs(\1)", expr)
+    # Iteratively replace innermost function calls to handle nested calls correctly
+    replacements = [
+        (r"log\[(\d+)\]\(([^()]*)\)", r"log_n(\2,\1)"),
+        (r"sqrt\[(\d+)\]\(([^()]*)\)", r"sqrt_n(\2,\1)"),
+        (r"sqrt\(([^()]*)\)", r"sqrt_n(\1)"),
+        (r"nthroot\[(\d+)\]\(([^()]*)\)", r"sqrt_n(\2,\1)"),
+        (r"log2\(([^()]*)\)", r"log_n(\1,2)"),
+        (r"log10\(([^()]*)\)", r"log_n(\1,10)"),
+        (r"ln\(([^()]*)\)", r"log_n(\1)"),
+        (r"sin\(([^()]*)\)", r"math.sin(\1)"),
+        (r"cos\(([^()]*)\)", r"math.cos(\1)"),
+        (r"tan\(([^()]*)\)", r"math.tan(\1)"),
+        (r"asin\(([^()]*)\)", r"math.asin(\1)"),
+        (r"acos\(([^()]*)\)", r"math.acos(\1)"),
+        (r"atan\(([^()]*)\)", r"math.atan(\1)"),
+        (r"floor\(([^()]*)\)", r"math.floor(\1)"),
+        (r"ceil\(([^()]*)\)", r"math.ceil(\1)"),
+        (r"abs\(([^()]*)\)", r"abs(\1)"),
+    ]
+
+    # Keep replacing until no more replacements are possible
+    max_iterations = 100
+    for _ in range(max_iterations):
+        old_expr = expr
+        for pattern, replacement in replacements:
+            expr = re.sub(pattern, replacement, expr)
+        if expr == old_expr:
+            break
 
     return _eval_ast(ast.parse(expr, mode="eval").body, variables)
 
 
-def _eval_ast(node, variables):
+def _eval_ast(node: ast.AST, variables: Mapping[str, float]) -> float:
     if isinstance(node, ast.Constant):
         return node.value
     elif isinstance(node, ast.BinOp):
@@ -272,7 +285,13 @@ class LevelThresholdCache:
     _thresholds: collections.OrderedDict[tuple[str, str | None], tuple[list[int], int]] = collections.OrderedDict()
     _MAX_LEVEL = 10000
     _MAX_ENTRIES = 50
-    _lock: asyncio.Lock = asyncio.Lock()
+    _lock: asyncio.Lock | None = None
+
+    @classmethod
+    def _get_lock(cls) -> asyncio.Lock:
+        if cls._lock is None:
+            cls._lock = asyncio.Lock()
+        return cls._lock
 
     @classmethod
     def get_level_for_xp(cls, xp: int, scaling: str, custom_formula: str | None = None) -> int:
@@ -325,7 +344,7 @@ class LevelThresholdCache:
             max_level = cls._MAX_LEVEL
 
         if thresholds is None or thresholds[-1] < xp:
-            async with cls._lock:
+            async with cls._get_lock():
                 entry = cls._thresholds.get(key)
                 if entry is not None:
                     thresholds, max_level = entry
@@ -360,7 +379,7 @@ def get_xp_for_level(level: int, scaling: str, custom_formula: str | None = None
         return 0
     if scaling == "custom" and custom_formula:
         try:
-            result = eval_expr(custom_formula.replace("level", str(level)))
+            result = eval_expr(custom_formula, variables={"level": level})
         except Exception:
             return 0
     else:
@@ -376,7 +395,7 @@ async def get_xp_for_level_async(level: int, scaling: str, custom_formula: str |
         return 0
     if scaling == "custom" and custom_formula:
         try:
-            result = await eval_expr_async(custom_formula.replace("level", str(level)))
+            result = await eval_expr_async(custom_formula, variables={"level": level})
         except Exception:
             return 0
     else:

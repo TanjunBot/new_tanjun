@@ -17,7 +17,6 @@ New code should import from the specific ``utils.*`` modules instead.
 # ruff: noqa: F401, F403
 
 import logging
-import re as _re
 from difflib import SequenceMatcher as _SequenceMatcher
 from typing import Any
 
@@ -26,6 +25,7 @@ import discord
 # Re-export from sub-modules
 from utils.async_io import run_blocking
 from utils.embeds import (
+    EMOJI_MAP,
     EmbedAuthor,
     EmbedColor,
     EmbedField,
@@ -33,7 +33,6 @@ from utils.embeds import (
     EmbedMedia,
     EmbedProvider,
     EmbedVideo,
-    EMOJI_MAP,
     ErrorEmbedCategory,
     StatusIcon,
     TanjunEmbed,
@@ -53,8 +52,8 @@ from utils.github import addFeedback, missingLocalization
 from utils.http import getGif, upload_image_to_imgbb, upload_to_tanjun_logs
 from utils.math import (
     LEVEL_SCALINGS,
-    NumericStringParser,
     LevelThresholdCache,
+    NumericStringParser,
     cmp,
     eval_expr,
     eval_expr_async,
@@ -66,8 +65,8 @@ from utils.math import (
     sqrt_n,
 )
 from utils.time import (
-    dateToRelativeTimeStr,
     date_time_to_timestamp,
+    dateToRelativeTimeStr,
     isoTimeToDate,
     relativeTimeStrToDate,
     relativeTimeToSeconds,
@@ -86,7 +85,14 @@ def check_if_str_is_hex_color(color: str) -> bool:
         return False
 
 
-def draw_text_with_outline(draw, position, text, font, text_color, outline_color):
+def draw_text_with_outline(  # noqa: ANN001
+    draw: object,
+    position: tuple[int, int],
+    text: str,
+    font: object,
+    text_color: object,
+    outline_color: object,
+) -> None:
     x, y = position
     draw.text((x - 1, y - 1), text, font=font, fill=outline_color)
     draw.text((x + 1, y - 1), text, font=font, fill=outline_color)
@@ -95,24 +101,34 @@ def draw_text_with_outline(draw, position, text, font, text_color, outline_color
     draw.text(position, text, font=font, fill=text_color)
 
 
-def similar(a, b):
+def similar(a: str, b: str) -> float:
     return _SequenceMatcher(None, a, b).ratio()
 
 
-def addThousandsSeparator(number: int) -> str:
+def add_thousands_separator(number: int) -> str:
     return f"{number:,}".replace(",", " ")
+
+
+addThousandsSeparator = add_thousands_separator  # noqa: N816
 
 
 # ---------------------------------------------------------------------------
 # CommandInfo — originally a Pydantic model in utility.py.
 # ---------------------------------------------------------------------------
 
-T = type("T", (), {})
-
 
 class CommandInfo:
-    """Placeholder — was moved elsewhere."""
-    pass
+    """CommandInfo class that accepts keyword arguments for Discord command metadata."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.user = kwargs.get("user")
+        self.channel = kwargs.get("channel")
+        self.guild = kwargs.get("guild")
+        self.command = kwargs.get("command")
+        self.locale = kwargs.get("locale")
+        self.message = kwargs.get("message")
+        self.permissions = kwargs.get("permissions")
+        self.client = kwargs.get("client")
 
 
 command_info: type = CommandInfo

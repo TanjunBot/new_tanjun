@@ -7,7 +7,7 @@ import datetime
 import re
 
 
-def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
+def relative_time_str_to_date(time_string: str) -> datetime.datetime:
     if not time_string:
         return datetime.datetime.now()
 
@@ -34,7 +34,7 @@ def relativeTimeStrToDate(time_string: str) -> datetime.datetime:
     return datetime.datetime.now() + delta
 
 
-def relativeTimeToSeconds(time_string: str) -> int:
+def relative_time_to_seconds(time_string: str) -> int:
     if not time_string:
         return 0
 
@@ -61,16 +61,18 @@ def relativeTimeToSeconds(time_string: str) -> int:
     return int(delta.total_seconds())
 
 
-def dateToRelativeTimeStr(date: datetime.datetime) -> str:
+def dateToRelativeTimeStr(date: datetime.datetime) -> str:  # noqa: N802
     start_date = datetime.datetime.now()
-    delta = date - start_date
+    total_seconds = (date - start_date).total_seconds()
 
-    days = delta.days
-    seconds = delta.seconds
+    is_negative = total_seconds < 0
+    abs_seconds = abs(total_seconds)
 
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    seconds = seconds % 60
+    days = int(abs_seconds // 86400)
+    remaining_seconds = int(abs_seconds % 86400)
+    hours = remaining_seconds // 3600
+    minutes = (remaining_seconds % 3600) // 60
+    seconds = remaining_seconds % 60
 
     components = []
     if days:
@@ -82,12 +84,18 @@ def dateToRelativeTimeStr(date: datetime.datetime) -> str:
     if seconds:
         components.append(f"{seconds}s")
 
-    return " ".join(components)
+    result = " ".join(components)
+    return f"-{result}" if is_negative and result else result
 
 
 def date_time_to_timestamp(date: datetime.datetime) -> int:
     return int(date.timestamp())
 
 
-def isoTimeToDate(isoTime: str) -> datetime.datetime:
+def isoTimeToDate(isoTime: str) -> datetime.datetime:  # noqa: N802,N803
     return datetime.datetime.fromisoformat(isoTime)
+
+
+# Backward-compatible aliases
+relativeTimeStrToDate = relative_time_str_to_date  # noqa: N816
+relativeTimeToSeconds = relative_time_to_seconds  # noqa: N816

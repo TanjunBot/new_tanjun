@@ -9,7 +9,7 @@ from config import GithubAuthToken
 from utils.async_io import run_blocking
 
 
-async def missingLocalization(locale: str) -> None:
+async def missingLocalization(locale: str) -> None:  # noqa: N802
     """Create a GitHub issue reporting a missing localization."""
     await run_blocking(_sync_create_missing_localization_issue, locale)
 
@@ -25,7 +25,7 @@ def _sync_create_missing_localization_issue(locale: str) -> None:
     )
 
 
-async def addFeedback(content: str, author: str) -> None:
+async def addFeedback(content: str, author: str) -> None:  # noqa: N802
     """Create a GitHub issue with user feedback."""
     await run_blocking(_sync_create_feedback_issue, content, author)
 

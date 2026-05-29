@@ -18,7 +18,7 @@ from config import (
 )
 
 
-async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:
+async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:  # noqa: N802
     try:
         async with aiohttp.ClientSession(timeout=ClientTimeout(total=10)) as session:
 
@@ -56,7 +56,7 @@ async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict
     return response_data
 
 
-async def upload_to_tanjun_logs(content: str) -> str:
+async def upload_to_tanjun_logs(content: str) -> str | None:
     compressed_content = gzip.compress(content.encode("utf-8"))
     url = bytebin_url
     username = bytebin_username

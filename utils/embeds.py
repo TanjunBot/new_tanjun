@@ -296,7 +296,9 @@ class TanjunEmbed(BaseModel):
 
     def copy(self) -> Self:
         """Return a shallow copy of the embed."""
-        return self.__class__(**self.model_dump())
+        data = self.model_dump()
+        data["colour"] = self._colour
+        return self.__class__(**data)
 
     def __len__(self) -> int:
         total = len(self.title or "") + len(self.description or "")
@@ -368,21 +370,21 @@ class TanjunEmbed(BaseModel):
         self.footer = None
         return self
 
-    def set_image(self, *, url: Any | None) -> Self:
+    def set_image(self, *, url: object | None) -> Self:
         if url is None:
             self.image = None
         else:
             self.image = EmbedMedia(url=str(url))
         return self
 
-    def set_thumbnail(self, *, url: Any | None) -> Self:
+    def set_thumbnail(self, *, url: object | None) -> Self:
         if url is None:
             self.thumbnail = None
         else:
             self.thumbnail = EmbedMedia(url=str(url))
         return self
 
-    def set_author(self, *, name: Any, url: Any | None = None, icon_url: Any | None = None) -> Self:
+    def set_author(self, *, name: object, url: object | None = None, icon_url: object | None = None) -> Self:
         kwargs: dict[str, Any] = {"name": str(name)}
         if url is not None:
             kwargs["url"] = str(url)
@@ -395,13 +397,13 @@ class TanjunEmbed(BaseModel):
         self.author = None
         return self
 
-    def add_field(self, *, name: Any, value: Any, inline: bool | Any = True) -> Self:
+    def add_field(self, *, name: object, value: object, inline: bool | object = True) -> Self:
         self.fields.append(
             EmbedField(name=str(name), value=str(value), inline=bool(inline))
         )
         return self
 
-    def insert_field_at(self, index: int, *, name: Any, value: Any, inline: bool | Any = True) -> Self:
+    def insert_field_at(self, index: int, *, name: object, value: object, inline: bool | object = True) -> Self:
         self.fields.insert(
             index,
             EmbedField(name=str(name), value=str(value), inline=bool(inline)),
@@ -417,7 +419,7 @@ class TanjunEmbed(BaseModel):
             self.fields.pop(index)
         return self
 
-    def set_field_at(self, index: int, *, name: Any, value: Any, inline: bool | Any = True) -> Self:
+    def set_field_at(self, index: int, *, name: object, value: object, inline: bool | object = True) -> Self:
         if index < 0 or index >= len(self.fields):
             raise IndexError("field index out of range")
         self.fields[index] = EmbedField(name=str(name), value=str(value), inline=bool(inline))
@@ -573,4 +575,4 @@ def info_embed(
 
 
 # Backward-compatible alias
-tanjunEmbed = TanjunEmbed
+tanjunEmbed = TanjunEmbed  # noqa: N816
