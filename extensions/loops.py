@@ -6,7 +6,6 @@ import discord
 from discord.ext import commands, tasks
 
 from ai.refill_token import refill_ai_token
-from api import get_all_twitch_notification_uuids
 from commands.utility.claim_booster_channel import (
     remove_claimed_booster_channels_that_are_expired,
 )
@@ -14,7 +13,8 @@ from commands.utility.claim_booster_role import (
     remove_claimed_booster_roles_that_are_expired,
 )
 from commands.utility.schedulemessage import send_scheduled_messages
-from commands.utility.twitch.twitch_api import getTwitchApi, notify_twitch_online
+from commands.utility.twitch.twitch_api import notify_twitch_online
+from services.twitch_service import get_twitch_service
 from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
 from loops.giveaway import checkVoiceUsers, endGiveaways, sendReadyGiveaways
@@ -109,11 +109,11 @@ class LoopCog(commands.Cog):
     @tasks.loop(seconds=60)  # Twitch API rate limits
     async def pollTwitchStreams(self) -> None:
         try:
-            twitch_api = getTwitchApi()
-            if not twitch_api:
+            twitch_service = get_twitch_service()
+            if not twitch_service:
                 return
 
-            uuids = await get_all_twitch_notification_uuids()
+            uuids = await twitch_service.get_all_notification_uuids()
             if not uuids:
                 return
 
@@ -121,15 +121,18 @@ class LoopCog(commands.Cog):
             user_ids = [str(uuid) for uuid in uuids]
 
             # Initialize stream status on first run
-            if not twitch_api.initial_check_done:
-                await twitch_api.initialize_stream_status(user_ids)
+            if not twitch_service.initial_check_done:
+                await twitch_service.initialize_stream_status(user_ids)
                 return  # Skip notifications on first check
 
-            streams = await twitch_api.get_streams(user_ids)
+            streams = await twitch_service.get_streams(user_ids)
             live_streams = {stream["user_id"]: stream for stream in streams}
 
             # Batch notification for streams going live simultaneously
-            newly_live = [uuid for uuid in user_ids if not twitch_api.stream_status.get(uuid, False) and uuid in live_streams]
+            newly_live = [
+                uuid for uuid in user_ids
+                if not twitch_service.stream_status.get(uuid, False) and uuid in live_streams
+            ]
 
             if newly_live:
                 await asyncio.gather(
@@ -139,7 +142,7 @@ class LoopCog(commands.Cog):
 
             # Update status for all tracked uuids
             for uuid in user_ids:
-                twitch_api.stream_status[uuid] = uuid in live_streams
+                twitch_service.stream_status[uuid] = uuid in live_streams
 
         except Exception:
             logging.exception("Error in loop")

@@ -3,9 +3,32 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from datetime import datetime
 from enum import IntEnum
-from typing import ClassVar, Literal
+from typing import Annotated, ClassVar, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+
+
+def _from_row(cls, row: tuple):
+    """Convert a DB result row to a model instance using positional field order."""
+    field_names = tuple(cls.model_fields.keys())
+    if len(row) != len(field_names):
+        raise ValueError(
+            f"{cls.__name__}.from_row expected {len(field_names)} columns, got {len(row)}. "
+            "Check query projection/order."
+        )
+    return cls(**dict(zip(field_names, row, strict=True)))
+
+
+def _from_row_partial(cls, row: tuple, *, skip: int = 0):
+    """Convert a DB result row to a model instance, skipping first `skip` columns."""
+    field_names = tuple(cls.model_fields.keys())
+    values = row[skip:]
+    if len(values) != len(field_names):
+        raise ValueError(
+            f"{cls.__name__}.from_row_partial expected {len(field_names)} mapped columns, "
+            f"got {len(values)} after skipping {skip}. Check query projection/order."
+        )
+    return cls(**dict(zip(field_names, values, strict=True)))
 
 
 class GiveawayModel(BaseModel):
@@ -13,30 +36,30 @@ class GiveawayModel(BaseModel):
 
     # Matches SELECT column order from giveaway table
     giveaway_id: int
-    guild_id: str
-    title: str
-    description: str | None
-    winners: int
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    title: Annotated[str, StringConstraints(max_length=128)]
+    description: Annotated[str | None, StringConstraints(max_length=1024)] = None
+    winners: int = Field(ge=1)
     with_button: bool
-    custom_name: str | None
-    sponsor: str | None
-    price: str | None
-    message: str | None
-    end_time: datetime
-    start_time: datetime | None
+    custom_name: Annotated[str | None, StringConstraints(max_length=64)] = None
+    sponsor: Annotated[str | None, StringConstraints(max_length=64)] = None
+    price: Annotated[str | None, StringConstraints(max_length=64)] = None
+    message: Annotated[str | None, StringConstraints(max_length=1024)] = None
+    end_time: datetime | None
+    start_time: datetime | None = None
     started: bool
     ended: bool
-    new_message_requirement: int | None
-    day_requirement: int | None
-    voice_requirement: int | None
+    new_message_requirement: int | None = None
+    day_requirement: int | None = None
+    voice_requirement: int | None = None
     send_failed: bool
-    channel_id: str | None
-    message_id: str
-    created_at: datetime
+    channel_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    message_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    created_at: datetime | None
 
     @classmethod
     def from_row(cls, row: tuple) -> GiveawayModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[GiveawayModel]:
@@ -49,12 +72,12 @@ class GiveawayModel(BaseModel):
 class GiveawayChannelRequirementModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    channel_id: str
-    amount: int
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    amount: int = Field(gt=0)
 
     @classmethod
     def from_row(cls, row: tuple) -> GiveawayChannelRequirementModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[GiveawayChannelRequirementModel]:
@@ -67,12 +90,12 @@ class GiveawayChannelRequirementModel(BaseModel):
 class GiveawayBlacklistEntryModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    entity_id: str
-    reason: str | None = None
+    entity_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    reason: Annotated[str | None, StringConstraints(max_length=255)] = None
 
     @classmethod
     def from_row(cls, row: tuple) -> GiveawayBlacklistEntryModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[GiveawayBlacklistEntryModel]:
@@ -87,21 +110,21 @@ class ReportModel(BaseModel):
 
     # Matches SELECT order from get_reports()
     id: int
-    guild_id: str
-    user_id: str
-    reporter_id: str
-    reason: str | None
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    reporter_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    reason: Annotated[str | None, StringConstraints(max_length=500)] = None
     created_at: int  # UNIX_TIMESTAMP
     accepted: bool
     accepted_at: int | None  # UNIX_TIMESTAMP
-    accepted_by: str | None
+    accepted_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
     resolved: bool
     resolved_at: int | None  # UNIX_TIMESTAMP
-    resolved_by: str | None
+    resolved_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
 
     @classmethod
     def from_row(cls, row: tuple) -> ReportModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ReportModel]:
@@ -116,18 +139,19 @@ class ScheduledMessageModel(BaseModel):
 
     # Matches SELECT column order from scheduledMessages table
     message_id: int
-    guild_id: str | None
-    channel_id: str | None
-    user_id: str
-    content: str
+    guild_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    channel_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    content: Annotated[str, StringConstraints(max_length=2000)]
     send_time: datetime
     repeat_interval: int | None
     repeat_amount: int | None
+    attachments: str | None = None
     created_at: datetime
 
     @classmethod
     def from_row(cls, row: tuple) -> ScheduledMessageModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ScheduledMessageModel]:
@@ -141,15 +165,15 @@ class TwitchOnlineNotificationModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    channel_id: str
-    guild_id: str
-    twitch_uuid: str
-    twitch_name: str
-    notification_message: str | None
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    twitch_uuid: Annotated[str, StringConstraints(min_length=1, max_length=64)]
+    twitch_name: Annotated[str, StringConstraints(min_length=1, max_length=64)]
+    notification_message: Annotated[str | None, StringConstraints(max_length=500)] = None
 
     @classmethod
     def from_row(cls, row: tuple) -> TwitchOnlineNotificationModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TwitchOnlineNotificationModel]:
@@ -163,14 +187,14 @@ class TriggerMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    guild_id: str
-    trigger: str
-    response: str
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    trigger: Annotated[str, StringConstraints(max_length=128)]
+    response: Annotated[str, StringConstraints(max_length=1024)]
     case_sensitive: bool
 
     @classmethod
     def from_row(cls, row: tuple) -> TriggerMessageModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TriggerMessageModel]:
@@ -183,13 +207,13 @@ class TriggerMessageModel(BaseModel):
 class TriggerMessageChannelModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: str
-    channel_id: str
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
     trigger_id: int
 
     @classmethod
     def from_row(cls, row: tuple) -> TriggerMessageChannelModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TriggerMessageChannelModel]:
@@ -203,17 +227,17 @@ class TicketMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    guild_id: str
-    channel_id: str
-    introduction: str | None
-    ping_role: str | None
-    name: str | None
-    description: str | None
-    summary_channel_id: str | None
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    introduction: Annotated[str | None, StringConstraints(max_length=1024)] = None
+    ping_role: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    name: Annotated[str | None, StringConstraints(max_length=128)] = None
+    description: Annotated[str | None, StringConstraints(max_length=1024)] = None
+    summary_channel_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
 
     @classmethod
     def from_row(cls, row: tuple) -> TicketMessageModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TicketMessageModel]:
@@ -227,18 +251,18 @@ class TicketModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     # Matches explicit SELECT order from get_tickets()
-    guild_id: str
-    opener_id: str
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    opener_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
     opened_at: int  # UNIX_TIMESTAMP
     closed: bool
     closed_at: int | None  # UNIX_TIMESTAMP
-    closed_by: str | None
-    channel_id: str
+    closed_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
     ticket_message_id: int
 
     @classmethod
     def from_row(cls, row: tuple) -> TicketModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TicketModel]:
@@ -251,19 +275,19 @@ class TicketModel(BaseModel):
 class AISituationModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: str
-    situation: str | None
-    name: str | None
+    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    situation: Annotated[str | None, StringConstraints(max_length=2000)] = None
+    name: Annotated[str | None, StringConstraints(max_length=15)] = None
     created_at: datetime
-    temperature: float
-    top_p: float
-    frequency_penalty: float
-    presence_penalty: float
+    temperature: float = Field(ge=0.0, le=2.0, default=0.7)
+    top_p: float = Field(ge=0.0, le=1.0, default=1.0)
+    frequency_penalty: float = Field(ge=-2.0, le=2.0, default=0.0)
+    presence_penalty: float = Field(ge=-2.0, le=2.0, default=0.0)
     unlocked: bool
 
     @classmethod
     def from_row(cls, row: tuple) -> AISituationModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[AISituationModel]:
@@ -277,17 +301,17 @@ class WarningModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    guild_id: str
-    user_id: str
-    reason: str | None
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    reason: Annotated[str | None, StringConstraints(max_length=255)] = None
     created_at: datetime
     expires_at: datetime | None
-    created_by: str
-    escalation_level: int
+    created_by: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    escalation_level: int = Field(ge=0)
 
     @classmethod
     def from_row(cls, row: tuple) -> WarningModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[WarningModel]:
@@ -302,14 +326,14 @@ class DetailedWarningModel(BaseModel):
 
     # Subset projection from get_detailed_warnings()
     id: int
-    reason: str | None
+    reason: Annotated[str | None, StringConstraints(max_length=255)] = None
     created_at: datetime
     expires_at: datetime | None
-    created_by: str
+    created_by: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 
     @classmethod
     def from_row(cls, row: tuple) -> DetailedWarningModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[DetailedWarningModel]:
@@ -322,17 +346,16 @@ class DetailedWarningModel(BaseModel):
 class WarnConfigModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    expiration_days: int
-    timeout_threshold: int
-    timeout_duration: int
-    kick_threshold: int
-    ban_threshold: int
+    expiration_days: int = Field(ge=0)
+    timeout_threshold: int = Field(ge=0)
+    timeout_duration: int = Field(ge=0)
+    kick_threshold: int = Field(ge=0)
+    ban_threshold: int = Field(ge=0)
 
     @classmethod
     def from_row(cls, row: tuple) -> WarnConfigModel:
         # row includes guild_id as first column, which we skip
-        _, expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold = row
-        return cls(expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold)
+        return _from_row_partial(cls, row, skip=1)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[WarnConfigModel]:
@@ -345,12 +368,12 @@ class WarnConfigModel(BaseModel):
 class XpBoostModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    boost: float
+    boost: float = Field(ge=0.0)
     additive: bool
 
     @classmethod
     def from_row(cls, row: tuple) -> XpBoostModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[XpBoostModel]:
@@ -363,12 +386,12 @@ class XpBoostModel(BaseModel):
 class BlacklistEntryModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    entity_id: str
-    reason: str | None = None
+    entity_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    reason: Annotated[str | None, StringConstraints(max_length=255)] = None
 
     @classmethod
     def from_row(cls, row: tuple) -> BlacklistEntryModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[BlacklistEntryModel]:
@@ -381,12 +404,12 @@ class BlacklistEntryModel(BaseModel):
 class LevelRoleModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    level: int
-    role_id: str
+    level: int = Field(ge=0)
+    role_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 
     @classmethod
     def from_row(cls, row: tuple) -> LevelRoleModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[LevelRoleModel]:
@@ -399,16 +422,16 @@ class LevelRoleModel(BaseModel):
 class DynamicSlowmodeModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: str
-    channel_id: str
-    messages: int
-    per: int
-    reset_after: int
-    cached_slowmode: int | None
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    messages: int = Field(gt=0)
+    per: int = Field(gt=0)
+    reset_after: int = Field(gt=0)
+    cached_slowmode: Annotated[int | None, Field(ge=0)] = None
 
     @classmethod
     def from_row(cls, row: tuple) -> DynamicSlowmodeModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[DynamicSlowmodeModel]:
@@ -421,12 +444,12 @@ class DynamicSlowmodeModel(BaseModel):
 class AfkMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    message_id: str
-    channel_id: str
+    message_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 
     @classmethod
     def from_row(cls, row: tuple) -> AfkMessageModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[AfkMessageModel]:
@@ -439,12 +462,12 @@ class AfkMessageModel(BaseModel):
 class LogBlacklistEntryModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: str
-    entity_id: str
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    entity_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 
     @classmethod
     def from_row(cls, row: tuple) -> LogBlacklistEntryModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[LogBlacklistEntryModel]:
@@ -457,14 +480,14 @@ class LogBlacklistEntryModel(BaseModel):
 class WelcomeChannelModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    channel_id: str
-    guild_id: str
-    message: str | None
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    message: Annotated[str | None, StringConstraints(max_length=1024)] = None
     image_background: str | None
 
     @classmethod
     def from_row(cls, row: tuple) -> WelcomeChannelModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[WelcomeChannelModel]:
@@ -477,14 +500,14 @@ class WelcomeChannelModel(BaseModel):
 class LeaveChannelModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    channel_id: str
-    guild_id: str
-    message: str | None
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    message: Annotated[str | None, StringConstraints(max_length=1024)] = None
     image_background: str | None
 
     @classmethod
     def from_row(cls, row: tuple) -> LeaveChannelModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[LeaveChannelModel]:
@@ -498,13 +521,13 @@ class DynamicSlowmodeMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    channel_id: str
-    message_id: str
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    message_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
     send_time: datetime
 
     @classmethod
     def from_row(cls, row: tuple) -> DynamicSlowmodeMessageModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[DynamicSlowmodeMessageModel]:
@@ -517,14 +540,14 @@ class DynamicSlowmodeMessageModel(BaseModel):
 class TokenOverviewModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    free_token: int
-    plus_token: int
-    paid_token: int
-    used_token: int
+    free_token: int = Field(ge=0)
+    plus_token: int = Field(ge=0)
+    paid_token: int = Field(ge=0)
+    used_token: int = Field(ge=0)
 
     @classmethod
     def from_row(cls, row: tuple) -> TokenOverviewModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[TokenOverviewModel]:
@@ -537,7 +560,7 @@ class TokenOverviewModel(BaseModel):
 class LogEnableModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: str
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
     automod_rule_create: bool = True
     automod_rule_update: bool = True
     automod_rule_delete: bool = True
@@ -591,7 +614,7 @@ class LogEnableModel(BaseModel):
         "guild_role_update",
     ]
 
-    # DB column name → model field name mapping
+    # DB column name to model field name mapping
     _DB_FIELD_MAP: ClassVar[dict[str, str]] = {
         "automodRuleCreate": "automod_rule_create",
         "automodRuleUpdate": "automod_rule_update",
@@ -619,8 +642,8 @@ class LogEnableModel(BaseModel):
         "guildRoleUpdate": "guild_role_update",
     }
 
-    # Reverse mapping: model field → DB column name
-    _FIELD_DB_MAP: ClassVar[dict[str, str]] = {v: k for k, v in _DB_FIELD_MAP.items()}
+    # Reverse mapping: model field --> DB column name
+    _FIELD_DB_MAP: ClassVar[dict[str, str]] = {v: k for k, v in _DB_FIELD_MAP.items()}  # type: ignore[misc]
 
     @model_validator(mode="wrap")
     @classmethod
@@ -637,16 +660,15 @@ class LogEnableModel(BaseModel):
 
     @classmethod
     def from_row(cls, row: tuple) -> LogEnableModel:
-        guild_id = row[0]
-        field_names = [k for k in cls._OPTION_KEYS]
-        expected_count = len(field_names)
-        actual_values = row[1:]
-        if len(actual_values) != expected_count:
+        expected_count = len(cls._OPTION_KEYS) + 1
+        if len(row) != expected_count:
             raise ValueError(
-                f"Expected {expected_count} column values for LogEnableModel, "
-                f"got {len(actual_values)}. Row: {row[: expected_count + 1]!r}..."
+                f"{cls.__name__}.from_row expected {expected_count} columns, got {len(row)}. "
+                "Check query projection/order."
             )
-        values = {name: bool(v) for name, v in zip(field_names, actual_values, strict=False)}
+        guild_id = row[0]
+        actual_values = row[1:]
+        values = dict(zip(cls._OPTION_KEYS, actual_values, strict=True))
         return cls(guild_id=guild_id, **values)
 
     @classmethod
@@ -676,13 +698,13 @@ class LogEnableModel(BaseModel):
 class ClaimedBoosterChannelModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: str
-    channel_id: str
-    guild_id: str
+    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    channel_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 
     @classmethod
     def from_row(cls, row: tuple) -> ClaimedBoosterChannelModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ClaimedBoosterChannelModel]:
@@ -695,13 +717,13 @@ class ClaimedBoosterChannelModel(BaseModel):
 class ClaimedBoosterRoleModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: str
-    role_id: str
-    guild_id: str
+    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    role_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 
     @classmethod
     def from_row(cls, row: tuple) -> ClaimedBoosterRoleModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ClaimedBoosterRoleModel]:
@@ -714,12 +736,12 @@ class ClaimedBoosterRoleModel(BaseModel):
 class BlockedReporterModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: str
-    user_id: str
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
 
     @classmethod
     def from_row(cls, row: tuple) -> BlockedReporterModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[BlockedReporterModel]:
@@ -732,12 +754,12 @@ class BlockedReporterModel(BaseModel):
 class LevelLeaderboardEntryModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: str
-    xp: int
+    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    xp: int = Field(ge=0)
 
     @classmethod
     def from_row(cls, row: tuple) -> LevelLeaderboardEntryModel:
-        return cls(*row)
+        return _from_row(cls, row)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[LevelLeaderboardEntryModel]:
@@ -750,16 +772,16 @@ class LevelLeaderboardEntryModel(BaseModel):
 class UserLevelInfoModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    xp: int
-    level: int
-    xp_needed: int
-    custom_background: str | None
+    xp: int = Field(ge=0)
+    level: int = Field(ge=0)
+    xp_needed: int = Field(ge=0)
+    custom_background: Annotated[str | None, StringConstraints(max_length=255)] = None
 
 
 class ChannelOverwriteModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    role_id: str
+    role_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
     overwrites: dict
 
     @classmethod
@@ -780,13 +802,13 @@ class LevelConfig(BaseModel):
     """Pydantic model for a guild's level configuration."""
     model_config = ConfigDict(from_attributes=True)
 
-    guild_id: str
+    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
     active: bool = True
     difficulty: Literal['easy', 'medium', 'hard', 'extreme', 'custom'] = "medium"
-    custom_formula: str | None = None
+    custom_formula: Annotated[str | None, StringConstraints(max_length=255)] = None
     level_up_message_active: bool = True
-    level_up_message: str | None = None
-    level_up_channel_id: str | None = None
+    level_up_message: Annotated[str | None, StringConstraints(max_length=1024)] = None
+    level_up_channel_id: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
     text_cooldown: int = Field(default=60, ge=0)
     voice_cooldown: int = Field(default=60, ge=0)
 
@@ -800,9 +822,10 @@ class LevelConfig(BaseModel):
     @classmethod
     def from_row(cls, row: tuple) -> LevelConfig:
         """Create a LevelConfig from a DB result row."""
-        if not isinstance(row, (list, tuple)) or len(row) < 9:
+        expected_count = len(cls._COLUMN_ORDER)
+        if not isinstance(row, (list, tuple)) or len(row) != expected_count:
             raise ValueError(
-                f"LevelConfig.from_row expects a row with at least 9 columns, "
+                f"LevelConfig.from_row expects exactly {expected_count} columns, "
                 f"got {len(row) if isinstance(row, (list, tuple)) else 'non-sequence'}. "
                 f"Check query projection/order."
             )
@@ -839,5 +862,7 @@ class CountingMode(IntEnum):
 
 
 class LevelRolesGroupModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     level: int = Field(ge=0)
-    role_ids: list[str]
+    role_ids: Annotated[list[Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]], Field(min_length=1)]

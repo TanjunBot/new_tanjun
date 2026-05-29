@@ -30,6 +30,7 @@ from config import (
     prefix,
 )
 from DatabaseHealthCheck import DatabaseHealthCheck
+from di import services
 from external_api_health_checks import (
     BrawlStarsHealthCheck,
     BytebinHealthCheck,
@@ -155,6 +156,10 @@ async def main():
 
     set_bot(bot)
 
+    # Populate DI container with core infrastructure.
+    services.bot = bot
+    services.pool = pool
+
     # Step 2: Create tables concurrently with remaining extension loading.
     from api import create_tables
 
@@ -181,6 +186,26 @@ async def main():
     from api import preload_guild_configs
 
     await preload_guild_configs(bot)
+
+    # Populate DI container with existing service singletons.
+    from services.afk_service import afk_service
+    from services.giveaway_service import giveaway_service
+    from services.report_service import report_service
+    from services.ticket_service import ticket_service
+    from services.trigger_message_service import trigger_message_service
+    from services.xp_calculator import xp_calculator
+
+    services.afk_service = afk_service
+    services.giveaway_service = giveaway_service
+    services.report_service = report_service
+    services.ticket_service = ticket_service
+    services.trigger_message_service = trigger_message_service
+    services.xp_calculator = xp_calculator
+
+    # Step 3.5: Initialize Twitch service.
+    from services.twitch_service import init_twitch_service
+
+    await init_twitch_service()
 
     # Step 4: Load translator (depends on extensions being loaded for tree).
     await loadTranslator(bot)

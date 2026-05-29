@@ -1,497 +1,402 @@
 """
-BrawlStarsService: Typed client for Brawl Stars API with Pydantic response models.
+BrawlStarsService: Typed client for the Brawl Stars API with Pydantic response models.
 
-Consolidates raw API calls across commands/utility/brawlstars/* into a single
-service class with validated Pydantic models. Reuses one aiohttp session and
-centralizes rate-limit handling with retry logic and exponential backoff.
+Consolidates all raw API calls scattered across commands/utility/brawlstars/* into a single
+service with proper response validation, centralized rate-limit handling, and shared session
+management.
+
+Usage:
+    from services.brawlstars import BrawlStarsService
+
+    service = BrawlStarsService()
+    player = await service.get_player("#ABC123")
 """
 
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import random
 from typing import Any
 
 import aiohttp
-from aiohttp import ClientTimeout
-from pydantic import BaseModel, Field
-
-from config import brawlstarsToken
+from pydantic import AliasPath, BaseModel, ConfigDict, Field
 
 logger = logging.getLogger(__name__)
 
-# ---- Pydantic response models ----
+# ── Pydantic Models ──────────────────────────────────────────────────────────
 
 
-class BrawlStarsClub(BaseModel):
-    """A club the player belongs to."""
+def to_camel_case(snake_str: str) -> str:
+    """Convert snake_case to camelCase."""
+    components = snake_str.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
+
+
+class BrawlStarsBaseModel(BaseModel):
+    """Base model with camelCase alias support for all Brawl Stars models."""
+
+    model_config = ConfigDict(
+        alias_generator=to_camel_case,
+        populate_by_name=True,
+    )
+
+
+class BrawlStarsIcon(BrawlStarsBaseModel):
+    """Represents an icon/avatar in Brawl Stars API responses."""
+
+    id: int | None = None
+
+
+class BrawlStarsClubMember(BrawlStarsBaseModel):
+    """Represents a single member within a club."""
+
+    tag: str
+    name: str
+    role: str
+    trophies: int
+    name_color: str | None = None
+    icon: BrawlStarsIcon | None = None
+    # Optional fields from get_player context
+    club_rank: int | None = None
+
+
+class BrawlStarsClub(BrawlStarsBaseModel):
+    """Represents a club associated with a player or queried directly."""
 
     tag: str = ""
     name: str = ""
+    description: str | None = None
+    type: str | None = None
+    badge_id: int | None = None
+    required_trophies: int = 0
+    trophies: int | None = None
+    members: list[BrawlStarsClubMember] = Field(default_factory=list)
 
 
-class BrawlerGear(BaseModel):
-    """A single gear item on a brawler."""
+class BrawlerGear(BrawlStarsBaseModel):
+    """A gear equipped on a brawler."""
 
-    id: int = 0
-    name: str = ""
-    level: int = 1
-
-
-class BrawlerGadget(BaseModel):
-    """A single gadget on a brawler."""
-
-    id: int = 0
-    name: str = ""
+    id: int
+    name: str
+    level: int
 
 
-class BrawlerStarPower(BaseModel):
-    """A single star power on a brawler."""
+class BrawlerGadget(BrawlStarsBaseModel):
+    """A gadget equipped on a brawler."""
 
-    id: int = 0
-    name: str = ""
+    id: int
+    name: str
 
 
-class BrawlerInfo(BaseModel):
-    """A brawler on a player's roster."""
+class BrawlerStarPower(BrawlStarsBaseModel):
+    """A star power equipped on a brawler."""
 
-    id: int = 0
-    name: str = ""
-    power: int = 1
-    rank: int = 1
-    trophies: int = 0
-    highest_trophies: int = 0
+    id: int
+    name: str
+
+
+class BrawlerInfo(BrawlStarsBaseModel):
+    """Detailed info for a single brawler a player owns."""
+
+    id: int
+    name: str
+    power: int
+    rank: int
+    trophies: int
+    highest_trophies: int
     gears: list[BrawlerGear] = Field(default_factory=list)
     gadgets: list[BrawlerGadget] = Field(default_factory=list)
     star_powers: list[BrawlerStarPower] = Field(default_factory=list)
 
 
-class BrawlStarsPlayer(BaseModel):
-    """A Brawl Stars player profile."""
+class BattleBrawler(BrawlStarsBaseModel):
+    """Minimal brawler data from battle log payloads."""
 
-    tag: str = ""
-    name: str = ""
-    name_color: str = ""
+    id: int
+    name: str
+    power: int
+    trophies: int
+
+
+class BrawlStarsPlayer(BrawlStarsBaseModel):
+    """Full player model returned by the Brawl Stars API."""
+
+    tag: str
+    name: str
     trophies: int = 0
     highest_trophies: int = 0
     exp_level: int = 0
     exp_points: int = 0
     is_qualified_from_championship: bool = False
+    duo_wins: int = 0
+    solo_wins: int = 0
+    x3vs3_victories: int = 0
     solo_victories: int = 0
     duo_victories: int = 0
-    x3vs3_victories: int = 0
     club: BrawlStarsClub | None = None
     brawlers: list[BrawlerInfo] = Field(default_factory=list)
+    name_color: str | None = None
+    icon: BrawlStarsIcon | None = None
 
 
-class BattleBrawler(BaseModel):
-    """A brawler used in a battle."""
+class BrawlStarPlayerBrawler(BrawlStarsBaseModel):
+    """Minimal brawler data from the /v1/brawlers endpoint."""
 
-    name: str = ""
-    power: int = 1
-    trophies: int = 0
-
-
-class BattlePlayer(BaseModel):
-    """A player in a battle."""
-
-    tag: str = ""
-    name: str = ""
-    brawler: BattleBrawler = Field(default_factory=BattleBrawler)
+    id: int
+    name: str
 
 
-class BattleEvent(BaseModel):
-    """The event (map + mode) a battle was played on."""
+class BrawlStarsBrawlerList(BrawlStarsBaseModel):
+    """Response from the /v1/brawlers list endpoint."""
 
-    mode: str = ""
-    map: str = ""
-    id: int = 0
+    items: list[BrawlStarPlayerBrawler] = Field(default_factory=list)
 
 
-class BattleResult(BaseModel):
-    """Details of a single battle from the battle log."""
+class BrawlStarsEventDetail(BrawlStarsBaseModel):
+    """Details of a single event slot."""
 
-    mode: str = ""
-    type: str = ""
-    result: str = ""
-    duration: int | None = None
-    trophy_change: int | None = None
+    id: int
+    mode: str
+    map: str
+
+
+class BrawlStarsEvent(BrawlStarsBaseModel):
+    """A single event in the current rotation."""
+
+    start_time: str
+    end_time: str
+    event: BrawlStarsEventDetail
+
+
+class BrawlStarsEventRotation(BrawlStarsBaseModel):
+    """Wrapper for the event rotation endpoint (list in response)."""
+
+    items: list[BrawlStarsEvent] = Field(default_factory=list)
+
+
+class BattlePlayer(BrawlStarsBaseModel):
+    """Player info within a battle."""
+
+    tag: str
+    name: str
     brawler: BattleBrawler | None = None
-    map: str | None = None
-    star_player: BattlePlayer | None = None
-    players: list[BattlePlayer] = Field(default_factory=list)
-    teams: list[list[BattlePlayer]] = Field(default_factory=list)
 
 
-class BattleLogItem(BaseModel):
-    """A single entry in a player's battle log."""
+class BrawlStarsBattle(BrawlStarsBaseModel):
+    """A single battle entry from the battle log."""
 
-    battle_time: str = ""
-    event: BattleEvent = Field(default_factory=BattleEvent)
-    battle: BattleResult = Field(default_factory=BattleResult)
-
-
-class BrawlStarsClubMember(BaseModel):
-    """A member of a club."""
-
-    tag: str = ""
-    name: str = ""
-    trophies: int = 0
-    role: str = "member"
+    battle_time: str = Field(validation_alias="battleTime")
+    mode: str = Field(validation_alias=AliasPath("event", "mode"))
+    type: str = Field(validation_alias=AliasPath("battle", "type"))
+    result: str | None = Field(default=None, validation_alias=AliasPath("battle", "result"))
+    duration: int | None = Field(default=None, validation_alias=AliasPath("battle", "duration"))
+    trophy_change: int | None = Field(default=None, validation_alias=AliasPath("battle", "trophyChange"))
+    star_player: BattlePlayer | None = Field(default=None, validation_alias=AliasPath("battle", "starPlayer"))
+    teams: list[list[BattlePlayer]] | None = Field(default=None, validation_alias=AliasPath("battle", "teams"))
+    players: list[BattlePlayer] | None = Field(default=None, validation_alias=AliasPath("battle", "players"))
+    map: str | None = Field(default=None, validation_alias=AliasPath("event", "map"))
 
 
-class BrawlStarsClubFull(BaseModel):
-    """A full club profile with members."""
+class BrawlStarsBattleLog(BrawlStarsBaseModel):
+    """Response from the battle log endpoint."""
 
-    tag: str = ""
-    name: str = ""
-    description: str = ""
-    trophies: int = 0
-    required_trophies: int = 0
-    members: list[BrawlStarsClubMember] = Field(default_factory=list)
+    items: list[BrawlStarsBattle] = Field(default_factory=list)
 
 
-class BrawlStarsEvent(BaseModel):
-    """A single event in the rotation."""
-
-    start_time: str = ""
-    end_time: str = ""
-    event: BattleEvent = Field(default_factory=BattleEvent)
-
-
-class BrawlerDefinition(BaseModel):
-    """Brawler definition from the brawlers list endpoint."""
-
-    id: int = 0
-    name: str = ""
-    star_powers: list[BrawlerStarPower] = Field(default_factory=list)
-    gadgets: list[BrawlerGadget] = Field(default_factory=list)
-
-
-class BrawlersList(BaseModel):
-    """Response from the brawlers list endpoint."""
-
-    items: list[BrawlerDefinition] = Field(default_factory=list)
-
-
-# ---- Service class ----
+# ── Service ──────────────────────────────────────────────────────────────────
 
 
 class BrawlStarsService:
     """Typed HTTP client for the Brawl Stars API.
 
-    Centralizes all Brawl Stars API calls into a single session-managed
-    service with Pydantic-validated responses and shared rate-limit handling.
+    Manages a reusable aiohttp.ClientSession, reads the API token from
+    environment (``brawlstarsToken``), and returns Pydantic-validated models
+    instead of raw dicts.
     """
 
     BASE_URL = "https://api.brawlstars.com/v1"
 
-    def __init__(self) -> None:
-        self._token: str | None = brawlstarsToken
-        self._session: aiohttp.ClientSession | None = None
+    def __init__(self, token: str | None = None, session: aiohttp.ClientSession | None = None) -> None:
+        """Initialise with an optional token and optional shared session.
 
-    async def _ensure_session(self) -> aiohttp.ClientSession:
+        When ``session`` is ``None`` a new one will be created on first request
+        and reused for the lifetime of the service.
+        """
+        from config import brawlstarsToken  # noqa: PLC0415
+
+        self._token: str = token or brawlstarsToken
+        self._session: aiohttp.ClientSession | None = session
+        self._owns_session: bool = session is None
+
+    # ── Session management ──────────────────────────────────────────────────
+
+    async def _get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession()
+            self._owns_session = True
         return self._session
 
-    async def _request(
-        self,
-        path: str,
-        params: dict[str, str] | None = None,
-        max_retries: int = 3,
-    ) -> dict[str, Any] | list[dict[str, Any]] | None:
-        """Make an authenticated GET request to the Brawl Stars API with retry logic.
-
-        Implements exponential backoff with jitter for rate limits (HTTP 429) and
-        server errors (HTTP 503). Respects Retry-After header when present.
-        """
-        if not self._token:
-            return None
-        session = await self._ensure_session()
-        url = f"{self.BASE_URL}/{path}"
-        headers = {"Authorization": f"Bearer {self._token}"}
-
-        for attempt in range(max_retries + 1):
-            async with session.get(
-                url,
-                headers=headers,
-                params=params,
-                timeout=ClientTimeout(total=10),
-            ) as response:
-                if response.status == 200:
-                    raw: Any = await response.json()
-                    if isinstance(raw, dict):
-                        return raw
-                    if isinstance(raw, list):
-                        return raw
-                    return None
-
-                # Read response body for logging
-                try:
-                    body = await response.text()
-                except Exception:
-                    body = "<unable to read body>"
-
-                # Handle rate limits and server errors with retry
-                if response.status in (429, 503) and attempt < max_retries:
-                    # Check for Retry-After header
-                    retry_after = response.headers.get("Retry-After")
-                    if retry_after and retry_after.isdigit():
-                        delay = int(retry_after)
-                    else:
-                        # Exponential backoff with jitter: 2^attempt * (0.5 to 1.5)
-                        base_delay = 2 ** attempt
-                        jitter = random.uniform(0.5, 1.5)
-                        delay = base_delay * jitter
-
-                    logger.warning(
-                        f"Rate limit/server error on {path} (attempt {attempt + 1}/{max_retries + 1}): "
-                        f"HTTP {response.status}. Retrying in {delay:.2f}s"
-                    )
-                    await asyncio.sleep(delay)
-                    continue
-
-                # Log and return None for all error cases after retries exhausted
-                logger.error(
-                    f"Request to {path} failed with HTTP {response.status}: {body[:200]}"
-                )
-                return None
-
-        return None
-
     async def close(self) -> None:
-        """Close the underlying aiohttp session."""
-        if self._session and not self._session.closed:
+        """Close the underlying session if owned by this service."""
+        if self._session is not None and not self._session.closed and self._owns_session:
             await self._session.close()
 
+    async def __aenter__(self) -> BrawlStarsService:
+        return self
+
+    async def __aexit__(self, *args: Any) -> None:
+        await self.close()
+
+    # ── Request helpers ─────────────────────────────────────────────────────
+
+    async def _get(self, path: str, max_retries: int = 3) -> dict[str, Any] | None:
+        """Perform a GET request to the Brawl Stars API with retry logic.
+
+        Implements exponential backoff with jitter for rate limits (HTTP 429)
+        and server errors (HTTP 503). Returns the parsed JSON dict on success
+        (HTTP 200), or ``None`` on persistent errors.
+        """
+        try:
+            session = await self._get_session()
+            for attempt in range(max_retries + 1):
+                async with session.get(
+                    f"{self.BASE_URL}{path}",
+                    headers={"Authorization": f"Bearer {self._token}"},
+                    timeout=aiohttp.ClientTimeout(total=10),
+                ) as response:
+                    if response.status == 200:
+                        data: Any = await response.json()
+                        if isinstance(data, dict):
+                            return data
+                        return None
+
+                    if response.status in (429, 503) and attempt < max_retries:
+                        retry_after = response.headers.get("Retry-After")
+                        if retry_after and retry_after.isdigit():
+                            delay = float(retry_after)
+                        else:
+                            delay = (2 ** attempt) * random.uniform(0.5, 1.5)
+                        logger.warning(
+                            "Rate limit/server error on %s (attempt %d/%d): "
+                            "HTTP %d. Retrying in %.2fs",
+                            path,
+                            attempt + 1,
+                            max_retries + 1,
+                            response.status,
+                            delay,
+                        )
+                        await asyncio.sleep(delay)
+                        continue
+
+                    return None
+        except (TimeoutError, aiohttp.ClientError, json.JSONDecodeError, ValueError):
+            return None
+        return None
+
+    async def _get_list(self, path: str) -> list[dict[str, Any]]:
+        """Perform a GET request that returns a list (e.g. event rotation).
+
+        Returns an empty list on network errors, timeouts, or JSON parsing errors.
+        """
+        try:
+            session = await self._get_session()
+            async with session.get(
+                f"{self.BASE_URL}{path}",
+                headers={"Authorization": f"Bearer {self._token}"},
+                timeout=aiohttp.ClientTimeout(total=10),
+            ) as response:
+                if response.status != 200:
+                    return []
+                data: Any = await response.json()
+                if isinstance(data, list):
+                    return data
+                return []
+        except (TimeoutError, aiohttp.ClientError, json.JSONDecodeError, ValueError):
+            return []
+
+    # ── Player endpoints ────────────────────────────────────────────────────
+
     async def get_player(self, tag: str) -> BrawlStarsPlayer | None:
-        """Fetch a player profile by tag."""
-        clean_tag = tag.lstrip("#")
-        data = await self._request(f"players/%23{clean_tag}")
-        if data is None:
-            return None
-        return BrawlStarsPlayer(
-            tag=data.get("tag", ""),
-            name=data.get("name", ""),
-            name_color=data.get("nameColor", ""),
-            trophies=data.get("trophies", 0),
-            highest_trophies=data.get("highestTrophies", data.get("highest_trophies", 0)),
-            exp_level=data.get("expLevel", data.get("exp_level", 0)),
-            exp_points=data.get("expPoints", data.get("exp_points", 0)),
-            is_qualified_from_championship=data.get(
-                "isQualifiedFromChampionship",
-                data.get("is_qualified_from_championship", False),
-            ),
-            solo_victories=data.get("soloVictories", data.get("solo_victories", 0)),
-            duo_victories=data.get("duoVictories", data.get("duo_victories", 0)),
-            x3vs3_victories=data.get("3vs3Victories", data.get("x3v3Victories", 0)),
-            club=BrawlStarsClub(
-                tag=data.get("club", {}).get("tag", ""),
-                name=data.get("club", {}).get("name", ""),
-            )
-            if data.get("club")
-            else None,
-            brawlers=[
-                BrawlerInfo(
-                    id=b.get("id", 0),
-                    name=b.get("name", ""),
-                    power=b.get("power", 1),
-                    rank=b.get("rank", 1),
-                    trophies=b.get("trophies", 0),
-                    highest_trophies=b.get("highestTrophies", b.get("highest_trophies", 0)),
-                    gears=[
-                        BrawlerGear(id=g.get("id", 0), name=g.get("name", ""), level=g.get("level", 1))
-                        for g in b.get("gears", [])
-                    ],
-                    gadgets=[
-                        BrawlerGadget(id=g.get("id", 0), name=g.get("name", ""))
-                        for g in b.get("gadgets", [])
-                    ],
-                    star_powers=[
-                        BrawlerStarPower(id=sp.get("id", 0), name=sp.get("name", ""))
-                        for sp in b.get("starPowers", b.get("star_powers", []))
-                    ],
-                )
-                for b in data.get("brawlers", [])
-            ],
-        )
+        """Fetch full player info from the Brawl Stars API.
 
-    async def get_battle_log(self, tag: str) -> list[BattleLogItem] | None:
-        """Fetch a player's battle log."""
-        clean_tag = tag.lstrip("#")
-        data = await self._request(f"players/%23{clean_tag}/battlelog")
+        The tag should include the ``#`` prefix (e.g. ``#ABC123``).
+        """
+        data = await self._get(f"/players/%23{tag[1:]}")
         if data is None:
             return None
-        # Handle both dict response with "items" key and direct list response
-        if isinstance(data, list):
-            items = data
-        elif isinstance(data, dict):
-            items = data.get("items", [])
-        else:
-            items = []
-        if not items:
+        return BrawlStarsPlayer.model_validate(data)
+
+    async def get_battle_log(self, tag: str) -> list[BrawlStarsBattle]:
+        """Fetch the recent battle log for a player."""
+        data = await self._get(f"/players/%23{tag[1:]}/battlelog")
+        if data is None:
             return []
-        return [
-            BattleLogItem(
-                battle_time=item.get("battleTime", item.get("battle_time", "")),
-                event=BattleEvent(
-                    mode=item.get("event", {}).get("mode", ""),
-                    map=item.get("event", {}).get("map", ""),
-                    id=item.get("event", {}).get("id", 0),
-                ),
-                battle=self._parse_battle(item.get("battle", {})),
-            )
-            for item in items
-        ]
-
-    def _parse_battle(self, battle: dict[str, Any]) -> BattleResult:
-        """Parse a raw battle dict into a BattleResult model."""
-        result = BattleResult(
-            mode=battle.get("mode", ""),
-            type=battle.get("type", ""),
-            result=battle.get("result", ""),
-            duration=battle.get("duration"),
-            trophy_change=battle.get("trophyChange", battle.get("trophy_change")),
-        )
-
-        if "brawler" in battle:
-            result.brawler = BattleBrawler(
-                name=battle["brawler"].get("name", ""),
-                power=battle["brawler"].get("power", 1),
-                trophies=battle["brawler"].get("trophies", 0),
-            )
-
-        if "starPlayer" in battle or "star_player" in battle:
-            sp = battle.get("starPlayer") or battle.get("star_player", {})
-            result.star_player = BattlePlayer(
-                tag=sp.get("tag", ""),
-                name=sp.get("name", ""),
-                brawler=BattleBrawler(
-                    name=sp.get("brawler", {}).get("name", ""),
-                    power=sp.get("brawler", {}).get("power", 1),
-                    trophies=sp.get("brawler", {}).get("trophies", 0),
-                ),
-            )
-
-        if "players" in battle:
-            result.players = [
-                BattlePlayer(
-                    tag=p.get("tag", ""),
-                    name=p.get("name", ""),
-                    brawler=BattleBrawler(
-                        name=p.get("brawler", {}).get("name", ""),
-                        power=p.get("brawler", {}).get("power", 1),
-                        trophies=p.get("brawler", {}).get("trophies", 0),
-                    ),
-                )
-                for p in battle["players"]
-            ]
-
-        if "teams" in battle:
-            result.teams = [
-                [
-                    BattlePlayer(
-                        tag=p.get("tag", ""),
-                        name=p.get("name", ""),
-                        brawler=BattleBrawler(
-                            name=p.get("brawler", {}).get("name", ""),
-                            power=p.get("brawler", {}).get("power", 1),
-                            trophies=p.get("brawler", {}).get("trophies", 0),
-                        ),
-                    )
-                    for p in team
-                ]
-                for team in battle["teams"]
-            ]
-
-        return result
-
-    async def get_club(self, tag: str) -> BrawlStarsClubFull | None:
-        """Fetch a club profile by tag."""
-        clean_tag = tag.lstrip("#")
-        data = await self._request(f"clubs/%23{clean_tag}")
-        if data is None:
-            return None
-        return BrawlStarsClubFull(
-            tag=data.get("tag", ""),
-            name=data.get("name", ""),
-            description=data.get("description", ""),
-            trophies=data.get("trophies", 0),
-            required_trophies=data.get("requiredTrophies", data.get("required_trophies", 0)),
-            members=[
-                BrawlStarsClubMember(
-                    tag=m.get("tag", ""),
-                    name=m.get("name", ""),
-                    trophies=m.get("trophies", 0),
-                    role=m.get("role", "member"),
-                )
-                for m in data.get("members", [])
-            ],
-        )
-
-    async def get_events(self) -> list[BrawlStarsEvent] | None:
-        """Fetch the current event rotation."""
-        data = await self._request("events/rotation")
-        if data is None:
-            return None
-        items: list[dict[str, Any]] = data if isinstance(data, list) else data.get("items", [])
-        if not items:
-            return []
-        return [
-            BrawlStarsEvent(
-                start_time=item.get("startTime", item.get("start_time", "")),
-                end_time=item.get("endTime", item.get("end_time", "")),
-                event=BattleEvent(
-                    mode=item.get("event", {}).get("mode", ""),
-                    map=item.get("event", {}).get("map", ""),
-                    id=item.get("event", {}).get("id", 0),
-                ),
-            )
-            for item in items
-        ]
-
-    async def get_brawlers_list(self) -> BrawlersList | None:
-        """Fetch the full list of brawler definitions."""
-        data = await self._request("brawlers")
-        if data is None:
-            return None
         items = data.get("items", [])
-        return BrawlersList(
-            items=[
-                BrawlerDefinition(
-                    id=b.get("id", 0),
-                    name=b.get("name", ""),
-                    star_powers=[
-                        BrawlerStarPower(id=sp.get("id", 0), name=sp.get("name", ""))
-                        for sp in b.get("starPowers", b.get("star_powers", []))
-                    ],
-                    gadgets=[
-                        BrawlerGadget(id=g.get("id", 0), name=g.get("name", ""))
-                        for g in b.get("gadgets", [])
-                    ],
-                )
-                for b in items
-            ],
-        )
+        return [BrawlStarsBattle.model_validate(b) for b in items]
 
-    # ---- Account linking helpers (database-backed) ----
+    async def get_brawler_list(self) -> list[BrawlStarPlayerBrawler]:
+        """Fetch the full list of all brawlers available in the game."""
+        data = await self._get("/brawlers")
+        if data is None:
+            return []
+        items = data.get("items", [])
+        return [BrawlStarPlayerBrawler.model_validate(b) for b in items]
+
+    # ── Club endpoints ──────────────────────────────────────────────────────
+
+    async def get_club(self, tag: str) -> BrawlStarsClub | None:
+        """Fetch club information.
+
+        The tag should include the ``#`` prefix (e.g. ``#ABC123``).
+        """
+        data = await self._get(f"/clubs/%23{tag[1:]}")
+        if data is None:
+            return None
+        return BrawlStarsClub.model_validate(data)
+
+    # ── Events endpoints ────────────────────────────────────────────────────
+
+    async def get_events(self) -> list[BrawlStarsEvent]:
+        """Fetch the current event rotation.
+
+        Returns parsed BrawlStarsEvent model instances.
+        """
+        data = await self._get_list("/events/rotation")
+        return [BrawlStarsEvent.model_validate(event) for event in data]
+
+    # ── Account linking helpers (database-backed) ───────────────────────────
 
     async def get_linked_account(self, user_id: str) -> str | None:
         """Get the Brawl Stars tag linked to a Discord user."""
-        from api import get_brawlstars_linked_account
+        from api import get_brawlstars_linked_account  # noqa: PLC0415
 
         return await get_brawlstars_linked_account(user_id)
 
     async def link_account(self, user_id: str, brawlstars_tag: str) -> None:
         """Link a Brawl Stars tag to a Discord user."""
-        from api import add_brawlstars_linked_account
+        from api import add_brawlstars_linked_account  # noqa: PLC0415
 
         await add_brawlstars_linked_account(user_id, brawlstars_tag)
 
     async def unlink_account(self, user_id: str) -> None:
         """Remove the Brawl Stars link for a Discord user."""
-        from api import remove_brawlstars_linked_account
+        from api import remove_brawlstars_linked_account  # noqa: PLC0415
 
         await remove_brawlstars_linked_account(user_id)
+
+
+# Module-level singleton for convenient import
+_default_service: BrawlStarsService | None = None
+
+
+def get_brawlstars_service() -> BrawlStarsService:
+    """Return the application-wide BrawlStarsService singleton.
+
+    Creates it on first call.
+    """
+    global _default_service  # noqa: PLW0603
+    if _default_service is None:
+        _default_service = BrawlStarsService()
+    return _default_service
