@@ -180,6 +180,15 @@ class TestCountingRepository:
             assert "counting_challenge" in args[0]
             assert args[1] == ("123", 10, "456", 10)
 
+    @pytest.mark.asyncio
+    async def test_set_challenge_progress_modes_default_guild(self, repo: CountingRepository) -> None:
+        with patch("services.counting_repository.execute_action", new_callable=AsyncMock) as mock_exec:
+            await repo.set_challenge_progress(CountingMode.MODES, "123", 10)
+            mock_exec.assert_awaited_once()
+            args = mock_exec.await_args[0]
+            assert "counting_modes" in args[0]
+            assert args[1] == ("123", 10, 0, 10)
+
     # ── get_configs (batch) ───────────────────────────────────
 
     @pytest.mark.asyncio
@@ -234,7 +243,7 @@ class TestCountingRepository:
             assert args[1][1] == 0  # progress is 0
 
     @pytest.mark.asyncio
-    async def test_increment_progress_then_get(self, repo: CountingRepository) -> None:
+    async def test_increment_and_get_flow(self, repo: CountingRepository) -> None:
         """Simulate increment+read flow: after increment, get_progress shows +1."""
         calls = []
 
