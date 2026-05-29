@@ -357,7 +357,7 @@ async def plot_function_command(
             disabled=True,
         )
         async def empty(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
-            await interaction.response.send_message("this should not be clickable??", ephemeral=True)
+            await interaction.response.send_message(tanjunLocalizer.localize(self.plotter.command_info.locale, "commands.math.plotfunction.not_clickable"), ephemeral=True)
 
         @discord.ui.button(
             emoji="<:math_add:1254372629456883793>",
@@ -500,7 +500,7 @@ async def plot_function_command(
         )
         async def rename_function(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             if not self.plotter.functions:
-                await interaction.response.send_message("There are no functions to rename.", ephemeral=True)
+                await interaction.response.send_message(tanjunLocalizer.localize(self.plotter.command_info.locale, "commands.math.plotfunction.no_functions_to_rename"), ephemeral=True)
                 return
 
             view = discord.ui.View()
@@ -604,9 +604,9 @@ async def plot_function_command(
                 await self.plotterView.update_plot(interaction)
                 self.update_options()
             except ValueError as e:
-                await interaction.response.send_message(f"Error: {str(e)}", ephemeral=True)
+                await interaction.response.send_message(tanjunLocalizer.localize(self.plotterView.plotter.command_info.locale, "commands.math.plotfunction.error", error=str(e)), ephemeral=True)
             except Exception as e:
-                await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+                await interaction.response.send_message(tanjunLocalizer.localize(self.plotterView.plotter.command_info.locale, "commands.math.plotfunction.unexpected_error", error=str(e)), ephemeral=True)
 
     class ChangeTitleModal(
         discord.ui.Modal,

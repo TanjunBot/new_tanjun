@@ -32046,5 +32046,245 @@
     "context": "logs -> permissions",
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.test_bot.starting",
+    "source_string": "Bot-Tests werden gestartet...",
+    "translation": "Bot-Tests werden gestartet...",
+    "context": "admin -> administration -> test_bot -> starting",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.test_bot.tests_unavailable",
+    "source_string": "⚠️ Testfunktionen nicht verfügbar. Tests werden übersprungen.",
+    "translation": "⚠️ Testfunktionen nicht verfügbar. Tests werden übersprungen.",
+    "context": "admin -> administration -> test_bot -> tests_unavailable",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.test_bot.current_test_ping",
+    "source_string": "Bot-Tests werden gestartet...\naktueller Test: `Ping`",
+    "translation": "Bot-Tests werden gestartet...\naktueller Test: `Ping`",
+    "context": "admin -> administration -> test_bot -> current_test_ping",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.test_bot.current_test_db",
+    "source_string": "Bot-Tests werden gestartet...\nPing Test: ✅\naktueller Test: `Datenbank`",
+    "translation": "Bot-Tests werden gestartet...\nPing Test: ✅\naktueller Test: `Datenbank`",
+    "context": "admin -> administration -> test_bot -> current_test_db",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.test_bot.current_test_cmds",
+    "source_string": "Bot-Tests werden gestartet...\nPing Test: ✅\nDatenbank Test: ✅\naktueller Test: `Befehle`",
+    "translation": "Bot-Tests werden gestartet...\nPing Test: ✅\nDatenbank Test: ✅\naktueller Test: `Befehle`",
+    "context": "admin -> administration -> test_bot -> current_test_cmds",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.test_bot.error",
+    "source_string": "❌ Fehler im ${test_name} Test: ${error}",
+    "translation": "❌ Fehler im ${test_name} Test: ${error}",
+    "context": "admin -> administration -> test_bot -> error",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.test_bot.all_completed",
+    "source_string": "Bot-Tests werden gestartet...\nPing Test: ✅\nDatenbank Test: ✅\nBefehle Test: ✅\nAlle Tests erfolgreich abgeschlossen. Der Bot scheint einwandfrei zu funktionieren.",
+    "translation": "Bot-Tests werden gestartet...\nPing Test: ✅\nDatenbank Test: ✅\nBefehle Test: ✅\nAlle Tests erfolgreich abgeschlossen. Der Bot scheint einwandfrei zu funktionieren.",
+    "context": "admin -> administration -> test_bot -> all_completed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.update.updating",
+    "source_string": "Aktualisiere...",
+    "translation": "Aktualisiere...",
+    "context": "admin -> administration -> update -> updating",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.update.http_error",
+    "source_string": "Fehler: Statuscode ${status} erhalten. Antwort: ${response}",
+    "translation": "Fehler: Statuscode ${status} erhalten. Antwort: ${response}",
+    "context": "admin -> administration -> update -> http_error",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.update.connection_failed",
+    "source_string": "Verbindung zum Update-Dienst fehlgeschlagen: ${error}",
+    "translation": "Verbindung zum Update-Dienst fehlgeschlagen: ${error}",
+    "context": "admin -> administration -> update -> connection_failed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.set_guild_locale",
+    "source_string": "Die Server-Sprache wurde auf ${locale} gesetzt.",
+    "translation": "Die Server-Sprache wurde auf ${locale} gesetzt.",
+    "context": "admin -> administration -> set_guild_locale",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.me",
+    "source_string": "${name} ${id} ${mention}",
+    "translation": "${name} ${id} ${mention}",
+    "context": "admin -> administration -> me",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.permission_result",
+    "source_string": "${result}",
+    "translation": "${result}",
+    "context": "admin -> administration -> permission_result",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.permission_list",
+    "source_string": "${permissions}",
+    "translation": "${permissions}",
+    "context": "admin -> administration -> permission_list",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.github_auth_test",
+    "source_string": "jup gemacht :)",
+    "translation": "jup gemacht :)",
+    "context": "admin -> administration -> github_auth_test",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.console_check",
+    "source_string": "schau in die Konsole",
+    "translation": "schau in die Konsole",
+    "context": "admin -> administration -> console_check",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.bs_download_failed",
+    "source_string": "Download fehlgeschlagen: ${status} für ${name}",
+    "translation": "Download fehlgeschlagen: ${status} für ${name}",
+    "context": "admin -> administration -> bs_download_failed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.bs_emoji_created",
+    "source_string": "${emoji} ${name}; i:${index}",
+    "translation": "${emoji} ${name}; i:${index}",
+    "context": "admin -> administration -> bs_emoji_created",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.bs_emoji_failed",
+    "source_string": "Emoji-Erstellung für ${name} fehlgeschlagen: ${error}",
+    "translation": "Emoji-Erstellung für ${name} fehlgeschlagen: ${error}",
+    "context": "admin -> administration -> bs_emoji_failed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.bs_bot_info",
+    "source_string": "JSON-Daten für Bot-Konto",
+    "translation": "JSON-Daten für Bot-Konto",
+    "context": "admin -> administration -> bs_bot_info",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.situation_not_found",
+    "source_string": "Situation wurde denke gelöscht oder so :/",
+    "translation": "Situation wurde denke gelöscht oder so :/",
+    "context": "admin -> administration -> situation_not_found",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.situation_creator_gone",
+    "source_string": "Der typ der die Situation erstellt hat ist nicht mehr am tanjun nutzen :c",
+    "translation": "Der typ der die Situation erstellt hat ist nicht mehr am tanjun nutzen :c",
+    "context": "admin -> administration -> situation_creator_gone",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.situation_approved",
+    "source_string": "Situation wurde freigeschaltet!",
+    "translation": "Situation wurde freigeschaltet!",
+    "context": "admin -> administration -> situation_approved",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.situation_deleted",
+    "source_string": "Situation wurde gelöscht!",
+    "translation": "Situation wurde gelöscht!",
+    "context": "admin -> administration -> situation_deleted",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.embed.modals.removeFieldModal.fieldLabel",
+    "source_string": "Feld ${number}",
+    "translation": "Feld ${number}",
+    "context": "admin -> embed -> modals -> removeFieldModal -> fieldLabel",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.warn.reason.reached_warnings",
+    "source_string": "${count} Verwarnungen erreicht",
+    "translation": "${count} Verwarnungen erreicht",
+    "context": "admin -> warn -> reason -> reached_warnings",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.math.plot_function.not_clickable",
+    "source_string": "das sollte nicht klickbar sein??",
+    "translation": "das sollte nicht klickbar sein??",
+    "context": "math -> plot_function -> not_clickable",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.math.plot_function.no_functions_to_rename",
+    "source_string": "Es gibt keine Funktionen zum Umbenennen.",
+    "translation": "Es gibt keine Funktionen zum Umbenennen.",
+    "context": "math -> plot_function -> no_functions_to_rename",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.math.plot_function.error",
+    "source_string": "Fehler: ${error}",
+    "translation": "Fehler: ${error}",
+    "context": "math -> plot_function -> error",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.math.plot_function.unexpected_error",
+    "source_string": "Ein unerwarteter Fehler ist aufgetreten: ${error}",
+    "translation": "Ein unerwarteter Fehler ist aufgetreten: ${error}",
+    "context": "math -> plot_function -> unexpected_error",
+    "labels": "unassigned",
+    "max_length": null
   }
 ]

@@ -1,42 +1,38 @@
-import io
-from io import BytesIO
+"""Background removal command — thin wrapper around ImageService.
+
+Background removal is currently disabled (rembg not available).
+Returns the original image with a 'disabled' message.
+"""
+
+from __future__ import annotations
 
 import discord
-from PIL import Image
 
-import utility
-from localizer import tanjunLocalizer
+from services.image_service import ImageOperation, ImageService
+from utility import CommandInfo
 
 
-async def background(command_info: utility.CommandInfo, image: discord.Attachment):  # type: ignore[no-untyped-def]
-    if isinstance(image, discord.Attachment) and not image.filename.endswith((".png", ".jpg", ".jpeg")):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.typenotsupported.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.typenotsupported.description"),
+async def background(command_info: CommandInfo, image: discord.Attachment) -> None:
+    """Remove image background (currently disabled — returns original)."""
+    error = ImageService.validate_attachment(image)
+    if error is not None:
+        embed = ImageService.format_error_embed(
+            str(command_info.locale),
+            error,
+            locale_prefix="image",
         )
         await command_info.reply(embed=embed)
         return
 
-    if image.size > 8 * 1024 * 1024:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.filesize.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.filesize.description"),
-        )
-        await command_info.reply(embed=embed)
-        return
+    image_bytes = await image.read()
+    result_bytes = await ImageService.process(image_bytes, ImageOperation(remove_background=True))
 
-    image = await image.read()  # type: ignore[assignment]
-    image = Image.open(io.BytesIO(image))  # type: ignore[assignment, arg-type]
-    #    image = removeBackground(image)
-    # Background removal functionality is temporarily disabled
-    # You can re-enable this when rembg is properly installed
-    # image = removeBackground(image)
+    from io import BytesIO  # noqa: PLC0415
 
-    # Background removal is temporarily disabled
-    buffer = BytesIO()
-    image.save(buffer, format="png")  # type: ignore[call-arg, unused-coroutine]
-    buffer.seek(0)
+    import utility  # noqa: PLC0415
+    from localizer import tanjunLocalizer  # noqa: PLC0415
 
+    buffer = BytesIO(result_bytes)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.image.background.disabled.title"),
         description=tanjunLocalizer.localize(str(command_info.locale), "commands.image.background.disabled.description"),

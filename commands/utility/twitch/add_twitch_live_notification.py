@@ -1,11 +1,11 @@
 import discord
 
-from api import set_twitch_online_notification
 from commands.utility.twitch.twitch_api import (
     get_uuid_by_twitch_name,
     subscribe_to_twitch_online_notification,
 )
 from localizer import tanjunLocalizer
+from services.twitch_service import get_twitch_service
 from utility import CommandInfo, tanjunEmbed
 
 
@@ -65,7 +65,22 @@ async def addTwitchLiveNotification(
         await command_info.reply(embed=embed)
         return
 
-    await set_twitch_online_notification(command_info.guild.id, channel.id, uuid, twitch_name, notification_message)  # type: ignore[union-attr, arg-type]
+    service = get_twitch_service()
+    if service is None:
+        embed = tanjunEmbed(
+            title="Service Unavailable",
+            description="Twitch service is not initialized.",
+        )
+        await command_info.reply(embed=embed)
+        return
+
+    await service.add_notification(
+        str(command_info.guild.id),  # type: ignore[union-attr]
+        str(channel.id),
+        uuid,
+        twitch_name,
+        notification_message,
+    )
 
     await subscribe_to_twitch_online_notification(uuid)
 

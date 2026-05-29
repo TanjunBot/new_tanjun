@@ -1,9 +1,7 @@
-import aiohttp
 import discord
-from aiohttp import ClientTimeout
 
-from config import brawlstarsToken
 from localizer import tanjunLocalizer
+from services.brawlstars import get_brawlstars_service
 from utility import (
     command_info,
     date_time_to_timestamp,
@@ -12,23 +10,9 @@ from utility import (
 )
 
 
-async def getEventRotation():
-    headers = {"Authorization": f"Bearer {brawlstarsToken}"}
-    async with (
-        aiohttp.ClientSession() as session,
-        session.get(
-            "https://api.brawlstars.com/v1/events/rotation",
-            headers=headers,
-            timeout=ClientTimeout(total=10),
-        ) as response,
-    ):
-        if response.status != 200:
-            return None
-        return await response.json()
-
-
 async def events(command_info: command_info):
-    event_rotation = await getEventRotation()
+    service = get_brawlstars_service()
+    event_rotation = await service.get_events()
     if not event_rotation:
         return await command_info.reply(
             tanjunLocalizer.localize(
@@ -39,16 +23,16 @@ async def events(command_info: command_info):
 
     async def generate_page(page_num: int) -> discord.Embed:
         event = event_rotation[page_num]
-        start_time = event["start_time"]
+        start_time = event.start_time
         start_timestamp = date_time_to_timestamp(isoTimeToDate(start_time))
-        end_time = event["end_time"]
+        end_time = event.end_time
         end_timestamp = date_time_to_timestamp(isoTimeToDate(end_time))
-        map_ = event["event"]["map"]
+        map_ = event.event.map
         map_locale = tanjunLocalizer.localize(
             command_info.locale,
             f"commands.utility.brawlstars.maps.{map_}",
         )
-        mode = event["event"]["mode"]
+        mode = event.event.mode
         mode_locale = tanjunLocalizer.localize(
             command_info.locale,
             f"commands.utility.brawlstars.game_modes.{mode}",

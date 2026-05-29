@@ -1,7 +1,7 @@
 import discord
 
 import utility
-from api import add_booster_role, delete_booster_role
+from services.booster_service import BoosterType, booster_service
 from localizer import tanjunLocalizer
 
 
@@ -41,7 +41,7 @@ async def create_booster_role(command_info: utility.CommandInfo, role: discord.R
         return
 
     if role is None:
-        await delete_booster_role(command_info.guild.id)
+        await booster_service.delete(BoosterType.ROLE, str(command_info.guild.id))
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.boosterRole.roleRemoved.title"),
             description=tanjunLocalizer.localize(
@@ -80,7 +80,7 @@ async def create_booster_role(command_info: utility.CommandInfo, role: discord.R
         return
 
     try:
-        await add_booster_role(str(command_info.guild.id), str(role.id))
+        await booster_service.add(BoosterType.ROLE, str(command_info.guild.id), str(role.id))
         if role.permissions.administrator:
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.boosterRole.success.title"),
