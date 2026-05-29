@@ -7,7 +7,6 @@ import uuid
 from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from datetime import datetime
-from enum import Enum
 from typing import Any
 
 from discord import Entitlement
@@ -47,57 +46,24 @@ from models import (
 from utility import get_level_for_xp_async, get_xp_for_level_async
 
 
-class LogBlacklistType(Enum):
-    """Enum representing the three log blacklist types with their table/column mapping."""
-
-    CHANNEL = ("logBlacklistChannel", "channel_id")
-    ROLE = ("logRoleBlacklist", "role_id")
-    USER = ("logUserBlacklist", "user_id")
-
-    @property
-    def table(self) -> str:
-        return self.value[0]
-
-    @property
-    def column(self) -> str:
-        return self.value[1]
-
+# ── Log blacklist (delegated to LogBlacklistRepository) ─────────────────────────────
+from repositories.log_blacklist_repository import LogBlacklistType, log_blacklist_repo
 
 
 async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
-    """Add a log blacklist entry for the given entity type."""
-    table = blacklist_type.table
-    column = blacklist_type.column
-    query = f"INSERT INTO {table} (guild_id, {column}) VALUES (%s, %s)"
-    await execute_action(query, (guild_id, entity_id))
+    await log_blacklist_repo.add(guild_id, entity_id, blacklist_type)
 
 
 async def remove_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
-    """Remove a log blacklist entry for the given entity type."""
-    table = blacklist_type.table
-    column = blacklist_type.column
-    query = f"DELETE FROM {table} WHERE guild_id = %s AND {column} = %s"
-    await execute_action(query, (guild_id, entity_id))
+    await log_blacklist_repo.remove(guild_id, entity_id, blacklist_type)
 
 
 async def get_log_blacklist(guild_id: str, blacklist_type: LogBlacklistType) -> list[str]:
-    """Retrieve all blacklisted entity IDs of a given type for a guild."""
-    table = blacklist_type.table
-    column = blacklist_type.column
-    query = f"SELECT {column} FROM {table} WHERE guild_id = %s"
-    entity_ids: list[str] = []
-    async for row in execute_query_iter(query, (guild_id,)):
-        entity_ids.append(row[0])
-    return entity_ids
+    return await log_blacklist_repo.get_all(guild_id, blacklist_type)
 
 
 async def is_log_entity_blacklisted(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> str | None:
-    """Check whether a specific entity is blacklisted."""
-    table = blacklist_type.table
-    column = blacklist_type.column
-    query = f"SELECT {column} FROM {table} WHERE guild_id = %s AND {column} = %s"
-    result = await execute_query(query, (guild_id, entity_id))
-    return result[0] if result else None
+    return await log_blacklist_repo.is_entity_blacklisted(guild_id, entity_id, blacklist_type)
 
 
 
@@ -1277,50 +1243,28 @@ async def create_tables(bot=None) -> None:
                 raise
 
 
+# ── Warning functions (delegated to WarningRepository) ───────────────────────────
+from repositories.warning_repository import warning_repo
+
+
 async def add_warning(
     guild_id: str | int, user_id: str | int, reason: str, created_by: str | int, expiration_date: datetime | None = None
 ) -> int:
-    query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at, created_by) VALUES (%s, %s, %s, %s, %s)"
-    params = (guild_id, user_id, reason, expiration_date, created_by)
-    warning_id = await execute_insert_and_get_id(query, params)
-    return warning_id
+    return await warning_repo.add(guild_id, user_id, reason, created_by, expiration_date)
 
 
 async def get_warnings(guild_id: str | int, user_id: str | int | None = None) -> AsyncIterator[WarningModel]:
-    """Stream all active warnings for a guild (or a specific user).
-
-    Yields rows one at a time so that only one row is held in memory
-    at a time, even when the result set contains thousands of warnings.
-    """
-    if user_id:
-        query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
-        params = (guild_id, user_id)
-    else:
-        query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
-        params = (guild_id,)
-    async for row in WarningModel.iter_rows(query, params):
+    async for row in warning_repo.get_all(guild_id, user_id):
         yield row
 
 
 async def get_detailed_warnings(guild_id: str | int, user_id: str | int) -> AsyncIterator[DetailedWarningModel]:
-    """Stream detailed warnings for a specific user in a guild.
-
-    Yields rows one at a time, ordered by creation date descending.
-    """
-    query = (
-        "SELECT id, reason, created_at, expires_at, created_by "
-        "FROM warnings WHERE guild_id = %s AND user_id = %s "
-        "ORDER BY created_at DESC"
-    )
-    params = (guild_id, user_id)
-    async for row in DetailedWarningModel.iter_rows(query, params):
+    async for row in warning_repo.get_detailed(guild_id, user_id):
         yield row
 
 
 async def remove_warning(warning_id: int) -> None:
-    query = "DELETE FROM warnings WHERE id = %s"
-    params = (warning_id,)
-    await execute_action(query, params)
+    await warning_repo.remove(warning_id)
 
 
 async def set_warn_config(
@@ -1331,37 +1275,11 @@ async def set_warn_config(
     kick_threshold: int,
     ban_threshold: int,
 ) -> None:
-    query = (
-        "INSERT INTO warn_config (guild_id, expiration_days, "
-        "timeout_threshold, timeout_duration, "
-        "kick_threshold, ban_threshold) "
-        "VALUES (%s, %s, %s, %s, %s, %s) "
-        "ON DUPLICATE KEY UPDATE "
-        "expiration_days = VALUES(expiration_days), "
-        "timeout_threshold = VALUES(timeout_threshold), "
-        "timeout_duration = VALUES(timeout_duration), "
-        "kick_threshold = VALUES(kick_threshold), "
-        "ban_threshold = VALUES(ban_threshold)"
-    )
-    params = (
-        guild_id,
-        expiration_days,
-        timeout_threshold,
-        timeout_duration,
-        kick_threshold,
-        ban_threshold,
-    )
-    await execute_action(query, params)
+    await warning_repo.set_config(guild_id, expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold)
 
 
 async def get_warn_config(guild_id: str | int) -> WarnConfigModel | None:
-    query = "SELECT guild_id, expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold FROM warn_config WHERE guild_id = %s"
-    params = (guild_id,)
-    result = await execute_query(query, params)
-    if result:
-        return WarnConfigModel.from_row(result[0])
-    else:
-        return None
+    return await warning_repo.get_config(guild_id)
 
 
 async def save_channel_overwrites(channel_id: str | int, role_id: str | int, overwrites: str) -> None:
@@ -1634,111 +1552,10 @@ async def get_all_level_roles(guild_id: str) -> list[LevelRolesGroupModel]:
     return await level_role_repo.get_grouped_by_level(guild_id)
 
 
-from enum import Enum
 
 
-class BoostTarget(Enum):
-    """Type-safe enum for XP boost target types, mapping to DB table and entity column."""
-    ROLE = ("roleXpBoost", "role_id")
-    CHANNEL = ("channelXpBoost", "channel_id")
-    USER = ("userXpBoost", "user_id")
-
-    @property
-    def table(self) -> str:
-        return self.value[0]
-
-    @property
-    def entity_column(self) -> str:
-        return self.value[1]
-
-
-class XpBoostRepository:
-    """Consolidated XP boost CRUD using BoostTarget enum.
-
-    Replaces the 9+ individual add/remove/get functions for role, channel, and user boosts.
-    """
-
-    @staticmethod
-    async def add_boost(
-        guild_id: str,
-        entity_id: str,
-        boost: float,
-        additive: bool,
-        target: BoostTarget = BoostTarget.USER,
-    ) -> None:
-        """Add or update an XP boost entry."""
-        query = f"""
-        INSERT INTO {target.table} (guild_id, {target.entity_column}, boost, additive)
-        VALUES (%s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE boost = VALUES(boost), additive = VALUES(additive)
-        """
-        params = (guild_id, entity_id, boost, additive)
-        await execute_action(query, params)
-
-    @staticmethod
-    async def remove_boost(
-        guild_id: str,
-        entity_id: str,
-        target: BoostTarget = BoostTarget.USER,
-    ) -> None:
-        """Remove an XP boost entry."""
-        query = f"DELETE FROM {target.table} WHERE guild_id = %s AND {target.entity_column} = %s"
-        params = (guild_id, entity_id)
-        await execute_action(query, params)
-
-    @staticmethod
-    async def get_boost(
-        guild_id: str,
-        entity_id: str,
-        target: BoostTarget = BoostTarget.USER,
-    ) -> XpBoostModel | None:
-        """Get a specific XP boost entry by entity ID."""
-        query = f"SELECT boost, additive FROM {target.table} WHERE guild_id = %s AND {target.entity_column} = %s"
-        params = (guild_id, entity_id)
-        result = await execute_query(query, params)
-        return XpBoostModel.from_row(result[0]) if result else None
-
-    @staticmethod
-    async def get_boosts_for_target(
-        guild_id: str,
-        entity_ids: list[str],
-        target: BoostTarget = BoostTarget.ROLE,
-    ) -> list[XpBoostModel]:
-        """Get all boost entries for a list of entity IDs under a target type."""
-        if not entity_ids:
-            return []
-        query = f"SELECT boost, additive FROM {target.table} WHERE guild_id = %s AND {target.entity_column} IN %s"
-        params = (guild_id, tuple(entity_ids))
-        rows: list[XpBoostModel] = []
-        async for row in XpBoostModel.iter_rows(query, params):
-            rows.append(row)
-        return rows
-
-    @staticmethod
-    async def get_all_boosts(guild_id: str) -> dict[str, list[XpBoostModel]]:
-        """Get all boosts for a guild, grouped by target type."""
-        role_query = "SELECT boost, additive FROM roleXpBoost WHERE guild_id = %s"
-        channel_query = "SELECT boost, additive FROM channelXpBoost WHERE guild_id = %s"
-        user_query = "SELECT boost, additive FROM userXpBoost WHERE guild_id = %s"
-
-        roles: list[XpBoostModel] = []
-        async for row in XpBoostModel.iter_rows(role_query, (guild_id,)):
-            roles.append(row)
-
-        channels: list[XpBoostModel] = []
-        async for row in XpBoostModel.iter_rows(channel_query, (guild_id,)):
-            channels.append(row)
-
-        users: list[XpBoostModel] = []
-        async for row in XpBoostModel.iter_rows(user_query, (guild_id,)):
-            users.append(row)
-
-        return {
-            "roles": roles,
-            "channels": channels,
-            "users": users,
-        }
-
+# ── XP Boost (delegated to XpBoostRepository) ──────────────────────────────────
+from repositories.xp_boost_repository import BoostTarget, XpBoostRepository
 
 # --- Legacy wrapper functions (backward compatible) ---
 
@@ -2909,77 +2726,40 @@ async def remove_report_channel(guild_id: str) -> None:
     await _report_svc.remove_channel(guild_id)
 
 
+# ── Trigger message functions (delegated to TriggerMessageRepository) ──────────────
+from repositories.trigger_message_repository import trigger_message_repo
+
+
 async def get_trigger_messages(guild_id: str) -> list[TriggerMessageModel]:
-    query = "SELECT id, guild_id, `trigger`, response, case_sensitive FROM triggerMessages WHERE guild_id = %s"
-    params = (guild_id,)
-    rows: list[TriggerMessageModel] = []
-    async for row in TriggerMessageModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    return await trigger_message_repo.get_all(guild_id)
 
 
 async def add_trigger_message(guild_id: str, trigger: str, response: str, case_sensitive: bool = False) -> None:
-    query = "INSERT INTO triggerMessages (guild_id, `trigger`, response, case_sensitive) VALUES (%s, %s, %s, %s)"
-    params = (guild_id, trigger, response, case_sensitive)
-    await execute_action(query, params)
+    await trigger_message_repo.add(guild_id, trigger, response, case_sensitive)
 
 
 async def remove_trigger_message(guild_id: str, trigger: str) -> None:
-    query = "DELETE FROM triggerMessages WHERE guild_id = %s AND `trigger` = %s"
-    params = (guild_id, trigger)
-    await execute_action(query, params)
+    await trigger_message_repo.remove(guild_id, trigger)
 
 
 async def get_trigger_message_channels(guild_id: str, trigger_id: int) -> list[TriggerMessageChannelModel]:
-    query = "SELECT guild_id, channel_id, triggerId FROM triggerMessagesChannel WHERE guild_id = %s AND triggerId = %s"
-    params = (guild_id, trigger_id)
-    rows: list[TriggerMessageChannelModel] = []
-    async for row in TriggerMessageChannelModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    return await trigger_message_repo.get_channels(guild_id, trigger_id)
 
 
 async def get_trigger_messages_by_channel(guild_id: str, channel_id: str) -> list[TriggerMessageChannelModel]:
-    query = "SELECT guild_id, channel_id, triggerId FROM triggerMessagesChannel WHERE guild_id = %s AND channel_id = %s"
-    params = (guild_id, channel_id)
-    rows: list[TriggerMessageChannelModel] = []
-    async for row in TriggerMessageChannelModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    return await trigger_message_repo.get_by_channel(guild_id, channel_id)
 
 
 async def add_trigger_message_channel(guild_id: str, channel_id: str, trigger_id: int) -> None:
-    query = "INSERT INTO triggerMessagesChannel (guild_id, channel_id, triggerId) VALUES (%s, %s, %s)"
-    params = (guild_id, channel_id, trigger_id)
-    await execute_action(query, params)
+    await trigger_message_repo.add_channel(guild_id, channel_id, trigger_id)
 
 
 async def remove_trigger_message_channel(guild_id: str, channel_id: str, trigger_id: int) -> None:
-    query = "DELETE FROM triggerMessagesChannel WHERE guild_id = %s AND channel_id = %s AND triggerId = %s"
-    params = (guild_id, channel_id, trigger_id)
-    await execute_action(query, params)
+    await trigger_message_repo.remove_channel(guild_id, channel_id, trigger_id)
 
 
 async def is_trigger_message(guild_id: str, trigger: str, channel_id: str) -> TriggerMessageModel | None:
-    query = """
-        SELECT t.id, t.guild_id, t.`trigger`, t.response, t.case_sensitive FROM triggerMessages t
-        LEFT JOIN triggerMessagesChannel tc ON t.id = tc.triggerId AND t.guild_id = tc.guild_id
-        WHERE t.guild_id = %s AND t.`trigger` LIKE %s
-        AND (tc.channel_id = %s)
-    """
-    params = (guild_id, trigger, channel_id)
-    result = await execute_query(query, params)
-    result = result[0] if result and result[0] else None
-    if not result:
-        return None
-    trigger_message = TriggerMessageModel.from_row(result)
-    if trigger_message.case_sensitive:
-        if trigger != trigger_message.trigger:
-            return None
-    else:
-        if trigger.lower() != trigger_message.trigger.lower():
-            return None
-    return trigger_message
+    return await trigger_message_repo.find(guild_id, trigger, channel_id)
 
 
 # Ticket functions have been moved to TicketService in services/ticket_service.py
@@ -3213,13 +2993,12 @@ async def remove_cashed_slowmode_delay(channel_id: str) -> None:
     await execute_action(query, params)
 
 
+# ── Twitch notification functions (delegated to TwitchRepository) ──────────────────
+from repositories.twitch_repository import twitch_repo
+
+
 async def get_twitch_online_notification(channel_id: str) -> list[TwitchOnlineNotificationModel]:
-    query = "SELECT id, channel_id, guild_id, twitchUuid, twitchName, notification_message FROM twitchOnlineNotification WHERE channel_id = %s"
-    params = (channel_id,)
-    rows: list[TwitchOnlineNotificationModel] = []
-    async for row in TwitchOnlineNotificationModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    return await twitch_repo.get_by_channel(channel_id)
 
 
 async def set_twitch_online_notification(
@@ -3230,40 +3009,24 @@ async def set_twitch_online_notification(
     notification_message: str,
 ) -> None:
     print("adding twitch online notification")
-    query = "INSERT INTO twitchOnlineNotification (guild_id, channel_id, twitchUuid, twitchName, notification_message) VALUES (%s, %s, %s, %s, %s)"
-    params = (guild_id, channel_id, twitch_uuid, twitch_name, notification_message)
-    await execute_action(query, params)
+    await twitch_repo.set(guild_id, channel_id, twitch_uuid, twitch_name, notification_message)
     print("added twitch online notification")
 
 
 async def remove_twitch_online_notification(id: str) -> None:
-    query = "DELETE FROM twitchOnlineNotification WHERE id = %s"
-    params = (id,)
-    await execute_action(query, params)
+    await twitch_repo.remove(id)
 
 
 async def get_twitch_online_notification_by_twitch_uuid(twitch_uuid: str) -> TwitchOnlineNotificationModel | None:
-    query = "SELECT id, channel_id, guild_id, twitchUuid, twitchName, notification_message FROM twitchOnlineNotification WHERE twitchUuid = %s"
-    params = (twitch_uuid,)
-    result = await safe_execute_query(query, params)
-    return TwitchOnlineNotificationModel.from_row(result[0]) if result else None
+    return await twitch_repo.get_by_twitch_uuid(twitch_uuid)
 
 
 async def get_all_twitch_notification_uuids() -> list[str]:
-    query = "SELECT twitchUuid FROM twitchOnlineNotification"
-    uuids: list[str] = []
-    async for row in execute_query_iter(query):
-        uuids.append(row[0])
-    return uuids
+    return await twitch_repo.get_all_uuids()
 
 
 async def get_twitch_notification_by_guild_id(guild_id: str) -> list[TwitchOnlineNotificationModel]:
-    query = "SELECT id, channel_id, guild_id, twitchUuid, twitchName, notification_message FROM twitchOnlineNotification WHERE guild_id = %s"
-    params = (guild_id,)
-    rows: list[TwitchOnlineNotificationModel] = []
-    async for row in TwitchOnlineNotificationModel.iter_rows(query, params):
-        rows.append(row)
-    return rows
+    return await twitch_repo.get_by_guild(guild_id)
 
 
 async def get_brawlstars_linked_account(user_id: str) -> str | None:
