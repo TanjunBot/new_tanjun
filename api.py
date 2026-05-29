@@ -898,6 +898,7 @@ def get_table_definitions() -> dict[str, str]:
         `send_time` DATETIME NOT NULL,
         `repeatInterval` MEDIUMINT UNSIGNED,
         `repeatAmount` MEDIUMINT UNSIGNED,
+        `attachments` TEXT,
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX `idx_sendtime` (send_time),
         INDEX `idx_user` (user_id),
@@ -1115,6 +1116,25 @@ async def create_tables(bot=None) -> None:
         await asyncio.gather(
             *[execute_action(tables[table_name], bot=bot) for table_name in batch]
         )
+
+    # Run schema migrations for existing tables that need column additions
+    migrations = [
+        # Add attachments column to scheduledMessages for attachment support
+        """ALTER TABLE `scheduledMessages`
+         ADD COLUMN `attachments` TEXT DEFAULT NULL
+         AFTER `repeatAmount`""",
+    ]
+    for migration in migrations:
+        try:
+            await execute_action(migration, bot=bot)
+        except Exception as exc:
+            exc_str = str(exc).lower()
+            # Only suppress "column already exists" / duplicate column errors
+            if "column already exists" in exc_str or "duplicate column" in exc_str or "duplicate column name" in exc_str:
+                logging.debug("Migration skipped (column already exists): %s", migration[:60])
+            else:
+                logging.exception("Unexpected migration error: %s", migration[:60])
+                raise
 
 
 async def add_warning(
@@ -2554,19 +2574,20 @@ async def add_scheduled_message(
     send_time: datetime,
     repeat_interval: int | None = None,
     repeat_amount: int | None = None,
+    attachments: str | None = None,
 ) -> None:
     query = """
     INSERT INTO scheduledMessages
-    (guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    (guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
-    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval, repeat_amount)
+    params = (guild_id, channel_id, user_id, content, send_time, repeat_interval, repeat_amount, attachments)
     await execute_action(query, params)
 
 
 async def get_scheduled_messages(user_id: str) -> list[ScheduledMessageModel]:
     query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
+    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments, created_at
     FROM scheduledMessages
     WHERE user_id = %s
     ORDER BY send_time ASC
@@ -2591,7 +2612,7 @@ async def get_user_scheduled_messages_in_timeframe(
     guild_id: str | None = None,
 ) -> list[ScheduledMessageModel]:
     query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
+    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments, created_at
     FROM scheduledMessages
     WHERE user_id = %s
     AND send_time BETWEEN %s AND %s
@@ -2622,7 +2643,7 @@ async def update_scheduled_message_repeat_amount(message_id: int, repeat_amount:
 
 async def get_ready_scheduled_messages() -> list[ScheduledMessageModel]:
     query = """
-    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, created_at
+    SELECT messageId, guild_id, channel_id, user_id, content, send_time, repeatInterval, repeatAmount, attachments, created_at
     FROM scheduledMessages WHERE send_time <= NOW()
     """
     rows: list[ScheduledMessageModel] = []
