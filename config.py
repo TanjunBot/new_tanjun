@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import sys
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 from dotenv import load_dotenv
 from pydantic import Field, SecretStr, ValidationError, computed_field
@@ -60,6 +60,16 @@ class Settings(BaseSettings, cli_parse_args=False):
     # ── Activity ──────────────────────────────────────────────────────────────
     activity: str = "Tanjun {version}"
 
+    # ── Calculator emoji identifiers (loaded from env with sensible defaults) ─
+    calc_add: str = Field(default="math_add:1254372629456883793", alias="CALC_ADD")
+    calc_subtract: str = Field(default="math_substract:1254372627766837248", alias="CALC_SUBTRACT")
+    calc_multiply: str = Field(default="math_multiply:1254372798319558768", alias="CALC_MULTIPLY")
+    calc_divide: str = Field(default="math_divide:1254373636224323644", alias="CALC_DIVIDE")
+    calc_backspace: str = Field(default="math_backspace:1254371946695757854", alias="CALC_BACKSPACE")
+
+    # ── Welcome emoji (numeric Discord emoji ID) ───────────────────────────────
+    welcome_emoji_id_raw: str = Field(default="1266369876524666920", alias="WELCOME_EMOJI_ID")
+
     # ── Computed properties ───────────────────────────────────────────────────
 
     @computed_field  # type: ignore[prop-decorator]
@@ -67,6 +77,12 @@ class Settings(BaseSettings, cli_parse_args=False):
     def admin_ids(self) -> list[int]:
         raw = self.admin_ids_raw
         return [int(x) for x in raw.split(",") if x.strip()] if raw.strip() else []
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def welcome_emoji_id(self) -> Optional[int]:
+        raw = self.welcome_emoji_id_raw
+        return int(raw) if raw.isdigit() else None
 
 
 try:
@@ -107,11 +123,14 @@ OPENROUTER_MODEL: str = settings.openrouter_model
 
 # ── Emoji identifiers for calculator ─────────────────────────────────────────
 
-CALC_ADD = "math_add:1254372629456883793"
-CALC_SUBTRACT = "math_substract:1254372627766837248"
-CALC_MULTIPLY = "math_multiply:1254372798319558768"
-CALC_DIVIDE = "math_divide:1254373636224323644"
-CALC_BACKSPACE = "math_backspace:1254371946695757854"
+CALC_ADD: str = settings.calc_add
+CALC_SUBTRACT: str = settings.calc_subtract
+CALC_MULTIPLY: str = settings.calc_multiply
+CALC_DIVIDE: str = settings.calc_divide
+CALC_BACKSPACE: str = settings.calc_backspace
+
+# Emoji ID for welcome command (numeric Discord emoji ID)
+WELCOME_EMOJI_ID: Optional[int] = settings.welcome_emoji_id
 
 
 # ── Startup validation ───────────────────────────────────────────────────────
