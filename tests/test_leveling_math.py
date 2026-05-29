@@ -346,25 +346,25 @@ class TestExpressionParser:
         assert result == 10.0
 
     def test_undefined_variable_raises(self):
-        with pytest.raises(Exception):
+        with pytest.raises(NameError):
             eval_expr("x + 1", {})
 
     # ── Error handling ──────────────────────────────────────────────────
 
     def test_empty_expression_raises(self):
-        with pytest.raises(Exception):
+        with pytest.raises(SyntaxError):
             eval_expr("")
 
     def test_invalid_syntax_raises(self):
-        with pytest.raises(Exception):
+        with pytest.raises(SyntaxError):
             eval_expr("+++")
 
     def test_unsupported_function_raises(self):
-        with pytest.raises(Exception):
+        with pytest.raises(TypeError):
             eval_expr("bad_function(42)")
 
     def test_malformed_expression_raises(self):
-        with pytest.raises(Exception):
+        with pytest.raises(SyntaxError):
             eval_expr("2 + ")
 
     def test_zero_result(self):
