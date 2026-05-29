@@ -14,11 +14,16 @@ Usage:
 
 from __future__ import annotations
 
+import asyncio
 import json
+import logging
+import random
 from typing import Any
 
 import aiohttp
 from pydantic import AliasPath, BaseModel, ConfigDict, Field
+
+logger = logging.getLogger(__name__)
 
 # ── Pydantic Models ──────────────────────────────────────────────────────────
 
@@ -44,19 +49,6 @@ class BrawlStarsIcon(BrawlStarsBaseModel):
     id: int | None = None
 
 
-class BrawlStarsClub(BrawlStarsBaseModel):
-    """Represents a club associated with a player or queried directly."""
-
-    tag: str = ""
-    name: str = ""
-    description: str | None = None
-    type: str | None = None
-    badge_id: int | None = None
-    required_trophies: int = 0
-    trophies: int | None = None
-    members: list[BrawlStarsClubMember] = Field(default_factory=list)
-
-
 class BrawlStarsClubMember(BrawlStarsBaseModel):
     """Represents a single member within a club."""
 
@@ -68,6 +60,19 @@ class BrawlStarsClubMember(BrawlStarsBaseModel):
     icon: BrawlStarsIcon | None = None
     # Optional fields from get_player context
     club_rank: int | None = None
+
+
+class BrawlStarsClub(BrawlStarsBaseModel):
+    """Represents a club associated with a player or queried directly."""
+
+    tag: str = ""
+    name: str = ""
+    description: str | None = None
+    type: str | None = None
+    badge_id: int | None = None
+    required_trophies: int = 0
+    trophies: int | None = None
+    members: list[BrawlStarsClubMember] = Field(default_factory=list)
 
 
 class BrawlerGear(BrawlStarsBaseModel):
@@ -149,20 +154,20 @@ class BrawlStarsBrawlerList(BrawlStarsBaseModel):
     items: list[BrawlStarPlayerBrawler] = Field(default_factory=list)
 
 
-class BrawlStarsEvent(BrawlStarsBaseModel):
-    """A single event in the current rotation."""
-
-    start_time: str
-    end_time: str
-    event: BrawlStarsEventDetail
-
-
 class BrawlStarsEventDetail(BrawlStarsBaseModel):
     """Details of a single event slot."""
 
     id: int
     mode: str
     map: str
+
+
+class BrawlStarsEvent(BrawlStarsBaseModel):
+    """A single event in the current rotation."""
+
+    start_time: str
+    end_time: str
+    event: BrawlStarsEventDetail
 
 
 class BrawlStarsEventRotation(BrawlStarsBaseModel):
@@ -246,27 +251,49 @@ class BrawlStarsService:
 
     # ── Request helpers ─────────────────────────────────────────────────────
 
-    async def _get(self, path: str) -> dict[str, Any] | None:
-        """Perform a GET request to the Brawl Stars API.
+    async def _get(self, path: str, max_retries: int = 3) -> dict[str, Any] | None:
+        """Perform a GET request to the Brawl Stars API with retry logic.
 
-        Returns the parsed JSON dict on success (HTTP 200), or ``None`` on
-        any non-200 status, network errors, timeouts, or JSON parsing errors.
+        Implements exponential backoff with jitter for rate limits (HTTP 429)
+        and server errors (HTTP 503). Returns the parsed JSON dict on success
+        (HTTP 200), or ``None`` on persistent errors.
         """
         try:
             session = await self._get_session()
-            async with session.get(
-                f"{self.BASE_URL}{path}",
-                headers={"Authorization": f"Bearer {self._token}"},
-                timeout=aiohttp.ClientTimeout(total=10),
-            ) as response:
-                if response.status != 200:
+            for attempt in range(max_retries + 1):
+                async with session.get(
+                    f"{self.BASE_URL}{path}",
+                    headers={"Authorization": f"Bearer {self._token}"},
+                    timeout=aiohttp.ClientTimeout(total=10),
+                ) as response:
+                    if response.status == 200:
+                        data: Any = await response.json()
+                        if isinstance(data, dict):
+                            return data
+                        return None
+
+                    if response.status in (429, 503) and attempt < max_retries:
+                        retry_after = response.headers.get("Retry-After")
+                        if retry_after and retry_after.isdigit():
+                            delay = float(retry_after)
+                        else:
+                            delay = (2 ** attempt) * random.uniform(0.5, 1.5)
+                        logger.warning(
+                            "Rate limit/server error on %s (attempt %d/%d): "
+                            "HTTP %d. Retrying in %.2fs",
+                            path,
+                            attempt + 1,
+                            max_retries + 1,
+                            response.status,
+                            delay,
+                        )
+                        await asyncio.sleep(delay)
+                        continue
+
                     return None
-                data: Any = await response.json()
-                if isinstance(data, dict):
-                    return data
-                return None
         except (TimeoutError, aiohttp.ClientError, json.JSONDecodeError, ValueError):
             return None
+        return None
 
     async def _get_list(self, path: str) -> list[dict[str, Any]]:
         """Perform a GET request that returns a list (e.g. event rotation).
@@ -338,6 +365,26 @@ class BrawlStarsService:
         """
         data = await self._get_list("/events/rotation")
         return [BrawlStarsEvent.model_validate(event) for event in data]
+
+    # ── Account linking helpers (database-backed) ───────────────────────────
+
+    async def get_linked_account(self, user_id: str) -> str | None:
+        """Get the Brawl Stars tag linked to a Discord user."""
+        from api import get_brawlstars_linked_account  # noqa: PLC0415
+
+        return await get_brawlstars_linked_account(user_id)
+
+    async def link_account(self, user_id: str, brawlstars_tag: str) -> None:
+        """Link a Brawl Stars tag to a Discord user."""
+        from api import add_brawlstars_linked_account  # noqa: PLC0415
+
+        await add_brawlstars_linked_account(user_id, brawlstars_tag)
+
+    async def unlink_account(self, user_id: str) -> None:
+        """Remove the Brawl Stars link for a Discord user."""
+        from api import remove_brawlstars_linked_account  # noqa: PLC0415
+
+        await remove_brawlstars_linked_account(user_id)
 
 
 # Module-level singleton for convenient import
