@@ -22,7 +22,6 @@ from utility import (
     get_xp_for_level_async,
 )
 
-
 # =============================================================================
 # Scaling Tests: get_xp_for_level ↔ get_level_for_xp round-trip
 # =============================================================================

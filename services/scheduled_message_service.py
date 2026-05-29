@@ -114,6 +114,30 @@ class ScheduledMessageService:
         await execute_action(query, (repeat_amount, message_id))
 
     @staticmethod
+    async def update_discord_message_id(message_id: int, discord_message_id: str) -> None:
+        """Store the Discord message ID after a scheduled message is sent."""
+        from api import execute_action
+
+        query = "UPDATE scheduledMessages SET discord_message_id = %s WHERE messageId = %s"
+        await execute_action(query, (discord_message_id, message_id))
+
+    @staticmethod
+    async def update_send_time(message_id: int, send_time: datetime) -> None:
+        """Update the send time of a scheduled message (for repeat advancement)."""
+        from api import execute_action
+
+        query = "UPDATE scheduledMessages SET send_time = %s WHERE messageId = %s"
+        await execute_action(query, (send_time, message_id))
+
+    @staticmethod
+    async def update_repeat_and_send_time(message_id: int, repeat_amount: int, send_time: datetime) -> None:
+        """Atomically update both repeat amount and send time in a single query."""
+        from api import execute_action
+
+        query = "UPDATE scheduledMessages SET repeatAmount = %s, send_time = %s WHERE messageId = %s"
+        await execute_action(query, (repeat_amount, send_time, message_id))
+
+    @staticmethod
     async def get_due_messages() -> list[ScheduledMessageModel]:
         """Return all messages whose send_time is due (<= now)."""
 
