@@ -31,6 +31,7 @@ from models import (
     LevelRolesGroupModel,
     LogEnableModel,
     ReportModel,
+    ScheduledMessageModel,
     TicketMessageModel,
     TicketModel,
     TokenOverviewModel,
