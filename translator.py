@@ -5,7 +5,7 @@ from typing import Any
 import discord
 from discord import app_commands
 
-from localizer import LocalizerService, tanjunLocalizer
+from localizer import TRANSLATION_NOT_FOUND, LocalizerService, tanjunLocalizer
 
 
 class TanjunTranslator(app_commands.Translator):
@@ -31,6 +31,6 @@ class TanjunTranslator(app_commands.Translator):
 
         current = self._localizer.localize(locale, key_str)
 
-        if current == "err: no translation found.":
+        if current == TRANSLATION_NOT_FOUND:
             return None
         return current

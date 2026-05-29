@@ -12,6 +12,8 @@ from pydantic import BaseModel
 from utility import missingLocalization
 from utils.async_io import run_blocking
 
+TRANSLATION_NOT_FOUND: str = "err: no translation found."
+
 CACHE_TTL: float = 300.0  # 5 minutes
 
 reported_locales: list[str] = []
@@ -236,7 +238,7 @@ class LocalizerService:
         if entry is None:
             print(f"No translation found for key '{key}' in locale '{locale_str}'.")
             self._report_missing(locale_str)
-            return "err: no translation found."
+            return TRANSLATION_NOT_FOUND
 
         template = Template(entry.translation)
         return str(template.safe_substitute(args))
