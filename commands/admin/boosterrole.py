@@ -1,8 +1,8 @@
 import discord
 
 import utility
-from services.booster_service import BoosterType, booster_service
 from localizer import tanjunLocalizer
+from services.booster_service import BoosterType, booster_service
 
 
 async def create_booster_role(command_info: utility.CommandInfo, role: discord.Role) -> None:

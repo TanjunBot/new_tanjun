@@ -1,4 +1,3 @@
-from typing import Any
 
 import discord
 from discord import app_commands
