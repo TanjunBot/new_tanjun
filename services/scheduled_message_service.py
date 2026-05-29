@@ -114,6 +114,14 @@ class ScheduledMessageService:
         await execute_action(query, (repeat_amount, message_id))
 
     @staticmethod
+    async def update_send_time(message_id: int, send_time: datetime) -> None:
+        """Update the send time of a scheduled message (for repeat advancement)."""
+        from api import execute_action
+
+        query = "UPDATE scheduledMessages SET send_time = %s WHERE messageId = %s"
+        await execute_action(query, (send_time, message_id))
+
+    @staticmethod
     async def get_due_messages() -> list[ScheduledMessageModel]:
         """Return all messages whose send_time is due (<= now)."""
 
