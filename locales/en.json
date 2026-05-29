@@ -31922,7 +31922,7 @@
   {
     "identifier": "commands.admin.administration.set_guild_locale",
     "source_string": "Die Server-Sprache wurde auf ${locale} gesetzt.",
-    "translation": "The guild locale has been set to ${locale}",
+    "translation": "The guild locale has been set to ${locale}.",
     "context": "admin -> administration -> set_guild_locale",
     "labels": "unassigned",
     "max_length": null
