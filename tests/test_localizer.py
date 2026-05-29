@@ -4,7 +4,9 @@ import asyncio
 import json
 import os
 import time
+from contextlib import contextmanager
 from pathlib import Path
+from typing import Iterator
 from unittest.mock import AsyncMock, patch
 
 import sys
@@ -37,10 +39,14 @@ from localizer import (  # noqa: E402
 # ---------------------------------------------------------------------------
 
 
-def _chdir(d: Path):
+@contextmanager
+def _chdir(d: Path) -> Iterator[None]:
     old = os.getcwd()
     os.chdir(d.parent)
-    return lambda: os.chdir(old)
+    try:
+        yield
+    finally:
+        os.chdir(old)
 
 
 # ---------------------------------------------------------------------------
@@ -95,63 +101,45 @@ class TestInit:
 
 
 class TestLoadTranslationsSync:
-    def test_load_en(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_load_en(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             r = loc._load_translations_sync("en")
             assert len(r) == 3
             assert r[0]["identifier"] == "common.error"
-        finally:
-            restore()
 
-    def test_load_german(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_load_german(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             r = loc._load_translations_sync("de")
             assert len(r) == 3
             assert r[0]["translation"] == "Ein Fehler ist aufgetreten: $detail"
-        finally:
-            restore()
 
-    def test_cache_hit_returns_same_object(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_cache_hit_returns_same_object(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             r1 = loc._load_translations_sync("en")
             r2 = loc._load_translations_sync("en")
             assert r1 is r2
-        finally:
-            restore()
 
-    def test_cache_expiry(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_cache_expiry(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             r1 = loc._load_translations_sync("en")
             entries, _ = loc._cache["en"]
             loc._cache["en"] = (entries, time.time() - CACHE_TTL - 1)
             r2 = loc._load_translations_sync("en")
             assert r1 is not r2
             assert len(r1) == len(r2)
-        finally:
-            restore()
 
-    def test_fallback_to_cached_en(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_fallback_to_cached_en(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             loc._load_translations_sync("en")
             r = loc._load_translations_sync("fr")
             assert len(r) == 3
-        finally:
-            restore()
 
-    def test_fallback_loads_en_from_disk(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_fallback_loads_en_from_disk(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             r = loc._load_translations_sync("fr")
             assert len(r) == 3
-        finally:
-            restore()
 
-    def test_bad_json_returns_empty(self, loc: Localizer, tmp_path):
+    def test_bad_json_returns_empty(self, loc: Localizer, tmp_path: Path):
         d = tmp_path / "locales"
         d.mkdir()
         (d / "en.json").write_text("{{{ bad", encoding="utf-8")
@@ -162,21 +150,15 @@ class TestLoadTranslationsSync:
         finally:
             os.chdir(old)
 
-    def test_not_a_list_returns_empty(self, loc: Localizer, locale_dir):
+    def test_not_a_list_returns_empty(self, loc: Localizer, locale_dir: Path):
         (locale_dir / "en.json").write_text('{"identifier":"x","translation":"y"}', encoding="utf-8")
-        restore = _chdir(locale_dir)
-        try:
+        with _chdir(locale_dir):
             assert loc._load_translations_sync("en") == []
-        finally:
-            restore()
 
-    def test_missing_file_returns_empty(self, loc: Localizer, locale_dir):
+    def test_missing_file_returns_empty(self, loc: Localizer, locale_dir: Path):
         (locale_dir / "en.json").unlink()
-        restore = _chdir(locale_dir)
-        try:
+        with _chdir(locale_dir):
             assert loc._load_translations_sync("en") == []
-        finally:
-            restore()
 
 
 # ===================================================================
@@ -185,13 +167,10 @@ class TestLoadTranslationsSync:
 
 
 class TestLoadTranslations:
-    def test_sync_wrapper(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_sync_wrapper(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             r = loc.load_translations("de")
             assert len(r) == 3
-        finally:
-            restore()
 
 
 # ===================================================================
@@ -200,15 +179,12 @@ class TestLoadTranslations:
 
 
 class TestLoadTranslationsAsync:
-    def test_async(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_async(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             loop = asyncio.new_event_loop()
             r = loop.run_until_complete(loc.load_translations_async("en"))
             loop.close()
             assert len(r) == 3
-        finally:
-            restore()
 
 
 # ===================================================================
@@ -240,69 +216,44 @@ class TestGetTranslation:
 
 
 class TestLocalize:
-    def test_en_with_placeholder(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_en_with_placeholder(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             assert loc.localize("en", "common.error", detail="timeout") == "An error occurred: timeout"
-        finally:
-            restore()
 
-    def test_de_with_placeholder(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_de_with_placeholder(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             r = loc.localize("de", "common.error", detail="Zeitüberschreitung")
             assert r == "Ein Fehler ist aufgetreten: Zeitüberschreitung"
-        finally:
-            restore()
 
-    def test_en_us_normalized(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_en_us_normalized(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             assert loc.localize("en-US", "common.success") == "Operation successful."
-        finally:
-            restore()
 
-    def test_de_prefix_normalized(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_de_prefix_normalized(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             assert loc.localize("de-DE", "common.success") == "Vorgang erfolgreich."
-        finally:
-            restore()
 
-    def test_no_placeholder(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_no_placeholder(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             assert loc.localize("en", "common.success") == "Operation successful."
-        finally:
-            restore()
 
-    def test_safe_substitute(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_safe_substitute(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             assert loc.localize("en", "common.error") == "An error occurred: $detail"
-        finally:
-            restore()
 
-    def test_missing_key(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_missing_key(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             with patch.object(loc, "load_translations", return_value=[]):
                 result = loc.localize("en", "xyz")
                 assert result == "err: no translation found."
-        finally:
-            restore()
 
-    def test_reports_missing_locale(self, loc: Localizer, locale_dir):
+    def test_reports_missing_locale(self, loc: Localizer, locale_dir: Path):
         reported_locales.clear()
-        restore = _chdir(locale_dir)
-        try:
-            with patch.object(loc, "load_translations", return_value=[]):
-                with patch("localizer.missingLocalization", new_callable=AsyncMock):
-                    result = loc.localize("en", "xyz")
-                    assert result == "err: no translation found."
-                    assert "en" in reported_locales
-        finally:
-            restore()
+        with _chdir(locale_dir):
+            with patch.object(loc, "load_translations", return_value=[]), patch("localizer.missingLocalization", new_callable=AsyncMock):
+                result = loc.localize("en", "xyz")
+                assert result == "err: no translation found."
+                assert "en" in reported_locales
 
 
 # ===================================================================
@@ -311,33 +262,24 @@ class TestLocalize:
 
 
 class TestTestLocalize:
-    def test_found(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_found(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             assert loc.test_localize("en", "common.success") == "Operation successful."
-        finally:
-            restore()
 
-    def test_fallback_to_de(self, loc: Localizer, locale_dir):
+    def test_fallback_to_de(self, loc: Localizer, locale_dir: Path):
         """test_localize with missing key falls back to localize('de', key)."""
-        restore = _chdir(locale_dir)
-        try:
+        with _chdir(locale_dir):
             reported_locales.clear()
             with patch("localizer.missingLocalization", new_callable=AsyncMock):
                 # 'fr' falls back to en, 'nope' not found → tries localize('de', 'nope')
                 # 'nope' also missing in de → returns sentinel
                 r = loc.test_localize("fr", "nope")
                 assert r == "err: no translation found."
-        finally:
-            restore()
 
-    def test_de_missing(self, loc: Localizer, locale_dir):
-        restore = _chdir(locale_dir)
-        try:
+    def test_de_missing(self, loc: Localizer, locale_dir: Path):
+        with _chdir(locale_dir):
             r = loc.test_localize("de", "nope")
             assert "No translation found" in r
-        finally:
-            restore()
 
 
 # ===================================================================
@@ -350,8 +292,8 @@ class TestGlobalInstance:
         assert isinstance(tanjunLocalizer, Localizer)
 
     def test_singleton(self):
-        from localizer import tanjunLocalizer as r
-        assert r is tanjunLocalizer
+        from localizer import tanjunLocalizer
+        assert tanjunLocalizer is tanjunLocalizer
 
 
 # ===================================================================
