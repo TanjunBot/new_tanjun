@@ -29,6 +29,35 @@ CallbackType = Callable[..., Awaitable[None] | None]
 
 
 @dataclass
+class MessageFilters:
+    """Constraints a message must satisfy for the handler to run."""
+
+    only_guilds: bool = True
+    """If True, skip DMs (message.guild must be set)."""
+
+    ignore_bots: bool = True
+    """If True, skip messages from bots."""
+
+    channel_whitelist: set[int] | None = None
+    """If set, only run in these channel IDs (None = allow all)."""
+
+    channel_blacklist: set[int] | None = None
+    """If set, never run in these channel IDs."""
+
+    def check(self, message: discord.Message) -> bool:
+        """Return True if *message* passes all configured filters."""
+        if self.ignore_bots and message.author.bot:
+            return False
+        if self.only_guilds and message.guild is None:
+            return False
+        if self.channel_whitelist is not None and message.channel.id not in self.channel_whitelist:
+            return False
+        if self.channel_blacklist is not None and message.channel.id in self.channel_blacklist:
+            return False
+        return True
+
+
+@dataclass
 class MessageHandler:
     """A registered message handler with optional filter predicates.
 
