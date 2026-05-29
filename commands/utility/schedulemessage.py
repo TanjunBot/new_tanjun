@@ -270,16 +270,43 @@ async def send_scheduled_messages(client: discord.Client) -> None:
 
             # --- Repeat logic ---
             if repeat_interval and repeat_interval > 0:
-                # This is a repeating message — advance send_time
+                now = datetime.now()
+
+                # Catch-up: if bot was offline and this message is overdue by
+                # multiple intervals, advance send_time past now without spamming
+                # the channel with backlogged messages. We send ONE current message
+                # but skip all missed repeat executions.
                 next_send_time = msg.send_time + timedelta(seconds=repeat_interval)
+
+                # Determine how many intervals to skip if we fell behind
+                intervals_behind = 0
+                if next_send_time <= now:
+                    intervals_behind = int((now - msg.send_time).total_seconds() // repeat_interval)
+
+                if intervals_behind > 0:
+                    logging.info(
+                        "Scheduled message %s was %d repeat intervals behind. "
+                        "Catching up by advancing send_time.",
+                        message_id,
+                        intervals_behind,
+                    )
+
+                # Advance send_time by the total number of intervals to catch up
+                total_advance = (intervals_behind + 1) * repeat_interval if intervals_behind > 0 else repeat_interval
+                next_send_time = msg.send_time + timedelta(seconds=total_advance)
 
                 if repeat_amount is not None:
                     # Finite repeats: decrement count
-                    if repeat_amount > 0:
-                        new_amount = repeat_amount - 1
-                        await ScheduledMessageService.update_repeat_and_send_time(message_id, new_amount, next_send_time)
+                    # Reduce by the number of skipped + the current execution
+                    total_consumed = intervals_behind + 1
+                    new_amount = max(0, repeat_amount - total_consumed)
+
+                    if new_amount > 0:
+                        await ScheduledMessageService.update_repeat_and_send_time(
+                            message_id, new_amount, next_send_time
+                        )
                     else:
-                        # repeat_amount == 0: no more repeats, cancel
+                        # No more repeats remaining — cancel
                         await ScheduledMessageService.cancel(message_id)
                 else:
                     # Infinite repeats (repeat_amount is None): keep going forever
