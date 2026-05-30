@@ -20,7 +20,16 @@ class AdvancedTicTacToe:
         self.player1 = player1
         self.player2 = player2 or "tanjun"  # type: ignore[assignment]
         # boards[meta_row][meta_col] is a 3x3 list of sub-board cells
-        self.boards: list[list[list[list[str]]]] = [[[["-"] * 3 for _ in range(3)] for _ in range(3)] for _ in range(3)]
+        self.boards: list[list[list[list[str]]]] = [
+            [  # meta_row
+                [  # meta_col
+                    ["-"] * 3  # row of sub-board
+                    for _ in range(3)
+                ]
+                for _ in range(3)
+            ]
+            for _ in range(3)
+        ]
         # Track winners of each sub-board: None = ongoing, "⭕" or "❌" or "D" (draw)
         self.board_winners: list[list[str | None]] = [[None] * 3 for _ in range(3)]
         # Which sub-board the next player MUST play in (None = free choice)
