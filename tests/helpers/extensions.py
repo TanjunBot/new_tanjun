@@ -54,13 +54,13 @@ def iter_app_command_methods(obj: Any) -> list[tuple[str, Callable[..., Any]]]:
         if name in ("log_consumer_task",):
             continue
         methods.append((name, member))
-    for name, member in inspect.getmembers(type(obj), predicate=inspect.isfunction):
+    for name, fn_member in inspect.getmembers(type(obj), predicate=inspect.isfunction):
         if name.startswith("_"):
             continue
-        if not inspect.iscoroutinefunction(member):
+        if not inspect.iscoroutinefunction(fn_member):
             continue
         bound = getattr(obj, name, None)
-        if bound is None or (name, bound) in methods:
+        if bound is None or (name, bound) in methods:  # type: ignore[comparison-overlap]
             continue
         methods.append((name, bound))
     return methods
@@ -126,7 +126,7 @@ def make_automod_rule(guild: MagicMock | None = None) -> MagicMock:
 
 
 def _empty_async_iter() -> Any:
-    async def _gen():
+    async def _gen() -> Any:  # type: ignore[misc]
         if False:
             yield
 
@@ -142,7 +142,7 @@ def make_audit_log_entry(user: MagicMock | None = None, target_id: int = 1) -> M
 
 
 def async_audit_logs(*entries: MagicMock) -> Any:
-    async def _gen():
+    async def _gen() -> Any:  # type: ignore[misc]
         for e in entries:
             yield e
 
