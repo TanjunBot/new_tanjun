@@ -1,0 +1,57 @@
+name: Crowdin Sync
+
+on:
+  push:
+    branches:
+      - development
+    paths:
+      - 'locales/en.json'
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      upload_only:
+        description: 'Only upload source files (skip download)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  crowdin-sync:
+    name: Sync Translations with Crowdin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: development
+
+      - name: Upload source files to Crowdin
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          upload_translations: false
+          download_translations: false
+          crowdin_branch_name: development
+          config: crowdin.yml
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Download translations from Crowdin
+        if: ${{ !inputs.upload_only }}
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          crowdin_branch_name: development
+          config: crowdin.yml
+          create_pull_request: true
+          pull_request_title: 'New Crowdin updates'
+          pull_request_body: 'Automated translation updates from Crowdin.'
+          pull_request_labels: 'translations'
+          pull_request_base_branch_name: development
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
