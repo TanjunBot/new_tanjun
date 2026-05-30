@@ -1,7 +1,6 @@
 import asyncio
 import difflib
 import logging
-import typing
 
 import discord
 from discord import app_commands
@@ -101,7 +100,9 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistc_add_description"),
     )
     @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_add_params_channel_description"))
-    async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: typing.Union[discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel] = None) -> None:  # type: ignore[assignment]
+    async def add_blacklist_channel_cmd(
+        self, ctx: discord.Interaction, channel: discord.TextChannel | discord.VoiceChannel | discord.CategoryChannel = None
+    ) -> None:  # type: ignore[assignment]
         await ctx.response.defer()
         command_info = utility.CommandInfo(
             user=ctx.user,
@@ -125,7 +126,9 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistc_remove_description"),
     )
     @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_remove_params_channel_description"))
-    async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: typing.Union[discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel] = None) -> None:  # type: ignore[assignment]
+    async def remove_blacklist_channel_cmd(
+        self, ctx: discord.Interaction, channel: discord.TextChannel | discord.VoiceChannel | discord.CategoryChannel = None
+    ) -> None:  # type: ignore[assignment]
         await ctx.response.defer()
         command_info = utility.CommandInfo(
             user=ctx.user,

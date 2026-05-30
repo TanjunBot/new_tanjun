@@ -1240,7 +1240,7 @@ async def create_tables(bot=None) -> None:
             """UPDATE `logBlacklistChannel`
                SET `channel_type` = 'text'
                WHERE `channel_type` IS NULL OR `channel_type` = ''""",
-            bot=bot
+            bot=bot,
         )
 
         # Step 2: Drop the old primary key if it exists (guild_id, channel_id)
@@ -1249,7 +1249,7 @@ async def create_tables(bot=None) -> None:
             await execute_action(
                 """ALTER TABLE `logBlacklistChannel`
                    DROP PRIMARY KEY""",
-                bot=bot
+                bot=bot,
             )
             logging.debug("Dropped old PRIMARY KEY on logBlacklistChannel")
         except Exception as drop_exc:
@@ -1263,7 +1263,7 @@ async def create_tables(bot=None) -> None:
             await execute_action(
                 """ALTER TABLE `logBlacklistChannel`
                    ADD PRIMARY KEY (`guild_id`, `channel_id`, `channel_type`)""",
-                bot=bot
+                bot=bot,
             )
             logging.info("Successfully migrated logBlacklistChannel PRIMARY KEY to include channel_type")
         except Exception as add_exc:
