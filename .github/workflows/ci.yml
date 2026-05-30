@@ -117,11 +117,12 @@ jobs:
 
       - name: Run tests with coverage
         env:
-          TANJUN_DB_HOST: 127.0.0.1
-          TANJUN_DB_PORT: 3307
-          TANJUN_DB_USER: test_user
-          TANJUN_DB_PASSWORD: test_password
-          TANJUN_DB_NAME: tanjun_test
+          TANJUN_TEST_DB_HOST: 127.0.0.1
+          TANJUN_TEST_DB_PORT: 3307
+          TANJUN_TEST_DB_USER: test_user
+          TANJUN_TEST_DB_PASSWORD: test_password
+          TANJUN_TEST_DB_NAME: tanjun_test
+          TANJUN_INTEGRATION: "true"
         run: |
           pytest --cov=. --cov-report=term --cov-report=xml --junitxml=test-results.xml -v
 
