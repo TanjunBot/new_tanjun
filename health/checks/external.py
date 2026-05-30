@@ -222,7 +222,10 @@ class BytebinHealthCheck(HealthCheck):
             headers["Authorization"] = f"Basic {auth}"
 
         try:
-            async with ClientSession() as session, session.get(bytebin_url, headers=headers, timeout=ClientTimeout(total=10)) as response:
+            async with (
+                ClientSession() as session,
+                session.get(bytebin_url, headers=headers, timeout=ClientTimeout(total=10)) as response,
+            ):
                 if bytebin_username and bytebin_password and response.status in (401, 403):
                     return HealthCheckResult(
                         check_name=self.name,
