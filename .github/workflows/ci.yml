@@ -175,7 +175,6 @@ jobs:
   test-e2e-live:
     name: E2E Live Discord (optional)
     runs-on: ubuntu-latest
-    if: ${{ secrets.TANJUN_TEST_BOT_TOKEN != '' }}
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -186,7 +185,9 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      - run: pytest tests/e2e_live/ -m live_discord -v --timeout=120
+      - name: Run live Discord tests
+        if: env.TANJUN_TEST_BOT_TOKEN != ''
+        run: pytest tests/e2e_live/ -m live_discord -v --timeout=120
         env:
           TANJUN_TEST_BOT_TOKEN: ${{ secrets.TANJUN_TEST_BOT_TOKEN }}
           TANJUN_TEST_GUILD_ID: ${{ secrets.TANJUN_TEST_GUILD_ID }}

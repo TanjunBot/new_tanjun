@@ -5,8 +5,8 @@ Extracted from ``utility.py`` as part of refactoring (issue #1608).
 
 import datetime
 import enum
-from collections.abc import AbstractSet, Mapping
-from typing import Annotated, Any, Self
+from collections.abc import Mapping
+from typing import AbstractSet, Annotated, Any, Self
 
 import discord
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
