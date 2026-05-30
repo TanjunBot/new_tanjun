@@ -7,6 +7,7 @@ type-safe repository methods using BoostTarget enum.
 from __future__ import annotations
 
 from enum import Enum
+
 from models import XpBoostModel
 
 

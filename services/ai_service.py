@@ -14,17 +14,10 @@ import os
 from collections.abc import AsyncIterator
 from typing import Annotated
 
-from pydantic import BaseModel, BeforeValidator, Field, StringConstraints
+from pydantic import BaseModel, Field, StringConstraints
 
 from config import openAiKey
-
-# --- Type aliases ---
-
-UserId = Annotated[
-    str,
-    BeforeValidator(lambda v: str(v) if isinstance(v, int) else v),
-    StringConstraints(pattern=r"^\d{17,20}$"),
-]
+from tanjun_types import UserId
 
 
 # --- Pydantic models ---
