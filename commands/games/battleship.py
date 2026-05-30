@@ -58,9 +58,7 @@ class Battleship:
         self.message = None
 
     @staticmethod
-    def _generate_random_placement(
-        board: list[list[str]], ships_list: list[dict[str, Any]]
-    ) -> None:
+    def _generate_random_placement(board: list[list[str]], ships_list: list[dict[str, Any]]) -> None:
         """Randomly place ships on a board."""
         ships_list.clear()
         for name, size, symbol in SHIPS:
@@ -84,19 +82,25 @@ class Battleship:
                         else:
                             board[row + i][col] = symbol
                             cells.append((row + i, col))
-                    ships_list.append({
-                        "name": name,
-                        "symbol": symbol,
-                        "cells": cells,
-                        "hits": 0,
-                        "sunk": False,
-                    })
+                    ships_list.append(
+                        {
+                            "name": name,
+                            "symbol": symbol,
+                            "cells": cells,
+                            "hits": 0,
+                            "sunk": False,
+                        }
+                    )
                     placed = True
                 attempts += 1
 
     @staticmethod
     def _can_place(
-        board: list[list[str]], row: int, col: int, size: int, direction: str,
+        board: list[list[str]],
+        row: int,
+        col: int,
+        size: int,
+        direction: str,
     ) -> bool:
         """Check if a ship can be placed without overlapping."""
         for i in range(size):
@@ -108,8 +112,11 @@ class Battleship:
         return True
 
     def _receive_attack(
-        self, board: list[list[str]], ships_list: list[dict[str, Any]],
-        row: int, col: int,
+        self,
+        board: list[list[str]],
+        ships_list: list[dict[str, Any]],
+        row: int,
+        col: int,
     ) -> str:
         """Process an attack on a board. Returns 'hit', 'miss', or 'sunk:Name'."""
         cell = board[row][col]
@@ -162,19 +169,9 @@ class Battleship:
 
         # Personalize based on viewer
         if viewer == self.player1:
-            desc = (
-                f"## **{p1_name}** (your board)\n"
-                f"```\n{p1_own}\n```\n"
-                f"## **{p2_name}** (your view)\n"
-                f"```\n{p1_view}\n```\n"
-            )
+            desc = f"## **{p1_name}** (your board)\n```\n{p1_own}\n```\n## **{p2_name}** (your view)\n```\n{p1_view}\n```\n"
         elif viewer == self.player2:
-            desc = (
-                f"## **{p2_name}** (your board)\n"
-                f"```\n{p2_own}\n```\n"
-                f"## **{p1_name}** (your view)\n"
-                f"```\n{p2_view}\n```\n"
-            )
+            desc = f"## **{p2_name}** (your board)\n```\n{p2_own}\n```\n## **{p1_name}** (your view)\n```\n{p2_view}\n```\n"
         else:
             # Spectator or no viewer specified - show masked views only
             desc = (
@@ -195,8 +192,7 @@ class Battleship:
             desc += tanjunLocalizer.localize(locale, "commands.games.battleship.currentTurn", player=current)
 
         legend = tanjunLocalizer.localize(
-            locale, "commands.games.battleship.legend",
-            water=WATER, hit=HIT, miss=MISS, sunk=SHIP_SUNK
+            locale, "commands.games.battleship.legend", water=WATER, hit=HIT, miss=MISS, sunk=SHIP_SUNK
         )
         desc += f"\n**{legend}**"
 
@@ -237,14 +233,16 @@ class Battleship:
         self.current_player = self.player1
 
     async def show_board(
-        self, interaction: discord.Interaction | utility.CommandInfo, initial: bool = False,
+        self,
+        interaction: discord.Interaction | utility.CommandInfo,
+        initial: bool = False,
     ) -> None:
         """Display the current game state."""
         locale = str(interaction.locale)
 
         # Determine viewer for personalized embed
         viewer = None
-        if hasattr(interaction, 'user'):
+        if hasattr(interaction, "user"):
             viewer = interaction.user
 
         embed = self._format_battle_embed(locale, viewer=viewer)
@@ -252,17 +250,19 @@ class Battleship:
 
         if initial:
             # Handle CommandInfo vs Interaction
-            if hasattr(interaction, 'reply'):
+            if hasattr(interaction, "reply"):
                 self.message = await interaction.reply(embed=embed, view=view)  # type: ignore[attr-defined]
             else:
                 self.message = await interaction.followup.send(embed=embed, view=view)  # type: ignore[attr-defined]
         else:
             # Handle edit for CommandInfo vs Interaction
-            if hasattr(interaction, 'edit_message'):
+            if hasattr(interaction, "edit_message"):
                 await interaction.edit_message(embed=embed, view=view)  # type: ignore[attr-defined]
             else:
                 await interaction.followup.edit_message(
-                    message_id=interaction.message.id, embed=embed, view=view,
+                    message_id=interaction.message.id,
+                    embed=embed,
+                    view=view,
                 )
 
 
@@ -355,7 +355,8 @@ class BattleshipView(discord.ui.View):
         if interaction.user != self.game.current_player:
             await interaction.response.send_message(
                 tanjunLocalizer.localize(
-                    str(interaction.locale), "commands.games.battleship.notYourTurn",
+                    str(interaction.locale),
+                    "commands.games.battleship.notYourTurn",
                 ),
                 ephemeral=True,
             )
@@ -378,7 +379,8 @@ class BattleshipView(discord.ui.View):
         if interaction.user != game.current_player:
             await interaction.followup.send(
                 tanjunLocalizer.localize(
-                    str(interaction.locale), "commands.games.battleship.notYourTurn",
+                    str(interaction.locale),
+                    "commands.games.battleship.notYourTurn",
                 ),
                 ephemeral=True,
             )
@@ -398,7 +400,8 @@ class BattleshipView(discord.ui.View):
         if target_board[row][col] in (HIT, MISS, SHIP_SUNK):
             await interaction.followup.send(
                 tanjunLocalizer.localize(
-                    str(interaction.locale), "commands.games.battleship.alreadyAttacked",
+                    str(interaction.locale),
+                    "commands.games.battleship.alreadyAttacked",
                 ),
                 ephemeral=True,
             )
@@ -443,7 +446,8 @@ class BattleshipView(discord.ui.View):
         if interaction.user != game.current_player:
             await interaction.followup.send(
                 tanjunLocalizer.localize(
-                    str(interaction.locale), "commands.games.battleship.notYourGame",
+                    str(interaction.locale),
+                    "commands.games.battleship.notYourGame",
                 ),
                 ephemeral=True,
             )
@@ -470,24 +474,35 @@ class BattleshipView(discord.ui.View):
             )
             return
 
-        current_turn = self.game.current_player.display_name if hasattr(self.game.current_player, 'display_name') else 'Tanjun'
+        current_turn = self.game.current_player.display_name if hasattr(self.game.current_player, "display_name") else "Tanjun"
 
         msg = (
             f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpTitle')}**\n\n"
             f"📋 **{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpBoards')}**\n"
             f"- {tanjunLocalizer.localize(locale, 'commands.games.battleship.helpYourBoard')}\n"
-            f"- {tanjunLocalizer.localize(
-                locale, 'commands.games.battleship.helpEnemyBoard',
-                hit=HIT, miss=MISS, sunk=SHIP_SUNK,
-            )}\n\n"
+            f"- {
+                tanjunLocalizer.localize(
+                    locale,
+                    'commands.games.battleship.helpEnemyBoard',
+                    hit=HIT,
+                    miss=MISS,
+                    sunk=SHIP_SUNK,
+                )
+            }\n\n"
             f"🎯 **{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpToAttack')}** "
             f"{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpAttackInstruction')}\n\n"
             f"🏳️ **{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpGiveUp')}** "
             f"{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpGiveUpInstruction')}\n\n"
-            f"📖 **{tanjunLocalizer.localize(
-                locale, 'commands.games.battleship.legend',
-                water=WATER, hit=HIT, miss=MISS, sunk=SHIP_SUNK,
-            )}**\n\n"
+            f"📖 **{
+                tanjunLocalizer.localize(
+                    locale,
+                    'commands.games.battleship.legend',
+                    water=WATER,
+                    hit=HIT,
+                    miss=MISS,
+                    sunk=SHIP_SUNK,
+                )
+            }**\n\n"
             f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpPlayers')}** "
             f"{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpPlayersValue', p1=p1_name, p2=p2_name)}\n"
             f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpCurrentTurn')}** {current_turn}"
