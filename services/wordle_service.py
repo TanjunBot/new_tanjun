@@ -30,7 +30,7 @@ async def upsert_wordle_stats(
     won: bool,
     guesses: int,
     hard_mode: bool = False,
-) -> WordleStatsModel:
+) -> WordleStatsModel | None:
     """Update or create Wordle stats after a game ends."""
     from api import upsert_wordle_stats as _upsert
 
@@ -47,7 +47,24 @@ def validate_hard_mode_guess(guess: str, previous_guesses: list[str], word: str)
     if not last_guess:
         return None
 
-    for i, (guess_char, prev_char, word_char) in enumerate(zip(guess, last_guess, word)):
+    # Evaluate the previous guess to determine which letters were revealed (green/yellow)
+    revealed_green = []
+    revealed_yellow = []
+    word_chars = list(word)
+
+    # First pass: mark greens
+    for i, char in enumerate(last_guess):
+        if char == word[i]:
+            revealed_green.append((i, char))
+            word_chars[i] = None  # Mark as used
+
+    # Second pass: mark yellows
+    for i, char in enumerate(last_guess):
+        if char != word[i] and char in word_chars:
+            revealed_yellow.append((i, char))
+            word_chars[word_chars.index(char)] = None  # Mark as used
+
+    for i, (guess_char, prev_char, word_char) in enumerate(zip(guess, last_guess, word, strict=True)):
         if prev_char == word_char:
             # Previous guess had this letter in the correct position
             if guess_char != word_char:
@@ -56,7 +73,10 @@ def validate_hard_mode_guess(guess: str, previous_guesses: list[str], word: str)
             # Previous guess had this letter but wrong position
             if prev_char not in guess:
                 return f"Letter **{prev_char.upper()}** must be used (was yellow before)"
-            prev_count = sum(1 for c in last_guess if c == prev_char)
+            # Count revealed instances (green + yellow) of prev_char
+            prev_count = sum(1 for pos, ch in revealed_green if ch == prev_char) + sum(
+                1 for pos, ch in revealed_yellow if ch == prev_char
+            )
             # The letter must appear at least as many times as before
             guess_count = sum(1 for c in guess if c == prev_char)
             if guess_count < prev_count:

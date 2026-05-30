@@ -43,11 +43,10 @@ from models import (
     WelcomeChannelModel,
     XpBoostModel,
 )
-from utility import get_level_for_xp_async, get_xp_for_level_async
-
 
 # ── Log blacklist (delegated to LogBlacklistRepository) ─────────────────────────────
 from repositories.log_blacklist_repository import LogBlacklistType, log_blacklist_repo
+from utility import get_level_for_xp_async, get_xp_for_level_async
 
 
 async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
@@ -64,7 +63,6 @@ async def get_log_blacklist(guild_id: str, blacklist_type: LogBlacklistType) -> 
 
 async def is_log_entity_blacklisted(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> str | None:
     return await log_blacklist_repo.is_entity_blacklisted(guild_id, entity_id, blacklist_type)
-
 
 
 logger = logging.getLogger(__name__)
@@ -104,9 +102,7 @@ class DatabaseManager:
         async def _callback(cursor: Any, conn: Any) -> list[tuple[Any, ...]]:
             return await cursor.fetchall()
 
-        return await _execute_with_retry(
-            "execute_query", _callback, query, params
-        )
+        return await _execute_with_retry("execute_query", _callback, query, params)
 
     async def execute_action(
         self,
@@ -120,9 +116,7 @@ class DatabaseManager:
         async def _callback(cursor: Any, conn: Any) -> int:
             return cursor.rowcount
 
-        return await _execute_with_retry(
-            "execute_action", _callback, query, params, is_write=True
-        )
+        return await _execute_with_retry("execute_action", _callback, query, params, is_write=True)
 
     async def execute_batch(
         self,
@@ -137,9 +131,7 @@ class DatabaseManager:
             await cursor.executemany(query, params_list)
             return None
 
-        await _execute_with_retry(
-            "execute_batch", _callback, query, is_write=True
-        )
+        await _execute_with_retry("execute_batch", _callback, query, is_write=True)
 
     async def execute_insert_and_get_id(
         self,
@@ -154,9 +146,7 @@ class DatabaseManager:
             await conn.commit()
             return cursor.lastrowid
 
-        return await _execute_with_retry(
-            "execute_insert_and_get_id", _callback, query, params, is_write=True
-        )
+        return await _execute_with_retry("execute_insert_and_get_id", _callback, query, params, is_write=True)
 
     async def check_health(self) -> bool:
         """Check if the database pool is healthy by running SELECT 1."""
@@ -507,11 +497,7 @@ async def execute_query_iter(
                 logger.error(f"Error after yielding rows during query iteration: {e} — {safe_id}")
                 raise
             err_str = str(e).lower()
-            retryable = (
-                "deadlock" in err_str
-                or "connection" in err_str
-                or "timeout" in err_str
-            )
+            retryable = "deadlock" in err_str or "connection" in err_str or "timeout" in err_str
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
                 print(f"Transient error on execute_query_iter attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
@@ -1216,8 +1202,7 @@ async def create_tables(bot=None) -> None:
     while to_create:
         # Find all tables whose dependencies are satisfied (or have no dependencies)
         batch = {
-            name for name in to_create
-            if all(dep in created or dep not in to_create for dep in dependencies.get(name, []))
+            name for name in to_create if all(dep in created or dep not in to_create for dep in dependencies.get(name, []))
         }
         if not batch:
             # Circular dependency or missing parent - shouldn't happen with current schema
@@ -1228,9 +1213,7 @@ async def create_tables(bot=None) -> None:
 
     # Create tables in batches, parallelizing within each batch
     for batch in batches:
-        await asyncio.gather(
-            *[execute_action(tables[table_name], bot=bot) for table_name in batch]
-        )
+        await asyncio.gather(*[execute_action(tables[table_name], bot=bot) for table_name in batch])
 
     # Run schema migrations for existing tables that need column additions
     migrations = [
@@ -1289,7 +1272,9 @@ async def set_warn_config(
     kick_threshold: int,
     ban_threshold: int,
 ) -> None:
-    await warning_repo.set_config(guild_id, expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold)
+    await warning_repo.set_config(
+        guild_id, expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold
+    )
 
 
 async def get_warn_config(guild_id: str | int) -> WarnConfigModel | None:
@@ -1342,7 +1327,9 @@ async def get_wordle_stats(user_id: str, guild_id: str) -> dict | None:
     """Fetch Wordle stats for a user in a guild."""
     from models import WordleStatsModel
 
-    query = "SELECT * FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"
+    query = """SELECT user_id, guild_id, games_played, games_won, current_streak,
+                      max_streak, guess_distribution, hard_mode_games_played, hard_mode_games_won
+               FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"""
     rows = await execute_query(query, (user_id, guild_id))
     if not rows:
         return None
@@ -1359,7 +1346,9 @@ async def upsert_wordle_stats(
     """Update or insert Wordle stats after a game completes."""
     from models import WordleStatsModel
 
-    query = "SELECT * FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"
+    query = """SELECT user_id, guild_id, games_played, games_won, current_streak,
+                      max_streak, guess_distribution, hard_mode_games_played, hard_mode_games_won
+               FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"""
     rows = await execute_query(query, (user_id, guild_id))
 
     if rows:
@@ -1388,7 +1377,7 @@ async def upsert_wordle_stats(
             stats.max_streak = stats.current_streak
         # Update guess distribution (1-indexed, capped at 6)
         dist = [int(x) for x in stats.guess_distribution.split(",")]
-        idx = min(guesses - 1, 5)
+        idx = max(0, min(guesses - 1, 5))
         dist[idx] += 1
         stats.guess_distribution = ",".join(str(d) for d in dist)
         if hard_mode:
@@ -1653,8 +1642,6 @@ async def get_all_level_roles(guild_id: str) -> list[LevelRolesGroupModel]:
     from repositories.level_role_repository import level_role_repo
 
     return await level_role_repo.get_grouped_by_level(guild_id)
-
-
 
 
 # ── XP Boost (delegated to XpBoostRepository) ──────────────────────────────────
@@ -2540,8 +2527,6 @@ async def remove_log_channel(guild_id: str) -> None:
     query = "DELETE FROM log_channel WHERE guild_id = %s"
     params = (guild_id,)
     await execute_action(query, params)
-
-
 
 
 async def get_log_channel(guild_id: str) -> str | None:

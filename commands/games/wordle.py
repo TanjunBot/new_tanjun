@@ -118,9 +118,10 @@ async def generate_wordle_image(
 
             if row < len(guesses) and guesses[row] != "NOTHING":
                 guess = guesses[row]
+                colors = _evaluate_guess(guess, word)
                 if len(guess) > col:
                     char = guess[col]
-                    color = _evaluate_guess(guess, word)[col]
+                    color = colors[col]
                     _draw_tile(draw, x, y, char, color, font)
                 else:
                     _draw_tile(draw, x, y, " ", DARK_GRAY, font)
@@ -349,9 +350,9 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
                 )
                 return
             # Fill remaining slots to show full grid
-            while len(guesses) < 6:
+            while len(guesses) < GRID_ROWS - 1:
                 guesses.append("NOTHING")
-            # Reveal word as last guess
+            # Reveal word as last guess in the last row
             guesses.append(word)
             await update_embed(interaction, given_up=True)
 
@@ -400,7 +401,10 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
                 )
                 return
             share_text = generate_share_text(
-                self._guesses, self._word, self._won, self._hard_mode,
+                self._guesses,
+                self._word,
+                self._won,
+                self._hard_mode,
             )
             await interaction.response.send_message(
                 f"```{share_text}```",
@@ -425,7 +429,7 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
         ) -> None:
             nonlocal hard_mode
             hard_mode = False
-            await _start_game(interaction)
+            await self._start_game(interaction)
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.buttons.playHard"),
@@ -438,7 +442,7 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
         ) -> None:
             nonlocal hard_mode
             hard_mode = True
-            await _start_game(interaction)
+            await self._start_game(interaction)
 
         async def _start_game(self, interaction: discord.Interaction) -> None:
             if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
@@ -457,7 +461,12 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
                     guesses=0,
                 )
                 + (
-                    f"\n\n{tanjunLocalizer.localize(str(command_info.locale), 'commands.games.wordle.initial.descriptionextra.ja')}"
+                    f"\n\n{
+                        tanjunLocalizer.localize(
+                            str(command_info.locale),
+                            'commands.games.wordle.initial.descriptionextra.ja',
+                        )
+                    }"
                     if language == "ja"
                     else ""
                 ),
