@@ -1,0 +1,39 @@
+site_name: Tanjun Documentation
+site_description: Documentation for Tanjun Discord Bot
+site_url: https://docs.tanjun.bot
+repo_url: https://github.com/TanjunBot/new_tanjun
+repo_name: TanjunBot/new_tanjun
+edit_uri: edit/development/docs/
+
+theme:
+  name: material
+  language: en
+  palette:
+    primary: indigo
+    accent: indigo
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - content.tabs.link
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - admonition
+  - toc:
+      permalink: true
+  - tables
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Database Schema: database-schema.md
+  - User Manual: user-manual.md
+  - Contributing: https://github.com/TanjunBot/new_tanjun/blob/development/CONTRIBUTING.md
