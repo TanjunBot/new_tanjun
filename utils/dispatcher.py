@@ -50,9 +50,10 @@ class MessageFilters:
             return False
         if self.channel_whitelist is not None and message.channel.id not in self.channel_whitelist:
             return False
-        if self.channel_blacklist is not None and message.channel.id in self.channel_blacklist:
-            return False
-        return True
+        return not (
+            self.channel_blacklist is not None
+            and message.channel.id in self.channel_blacklist
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -88,35 +89,6 @@ class Priority:
 # ---------------------------------------------------------------------------
 # Handler record
 # ---------------------------------------------------------------------------
-
-
-@dataclass
-class MessageFilters:
-    """Constraints a message must satisfy for the handler to run."""
-
-    only_guilds: bool = True
-    """If True, skip DMs (message.guild must be set)."""
-
-    ignore_bots: bool = True
-    """If True, skip messages from bots."""
-
-    channel_whitelist: set[int] | None = None
-    """If set, only run in these channel IDs (None = allow all)."""
-
-    channel_blacklist: set[int] | None = None
-    """If set, never run in these channel IDs."""
-
-    def check(self, message: discord.Message) -> bool:
-        """Return True if *message* passes all configured filters."""
-        if self.ignore_bots and message.author.bot:
-            return False
-        if self.only_guilds and message.guild is None:
-            return False
-        if self.channel_whitelist is not None and message.channel.id not in self.channel_whitelist:
-            return False
-        if self.channel_blacklist is not None and message.channel.id in self.channel_blacklist:
-            return False
-        return True
 
 
 @dataclass
@@ -178,6 +150,9 @@ def register(
     priority:
         Lower numbers run first.  Use :class:`Priority` constants.
     """
+    if _ready:
+        raise RuntimeError("Cannot register message handlers after dispatcher.freeze()")
+
     if callback is None:
         # Decorator form
         def _decorator(
@@ -291,18 +266,23 @@ async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
     if not matched:
         return []
 
-    names: list[str] = [h.name for h in matched]
-    log.debug("Dispatching %d handler(s) by priority: %s", len(matched), names)
-
-    # Execute all matched handlers concurrently with timing and exception isolation
-    coros: list[Awaitable[Any]] = [
-        _execute_with_logging(h.name, h.callback, message) for h in matched
-    ]
-    results = await asyncio.gather(*coros)
+    from itertools import groupby
 
     outcomes: list[tuple[str, Any]] = []
-    for handler, result in zip(matched, results, strict=True):
-        outcomes.append((handler.name, result))
+    for _, batch_iter in groupby(matched, key=lambda h: h.priority):
+        batch = list(batch_iter)
+        names: list[str] = [h.name for h in batch]
+        log.debug("Dispatching %d handler(s) at priority %d: %s", len(batch), batch[0].priority, names)
+
+        coros: list[Awaitable[Any]] = [
+            _execute_with_logging(h.name, h.callback, message) for h in batch
+        ]
+        results = await asyncio.gather(*coros)
+
+        for handler, result in zip(batch, results, strict=True):
+            outcomes.append((handler.name, result))
+
+    return outcomes
 
     return outcomes
 
@@ -439,7 +419,10 @@ def registered_handlers() -> list[MessageHandler]:
 
 def clear() -> None:
     """Remove all registered handlers (useful for tests)."""
+    global _ready
     _handlers.clear()
+    _ready = False
+    log.debug("Dispatcher cleared")
 
 
 def freeze() -> None:
