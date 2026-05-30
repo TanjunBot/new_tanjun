@@ -32,7 +32,7 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:  # 
 
             r: dict[str, Any] | None = await fetch(
                 f"https://api.giphy.com/v1/gifs/search?api_key={giphyAPIKey}&q={query}&limit={limit}&rating=pg"
-            )
+            )  # type: ignore[no-any-return]
 
             if r is None:
                 return []

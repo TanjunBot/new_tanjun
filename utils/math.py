@@ -11,7 +11,7 @@ import concurrent.futures
 import math
 import operator as op
 import re
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 
 # Thread pool executor for CPU-bound formula evaluation (module-level singleton)
 _eval_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
@@ -39,7 +39,7 @@ class NumericStringParser:
         )
         from pyparsing import Optional as Opt
 
-        self.exprStack = []
+        self.exprStack: list[str] = []
 
         point = Literal(".")
         e = CaselessLiteral("E")
@@ -254,7 +254,7 @@ LEVEL_SCALINGS = {
 }
 
 # Inverse formulas for built-in scalings: O(1) lookups instead of O(log n) threshold scans.
-_LEVEL_INVERSES: dict[str, callable] = {
+_LEVEL_INVERSES: dict[str, Callable[[int], int]] = {
     "easy": lambda xp: xp // 100,
     "medium": lambda xp: int((xp / 100) ** (1 / 1.5)),
     "hard": lambda xp: int(math.sqrt(xp / 100)),

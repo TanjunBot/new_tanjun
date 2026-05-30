@@ -15,7 +15,7 @@ def _load_emoji_map(filename: str) -> dict[str, str]:
     path = os.path.join(_DATA_DIR, filename)
     try:
         with open(path, encoding="utf-8") as f:
-            data: dict[str, str] = json.load(f)
+            data: dict[str, str] = json.load(f)  # type: ignore[no-any-return]
             return data
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
