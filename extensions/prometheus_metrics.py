@@ -14,7 +14,6 @@ from typing import Any
 import discord
 from discord.ext import commands, tasks
 
-import config
 from services.metrics_service import (
     bot_start_time,
     command_duration,
@@ -24,11 +23,7 @@ from services.metrics_service import (
     loop_iteration_duration,
     loop_iteration_errors,
     loop_running,
-    message_processing_duration,
     messages_processed,
-    process_memory_bytes,
-    process_open_fds,
-    process_threads,
     shard_connected,
     shard_latency,
     update_process_metrics,
@@ -83,7 +78,7 @@ class PrometheusMetricsCog(commands.Cog):
             app = web.Application()
 
             async def metrics_handler(request: web.Request) -> web.Response:
-                from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+                from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
                 # Update process metrics synchronously before serving.
                 update_process_metrics()
@@ -204,6 +199,7 @@ class PrometheusMetricsCog(commands.Cog):
 
 
 # ── Standalone utilities for external instrumentation ─────────────────────────
+
 
 def record_db_query(operation: str, duration: float, error: bool = False) -> None:
     """Record a database query duration and optionally an error.

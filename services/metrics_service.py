@@ -12,10 +12,7 @@ from __future__ import annotations
 
 import logging
 import os
-import time
-from typing import Any
 
-import prometheus_client
 from prometheus_client import Counter, Gauge, Histogram
 
 logger = logging.getLogger(__name__)
@@ -189,6 +186,7 @@ loop_iteration_errors = Counter(
 
 
 # ── Utility functions ────────────────────────────────────────────────────────
+
 
 def _get_process_stats() -> dict[str, float]:
     """Read process resource usage from /proc/self/status and /proc/self/stat.

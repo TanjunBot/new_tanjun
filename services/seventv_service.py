@@ -102,9 +102,7 @@ class SevenTVService:
         except Exception:
             return None
 
-    async def _search_user_by_twitch_name(
-        self, session: aiohttp.ClientSession, twitch_username: str
-    ) -> SevenTVUser | None:
+    async def _search_user_by_twitch_name(self, session: aiohttp.ClientSession, twitch_username: str) -> SevenTVUser | None:
         """Search for a user by their Twitch connection name via GraphQL."""
         query = """
         query SearchUsers($query: String!) {
