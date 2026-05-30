@@ -110,11 +110,11 @@ class TestGiveawayBlacklistEntryModel:
 class TestReportModel:
     def test_from_row(self):
         model = ReportModel.from_row(
-            (1, GUILD_ID, USER_ID, "22222222222222222", "reason", 1700000000, True, 1700000100, "33333333333333333", False, None, None)
+            (1, GUILD_ID, USER_ID, "22222222222222222", "reason", 1700000000, "pending", 1700000100, "33333333333333333", None, False)
         )
         assert model.id == 1
-        assert model.accepted is True
-        assert model.resolved is False
+        assert model.status == "pending"
+        assert model.anonymous is False
 
 
 class TestScheduledMessageModel:

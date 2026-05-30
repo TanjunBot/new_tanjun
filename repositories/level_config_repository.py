@@ -111,7 +111,6 @@ class LevelConfigRepository:
         if not kwargs:
             return
 
-        # Validate incoming values against LevelConfig domain model
         valid_difficulties = {"easy", "medium", "hard", "extreme", "custom"}
 
         for key, value in kwargs.items():
@@ -128,11 +127,9 @@ class LevelConfigRepository:
                 if not isinstance(value, bool):
                     raise ValueError(f"Invalid level_up_message_active: {value!r}. Must be a boolean.")
             elif key in ("custom_formula", "level_up_message", "level_up_channel_id"):
-                # These can be str or None
                 if value is not None and not isinstance(value, str):
                     raise ValueError(f"Invalid {key}: {value!r}. Must be a string or None.")
 
-        # Map Python field names to DB column names
         field_map = {
             "active": "active",
             "difficulty": "difficulty",
@@ -182,5 +179,4 @@ class LevelConfigRepository:
         _invalidate_guild_cache(guild_id)
 
 
-# Module-level singleton for easy import in existing callers
 level_config_repo = LevelConfigRepository()

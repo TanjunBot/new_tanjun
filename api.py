@@ -187,7 +187,7 @@ def set_bot(bot) -> None:
         db_manager._pool = None
 
 
-def _get_pool():
+def _get_pool() -> Pool | None:
     """Return the shared connection pool.
 
     Delegates to ``db_manager._pool`` so that all functions
@@ -240,12 +240,22 @@ async def _execute_with_retry(
 
     last_exception = None
     safe_id = _sanitize_for_log(query)
+    _start = time.monotonic()
     for attempt in range(_MAX_DB_RETRIES):
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
             async with conn, conn.cursor() as cursor:
                 await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
-                return await callback(cursor, conn)
+                _result = await callback(cursor, conn)
+                _elapsed = time.monotonic() - _start
+                # Record metrics if available
+                try:
+                    from extensions.prometheus_metrics import record_db_query
+
+                    record_db_query(operation, _elapsed, error=False)
+                except ImportError:
+                    pass
+                return _result
         except TimeoutError:
             msg = f"Timeout on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}"
             print(msg)
@@ -266,10 +276,25 @@ async def _execute_with_retry(
                 last_exception = e
                 continue
             # Non-retryable error or final attempt: raise instead of silently returning None
+            _elapsed = time.monotonic() - _start
+            try:
+                from extensions.prometheus_metrics import record_db_query
+
+                record_db_query(operation, _elapsed, error=True)
+            except ImportError:
+                pass
             print(f"Error during {operation}: {e} — {safe_id}")
             raise
 
     if last_exception:
+        # Record the exhaustion as a DB error metric.
+        _elapsed = time.monotonic() - _start
+        try:
+            from extensions.prometheus_metrics import record_db_query
+
+            record_db_query(operation, _elapsed, error=True)
+        except ImportError:
+            pass
         print(f"All retries exhausted for {operation}: {safe_id}")
         raise last_exception
 
@@ -413,6 +438,7 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
 
     last_exception = None
     safe_id = _query_safe_id(query)
+    _start = time.monotonic()
     for attempt in range(_MAX_DB_RETRIES):
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
@@ -438,10 +464,24 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
                 last_exception = e
                 continue
             # Non-retryable error or final attempt: raise instead of silently failing
+            _elapsed = time.monotonic() - _start
+            try:
+                from extensions.prometheus_metrics import record_db_query
+
+                record_db_query("execute_batch", _elapsed, error=True)
+            except ImportError:
+                pass
             print(f"Error during execute_batch: {e} — {safe_id}")
             raise
 
     if last_exception:
+        _elapsed = time.monotonic() - _start
+        try:
+            from extensions.prometheus_metrics import record_db_query
+
+            record_db_query("execute_batch", _elapsed, error=True)
+        except ImportError:
+            pass
         print(f"All retries exhausted for execute_batch: {safe_id}")
         raise last_exception
 
@@ -995,13 +1035,14 @@ def get_table_definitions() -> dict[str, str]:
         `reporterId` VARCHAR(20),
         `reason` VARCHAR(1024),
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        `accepted` TINYINT(1) DEFAULT 0,
-        `accepted_at` TIMESTAMP DEFAULT NULL,
-        `acceptedBy` VARCHAR(20) DEFAULT NULL,
-        `resolved` TINYINT(1) DEFAULT 0,
-        `resolved_at` TIMESTAMP DEFAULT NULL,
-        `resolvedBy` VARCHAR(20) DEFAULT NULL,
-        PRIMARY KEY(`id`)
+        `status` VARCHAR(20) DEFAULT 'pending',
+        `status_updated_at` TIMESTAMP DEFAULT NULL,
+        `status_updated_by` VARCHAR(20) DEFAULT NULL,
+        `status_note` VARCHAR(1024) DEFAULT NULL,
+        `anonymous` TINYINT(1) DEFAULT 0,
+        PRIMARY KEY(`id`),
+        INDEX `idx_status` (`status`),
+        INDEX `idx_guild` (`guild_id`)
     ) ENGINE=InnoDB;
     """
     tables["blockedReporters"] = """
@@ -1016,6 +1057,53 @@ def get_table_definitions() -> dict[str, str]:
         `guild_id` VARCHAR(20),
         `channel_id` VARCHAR(20),
         PRIMARY KEY(`guild_id`, `channel_id`)
+    ) ENGINE=InnoDB;
+    """
+    tables["report_evidence"] = """
+    CREATE TABLE IF NOT EXISTS `report_evidence` (
+        `id` INT AUTO_INCREMENT,
+        `guild_id` VARCHAR(20),
+        `report_id` INT,
+        `url` VARCHAR(2048),
+        `filename` VARCHAR(255) DEFAULT NULL,
+        `uploaded_by` VARCHAR(20) DEFAULT NULL,
+        `uploaded_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY(`id`),
+        INDEX `idx_report` (`guild_id`, `report_id`),
+        FOREIGN KEY (`guild_id`, `report_id`)
+            REFERENCES `reports`(`guild_id`, `id`)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    """
+    tables["report_mod_actions"] = """
+    CREATE TABLE IF NOT EXISTS `report_mod_actions` (
+        `id` INT AUTO_INCREMENT,
+        `guild_id` VARCHAR(20),
+        `report_id` INT,
+        `action_type` VARCHAR(20),
+        `target_id` VARCHAR(20),
+        `performed_by` VARCHAR(20),
+        `details` VARCHAR(1024) DEFAULT NULL,
+        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY(`id`),
+        INDEX `idx_report` (`guild_id`, `report_id`),
+        FOREIGN KEY (`guild_id`, `report_id`)
+            REFERENCES `reports`(`guild_id`, `id`)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    """
+    tables["report_anonymity"] = """
+    CREATE TABLE IF NOT EXISTS `report_anonymity` (
+        `guild_id` VARCHAR(20),
+        `enabled` TINYINT(1) DEFAULT 0,
+        PRIMARY KEY(`guild_id`)
+    ) ENGINE=InnoDB;
+    """
+    tables["report_notification_optout"] = """
+    CREATE TABLE IF NOT EXISTS `report_notification_optout` (
+        `guild_id` VARCHAR(20),
+        `user_id` VARCHAR(20),
+        PRIMARY KEY(`guild_id`, `user_id`)
     ) ENGINE=InnoDB;
     """
     tables["triggerMessages"] = """
@@ -1082,6 +1170,20 @@ def get_table_definitions() -> dict[str, str]:
         `channel_id` VARCHAR(20),
         `guild_id` VARCHAR(20),
         PRIMARY KEY(`channel_id`)
+    ) ENGINE=InnoDB;
+    """
+    tables["wordle_stats"] = """
+    CREATE TABLE IF NOT EXISTS `wordle_stats` (
+        `user_id` VARCHAR(20) NOT NULL,
+        `guild_id` VARCHAR(20) NOT NULL,
+        `games_played` INT UNSIGNED DEFAULT 0,
+        `games_won` INT UNSIGNED DEFAULT 0,
+        `current_streak` INT UNSIGNED DEFAULT 0,
+        `max_streak` INT UNSIGNED DEFAULT 0,
+        `guess_distribution` VARCHAR(64) DEFAULT '0,0,0,0,0,0',
+        `hard_mode_games_played` INT UNSIGNED DEFAULT 0,
+        `hard_mode_games_won` INT UNSIGNED DEFAULT 0,
+        PRIMARY KEY (`user_id`, `guild_id`)
     ) ENGINE=InnoDB;
     """
     tables["welcome_channel"] = """
@@ -1207,6 +1309,14 @@ async def create_tables(bot=None) -> None:
          ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
          AFTER `attachments`,
          ADD INDEX `idx_discord_message` (`discord_message_id`)""",
+        """ALTER TABLE `reports`
+         ADD COLUMN `status` VARCHAR(20) DEFAULT 'PENDING'
+         AFTER `created_at`,
+         ADD COLUMN `status_updated_at` TIMESTAMP DEFAULT NULL
+         AFTER `status`,
+         ADD COLUMN `status_updated_by` VARCHAR(20) DEFAULT NULL
+         AFTER `status_updated_at`,
+         ADD INDEX `idx_status` (`status`)""",
         """ALTER TABLE `level`
          ADD INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)""",
         """ALTER TABLE `warnings`
@@ -1220,7 +1330,12 @@ async def create_tables(bot=None) -> None:
         except Exception as exc:
             exc_str = str(exc).lower()
             # Only suppress "column already exists" / duplicate column errors
-            if "column already exists" in exc_str or "duplicate column" in exc_str or "duplicate column name" in exc_str:
+            if (
+                "column already exists" in exc_str
+                or "duplicate column" in exc_str
+                or "duplicate column name" in exc_str
+                or "duplicate key name" in exc_str
+            ):
                 logging.debug("Migration skipped (column already exists): %s", migration[:60])
             else:
                 logging.exception("Unexpected migration error: %s", migration[:60])
@@ -1308,6 +1423,99 @@ async def opt_in(user_id: str | int) -> None:
     query = "DELETE FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     await execute_action(query, params)
+
+
+async def get_wordle_stats(user_id: str, guild_id: str) -> dict | None:
+    """Fetch Wordle stats for a user in a guild."""
+    from models import WordleStatsModel
+
+    query = """SELECT user_id, guild_id, games_played, games_won, current_streak,
+                      max_streak, guess_distribution, hard_mode_games_played, hard_mode_games_won
+               FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"""
+    rows = await execute_query(query, (user_id, guild_id))
+    if not rows:
+        return None
+    return WordleStatsModel.from_row(rows[0]).model_dump()
+
+
+async def upsert_wordle_stats(
+    user_id: str,
+    guild_id: str,
+    won: bool,
+    guesses: int,
+    hard_mode: bool = False,
+) -> dict:
+    """Update or insert Wordle stats after a game completes."""
+    from models import WordleStatsModel
+
+    query = """SELECT user_id, guild_id, games_played, games_won, current_streak,
+                      max_streak, guess_distribution, hard_mode_games_played, hard_mode_games_won
+               FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"""
+    rows = await execute_query(query, (user_id, guild_id))
+
+    if rows:
+        stats = WordleStatsModel.from_row(rows[0])
+    else:
+        stats = WordleStatsModel(
+            user_id=user_id,
+            guild_id=guild_id,
+            games_played=0,
+            games_won=0,
+            current_streak=0,
+            max_streak=0,
+            guess_distribution="0,0,0,0,0,0",
+            hard_mode_games_played=0,
+            hard_mode_games_won=0,
+        )
+
+    stats.games_played += 1
+    if hard_mode:
+        stats.hard_mode_games_played += 1
+
+    if won:
+        stats.games_won += 1
+        stats.current_streak += 1
+        if stats.current_streak > stats.max_streak:
+            stats.max_streak = stats.current_streak
+        # Update guess distribution (1-indexed, capped at 6)
+        dist = [int(x) for x in stats.guess_distribution.split(",")]
+        idx = max(0, min(guesses - 1, 5))
+        dist[idx] += 1
+        stats.guess_distribution = ",".join(str(d) for d in dist)
+        if hard_mode:
+            stats.hard_mode_games_won += 1
+    else:
+        stats.current_streak = 0
+
+    upsert_query = """
+        INSERT INTO `wordle_stats`
+            (user_id, guild_id, games_played, games_won, current_streak,
+             max_streak, guess_distribution, hard_mode_games_played, hard_mode_games_won)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            games_played = VALUES(games_played),
+            games_won = VALUES(games_won),
+            current_streak = VALUES(current_streak),
+            max_streak = VALUES(max_streak),
+            guess_distribution = VALUES(guess_distribution),
+            hard_mode_games_played = VALUES(hard_mode_games_played),
+            hard_mode_games_won = VALUES(hard_mode_games_won)
+    """
+    await execute_action(
+        upsert_query,
+        (
+            stats.user_id,
+            stats.guild_id,
+            stats.games_played,
+            stats.games_won,
+            stats.current_streak,
+            stats.max_streak,
+            stats.guess_distribution,
+            stats.hard_mode_games_played,
+            stats.hard_mode_games_won,
+        ),
+    )
+    return stats.model_dump()
 
 
 async def get_counting_configs(channel_id: str | int) -> tuple[dict | None, dict | None, dict | None]:
@@ -2632,19 +2840,19 @@ async def report_user(
 async def accept_report(guild_id: str, report_id: str) -> None:
     from services.report_service import report_service as _report_svc
 
-    await _report_svc.accept(guild_id, report_id, accepted_by=None)
+    await _report_svc.update_status(guild_id, report_id, "investigating", updated_by=None)
 
 
 async def reject_report(guild_id: str, report_id: str) -> None:
     from services.report_service import report_service as _report_svc
 
-    await _report_svc.reject(guild_id, report_id, accepted_by=None)
+    await _report_svc.update_status(guild_id, report_id, "dismissed", updated_by=None)
 
 
-async def resolve_report(guild_id: str, report_id: str) -> None:
+async def resolve_report(guild_id: str, report_id: str, resolved_by: str | None = None) -> None:
     from services.report_service import report_service as _report_svc
 
-    await _report_svc.resolve(guild_id, report_id)
+    await _report_svc.update_status(guild_id, report_id, "action_taken", updated_by=resolved_by)
 
 
 async def delete_report(guild_id: str, report_id: str) -> None:

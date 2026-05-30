@@ -161,6 +161,7 @@ _TEST_GUILD = GUILD_ID
 _TEST_USER = USER_ID
 
 
+
 class TestExecuteQuery:
     """Tests for execute_query - core query execution."""
 

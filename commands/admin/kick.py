@@ -2,45 +2,13 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo, EmbedColor
+from utility import EmbedColor
+from utils.checks import can_moderate, send_check_failure
 
 
 async def kick(command_info: utility.CommandInfo, target: discord.Member, reason: str | None = None) -> None:
-    if (
-        isinstance(command_info.user, discord.Member)
-        and isinstance(command_info.channel, discord.abc.GuildChannel)
-        and not command_info.channel.permissions_for(command_info.user).kick_members
-    ):
-        embed = utility.tanjunEmbed(
-            colour=EmbedColor.ERROR,
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.missingPermission.title"),
-            description=tanjunLocalizer.localize(
-                str(command_info.locale), "commands.admin.kick.missingPermission.description"
-            ),
-        )
-        await command_info.reply(embed=embed)
-        return
-
-    assert command_info.guild is not None
-    if not command_info.guild.me.guild_permissions.kick_members:
-        embed = utility.tanjunEmbed(
-            colour=EmbedColor.ERROR,
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.missingPermissionBot.title"),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.admin.kick.missingPermissionBot.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
-        return
-
-    if isinstance(command_info.user, discord.Member) and target.top_role >= command_info.user.top_role:  # type: ignore[misc, union-attr]
-        embed = utility.tanjunEmbed(
-            colour=EmbedColor.WARNING,
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.targetTooHigh.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.targetTooHigh.description"),
-        )
-        await command_info.reply(embed=embed)
+    result = can_moderate(command_info, target, "kick_members", "kick_members")
+    if await send_check_failure(command_info, "kick", result):
         return
 
     try:

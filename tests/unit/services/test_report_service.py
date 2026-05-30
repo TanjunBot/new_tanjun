@@ -14,12 +14,7 @@ from tests.helpers.factories import GUILD_ID, USER_ID
 REPORTER_ID = "22222222222222222"
 
 
-def _report_row(
-    *,
-    accepted: int = 0,
-    resolved: int = 0,
-    report_id: int = 1,
-):
+def _report_row(*, report_id: int = 1, status: str = "pending"):
     return (
         report_id,
         GUILD_ID,
@@ -27,12 +22,11 @@ def _report_row(
         REPORTER_ID,
         "spam reason",
         1718452800,
-        accepted,
+        status,
+        1718452900,
+        REPORTER_ID,
         None,
-        None,
-        resolved,
-        None,
-        None,
+        False,
     )
 
 
@@ -70,7 +64,8 @@ class TestReportServiceCreate:
             result = await service.create(params)
         assert result == 42
         query = mock_insert.await_args[0][0]
-        assert "accepted" not in query
+        assert "status" in query
+        assert mock_insert.await_args[0][1][-1] == "pending"
 
     @pytest.mark.asyncio
     async def test_create_moderator(self, service: ReportService):
@@ -86,7 +81,8 @@ class TestReportServiceCreate:
             result = await service.create(params)
         assert result == 99
         query = mock_insert.await_args[0][0]
-        assert "accepted_at" in query
+        assert "status_updated_at" in query
+        assert mock_insert.await_args[0][1][4] == "investigating"
 
 
 class TestReportServiceGet:
@@ -100,25 +96,16 @@ class TestReportServiceGet:
         assert len(result) == 1
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        ("status", "fragment"),
-        [
-            ("PENDING", "accepted = 0 AND resolved = 0"),
-            ("ACCEPTED", "accepted = 1"),
-            ("RESOLVED", "resolved = 1"),
-            ("REJECTED", "accepted = 0 AND resolved = 1"),
-        ],
-    )
-    async def test_get_with_status_filter(self, service: ReportService, status: str, fragment: str):
+    async def test_get_with_status_filter(self, service: ReportService):
         captured: list[str] = []
 
         async def fake_iter(query, params):
             captured.append(query)
-            yield ReportModel.from_row(_report_row())
+            yield ReportModel.from_row(_report_row(status="investigating"))
 
         with patch.object(ReportModel, "iter_rows", side_effect=fake_iter):
-            await service.get(ReportFilter(guild_id=GUILD_ID, status=status))
-        assert fragment in captured[0]
+            await service.get(ReportFilter(guild_id=GUILD_ID, status="investigating"))
+        assert "status = %s" in captured[0]
 
     @pytest.mark.asyncio
     async def test_get_with_user_id(self, service: ReportService):
@@ -157,29 +144,43 @@ class TestReportServiceGet:
 
 class TestReportServiceActions:
     @pytest.mark.asyncio
-    async def test_accept(self, service: ReportService):
-        with patch("services.report_service.execute_action", new_callable=AsyncMock) as mock_exec:
-            await service.accept(GUILD_ID, 5, REPORTER_ID)
-            assert "accepted = 1" in mock_exec.await_args[0][0]
+    async def test_get_by_id_found(self, service: ReportService):
+        async def fake_iter(query, params):
+            yield ReportModel.from_row(_report_row(report_id=5))
+
+        with patch.object(ReportModel, "iter_rows", side_effect=fake_iter):
+            result = await service.get_by_id(GUILD_ID, 5)
+        assert result is not None
+        assert result.id == 5
 
     @pytest.mark.asyncio
-    async def test_reject(self, service: ReportService):
-        with patch("services.report_service.execute_action", new_callable=AsyncMock) as mock_exec:
-            await service.reject(GUILD_ID, 5, REPORTER_ID)
-            query = mock_exec.await_args[0][0]
-            assert "resolved = 2" in query
+    async def test_get_by_id_missing(self, service: ReportService):
+        async def fake_iter(query, params):
+            return
+            yield
+
+        with patch.object(ReportModel, "iter_rows", side_effect=fake_iter):
+            result = await service.get_by_id(GUILD_ID, 5)
+        assert result is None
 
     @pytest.mark.asyncio
-    async def test_resolve(self, service: ReportService):
-        with patch("services.report_service.execute_action", new_callable=AsyncMock) as mock_exec:
-            await service.resolve(GUILD_ID, 5)
-            assert "resolved = 1" in mock_exec.await_args[0][0]
+    async def test_update_status(self, service: ReportService):
+        with (
+            patch("services.report_service.execute_query", new_callable=AsyncMock) as mock_q,
+            patch("services.report_service.execute_action", new_callable=AsyncMock) as mock_exec,
+        ):
+            mock_q.return_value = [("pending",)]
+            old = await service.update_status(GUILD_ID, 5, "investigating", REPORTER_ID, "note")
+        assert old == "pending"
+        assert "SET status = %s" in mock_exec.await_args[0][0]
 
     @pytest.mark.asyncio
     async def test_delete(self, service: ReportService):
         with patch("services.report_service.execute_action", new_callable=AsyncMock) as mock_exec:
             await service.delete(GUILD_ID, 5)
-            assert "DELETE FROM reports" in mock_exec.await_args[0][0]
+        queries = [call[0][0] for call in mock_exec.await_args_list]
+        assert any("DELETE FROM report_evidence" in q for q in queries)
+        assert any("DELETE FROM reports" in q for q in queries)
 
 
 class TestReportServiceBlockedReporters:
