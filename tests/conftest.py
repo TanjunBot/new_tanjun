@@ -90,7 +90,15 @@ _discord_mock.app_commands.autocomplete = lambda *a, **k: lambda f: f
 _discord_mock.app_commands.locale_str = lambda s: s
 _discord_mock.app_commands.describe = lambda **kw: lambda f: f
 _discord_mock.app_commands.choices = lambda *a, **kw: lambda f: f
-_discord_mock.app_commands.Range = lambda *a, **kw: int
+
+
+class _FakeAppCommandRange:
+    @classmethod
+    def __class_getitem__(cls, item: object) -> type:
+        return cls
+
+
+_discord_mock.app_commands.Range = _FakeAppCommandRange
 _discord_mock.app_commands.Choice = lambda **kw: type("Choice", (), kw)
 _discord_mock.Interaction = MagicMock()
 

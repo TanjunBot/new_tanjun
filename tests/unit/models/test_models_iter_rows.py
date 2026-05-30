@@ -51,7 +51,7 @@ ITER_ROW_CASES = [
     (GiveawayBlacklistEntryModel, (USER_ID, "reason")),
     (
         ReportModel,
-        (1, GUILD_ID, USER_ID, USER_ID, "r", 1, True, 2, USER_ID, False, None, None),
+        (1, GUILD_ID, USER_ID, USER_ID, "r", 1, "pending", 2, USER_ID, None, False),
     ),
     (
         ScheduledMessageModel,
