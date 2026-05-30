@@ -1,3 +1,4 @@
+from collections.abc import Callable, Coroutine
 from typing import Any
 
 import discord
@@ -13,24 +14,40 @@ MAX_CONTENT_LENGTH = 1000  # Maximum length for message content preview
 MAX_EMBED_LENGTH = 6000  # Discord's maximum embed length
 
 
-class EditContentModal(Modal, title="Edit Scheduled Message"):
+class EditContentModal(Modal):
     """Modal for editing the content of a scheduled message."""
 
     new_content: TextInput[Any] = TextInput(
-        label="New content",
         style=discord.TextStyle.paragraph,
-        max_length=1024,
+        max_length=2000,
         required=True,
     )
 
-    def __init__(self, message_id: int, current_content: str, locale: str) -> None:
-        super().__init__(timeout=300)
-        self.message_id = message_id
+    def __init__(self, message_id: int, current_content: str, locale: str, view: View) -> None:
         self.locale = locale
+        super().__init__(
+            title=tanjunLocalizer.localize(
+                locale,
+                "commands.utility.listscheduled.edit_modal.title",
+            ),
+            timeout=300,
+        )
+        self.message_id = message_id
+        self.view = view
+        self.new_content.label = tanjunLocalizer.localize(
+            locale,
+            "commands.utility.listscheduled.edit_modal.content_label",
+        )
         self.new_content.default = current_content
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         await ScheduledMessageService.update_content(self.message_id, self.new_content.value)
+
+        # Update the in-memory model
+        for msg in self.view.messages:
+            if msg.message_id == self.message_id:
+                msg.content = self.new_content.value
+                break
 
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -114,7 +131,9 @@ async def list_scheduled_messages(command_info: utility.CommandInfo) -> None:
                 cancel_button.callback = self._make_cancel_callback(msg)  # type: ignore[method-assign]
                 self.add_item(cancel_button)
 
-        def _make_edit_callback(self, msg: ScheduledMessageModel) -> Any:
+        def _make_edit_callback(
+            self, msg: ScheduledMessageModel
+        ) -> Callable[[discord.Interaction], Coroutine[Any, Any, None]]:
             """Create a closure that opens the edit modal for *msg*."""
 
             async def _edit(interaction: discord.Interaction) -> None:
@@ -131,12 +150,15 @@ async def list_scheduled_messages(command_info: utility.CommandInfo) -> None:
                     message_id=msg.message_id,
                     current_content=msg.content,
                     locale=self.locale,
+                    view=self,
                 )
                 await interaction.response.send_modal(modal)
 
             return _edit
 
-        def _make_cancel_callback(self, msg: ScheduledMessageModel) -> Any:
+        def _make_cancel_callback(
+            self, msg: ScheduledMessageModel
+        ) -> Callable[[discord.Interaction], Coroutine[Any, Any, None]]:
             """Create a closure that cancels *msg*."""
 
             async def _cancel(interaction: discord.Interaction) -> None:
