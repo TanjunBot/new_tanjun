@@ -112,7 +112,7 @@ dev = [
     "referencing==0.37.0",
     "rpds-py==0.30.0",
     "stack-data==0.6.3",
-    "tinycss2>=1.1.0,<1.5",
+    "tinycss2>=1.5.1,<1.6",
     "tornado==6.5.6",
     "tqdm==4.67.3",
     "traitlets==5.15.0",
