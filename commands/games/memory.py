@@ -8,14 +8,70 @@ from localizer import tanjunLocalizer
 
 # Emoji pairs for the memory game
 EMOJI_PAIRS = [
-    "🍎", "🍊", "🍋", "🍇", "🍓", "🍒", "🍑", "🥝",
-    "🍌", "🍉", "🍍", "🥭", "🍈", "🫐", "🍐", "🥥",
-    "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼",
-    "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🐔",
-    "🐧", "🐦", "🐤", "🦆", "🦅", "🦉", "🦇", "🐺",
-    "🌻", "🌹", "🌸", "🌺", "🌷", "🌵", "🌲", "🍀",
-    "⭐", "🌙", "☀️", "🌈", "⚡", "🔥", "💧", "❄️",
-    "❤️", "💛", "💚", "💙", "💜", "🖤", "🤍", "🧡",
+    "🍎",
+    "🍊",
+    "🍋",
+    "🍇",
+    "🍓",
+    "🍒",
+    "🍑",
+    "🥝",
+    "🍌",
+    "🍉",
+    "🍍",
+    "🥭",
+    "🍈",
+    "🫐",
+    "🍐",
+    "🥥",
+    "🐶",
+    "🐱",
+    "🐭",
+    "🐹",
+    "🐰",
+    "🦊",
+    "🐻",
+    "🐼",
+    "🐨",
+    "🐯",
+    "🦁",
+    "🐮",
+    "🐷",
+    "🐸",
+    "🐵",
+    "🐔",
+    "🐧",
+    "🐦",
+    "🐤",
+    "🦆",
+    "🦅",
+    "🦉",
+    "🦇",
+    "🐺",
+    "🌻",
+    "🌹",
+    "🌸",
+    "🌺",
+    "🌷",
+    "🌵",
+    "🌲",
+    "🍀",
+    "⭐",
+    "🌙",
+    "☀️",
+    "🌈",
+    "⚡",
+    "🔥",
+    "💧",
+    "❄️",
+    "❤️",
+    "💛",
+    "💚",
+    "💙",
+    "💜",
+    "🖤",
+    "🤍",
+    "🧡",
 ]
 
 # Hidden card emoji
@@ -23,11 +79,31 @@ HIDDEN_EMOJI = "❓"
 
 # Numbered button labels for grid positions
 NUMBER_EMOJIS = {
-    0: "0️⃣", 1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "4️⃣",
-    5: "5️⃣", 6: "6️⃣", 7: "7️⃣", 8: "8️⃣", 9: "9️⃣",
-    10: "🔟", 11: "1️⃣1️⃣", 12: "1️⃣2️⃣", 13: "1️⃣3️⃣", 14: "1️⃣4️⃣",
-    15: "1️⃣5️⃣", 16: "1️⃣6️⃣", 17: "1️⃣7️⃣", 18: "1️⃣8️⃣", 19: "1️⃣9️⃣",
-    20: "2️⃣0️⃣", 21: "2️⃣1️⃣", 22: "2️⃣2️⃣", 23: "2️⃣3️⃣", 24: "2️⃣4️⃣",
+    0: "0️⃣",
+    1: "1️⃣",
+    2: "2️⃣",
+    3: "3️⃣",
+    4: "4️⃣",
+    5: "5️⃣",
+    6: "6️⃣",
+    7: "7️⃣",
+    8: "8️⃣",
+    9: "9️⃣",
+    10: "🔟",
+    11: "1️⃣1️⃣",
+    12: "1️⃣2️⃣",
+    13: "1️⃣3️⃣",
+    14: "1️⃣4️⃣",
+    15: "1️⃣5️⃣",
+    16: "1️⃣6️⃣",
+    17: "1️⃣7️⃣",
+    18: "1️⃣8️⃣",
+    19: "1️⃣9️⃣",
+    20: "2️⃣0️⃣",
+    21: "2️⃣1️⃣",
+    22: "2️⃣2️⃣",
+    23: "2️⃣3️⃣",
+    24: "2️⃣4️⃣",
 }
 
 
@@ -227,9 +303,7 @@ class MemoryView(discord.ui.View):
         async def callback(interaction: discord.Interaction) -> None:
             if interaction.user != self.game.player:
                 locale = self.command_info.locale
-                not_your_game_msg = tanjunLocalizer.localize(
-                    locale, "commands.games.memory.not_your_game"
-                )
+                not_your_game_msg = tanjunLocalizer.localize(locale, "commands.games.memory.not_your_game")
                 await interaction.response.send_message(
                     not_your_game_msg,
                     ephemeral=True,
@@ -312,6 +386,7 @@ class MemoryView(discord.ui.View):
             self._build_buttons()
 
             import asyncio
+
             await asyncio.sleep(1.5)
 
             embed = utility.TanjunEmbed(
