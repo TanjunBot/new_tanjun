@@ -22,7 +22,9 @@ async def setCountingChannel(command_info: CommandInfo, channel: discord.TextCha
     if await require_bot_permissions(command_info, channel):
         return
 
-    await _repo.set_challenge_progress(CountingMode.CHALLENGE, channel_id=channel.id, progress=0, guild_id=command_info.guild.id)
+    await _repo.set_challenge_progress(
+        CountingMode.CHALLENGE, channel_id=channel.id, progress=0, guild_id=command_info.guild.id
+    )
 
     introduction_embed = tanjunEmbed(
         title=tanjunLocalizer.localize(command_info.locale, f"{LOCALE_KEY}.challengeintroduction.title"),
@@ -32,6 +34,8 @@ async def setCountingChannel(command_info: CommandInfo, channel: discord.TextCha
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), f"{LOCALE_KEY}.success.title"),
-        description=tanjunLocalizer.localize(command_info.locale, f"{LOCALE_KEY}.success.description", channel=channel.mention),
+        description=tanjunLocalizer.localize(
+            command_info.locale, f"{LOCALE_KEY}.success.description", channel=channel.mention
+        ),
     )
     await command_info.reply(embed=embed)

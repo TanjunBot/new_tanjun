@@ -207,12 +207,14 @@ class TestCountingRepository:
 
         with patch("services.counting_repository.execute_query", new_callable=AsyncMock) as mock_q:
             mock_q.side_effect = [
-                [(42, "12345678901234567", "12345678901234567")],   # counting
-                [],                          # counting_challenge
-                [],                          # counting_modes
+                [(42, "12345678901234567", "12345678901234567")],  # counting
+                [],  # counting_challenge
+                [],  # counting_modes
             ]
             normal, challenge, modes = await repo.get_configs("123")
-            assert normal == CountingConfigModel(progress=42, last_counter_id="12345678901234567", guild_id="12345678901234567")
+            assert normal == CountingConfigModel(
+                progress=42, last_counter_id="12345678901234567", guild_id="12345678901234567"
+            )
             assert challenge is None
             assert modes is None
 
@@ -223,16 +225,23 @@ class TestCountingRepository:
 
         with patch("services.counting_repository.execute_query", new_callable=AsyncMock) as mock_q:
             mock_q.side_effect = [
-                [(42, "12345678901234567", "12345678901234567")],                                # counting
-                [(99, "12345678901234568", "12345678901234567")],                                # counting_challenge
-                [(10, 3, 100, "12345678901234569", "12345678901234567")],                        # counting_modes
+                [(42, "12345678901234567", "12345678901234567")],  # counting
+                [(99, "12345678901234568", "12345678901234567")],  # counting_challenge
+                [(10, 3, 100, "12345678901234569", "12345678901234567")],  # counting_modes
             ]
             normal, challenge, modes = await repo.get_configs("123")
-            assert normal == CountingConfigModel(progress=42, last_counter_id="12345678901234567", guild_id="12345678901234567")
-            assert challenge == CountingConfigModel(progress=99, last_counter_id="12345678901234568", guild_id="12345678901234567")
+            assert normal == CountingConfigModel(
+                progress=42, last_counter_id="12345678901234567", guild_id="12345678901234567"
+            )
+            assert challenge == CountingConfigModel(
+                progress=99, last_counter_id="12345678901234568", guild_id="12345678901234567"
+            )
             assert modes == CountingModesConfigModel(
-                progress=10, mode=3, goal=100,
-                last_counter_id="12345678901234569", guild_id="12345678901234567",
+                progress=10,
+                mode=3,
+                goal=100,
+                last_counter_id="12345678901234569",
+                guild_id="12345678901234567",
             )
 
     # ── TDD for known patterns / edge cases ──────────────────

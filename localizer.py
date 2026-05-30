@@ -152,6 +152,7 @@ class LocalizerService:
                 if exc is not None:
                     print(f"Exception in missingLocalization task for locale '{locale_str}': {exc}")
                     import traceback
+
                     traceback.print_exception(type(exc), exc, exc.__traceback__)
 
             task.add_done_callback(_handle_task_exception)
@@ -253,11 +254,7 @@ class LocalizerService:
         translations = self._load_sync(locale)
         entry = self._find_entry(translations, key)
         if entry is None:
-            return (
-                self.localize("de", key, **args)
-                if locale != "de"
-                else f"No translation found for key '{key}'."
-            )
+            return self.localize("de", key, **args) if locale != "de" else f"No translation found for key '{key}'."
         template = Template(entry.translation)
         return template.safe_substitute(args)
 

@@ -14,7 +14,9 @@ async def kick(command_info: utility.CommandInfo, target: discord.Member, reason
         embed = utility.tanjunEmbed(
             colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.missingPermission.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.missingPermission.description"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.admin.kick.missingPermission.description"
+            ),
         )
         await command_info.reply(embed=embed)
         return

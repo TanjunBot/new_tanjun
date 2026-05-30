@@ -85,7 +85,7 @@ from api import (  # noqa: E402
 # -------------------------------------------------------------------------
 # Helper: async iterator that yields from a list
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class AsyncIter:
@@ -94,7 +94,7 @@ class AsyncIter:
     def __init__(self, items: list) -> None:
         self._items = list(reversed(items))
 
-    def __aiter__(self) -> 'AsyncIter':
+    def __aiter__(self) -> "AsyncIter":
         return self
 
     async def __anext__(self) -> object:
@@ -149,6 +149,7 @@ def reset_globals() -> Iterator[None]:
     """Reset global state in api.py between tests."""
     set_bot(None)
     from api import _blacklist_cache, _guild_config_cache
+
     _guild_config_cache.clear()
     _blacklist_cache.clear()
     yield
@@ -167,6 +168,7 @@ def bot_with_pool(pool_conn_cursor: tuple[Any, Any, Any]) -> tuple[Any, Any]:
 # ---------------------------------------------------------------------------
 # execute_query
 # ---------------------------------------------------------------------------
+
 
 class TestExecuteQuery:
     """Tests for execute_query - core query execution."""
@@ -204,6 +206,7 @@ class TestExecuteQuery:
 # safe_execute_query
 # ---------------------------------------------------------------------------
 
+
 class TestSafeExecuteQuery:
     """Tests for safe_execute_query - always-lists wrapper."""
 
@@ -239,6 +242,7 @@ class TestSafeExecuteQuery:
 # execute_action
 # ---------------------------------------------------------------------------
 
+
 class TestExecuteAction:
     """Tests for execute_action - INSERT/UPDATE/DELETE."""
 
@@ -258,6 +262,7 @@ class TestExecuteAction:
 # ---------------------------------------------------------------------------
 # check_pool_health
 # ---------------------------------------------------------------------------
+
 
 class TestCheckPoolHealth:
     """Tests for check_pool_health."""
@@ -290,6 +295,7 @@ class TestCheckPoolHealth:
 # ---------------------------------------------------------------------------
 # Level system
 # ---------------------------------------------------------------------------
+
 
 class TestLevelSystemStatus:
     """Tests for get/set level system status."""
@@ -490,6 +496,7 @@ class TestCustomFormula:
         cursor.execute = AsyncMock()
 
         from api import get_custom_formula
+
         result = await get_custom_formula("123")
         assert result is None
 
@@ -497,6 +504,7 @@ class TestCustomFormula:
 # ---------------------------------------------------------------------------
 # Level roles
 # ---------------------------------------------------------------------------
+
 
 class TestLevelRoles:
     """Tests for level role management."""
@@ -538,6 +546,7 @@ class TestLevelRoles:
 # ---------------------------------------------------------------------------
 # XP Boosts
 # ---------------------------------------------------------------------------
+
 
 class TestXpBoosts:
     """Tests for XP boost management."""
@@ -604,6 +613,7 @@ class TestXpBoosts:
 # Warnings
 # ---------------------------------------------------------------------------
 
+
 class TestWarnings:
     """Tests for warning management."""
 
@@ -636,11 +646,16 @@ class TestWarnings:
     async def test_get_warnings_with_results(self, bot_with_pool):
         """Should return WarningModel instances."""
         from datetime import datetime
+
         _, cursor = bot_with_pool
         now = datetime.now()
-        cursor.__aiter__ = MagicMock(return_value=AsyncIter([
-            (1, "123", "456", "Spam", now, None, "admin1", 0),
-        ]))
+        cursor.__aiter__ = MagicMock(
+            return_value=AsyncIter(
+                [
+                    (1, "123", "456", "Spam", now, None, "admin1", 0),
+                ]
+            )
+        )
         cursor.execute = AsyncMock()
 
         results = [row async for row in get_warnings("123", "456")]
@@ -708,6 +723,7 @@ class TestWarnConfig:
 # Opt-out
 # ---------------------------------------------------------------------------
 
+
 class TestOptOut:
     """Tests for message tracking opt-out/in."""
 
@@ -758,6 +774,7 @@ class TestOptOut:
 # Channel overwrites
 # ---------------------------------------------------------------------------
 
+
 class TestChannelOverwrites:
     """Tests for channel overwrite persistence."""
 
@@ -799,6 +816,7 @@ class TestChannelOverwrites:
 # Blacklist
 # ---------------------------------------------------------------------------
 
+
 class TestBlacklist:
     """Tests for channel/role blacklist."""
 
@@ -831,6 +849,7 @@ class TestBlacklist:
 # Bulk operations
 # ---------------------------------------------------------------------------
 
+
 class TestBulkOperations:
     """Tests for bulk and multi-table operations."""
 
@@ -856,8 +875,15 @@ class TestBulkOperations:
 
         # Should execute one DELETE per table
         expected_tables = [
-            "level", "blacklistedUser", "blacklisted_role", "blacklistedChannel",
-            "userXpBoost", "roleXpBoost", "channelXpBoost", "levelRole", "levelConfig",
+            "level",
+            "blacklistedUser",
+            "blacklisted_role",
+            "blacklistedChannel",
+            "userXpBoost",
+            "roleXpBoost",
+            "channelXpBoost",
+            "levelRole",
+            "levelConfig",
         ]
         assert cursor.execute.await_count == len(expected_tables)
         # Verify all tables are included
@@ -879,6 +905,7 @@ class TestBulkOperations:
 # ---------------------------------------------------------------------------
 # transaction context manager
 # ---------------------------------------------------------------------------
+
 
 class TestTransaction:
     """Tests for the transaction async context manager."""

@@ -12,7 +12,9 @@ async def approve_custom_situation(interaction) -> None:  # type: ignore[no-unty
     situation = await AiService.get_user_situation(situation_id)
     locale = interaction.data["custom_id"].split(";")[2]
     if not situation:
-        await interaction.response.send_message(tanjunLocalizer.localize(locale, "commands.admin.administration.situation_not_found"))
+        await interaction.response.send_message(
+            tanjunLocalizer.localize(locale, "commands.admin.administration.situation_not_found")
+        )
         return
     situation_creator = interaction.client.get_user(int(situation_id))
     if not situation_creator:
@@ -34,7 +36,9 @@ async def approve_custom_situation(interaction) -> None:  # type: ignore[no-unty
         await situation_creator.send(embed=embed)
     except (discord.Forbidden, discord.HTTPException):
         logging.exception("Failed to send approval DM to situation creator")
-    await interaction.channel.send(tanjunLocalizer.localize(locale, "commands.admin.administration.situation_approved"), delete_after=25)
+    await interaction.channel.send(
+        tanjunLocalizer.localize(locale, "commands.admin.administration.situation_approved"), delete_after=25
+    )
 
 
 async def deny_custom_situation(interaction) -> None:  # type: ignore[no-untyped-def]
@@ -42,7 +46,9 @@ async def deny_custom_situation(interaction) -> None:  # type: ignore[no-untyped
     situation = await AiService.get_user_situation(situation_id)
     locale = interaction.data["custom_id"].split(";")[2]
     if not situation:
-        await interaction.response.send_message(tanjunLocalizer.localize(locale, "commands.admin.administration.situation_not_found"))
+        await interaction.response.send_message(
+            tanjunLocalizer.localize(locale, "commands.admin.administration.situation_not_found")
+        )
         return
 
     situation_creator = interaction.bot.get_user(int(situation_id))
@@ -65,4 +71,6 @@ async def deny_custom_situation(interaction) -> None:  # type: ignore[no-untyped
         await situation_creator.send(embed=embed)
     except (discord.Forbidden, discord.HTTPException):
         logging.exception("Failed to send denial DM to situation creator")
-    await interaction.channel.send(tanjunLocalizer.localize(locale, "commands.admin.administration.situation_deleted"), delete_after=25)
+    await interaction.channel.send(
+        tanjunLocalizer.localize(locale, "commands.admin.administration.situation_deleted"), delete_after=25
+    )

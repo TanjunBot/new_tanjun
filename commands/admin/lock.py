@@ -20,7 +20,9 @@ async def lock_channel(command_info: utility.CommandInfo, channel: discord.TextC
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.lock.missingPermission.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.lock.missingPermission.description"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.admin.lock.missingPermission.description"
+            ),
         )
         await command_info.reply(embed=embed)
         return

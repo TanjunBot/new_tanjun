@@ -9,9 +9,6 @@ from __future__ import annotations
 
 import asyncmy
 from discord.ext import commands
-
-from typing import TYPE_CHECKING
-
 from pydantic import BaseModel, ConfigDict
 
 from api import DatabaseManager

@@ -32318,5 +32318,85 @@
     "context": "math -> plot_function -> unexpected_error",
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "setup_name",
+    "source_string": "setup",
+    "translation": "setup",
+    "context": "Slash-Befehlsgruppenname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_description",
+    "source_string": "Interaktive Einrichtungsassistenten",
+    "translation": "Interaktive Einrichtungsassistenten",
+    "context": "Slash-Befehlsgruppenbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_logs_name",
+    "source_string": "logs",
+    "translation": "logs",
+    "context": "Slash-Befehlsname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_logs_description",
+    "source_string": "Interaktiver Assistent zur Protokollkonfiguration",
+    "translation": "Interaktiver Assistent zur Protokollkonfiguration",
+    "context": "Slash-Befehlsbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_level_name",
+    "source_string": "level",
+    "translation": "level",
+    "context": "Slash-Befehlsname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_level_description",
+    "source_string": "Interaktiver Assistent zur Konfiguration des Levelsystems",
+    "translation": "Interaktiver Assistent zur Konfiguration des Levelsystems",
+    "context": "Slash-Befehlsbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_giveaway_name",
+    "source_string": "giveaway",
+    "translation": "giveaway",
+    "context": "Slash-Befehlsname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_giveaway_description",
+    "source_string": "Interaktiver Assistent zum Erstellen eines Gewinnspiels",
+    "translation": "Interaktiver Assistent zum Erstellen eines Gewinnspiels",
+    "context": "Slash-Befehlsbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_booster_name",
+    "source_string": "booster",
+    "translation": "booster",
+    "context": "Slash-Befehlsname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_booster_description",
+    "source_string": "Interaktiver Assistent für Booster-Vorteile",
+    "translation": "Interaktiver Assistent für Booster-Vorteile",
+    "context": "Slash-Befehlsbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
   }
 ]

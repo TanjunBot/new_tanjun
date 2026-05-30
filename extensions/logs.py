@@ -1472,7 +1472,9 @@ class LogsCog(commands.Cog):
                     locale,
                     "logs.guildUpdate.discoverySplash",
                     before=(
-                        "[" + url_locale + "](" + before.discovery_splash.url + ")" if before.discovery_splash else keiner_locale
+                        "[" + url_locale + "](" + before.discovery_splash.url + ")"
+                        if before.discovery_splash
+                        else keiner_locale
                     ),
                     after=(
                         "[" + url_locale + "](" + after.discovery_splash.url + ")" if after.discovery_splash else keiner_locale

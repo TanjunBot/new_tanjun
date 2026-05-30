@@ -46,8 +46,8 @@ def parse_twitch_notification_message(message: str | None, locale: str, twitch_n
         if not message:
             from localizer import tanjunLocalizer
 
-            return tanjunLocalizer.localize(
-                locale, "commands.utility.twitch.defaultNotificationMessage"
-            ).replace("{name}", twitch_name)
+            return tanjunLocalizer.localize(locale, "commands.utility.twitch.defaultNotificationMessage").replace(
+                "{name}", twitch_name
+            )
         return message.replace("{name}", twitch_name)
     return service.parse_notification_message(message, locale, twitch_name)
