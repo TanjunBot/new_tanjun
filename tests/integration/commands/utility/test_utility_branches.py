@@ -1,12 +1,12 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.utility.afk import afk, checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
 from commands.utility.feedback import feedback
 from commands.utility.help import help
 from commands.utility.removescheduled import remove_scheduled_message
 from tests.helpers.discord import make_interaction, make_message, make_target_member
-
 
 pytestmark = pytest.mark.asyncio
 

@@ -5,8 +5,8 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
 from OpenAIHealthCheck import OpenAIHealthCheck
+
 from health.checks import HealthStatus
 
 
@@ -29,9 +29,8 @@ class TestOpenAIHealthCheck:
 
     @pytest.mark.asyncio
     async def test_missing_key_critical(self, check: OpenAIHealthCheck):
-        with patch("OpenAIHealthCheck.openAiKey", "", create=True):
-            with patch("config.openAiKey", ""):
-                result = await check.run()
+        with patch("OpenAIHealthCheck.openAiKey", "", create=True), patch("config.openAiKey", ""):
+            result = await check.run()
         assert result.status == HealthStatus.CRITICAL
         assert "not configured" in result.message.lower()
 

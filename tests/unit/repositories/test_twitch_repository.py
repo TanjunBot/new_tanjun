@@ -20,9 +20,7 @@ class TestTwitchRepository:
     @pytest.mark.asyncio
     async def test_get_by_channel(self, repo: TwitchRepository):
         async def fake_iter(*args, **kwargs):
-            yield TwitchOnlineNotificationModel.from_row(
-                (1, CHANNEL_ID, GUILD_ID, "uuid123456789012345", "streamer", "msg")
-            )
+            yield TwitchOnlineNotificationModel.from_row((1, CHANNEL_ID, GUILD_ID, "uuid123456789012345", "streamer", "msg"))
 
         with patch.object(TwitchOnlineNotificationModel, "iter_rows", side_effect=fake_iter):
             result = await repo.get_by_channel(CHANNEL_ID)

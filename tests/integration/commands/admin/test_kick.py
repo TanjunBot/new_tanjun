@@ -1,12 +1,12 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 from commands.admin.kick import kick
 from tests.helpers.discord import (
     make_permissions,
     make_target_member,
 )
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -21,7 +21,7 @@ async def test_kick_missing_user_permission(restricted_command_info):
 async def test_kick_missing_bot_permission(admin_command_info):
     guild = admin_command_info.guild
     guild.me.guild_permissions = make_permissions(kick_members=True)
-    setattr(guild.me.guild_permissions, "kick_members", False)
+    guild.me.guild_permissions.kick_members = False
     target = make_target_member(top_role_position=1)
 
     await kick(admin_command_info, target)

@@ -8,7 +8,6 @@ import pytest
 from commands.utility.report import report
 from tests.helpers.discord import make_target_member
 
-
 pytestmark = pytest.mark.asyncio
 
 

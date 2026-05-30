@@ -1,8 +1,7 @@
 import io
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import discord
+import pytest
 
 from commands.level.change_xp_scaling import change_xp_scaling_command
 from commands.level.disable_level_system import disable_level_system
@@ -26,12 +25,11 @@ from commands.level.level_boosts import (
     remove_user_boost_command,
     show_boosts_command,
 )
-from commands.level.level_rankcard import generate_rankcard, set_background_command, show_rankcard_command
+from commands.level.level_rankcard import generate_rankcard, set_background_command
 from commands.level.level_set_xp_cooldown import set_text_cooldown_command, set_voice_cooldown_command
 from commands.level.show_level_roles import show_level_roles_command
 from tests.helpers.discord import make_role, make_target_member, make_text_channel
 from tests.integration.commands.admin.conftest import make_view_interaction
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -56,6 +54,7 @@ async def test_change_xp_scaling_custom_no_formula(admin_command_info):
 
 async def test_change_xp_scaling_no_permission(restricted_command_info):
     from unittest.mock import MagicMock
+
     restricted_command_info.user.guild_permissions = MagicMock(administrator=False)
     await change_xp_scaling_command(restricted_command_info, "medium")
     restricted_command_info.reply.assert_awaited_once()
@@ -91,7 +90,9 @@ async def test_disable_level_system_shows_confirm(mock_status, admin_command_inf
 @patch("commands.level.leaderboard.get_level_leaderboard_paginated", new_callable=AsyncMock)
 @patch("commands.level.leaderboard.get_level_for_xp_async", new_callable=AsyncMock, return_value=5)
 @patch("commands.level.leaderboard.get_xp_for_level_async", new_callable=AsyncMock, return_value=100)
-async def test_leaderboard_paginator_previous(mock_xp, mock_level, mock_page, mock_formula, mock_scaling, mock_count, admin_command_info):
+async def test_leaderboard_paginator_previous(
+    mock_xp, mock_level, mock_page, mock_formula, mock_scaling, mock_count, admin_command_info
+):
     entry = MagicMock(user_id="111", xp=500)
     mock_page.return_value = [entry]
     await leaderboard(admin_command_info, page=2)
@@ -108,7 +109,9 @@ async def test_leaderboard_paginator_previous(mock_xp, mock_level, mock_page, mo
 @patch("commands.level.leaderboard.get_level_leaderboard_paginated", new_callable=AsyncMock, return_value=[])
 @patch("commands.level.leaderboard.get_level_for_xp_async", new_callable=AsyncMock, return_value=1)
 @patch("commands.level.leaderboard.get_xp_for_level_async", new_callable=AsyncMock, return_value=100)
-async def test_leaderboard_paginator_next(mock_xp, mock_level, mock_page, mock_formula, mock_scaling, mock_count, admin_command_info):
+async def test_leaderboard_paginator_next(
+    mock_xp, mock_level, mock_page, mock_formula, mock_scaling, mock_count, admin_command_info
+):
     await leaderboard(admin_command_info, page=1)
     view = admin_command_info.reply.await_args.kwargs["view"]
     interaction = make_view_interaction(user=admin_command_info.user)
@@ -123,7 +126,9 @@ async def test_leaderboard_paginator_next(mock_xp, mock_level, mock_page, mock_f
 @patch("commands.level.leaderboard.get_level_leaderboard_paginated", new_callable=AsyncMock, return_value=[])
 @patch("commands.level.leaderboard.get_level_for_xp_async", new_callable=AsyncMock, return_value=1)
 @patch("commands.level.leaderboard.get_xp_for_level_async", new_callable=AsyncMock, return_value=100)
-async def test_leaderboard_unauthorized(mock_xp, mock_level, mock_page, mock_formula, mock_scaling, mock_count, admin_command_info):
+async def test_leaderboard_unauthorized(
+    mock_xp, mock_level, mock_page, mock_formula, mock_scaling, mock_count, admin_command_info
+):
     await leaderboard(admin_command_info, page=1)
     view = admin_command_info.reply.await_args.kwargs["view"]
     interaction = make_view_interaction(user=make_target_member(user_id=999))

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from tests.e2e.conftest import load_extension_bot
-from tests.helpers.discord import make_guild, make_interaction, make_member, make_message, make_text_channel
+from tests.helpers.discord import make_guild, make_interaction, make_member, make_message
 from tests.helpers.factories import CHANNEL_ID, GUILD_ID, USER_ID, giveaway_row
 
 pytestmark = [pytest.mark.asyncio, pytest.mark.e2e]
@@ -16,9 +16,11 @@ async def test_on_message_runs_handlers(listener_cog):
     msg = make_message(content="5", guild=make_guild(guild_id=int(GUILD_ID)))
     msg.author = make_member()
     msg.author.bot = False
-    with patch("extensions.listeners.get_counting_configs", new=AsyncMock(return_value=(None, None, None))), patch(
-        "extensions.listeners.run_handlers_sequential", new=AsyncMock()
-    ) as seq_mock, patch("extensions.listeners.run_handlers_safe", new=AsyncMock()) as safe_mock:
+    with (
+        patch("extensions.listeners.get_counting_configs", new=AsyncMock(return_value=(None, None, None))),
+        patch("extensions.listeners.run_handlers_sequential", new=AsyncMock()) as seq_mock,
+        patch("extensions.listeners.run_handlers_safe", new=AsyncMock()) as safe_mock,
+    ):
         await listener_cog.on_message(msg)
     seq_mock.assert_awaited_once()
     safe_mock.assert_awaited_once()
@@ -29,9 +31,10 @@ async def test_on_message_with_counting_config(listener_cog):
     msg.author = make_member()
     msg.author.bot = False
     config = {"progress": 0, "last_counter_id": None, "guild_id": str(GUILD_ID)}
-    with patch("extensions.listeners.get_counting_configs", new=AsyncMock(return_value=(config, None, None))), patch(
-        "extensions.listeners.run_handlers_sequential", new=AsyncMock()
-    ) as seq_mock:
+    with (
+        patch("extensions.listeners.get_counting_configs", new=AsyncMock(return_value=(config, None, None))),
+        patch("extensions.listeners.run_handlers_sequential", new=AsyncMock()) as seq_mock,
+    ):
         await listener_cog.on_message(msg)
     seq_mock.assert_awaited_once()
     handlers = seq_mock.call_args[0][0]
@@ -104,9 +107,10 @@ async def test_add_level_xp_skips_opted_out():
     author = make_member(user_id=int(USER_ID))
     author.roles = []
     msg = make_message(content="hello world", author=author, guild=guild)
-    with patch("api.check_if_opted_out", new=AsyncMock(return_value=True)), patch(
-        "api.get_level_system_status", new=AsyncMock()
-    ) as status_mock:
+    with (
+        patch("api.check_if_opted_out", new=AsyncMock(return_value=True)),
+        patch("api.get_level_system_status", new=AsyncMock()) as status_mock,
+    ):
         from minigames.add_level_xp import addLevelXp
 
         await addLevelXp(msg)
@@ -118,14 +122,15 @@ async def test_add_level_xp_updates_xp_when_enabled():
     author = make_member(user_id=int(USER_ID))
     author.roles = []
     msg = make_message(content="hello world", author=author, guild=guild)
-    with patch("api.check_if_opted_out", new=AsyncMock(return_value=False)), patch(
-        "api.get_level_system_status", new=AsyncMock(return_value=True)
-    ), patch("minigames._xp_core.is_entity_blacklisted", new=AsyncMock(return_value=False)), patch(
-        "minigames.add_level_xp.fetch_xp_details", new=AsyncMock(return_value=("medium", None, 15))
-    ), patch("api.get_user_xp", new=AsyncMock(return_value=0)), patch(
-        "utility.get_level_for_xp_async", new=AsyncMock(return_value=1)
-    ), patch("minigames.add_level_xp.update_user_xp", new=AsyncMock()) as update_mock, patch(
-        "minigames.add_level_xp.handle_level_up", new=AsyncMock()
+    with (
+        patch("api.check_if_opted_out", new=AsyncMock(return_value=False)),
+        patch("api.get_level_system_status", new=AsyncMock(return_value=True)),
+        patch("minigames._xp_core.is_entity_blacklisted", new=AsyncMock(return_value=False)),
+        patch("minigames.add_level_xp.fetch_xp_details", new=AsyncMock(return_value=("medium", None, 15))),
+        patch("api.get_user_xp", new=AsyncMock(return_value=0)),
+        patch("utility.get_level_for_xp_async", new=AsyncMock(return_value=1)),
+        patch("minigames.add_level_xp.update_user_xp", new=AsyncMock()) as update_mock,
+        patch("minigames.add_level_xp.handle_level_up", new=AsyncMock()),
     ):
         from minigames.add_level_xp import addLevelXp
 
@@ -134,8 +139,8 @@ async def test_add_level_xp_updates_xp_when_enabled():
 
 
 def _giveaway_params():
-    end = datetime.now(timezone.utc) + timedelta(days=1)
-    start = datetime.now(timezone.utc)
+    end = datetime.now(UTC) + timedelta(days=1)
+    start = datetime.now(UTC)
     return dict(
         guild_id=GUILD_ID,
         title="Prize",

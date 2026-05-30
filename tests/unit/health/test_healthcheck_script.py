@@ -48,9 +48,8 @@ class TestCheckHealth:
     @pytest.mark.asyncio
     async def test_import_error_returns_false(self, ready_file):
         ready_file.touch()
-        with patch.dict(sys.modules, {"api": None}):
-            with patch("builtins.__import__", side_effect=ImportError("no api")):
-                assert await hc.check_health() is False
+        with patch.dict(sys.modules, {"api": None}), patch("builtins.__import__", side_effect=ImportError("no api")):
+            assert await hc.check_health() is False
 
 
 class TestHealthcheckMain:

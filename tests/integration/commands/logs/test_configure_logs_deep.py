@@ -7,7 +7,6 @@ import pytest
 from commands.logs.configure_logs import configure_logs
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -12,8 +12,8 @@ from utility import (
     CommandInfo,
     DiscordSafe,
     SafeInteraction,
-    addThousandsSeparator,
     add_thousands_separator,
+    addThousandsSeparator,
     check_if_str_is_hex_color,
     command_info,
     draw_text_with_outline,

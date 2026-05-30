@@ -176,7 +176,7 @@ class TestSettingsClass:
         assert real_config_module.token == "mock_test_token"
         assert real_config_module.applicationId == "1234567890_mock"
         assert real_config_module.adminIds == [1001, 1002, 1003]
-        assert real_config_module.CALC_ADD == real_config_module.settings.calc_add
+        assert real_config_module.settings.calc_add == real_config_module.CALC_ADD
         assert real_config_module.WELCOME_EMOJI_ID == 1266369876524666920
 
     def test_version_constant(self, real_config_module):

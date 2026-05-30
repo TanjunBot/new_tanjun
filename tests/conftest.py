@@ -50,6 +50,8 @@ _discord_mock.ext.commands.cooldown = lambda *a, **kw: lambda f: f
 _discord_mock.ext.commands.Command = type("Command", (), {})
 _discord_mock.app_commands = MagicMock()
 _discord_mock.app_commands.Command = type("AppCommand", (), {})
+
+
 class _FakeAppGroup:
     def __init__(self, *args, **kwargs) -> None:
         if args and "name" not in kwargs:
@@ -84,13 +86,14 @@ def _app_command(*args, **kwargs):
 
 _discord_mock.app_commands.Group = _FakeAppGroup
 _discord_mock.app_commands.command = _app_command
-_discord_mock.app_commands.autocomplete = lambda *a, **k: (lambda f: f)
+_discord_mock.app_commands.autocomplete = lambda *a, **k: lambda f: f
 _discord_mock.app_commands.locale_str = lambda s: s
 _discord_mock.app_commands.describe = lambda **kw: lambda f: f
 _discord_mock.app_commands.choices = lambda *a, **kw: lambda f: f
 _discord_mock.app_commands.Range = lambda *a, **kw: int
 _discord_mock.app_commands.Choice = lambda **kw: type("Choice", (), kw)
 _discord_mock.Interaction = MagicMock()
+
 
 class _FakeMember:
     def __init__(self, user_id: int = 111111111, name: str = "TestUser") -> None:
@@ -151,6 +154,8 @@ _discord_mock.Locale = type(
 )
 
 _discord_mock.ui = MagicMock()
+
+
 class _FakeUIButton:
     def __init__(self, *args, **kwargs) -> None:
         pass

@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
 
 from commands.level.level_boosts import (
     add_channel_boost_command,
@@ -7,11 +8,9 @@ from commands.level.level_boosts import (
     add_user_boost_command,
     remove_channel_boost_command,
     remove_role_boost_command,
-    remove_user_boost_command,
     show_boosts_command,
 )
 from tests.helpers.discord import make_role, make_target_member, make_text_channel
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -57,7 +56,11 @@ async def test_remove_channel_boost_success(mock_remove, admin_command_info):
     mock_remove.assert_awaited_once()
 
 
-@patch("commands.level.level_boosts.get_all_boosts", new_callable=AsyncMock, return_value={"roles": [], "channels": [], "users": []})
+@patch(
+    "commands.level.level_boosts.get_all_boosts",
+    new_callable=AsyncMock,
+    return_value={"roles": [], "channels": [], "users": []},
+)
 async def test_show_boosts(mock_get, admin_command_info):
     await show_boosts_command(admin_command_info)
     admin_command_info.reply.assert_awaited_once()

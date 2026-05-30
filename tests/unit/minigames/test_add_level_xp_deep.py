@@ -7,7 +7,6 @@ import pytest
 from minigames import add_level_xp
 from tests.helpers.discord import make_member, make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 

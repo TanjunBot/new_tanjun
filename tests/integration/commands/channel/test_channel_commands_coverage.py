@@ -13,7 +13,6 @@ from commands.channel.farewell import removeFarewellChannel, setFarewellChannel
 from commands.channel.media import addMediaChannel, removeMediaChannel
 from commands.channel.welcome import removeWelcomeChannel, setWelcomeChannel
 
-
 pytestmark = pytest.mark.asyncio
 
 

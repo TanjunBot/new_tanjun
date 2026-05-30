@@ -4,8 +4,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from commands.giveaway.utility import (
-    addMessageToGiveaway,
     add_giveaway_participant,
+    addMessageToGiveaway,
     endGiveaway,
     generateGiveawayEmbed,
     sendGiveaway,

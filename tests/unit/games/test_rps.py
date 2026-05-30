@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -13,11 +13,7 @@ from tests.helpers.discord import make_command_info, make_member
 def rps_winner(p1: str, p2: str, rock: str, paper: str, scissors: str) -> str:
     if p1 == p2:
         return "draw"
-    if (
-        (p1 == rock and p2 == scissors)
-        or (p1 == paper and p2 == rock)
-        or (p1 == scissors and p2 == paper)
-    ):
+    if (p1 == rock and p2 == scissors) or (p1 == paper and p2 == rock) or (p1 == scissors and p2 == paper):
         return "p1"
     return "p2"
 

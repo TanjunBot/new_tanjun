@@ -7,8 +7,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-
 from locale_file_health_check import LocaleFileHealthCheck
+
 from health.checks import HealthStatus
 
 
@@ -38,19 +38,24 @@ class TestLocaleFileHealthCheck:
         def fake_exists(self):
             return True
 
-        with patch.object(Path, "exists", fake_exists):
-            with patch("builtins.open", side_effect=[
-                __import__("io").StringIO("not json"),
-                __import__("io").StringIO("not json"),
-            ]):
-                with patch.object(Path, "open"):
-                    check_copy = LocaleFileHealthCheck()
-                    with patch.object(check_copy, "LOCALES", ["en"]):
-                        with patch("locale_file_health_check.Path") as mock_path_cls:
-                            mock_path = mock_path_cls.return_value.__truediv__.return_value
-                            mock_path.exists.return_value = True
-                            mock_path.open.return_value.__enter__ = lambda s: s
-                            mock_path.open.return_value.__exit__ = lambda *a: None
-                            with patch("json.load", side_effect=json.JSONDecodeError("err", "", 0)):
-                                result = await check_copy.run()
+        with (
+            patch.object(Path, "exists", fake_exists),
+            patch(
+                "builtins.open",
+                side_effect=[
+                    __import__("io").StringIO("not json"),
+                    __import__("io").StringIO("not json"),
+                ],
+            ),
+            patch.object(Path, "open"),
+        ):
+            check_copy = LocaleFileHealthCheck()
+            with patch.object(check_copy, "LOCALES", ["en"]):
+                with patch("locale_file_health_check.Path") as mock_path_cls:
+                    mock_path = mock_path_cls.return_value.__truediv__.return_value
+                    mock_path.exists.return_value = True
+                    mock_path.open.return_value.__enter__ = lambda s: s
+                    mock_path.open.return_value.__exit__ = lambda *a: None
+                    with patch("json.load", side_effect=json.JSONDecodeError("err", "", 0)):
+                        result = await check_copy.run()
         assert result.status == HealthStatus.CRITICAL

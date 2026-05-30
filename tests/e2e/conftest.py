@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from collections.abc import AsyncIterator, Iterator
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -74,7 +74,7 @@ def _ensure_discord_cog_listener_fn() -> None:
     mock.Embed = MagicMock()
     cog = mock.ext.commands.Cog
     if isinstance(cog, type) and not hasattr(cog, "listener"):
-        cog.listener = staticmethod(lambda *a, **k: (lambda f: f))
+        cog.listener = staticmethod(lambda *a, **k: lambda f: f)
 
 
 @pytest.fixture(scope="session", autouse=True)

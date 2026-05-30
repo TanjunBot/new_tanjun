@@ -1,9 +1,9 @@
+from unittest.mock import AsyncMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 
 from commands.admin.join_to_create.jointocreatechannel import jointocreatechannel
 from tests.helpers.discord import make_text_channel
-
 
 pytestmark = pytest.mark.asyncio
 

@@ -13,18 +13,17 @@ from commands.utility.twitch.twitch_api import (
     subscribe_to_twitch_online_notification,
 )
 
-
 pytestmark = pytest.mark.asyncio
 
 
 async def test_add_twitch_no_permission(restricted_command_info):
-    await addTwitchLiveNotification(
-        restricted_command_info, "ninja", restricted_command_info.channel, "live"
-    )
+    await addTwitchLiveNotification(restricted_command_info, "ninja", restricted_command_info.channel, "live")
     restricted_command_info.reply.assert_awaited_once()
 
 
-@patch("commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name", new_callable=AsyncMock, return_value=None)
+@patch(
+    "commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name", new_callable=AsyncMock, return_value=None
+)
 async def test_add_twitch_user_not_found(mock_uid, admin_command_info):
     await addTwitchLiveNotification(admin_command_info, "ninja", admin_command_info.channel, "live")
     admin_command_info.reply.assert_awaited_once()
@@ -32,14 +31,14 @@ async def test_add_twitch_user_not_found(mock_uid, admin_command_info):
 
 @patch("commands.utility.twitch.add_twitch_live_notification.subscribe_to_twitch_online_notification", new_callable=AsyncMock)
 @patch("commands.utility.twitch.add_twitch_live_notification.get_twitch_service")
-@patch("commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name", new_callable=AsyncMock, return_value="uid")
+@patch(
+    "commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name", new_callable=AsyncMock, return_value="uid"
+)
 async def test_add_twitch_success(mock_uid, mock_svc, mock_sub, admin_command_info):
     svc = MagicMock()
     svc.add_notification = AsyncMock()
     mock_svc.return_value = svc
-    admin_command_info.channel.permissions_for = MagicMock(
-        return_value=MagicMock(send_messages=True, embed_links=True)
-    )
+    admin_command_info.channel.permissions_for = MagicMock(return_value=MagicMock(send_messages=True, embed_links=True))
     await addTwitchLiveNotification(admin_command_info, "ninja", admin_command_info.channel, "live")
     svc.add_notification.assert_awaited_once()
     admin_command_info.reply.assert_awaited_once()

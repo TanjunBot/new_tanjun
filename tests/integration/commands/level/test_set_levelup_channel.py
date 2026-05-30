@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
 
 from commands.level.set_levelup_channel import set_levelup_channel_command
 from tests.helpers.discord import make_text_channel
-
 
 pytestmark = pytest.mark.asyncio
 

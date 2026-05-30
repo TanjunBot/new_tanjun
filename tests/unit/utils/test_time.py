@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-import pytest
-
 from utils.time import (
     date_time_to_timestamp,
     dateToRelativeTimeStr,

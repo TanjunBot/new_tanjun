@@ -1,17 +1,15 @@
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
 
 from commands.level.level_blacklist import (
     add_channel_to_blacklist_command,
     add_role_to_blacklist_command,
     add_user_to_blacklist_command,
     remove_channel_from_blacklist_command,
-    remove_role_from_blacklist_command,
-    remove_user_from_blacklist_command,
     show_blacklist_command,
 )
 from tests.helpers.discord import make_role, make_target_member, make_text_channel
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -57,7 +55,11 @@ async def test_add_user_success(mock_add, admin_command_info):
     mock_add.assert_awaited_once()
 
 
-@patch("commands.level.level_blacklist.get_blacklist", new_callable=AsyncMock, return_value={"channels": [], "roles": [], "users": []})
+@patch(
+    "commands.level.level_blacklist.get_blacklist",
+    new_callable=AsyncMock,
+    return_value={"channels": [], "roles": [], "users": []},
+)
 async def test_show_blacklist(mock_get, admin_command_info):
     await show_blacklist_command(admin_command_info)
     admin_command_info.reply.assert_awaited_once()

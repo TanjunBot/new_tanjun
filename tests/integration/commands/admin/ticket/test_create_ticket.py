@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.admin.ticket.create_ticket import create_ticket
 from tests.helpers.discord import make_permissions, make_role, make_text_channel
-
 
 pytestmark = pytest.mark.asyncio
 

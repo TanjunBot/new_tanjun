@@ -1,12 +1,11 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.image.background import background
 from commands.image.compress import compress
 from commands.image.mirror import mirror
 from commands.image.rescale import rescale
-from tests.helpers.discord import make_command_info
-
 
 pytestmark = pytest.mark.asyncio
 

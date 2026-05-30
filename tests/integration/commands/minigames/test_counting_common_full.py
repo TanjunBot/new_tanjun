@@ -7,7 +7,6 @@ import pytest
 from commands.minigames import _counting_common as common
 from tests.helpers.discord import make_command_info, make_guild, make_member, make_permissions, make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 
@@ -97,9 +96,7 @@ async def test_require_bot_permissions_ok(admin_command_info):
 
 async def test_require_counting_channel_missing(admin_command_info):
     with patch("commands.minigames._counting_common.tanjunEmbed", return_value=MagicMock()):
-        result = await common.require_counting_channel(
-            admin_command_info, 1, AsyncMock(return_value=None), "pfx"
-        )
+        result = await common.require_counting_channel(admin_command_info, 1, AsyncMock(return_value=None), "pfx")
     assert result is None
     admin_command_info.reply.assert_awaited_once()
 

@@ -4,9 +4,7 @@ These functions in minigames/countingmodes.py are pure math — no Discord depen
 """
 
 import math
-from unittest.mock import MagicMock, patch
-
-from models import CountingMode
+from unittest.mock import patch
 
 from minigames.counting_modes import (
     get_correct_next_number,
@@ -16,6 +14,7 @@ from minigames.counting_modes import (
     number_to_romeal,
     romeal_to_number,
 )
+from models import CountingMode
 
 
 class TestRomanNumerals:

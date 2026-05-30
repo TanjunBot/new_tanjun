@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import pytest
 from unittest.mock import AsyncMock
+
+import pytest
 
 from commands.math.calculator import CalculatorButton, CalculatorView
 from tests.helpers.discord import make_interaction

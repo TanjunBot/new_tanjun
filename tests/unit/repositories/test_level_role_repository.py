@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from models import LevelRoleModel, LevelRolesGroupModel
+from models import LevelRoleModel
 from repositories.level_role_repository import LevelRoleRepository
-from tests.helpers.factories import GUILD_ID, ROLE_ID, level_role_row
+from tests.helpers.factories import ROLE_ID, level_role_row
 
 
 @pytest.fixture

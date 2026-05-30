@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from models import DetailedWarningModel, WarnConfigModel, WarningModel
+from models import DetailedWarningModel, WarningModel
 from repositories.warning_repository import WarningRepository
 from tests.helpers.factories import GUILD_ID, USER_ID, warning_row
 
@@ -46,7 +46,7 @@ class TestWarningRepository:
 
     @pytest.mark.asyncio
     async def test_get_detailed(self, repo: WarningRepository):
-        dt = datetime(2024, 6, 15, tzinfo=timezone.utc)
+        dt = datetime(2024, 6, 15, tzinfo=UTC)
 
         async def fake_iter(*args, **kwargs):
             yield DetailedWarningModel.from_row((1, "reason", dt, None, USER_ID))

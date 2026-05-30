@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.admin.join_to_create.listener import memberJoin, memberLeave, removeAllJoinToCreateChannels
 from tests.helpers.discord import make_member
-
 
 pytestmark = pytest.mark.asyncio
 

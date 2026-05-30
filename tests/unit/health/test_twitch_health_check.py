@@ -5,8 +5,8 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
 from TwitchAPIHealthCheck import TwitchAPIHealthCheck
+
 from health.checks import HealthStatus
 
 
@@ -30,9 +30,8 @@ class TestTwitchAPIHealthCheck:
 
     @pytest.mark.asyncio
     async def test_missing_credentials(self, check: TwitchAPIHealthCheck):
-        with patch("config.twitchId", ""):
-            with patch("config.twitchSecret", ""):
-                result = await check.run()
+        with patch("config.twitchId", ""), patch("config.twitchSecret", ""):
+            result = await check.run()
         assert result.status == HealthStatus.CRITICAL
 
     @pytest.mark.asyncio

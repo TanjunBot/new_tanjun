@@ -7,7 +7,6 @@ from discord import app_commands
 
 from tests.helpers.discord import make_command_info
 
-
 pytestmark = pytest.mark.asyncio
 
 
@@ -43,7 +42,7 @@ def help_ui_types():
     )
     discord.ui.View = _HelpViewBase
     discord.ui.Select = _HelpSelectBase
-    discord.ui.button = lambda **kwargs: (lambda fn: fn)
+    discord.ui.button = lambda **kwargs: lambda fn: fn
     discord.Embed = MagicMock(side_effect=lambda **kw: MagicMock(**kw))
     discord.SelectOption = MagicMock(side_effect=lambda **kw: MagicMock(**kw))
     from commands.utility.help import help as help_command
@@ -213,9 +212,7 @@ async def test_paginated_help_view_buttons(help_ui_types):
     parent.name = "util"
     parent.description = "util_desc"
     info.client.tree = MagicMock()
-    info.client.tree.walk_commands = MagicMock(
-        return_value=[MagicMock(parent=parent, name="util", description="d")]
-    )
+    info.client.tree.walk_commands = MagicMock(return_value=[MagicMock(parent=parent, name="util", description="d")])
     await help_command(info, MagicMock())
     view = info.reply.await_args.kwargs["view"]
     select_cls = type(view.children[0])
@@ -242,4 +239,3 @@ async def test_paginated_help_view_buttons(help_ui_types):
     with patch.object(select_cls, "get_locale", side_effect=_raise_on_desc):
         await select.callback(interaction)
     interaction.response.edit_message.assert_awaited_once()
-

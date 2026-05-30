@@ -8,7 +8,6 @@ from commands.minigames.wordchain.removewordchainchannel import removewordchainc
 from commands.minigames.wordchain.setwordchainchannel import setwordchainchannel
 from tests.helpers.discord import make_permissions, make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 

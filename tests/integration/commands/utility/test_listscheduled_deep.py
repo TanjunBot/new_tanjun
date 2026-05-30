@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -12,12 +12,11 @@ from tests.helpers.discord import make_permissions, make_target_member, make_tex
 from tests.helpers.factories import CHANNEL_ID, GUILD_ID, USER_ID
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 
 def _scheduled_msg(msg_id: int = 1, content: str = "hello") -> ScheduledMessageModel:
-    dt = datetime.now(timezone.utc) + timedelta(hours=1)
+    dt = datetime.now(UTC) + timedelta(hours=1)
     return ScheduledMessageModel.from_row((msg_id, GUILD_ID, CHANNEL_ID, USER_ID, content, dt, None, None, None, None, dt))
 
 
@@ -83,7 +82,9 @@ async def test_list_scheduled_edit_modal(mock_get, admin_command_info):
 async def test_edit_content_modal_submit(mock_update, admin_command_info):
     from commands.utility.listscheduled import list_scheduled_messages as _fn
 
-    with patch("commands.utility.listscheduled.ScheduledMessageService.get_user_messages", AsyncMock(return_value=[_scheduled_msg(1)])):
+    with patch(
+        "commands.utility.listscheduled.ScheduledMessageService.get_user_messages", AsyncMock(return_value=[_scheduled_msg(1)])
+    ):
         admin_command_info.reply = AsyncMock(return_value=MagicMock(edit=AsyncMock()))
         await _fn(admin_command_info)
         view = _view_from_reply(admin_command_info)
@@ -256,7 +257,9 @@ async def test_schedule_message_success(mock_time, mock_params, mock_sched, admi
     admin_command_info.reply.assert_awaited_once()
 
 
-@patch("commands.utility.schedulemessage.ScheduledMessageService.get_upcoming", new_callable=AsyncMock, return_value=[MagicMock()])
+@patch(
+    "commands.utility.schedulemessage.ScheduledMessageService.get_upcoming", new_callable=AsyncMock, return_value=[MagicMock()]
+)
 @patch("commands.utility.schedulemessage.utility.relativeTimeStrToDate")
 async def test_schedule_message_too_many(mock_time, mock_upcoming, admin_command_info):
     mock_time.return_value = datetime.now() + timedelta(hours=2)

@@ -238,7 +238,10 @@ class TestOtherListeners:
         msg = make_message()
         scheduled = MagicMock(message_id="sched1")
         with (
-            patch("extensions.listeners.ScheduledMessageService.find_by_discord_message_id", new=AsyncMock(return_value=scheduled)),
+            patch(
+                "extensions.listeners.ScheduledMessageService.find_by_discord_message_id",
+                new=AsyncMock(return_value=scheduled),
+            ),
             patch("extensions.listeners.ScheduledMessageService.cancel", new=AsyncMock()) as cancel,
         ):
             await cog.on_message_delete(msg)
@@ -247,7 +250,9 @@ class TestOtherListeners:
     async def test_message_delete_no_scheduled(self) -> None:
         cog = await _cog()
         msg = make_message()
-        with patch("extensions.listeners.ScheduledMessageService.find_by_discord_message_id", new=AsyncMock(return_value=None)):
+        with patch(
+            "extensions.listeners.ScheduledMessageService.find_by_discord_message_id", new=AsyncMock(return_value=None)
+        ):
             await cog.on_message_delete(msg)
 
     async def test_member_join(self) -> None:

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -64,7 +64,7 @@ class TestDynamicSlowmodeService:
 
     @pytest.mark.asyncio
     async def test_clean_old(self, service: DynamicSlowmodeService):
-        dt = datetime.now(timezone.utc)
+        dt = datetime.now(UTC)
         with patch("api.clear_old_dynamicslowmode_messages", new_callable=AsyncMock) as mock_clear:
             await service.clean_old(CHANNEL_ID, dt)
             mock_clear.assert_awaited_once()
@@ -112,7 +112,7 @@ class TestDynamicSlowmodeService:
 
     @pytest.mark.asyncio
     async def test_track_message(self, service: DynamicSlowmodeService):
-        dt = datetime.now(timezone.utc)
+        dt = datetime.now(UTC)
         with patch("api.add_dynamicslowmode_message", new_callable=AsyncMock) as mock_add:
             await service.track_message(CHANNEL_ID, "99999999999999999", dt)
             mock_add.assert_awaited_once()

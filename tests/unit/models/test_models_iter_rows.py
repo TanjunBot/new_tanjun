@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import patch
 
 import pytest
@@ -38,11 +38,11 @@ from models import (
     WelcomeChannelModel,
     XpBoostModel,
 )
-from tests.helpers.factories import CHANNEL_ID, GUILD_ID, MESSAGE_ID, ROLE_ID, USER_ID, _dt, giveaway_row, warning_row
+from tests.helpers.factories import CHANNEL_ID, GUILD_ID, MESSAGE_ID, ROLE_ID, USER_ID, giveaway_row, warning_row
 
 
 def _dt_local() -> datetime:
-    return datetime(2024, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+    return datetime(2024, 6, 15, 12, 0, 0, tzinfo=UTC)
 
 
 ITER_ROW_CASES = [

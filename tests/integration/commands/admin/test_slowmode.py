@@ -1,13 +1,9 @@
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 
 from commands.admin.slowmode import set_slowmode
 from tests.helpers.discord import (
-    make_role,
-    make_target_member,
     make_text_channel,
 )
-
 
 pytestmark = pytest.mark.asyncio
 

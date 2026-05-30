@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 GUILD_ID = "12345678901234567"
 USER_ID = "11111111111111111"
@@ -10,7 +10,7 @@ MESSAGE_ID = "99999999999999999"
 
 
 def _dt() -> datetime:
-    return datetime(2024, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+    return datetime(2024, 6, 15, 12, 0, 0, tzinfo=UTC)
 
 
 def giveaway_row(**overrides):

@@ -8,8 +8,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from PIL import Image
 
-from services.image_service import ImageFilter, ImageOperation, ImageService
 from services import pillow_service
+from services.image_service import ImageFilter, ImageOperation, ImageService
 
 
 class TestImageFilter:

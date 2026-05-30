@@ -6,7 +6,6 @@ import pytest
 
 from commands.ai.add_custom_situation import add_custom_situation
 
-
 pytestmark = pytest.mark.asyncio
 
 

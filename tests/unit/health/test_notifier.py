@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -115,9 +114,7 @@ class TestNotifyHealthFailures:
         channel.send = AsyncMock()
         bot = MagicMock()
         bot.get_channel.return_value = channel
-        failures = [
-            HealthCheckResult(f"Check{i}", HealthStatus.CRITICAL, f"msg{i}") for i in range(30)
-        ]
+        failures = [HealthCheckResult(f"Check{i}", HealthStatus.CRITICAL, f"msg{i}") for i in range(30)]
         await notify_health_failures(bot, failures)
         assert channel.send.await_count == 2
 

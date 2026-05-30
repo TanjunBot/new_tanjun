@@ -1,16 +1,16 @@
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
 from services.brawlstars import (
     BrawlerInfo,
+    BrawlStarPlayerBrawler,
     BrawlStarsBattle,
     BrawlStarsClub,
     BrawlStarsClubMember,
     BrawlStarsEvent,
     BrawlStarsEventDetail,
     BrawlStarsPlayer,
-    BrawlStarPlayerBrawler,
 )
 from tests.helpers.discord import make_command_info
 
@@ -180,9 +180,7 @@ async def test_playerinfo_success(mock_service):
     from commands.utility.brawlstars.playerinfo import player_info
 
     mock_service.return_value.get_player = AsyncMock(return_value=_player())
-    mock_service.return_value.get_brawler_list = AsyncMock(
-        return_value=[BrawlStarPlayerBrawler(id=1, name="Shelly")]
-    )
+    mock_service.return_value.get_brawler_list = AsyncMock(return_value=[BrawlStarPlayerBrawler(id=1, name="Shelly")])
     info = make_command_info()
     await player_info(info, "#ABC123")
     info.reply.assert_awaited_once()

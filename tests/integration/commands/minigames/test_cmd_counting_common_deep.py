@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from commands.minigames import _counting_common as common
 from tests.helpers.discord import make_command_info, make_member, make_permissions, make_text_channel
-
 
 pytestmark = pytest.mark.asyncio
 

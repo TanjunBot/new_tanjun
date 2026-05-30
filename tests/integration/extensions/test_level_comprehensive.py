@@ -129,7 +129,7 @@ async def test_level_commands(group_cls, method, extra, mock_cmds) -> None:
     group = group_cls(name="test", description="test")
     handler = getattr(group, method)
     if method in ("showxpscalings", "leaderboard"):
-        from tests.helpers.discord import make_interaction, make_guild, make_member, make_text_channel
+        from tests.helpers.discord import make_guild, make_interaction, make_member, make_text_channel
 
         guild = make_guild()
         interaction = make_interaction(guild=guild, channel=make_text_channel(guild=guild), user=make_member())

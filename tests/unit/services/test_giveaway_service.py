@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -36,7 +36,7 @@ class TestGiveawayService:
             winners=1,
             with_button=True,
             channel_id=CHANNEL_ID,
-            end_time=datetime(2025, 12, 31, tzinfo=timezone.utc),
+            end_time=datetime(2025, 12, 31, tzinfo=UTC),
         )
         with patch("services.giveaway_service.transaction", _fake_transaction):
             result = await GiveawayService.create(params)
@@ -61,7 +61,7 @@ class TestGiveawayService:
         params = GiveawayUpdateParams(
             guild_id=GUILD_ID,
             title="Updated",
-            end_time=datetime(2025, 12, 31, tzinfo=timezone.utc),
+            end_time=datetime(2025, 12, 31, tzinfo=UTC),
             channel_id=CHANNEL_ID,
         )
         with patch("services.giveaway_service.transaction", _fake_transaction):

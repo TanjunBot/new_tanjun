@@ -21,26 +21,32 @@ pytestmark = pytest.mark.asyncio
 EXTENSION = "extensions.ai"
 COG_NAME = "AiCog"
 
+
 async def test_module_exposes_setup():
     module = importlib.import_module(EXTENSION)
     assert hasattr(module, "setup")
     assert callable(module.setup)
 
+
 async def test_setup_registers_cog():
     bot = await load_extension_bot(EXTENSION, fire_ready=False)
     assert COG_NAME in bot.cogs
+
 
 async def test_setup_calls_add_cog_once():
     bot = await load_extension_bot(EXTENSION, fire_ready=False)
     bot.add_cog.assert_awaited_once()
 
+
 async def test_get_cog_returns_registered_instance():
     bot = await load_extension_bot(EXTENSION, fire_ready=False)
     assert bot.get_cog(COG_NAME) is bot.cogs[COG_NAME]
 
+
 async def test_cog_stores_bot_reference():
     bot = await load_extension_bot(EXTENSION, fire_ready=False)
     assert bot.cogs[COG_NAME].bot is bot
+
 
 async def test_on_ready_adds_command_to_tree():
     bot = make_bot_for_extensions()
@@ -49,9 +55,11 @@ async def test_on_ready_adds_command_to_tree():
     await fire_cog_on_ready(bot)
     assert len(get_tree_commands(bot)) == 1
 
+
 async def test_root_command_name_is_ai_name():
     bot = await load_extension_bot(EXTENSION)
     assert get_tree_command_names(bot) == ["ai_name"]
+
 
 async def test_root_group_has_4_entries():
     bot = await load_extension_bot(EXTENSION)
@@ -59,11 +67,13 @@ async def test_root_group_has_4_entries():
     assert root is not None
     assert len(get_subcommand_names(root)) == 4
 
+
 async def test_subcommand_ai_askgpt_name_registered():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "ai_name")
     assert root is not None
     assert "ai_askgpt_name" in get_subcommand_names(root)
+
 
 async def test_subcommand_ai_asktanjuwun_name_registered():
     bot = await load_extension_bot(EXTENSION)
@@ -71,11 +81,13 @@ async def test_subcommand_ai_asktanjuwun_name_registered():
     assert root is not None
     assert "ai_asktanjuwun_name" in get_subcommand_names(root)
 
+
 async def test_subcommand_ai_customsituations_name_registered():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "ai_name")
     assert root is not None
     assert "ai_customsituations_name" in get_subcommand_names(root)
+
 
 async def test_nested_group_ai_customsituations_name_has_2_commands():
     bot = await load_extension_bot(EXTENSION)
@@ -84,12 +96,14 @@ async def test_nested_group_ai_customsituations_name_has_2_commands():
     assert nested is not None
     assert len(get_subcommand_names(nested)) == 2
 
+
 async def test_nested_ai_customsituations_name_ai_createcustom_name_registered():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "ai_name")
     nested = find_nested_group(root, "ai_customsituations_name")
     assert nested is not None
     assert "ai_createcustom_name" in get_subcommand_names(nested)
+
 
 async def test_nested_ai_customsituations_name_ai_deletecustom_name_registered():
     bot = await load_extension_bot(EXTENSION)

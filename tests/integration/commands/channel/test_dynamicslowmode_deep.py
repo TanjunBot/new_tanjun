@@ -15,7 +15,6 @@ from commands.channel.dynamicslowmode import (
 )
 from tests.helpers.discord import make_permissions, make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 

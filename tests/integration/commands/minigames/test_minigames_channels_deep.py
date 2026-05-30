@@ -11,7 +11,6 @@ from commands.minigames.wordchain.removewordchainchannel import removewordchainc
 from commands.minigames.wordchain.setwordchainchannel import setwordchainchannel
 from tests.helpers.discord import make_permissions, make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 
@@ -45,17 +44,36 @@ async def test_set_challenge_channel_no_guild(admin_command_info):
     await setChallengeChannel(admin_command_info, make_text_channel())
 
 
-@patch("commands.minigames.counting_challenge.setcountingchannel.require_bot_permissions", new_callable=AsyncMock, return_value=True)
-@patch("commands.minigames.counting_challenge.setcountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False)
+@patch(
+    "commands.minigames.counting_challenge.setcountingchannel.require_bot_permissions",
+    new_callable=AsyncMock,
+    return_value=True,
+)
+@patch(
+    "commands.minigames.counting_challenge.setcountingchannel.require_moderate_members",
+    new_callable=AsyncMock,
+    return_value=False,
+)
 async def test_set_challenge_channel_bot_perms_fail(mock_mod, mock_bot, admin_command_info):
     ch = make_text_channel(guild=admin_command_info.guild)
     await setChallengeChannel(admin_command_info, ch)
     admin_command_info.reply.assert_not_awaited()
 
 
-@patch("commands.minigames.counting_challenge.setcountingchannel.CountingRepository.set_challenge_progress", new_callable=AsyncMock)
-@patch("commands.minigames.counting_challenge.setcountingchannel.require_bot_permissions", new_callable=AsyncMock, return_value=False)
-@patch("commands.minigames.counting_challenge.setcountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False)
+@patch(
+    "commands.minigames.counting_challenge.setcountingchannel.CountingRepository.set_challenge_progress",
+    new_callable=AsyncMock,
+)
+@patch(
+    "commands.minigames.counting_challenge.setcountingchannel.require_bot_permissions",
+    new_callable=AsyncMock,
+    return_value=False,
+)
+@patch(
+    "commands.minigames.counting_challenge.setcountingchannel.require_moderate_members",
+    new_callable=AsyncMock,
+    return_value=False,
+)
 async def test_set_challenge_channel_success(mock_mod, mock_bot, mock_set, admin_command_info):
     ch = make_text_channel(guild=admin_command_info.guild)
     ch.send = AsyncMock()
@@ -68,8 +86,12 @@ async def test_set_modes_channel_no_guild(admin_command_info):
     await setModesChannel(admin_command_info, make_text_channel())
 
 
-@patch("commands.minigames.counting_modes.setcountingchannel.require_bot_permissions", new_callable=AsyncMock, return_value=True)
-@patch("commands.minigames.counting_modes.setcountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False)
+@patch(
+    "commands.minigames.counting_modes.setcountingchannel.require_bot_permissions", new_callable=AsyncMock, return_value=True
+)
+@patch(
+    "commands.minigames.counting_modes.setcountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False
+)
 async def test_set_modes_channel_bot_perms_fail(mock_mod, mock_bot, admin_command_info):
     ch = make_text_channel(guild=admin_command_info.guild)
     await setModesChannel(admin_command_info, ch)
@@ -77,8 +99,12 @@ async def test_set_modes_channel_bot_perms_fail(mock_mod, mock_bot, admin_comman
 
 
 @patch("commands.minigames.counting_modes.setcountingchannel.CountingRepository.set_mode_progress", new_callable=AsyncMock)
-@patch("commands.minigames.counting_modes.setcountingchannel.require_bot_permissions", new_callable=AsyncMock, return_value=False)
-@patch("commands.minigames.counting_modes.setcountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False)
+@patch(
+    "commands.minigames.counting_modes.setcountingchannel.require_bot_permissions", new_callable=AsyncMock, return_value=False
+)
+@patch(
+    "commands.minigames.counting_modes.setcountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False
+)
 async def test_set_modes_channel_success(mock_mod, mock_bot, mock_set, admin_command_info):
     ch = make_text_channel(guild=admin_command_info.guild)
     ch.send = AsyncMock()

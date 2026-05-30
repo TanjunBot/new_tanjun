@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.admin.trigger_messages.configure import configure_trigger_messages
 from tests.integration.commands.admin.conftest import (
@@ -7,7 +8,6 @@ from tests.integration.commands.admin.conftest import (
     make_trigger_message,
     make_view_interaction,
 )
-
 
 pytestmark = pytest.mark.asyncio
 

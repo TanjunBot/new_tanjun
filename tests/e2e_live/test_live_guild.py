@@ -14,12 +14,14 @@ pytestmark = [pytest.mark.live_discord, pytest.mark.asyncio]
 async def test_fetch_application_info(live_bot_token: str):
     import aiohttp
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(
             "https://discord.com/api/v10/oauth2/applications/@me",
             headers={"Authorization": f"Bot {live_bot_token}"},
-        ) as resp:
-            assert resp.status in (200, 401, 403)
-            if resp.status == 200:
-                data = await resp.json()
-                assert "id" in data
+        ) as resp,
+    ):
+        assert resp.status in (200, 401, 403)
+        if resp.status == 200:
+            data = await resp.json()
+            assert "id" in data

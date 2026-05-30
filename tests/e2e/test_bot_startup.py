@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-import importlib
 import os
-import sys
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -28,11 +25,7 @@ pytestmark = pytest.mark.e2e
 
 @pytest.mark.asyncio
 async def test_main_lists_extension_files():
-    extensions = [
-        f.replace(".py", "")
-        for f in os.listdir("extensions")
-        if f.endswith(".py") and not f.startswith("__")
-    ]
+    extensions = [f.replace(".py", "") for f in os.listdir("extensions") if f.endswith(".py") and not f.startswith("__")]
     assert len(extensions) >= 18
     assert "listeners" in extensions
     assert "error_handler" in extensions
@@ -150,9 +143,8 @@ async def test_init_database_pool_success():
 
 @pytest.mark.asyncio
 async def test_init_database_pool_failure():
-    with patch("asyncmy.create_pool", new=AsyncMock(side_effect=OSError("db down"))):
-        with pytest.raises(OSError):
-            await main_mod._init_database_pool()
+    with patch("asyncmy.create_pool", new=AsyncMock(side_effect=OSError("db down"))), pytest.raises(OSError):
+        await main_mod._init_database_pool()
 
 
 @pytest.mark.asyncio

@@ -1,7 +1,7 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import discord
+import pytest
 
 from commands.admin.lock import lock_channel
 from commands.admin.nickname import change_nickname
@@ -20,7 +20,6 @@ from tests.helpers.discord import (
     make_text_channel,
 )
 from tests.integration.commands.admin.conftest import make_view_interaction
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -62,7 +61,9 @@ async def test_lock_channel_missing_bot_permission(admin_command_info):
     admin_command_info.reply.assert_awaited_once()
 
 
-@patch("commands.admin.lock.clear_channel_overwrites", new_callable=AsyncMock, side_effect=discord.Forbidden(MagicMock(), "nope"))
+@patch(
+    "commands.admin.lock.clear_channel_overwrites", new_callable=AsyncMock, side_effect=discord.Forbidden(MagicMock(), "nope")
+)
 async def test_lock_channel_forbidden(mock_clear, admin_command_info):
     channel = make_text_channel(guild=admin_command_info.guild)
     channel.overwrites = {}
@@ -71,7 +72,11 @@ async def test_lock_channel_forbidden(mock_clear, admin_command_info):
     admin_command_info.reply.assert_awaited_once()
 
 
-@patch("commands.admin.lock.clear_channel_overwrites", new_callable=AsyncMock, side_effect=discord.HTTPException(MagicMock(), "err"))
+@patch(
+    "commands.admin.lock.clear_channel_overwrites",
+    new_callable=AsyncMock,
+    side_effect=discord.HTTPException(MagicMock(), "err"),
+)
 async def test_lock_channel_http_error(mock_clear, admin_command_info):
     channel = make_text_channel(guild=admin_command_info.guild)
     channel.overwrites = {}
@@ -427,7 +432,19 @@ async def test_nuke_view_on_timeout(admin_command_info):
 
 @pytest.mark.parametrize(
     "setting",
-    ["all", "bot", "user", "notPinned", "userNotPinned", "botNotPinned", "notAdmin", "userNotAdmin", "embeds", "files", "notAdminNotPinned"],
+    [
+        "all",
+        "bot",
+        "user",
+        "notPinned",
+        "userNotPinned",
+        "botNotPinned",
+        "notAdmin",
+        "userNotAdmin",
+        "embeds",
+        "files",
+        "notAdminNotPinned",
+    ],
 )
 async def test_purge_settings(admin_command_info, setting):
     admin_command_info.channel.purge = AsyncMock(return_value=[MagicMock()] * 3)

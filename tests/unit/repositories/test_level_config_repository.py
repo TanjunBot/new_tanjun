@@ -8,7 +8,7 @@ import pytest
 
 from models import LevelConfig
 from repositories.level_config_repository import LevelConfigRepository
-from tests.helpers.factories import CHANNEL_ID, GUILD_ID
+from tests.helpers.factories import GUILD_ID
 
 
 @pytest.fixture
@@ -28,10 +28,9 @@ class TestLevelConfigRepository:
 
     @pytest.mark.asyncio
     async def test_update_field(self, repo: LevelConfigRepository):
-        with patch("api.execute_action", new_callable=AsyncMock) as mock_exec:
-            with patch("api._invalidate_guild_cache"):
-                await repo.update_field(GUILD_ID, active=False)
-                mock_exec.assert_awaited_once()
+        with patch("api.execute_action", new_callable=AsyncMock) as mock_exec, patch("api._invalidate_guild_cache"):
+            await repo.update_field(GUILD_ID, active=False)
+            mock_exec.assert_awaited_once()
 
     @pytest.mark.asyncio
     async def test_update_field_empty_kwargs_noop(self, repo: LevelConfigRepository):
@@ -51,7 +50,6 @@ class TestLevelConfigRepository:
 
     @pytest.mark.asyncio
     async def test_delete_config(self, repo: LevelConfigRepository):
-        with patch("api.execute_action", new_callable=AsyncMock) as mock_exec:
-            with patch("api._invalidate_guild_cache"):
-                await repo.delete_config(GUILD_ID)
-                assert "DELETE FROM levelConfig" in mock_exec.await_args[0][0]
+        with patch("api.execute_action", new_callable=AsyncMock) as mock_exec, patch("api._invalidate_guild_cache"):
+            await repo.delete_config(GUILD_ID)
+            assert "DELETE FROM levelConfig" in mock_exec.await_args[0][0]

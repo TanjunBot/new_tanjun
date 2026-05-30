@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
-
 import importlib
+from unittest.mock import MagicMock, patch
 
 import run_flake8
 

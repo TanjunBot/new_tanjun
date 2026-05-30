@@ -6,11 +6,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from tests.integration.commands.conftest import embed_from_reply, make_role, make_user
-from tests.helpers.discord import make_command_info, make_guild, make_member, make_permissions, make_text_channel
-
-
 from commands.giveaway.add_blacklist_user import add_blacklist_user as command_fn
+from tests.helpers.discord import make_command_info, make_permissions
+from tests.integration.commands.conftest import embed_from_reply, make_user
 
 
 @pytest.mark.asyncio

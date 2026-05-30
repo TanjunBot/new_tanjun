@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from commands.admin.reports.remove_channel import remove_channel
+import pytest
 
+from commands.admin.reports.remove_channel import remove_channel
 
 pytestmark = pytest.mark.asyncio
 

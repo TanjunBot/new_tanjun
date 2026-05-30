@@ -90,9 +90,11 @@ class TestTicketService:
 
         async def fake_iter(*args, **kwargs):
             from models import TicketModel
+
             yield TicketModel.from_row(row)
 
         from models import TicketModel
+
         with patch.object(TicketModel, "iter_rows", side_effect=fake_iter):
             result = await TicketService.get_tickets(GUILD_ID)
         assert len(result) == 1

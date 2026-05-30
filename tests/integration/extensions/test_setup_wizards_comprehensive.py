@@ -3,12 +3,18 @@ from __future__ import annotations
 import importlib
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import discord
 import pytest
 
 import extensions.setup_wizards as sw_mod
 from models import LogEnableModel
-from tests.helpers.discord import MockVoiceChannel, make_guild, make_interaction, make_member, make_permissions, make_text_channel
+from tests.helpers.discord import (
+    MockVoiceChannel,
+    make_guild,
+    make_interaction,
+    make_member,
+    make_permissions,
+    make_text_channel,
+)
 from tests.integration.extensions.conftest import load_extension_bot
 
 pytestmark = pytest.mark.asyncio
@@ -234,7 +240,10 @@ class TestBoosterSetup:
         modal.children = [MagicMock(value="777777777")]
         svc = MagicMock()
         svc.add = AsyncMock()
-        with patch.object(sw_mod, "BoosterService", return_value=svc), patch.object(sw_mod.discord, "VoiceChannel", MockVoiceChannel):
+        with (
+            patch.object(sw_mod, "BoosterService", return_value=svc),
+            patch.object(sw_mod.discord, "VoiceChannel", MockVoiceChannel),
+        ):
             await modal.on_submit(ix)
 
     async def test_booster_role_modal_paths(self, sw) -> None:

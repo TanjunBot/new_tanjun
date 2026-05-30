@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -10,14 +9,11 @@ import tests.mock_config as mock_config
 
 mock_config.patch_config_module()
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from api import (  # noqa: E402
     DatabaseManager,
     add_channel_boost,
-    create_tables,
-    db_manager,
-    get_table_definitions,
     add_giveaway,
     add_giveaway_blacklisted_role,
     add_giveaway_blacklisted_user,
@@ -25,10 +21,11 @@ from api import (  # noqa: E402
     add_log_blacklist,
     check_if_giveaway_participant,
     check_if_user_blacklisted,
+    clear_wordchain,
+    create_tables,
     db_manager,
     delete_giveaway,
     execute_batch,
-    execute_insert_and_get_id,
     execute_query_iter,
     get_all_boosts,
     get_all_level_roles,
@@ -48,6 +45,7 @@ from api import (  # noqa: E402
     get_new_messages_channel,
     get_role_boost,
     get_send_ready_giveaways,
+    get_table_definitions,
     get_user_level_info,
     get_voice_time,
     get_wordchain_last_user_id,
@@ -66,10 +64,9 @@ from api import (  # noqa: E402
     remove_user_boost,
     remove_user_from_blacklist,
     set_bot,
-    set_wordchain_word,
-    clear_wordchain,
-    update_user_xp_from_voice,
     set_custom_background,
+    set_wordchain_word,
+    update_user_xp_from_voice,
 )
 from repositories.log_blacklist_repository import LogBlacklistType
 from tests.helpers.db import AsyncIter, make_mock_pool
@@ -82,7 +79,7 @@ pytestmark = pytest.mark.asyncio
 def reset_api() -> Iterator[None]:
     set_bot(None)
     db_manager._pool = None
-    from api import _blacklist_cache, _guild_config_cache, _counting_cache
+    from api import _blacklist_cache, _counting_cache, _guild_config_cache
 
     _blacklist_cache.clear()
     _guild_config_cache.clear()
@@ -275,6 +272,7 @@ class TestCountingApi:
 class TestWarningsApi:
     async def test_get_detailed_warnings(self, pool_setup):
         with patch("api.warning_repo") as repo:
+
             async def _rows(guild_id, user_id):
                 if False:
                     yield
@@ -288,7 +286,6 @@ class TestWarningsApi:
 
 class TestGiveawayApi:
     async def test_giveaway_lifecycle(self, pool_setup):
-        from datetime import datetime, timezone
 
         with patch("services.giveaway_service.giveaway_service") as gs:
             gs.create = AsyncMock(return_value=1)
@@ -308,7 +305,7 @@ class TestGiveawayApi:
             gs.get_blacklisted_users = AsyncMock(return_value=[])
             gs.get_blacklisted_roles = AsyncMock(return_value=[])
             gs.delete = AsyncMock()
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             gid = await add_giveaway(
                 GUILD_ID,
                 "title",
@@ -430,9 +427,8 @@ class TestCreateTables:
             if "ALTER TABLE" in query:
                 raise Exception("syntax error")
 
-        with patch("api.execute_action", side_effect=_action):
-            with pytest.raises(Exception, match="syntax error"):
-                await create_tables()
+        with patch("api.execute_action", side_effect=_action), pytest.raises(Exception, match="syntax error"):
+            await create_tables()
 
 
 class TestPoolFallback:

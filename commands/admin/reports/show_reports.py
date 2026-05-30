@@ -12,7 +12,6 @@ from api import (
 )
 from localizer import tanjunLocalizer
 from models import ReportModel
-from utility import CommandInfo
 
 
 async def show_reports(command_info: utility.CommandInfo, user: discord.Member | None = None) -> None:

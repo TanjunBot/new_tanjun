@@ -4,7 +4,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from aiohttp import ClientError
-
 from external_api_health_checks import (
     BrawlStarsHealthCheck,
     BytebinHealthCheck,
@@ -12,6 +11,7 @@ from external_api_health_checks import (
     GitHubAPIHealthCheck,
     ImgBBHealthCheck,
 )
+
 from health.checks import HealthStatus
 
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from hypothesis import given, settings
@@ -119,8 +119,6 @@ class TestCountingCommonHypothesis:
         content=st.integers(min_value=1, max_value=1001),
     )
     @settings(max_examples=60)
-    def test_valid_count_only_when_content_equals_progress_plus_one(
-        self, progress: int, content: int
-    ):
+    def test_valid_count_only_when_content_equals_progress_plus_one(self, progress: int, content: int):
         is_valid = str(content) == str(progress + 1) and str(content).isdigit()
         assert is_valid == (content == progress + 1)

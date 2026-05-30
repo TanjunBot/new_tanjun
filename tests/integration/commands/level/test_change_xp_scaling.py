@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from commands.level.change_xp_scaling import change_xp_scaling_command, show_xp_scalings
+import pytest
 
+from commands.level.change_xp_scaling import change_xp_scaling_command, show_xp_scalings
 
 pytestmark = pytest.mark.asyncio
 

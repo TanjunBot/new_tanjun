@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
 import pytest
 
 from models import (
@@ -51,7 +49,6 @@ from tests.helpers.factories import (
     ROLE_ID,
     USER_ID,
     _dt,
-    afk_row,
     giveaway_row,
     level_role_row,
     warning_row,
@@ -110,7 +107,19 @@ class TestGiveawayBlacklistEntryModel:
 class TestReportModel:
     def test_from_row(self):
         model = ReportModel.from_row(
-            (1, GUILD_ID, USER_ID, "22222222222222222", "reason", 1700000000, "pending", 1700000100, "33333333333333333", None, False)
+            (
+                1,
+                GUILD_ID,
+                USER_ID,
+                "22222222222222222",
+                "reason",
+                1700000000,
+                "pending",
+                1700000100,
+                "33333333333333333",
+                None,
+                False,
+            )
         )
         assert model.id == 1
         assert model.status == "pending"
@@ -120,9 +129,7 @@ class TestReportModel:
 class TestScheduledMessageModel:
     def test_from_row(self):
         dt = _dt()
-        model = ScheduledMessageModel.from_row(
-            (1, GUILD_ID, CHANNEL_ID, USER_ID, "hello", dt, 3600, 5, None, None, dt)
-        )
+        model = ScheduledMessageModel.from_row((1, GUILD_ID, CHANNEL_ID, USER_ID, "hello", dt, 3600, 5, None, None, dt))
         assert model.message_id == 1
         assert model.content == "hello"
         assert model.repeat_interval == 3600
@@ -130,9 +137,7 @@ class TestScheduledMessageModel:
 
 class TestTwitchOnlineNotificationModel:
     def test_from_row(self):
-        model = TwitchOnlineNotificationModel.from_row(
-            (1, CHANNEL_ID, GUILD_ID, "uuid-123", "streamer", "Live now!")
-        )
+        model = TwitchOnlineNotificationModel.from_row((1, CHANNEL_ID, GUILD_ID, "uuid-123", "streamer", "Live now!"))
         assert model.twitch_uuid == "uuid-123"
         assert model.notification_message == "Live now!"
 
@@ -160,9 +165,7 @@ class TestTicketMessageModel:
 
 class TestTicketModel:
     def test_from_row(self):
-        model = TicketModel.from_row(
-            (GUILD_ID, USER_ID, 1700000000, False, None, None, CHANNEL_ID, 1)
-        )
+        model = TicketModel.from_row((GUILD_ID, USER_ID, 1700000000, False, None, None, CHANNEL_ID, 1))
         assert model.closed is False
         assert model.ticket_message_id == 1
 
@@ -170,9 +173,7 @@ class TestTicketModel:
 class TestAISituationModel:
     def test_from_row(self):
         dt = _dt()
-        model = AISituationModel.from_row(
-            (USER_ID, "situation text", "name", dt, 0.7, 1.0, 0.0, 0.0, True)
-        )
+        model = AISituationModel.from_row((USER_ID, "situation text", "name", dt, 0.7, 1.0, 0.0, 0.0, True))
         assert model.temperature == 0.7
         assert model.unlocked is True
 
@@ -199,9 +200,7 @@ class TestDetailedWarningModel:
 
 class TestWarnConfigModel:
     def test_from_row_skips_guild_id(self):
-        model = WarnConfigModel.from_row(
-            (GUILD_ID, 30, 3, 600, 5, 10)
-        )
+        model = WarnConfigModel.from_row((GUILD_ID, 30, 3, 600, 5, 10))
         assert model.expiration_days == 30
         assert model.ban_threshold == 10
 
@@ -329,9 +328,7 @@ class TestChannelOverwriteModel:
 
 class TestLevelConfig:
     def test_from_row(self):
-        model = LevelConfig.from_row(
-            (GUILD_ID, 1, "medium", None, 1, "Level up!", CHANNEL_ID, 60, 120)
-        )
+        model = LevelConfig.from_row((GUILD_ID, 1, "medium", None, 1, "Level up!", CHANNEL_ID, 60, 120))
         assert model.active is True
         assert model.difficulty == "medium"
         assert model.text_cooldown == 60

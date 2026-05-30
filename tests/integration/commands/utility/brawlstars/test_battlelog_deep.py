@@ -9,7 +9,6 @@ from services.brawlstars import BattleBrawler, BattlePlayer, BrawlStarsBattle
 from tests.helpers.discord import make_target_member
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 

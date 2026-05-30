@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from commands.admin.trigger_messages.add import add_trigger_message
+import pytest
 
+from commands.admin.trigger_messages.add import add_trigger_message
 
 pytestmark = pytest.mark.asyncio
 

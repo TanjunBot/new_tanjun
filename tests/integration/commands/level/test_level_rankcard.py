@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.level.level_rankcard import set_background_command, show_rankcard_command
 from tests.helpers.discord import make_target_member
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -52,4 +52,6 @@ async def test_set_background_guild_id(mock_set, mock_upload, admin_command_info
     image.read = AsyncMock(return_value=b"data")
     mock_upload.return_value = {"data": {"url": "http://example.com/bg.jpg"}}
     await set_background_command(admin_command_info, image)
-    mock_set.assert_awaited_once_with(str(admin_command_info.guild.id), str(admin_command_info.user.id), "http://example.com/bg.jpg")
+    mock_set.assert_awaited_once_with(
+        str(admin_command_info.guild.id), str(admin_command_info.user.id), "http://example.com/bg.jpg"
+    )

@@ -57,7 +57,7 @@ def _ensure_app_command_errors() -> None:
     ac.TransformerError = TransformerError
     ac.AppCommandOptionType = MagicMock()
     ac.AppCommandOptionType.string = "string"
-    ac.autocomplete = lambda *a, **k: (lambda f: f)
+    ac.autocomplete = lambda *a, **k: lambda f: f
 
     mock.ext.commands.CommandInvokeError = CommandInvokeError
 

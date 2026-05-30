@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from commands.giveaway.start import CustomNameModal, SponsorView
 from tests.integration.commands.admin.conftest import make_view_interaction
 from tests.integration.commands.giveaway.test_giveaway_start_deep import _builder
-
 
 pytestmark = pytest.mark.asyncio
 

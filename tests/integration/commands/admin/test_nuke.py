@@ -3,7 +3,6 @@ import pytest
 from commands.admin.nuke import nuke_channel
 from tests.helpers.discord import make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -9,14 +9,13 @@ from commands.utility.brawlstars.events import events
 from tests.helpers.discord import make_target_member
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 
 def _event(map_name="Gem_Grab", mode="gemGrab"):
     ev = MagicMock()
-    ev.start_time = datetime.now(timezone.utc).isoformat()
-    ev.end_time = datetime.now(timezone.utc).isoformat()
+    ev.start_time = datetime.now(UTC).isoformat()
+    ev.end_time = datetime.now(UTC).isoformat()
     ev.event = MagicMock()
     ev.event.map = map_name
     ev.event.mode = mode

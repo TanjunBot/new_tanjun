@@ -3,7 +3,6 @@ from __future__ import annotations
 import importlib
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import discord
 import pytest
 
 from tests.helpers.discord import make_guild, make_text_channel
@@ -78,7 +77,9 @@ async def test_loop_success_and_exception(loop_cog, loop_name: str, patch_target
             mocked.assert_awaited_once_with(bot)
         else:
             mocked.assert_called_once_with(bot)
-    fail_mock = AsyncMock(side_effect=RuntimeError("loop fail")) if is_async else MagicMock(side_effect=RuntimeError("loop fail"))
+    fail_mock = (
+        AsyncMock(side_effect=RuntimeError("loop fail")) if is_async else MagicMock(side_effect=RuntimeError("loop fail"))
+    )
     with patch.object(loops_mod, patch_target, new=fail_mock):
         await loop_fn()
 

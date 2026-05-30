@@ -7,7 +7,6 @@ import pytest
 from commands.image import _filter
 from services.image_service import ImageFilter, ImageOperation
 
-
 pytestmark = pytest.mark.asyncio
 
 

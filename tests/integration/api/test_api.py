@@ -36,6 +36,7 @@ from api import (  # noqa: E402
     get_levelup_channel,
     get_levelup_message,
     get_levelup_message_status,
+    get_table_definitions,
     get_user_boost,
     get_user_roles_boosts,
     get_warn_config,
@@ -56,7 +57,6 @@ from api import (  # noqa: E402
     set_warn_config,
     set_xp_scaling,
     transaction,
-    get_table_definitions,
 )
 
 # ---------------------------------------------------------------------------
@@ -155,11 +155,10 @@ def bot_with_pool(pool_conn_cursor: tuple[Any, Any, Any]) -> tuple[Any, Any]:
     return bot, cursor
 
 
-from tests.helpers.factories import CHANNEL_ID, GUILD_ID, ROLE_ID, USER_ID  # noqa: E402
+from tests.helpers.factories import CHANNEL_ID, GUILD_ID, USER_ID  # noqa: E402
 
 _TEST_GUILD = GUILD_ID
 _TEST_USER = USER_ID
-
 
 
 class TestExecuteQuery:
@@ -978,4 +977,3 @@ class TestInvalidateCountingCache:
 
         invalidate_counting_cache("12345")
         invalidate_counting_cache(67890)
-

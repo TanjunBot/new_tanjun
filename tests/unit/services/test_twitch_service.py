@@ -361,9 +361,7 @@ class TestTwitchServiceSendLiveNotification:
         notification = TwitchNotification("1", CHANNEL_ID, GUILD_ID, "uuid", "name", None)
         with patch.object(service, "get_notification_by_twitch_uuid", new_callable=AsyncMock) as mock_get:
             mock_get.return_value = [notification]
-            await service.send_live_notification(
-                client, "uuid", {"user_name": "s", "title": "t", "thumbnail_url": "u"}
-            )
+            await service.send_live_notification(client, "uuid", {"user_name": "s", "title": "t", "thumbnail_url": "u"})
 
 
 class TestTwitchServiceSingleton:

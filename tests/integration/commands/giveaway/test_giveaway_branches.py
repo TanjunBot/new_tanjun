@@ -1,14 +1,14 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.giveaway.edit_giveaway import edit_giveaway
 from commands.giveaway.end_giveaway import end_giveaway
 from commands.giveaway.reroll_giveaway import reroll_giveaway
 from commands.giveaway.start import GiveawayBuilder, start_giveaway
-from commands.giveaway.utility import generateGiveawayEmbed, sendGiveaway
+from commands.giveaway.utility import sendGiveaway
 from tests.helpers.discord import make_permissions, make_text_channel
 from tests.integration.commands.admin.conftest import make_view_interaction
-
 
 pytestmark = pytest.mark.asyncio
 

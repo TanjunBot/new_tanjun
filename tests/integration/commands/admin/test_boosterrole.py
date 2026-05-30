@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.admin.boosterrole import create_booster_role
 from tests.helpers.discord import make_permissions, make_role
-
 
 pytestmark = pytest.mark.asyncio
 

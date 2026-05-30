@@ -1,11 +1,11 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
 import discord
+import pytest
 
 from commands.admin.unban import unban
 from tests.helpers.db import AsyncIter
 from tests.helpers.discord import make_permissions
-
 
 pytestmark = pytest.mark.asyncio
 

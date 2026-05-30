@@ -229,7 +229,7 @@ class TestTanjunEmbedSerialization:
         assert len(embed.fields) == 1
 
     def test_to_dict_with_aware_timestamp(self):
-        ts = datetime.datetime(2024, 6, 15, 12, 0, tzinfo=datetime.timezone.utc)
+        ts = datetime.datetime(2024, 6, 15, 12, 0, tzinfo=datetime.UTC)
         embed = TanjunEmbed(title="T", timestamp=ts)
         d = embed.to_dict()
         assert "timestamp" in d
@@ -291,7 +291,7 @@ class TestTanjunEmbedMagicMethods:
         assert bool(embed) is True
 
     def test_bool_with_timestamp(self):
-        embed = TanjunEmbed(timestamp=datetime.datetime.now(tz=datetime.timezone.utc))
+        embed = TanjunEmbed(timestamp=datetime.datetime.now(tz=datetime.UTC))
         assert bool(embed) is True
 
     def test_tanjun_embed_alias(self):

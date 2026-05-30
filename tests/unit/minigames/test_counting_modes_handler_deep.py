@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
 from minigames import counting_modes as cm
 from models import CountingMode
 from tests.helpers.discord import make_guild, make_member, make_message
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -142,5 +141,7 @@ async def test_counting_modes_binary_invalid(mock_repo):
         patch("minigames.counting_modes.random.choice", return_value=CountingMode.NORMAL),
         patch("minigames.counting_modes.get_goal", return_value=50),
     ):
-        await cm.counting(_msg("notbinary"), config={"progress": 0, "mode": CountingMode.BINARY, "goal": 50, "last_counter_id": "1"})
+        await cm.counting(
+            _msg("notbinary"), config={"progress": 0, "mode": CountingMode.BINARY, "goal": 50, "last_counter_id": "1"}
+        )
     mock_repo.clear.assert_awaited_once()

@@ -9,7 +9,6 @@ import utility
 from api import get_detailed_warnings, remove_warning
 from localizer import tanjunLocalizer
 from models import DetailedWarningModel
-from utility import CommandInfo
 
 WARNINGS_PER_PAGE = 5
 

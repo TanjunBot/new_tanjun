@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.minigames.counting.removecountingchannel import removeCountingChannel
 from commands.minigames.counting.setcountingchannel import setCountingChannel
@@ -7,7 +8,6 @@ from commands.minigames.counting.setcountingprogress import setCountingProgress
 from commands.minigames.wordchain.removewordchainchannel import removewordchainchannel
 from commands.minigames.wordchain.setwordchainchannel import setwordchainchannel
 from tests.helpers.discord import make_permissions, make_text_channel
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -30,14 +30,18 @@ async def test_set_counting_channel_success(mock_mod, mock_bot, mock_repo, admin
 
 
 async def test_set_counting_channel_no_permission(restricted_command_info):
-    with patch("commands.minigames.counting.setcountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=True):
+    with patch(
+        "commands.minigames.counting.setcountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=True
+    ):
         channel = make_text_channel(guild=restricted_command_info.guild)
         await setCountingChannel(restricted_command_info, channel)
 
 
 @patch("commands.minigames.counting.removecountingchannel._repo")
 @patch("commands.minigames.counting.removecountingchannel.require_counting_channel", new_callable=AsyncMock, return_value=5)
-@patch("commands.minigames.counting.removecountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False)
+@patch(
+    "commands.minigames.counting.removecountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False
+)
 async def test_remove_counting_channel_success(mock_mod, mock_req, mock_repo, admin_command_info):
     mock_repo.clear = AsyncMock()
     channel = make_text_channel(guild=admin_command_info.guild)
@@ -57,7 +61,9 @@ async def test_set_counting_progress_success(mock_mod, mock_req, mock_valid, moc
 
 
 async def test_set_counting_progress_no_permission(restricted_command_info):
-    with patch("commands.minigames.counting.setcountingprogress.require_moderate_members", new_callable=AsyncMock, return_value=True):
+    with patch(
+        "commands.minigames.counting.setcountingprogress.require_moderate_members", new_callable=AsyncMock, return_value=True
+    ):
         channel = make_text_channel(guild=restricted_command_info.guild)
         await setCountingProgress(restricted_command_info, channel, 1)
 

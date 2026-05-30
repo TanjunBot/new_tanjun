@@ -6,7 +6,6 @@ import pytest
 
 from minigames import _xp_core
 
-
 pytestmark = pytest.mark.asyncio
 
 

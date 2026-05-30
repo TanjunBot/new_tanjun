@@ -62,7 +62,9 @@ async def test_get_battle_log(service: BrawlStarsService):
 
 @pytest.mark.asyncio
 async def test_get_events(service: BrawlStarsService):
-    data = [{"startTime": "20240101T120000.000Z", "endTime": "20240101T130000.000Z", "event": {"id": 1, "mode": "m", "map": "map"}}]
+    data = [
+        {"startTime": "20240101T120000.000Z", "endTime": "20240101T130000.000Z", "event": {"id": 1, "mode": "m", "map": "map"}}
+    ]
     with patch.object(service, "_get_list", AsyncMock(return_value=data)):
         events = await service.get_events()
     assert len(events) == 1

@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from commands.giveaway import utility as gw_util
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -21,7 +20,7 @@ def _giveaway(**kwargs) -> MagicMock:
     gw.description = "Desc"
     gw.ended = kwargs.get("ended", False)
     gw.winners = kwargs.get("winners", 1)
-    gw.start_time = datetime.now(timezone.utc)
+    gw.start_time = datetime.now(UTC)
     return gw
 
 

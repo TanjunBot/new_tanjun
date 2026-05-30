@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.games.akinator import akinator
 from commands.games.connect4 import Connect4, connect4
@@ -9,19 +10,20 @@ from commands.games.rps import rps
 from commands.games.tic_tac_toe import tic_tac_toe
 from commands.games.wordle import wordle
 from tests.helpers.discord import make_member, make_target_member
-from tests.integration.commands.admin.conftest import make_view_interaction
-
 
 pytestmark = pytest.mark.asyncio
 
 
-@pytest.mark.parametrize("locale,expected", [
-    ("de", "de"),
-    ("fr", "fr"),
-    ("ja", "jp"),
-    ("pt-BR", "pt"),
-    ("en-US", "en"),
-])
+@pytest.mark.parametrize(
+    "locale,expected",
+    [
+        ("de", "de"),
+        ("fr", "fr"),
+        ("ja", "jp"),
+        ("pt-BR", "pt"),
+        ("en-US", "en"),
+    ],
+)
 @patch("commands.games.akinator.Akinator")
 async def test_akinator_locales(mock_cls, admin_command_info, locale, expected):
     mock_aki = MagicMock()

@@ -32,9 +32,7 @@ def _channel_row(trigger_id: int = 1):
 
 class TestTriggerMessageCreateParams:
     def test_valid_params(self):
-        params = TriggerMessageCreateParams(
-            guild_id=GUILD_ID, trigger="hi", response="there", case_sensitive=True
-        )
+        params = TriggerMessageCreateParams(guild_id=GUILD_ID, trigger="hi", response="there", case_sensitive=True)
         assert params.trigger == "hi"
         assert params.case_sensitive is True
 

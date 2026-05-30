@@ -9,7 +9,6 @@ from commands.games.hangman import hangman
 from commands.games.wordle import wordle
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 

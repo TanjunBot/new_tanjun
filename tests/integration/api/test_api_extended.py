@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from datetime import datetime, timedelta, timezone
-from typing import Any
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -14,8 +13,6 @@ import tests.mock_config as mock_config
 mock_config.patch_config_module()
 
 from api import (  # noqa: E402
-    addAutoPublish,
-    addToken,
     add_brawlstars_linked_account,
     add_channel_boost,
     add_dynamicslowmode,
@@ -25,8 +22,10 @@ from api import (  # noqa: E402
     add_media_channel,
     add_trigger_message,
     add_user_to_blacklist,
-    checkIfChannelIsAutopublish,
+    addAutoPublish,
+    addToken,
     check_if_user_blacklisted,
+    checkIfChannelIsAutopublish,
     clear_wordchain,
     consumePaidToken,
     execute_batch,
@@ -35,8 +34,6 @@ from api import (  # noqa: E402
     feedbackBlockUser,
     feedbackIsBlocked,
     feedbackUnblockUser,
-    getToken,
-    getTokenOverview,
     get_all_boosts,
     get_blacklist,
     get_brawlstars_linked_account,
@@ -55,16 +52,18 @@ from api import (  # noqa: E402
     get_voice_cooldown,
     get_wordchain_last_user_id,
     get_wordchain_word,
+    getToken,
+    getTokenOverview,
     includeToToken,
     invalidate_counting_cache,
     is_log_entity_blacklisted,
-    removeAutoPublish,
     remove_channel_boost,
     remove_channel_from_blacklist,
+    remove_log_blacklist,
     remove_role_boost,
     remove_user_boost,
     remove_user_from_blacklist,
-    remove_log_blacklist,
+    removeAutoPublish,
     resetToken,
     set_bot,
     set_custom_background,
@@ -264,9 +263,11 @@ class TestXpAndLevelExtended:
 
     @pytest.mark.asyncio
     async def test_get_user_level_info_none_when_missing(self, bot_with_pool):
-        with patch("api.execute_query", new=AsyncMock(return_value=None)), patch(
-            "api.get_xp_scaling", new=AsyncMock(return_value="medium")
-        ), patch("api.get_custom_formula", new=AsyncMock(return_value=None)):
+        with (
+            patch("api.execute_query", new=AsyncMock(return_value=None)),
+            patch("api.get_xp_scaling", new=AsyncMock(return_value="medium")),
+            patch("api.get_custom_formula", new=AsyncMock(return_value=None)),
+        ):
             result = await get_user_level_info(GUILD_ID, USER_ID)
         assert result is None
 
@@ -502,10 +503,11 @@ class TestLogBlacklist:
     @pytest.mark.parametrize("bl_type", list(LogBlacklistType))
     @pytest.mark.asyncio
     async def test_log_blacklist_add_remove(self, bot_with_pool, bl_type: LogBlacklistType):
-        with patch("api.log_blacklist_repo.add", new=AsyncMock()) as add_mock, patch(
-            "api.log_blacklist_repo.remove", new=AsyncMock()
-        ) as remove_mock, patch("api.log_blacklist_repo.get_all", new=AsyncMock(return_value=[USER_ID])), patch(
-            "api.log_blacklist_repo.is_entity_blacklisted", new=AsyncMock(return_value="reason")
+        with (
+            patch("api.log_blacklist_repo.add", new=AsyncMock()) as add_mock,
+            patch("api.log_blacklist_repo.remove", new=AsyncMock()) as remove_mock,
+            patch("api.log_blacklist_repo.get_all", new=AsyncMock(return_value=[USER_ID])),
+            patch("api.log_blacklist_repo.is_entity_blacklisted", new=AsyncMock(return_value="reason")),
         ):
             await add_log_blacklist(GUILD_ID, USER_ID, bl_type)
             await remove_log_blacklist(GUILD_ID, USER_ID, bl_type)
@@ -528,7 +530,7 @@ class TestCustomFormulaExtended:
         assert result == formula
 
 
-_DT = datetime(2024, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+_DT = datetime(2024, 6, 15, 12, 0, 0, tzinfo=UTC)
 _LOG_ENABLE_ROW = (
     GUILD_ID,
     1,
@@ -611,11 +613,13 @@ class TestXpCooldownPaths:
 class TestUserLevelInfoExtended:
     @pytest.mark.asyncio
     async def test_get_user_level_info_with_data(self, bot_with_pool):
-        with patch("api.execute_query", new=AsyncMock(return_value=[(500, "http://bg")])), patch(
-            "api.get_xp_scaling", new=AsyncMock(return_value="medium")
-        ), patch("api.get_custom_formula", new=AsyncMock(return_value=None)), patch(
-            "api.get_level_for_xp_async", new=AsyncMock(return_value=5)
-        ), patch("api.get_xp_for_level_async", new=AsyncMock(side_effect=[600, 400])):
+        with (
+            patch("api.execute_query", new=AsyncMock(return_value=[(500, "http://bg")])),
+            patch("api.get_xp_scaling", new=AsyncMock(return_value="medium")),
+            patch("api.get_custom_formula", new=AsyncMock(return_value=None)),
+            patch("api.get_level_for_xp_async", new=AsyncMock(return_value=5)),
+            patch("api.get_xp_for_level_async", new=AsyncMock(side_effect=[600, 400])),
+        ):
             info = await get_user_level_info(GUILD_ID, USER_ID)
         assert info is not None
         assert info.level == 5
@@ -644,8 +648,8 @@ class TestGiveawayExtended:
             add_giveaway_voice_minutes_if_needed,
             delete_old_giveaways,
             get_blacklisted_roles,
-            set_giveaway_endtime,
             set_giveaway_ended,
+            set_giveaway_endtime,
             set_giveaway_message_id,
             set_giveaway_started,
         )
@@ -768,9 +772,10 @@ class TestLogChannelApi:
     async def test_set_log_channel_new_guild(self, bot_with_pool):
         from api import set_log_channel
 
-        with patch("api.execute_query", new=AsyncMock(return_value=None)), patch(
-            "api.execute_action", new=AsyncMock()
-        ) as action:
+        with (
+            patch("api.execute_query", new=AsyncMock(return_value=None)),
+            patch("api.execute_action", new=AsyncMock()) as action,
+        ):
             await set_log_channel(GUILD_ID, CHANNEL_ID)
         action.assert_awaited_once()
 
@@ -778,9 +783,10 @@ class TestLogChannelApi:
     async def test_set_log_channel_existing_guild(self, bot_with_pool):
         from api import set_log_channel
 
-        with patch("api.execute_query", new=AsyncMock(return_value=[(1,)])), patch(
-            "api.execute_action", new=AsyncMock()
-        ) as action:
+        with (
+            patch("api.execute_query", new=AsyncMock(return_value=[(1,)])),
+            patch("api.execute_action", new=AsyncMock()) as action,
+        ):
             await set_log_channel(GUILD_ID, CHANNEL_ID)
         sql = action.call_args[0][0]
         assert "log_channel" in sql
@@ -894,9 +900,9 @@ class TestReportService:
             block_reporter,
             delete_report,
             reject_report,
+            remove_report_channel,
             report_user,
             resolve_report,
-            remove_report_channel,
             set_report_channel,
             unblock_reporter,
         )
@@ -993,8 +999,9 @@ class TestAISituations:
 
         _, cursor = bot_with_pool
         await addCustomSituation(USER_ID, "sit", "name", 1.0, 1.0, 0.0, 0.0)
-        with patch("api.execute_query", new=AsyncMock(return_value=[("name1",)])), patch(
-            "api.safe_execute_query", new=AsyncMock(return_value=[("name1",)])
+        with (
+            patch("api.execute_query", new=AsyncMock(return_value=[("name1",)])),
+            patch("api.safe_execute_query", new=AsyncMock(return_value=[("name1",)])),
         ):
             assert await getCustomSituations() == ["name1"]
         with patch("api.execute_query", new=AsyncMock(return_value=[_AI_SITUATION_ROW])):
@@ -1008,10 +1015,11 @@ class TestAISituations:
 class TestLeaderboard:
     @pytest.mark.asyncio
     async def test_leaderboard_functions(self, bot_with_pool):
-        from api import getLevelLeaderboard, get_level_leaderboard_count, get_level_leaderboard_paginated
+        from api import get_level_leaderboard_count, get_level_leaderboard_paginated, getLevelLeaderboard
 
-        with patch("api.execute_query_iter", side_effect=lambda q, p=None: _async_iter([_LEADERBOARD_ROW])), patch(
-            "api.execute_query", new=AsyncMock(return_value=[(42,)])
+        with (
+            patch("api.execute_query_iter", side_effect=lambda q, p=None: _async_iter([_LEADERBOARD_ROW])),
+            patch("api.execute_query", new=AsyncMock(return_value=[(42,)])),
         ):
             rows = [r async for r in getLevelLeaderboard(GUILD_ID)]
             assert len(rows) == 1
@@ -1074,6 +1082,7 @@ class TestDynamicSlowmodeExtended:
         )
 
         _, cursor = bot_with_pool
+
         async def iter_side_effect(query, params=None):
             if "dynamicslowmode_messages" in query:
                 async for r in _async_iter([_DSM_MSG_ROW]):
@@ -1082,8 +1091,9 @@ class TestDynamicSlowmodeExtended:
                 async for r in _async_iter([_DSM_ROW]):
                     yield r
 
-        with patch("api.execute_query", new=AsyncMock(return_value=[_DSM_ROW])), patch(
-            "api.execute_query_iter", side_effect=iter_side_effect
+        with (
+            patch("api.execute_query", new=AsyncMock(return_value=[_DSM_ROW])),
+            patch("api.execute_query_iter", side_effect=iter_side_effect),
         ):
             channels = await get_dynamicslowmode_channels(GUILD_ID)
             assert len(channels) == 1

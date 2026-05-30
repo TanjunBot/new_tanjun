@@ -8,7 +8,6 @@ from loops import alivemonitor, create_database_backup, giveaway, level
 from loops._voice_tracker import VoiceUserManager, voice_user_manager
 from tests.helpers.discord import make_guild, make_member
 
-
 pytestmark = pytest.mark.asyncio
 
 

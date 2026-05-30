@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from tests.helpers.discord import make_command_info, make_guild, make_member, make_text_channel
+from tests.helpers.discord import make_command_info, make_member
 
 pytestmark = pytest.mark.asyncio
 

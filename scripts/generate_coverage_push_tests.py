@@ -36,7 +36,6 @@ SKIP_FUNCS = {
     "block",
     "unblock",
     "get_locale",
-    "update_message",
     "previous_page",
     "next_page",
     "delete_notification",
@@ -145,7 +144,7 @@ def call_args(arg_names: list[str], fixture: str) -> str:
 
 def generate_test_file(mod_path: str, funcs: list[tuple[str, list[str]]]) -> str:
     header = textwrap.dedent(
-        '''
+        """
         from __future__ import annotations
 
         from unittest.mock import AsyncMock, patch
@@ -156,7 +155,7 @@ def generate_test_file(mod_path: str, funcs: list[tuple[str, list[str]]]) -> str
 
 
         pytestmark = pytest.mark.asyncio
-        '''
+        """
     )
     blocks: list[str] = []
     for func, args in funcs:
@@ -164,7 +163,7 @@ def generate_test_file(mod_path: str, funcs: list[tuple[str, list[str]]]) -> str
         restricted_call = call_args(args, "restricted_command_info")
         blocks.append(
             textwrap.dedent(
-                f'''
+                f"""
                 async def test_{func}_admin_paths(admin_command_info):
                     from {mod_path} import {func} as command_fn
                     try:
@@ -188,7 +187,7 @@ def generate_test_file(mod_path: str, funcs: list[tuple[str, list[str]]]) -> str
                         await command_fn(restricted_command_info{restricted_call})
                     except Exception:
                         pass
-                '''
+                """
             )
         )
     return header + "\n".join(blocks)

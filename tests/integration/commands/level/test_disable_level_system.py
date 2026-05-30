@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from commands.level.disable_level_system import disable_level_system
+import pytest
 
+from commands.level.disable_level_system import disable_level_system
 
 pytestmark = pytest.mark.asyncio
 

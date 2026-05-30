@@ -872,11 +872,7 @@ class TestDatabaseSync:
         status.edit = AsyncMock()
         ctx.channel.send = AsyncMock()
         ctx.send = AsyncMock(return_value=status)
-        sql_content = (
-            b"CREATE DATABASE `testdb`;\n"
-            b"USE `testdb`;\n"
-            b"CREATE TABLE foo (id INT);\n"
-        )
+        sql_content = b"CREATE DATABASE `testdb`;\nUSE `testdb`;\nCREATE TABLE foo (id INT);\n"
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_resp.read = AsyncMock(return_value=sql_content)

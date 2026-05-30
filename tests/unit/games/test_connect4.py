@@ -71,6 +71,4 @@ class TestConnect4Hypothesis:
             if game.board[row][col] == game.empty_cell:
                 game.board[row][col] = "🔴"
                 break
-        assert game.board[game.rows - 1][col] == "🔴" or any(
-            game.board[r][col] == "🔴" for r in range(game.rows)
-        )
+        assert game.board[game.rows - 1][col] == "🔴" or any(game.board[r][col] == "🔴" for r in range(game.rows))

@@ -8,7 +8,6 @@ from commands.utility.brawlstars.brawlers import brawlers
 from tests.helpers.discord import make_target_member
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 
@@ -47,7 +46,9 @@ async def test_brawlers_not_linked(mock_link, admin_command_info):
     admin_command_info.reply.assert_awaited_once()
 
 
-@patch("commands.utility.brawlstars.brawlers.get_brawlstars_linked_account", new_callable=AsyncMock, side_effect=["<@123>", None])
+@patch(
+    "commands.utility.brawlstars.brawlers.get_brawlstars_linked_account", new_callable=AsyncMock, side_effect=["<@123>", None]
+)
 async def test_brawlers_mention_not_linked(mock_link, admin_command_info):
     await brawlers(admin_command_info, "<@123>")
     admin_command_info.reply.assert_awaited_once()

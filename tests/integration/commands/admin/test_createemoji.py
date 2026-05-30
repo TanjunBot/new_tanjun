@@ -1,12 +1,11 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiohttp
+import pytest
 
 from commands.admin.createemoji import create_emoji
-from tests.helpers.discord import make_permissions, make_role
+from tests.helpers.discord import make_role
 from tests.integration.commands.admin.conftest import make_aiohttp_session
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -58,8 +57,6 @@ async def test_create_emoji_http_exception(mock_session_cls, emoji_command_info)
     import discord as discord_mod
 
     mock_session_cls.return_value = make_aiohttp_session()
-    emoji_command_info.guild.create_custom_emoji = AsyncMock(
-        side_effect=discord_mod.HTTPException(MagicMock(), "error")
-    )
+    emoji_command_info.guild.create_custom_emoji = AsyncMock(side_effect=discord_mod.HTTPException(MagicMock(), "error"))
     await create_emoji(emoji_command_info, name="test", image_url="https://example.com/e.png")
     emoji_command_info.reply.assert_awaited_once()

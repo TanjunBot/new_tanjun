@@ -7,7 +7,6 @@ import pytest
 
 from extensions.logs import (
     ChannelBlacklistCommands,
-    LogsCog,
     LogsCommands,
     RoleBlacklistCommands,
     UserBlacklistCommands,
@@ -118,9 +117,7 @@ async def test_log_event_consumer_skips_missing_channel():
 async def test_channel_blacklist_commands(log_api_mocks):
     group = ChannelBlacklistCommands(name="bl", description="bl")
     for name in ("add_blacklist_channel_cmd", "remove_blacklist_channel_cmd", "show_blacklist_channel_cmd"):
-        await invoke_interaction_command(
-            getattr(group, name), extra_kwargs={"channel": make_text_channel()}
-        )
+        await invoke_interaction_command(getattr(group, name), extra_kwargs={"channel": make_text_channel()})
 
 
 async def test_user_blacklist_commands(log_api_mocks):

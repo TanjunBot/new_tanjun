@@ -6,9 +6,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from commands.level.show_level_roles import show_level_roles_command
-from tests.helpers.discord import make_permissions, make_text_channel
+from tests.helpers.discord import make_permissions
 from tests.integration.commands.admin.conftest import make_view_interaction
-
 
 pytestmark = pytest.mark.asyncio
 

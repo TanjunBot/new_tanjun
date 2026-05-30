@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -21,7 +21,6 @@ from tests.helpers.discord import make_text_channel
 from tests.integration.commands.admin.conftest import make_view_interaction
 from tests.integration.commands.giveaway.test_giveaway_edit_deep import _editor
 from tests.integration.commands.giveaway.test_giveaway_start_deep import _builder
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -137,7 +136,7 @@ async def test_add_participant_day_no_start_time(mock_get, mock_is, mock_bl, moc
     mock_get.return_value = gw
     guild = MagicMock(preferred_locale="en_US")
     member = MagicMock()
-    member.joined_at = datetime(2020, 1, 1, tzinfo=timezone.utc)
+    member.joined_at = datetime(2020, 1, 1, tzinfo=UTC)
     member.roles = []
     guild.get_member = MagicMock(return_value=member)
     client = MagicMock()

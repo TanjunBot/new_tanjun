@@ -1,10 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.ai.add_custom_situation import add_custom_situation
 from commands.ai.ask_gpt import ask_gpt
-from tests.helpers.discord import make_target_member
-
 
 pytestmark = pytest.mark.asyncio
 

@@ -7,7 +7,6 @@ import pytest
 from loops import level as level_loop
 from tests.helpers.discord import make_guild, make_member
 
-
 pytestmark = pytest.mark.asyncio
 
 

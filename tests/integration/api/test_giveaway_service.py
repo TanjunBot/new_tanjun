@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -187,7 +187,7 @@ class TestGiveawayState:
     async def test_set_endtime(self, bot_with_pool):
         _, cursor = bot_with_pool
         cursor.rowcount = 1
-        end = datetime(2025, 1, 1, tzinfo=timezone.utc)
+        end = datetime(2025, 1, 1, tzinfo=UTC)
         await GiveawayService.set_endtime(1, end)
         assert cursor.execute.await_args[0][1][0] == end
 

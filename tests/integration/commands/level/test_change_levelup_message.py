@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from commands.level.change_levelup_message import change_levelup_message
+import pytest
 
+from commands.level.change_levelup_message import change_levelup_message
 
 pytestmark = pytest.mark.asyncio
 

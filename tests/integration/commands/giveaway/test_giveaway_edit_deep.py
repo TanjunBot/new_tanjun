@@ -9,7 +9,6 @@ from commands.giveaway.edit_giveaway import GiveawayEditor, edit_giveaway
 from tests.helpers.discord import make_permissions, make_text_channel
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 
@@ -107,7 +106,12 @@ async def test_editor_button_callbacks(custom_id, admin_command_info):
     editor = _editor(admin_command_info)
     interaction = make_view_interaction(user=admin_command_info.user)
     await editor.button_callback(interaction, MagicMock(custom_id=custom_id))
-    assert interaction.response.send_modal.await_count + interaction.response.edit_message.await_count + interaction.response.send_message.await_count >= 1
+    assert (
+        interaction.response.send_modal.await_count
+        + interaction.response.edit_message.await_count
+        + interaction.response.send_message.await_count
+        >= 1
+    )
 
 
 @patch("commands.giveaway.edit_giveaway.generateGiveawayEmbed", new_callable=AsyncMock, return_value=MagicMock())

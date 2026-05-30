@@ -11,7 +11,6 @@ from commands.utility.setup_booster_role import setupBoosterRole
 from services.booster_service import BoosterType
 from tests.helpers.discord import make_member, make_permissions
 
-
 pytestmark = pytest.mark.asyncio
 
 

@@ -8,7 +8,6 @@ import pytest
 import extensions.admin as admin_ext
 from extensions.admin import (
     AdministrationCommands,
-    AdminCog,
     JoinToCreateCommands,
     ReportCommands,
     RoleCommands,
@@ -73,5 +72,3 @@ async def test_invoke_all_group_handlers(group_cls, mock_all_admin_commands):
 async def test_admin_cog_on_ready():
     bot = await load_extension_bot(EXTENSION, fire_ready=True)
     assert bot.tree.add_command.called
-
-

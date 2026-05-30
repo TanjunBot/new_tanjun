@@ -17,8 +17,10 @@ from tests.helpers.discord import (
     make_guild,
     make_member,
     make_permissions,
-    make_role as _make_role,
     make_text_channel,
+)
+from tests.helpers.discord import (
+    make_role as _make_role,
 )
 
 _ensure_discord_types()
@@ -42,7 +44,7 @@ discord.TextStyle.short = "short"
 discord.TextStyle.paragraph = "paragraph"
 discord.ui.Select = MagicMock()
 if hasattr(discord.app_commands, "autocomplete"):
-    discord.app_commands.autocomplete = lambda *a, **k: (lambda f: f)
+    discord.app_commands.autocomplete = lambda *a, **k: lambda f: f
 discord.ui.UserSelect = MagicMock()
 discord.ui.ChannelSelect = MagicMock()
 discord.ui.RoleSelect = MagicMock()

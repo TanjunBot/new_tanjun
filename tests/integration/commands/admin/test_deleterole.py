@@ -1,11 +1,10 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 
 import discord as discord_mod
+import pytest
 
 from commands.admin.deleterole import deleterole
 from tests.helpers.discord import make_permissions, make_role
-
 
 pytestmark = pytest.mark.asyncio
 

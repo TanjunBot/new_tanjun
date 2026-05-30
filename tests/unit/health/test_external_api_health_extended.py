@@ -3,10 +3,9 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
 from external_api_health_checks import GIPHYHealthCheck
-from health.checks import HealthStatus
 
+from health.checks import HealthStatus
 
 pytestmark = pytest.mark.asyncio
 

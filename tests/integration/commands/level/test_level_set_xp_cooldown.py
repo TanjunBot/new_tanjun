@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from commands.level.level_set_xp_cooldown import set_text_cooldown_command, set_voice_cooldown_command
+import pytest
 
+from commands.level.level_set_xp_cooldown import set_text_cooldown_command, set_voice_cooldown_command
 
 pytestmark = pytest.mark.asyncio
 

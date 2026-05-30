@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.admin.trigger_messages.send import send_trigger_message
 from tests.helpers.discord import make_message
-
 
 pytestmark = pytest.mark.asyncio
 

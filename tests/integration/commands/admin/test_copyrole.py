@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 from commands.admin.copyrole import copyrole
 from tests.helpers.discord import make_permissions, make_role, make_target_member
-
 
 pytestmark = pytest.mark.asyncio
 

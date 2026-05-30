@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import asyncio
-import os
-import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -22,7 +20,6 @@ if not hasattr(discord, "DiscordException"):
     discord.DiscordException = type("DiscordException", (Exception,), {})
 
 import main as main_mod
-
 
 main_mod.discord.DiscordException = type("DiscordException", (Exception,), {})
 
@@ -148,9 +145,7 @@ class TestOnReady:
         if bot.user is not None:
             pass
         await bot.change_presence(
-            activity=main_mod.discord.Game(
-                name=main_mod.config.activity.format(version=main_mod.config.version)
-            )
+            activity=main_mod.discord.Game(name=main_mod.config.activity.format(version=main_mod.config.version))
         )
 
         assert ready_path.exists()

@@ -8,21 +8,23 @@ from commands.games.tic_tac_toe import TicTacToe
 from tests.helpers.discord import make_member, make_target_member
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 
-@pytest.mark.parametrize("button_name,custom_id", [
-    ("play_0", "0"),
-    ("play_1", "1"),
-    ("play_2", "2"),
-    ("play_3", "3"),
-    ("play_4", "4"),
-    ("play_5", "5"),
-    ("play_6", "6"),
-    ("play_7", "7"),
-    ("play_8", "8"),
-])
+@pytest.mark.parametrize(
+    "button_name,custom_id",
+    [
+        ("play_0", "0"),
+        ("play_1", "1"),
+        ("play_2", "2"),
+        ("play_3", "3"),
+        ("play_4", "4"),
+        ("play_5", "5"),
+        ("play_6", "6"),
+        ("play_7", "7"),
+        ("play_8", "8"),
+    ],
+)
 @patch("commands.games.tic_tac_toe.TicTacToe.update_board", new_callable=AsyncMock)
 async def test_ttt_all_buttons(mock_update, button_name, custom_id):
     game = TicTacToe(make_member(), make_target_member(user_id=2))

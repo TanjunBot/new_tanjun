@@ -8,7 +8,6 @@ from api import (
     set_log_channel as set_log_channel_api,
 )
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def set_log_channel(command_info: utility.CommandInfo, channel: discord.TextChannel) -> None:

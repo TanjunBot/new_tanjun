@@ -5,7 +5,6 @@ import pytest
 from commands.math.faculty import faculty_command
 from commands.math.randomnumber import random_number_command
 
-
 pytestmark = pytest.mark.asyncio
 
 

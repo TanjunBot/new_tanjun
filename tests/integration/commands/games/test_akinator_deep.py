@@ -7,7 +7,6 @@ import pytest
 from commands.games.akinator import akinator
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 

@@ -5,8 +5,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from commands.utility.claim_booster_channel import claimBoosterChannel, remove_claimed_booster_channels_that_are_expired
-from services.booster_service import BoosterType, ClaimedBoosterType
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -32,7 +30,11 @@ async def test_claim_not_booster(mock_get, admin_command_info):
     admin_command_info.reply.assert_awaited_once()
 
 
-@patch("commands.utility.claim_booster_channel.booster_service.get_claim_for_user", new_callable=AsyncMock, return_value="existing")
+@patch(
+    "commands.utility.claim_booster_channel.booster_service.get_claim_for_user",
+    new_callable=AsyncMock,
+    return_value="existing",
+)
 @patch("commands.utility.claim_booster_channel.booster_service.get", new_callable=AsyncMock, return_value="999")
 async def test_claim_already_claimed(mock_get, mock_claim, admin_command_info):
     admin_command_info.user.premium_since = MagicMock()

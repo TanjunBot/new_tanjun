@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from commands.giveaway import utility as gw_util
 from models import GiveawayChannelRequirementModel
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -16,13 +15,13 @@ def _giveaway(**kwargs) -> MagicMock:
     gw = MagicMock()
     gw.title = "Prize"
     gw.description = kwargs.get("description", "Desc")
-    gw.price = kwargs.get("price", None)
-    gw.sponsor = kwargs.get("sponsor", None)
+    gw.price = kwargs.get("price")
+    gw.sponsor = kwargs.get("sponsor")
     gw.winners = 1
     gw.new_message_requirement = kwargs.get("new_message_requirement")
     gw.day_requirement = kwargs.get("day_requirement")
     gw.voice_requirement = kwargs.get("voice_requirement")
-    gw.end_time = kwargs.get("end_time", datetime.now(timezone.utc))
+    gw.end_time = kwargs.get("end_time", datetime.now(UTC))
     gw.guild_id = "123"
     gw.channel_id = "456"
     gw.message = "Giveaway!"

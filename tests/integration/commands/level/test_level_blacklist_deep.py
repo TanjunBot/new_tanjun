@@ -14,7 +14,6 @@ from commands.level.level_blacklist import (
 )
 from tests.helpers.discord import make_permissions, make_role, make_target_member
 
-
 pytestmark = pytest.mark.asyncio
 
 

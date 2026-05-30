@@ -5,8 +5,8 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
 from DatabaseHealthCheck import DatabaseHealthCheck
+
 from health.checks import HealthStatus
 
 

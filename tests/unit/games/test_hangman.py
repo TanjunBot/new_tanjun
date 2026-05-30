@@ -8,7 +8,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from commands.games.hangman import get_guessed_letters, wrong_letters, hangmanSteps
+from commands.games.hangman import get_guessed_letters, hangmanSteps, wrong_letters
 
 
 class TestGetGuessedLetters:

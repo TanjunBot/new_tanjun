@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
 
 from commands.level.give_xp import give_xp_command
 from tests.helpers.discord import make_target_member
-
 
 pytestmark = pytest.mark.asyncio
 

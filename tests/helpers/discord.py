@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+import sys
+from datetime import UTC, datetime
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
-
-import sys
 
 from tests.helpers.discord_exceptions import FakeEmbed, Forbidden, HTTPException, NotFound
 
@@ -199,7 +198,7 @@ def _ensure_discord_types() -> None:
     discord.Embed = FakeEmbed
     if not hasattr(discord, "utils") or discord.utils is None:
         discord.utils = MagicMock()
-    discord.utils.utcnow = lambda: datetime.now(timezone.utc)
+    discord.utils.utcnow = lambda: datetime.now(UTC)
     discord.utils.get = _mock_discord_get
     if not hasattr(discord, "ui") or discord.ui is None:
         discord.ui = MagicMock()

@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import discord
 import pytest
 
-from commands.utility.report import report, report_btn_click
 from commands.utility.removescheduled import MessageSelectView, remove_scheduled_message
+from commands.utility.report import report, report_btn_click
 from tests.helpers.discord import make_permissions, make_target_member, make_text_channel
 from tests.helpers.factories import CHANNEL_ID, GUILD_ID, USER_ID
 from tests.integration.commands.admin.conftest import make_view_interaction
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -152,7 +150,7 @@ async def test_remove_scheduled_no_messages(mock_get, admin_command_info):
 async def test_remove_scheduled_by_id_success(mock_get, mock_cancel, admin_command_info):
     from models import ScheduledMessageModel
 
-    dt = datetime.now(timezone.utc)
+    dt = datetime.now(UTC)
     msg = ScheduledMessageModel.from_row((1, GUILD_ID, CHANNEL_ID, USER_ID, "hello", dt, None, None, None, None, dt))
     mock_get.return_value = [msg]
     await remove_scheduled_message(admin_command_info, message_id=1)
@@ -163,7 +161,7 @@ async def test_remove_scheduled_by_id_success(mock_get, mock_cancel, admin_comma
 async def test_remove_scheduled_not_found(mock_get, admin_command_info):
     from models import ScheduledMessageModel
 
-    dt = datetime.now(timezone.utc)
+    dt = datetime.now(UTC)
     msg = ScheduledMessageModel.from_row((1, GUILD_ID, CHANNEL_ID, USER_ID, "hello", dt, None, None, None, None, dt))
     mock_get.return_value = [msg]
     await remove_scheduled_message(admin_command_info, message_id=999)
@@ -174,7 +172,7 @@ async def test_remove_scheduled_not_found(mock_get, admin_command_info):
 async def test_remove_scheduled_select_view(mock_get, admin_command_info):
     from models import ScheduledMessageModel
 
-    dt = datetime.now(timezone.utc)
+    dt = datetime.now(UTC)
     msg = ScheduledMessageModel.from_row((1, GUILD_ID, CHANNEL_ID, USER_ID, "hello world", dt, None, None, None, None, dt))
     mock_get.return_value = [msg]
     admin_command_info.reply = AsyncMock(return_value=MagicMock(edit=AsyncMock()))

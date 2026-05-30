@@ -7,7 +7,6 @@ import pytest
 from commands.utility.avatar_decoration import avatarDecoration
 from tests.helpers.discord import make_member
 
-
 pytestmark = pytest.mark.asyncio
 
 

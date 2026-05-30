@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.admin.addrole import addrole
 from commands.admin.boosterrole import create_booster_role
@@ -9,17 +10,19 @@ from commands.admin.ticket.open_ticket import openTicket
 from tests.helpers.discord import make_interaction, make_permissions, make_role, make_target_member
 from tests.integration.commands.admin.conftest import make_aiohttp_session
 
-
 pytestmark = pytest.mark.asyncio
 
 _SAMPLE = "<:e:123456789012345678>"
 
 
-@pytest.mark.parametrize("emoji_input", [
-    "no emoji",
-    "plain text",
-    ":notvalid:",
-])
+@pytest.mark.parametrize(
+    "emoji_input",
+    [
+        "no emoji",
+        "plain text",
+        ":notvalid:",
+    ],
+)
 async def test_copy_emoji_invalid_inputs(emoji_command_info, emoji_input):
     await copy_emoji(emoji_command_info, emoji=emoji_input)
     emoji_command_info.reply.assert_awaited_once()
@@ -127,12 +130,15 @@ async def test_create_ticket_various_names(mock_service, admin_command_info, nam
     channel.send.assert_awaited_once()
 
 
-@pytest.mark.parametrize("trigger,response", [
-    ("hello", "hi there"),
-    ("ping", "pong"),
-    ("help", "need assistance?"),
-    ("rules", "read #rules"),
-])
+@pytest.mark.parametrize(
+    "trigger,response",
+    [
+        ("hello", "hi there"),
+        ("ping", "pong"),
+        ("help", "need assistance?"),
+        ("rules", "read #rules"),
+    ],
+)
 @patch("commands.admin.trigger_messages.add.trigger_message_service")
 async def test_add_trigger_various_pairs(mock_service, admin_command_info, trigger, response):
     from commands.admin.trigger_messages.add import add_trigger_message
@@ -208,7 +214,9 @@ async def test_copyrole_copy_members_flag(admin_command_info, copy_members):
 
 @pytest.mark.parametrize("locale", ["en-US", "de", "fr", "es-ES"])
 @patch("commands.admin.join_to_create.jointocreatechannel.set_join_to_create_channel", new_callable=AsyncMock)
-@patch("commands.admin.join_to_create.jointocreatechannel.get_join_to_create_channel", new_callable=AsyncMock, return_value=None)
+@patch(
+    "commands.admin.join_to_create.jointocreatechannel.get_join_to_create_channel", new_callable=AsyncMock, return_value=None
+)
 async def test_jointocreate_various_locales(mock_get, mock_set, admin_command_info, locale):
     from commands.admin.join_to_create.jointocreatechannel import jointocreatechannel
     from tests.helpers.discord import make_text_channel

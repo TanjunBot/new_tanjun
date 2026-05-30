@@ -7,8 +7,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from commands.image._filter import apply_filter as command_fn
-from tests.integration.commands.conftest import embed_from_reply
 from tests.helpers.discord import make_command_info
+from tests.integration.commands.conftest import embed_from_reply
 
 
 @pytest.mark.asyncio

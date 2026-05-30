@@ -10,7 +10,6 @@ from models import BlockedReporterModel, ReportModel
 from services.report_service import ReportCreateParams, ReportFilter, ReportService, report_service
 from tests.helpers.factories import GUILD_ID, USER_ID
 
-
 REPORTER_ID = "22222222222222222"
 
 
@@ -37,9 +36,7 @@ def service() -> ReportService:
 
 class TestReportCreateParams:
     def test_defaults(self):
-        params = ReportCreateParams(
-            guild_id=GUILD_ID, user_id=USER_ID, reporter_id=REPORTER_ID, reason="bad"
-        )
+        params = ReportCreateParams(guild_id=GUILD_ID, user_id=USER_ID, reporter_id=REPORTER_ID, reason="bad")
         assert params.is_moderator is False
 
     def test_moderator_flag(self):
@@ -58,9 +55,7 @@ class TestReportServiceCreate:
     async def test_create_regular(self, service: ReportService):
         with patch("services.report_service.execute_insert_and_get_id", new_callable=AsyncMock) as mock_insert:
             mock_insert.return_value = 42
-            params = ReportCreateParams(
-                guild_id=GUILD_ID, user_id=USER_ID, reporter_id=REPORTER_ID, reason="spam"
-            )
+            params = ReportCreateParams(guild_id=GUILD_ID, user_id=USER_ID, reporter_id=REPORTER_ID, reason="spam")
             result = await service.create(params)
         assert result == 42
         query = mock_insert.await_args[0][0]

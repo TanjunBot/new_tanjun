@@ -1,10 +1,10 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.admin.warn import warn_user
 from tests.helpers.discord import make_role, make_target_member, make_warn_config
 from tests.integration.commands.admin.conftest import async_iter_from
-
 
 pytestmark = pytest.mark.asyncio
 

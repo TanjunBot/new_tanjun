@@ -7,7 +7,6 @@ import pytest
 from commands.level.disable_level_system import disable_level_system
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 

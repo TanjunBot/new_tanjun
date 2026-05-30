@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-import extensions.setup_wizards as sw_ext
 from extensions.setup_wizards import (
     BoosterChannelModal,
     BoosterRoleModal,
@@ -18,7 +17,6 @@ from extensions.setup_wizards import (
     SetupWizardCommands,
 )
 from tests.helpers.discord import make_guild, make_text_channel
-from tests.helpers.extensions import invoke_interaction_command
 from tests.integration.extensions.conftest import load_extension_bot
 
 pytestmark = pytest.mark.asyncio
@@ -83,10 +81,7 @@ async def test_log_channel_select_view_callbacks():
 async def test_level_setup_views():
     guild = make_guild()
     for view_cls in (LevelSetupView, LevelCooldownView, LevelChannelView, BoosterSetupView, LogEventConfigView):
-        if view_cls is LevelCooldownView:
-            parent = LevelSetupView("en-US", guild)
-            view = view_cls("en-US", guild, parent)
-        elif view_cls is LevelChannelView:
+        if view_cls is LevelCooldownView or view_cls is LevelChannelView:
             parent = LevelSetupView("en-US", guild)
             view = view_cls("en-US", guild, parent)
         else:

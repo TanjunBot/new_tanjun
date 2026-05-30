@@ -1,10 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-import discord
+import pytest
 
 from commands.math.calculator import CalculatorView, calculator_command
-from tests.helpers.discord import make_command_info, make_interaction, make_member
+from tests.helpers.discord import make_interaction, make_member
 
 pytestmark = pytest.mark.asyncio
 

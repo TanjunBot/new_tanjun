@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from services.math import MathService, MathSyntaxError
+from services.math import MathService
 
 
 @pytest.fixture

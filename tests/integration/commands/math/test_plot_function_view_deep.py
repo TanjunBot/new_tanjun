@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import ast
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import numpy as np
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 
 from commands.math.plot_function import _safe_eval_node, plot_function_command
 from tests.helpers.discord import make_target_member
 from tests.integration.commands.admin.conftest import make_view_interaction
-
 
 pytestmark = pytest.mark.asyncio
 

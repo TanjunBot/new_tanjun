@@ -1,10 +1,10 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.admin.copy_emoji import copy_emoji
 from tests.helpers.discord import make_permissions
 from tests.integration.commands.admin.conftest import make_aiohttp_session
-
 
 pytestmark = pytest.mark.asyncio
 

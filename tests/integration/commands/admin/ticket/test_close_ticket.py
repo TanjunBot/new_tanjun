@@ -1,10 +1,10 @@
-import pytest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.admin.ticket.close_ticket import close_ticket, generate_summary_html
 from tests.helpers.discord import make_interaction, make_member, make_text_channel
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -65,14 +65,18 @@ async def test_close_ticket_no_summary_channel(mock_service):
     ticket = MagicMock()
     ticket.channel_id = 444444444
     ticket.opener_id = 111111111
-    ticket.opened_at = datetime.now(timezone.utc)
+    ticket.opened_at = datetime.now(UTC)
     mock_service.get_by_config_and_channel = AsyncMock(return_value=ticket)
     interaction.guild.fetch_member = AsyncMock(return_value=make_member())
     await close_ticket(interaction)
     interaction.channel.send.assert_awaited_once()
 
 
-@patch("commands.admin.ticket.close_ticket.utility.upload_to_tanjun_logs", new_callable=AsyncMock, return_value="https://logs.example.com")
+@patch(
+    "commands.admin.ticket.close_ticket.utility.upload_to_tanjun_logs",
+    new_callable=AsyncMock,
+    return_value="https://logs.example.com",
+)
 @patch("commands.admin.ticket.close_ticket.generate_summary_html", new_callable=AsyncMock, return_value="<html></html>")
 @patch("commands.admin.ticket.close_ticket.ticket_service")
 async def test_close_ticket_with_summary_channel(mock_service, mock_html, mock_upload):
@@ -81,7 +85,7 @@ async def test_close_ticket_with_summary_channel(mock_service, mock_html, mock_u
     ticket = MagicMock()
     ticket.channel_id = 444444444
     ticket.opener_id = 111111111
-    ticket.opened_at = datetime.now(timezone.utc)
+    ticket.opened_at = datetime.now(UTC)
     mock_service.get_by_config_and_channel = AsyncMock(return_value=ticket)
     interaction.guild.fetch_member = AsyncMock(return_value=make_member())
     summary_channel = make_text_channel()
@@ -108,7 +112,7 @@ async def test_generate_summary_html_empty_history():
 
     channel.history = empty_history
     member = make_member()
-    result = await generate_summary_html(channel, member, datetime.now(timezone.utc))
+    result = await generate_summary_html(channel, member, datetime.now(UTC))
     assert "<html" in result.lower()
 
 
@@ -129,7 +133,7 @@ async def test_generate_summary_html_with_message():
 
     channel.history = one_message
     member = make_member()
-    result = await generate_summary_html(channel, member, datetime.now(timezone.utc))
+    result = await generate_summary_html(channel, member, datetime.now(UTC))
     assert "Hello world" in result
 
 
@@ -158,7 +162,7 @@ async def test_generate_summary_html_with_embed_message():
 
     channel.history = one_message
     member = make_member()
-    result = await generate_summary_html(channel, member, datetime.now(timezone.utc))
+    result = await generate_summary_html(channel, member, datetime.now(UTC))
     assert "Title" in result
     assert "Footer" in result
 
@@ -186,7 +190,7 @@ async def test_generate_summary_html_with_role_mentions():
         yield msg
 
     channel.history = one_message
-    result = await generate_summary_html(channel, make_member(), datetime.now(timezone.utc))
+    result = await generate_summary_html(channel, make_member(), datetime.now(UTC))
     assert "Mod" in result
 
 
@@ -201,7 +205,7 @@ async def test_generate_summary_html_skips_empty_message():
         yield msg
 
     channel.history = one_message
-    result = await generate_summary_html(channel, make_member(), datetime.now(timezone.utc))
+    result = await generate_summary_html(channel, make_member(), datetime.now(UTC))
     assert "<html" in result.lower()
 
 
@@ -212,7 +216,7 @@ async def test_close_ticket_archive_text_channel(mock_service):
     ticket = MagicMock()
     ticket.channel_id = 444444444
     ticket.opener_id = 111111111
-    ticket.opened_at = datetime.now(timezone.utc)
+    ticket.opened_at = datetime.now(UTC)
     mock_service.get_by_config_and_channel = AsyncMock(return_value=ticket)
     interaction.guild.fetch_member = AsyncMock(return_value=make_member())
     interaction.channel.edit = AsyncMock()

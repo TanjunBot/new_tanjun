@@ -9,7 +9,6 @@ from minigames import _counting_common as pkg_common
 from minigames._counting_common import _handle_guild_check, _handle_opted_out
 from tests.helpers.discord import make_guild, make_message
 
-
 pytestmark = pytest.mark.asyncio
 
 

@@ -6,7 +6,7 @@ import pytest
 
 import extensions.games as games_ext
 from extensions.games import GameCommands
-from tests.helpers.discord import make_interaction, make_member
+from tests.helpers.discord import make_member
 from tests.helpers.extensions import invoke_interaction_command
 from tests.integration.extensions.conftest import load_extension_bot
 

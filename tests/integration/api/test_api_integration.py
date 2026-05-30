@@ -19,7 +19,6 @@ Set TANJUN_INTEGRATION=true as an alternative environment trigger.
 
 import os
 from datetime import datetime, timedelta
-from unittest.mock import MagicMock
 
 import pytest
 
@@ -883,4 +882,3 @@ async def test_warning_reasons(bot_with_integration_pool, reason: str):
     await add_warning(guild_id, user_id, reason, "mod", expires)
     warnings = await get_warnings(guild_id, user_id)
     assert any(w.reason == reason for w in warnings)
-

@@ -14,11 +14,14 @@ from commands.channel.farewell import (
 )
 from tests.helpers.discord import make_member, make_permissions, make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 
-@patch("commands.channel.farewell.utility.upload_image_to_imgbb", new_callable=AsyncMock, return_value={"data": {"url": "http://img"}})
+@patch(
+    "commands.channel.farewell.utility.upload_image_to_imgbb",
+    new_callable=AsyncMock,
+    return_value={"data": {"url": "http://img"}},
+)
 @patch("commands.channel.farewell.set_leave_channel", new_callable=AsyncMock)
 @patch("commands.channel.farewell.get_leave_channel", new_callable=AsyncMock, return_value=None)
 async def test_set_farewell_with_attachment(mock_get, mock_set, mock_upload, admin_command_info):

@@ -6,7 +6,6 @@ import pytest
 
 from loops._voice_tracker import VoiceUserManager
 
-
 pytestmark = pytest.mark.asyncio
 
 

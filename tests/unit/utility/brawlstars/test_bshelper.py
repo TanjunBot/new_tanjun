@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from unittest.mock import mock_open, patch
 
-import pytest
-
 from commands.utility.brawlstars import bshelper
 
 

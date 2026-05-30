@@ -5,21 +5,20 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from locale_file_health_check import LocaleFileHealthCheck
 
 from health.checks import HealthStatus
-from locale_file_health_check import LocaleFileHealthCheck
 
 
 @pytest.mark.asyncio
 async def test_invalid_structure_degraded():
     check = LocaleFileHealthCheck()
-    with patch.object(Path, "exists", return_value=True):
-        with patch("builtins.open", create=True):
-            with patch("json.load", return_value=["not", "dicts"]):
-                with patch.object(check, "LOCALES", ["en"]):
-                    mock_path = Path("locales/en.json")
-                    with patch.object(Path, "__truediv__", return_value=mock_path):
-                        result = await check.run()
+    with patch.object(Path, "exists", return_value=True), patch("builtins.open", create=True):
+        with patch("json.load", return_value=["not", "dicts"]):
+            with patch.object(check, "LOCALES", ["en"]):
+                mock_path = Path("locales/en.json")
+                with patch.object(Path, "__truediv__", return_value=mock_path):
+                    result = await check.run()
     assert result.status == HealthStatus.CRITICAL
 
 
@@ -33,11 +32,13 @@ async def test_missing_required_key_degraded():
 
         return io.StringIO(json.dumps(data))
 
-    with patch.object(Path, "exists", return_value=True), patch("builtins.open", fake_open), patch(
-        "json.load", return_value=data
+    with (
+        patch.object(Path, "exists", return_value=True),
+        patch("builtins.open", fake_open),
+        patch("json.load", return_value=data),
+        patch.object(check, "LOCALES", ["en", "de"]),
     ):
-        with patch.object(check, "LOCALES", ["en", "de"]):
-            result = await check.run()
+        result = await check.run()
     assert result.status in (HealthStatus.DEGRADED, HealthStatus.CRITICAL)
 
 

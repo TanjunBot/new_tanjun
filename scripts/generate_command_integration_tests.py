@@ -35,7 +35,13 @@ def get_entry_functions(path: Path) -> list[tuple[str, list[str]]]:
                 continue
             if node.name in ("confirm", "cancel", "previous", "next", "remove", "block", "unblock"):
                 continue
-            if node.name.endswith("_callback") or node.name in ("load_page", "generate_page", "generatePage", "generate_embed", "update_message"):
+            if node.name.endswith("_callback") or node.name in (
+                "load_page",
+                "generate_page",
+                "generatePage",
+                "generate_embed",
+                "update_message",
+            ):
                 continue
             args = [a.arg for a in node.args.args if a.arg not in ("self",)]
             funcs.append((node.name, args))
@@ -44,7 +50,16 @@ def get_entry_functions(path: Path) -> list[tuple[str, list[str]]]:
 
 def detect_permission(path: Path) -> str:
     text = path.read_text()
-    for perm in ("administrator", "manage_guild", "ban_members", "kick_members", "moderate_members", "manage_roles", "manage_messages", "manage_channels"):
+    for perm in (
+        "administrator",
+        "manage_guild",
+        "ban_members",
+        "kick_members",
+        "moderate_members",
+        "manage_roles",
+        "manage_messages",
+        "manage_channels",
+    ):
         if f".{perm}" in text:
             return perm
     return "administrator"
@@ -377,9 +392,32 @@ def generate_generic_admin_tests(mod_path: str, func: str, perm: str, args: list
         elif arg == "channel":
             setup_lines.append(f"        {arg} = make_text_channel(guild=admin_command_info.guild)")
             call_args.append(f"{arg}={arg}")
-        elif arg in ("reason", "name", "message", "username", "trigger", "response", "locale", "new_message", "introduction", "description", "nickname", "title"):
+        elif arg in (
+            "reason",
+            "name",
+            "message",
+            "username",
+            "trigger",
+            "response",
+            "locale",
+            "new_message",
+            "introduction",
+            "description",
+            "nickname",
+            "title",
+        ):
             call_args.append(f'{arg}="test"')
-        elif arg in ("amount", "seconds", "level", "page", "start_level", "end_level", "delete_message_days", "cooldown", "position"):
+        elif arg in (
+            "amount",
+            "seconds",
+            "level",
+            "page",
+            "start_level",
+            "end_level",
+            "delete_message_days",
+            "cooldown",
+            "position",
+        ):
             call_args.append(f"{arg}=1")
         elif arg == "duration":
             call_args.append(f'{arg}="1h"')
@@ -414,7 +452,7 @@ def generate_generic_admin_tests(mod_path: str, func: str, perm: str, args: list
     call_suffix = ", " + ", ".join(call_args) if call_args else ""
 
     return textwrap.dedent(
-        f'''
+        f"""
         import pytest
         from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -470,7 +508,7 @@ def generate_generic_admin_tests(mod_path: str, func: str, perm: str, args: list
             assert admin_command_info.guild is not None
 {chr(10).join("            " + line.strip() for line in setup_block.split(chr(10)))}
             await {func}(admin_command_info{call_suffix})
-        '''
+        """
     )
 
 
@@ -722,7 +760,7 @@ def generate_for_module(cmd_path: Path) -> str:
 
 def generate_addrole_tests(mod_path: str) -> str:
     return textwrap.dedent(
-        f'''
+        f"""
         import pytest
         from unittest.mock import AsyncMock, MagicMock
 
@@ -782,13 +820,13 @@ def generate_addrole_tests(mod_path: str) -> str:
             user.roles = []
             await addrole(admin_command_info, user, role)
             admin_command_info.reply.assert_awaited_once()
-        '''
+        """
     )
 
 
 def generate_purge_tests(mod_path: str) -> str:
     return textwrap.dedent(
-        f'''
+        f"""
         import pytest
         from unittest.mock import AsyncMock, MagicMock
         import discord
@@ -849,13 +887,13 @@ def generate_purge_tests(mod_path: str) -> str:
             admin_command_info.channel.purge = AsyncMock(return_value=[])
             await purge(admin_command_info, 10, setting="bot")
             admin_command_info.reply.assert_awaited_once()
-        '''
+        """
     )
 
 
 def generate_say_tests(mod_path: str) -> str:
     return textwrap.dedent(
-        f'''
+        f"""
         import pytest
         from unittest.mock import AsyncMock, MagicMock
         import discord
@@ -910,13 +948,13 @@ def generate_say_tests(mod_path: str) -> str:
             channel.permissions_for = MagicMock(return_value=make_permissions(send_messages=True))
             await say(admin_command_info, channel, message="hi")
             assert "embed" in admin_command_info.reply.await_args.kwargs
-        '''
+        """
     )
 
 
 def generate_unban_tests(mod_path: str) -> str:
     return textwrap.dedent(
-        f'''
+        f"""
         import pytest
         from unittest.mock import AsyncMock, MagicMock
         import discord
@@ -975,7 +1013,7 @@ def generate_unban_tests(mod_path: str) -> str:
             admin_command_info.guild.bans = failing_bans
             await unban(admin_command_info, "user")
             admin_command_info.reply.assert_awaited_once()
-        '''
+        """
     )
 
 

@@ -7,7 +7,6 @@ import pytest
 from commands.channel.media import addMediaChannel, mediaChannelMessage, removeMediaChannel
 from tests.helpers.discord import make_permissions, make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 

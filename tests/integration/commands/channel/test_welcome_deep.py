@@ -12,13 +12,16 @@ from commands.channel.welcome import (
     setWelcomeChannel,
     welcomeNewUser,
 )
-from tests.helpers.discord import make_member, make_permissions, make_text_channel
-
+from tests.helpers.discord import make_member, make_text_channel
 
 pytestmark = pytest.mark.asyncio
 
 
-@patch("commands.channel.welcome.utility.upload_image_to_imgbb", new_callable=AsyncMock, return_value={"data": {"url": "http://img"}})
+@patch(
+    "commands.channel.welcome.utility.upload_image_to_imgbb",
+    new_callable=AsyncMock,
+    return_value={"data": {"url": "http://img"}},
+)
 @patch("commands.channel.welcome.set_welcome_channel", new_callable=AsyncMock)
 @patch("commands.channel.welcome.get_welcome_channel", new_callable=AsyncMock, return_value=None)
 async def test_set_welcome_with_attachment(mock_get, mock_set, mock_upload, admin_command_info):

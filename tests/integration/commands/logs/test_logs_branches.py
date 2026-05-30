@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.logs.blacklist_channel.blacklist_remove_channel import blacklist_remove_channel
 from commands.logs.blacklist_role.blacklist_remove_role import blacklist_remove_role
@@ -8,8 +9,6 @@ from commands.logs.configure_logs import configure_logs
 from commands.logs.remove_log_channel import remove_log_channel
 from commands.logs.set_log_channel import set_log_channel
 from tests.helpers.discord import make_role, make_target_member, make_text_channel
-from tests.integration.commands.admin.conftest import make_view_interaction
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -57,7 +56,9 @@ async def test_configure_logs_missing_permission(restricted_command_info):
     restricted_command_info.reply.assert_awaited_once()
 
 
-@patch("commands.logs.blacklist_user.blacklist_remove_user.is_log_entity_blacklisted", new_callable=AsyncMock, return_value=False)
+@patch(
+    "commands.logs.blacklist_user.blacklist_remove_user.is_log_entity_blacklisted", new_callable=AsyncMock, return_value=False
+)
 async def test_blacklist_remove_user_not_blacklisted(mock_check, admin_command_info):
     user = make_target_member()
     await blacklist_remove_user(admin_command_info, user)
@@ -65,7 +66,9 @@ async def test_blacklist_remove_user_not_blacklisted(mock_check, admin_command_i
 
 
 @patch("commands.logs.blacklist_user.blacklist_remove_user.remove_log_blacklist", new_callable=AsyncMock)
-@patch("commands.logs.blacklist_user.blacklist_remove_user.is_log_entity_blacklisted", new_callable=AsyncMock, return_value=True)
+@patch(
+    "commands.logs.blacklist_user.blacklist_remove_user.is_log_entity_blacklisted", new_callable=AsyncMock, return_value=True
+)
 async def test_blacklist_remove_user_success(mock_check, mock_remove, admin_command_info):
     user = make_target_member()
     await blacklist_remove_user(admin_command_info, user)
@@ -79,7 +82,9 @@ async def test_blacklist_remove_user_missing_permission(restricted_command_info)
     restricted_command_info.reply.assert_awaited_once()
 
 
-@patch("commands.logs.blacklist_role.blacklist_remove_role.is_log_entity_blacklisted", new_callable=AsyncMock, return_value=True)
+@patch(
+    "commands.logs.blacklist_role.blacklist_remove_role.is_log_entity_blacklisted", new_callable=AsyncMock, return_value=True
+)
 @patch("commands.logs.blacklist_role.blacklist_remove_role.remove_log_blacklist", new_callable=AsyncMock)
 async def test_blacklist_remove_role_success(mock_remove, mock_check, admin_command_info):
     role = make_role()
@@ -87,7 +92,11 @@ async def test_blacklist_remove_role_success(mock_remove, mock_check, admin_comm
     mock_remove.assert_awaited_once()
 
 
-@patch("commands.logs.blacklist_channel.blacklist_remove_channel.is_log_entity_blacklisted", new_callable=AsyncMock, return_value=True)
+@patch(
+    "commands.logs.blacklist_channel.blacklist_remove_channel.is_log_entity_blacklisted",
+    new_callable=AsyncMock,
+    return_value=True,
+)
 @patch("commands.logs.blacklist_channel.blacklist_remove_channel.remove_log_blacklist", new_callable=AsyncMock)
 async def test_blacklist_remove_channel_success(mock_remove, mock_check, admin_command_info):
     channel = make_text_channel(guild=admin_command_info.guild)

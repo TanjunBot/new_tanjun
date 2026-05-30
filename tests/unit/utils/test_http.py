@@ -34,12 +34,7 @@ def _mock_session(get_response=None, post_response=None):
 class TestGetGif:
     @pytest.mark.asyncio
     async def test_returns_urls_on_success(self):
-        giphy_data = {
-            "data": [
-                {"images": {"downsized_medium": {"url": f"https://giphy.com/{i}.gif"}}}
-                for i in range(3)
-            ]
-        }
+        giphy_data = {"data": [{"images": {"downsized_medium": {"url": f"https://giphy.com/{i}.gif"}}} for i in range(3)]}
         mock_resp = _mock_response(200, giphy_data)
         mock_session = _mock_session(get_response=mock_resp)
 

@@ -10,9 +10,8 @@ from commands.utility.delete_booster_channel import deleteBoosterChannel
 from commands.utility.delete_booster_role import deleteBoosterRole
 from commands.utility.setup_booster_channel import setupBoosterChannel
 from commands.utility.setup_booster_role import setupBoosterRole
-from services.booster_service import BoosterType, ClaimedBoosterType
-from tests.helpers.discord import make_guild, make_member, make_text_channel
-
+from services.booster_service import ClaimedBoosterType
+from tests.helpers.discord import make_guild, make_member
 
 pytestmark = pytest.mark.asyncio
 

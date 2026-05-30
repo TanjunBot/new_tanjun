@@ -8,7 +8,6 @@ import pytest
 from commands.level.level_set_xp_cooldown import set_text_cooldown_command, set_voice_cooldown_command
 from tests.helpers.discord import make_permissions
 
-
 pytestmark = pytest.mark.asyncio
 
 

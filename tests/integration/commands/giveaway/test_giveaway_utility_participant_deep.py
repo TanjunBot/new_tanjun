@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from commands.giveaway import utility as gw_util
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -19,7 +18,7 @@ def _giveaway(**kwargs) -> MagicMock:
     gw.new_message_requirement = kwargs.get("new_message_requirement")
     gw.day_requirement = kwargs.get("day_requirement")
     gw.voice_requirement = kwargs.get("voice_requirement")
-    gw.start_time = kwargs.get("start_time", datetime.now(timezone.utc))
+    gw.start_time = kwargs.get("start_time", datetime.now(UTC))
     return gw
 
 
@@ -50,7 +49,7 @@ async def test_add_participant_success(
     role.id = 999
     member = MagicMock()
     member.roles = [role]
-    member.joined_at = datetime(2020, 1, 1, tzinfo=timezone.utc)
+    member.joined_at = datetime(2020, 1, 1, tzinfo=UTC)
     guild.get_member = MagicMock(return_value=member)
     channel = MagicMock()
     msg = MagicMock()
@@ -169,7 +168,9 @@ async def test_add_participant_zero_messages(mock_get, mock_is, mock_bl, mock_op
 @patch("commands.giveaway.utility.giveaway_service.is_user_blacklisted", new_callable=AsyncMock, return_value=False)
 @patch("commands.giveaway.utility.giveaway_service.is_participant", new_callable=AsyncMock, return_value=False)
 @patch("commands.giveaway.utility.giveaway_service.get", new_callable=AsyncMock)
-async def test_add_participant_channel_requirement_fail(mock_get, mock_is, mock_bl, mock_opt, mock_bl_roles, mock_roles, mock_channels):
+async def test_add_participant_channel_requirement_fail(
+    mock_get, mock_is, mock_bl, mock_opt, mock_bl_roles, mock_roles, mock_channels
+):
     from models import GiveawayChannelRequirementModel
 
     gw = _giveaway()
@@ -198,7 +199,7 @@ async def test_add_participant_day_requirement_fail(mock_get, mock_is, mock_bl, 
     guild = MagicMock(preferred_locale="en_US")
     member = MagicMock()
     member.roles = []
-    member.joined_at = datetime(2023, 12, 1, tzinfo=timezone.utc)
+    member.joined_at = datetime(2023, 12, 1, tzinfo=UTC)
     guild.get_member = MagicMock(return_value=member)
     client = MagicMock()
     client.get_guild = MagicMock(return_value=guild)

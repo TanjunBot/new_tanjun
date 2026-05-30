@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from commands.level.show_level_roles import show_level_roles_command
+import pytest
 
+from commands.level.show_level_roles import show_level_roles_command
 
 pytestmark = pytest.mark.asyncio
 

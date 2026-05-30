@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from commands.admin.ticket.open_ticket import openTicket, open_ticket_2
-from tests.helpers.discord import make_interaction, make_permissions, make_text_channel
+import pytest
 
+from commands.admin.ticket.open_ticket import open_ticket_2, openTicket
+from tests.helpers.discord import make_interaction, make_permissions, make_text_channel
 
 pytestmark = pytest.mark.asyncio
 
@@ -78,11 +78,13 @@ async def test_open_ticket_2_success(mock_service):
     mock_service.get_config = AsyncMock(return_value=ticket)
     mock_service.open = AsyncMock()
     channel = make_text_channel()
-    channel.create_thread = AsyncMock(return_value=MagicMock(
-        id=777777777,
-        send=AsyncMock(),
-        add_user=AsyncMock(),
-    ))
+    channel.create_thread = AsyncMock(
+        return_value=MagicMock(
+            id=777777777,
+            send=AsyncMock(),
+            add_user=AsyncMock(),
+        )
+    )
     channel.permissions_for = MagicMock(return_value=make_permissions(create_private_threads=True))
     interaction.channel = channel
     interaction.guild.preferred_locale = MagicMock(value="en-US")

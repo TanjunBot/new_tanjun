@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
 
 from commands.level.add_level_role import add_level_role_command
 from tests.helpers.discord import make_role
-
 
 pytestmark = pytest.mark.asyncio
 

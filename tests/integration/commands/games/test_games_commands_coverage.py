@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from commands.games import akinator, connect4, flag_quiz, hangman, rps, tic_tac_toe, wordle
 from tests.helpers.discord import make_interaction, make_member, make_target_member
-
 
 pytestmark = pytest.mark.asyncio
 

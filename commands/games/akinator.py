@@ -5,7 +5,6 @@ from akinator_python import Akinator  # type: ignore[import-not-found]
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 # Valid Themes: "Characters"; "Animals", "Objects"
@@ -191,7 +190,9 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
                 ),
             )
             embed.set_image(url=aki.akitude)
-            await interaction.followup.edit_message(message_id=interaction.message.id, embed=embed, view=AkinatorView(command_info))  # type: ignore[union-attr]
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id, embed=embed, view=AkinatorView(command_info)
+            )  # type: ignore[union-attr]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.games.akinator.title"),

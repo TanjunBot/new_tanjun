@@ -6,7 +6,6 @@ import pytest
 
 from services.dynamicslowmode import DynamicSlowmodeConfig, DynamicSlowmodeService
 
-
 pytestmark = pytest.mark.asyncio
 
 

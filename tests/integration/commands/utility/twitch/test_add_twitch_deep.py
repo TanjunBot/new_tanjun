@@ -8,7 +8,6 @@ import pytest
 from commands.utility.twitch.add_twitch_live_notification import addTwitchLiveNotification
 from tests.helpers.discord import make_permissions, make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 
@@ -32,7 +31,9 @@ async def test_add_twitch_bot_perms_fail(mock_isinstance, admin_command_info):
     admin_command_info.reply.assert_awaited_once()
 
 
-@patch("commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name", new_callable=AsyncMock, return_value=None)
+@patch(
+    "commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name", new_callable=AsyncMock, return_value=None
+)
 @patch("commands.utility.twitch.add_twitch_live_notification.isinstance")
 async def test_add_twitch_name_not_found(mock_isinstance, mock_uuid, admin_command_info):
     mock_isinstance.side_effect = lambda obj, cls: cls is discord.Member or cls is discord.abc.GuildChannel
@@ -44,7 +45,11 @@ async def test_add_twitch_name_not_found(mock_isinstance, mock_uuid, admin_comma
 
 
 @patch("commands.utility.twitch.add_twitch_live_notification.get_twitch_service", return_value=None)
-@patch("commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name", new_callable=AsyncMock, return_value="uuid-1")
+@patch(
+    "commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name",
+    new_callable=AsyncMock,
+    return_value="uuid-1",
+)
 @patch("commands.utility.twitch.add_twitch_live_notification.isinstance")
 async def test_add_twitch_service_unavailable(mock_isinstance, mock_uuid, mock_svc, admin_command_info):
     mock_isinstance.side_effect = lambda obj, cls: cls is discord.Member or cls is discord.abc.GuildChannel
@@ -57,7 +62,11 @@ async def test_add_twitch_service_unavailable(mock_isinstance, mock_uuid, mock_s
 
 @patch("commands.utility.twitch.add_twitch_live_notification.subscribe_to_twitch_online_notification", new_callable=AsyncMock)
 @patch("commands.utility.twitch.add_twitch_live_notification.get_twitch_service")
-@patch("commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name", new_callable=AsyncMock, return_value="uuid-1")
+@patch(
+    "commands.utility.twitch.add_twitch_live_notification.get_uuid_by_twitch_name",
+    new_callable=AsyncMock,
+    return_value="uuid-1",
+)
 @patch("commands.utility.twitch.add_twitch_live_notification.isinstance")
 async def test_add_twitch_success(mock_isinstance, mock_uuid, mock_get_svc, mock_sub, admin_command_info):
     mock_isinstance.side_effect = lambda obj, cls: cls is discord.Member or cls is discord.abc.GuildChannel

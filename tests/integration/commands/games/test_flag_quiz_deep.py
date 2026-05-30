@@ -7,7 +7,6 @@ import pytest
 from commands.games.flag_quiz import flag_quiz
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 
@@ -16,7 +15,10 @@ def _view_from_reply(info):
     return kwargs.get("view")
 
 
-@patch("commands.games.flag_quiz.tanjunLocalizer.localize", side_effect=lambda _loc, key, **kw: key.split(".")[-1] if key.startswith("countries.") else key)
+@patch(
+    "commands.games.flag_quiz.tanjunLocalizer.localize",
+    side_effect=lambda _loc, key, **kw: key.split(".")[-1] if key.startswith("countries.") else key,
+)
 @patch("commands.games.flag_quiz.random_flag", return_value="germany.png")
 async def test_flag_quiz_start(mock_flag, mock_loc, admin_command_info):
     await flag_quiz(admin_command_info)
@@ -24,7 +26,10 @@ async def test_flag_quiz_start(mock_flag, mock_loc, admin_command_info):
     assert _view_from_reply(admin_command_info) is not None
 
 
-@patch("commands.games.flag_quiz.tanjunLocalizer.localize", side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key)
+@patch(
+    "commands.games.flag_quiz.tanjunLocalizer.localize",
+    side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key,
+)
 @patch("commands.games.flag_quiz.random_flag", return_value="germany.png")
 async def test_flag_quiz_give_up(mock_flag, mock_loc, admin_command_info):
     await flag_quiz(admin_command_info)
@@ -36,7 +41,10 @@ async def test_flag_quiz_give_up(mock_flag, mock_loc, admin_command_info):
     interaction.followup.edit_message.assert_awaited_once()
 
 
-@patch("commands.games.flag_quiz.tanjunLocalizer.localize", side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key)
+@patch(
+    "commands.games.flag_quiz.tanjunLocalizer.localize",
+    side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key,
+)
 @patch("commands.games.flag_quiz.random_flag", return_value="germany.png")
 async def test_flag_quiz_wrong_user(mock_flag, mock_loc, admin_command_info):
     await flag_quiz(admin_command_info)
@@ -46,7 +54,10 @@ async def test_flag_quiz_wrong_user(mock_flag, mock_loc, admin_command_info):
     interaction.response.send_message.assert_awaited_once()
 
 
-@patch("commands.games.flag_quiz.tanjunLocalizer.localize", side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key)
+@patch(
+    "commands.games.flag_quiz.tanjunLocalizer.localize",
+    side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key,
+)
 @patch("commands.games.flag_quiz.random_flag", return_value="germany.png")
 async def test_flag_quiz_hint_once(mock_flag, mock_loc, admin_command_info):
     await flag_quiz(admin_command_info)
@@ -58,7 +69,10 @@ async def test_flag_quiz_hint_once(mock_flag, mock_loc, admin_command_info):
     interaction.followup.edit_message.assert_awaited_once()
 
 
-@patch("commands.games.flag_quiz.tanjunLocalizer.localize", side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key)
+@patch(
+    "commands.games.flag_quiz.tanjunLocalizer.localize",
+    side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key,
+)
 @patch("commands.games.flag_quiz.random_flag", return_value="germany.png")
 async def test_flag_quiz_hint_twice(mock_flag, mock_loc, admin_command_info):
     await flag_quiz(admin_command_info)
@@ -72,7 +86,10 @@ async def test_flag_quiz_hint_twice(mock_flag, mock_loc, admin_command_info):
     interaction2.followup.send.assert_awaited_once()
 
 
-@patch("commands.games.flag_quiz.tanjunLocalizer.localize", side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key)
+@patch(
+    "commands.games.flag_quiz.tanjunLocalizer.localize",
+    side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key,
+)
 @patch("commands.games.flag_quiz.random_flag", return_value="germany.png")
 async def test_flag_quiz_modal_correct_guess(mock_flag, mock_loc, admin_command_info):
     await flag_quiz(admin_command_info)
@@ -89,7 +106,10 @@ async def test_flag_quiz_modal_correct_guess(mock_flag, mock_loc, admin_command_
     submit.followup.edit_message.assert_awaited_once()
 
 
-@patch("commands.games.flag_quiz.tanjunLocalizer.localize", side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key)
+@patch(
+    "commands.games.flag_quiz.tanjunLocalizer.localize",
+    side_effect=lambda _loc, key, **kw: "Germany" if key.startswith("countries.") else key,
+)
 @patch("commands.games.flag_quiz.random_flag", return_value="germany.png")
 async def test_flag_quiz_modal_wrong_guess(mock_flag, mock_loc, admin_command_info):
     await flag_quiz(admin_command_info)

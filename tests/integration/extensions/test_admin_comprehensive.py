@@ -3,7 +3,6 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from discord import app_commands
 
 import extensions.admin as admin_ext
 from extensions.admin import (
@@ -14,7 +13,7 @@ from extensions.admin import (
     TriggerMessagesCommands,
     WarnCommands,
 )
-from tests.helpers.discord import make_guild, make_interaction, make_member, make_role, make_text_channel
+from tests.helpers.discord import make_guild, make_member, make_role, make_text_channel
 from tests.helpers.extensions import invoke_interaction_command
 from tests.integration.extensions.conftest import load_extension_bot
 
@@ -145,7 +144,6 @@ async def test_administration_roles_and_misc(mock_cmds) -> None:
     )
     await invoke_interaction_command(group.set_locale, extra_kwargs={"locale": "en"})
     await invoke_interaction_command(group.copy_emoji, extra_kwargs={"emoji": ":e:"})
-
 
 
 async def test_admin_cog_on_ready(mock_cmds) -> None:

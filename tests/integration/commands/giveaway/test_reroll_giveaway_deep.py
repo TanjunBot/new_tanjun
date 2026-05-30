@@ -9,7 +9,6 @@ from commands.giveaway.reroll_giveaway import perform_reroll, reroll_giveaway
 from tests.helpers.discord import make_member
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 

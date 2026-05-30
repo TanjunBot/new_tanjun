@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
 
 from commands.admin.reports.unblock_reporter import unblock_reporter_cmd
 from tests.helpers.discord import make_target_member
-
 
 pytestmark = pytest.mark.asyncio
 

@@ -1,13 +1,11 @@
 import numpy as np
 import pytest
-from unittest.mock import AsyncMock, MagicMock
 
 from commands.math.plot_function import (
     _safe_eval_node,
     _safe_np_eval,
     plot_function_command,
 )
-
 
 pytestmark = pytest.mark.asyncio
 

@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import discord
 import pytest
 
-from api import LogBlacklistType
 from extensions.logs import (
     ChannelBlacklistCommands,
     LogsCog,
@@ -121,16 +120,14 @@ def _rich_automod_rule(guild: MagicMock) -> MagicMock:
     block_interaction.type = discord.AutoModRuleActionType.block_member_interactions
     block_interaction.duration = 120
     rule.actions = [block, alert, timeout, block_interaction]
-    guild.audit_logs = MagicMock(
-        return_value=async_audit_logs(make_audit_log_entry(target_id=rule.id))
-    )
+    guild.audit_logs = MagicMock(return_value=async_audit_logs(make_audit_log_entry(target_id=rule.id)))
     return rule
 
 
 def _channel_with_overwrites(guild: MagicMock) -> MagicMock:
     channel = make_text_channel(guild=guild)
     channel.type = 0
-    channel.created_at = datetime.now(timezone.utc)
+    channel.created_at = datetime.now(UTC)
     channel.topic = "topic"
     channel.category = MagicMock()
     channel.category.name = "cat"
@@ -254,9 +251,7 @@ async def test_automod_blacklisted_and_disabled(log_api_mocks, logs_cog):
 async def test_channel_create_delete_with_overwrites(log_api_mocks, logs_cog):
     cog = await logs_cog()
     guild = make_guild()
-    guild.audit_logs = MagicMock(
-        return_value=async_audit_logs(make_audit_log_entry(target_id=444444444))
-    )
+    guild.audit_logs = MagicMock(return_value=async_audit_logs(make_audit_log_entry(target_id=444444444)))
     channel = _channel_with_overwrites(guild)
     await cog.on_guild_channel_create(channel)
     await cog.on_guild_channel_delete(channel)
@@ -265,9 +260,7 @@ async def test_channel_create_delete_with_overwrites(log_api_mocks, logs_cog):
 async def test_channel_update_permission_branches(log_api_mocks, logs_cog):
     cog = await logs_cog()
     guild = make_guild()
-    guild.audit_logs = MagicMock(
-        return_value=async_audit_logs(make_audit_log_entry(target_id=444444444))
-    )
+    guild.audit_logs = MagicMock(return_value=async_audit_logs(make_audit_log_entry(target_id=444444444)))
     before = make_text_channel(guild=guild)
     before.mention = "<#before>"
     before.name = "old"
@@ -285,15 +278,9 @@ async def test_channel_update_permission_branches(log_api_mocks, logs_cog):
     old_only = _PermissionOverwrite({"send_messages": True})
     new_target = make_role(role_id=888)
     new_target.mention = "<@&888>"
-    new_overwrite = _PermissionOverwrite(
-        {"send_messages": True, "attach_files": False, "embed_links": None}
-    )
-    modified_old = _PermissionOverwrite(
-        {"send_messages": True, "manage_messages": False, "read_messages": True}
-    )
-    modified_new = _PermissionOverwrite(
-        {"send_messages": False, "manage_messages": None, "read_messages": None}
-    )
+    new_overwrite = _PermissionOverwrite({"send_messages": True, "attach_files": False, "embed_links": None})
+    modified_old = _PermissionOverwrite({"send_messages": True, "manage_messages": False, "read_messages": True})
+    modified_new = _PermissionOverwrite({"send_messages": False, "manage_messages": None, "read_messages": None})
     before.overwrites = {role_target: modified_old, removed_target: old_only}
     after = make_text_channel(guild=guild)
     after.mention = "<#after>"
@@ -348,7 +335,7 @@ async def test_guild_update_comprehensive(log_api_mocks, logs_cog):
     before.filesize_limit = 8
     after.filesize_limit = 25
     before.invites_paused_until = None
-    after.invites_paused_until = datetime.now(timezone.utc)
+    after.invites_paused_until = datetime.now(UTC)
     before.max_members = 100
     after.max_members = 200
     before.max_presences = None
@@ -403,7 +390,7 @@ async def test_invite_create_delete(log_api_mocks, logs_cog):
     invite.max_age = 3600
     invite.max_uses = 10
     invite.max_uses = None
-    invite.expires_at = datetime.now(timezone.utc)
+    invite.expires_at = datetime.now(UTC)
     invite.temporary = True
     invite.url = "https://discord.gg/xyz"
     invite.scheduled_event = MagicMock(url="https://event")
@@ -433,7 +420,7 @@ async def test_member_join_remove_blacklist(log_api_mocks, logs_cog):
     member = make_member()
     member.guild = guild
     member.roles = [make_role()]
-    member.joined_at = datetime.now(timezone.utc)
+    member.joined_at = datetime.now(UTC)
     await cog.on_member_join(member)
     await cog.on_member_remove(member)
     with patch("extensions.logs.get_log_blacklist", new=AsyncMock(return_value=["555555555"])):
@@ -464,9 +451,9 @@ async def test_member_update_branches(log_api_mocks, logs_cog):
     before.pending = True
     after.pending = False
     before.timed_out_until = None
-    after.timed_out_until = datetime.now(timezone.utc)
+    after.timed_out_until = datetime.now(UTC)
     await cog.on_member_update(before, after)
-    before.timed_out_until = datetime.now(timezone.utc)
+    before.timed_out_until = datetime.now(UTC)
     after.timed_out_until = None
     await cog.on_member_update(before, after)
 
@@ -631,9 +618,7 @@ async def test_reactions(log_api_mocks, logs_cog):
 async def test_role_create_delete_update(log_api_mocks, logs_cog):
     cog = await logs_cog()
     guild = make_guild()
-    guild.audit_logs = MagicMock(
-        return_value=async_audit_logs(make_audit_log_entry(target_id=555555555))
-    )
+    guild.audit_logs = MagicMock(return_value=async_audit_logs(make_audit_log_entry(target_id=555555555)))
     role = make_role()
     role.guild = guild
     role.color = MagicMock()
@@ -763,7 +748,7 @@ async def test_guild_update_extra_branches(log_api_mocks, logs_cog):
     after.premium_progress_bar_enabled = False
     before.unavailable = False
     after.unavailable = True
-    before.invites_paused_until = datetime.now(timezone.utc)
+    before.invites_paused_until = datetime.now(UTC)
     after.invites_paused_until = None
     await cog.on_guild_update(before, after)
 
@@ -792,7 +777,7 @@ async def test_channel_delete_neutral_overwrite(log_api_mocks, logs_cog):
     guild = make_guild()
     channel = make_text_channel(guild=guild)
     channel.type = 0
-    channel.created_at = datetime.now(timezone.utc)
+    channel.created_at = datetime.now(UTC)
     channel.topic = "t"
     target = make_role()
     channel.overwrites = {target: _PermissionOverwrite({"send_messages": None})}
@@ -934,7 +919,7 @@ async def test_invite_delete_full_payload(log_api_mocks, logs_cog):
     invite.guild = guild
     invite.inviter = make_member()
     invite.inviter.roles = []
-    invite.expires_at = datetime.now(timezone.utc)
+    invite.expires_at = datetime.now(UTC)
     invite.max_uses = 5
     invite.channel = make_text_channel(guild=guild)
     invite.scheduled_event = MagicMock(url="https://ev")
@@ -953,9 +938,7 @@ async def test_automod_update_delete_with_updater(log_api_mocks, logs_cog):
     entry = make_audit_log_entry(target_id=rule.id)
     rule.guild.audit_logs = MagicMock(return_value=async_audit_logs(entry))
     await cog.on_automod_rule_update(rule)
-    rule.guild.audit_logs = MagicMock(
-        return_value=async_audit_logs(make_audit_log_entry(target_id=rule.id))
-    )
+    rule.guild.audit_logs = MagicMock(return_value=async_audit_logs(make_audit_log_entry(target_id=rule.id)))
     await cog.on_automod_rule_delete(rule)
 
 
@@ -1171,7 +1154,7 @@ async def test_member_update_roles_and_timeout_removed(log_api_mocks, logs_cog):
     before.roles = [r]
     after.roles = []
     before.pending = after.pending = False
-    before.timed_out_until = datetime.now(timezone.utc)
+    before.timed_out_until = datetime.now(UTC)
     after.timed_out_until = None
     await cog.on_member_update(before, after)
 

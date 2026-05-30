@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from tests.helpers.discord import make_interaction, make_member, make_permissions, make_text_channel
+from tests.helpers.discord import make_interaction, make_permissions
 
 
 def make_aiohttp_session(status: int = 200, data: bytes = b"fake", side_effect: Exception | None = None):

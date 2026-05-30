@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, patch
 
 import pytest
 
 from models import ScheduledMessageModel
-from services.scheduled_message_service import ScheduleMessageParams, ScheduledMessageService
+from services.scheduled_message_service import ScheduledMessageService, ScheduleMessageParams
 from tests.helpers.factories import CHANNEL_ID, GUILD_ID, MESSAGE_ID, USER_ID, _dt
 
 
@@ -20,7 +20,7 @@ class TestScheduledMessageService:
             channel_id=CHANNEL_ID,
             user_id=USER_ID,
             content="Hello",
-            send_time=datetime(2025, 1, 1, tzinfo=timezone.utc),
+            send_time=datetime(2025, 1, 1, tzinfo=UTC),
             repeat_interval=None,
             repeat_amount=None,
             attachments=None,
@@ -46,9 +46,7 @@ class TestScheduledMessageService:
         dt = _dt()
 
         async def fake_iter(*args, **kwargs):
-            yield ScheduledMessageModel.from_row(
-                (1, GUILD_ID, CHANNEL_ID, USER_ID, "hi", dt, None, None, None, None, dt)
-            )
+            yield ScheduledMessageModel.from_row((1, GUILD_ID, CHANNEL_ID, USER_ID, "hi", dt, None, None, None, None, dt))
 
         with patch.object(ScheduledMessageModel, "iter_rows", side_effect=lambda q, p: fake_iter()):
             result = await ScheduledMessageService.get_user_messages(USER_ID)
@@ -69,7 +67,7 @@ class TestScheduledMessageService:
 
     @pytest.mark.asyncio
     async def test_update_send_time(self):
-        dt = datetime(2025, 6, 1, tzinfo=timezone.utc)
+        dt = datetime(2025, 6, 1, tzinfo=UTC)
         with patch("api.execute_action", new_callable=AsyncMock) as mock_exec:
             await ScheduledMessageService.update_send_time(1, dt)
             mock_exec.assert_awaited_once()

@@ -7,7 +7,6 @@ import pytest
 from commands.utility.feedback import FeedbackModal, feedback
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 

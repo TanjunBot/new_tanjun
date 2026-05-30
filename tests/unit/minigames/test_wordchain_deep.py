@@ -6,7 +6,6 @@ import pytest
 
 from minigames import wordchain
 
-
 pytestmark = pytest.mark.asyncio
 
 

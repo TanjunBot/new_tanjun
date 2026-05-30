@@ -42,7 +42,11 @@ def mock_cmds():
             },
         ),
         (CustomSituationCommands, "delete_custom", {}),
-        (AiCommands, "ask_gpt_command", {"prompt": "hi", "temperature": 1.0, "topp": 1.0, "frequencypenalty": 0.0, "presencepenalty": 0.0}),
+        (
+            AiCommands,
+            "ask_gpt_command",
+            {"prompt": "hi", "temperature": 1.0, "topp": 1.0, "frequencypenalty": 0.0, "presencepenalty": 0.0},
+        ),
         (
             AiCommands,
             "ask_custom_situation",
@@ -69,6 +73,7 @@ async def test_ai_autocomplete(mock_cmds) -> None:
     interaction = MagicMock()
     interaction.user.id = 1
     with patch.object(ai_ext.AiService, "get_public_situations_iterator") as mock_iter:
+
         async def gen():
             yield "Friendly"
             yield "Strict"

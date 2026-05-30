@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from unittest.mock import patch
 
 import pytest
@@ -10,8 +9,8 @@ from pydantic import ValidationError
 
 from models import (
     AISituationModel,
-    CountingMode,
     CountingConfigModel,
+    CountingMode,
     CountingModesConfigModel,
     GiveawayChannelRequirementModel,
     GiveawayModel,
@@ -227,9 +226,7 @@ class TestCountingConfigModels:
 
     def test_counting_modes_goal_must_be_non_negative(self):
         with pytest.raises(ValidationError):
-            CountingModesConfigModel(
-                progress=0, mode=1, goal=-1, last_counter_id=USER_ID, guild_id=GUILD_ID
-            )
+            CountingModesConfigModel(progress=0, mode=1, goal=-1, last_counter_id=USER_ID, guild_id=GUILD_ID)
 
 
 class TestUserLevelInfoModel:

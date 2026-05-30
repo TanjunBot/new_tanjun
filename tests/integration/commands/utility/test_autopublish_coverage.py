@@ -7,7 +7,6 @@ import pytest
 from commands.utility.autopublish import autopublish, autopublish_remove, publish_message
 from tests.helpers.discord import make_message, make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 

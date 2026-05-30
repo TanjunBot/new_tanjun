@@ -1,12 +1,12 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from commands.channel.dynamicslowmode import addDynamicslowmode, removeDynamicslowmode
 from commands.channel.farewell import removeFarewellChannel, setFarewellChannel
 from commands.channel.media import addMediaChannel, removeMediaChannel
 from commands.channel.welcome import removeWelcomeChannel, setWelcomeChannel
 from tests.helpers.discord import make_permissions, make_text_channel
-
 
 pytestmark = pytest.mark.asyncio
 

@@ -7,7 +7,6 @@ import pytest
 from minigames import counting_challenge
 from tests.helpers.discord import make_text_channel
 
-
 pytestmark = pytest.mark.asyncio
 
 

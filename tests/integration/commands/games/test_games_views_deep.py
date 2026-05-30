@@ -10,7 +10,6 @@ from commands.games.tic_tac_toe import TicTacToe, tic_tac_toe
 from tests.helpers.discord import make_member, make_target_member
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 
@@ -229,7 +228,6 @@ async def test_rps_wrong_player_scissors(admin_command_info):
 
 
 async def _pvp_second_choice(admin_command_info, p1_method, p2_method):
-    from localizer import tanjunLocalizer
 
     locale = admin_command_info.locale
     p2 = make_target_member(user_id=222222222)
@@ -374,4 +372,3 @@ async def test_connect4_view_on_timeout(mock_update, admin_command_info):
     view = game.getBoardView(message=msg)
     await view.on_timeout()
     msg.edit.assert_awaited_once()
-

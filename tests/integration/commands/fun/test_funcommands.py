@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from tests.integration.commands.conftest import embed_from_reply, make_role, make_user
-from tests.helpers.discord import make_command_info, make_guild, make_member, make_permissions, make_text_channel
-
-
 from commands.fun.funcommands import fun_command as command_fn
+from tests.helpers.discord import make_command_info, make_member
+from tests.integration.commands.conftest import embed_from_reply
 
 
 @pytest.mark.asyncio

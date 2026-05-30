@@ -20,7 +20,6 @@ from commands.giveaway.start import (
 from tests.helpers.discord import make_text_channel
 from tests.integration.commands.admin.conftest import make_view_interaction
 
-
 pytestmark = pytest.mark.asyncio
 
 

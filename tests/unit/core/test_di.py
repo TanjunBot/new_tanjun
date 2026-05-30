@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-import pytest
-
 from di import BotServices, services
 from services.xp_calculator import XpCalculator
 
