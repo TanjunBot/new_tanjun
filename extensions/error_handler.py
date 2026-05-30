@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 # ── Sentry scope helpers ─────────────────────────────────────────────────────
-def _set_sentry_context(interaction: discord.Interaction, error: Exception) -> None:
+def _set_sentry_context(interaction: discord.Interaction) -> None:
     """Attach user, guild, and command context to Sentry events.
 
     This is a no-op when ``sentry_dsn`` is empty.
@@ -30,26 +30,27 @@ def _set_sentry_context(interaction: discord.Interaction, error: Exception) -> N
     try:
         import sentry_sdk
 
-        with sentry_sdk.configure_scope() as scope:
-            # User context — User ID + guild ID provide enough info to triage.
-            scope.set_user({
-                "id": str(interaction.user.id),
-                "username": str(interaction.user),
-            })
+        # User context — User ID + guild ID provide enough info to triage.
+        sentry_sdk.set_user({
+            "id": str(interaction.user.id),
+            "username": str(interaction.user),
+        })
 
-            # Guild context
-            if interaction.guild:
-                scope.set_tag("guild_id", str(interaction.guild.id))
-                scope.set_tag("guild_name", interaction.guild.name)
+        # Guild context
+        if interaction.guild:
+            sentry_sdk.set_tag("guild_id", str(interaction.guild.id))
+            sentry_sdk.set_tag("guild_name", interaction.guild.name)
 
-            # Command context
-            command = interaction.command
-            if command:
-                scope.set_tag("command", command.qualified_name)
+        # Command context
+        command = interaction.command
+        if command:
+            sentry_sdk.set_tag("command", command.qualified_name)
 
-            # Extra context
-            scope.set_extra("interaction_id", str(interaction.id))
-            scope.set_extra("channel_id", str(interaction.channel_id))
+        # Extra context
+        sentry_sdk.set_context("interaction", {
+            "interaction_id": str(interaction.id),
+            "channel_id": str(interaction.channel_id),
+        })
     except Exception:
         logger.debug("Failed to set Sentry context", exc_info=True)
 
@@ -194,7 +195,7 @@ class ErrorHandlerCog(commands.Cog):
 
         else:
             # Attach user/guild/command context to Sentry BEFORE logging.
-            _set_sentry_context(interaction, original)
+            _set_sentry_context(interaction)
 
             # Log unexpected errors with full traceback.
             logger.exception(

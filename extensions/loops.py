@@ -18,8 +18,7 @@ def _log_loop_error(task_name: str) -> None:
         try:
             import sentry_sdk
 
-            sentry_sdk.set_tag("loop_task", task_name)
-            sentry_sdk.capture_exception()
+            sentry_sdk.capture_exception(tags={"loop_task": task_name})
         except Exception:
             pass  # Don't let Sentry itself break the loop
 from commands.utility.claim_booster_channel import (
