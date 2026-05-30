@@ -65,11 +65,7 @@ class ReportService:
                 params.reporter_id,
             )
         else:
-            query = (
-                "INSERT INTO reports "
-                "(guild_id, user_id, reporterId, reason, status) "
-                "VALUES (%s, %s, %s, %s, %s)"
-            )
+            query = "INSERT INTO reports (guild_id, user_id, reporterId, reason, status) VALUES (%s, %s, %s, %s, %s)"
             vals = (params.guild_id, params.user_id, params.reporter_id, params.reason, "PENDING")
         return await execute_insert_and_get_id(query, vals)
 
@@ -144,8 +140,7 @@ class ReportService:
             raise ValueError(msg)
 
         query = (
-            "UPDATE reports SET status = %s, status_updated_at = NOW(), status_updated_by = %s "
-            "WHERE guild_id = %s AND id = %s"
+            "UPDATE reports SET status = %s, status_updated_at = NOW(), status_updated_by = %s WHERE guild_id = %s AND id = %s"
         )
         params = (status_upper, updated_by, guild_id, report_id)
         await execute_action(query, params)
