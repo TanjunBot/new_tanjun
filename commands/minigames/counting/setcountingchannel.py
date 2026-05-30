@@ -32,6 +32,8 @@ async def setCountingChannel(command_info: CommandInfo, channel: discord.TextCha
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), f"{LOCALE_KEY}.success.title"),
-        description=tanjunLocalizer.localize(command_info.locale, f"{LOCALE_KEY}.success.description", channel=channel.mention),
+        description=tanjunLocalizer.localize(
+            command_info.locale, f"{LOCALE_KEY}.success.description", channel=channel.mention
+        ),
     )
     await command_info.reply(embed=embed)

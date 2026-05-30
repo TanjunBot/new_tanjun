@@ -15,12 +15,13 @@ LOCALE_KEY = "minigames.setcountingchallengeprogress"
 _repo = CountingRepository
 
 
-async def set_counting_progress(command_info: CommandInfo, channel: discord.TextChannel, progress: int) -> None:
+async def setCountingProgress(command_info: CommandInfo, channel: discord.TextChannel, progress: int) -> None:
     if await require_moderate_members(command_info, LOCALE_KEY):
         return
 
     current_progress = await require_counting_channel(
-        command_info, channel.id,
+        command_info,
+        channel.id,
         lambda cid: _repo.get_progress(CountingMode.MODES, cid),
         LOCALE_KEY,
     )

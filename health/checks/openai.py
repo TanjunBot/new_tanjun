@@ -1,8 +1,12 @@
 """OpenAI API health check for Tanjun bot.
 
+<<<<<<<< HEAD:health/checks/openai_check.py
 Validates:
 1. openAiKey is configured
 2. API is reachable with valid credentials
+========
+Verifies the OpenAI API key is configured and the API is reachable.
+>>>>>>>> development:health/checks/openai.py
 """
 
 from __future__ import annotations

@@ -1,20 +1,16 @@
-"""Health check framework for Tanjun bot.
+"""Health check framework for Tanjun bot - compatibility shim.
 
 Re-exports from the health package for backwards compatibility.
 
-Defines the base classes for all health checks:
-- HealthCheck: abstract base class
-- HealthCheckResult: result container
-- HealthStatus: status enum
-
 New code should import from the ``health`` package directly.
+This shim will be removed after all imports have been migrated.
 """
 
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
-from health.checks.database_check import DatabaseHealthCheck
-from health.checks.openai_check import OpenAIHealthCheck
-from health.checks.twitch_check import TwitchAPIHealthCheck
-from locale_file_health_check import LocaleFileHealthCheck
+from health.checks.database import DatabaseHealthCheck
+from health.checks.locales import LocaleFileHealthCheck
+from health.checks.openai import OpenAIHealthCheck
+from health.checks.twitch import TwitchAPIHealthCheck
 
 __all__ = [
     "DatabaseHealthCheck",

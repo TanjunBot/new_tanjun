@@ -7352,6 +7352,38 @@
     "max_length": null
   },
   {
+    "identifier": "commands.utility.listscheduled.edit_button",
+    "source_string": "Edit",
+    "translation": "Edit",
+    "context": "commands -> utility -> listscheduled -> edit_button",
+    "labels": "en.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.cancel_button",
+    "source_string": "Cancel",
+    "translation": "Cancel",
+    "context": "commands -> utility -> listscheduled -> cancel_button",
+    "labels": "en.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_success.title",
+    "source_string": "Message Updated",
+    "translation": "Message Updated",
+    "context": "commands -> utility -> listscheduled -> edit_success -> title",
+    "labels": "en.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_success.description",
+    "source_string": "Scheduled message ${id} has been updated.",
+    "translation": "Scheduled message ${id} has been updated.",
+    "context": "commands -> utility -> listscheduled -> edit_success -> description",
+    "labels": "en.json",
+    "max_length": null
+  },
+  {
     "identifier": "commands.utility.removescheduled.select.placeholder",
     "source_string": "Wähle eine Nachricht aus",
     "translation": "Select a message",
@@ -32284,6 +32316,86 @@
     "source_string": "Ein unerwarteter Fehler ist aufgetreten: ${error}",
     "translation": "An unexpected error occurred: ${error}",
     "context": "math -> plot_function -> unexpected_error",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_name",
+    "source_string": "setup",
+    "translation": "setup",
+    "context": "Slash command group name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_description",
+    "source_string": "Interactive setup wizards",
+    "translation": "Interactive setup wizards",
+    "context": "Slash command group description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_logs_name",
+    "source_string": "logs",
+    "translation": "logs",
+    "context": "Slash command name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_logs_description",
+    "source_string": "Interactive wizard to configure logging",
+    "translation": "Interactive wizard to configure logging",
+    "context": "Slash command description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_level_name",
+    "source_string": "level",
+    "translation": "level",
+    "context": "Slash command name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_level_description",
+    "source_string": "Interactive wizard to configure the leveling system",
+    "translation": "Interactive wizard to configure the leveling system",
+    "context": "Slash command description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_giveaway_name",
+    "source_string": "giveaway",
+    "translation": "giveaway",
+    "context": "Slash command name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_giveaway_description",
+    "source_string": "Interactive wizard to create a giveaway",
+    "translation": "Interactive wizard to create a giveaway",
+    "context": "Slash command description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_booster_name",
+    "source_string": "booster",
+    "translation": "booster",
+    "context": "Slash command name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_booster_description",
+    "source_string": "Interactive wizard for booster perks configuration",
+    "translation": "Interactive wizard for booster perks configuration",
+    "context": "Slash command description",
     "labels": "unassigned",
     "max_length": null
   }

@@ -7,25 +7,21 @@ Usage:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
+import asyncmy
+from discord.ext import commands
 from pydantic import BaseModel, ConfigDict
 
-if TYPE_CHECKING:
-    import asyncmy
-    from discord.ext import commands
-
-    from api import DatabaseManager
-    from services.afk_service import AfkService
-    from services.ai_service import AiService
-    from services.counting_repository import CountingRepository
-    from services.dynamicslowmode import DynamicSlowmodeService
-    from services.giveaway_service import GiveawayService
-    from services.report_service import ReportService
-    from services.scheduled_message_service import ScheduledMessageService
-    from services.ticket_service import TicketService
-    from services.trigger_message_service import TriggerMessageService
-    from services.xp_calculator import XpCalculator
+from api import DatabaseManager
+from services.afk_service import AfkService
+from services.ai_service import AiService
+from services.counting_repository import CountingRepository
+from services.dynamicslowmode import DynamicSlowmodeService
+from services.giveaway_service import GiveawayService
+from services.report_service import ReportService
+from services.scheduled_message_service import ScheduledMessageService
+from services.ticket_service import TicketService
+from services.trigger_message_service import TriggerMessageService
+from services.xp_calculator import XpCalculator
 
 
 class BotServices(BaseModel):

@@ -62,11 +62,7 @@ class ReportService:
                 params.reporter_id,
             )
         else:
-            query = (
-                "INSERT INTO reports "
-                "(guild_id, user_id, reporterId, reason) "
-                "VALUES (%s, %s, %s, %s)"
-            )
+            query = "INSERT INTO reports (guild_id, user_id, reporterId, reason) VALUES (%s, %s, %s, %s)"
             vals = (params.guild_id, params.user_id, params.reporter_id, params.reason)
         return await execute_insert_and_get_id(query, vals)
 
@@ -130,10 +126,7 @@ class ReportService:
     @staticmethod
     async def accept(guild_id: str, report_id: int | str, accepted_by: str | None = None) -> None:
         """Mark a report as accepted."""
-        query = (
-            "UPDATE reports SET accepted = 1, accepted_at = NOW(), acceptedBy = %s "
-            "WHERE guild_id = %s AND id = %s"
-        )
+        query = "UPDATE reports SET accepted = 1, accepted_at = NOW(), acceptedBy = %s WHERE guild_id = %s AND id = %s"
         params = (accepted_by, guild_id, report_id)
         await execute_action(query, params)
 
@@ -211,9 +204,7 @@ class ReportService:
     @staticmethod
     async def get_channel(guild_id: str) -> str | None:
         """Get the report channel ID for a guild, or None."""
-        result = await execute_query(
-            "SELECT channel_id FROM reportchannel WHERE guild_id = %s", (guild_id,)
-        )
+        result = await execute_query("SELECT channel_id FROM reportchannel WHERE guild_id = %s", (guild_id,))
         return result[0][0] if result else None
 
     @staticmethod
