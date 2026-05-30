@@ -4,6 +4,7 @@ import discord
 
 import utility
 from api import LogBlacklistType, add_log_blacklist, get_log_blacklist, remove_log_blacklist
+from commands.logs.blacklist_channel.blacklist_utils import get_channel_blacklist_type
 from localizer import tanjunLocalizer
 
 
@@ -42,42 +43,53 @@ async def blacklist_list_channel(command_info: utility.command_info):
             self.locale = locale
             self.guild = guild
             self.selectedIndex = 0
+            self._update_button_states()
 
-        @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
+        def _update_button_states(self) -> None:
+            """Disable navigation and remove buttons when no entries exist."""
+            disabled = len(self.entries) == 0
+            for item in self.children:
+                if isinstance(item, discord.ui.Button) and item.custom_id in ("remove", "up", "down"):
+                    item.disabled = disabled
+
+        @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger, custom_id="remove")
         async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button):
+            if not self.entries:
+                return
             entity_id, bl_type = self.entries[self.selectedIndex]
             await remove_log_blacklist(self.guild.id, entity_id, bl_type)
             self.entries = [e for e in self.entries if e[0] != entity_id]
+            self.selectedIndex = max(0, min(self.selectedIndex, len(self.entries) - 1))
+            self._update_button_states()
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
         async def up(self, interaction: discord.Interaction, button: discord.ui.Button):
+            if not self.entries:
+                return
             self.selectedIndex = (self.selectedIndex - 1) % len(self.entries)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
         async def down(self, interaction: discord.Interaction, button: discord.ui.Button):
+            if not self.entries:
+                return
             self.selectedIndex = (self.selectedIndex + 1) % len(self.entries)
             await self.update_view(interaction)
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             if interaction.data["component_type"] == 8:  # ChannelSelect
                 channel_id = interaction.data["values"][0]
-                # Determine the type from the channel — we can look it up from the guild
                 channel = self.guild.get_channel(int(channel_id))
-                if isinstance(channel, discord.CategoryChannel):
-                    bl_type = LogBlacklistType.CATEGORY
-                elif isinstance(channel, discord.VoiceChannel):
-                    bl_type = LogBlacklistType.VOICE_CHANNEL
-                else:
-                    bl_type = LogBlacklistType.CHANNEL
+                bl_type = get_channel_blacklist_type(channel)
                 await add_log_blacklist(self.guild.id, channel_id, bl_type)
                 self.entries.append((channel_id, bl_type))
+                self._update_button_states()
                 await self.update_view(interaction)
             return True
 
         async def update_view(self, interaction: discord.Interaction):
-            if not self.entries or len(self.entries) == 0:
+            if not self.entries:
                 description = tanjunLocalizer.localize(
                     self.locale,
                     "commands.logs.blacklistListChannel.noBlacklistedChannels",
@@ -118,7 +130,7 @@ async def blacklist_list_channel(command_info: utility.command_info):
             ),
         )
     )
-    if not all_entries or len(all_entries) == 0:
+    if not all_entries:
         description = tanjunLocalizer.localize(
             command_info.locale,
             "commands.logs.blacklistListChannel.noBlacklistedChannels",

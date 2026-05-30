@@ -2,17 +2,8 @@ import discord
 
 import utility
 from api import LogBlacklistType, add_log_blacklist, is_log_entity_blacklisted
+from commands.logs.blacklist_channel.blacklist_utils import get_channel_blacklist_type
 from localizer import tanjunLocalizer
-
-
-def _get_blacklist_type(
-    channel: discord.TextChannel | discord.VoiceChannel | discord.CategoryChannel,
-) -> LogBlacklistType:
-    if isinstance(channel, discord.CategoryChannel):
-        return LogBlacklistType.CATEGORY
-    if isinstance(channel, discord.VoiceChannel):
-        return LogBlacklistType.VOICE_CHANNEL
-    return LogBlacklistType.CHANNEL
 
 
 async def blacklist_channel(command_info: utility.CommandInfo, channel: discord.TextChannel | discord.VoiceChannel | discord.CategoryChannel) -> None:
@@ -35,7 +26,7 @@ async def blacklist_channel(command_info: utility.CommandInfo, channel: discord.
         return
 
     assert command_info.guild is not None
-    blacklist_type = _get_blacklist_type(channel)
+    blacklist_type = get_channel_blacklist_type(channel)
     is_blacklisted = await is_log_entity_blacklisted(
         command_info.guild.id, str(channel.id), blacklist_type,
     )

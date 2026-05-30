@@ -947,7 +947,8 @@ def get_table_definitions() -> dict[str, str]:
     CREATE TABLE IF NOT EXISTS `logBlacklistChannel` (
         `guild_id` VARCHAR(20),
         `channel_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `channel_id`)
+        `channel_type` VARCHAR(10) NOT NULL DEFAULT 'text',
+        PRIMARY KEY(`guild_id`, `channel_id`, `channel_type`)
     ) ENGINE=InnoDB;
     """
     tables["logUserBlacklist"] = """

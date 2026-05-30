@@ -2412,7 +2412,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(after.guild.id, str(after.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_entity_blacklisted(after.guild.id, str(after.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
+        if await is_channel_blacklisted(after.channel):  # type: ignore[arg-type]
             return
 
         blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
@@ -2564,7 +2564,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(message.guild.id, str(message.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_entity_blacklisted(message.guild.id, str(message.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
+        if await is_channel_blacklisted(message.channel):  # type: ignore[arg-type]
             return
 
         blacklisted_roles = await get_log_blacklist(message.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
@@ -2656,7 +2656,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
+        if await is_channel_blacklisted(reaction.message.channel):  # type: ignore[arg-type]
             return
 
         blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)
@@ -2696,7 +2696,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
+        if await is_channel_blacklisted(reaction.message.channel):  # type: ignore[arg-type]
             return
 
         blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)
