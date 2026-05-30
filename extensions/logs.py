@@ -27,11 +27,62 @@ from commands.logs.blacklist_role.blacklist_role import blacklist_role
 from commands.logs.blacklist_user.blacklist_list_user import blacklist_list_user
 from commands.logs.blacklist_user.blacklist_remove_user import blacklist_remove_user
 from commands.logs.blacklist_user.blacklist_user import blacklist_user
+from commands.logs.blacklist_voice.blacklist_voice import blacklist_voice
+from commands.logs.blacklist_voice.blacklist_list_voice import (
+    blacklist_list_voice,
+)
+from commands.logs.blacklist_voice.blacklist_remove_voice import (
+    blacklist_remove_voice,
+)
+from commands.logs.blacklist_category.blacklist_category import blacklist_category
+from commands.logs.blacklist_category.blacklist_list_category import (
+    blacklist_list_category,
+)
+from commands.logs.blacklist_category.blacklist_remove_category import (
+    blacklist_remove_category,
+)
 from commands.logs.configure_logs import configure_logs
 from commands.logs.remove_log_channel import remove_log_channel
 from commands.logs.set_log_channel import set_log_channel
 from localizer import tanjunLocalizer
 from utility import EmbedColor, upload_image_to_imgbb, upload_to_tanjun_logs
+
+
+async def _is_channel_or_category_blacklisted(guild_id: str, channel: discord.abc.GuildChannel | None) -> bool:
+    """
+    Check if a channel is blacklisted.
+    Returns True if:
+    - The channel itself is in the channel blacklist
+    - The channel is a voice channel and is in the voice channel blacklist
+    - The channel's parent category is in the category blacklist
+    """
+    if channel is None:
+        return False
+
+    channel_id = str(channel.id)
+
+    if await is_log_entity_blacklisted(guild_id, channel_id, LogBlacklistType.CHANNEL):
+        return True
+
+    if isinstance(channel, discord.VoiceChannel) and await is_log_entity_blacklisted(
+        guild_id, channel_id, LogBlacklistType.VOICE_CHANNEL
+    ):
+        return True
+
+    if channel.category is not None and await is_log_entity_blacklisted(
+        guild_id, str(channel.category.id), LogBlacklistType.CATEGORY
+    ):
+        return True
+
+    return False
+
+
+async def _is_category_blacklisted(guild_id: str, category_id: str | None) -> bool:
+    """Check if a category ID is blacklisted."""
+    if category_id is None:
+        return False
+    return await is_log_entity_blacklisted(guild_id, category_id, LogBlacklistType.CATEGORY) is not None
+
 
 embeds = {}  # type: ignore[var-annotated]
 
@@ -261,6 +312,196 @@ class RoleBlacklistCommands(discord.app_commands.Group):
         await blacklist_list_role(command_info=command_info)
 
 
+class VoiceBlacklistCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistv_add_name"),
+        description=app_commands.locale_str("logs_blacklistv_add_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("logs_blacklistv_add_params_channel_description")
+    )
+    async def add_blacklist_voice_cmd(self, ctx: discord.Interaction, channel: discord.VoiceChannel = None) -> None:  # type: ignore[assignment]
+        await ctx.response.defer()
+        command_info = utility.CommandInfo(
+            user=ctx.user,
+            channel=ctx.channel,  # type: ignore[arg-type]
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,  # type: ignore[arg-type]
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if channel is None:
+            embed = utility.tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    ctx.locale,
+                    "commands.logs.blacklistVoiceChannel.missingChannel.title",
+                ),
+                description=tanjunLocalizer.localize(
+                    ctx.locale,
+                    "commands.logs.blacklistVoiceChannel.missingChannel.description",
+                ),
+            )
+            await ctx.followup.send(embed=embed)
+            return
+
+        await blacklist_voice(command_info=command_info, channel=channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistv_remove_name"),
+        description=app_commands.locale_str("logs_blacklistv_remove_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("logs_blacklistv_remove_params_channel_description")
+    )
+    async def remove_blacklist_voice_cmd(self, ctx: discord.Interaction, channel: discord.VoiceChannel = None) -> None:  # type: ignore[assignment]
+        await ctx.response.defer()
+        command_info = utility.CommandInfo(
+            user=ctx.user,
+            channel=ctx.channel,  # type: ignore[arg-type]
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,  # type: ignore[arg-type]
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if channel is None:
+            embed = utility.tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    ctx.locale,
+                    "commands.logs.blacklistRemoveVoiceChannel.missingChannel.title",
+                ),
+                description=tanjunLocalizer.localize(
+                    ctx.locale,
+                    "commands.logs.blacklistRemoveVoiceChannel.missingChannel.description",
+                ),
+            )
+            await ctx.followup.send(embed=embed)
+            return
+
+        await blacklist_remove_voice(command_info=command_info, channel=channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistv_show_name"),
+        description=app_commands.locale_str("logs_blacklistv_show_description"),
+    )
+    async def show_blacklist_voice_cmd(self, ctx: discord.Interaction) -> None:
+        await ctx.response.defer()
+        command_info = utility.CommandInfo(
+            user=ctx.user,
+            channel=ctx.channel,  # type: ignore[arg-type]
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,  # type: ignore[arg-type]
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await blacklist_list_voice(command_info=command_info)
+
+
+class CategoryBlacklistCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistcat_add_name"),
+        description=app_commands.locale_str("logs_blacklistcat_add_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("logs_blacklistcat_add_params_channel_description")
+    )
+    async def add_blacklist_category_cmd(self, ctx: discord.Interaction, channel: discord.CategoryChannel = None) -> None:  # type: ignore[assignment]
+        await ctx.response.defer()
+        command_info = utility.CommandInfo(
+            user=ctx.user,
+            channel=ctx.channel,  # type: ignore[arg-type]
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,  # type: ignore[arg-type]
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if channel is None:
+            embed = utility.tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    ctx.locale,
+                    "commands.logs.blacklistCategory.missingChannel.title",
+                ),
+                description=tanjunLocalizer.localize(
+                    ctx.locale,
+                    "commands.logs.blacklistCategory.missingChannel.description",
+                ),
+            )
+            await ctx.followup.send(embed=embed)
+            return
+
+        await blacklist_category(command_info=command_info, channel=channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistcat_remove_name"),
+        description=app_commands.locale_str("logs_blacklistcat_remove_description"),
+    )
+    @app_commands.describe(
+        channel=app_commands.locale_str("logs_blacklistcat_remove_params_channel_description")
+    )
+    async def remove_blacklist_category_cmd(self, ctx: discord.Interaction, channel: discord.CategoryChannel = None) -> None:  # type: ignore[assignment]
+        await ctx.response.defer()
+        command_info = utility.CommandInfo(
+            user=ctx.user,
+            channel=ctx.channel,  # type: ignore[arg-type]
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,  # type: ignore[arg-type]
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+
+        if channel is None:
+            embed = utility.tanjunEmbed(
+                title=tanjunLocalizer.localize(
+                    ctx.locale,
+                    "commands.logs.blacklistRemoveCategory.missingChannel.title",
+                ),
+                description=tanjunLocalizer.localize(
+                    ctx.locale,
+                    "commands.logs.blacklistRemoveCategory.missingChannel.description",
+                ),
+            )
+            await ctx.followup.send(embed=embed)
+            return
+
+        await blacklist_remove_category(command_info=command_info, channel=channel)
+
+    @app_commands.command(
+        name=app_commands.locale_str("logs_blacklistcat_show_name"),
+        description=app_commands.locale_str("logs_blacklistcat_show_description"),
+    )
+    async def show_blacklist_category_cmd(self, ctx: discord.Interaction) -> None:
+        await ctx.response.defer()
+        command_info = utility.CommandInfo(
+            user=ctx.user,
+            channel=ctx.channel,  # type: ignore[arg-type]
+            guild=ctx.guild,
+            command=ctx.command,
+            locale=ctx.locale,  # type: ignore[arg-type]
+            message=ctx.message,
+            permissions=ctx.permissions,
+            reply=ctx.followup.send,
+            client=ctx.client,
+        )
+        await blacklist_list_category(command_info=command_info)
+
+
 class LogsCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("logs_set_name"),
@@ -338,7 +579,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
+        if rule.channel_id is not None and await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -504,7 +745,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
+        if rule.channel_id is not None and await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -673,7 +914,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
+        if rule.channel_id is not None and await is_log_entity_blacklisted(rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL):
             return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
@@ -841,7 +1082,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(execution.guild.id, str(execution.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
+        if execution.channel is not None and await _is_channel_or_category_blacklisted(str(execution.guild.id), execution.channel):  # type: ignore[union-attr]
             return
 
         locale = execution.guild.preferred_locale if hasattr(execution.guild, "preferred_locale") else "en_US"
@@ -925,7 +1166,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(channel.guild.id, str(channel.id), LogBlacklistType.CHANNEL):
+        if await _is_channel_or_category_blacklisted(str(channel.guild.id), channel):
             return
 
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
@@ -1020,7 +1261,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(channel.guild.id, str(channel.id), LogBlacklistType.CHANNEL):
+        if await _is_channel_or_category_blacklisted(str(channel.guild.id), channel):
             return
 
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
@@ -1096,7 +1337,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.CHANNEL):
+        if await _is_channel_or_category_blacklisted(str(after.guild.id), after):
             return
 
         locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
@@ -2386,7 +2627,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(after.guild.id, str(after.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_entity_blacklisted(after.guild.id, str(after.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
+        if after.channel is not None and after.guild is not None and await _is_channel_or_category_blacklisted(str(after.guild.id), after.channel):  # type: ignore[union-attr]
             return
 
         blacklisted_roles = await get_log_blacklist(after.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
@@ -2538,7 +2779,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(message.guild.id, str(message.author.id), LogBlacklistType.USER):  # type: ignore[union-attr]
             return
 
-        if await is_log_entity_blacklisted(message.guild.id, str(message.channel.id), LogBlacklistType.CHANNEL):  # type: ignore[union-attr]
+        if message.channel is not None and message.guild is not None and await _is_channel_or_category_blacklisted(str(message.guild.id), message.channel):  # type: ignore[union-attr]
             return
 
         blacklisted_roles = await get_log_blacklist(message.guild.id, LogBlacklistType.ROLE)  # type: ignore[union-attr]
@@ -2630,7 +2871,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
+        if reaction.message.channel is not None and reaction.guild is not None and await _is_channel_or_category_blacklisted(str(reaction.guild.id), reaction.message.channel):
             return
 
         blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)
@@ -2670,7 +2911,7 @@ class LogsCog(commands.Cog):
         if await is_log_entity_blacklisted(reaction.guild.id, str(user.id), LogBlacklistType.USER):
             return
 
-        if await is_log_entity_blacklisted(reaction.guild.id, str(reaction.message.channel.id), LogBlacklistType.CHANNEL):
+        if reaction.message.channel is not None and reaction.guild is not None and await _is_channel_or_category_blacklisted(str(reaction.guild.id), reaction.message.channel):
             return
 
         blacklisted_roles = await get_log_blacklist(reaction.guild.id, LogBlacklistType.ROLE)
@@ -3018,9 +3259,19 @@ class LogsCog(commands.Cog):
             name=app_commands.locale_str("logs_blacklistr_name"),
             description=app_commands.locale_str("logs_blacklistr_description"),
         )
+        voice_blacklist = VoiceBlacklistCommands(
+            name=app_commands.locale_str("logs_blacklistv_name"),
+            description=app_commands.locale_str("logs_blacklistv_description"),
+        )
+        category_blacklist = CategoryBlacklistCommands(
+            name=app_commands.locale_str("logs_blacklistcat_name"),
+            description=app_commands.locale_str("logs_blacklistcat_description"),
+        )
         logcmds.add_command(channel_blacklist)
         logcmds.add_command(user_blacklist)
         logcmds.add_command(role_blacklist)
+        logcmds.add_command(voice_blacklist)
+        logcmds.add_command(category_blacklist)
         self.bot.tree.add_command(logcmds)
 
         # Only create the log consumer task if it doesn't exist or is done

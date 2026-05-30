@@ -957,6 +957,20 @@ def get_table_definitions() -> dict[str, str]:
         PRIMARY KEY(`guild_id`, `user_id`)
     ) ENGINE=InnoDB;
     """
+    tables["logVoiceBlacklist"] = """
+    CREATE TABLE IF NOT EXISTS `logVoiceBlacklist` (
+        `guild_id` VARCHAR(20),
+        `channel_id` VARCHAR(20),
+        PRIMARY KEY(`guild_id`, `channel_id`)
+    ) ENGINE=InnoDB;
+    """
+    tables["logCategoryBlacklist"] = """
+    CREATE TABLE IF NOT EXISTS `logCategoryBlacklist` (
+        `guild_id` VARCHAR(20),
+        `channel_id` VARCHAR(20),
+        PRIMARY KEY(`guild_id`, `channel_id`)
+    ) ENGINE=InnoDB;
+    """
     tables["log_enables"] = """
     CREATE TABLE IF NOT EXISTS `log_enables` (
         `guild_id` VARCHAR(20),
