@@ -926,6 +926,26 @@ class CountingMode(IntEnum):
     CUBE = 14
 
 
+class WordleStatsModel(BaseModel):
+    """Wordle player statistics tracked per user per guild."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    user_id: UserId
+    guild_id: GuildId
+    games_played: int = Field(ge=0)
+    games_won: int = Field(ge=0)
+    current_streak: int = Field(ge=0)
+    max_streak: int = Field(ge=0)
+    guess_distribution: str = "0,0,0,0,0,0"  # comma-separated: guesses 1-6
+    hard_mode_games_played: int = Field(ge=0)
+    hard_mode_games_won: int = Field(ge=0)
+
+    @classmethod
+    def from_row(cls, row: tuple) -> WordleStatsModel:
+        return _from_row(cls, row)
+
+
 class LevelRolesGroupModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

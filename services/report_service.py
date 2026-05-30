@@ -51,6 +51,8 @@ class ReportService:
     """Service for managing reports, blocked reporters, report channels, evidence,
     moderation actions, notifications, and anonymity settings."""
 
+    VALID_STATUSES = ("PENDING", "INVESTIGATING", "ACTION_TAKEN", "DISMISSED")
+
     # ------------------------------------------------------------------ #
     # Reports
     # ------------------------------------------------------------------ #
@@ -62,8 +64,8 @@ class ReportService:
         if params.is_moderator:
             query = (
                 "INSERT INTO reports "
-                "(guild_id, user_id, reporterId, reason, status, accepted, accepted_at, acceptedBy) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                "(guild_id, user_id, reporterId, reason, status, status_updated_at, status_updated_by) "
+                "VALUES (%s, %s, %s, %s, %s, NOW(), %s)"
             )
             vals: tuple[Any, ...] = (
                 params.guild_id,
@@ -71,8 +73,6 @@ class ReportService:
                 params.reporter_id,
                 params.reason,
                 "investigating",
-                1,
-                datetime.now(),
                 params.reporter_id,
             )
         else:
