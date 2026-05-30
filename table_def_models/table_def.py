@@ -7,8 +7,6 @@ that can generate DDL automatically.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 
@@ -19,9 +17,9 @@ class ColumnDef(BaseModel):
     sql_type: str
     primary_key: bool = False
     nullable: bool = True
-    default: Optional[str] = None
+    default: str | None = None
     auto_increment: bool = False
-    comment: Optional[str] = None
+    comment: str | None = None
 
     def to_sql(self) -> str:
         """Render this column as a fragment of a CREATE TABLE statement."""
@@ -43,7 +41,7 @@ class IndexDef(BaseModel):
     name: str
     columns: list[str]  # column names, optionally with " DESC" suffix
     unique: bool = False
-    index_type: Optional[str] = None  # e.g. FULLTEXT, SPATIAL
+    index_type: str | None = None  # e.g. FULLTEXT, SPATIAL
 
     def to_sql(self) -> str:
         """Render this index definition.
@@ -87,7 +85,7 @@ class TableDef(BaseModel):
     primary_key: list[str] = Field(default_factory=list)  # Composite PK column names
     indices: list[IndexDef] = Field(default_factory=list)
     foreign_keys: list[ForeignKeyDef] = Field(default_factory=list)
-    comment: Optional[str] = None
+    comment: str | None = None
 
     def _get_pk_col_names(self) -> list[str]:
         """Return the list of primary key column names."""
@@ -143,9 +141,9 @@ def col(
     *,
     pk: bool = False,
     nullable: bool = True,
-    default: Optional[str] = None,
+    default: str | None = None,
     ai: bool = False,
-    comment: Optional[str] = None,
+    comment: str | None = None,
 ) -> ColumnDef:
     """Shortcut factory for ColumnDef."""
     return ColumnDef(
