@@ -277,7 +277,7 @@ async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
         coros: list[Awaitable[Any]] = [
             _execute_with_logging(h.name, h.callback, message) for h in batch
         ]
-        results = await asyncio.gather(*coros)
+        results = await asyncio.gather(*coros, return_exceptions=True)
 
         for handler, result in zip(batch, results, strict=True):
             outcomes.append((handler.name, result))
@@ -343,7 +343,7 @@ async def run_handlers_safe(
             return exc
 
     tasks = [_execute_generic(name, fn, args, kwargs) for name, fn, args, kwargs in handlers]
-    return await asyncio.gather(*tasks)
+    return await asyncio.gather(*tasks, return_exceptions=True)
 
 
 async def run_handlers_sequential(
