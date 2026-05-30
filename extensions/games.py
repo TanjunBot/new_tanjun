@@ -422,10 +422,7 @@ class GameCommands(discord.app_commands.Group):
         name=app_commands.locale_str("games_memory_name"),
         description=app_commands.locale_str("games_memory_description"),
     )
-    @app_commands.describe(
-        user=app_commands.locale_str("games_memory_params_user_description"),
-    )
-    async def memory_cmd(self, interaction: discord.Interaction, user: discord.Member = None) -> None:  # type: ignore[assignment]
+    async def memory_cmd(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         command_info = utility.CommandInfo(
             user=interaction.user,

@@ -182,7 +182,6 @@ class MemoryView(discord.ui.View):
     def _build_buttons(self) -> None:
         """Create buttons for the current game state."""
         self.clear_items()
-        available = self.game.get_button_labels()
 
         for idx in range(self.game.total_cards):
             if self.game.matched[idx]:
@@ -227,8 +226,12 @@ class MemoryView(discord.ui.View):
 
         async def callback(interaction: discord.Interaction) -> None:
             if interaction.user != self.game.player:
+                locale = self.command_info.locale
+                not_your_game_msg = tanjunLocalizer.localize(
+                    locale, "commands.games.memory.not_your_game"
+                )
                 await interaction.response.send_message(
-                    "This is not your game!",
+                    not_your_game_msg,
                     ephemeral=True,
                 )
                 return
@@ -305,7 +308,7 @@ class MemoryView(discord.ui.View):
             await interaction.response.edit_message(embed=embed, view=self)
 
             # After a brief delay, flip cards back
-            game.flip_back()
+            game.reset_revealed()
             self._build_buttons()
 
             import asyncio

@@ -32290,7 +32290,7 @@
   {
     "identifier": "commands.games.memory.title",
     "source_string": "Memory Game",
-    "translation": "🧠 Memory Match",
+    "translation": "🧠 Memory-Spiel",
     "context": "commands -> games -> memory -> title",
     "labels": "unassigned",
     "max_length": null
@@ -32372,6 +32372,14 @@
     "source_string": "Game Over",
     "translation": "Spiel vorbei",
     "context": "commands -> games -> memory -> game_over",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.not_your_game",
+    "source_string": "This is not your game!",
+    "translation": "Das ist nicht dein Spiel!",
+    "context": "commands -> games -> memory -> not_your_game",
     "labels": "unassigned",
     "max_length": null
   },

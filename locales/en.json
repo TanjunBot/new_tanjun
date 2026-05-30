@@ -32376,6 +32376,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.games.memory.not_your_game",
+    "source_string": "This is not your game!",
+    "translation": "This is not your game!",
+    "context": "commands -> games -> memory -> not_your_game",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "games_memory_name",
     "source_string": "memory",
     "translation": "memory",
