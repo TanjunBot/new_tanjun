@@ -995,13 +995,17 @@ def get_table_definitions() -> dict[str, str]:
         `reporterId` VARCHAR(20),
         `reason` VARCHAR(1024),
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        `status` VARCHAR(20) DEFAULT 'PENDING',
+        `status_updated_at` TIMESTAMP DEFAULT NULL,
+        `status_updated_by` VARCHAR(20) DEFAULT NULL,
         `accepted` TINYINT(1) DEFAULT 0,
         `accepted_at` TIMESTAMP DEFAULT NULL,
         `acceptedBy` VARCHAR(20) DEFAULT NULL,
         `resolved` TINYINT(1) DEFAULT 0,
         `resolved_at` TIMESTAMP DEFAULT NULL,
         `resolvedBy` VARCHAR(20) DEFAULT NULL,
-        PRIMARY KEY(`id`)
+        PRIMARY KEY(`id`),
+        INDEX `idx_status` (`status`)
     ) ENGINE=InnoDB;
     """
     tables["blockedReporters"] = """
@@ -1221,6 +1225,15 @@ async def create_tables(bot=None) -> None:
          ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
          AFTER `attachments`,
          ADD INDEX `idx_discord_message` (`discord_message_id`)""",
+        # Add status column to reports for status transitions
+        """ALTER TABLE `reports`
+         ADD COLUMN `status` VARCHAR(20) DEFAULT 'PENDING'
+         AFTER `created_at`,
+         ADD COLUMN `status_updated_at` TIMESTAMP DEFAULT NULL
+         AFTER `status`,
+         ADD COLUMN `status_updated_by` VARCHAR(20) DEFAULT NULL
+         AFTER `status_updated_at`,
+         ADD INDEX `idx_status` (`status`)""",
         """ALTER TABLE `level`
          ADD INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)""",
         """ALTER TABLE `warnings`
@@ -2753,10 +2766,17 @@ async def reject_report(guild_id: str, report_id: str) -> None:
     await _report_svc.reject(guild_id, report_id, accepted_by=None)
 
 
-async def resolve_report(guild_id: str, report_id: str) -> None:
+async def resolve_report(guild_id: str, report_id: str, resolved_by: str | None = None) -> None:
     from services.report_service import report_service as _report_svc
 
-    await _report_svc.resolve(guild_id, report_id)
+    await _report_svc.resolve(guild_id, report_id, resolved_by)
+
+
+async def set_report_status(guild_id: str, report_id: str, status: str, updated_by: str | None = None) -> None:
+    """Set the status of a report."""
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.set_status(guild_id, report_id, status, updated_by)
 
 
 async def delete_report(guild_id: str, report_id: str) -> None:
