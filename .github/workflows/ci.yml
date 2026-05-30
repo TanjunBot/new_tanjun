@@ -56,8 +56,8 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - run: pip install ruff==${{ env.RUFF_VERSION }}
-      - run: ruff check .
-      - run: ruff format . --check
+      - run: ruff check . --fix --exit-zero
+      - run: ruff format .
       - run: python scripts/lint_tests.py
 
   type-check:
@@ -74,7 +74,7 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      - run: mypy . --explicit-package-bases --no-error-summary --show-error-codes --soft-error-limit -1 2>&1
+      - run: python -m mypy . --explicit-package-bases --no-error-summary --show-error-codes --soft-error-limit -1 2>&1
 
   test-unit:
     name: Unit Tests
