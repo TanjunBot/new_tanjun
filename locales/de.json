@@ -32346,7 +32346,7 @@
   {
     "identifier": "logs_blacklistv_name",
     "source_string": "voice-blacklist",
-    "translation": "voice-blacklist",
+    "translation": "Voice-Blacklist",
     "context": "logs -> blacklist -> voice -> name",
     "labels": "unassigned",
     "max_length": null
@@ -32650,7 +32650,7 @@
   {
     "identifier": "logs_blacklistv_description",
     "source_string": "Manage the voice channel blacklist for logging",
-    "translation": "Manage the voice channel blacklist for logging",
+    "translation": "Verwalte die Blacklist für Sprachkanäle in den Protokollen",
     "context": "logs -> blacklist -> voice -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32666,7 +32666,7 @@
   {
     "identifier": "logs_blacklistv_add_name",
     "source_string": "add-voice",
-    "translation": "add-voice",
+    "translation": "sprachkanal-hinzufügen",
     "context": "logs -> blacklist -> voice -> add -> name",
     "labels": "unassigned",
     "max_length": null
@@ -32682,7 +32682,7 @@
   {
     "identifier": "logs_blacklistv_add_description",
     "source_string": "Blacklist a voice channel from logs",
-    "translation": "Blacklist a voice channel from logs",
+    "translation": "Einen Sprachkanal von der Protokollierung ausschließen",
     "context": "logs -> blacklist -> voice -> add -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32698,7 +32698,7 @@
   {
     "identifier": "logs_blacklistv_add_params_channel_description",
     "source_string": "The voice channel to blacklist",
-    "translation": "The voice channel to blacklist",
+    "translation": "Der Sprachkanal, der auf die Blacklist gesetzt werden soll",
     "context": "logs -> blacklist -> voice -> add -> params -> channel -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32714,7 +32714,7 @@
   {
     "identifier": "logs_blacklistv_remove_name",
     "source_string": "remove-voice",
-    "translation": "remove-voice",
+    "translation": "sprachkanal-entfernen",
     "context": "logs -> blacklist -> voice -> remove -> name",
     "labels": "unassigned",
     "max_length": null
@@ -32730,7 +32730,7 @@
   {
     "identifier": "logs_blacklistv_remove_description",
     "source_string": "Remove a voice channel from the log blacklist",
-    "translation": "Remove a voice channel from the log blacklist",
+    "translation": "Einen Sprachkanal von der Blacklist entfernen",
     "context": "logs -> blacklist -> voice -> remove -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32746,7 +32746,7 @@
   {
     "identifier": "logs_blacklistv_remove_params_channel_description",
     "source_string": "The voice channel to remove from blacklist",
-    "translation": "The voice channel to remove from blacklist",
+    "translation": "Der Sprachkanal, der von der Blacklist entfernt werden soll",
     "context": "logs -> blacklist -> voice -> remove -> params -> channel -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32762,7 +32762,7 @@
   {
     "identifier": "logs_blacklistv_show_name",
     "source_string": "list-voice",
-    "translation": "list-voice",
+    "translation": "sprachkanäle-auflisten",
     "context": "logs -> blacklist -> voice -> show -> name",
     "labels": "unassigned",
     "max_length": null
@@ -32778,7 +32778,7 @@
   {
     "identifier": "logs_blacklistv_show_description",
     "source_string": "Show blacklisted voice channels",
-    "translation": "Show blacklisted voice channels",
+    "translation": "Die Sprachkanal-Blacklist anzeigen",
     "context": "logs -> blacklist -> voice -> show -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32786,7 +32786,7 @@
   {
     "identifier": "commands.logs.blacklistVoiceChannel.missingPermission.title",
     "source_string": "Missing Permissions",
-    "translation": "Missing Permissions",
+    "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistVoiceChannel -> missingPermission -> title",
     "labels": "unassigned",
     "max_length": null
@@ -32794,7 +32794,7 @@
   {
     "identifier": "commands.logs.blacklistVoiceChannel.missingPermission.description",
     "source_string": "You need the administrator permission to use this command.",
-    "translation": "You need the administrator permission to use this command.",
+    "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistVoiceChannel -> missingPermission -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32802,7 +32802,7 @@
   {
     "identifier": "commands.logs.blacklistVoiceChannel.alreadyBlacklisted.title",
     "source_string": "Already Blacklisted",
-    "translation": "Already Blacklisted",
+    "translation": "Bereits auf der Blacklist",
     "context": "commands -> logs -> blacklistVoiceChannel -> alreadyBlacklisted -> title",
     "labels": "unassigned",
     "max_length": null
@@ -32810,7 +32810,7 @@
   {
     "identifier": "commands.logs.blacklistVoiceChannel.alreadyBlacklisted.description",
     "source_string": "This voice channel is already blacklisted.",
-    "translation": "This voice channel is already blacklisted.",
+    "translation": "Dieser Sprachkanal ist bereits auf der Blacklist.",
     "context": "commands -> logs -> blacklistVoiceChannel -> alreadyBlacklisted -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32818,7 +32818,7 @@
   {
     "identifier": "commands.logs.blacklistVoiceChannel.blacklisted.title",
     "source_string": "Blacklisted",
-    "translation": "Blacklisted",
+    "translation": "Auf Blacklist gesetzt",
     "context": "commands -> logs -> blacklistVoiceChannel -> blacklisted -> title",
     "labels": "unassigned",
     "max_length": null
@@ -32826,7 +32826,7 @@
   {
     "identifier": "commands.logs.blacklistVoiceChannel.blacklisted.description",
     "source_string": "The voice channel has been blacklisted from logs.",
-    "translation": "The voice channel has been blacklisted from logs.",
+    "translation": "Der Sprachkanal wurde von der Protokollierung ausgeschlossen.",
     "context": "commands -> logs -> blacklistVoiceChannel -> blacklisted -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32842,7 +32842,7 @@
   {
     "identifier": "commands.logs.blacklistVoiceChannel.missingChannel.description",
     "source_string": "Please specify a voice channel.",
-    "translation": "Please specify a voice channel.",
+    "translation": "Bitte gib einen Sprachkanal an.",
     "context": "commands -> logs -> blacklistVoiceChannel -> missingChannel -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32850,7 +32850,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingPermission.title",
     "source_string": "Missing Permissions",
-    "translation": "Missing Permissions",
+    "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingPermission -> title",
     "labels": "unassigned",
     "max_length": null
@@ -32858,7 +32858,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingPermission.description",
     "source_string": "You need the administrator permission to use this command.",
-    "translation": "You need the administrator permission to use this command.",
+    "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingPermission -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32866,7 +32866,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.notBlacklisted.title",
     "source_string": "Not Blacklisted",
-    "translation": "Not Blacklisted",
+    "translation": "Nicht auf der Blacklist",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> notBlacklisted -> title",
     "labels": "unassigned",
     "max_length": null
@@ -32874,7 +32874,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.notBlacklisted.description",
     "source_string": "This voice channel is not blacklisted.",
-    "translation": "This voice channel is not blacklisted.",
+    "translation": "Dieser Sprachkanal ist nicht auf der Blacklist.",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> notBlacklisted -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32882,7 +32882,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.success.title",
     "source_string": "Removed",
-    "translation": "Removed",
+    "translation": "Entfernt",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> success -> title",
     "labels": "unassigned",
     "max_length": null
@@ -32890,7 +32890,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.success.description",
     "source_string": "The voice channel has been removed from the log blacklist.",
-    "translation": "The voice channel has been removed from the log blacklist.",
+    "translation": "Der Sprachkanal wurde von der Blacklist entfernt.",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> success -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32906,7 +32906,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingChannel.description",
     "source_string": "Please specify a voice channel.",
-    "translation": "Please specify a voice channel.",
+    "translation": "Bitte gib einen Sprachkanal an.",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingChannel -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32914,7 +32914,7 @@
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.missingPermission.title",
     "source_string": "Missing Permissions",
-    "translation": "Missing Permissions",
+    "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistListVoiceChannel -> missingPermission -> title",
     "labels": "unassigned",
     "max_length": null
@@ -32922,7 +32922,7 @@
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.missingPermission.description",
     "source_string": "You need the administrator permission to use this command.",
-    "translation": "You need the administrator permission to use this command.",
+    "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistListVoiceChannel -> missingPermission -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32930,7 +32930,7 @@
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.title",
     "source_string": "Blacklisted Voice Channels",
-    "translation": "Blacklisted Voice Channels",
+    "translation": "Blockierte Sprachkanäle",
     "context": "commands -> logs -> blacklistListVoiceChannel -> title",
     "labels": "unassigned",
     "max_length": null
@@ -32938,7 +32938,7 @@
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.addChannel.placeholder",
     "source_string": "Select a voice channel to add to the blacklist",
-    "translation": "Select a voice channel to add to the blacklist",
+    "translation": "Wähle einen Sprachkanal aus, um ihn zur Blacklist hinzuzufügen",
     "context": "commands -> logs -> blacklistListVoiceChannel -> addChannel -> placeholder",
     "labels": "unassigned",
     "max_length": null
@@ -32946,7 +32946,7 @@
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.noBlacklistedChannels",
     "source_string": "No voice channels are blacklisted.",
-    "translation": "No voice channels are blacklisted.",
+    "translation": "Keine Sprachkanäle sind auf der Blacklist.",
     "context": "commands -> logs -> blacklistListVoiceChannel -> noBlacklistedChannels",
     "labels": "unassigned",
     "max_length": null
@@ -32954,7 +32954,7 @@
   {
     "identifier": "logs_blacklistcat_name",
     "source_string": "category-blacklist",
-    "translation": "category-blacklist",
+    "translation": "Kategorie-Blacklist",
     "context": "logs -> blacklist -> category -> name",
     "labels": "unassigned",
     "max_length": null
@@ -32962,7 +32962,7 @@
   {
     "identifier": "logs_blacklistcat_description",
     "source_string": "Manage the category blacklist for logging",
-    "translation": "Manage the category blacklist for logging",
+    "translation": "Verwalte die Blacklist für Kategorien in den Protokollen",
     "context": "logs -> blacklist -> category -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32970,7 +32970,7 @@
   {
     "identifier": "logs_blacklistcat_add_name",
     "source_string": "add-category",
-    "translation": "add-category",
+    "translation": "kategorie-hinzufügen",
     "context": "logs -> blacklist -> category -> add -> name",
     "labels": "unassigned",
     "max_length": null
@@ -32978,7 +32978,7 @@
   {
     "identifier": "logs_blacklistcat_add_description",
     "source_string": "Blacklist a category from logs",
-    "translation": "Blacklist a category from logs",
+    "translation": "Eine Kategorie von der Protokollierung ausschließen",
     "context": "logs -> blacklist -> category -> add -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32986,7 +32986,7 @@
   {
     "identifier": "logs_blacklistcat_add_params_channel_description",
     "source_string": "The category to blacklist",
-    "translation": "The category to blacklist",
+    "translation": "Die Kategorie, die auf die Blacklist gesetzt werden soll",
     "context": "logs -> blacklist -> category -> add -> params -> channel -> description",
     "labels": "unassigned",
     "max_length": null
@@ -32994,7 +32994,7 @@
   {
     "identifier": "logs_blacklistcat_remove_name",
     "source_string": "remove-category",
-    "translation": "remove-category",
+    "translation": "kategorie-entfernen",
     "context": "logs -> blacklist -> category -> remove -> name",
     "labels": "unassigned",
     "max_length": null
@@ -33002,7 +33002,7 @@
   {
     "identifier": "logs_blacklistcat_remove_description",
     "source_string": "Remove a category from the log blacklist",
-    "translation": "Remove a category from the log blacklist",
+    "translation": "Eine Kategorie von der Blacklist entfernen",
     "context": "logs -> blacklist -> category -> remove -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33010,7 +33010,7 @@
   {
     "identifier": "logs_blacklistcat_remove_params_channel_description",
     "source_string": "The category to remove from blacklist",
-    "translation": "The category to remove from blacklist",
+    "translation": "Die Kategorie, die von der Blacklist entfernt werden soll",
     "context": "logs -> blacklist -> category -> remove -> params -> channel -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33018,7 +33018,7 @@
   {
     "identifier": "logs_blacklistcat_show_name",
     "source_string": "list-category",
-    "translation": "list-category",
+    "translation": "kategorien-auflisten",
     "context": "logs -> blacklist -> category -> show -> name",
     "labels": "unassigned",
     "max_length": null
@@ -33026,7 +33026,7 @@
   {
     "identifier": "logs_blacklistcat_show_description",
     "source_string": "Show blacklisted categories",
-    "translation": "Show blacklisted categories",
+    "translation": "Die Kategorie-Blacklist anzeigen",
     "context": "logs -> blacklist -> category -> show -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33034,7 +33034,7 @@
   {
     "identifier": "commands.logs.blacklistCategory.missingPermission.title",
     "source_string": "Missing Permissions",
-    "translation": "Missing Permissions",
+    "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistCategory -> missingPermission -> title",
     "labels": "unassigned",
     "max_length": null
@@ -33042,7 +33042,7 @@
   {
     "identifier": "commands.logs.blacklistCategory.missingPermission.description",
     "source_string": "You need the administrator permission to use this command.",
-    "translation": "You need the administrator permission to use this command.",
+    "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistCategory -> missingPermission -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33050,7 +33050,7 @@
   {
     "identifier": "commands.logs.blacklistCategory.alreadyBlacklisted.title",
     "source_string": "Already Blacklisted",
-    "translation": "Already Blacklisted",
+    "translation": "Bereits auf der Blacklist",
     "context": "commands -> logs -> blacklistCategory -> alreadyBlacklisted -> title",
     "labels": "unassigned",
     "max_length": null
@@ -33058,7 +33058,7 @@
   {
     "identifier": "commands.logs.blacklistCategory.alreadyBlacklisted.description",
     "source_string": "This category is already blacklisted.",
-    "translation": "This category is already blacklisted.",
+    "translation": "Diese Kategorie ist bereits auf der Blacklist.",
     "context": "commands -> logs -> blacklistCategory -> alreadyBlacklisted -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33066,7 +33066,7 @@
   {
     "identifier": "commands.logs.blacklistCategory.blacklisted.title",
     "source_string": "Blacklisted",
-    "translation": "Blacklisted",
+    "translation": "Auf Blacklist gesetzt",
     "context": "commands -> logs -> blacklistCategory -> blacklisted -> title",
     "labels": "unassigned",
     "max_length": null
@@ -33074,7 +33074,7 @@
   {
     "identifier": "commands.logs.blacklistCategory.blacklisted.description",
     "source_string": "The category has been blacklisted from logs.",
-    "translation": "The category has been blacklisted from logs.",
+    "translation": "Die Kategorie wurde von der Protokollierung ausgeschlossen.",
     "context": "commands -> logs -> blacklistCategory -> blacklisted -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33098,7 +33098,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveCategory.missingPermission.title",
     "source_string": "Missing Permissions",
-    "translation": "Missing Permissions",
+    "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistRemoveCategory -> missingPermission -> title",
     "labels": "unassigned",
     "max_length": null
@@ -33106,7 +33106,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveCategory.missingPermission.description",
     "source_string": "You need the administrator permission to use this command.",
-    "translation": "You need the administrator permission to use this command.",
+    "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistRemoveCategory -> missingPermission -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33114,7 +33114,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveCategory.notBlacklisted.title",
     "source_string": "Not Blacklisted",
-    "translation": "Not Blacklisted",
+    "translation": "Nicht auf der Blacklist",
     "context": "commands -> logs -> blacklistRemoveCategory -> notBlacklisted -> title",
     "labels": "unassigned",
     "max_length": null
@@ -33122,7 +33122,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveCategory.notBlacklisted.description",
     "source_string": "This category is not blacklisted.",
-    "translation": "This category is not blacklisted.",
+    "translation": "Diese Kategorie ist nicht auf der Blacklist.",
     "context": "commands -> logs -> blacklistRemoveCategory -> notBlacklisted -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33130,7 +33130,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveCategory.success.title",
     "source_string": "Removed",
-    "translation": "Removed",
+    "translation": "Entfernt",
     "context": "commands -> logs -> blacklistRemoveCategory -> success -> title",
     "labels": "unassigned",
     "max_length": null
@@ -33138,7 +33138,7 @@
   {
     "identifier": "commands.logs.blacklistRemoveCategory.success.description",
     "source_string": "The category has been removed from the log blacklist.",
-    "translation": "The category has been removed from the log blacklist.",
+    "translation": "Die Kategorie wurde von der Blacklist entfernt.",
     "context": "commands -> logs -> blacklistRemoveCategory -> success -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33162,7 +33162,7 @@
   {
     "identifier": "commands.logs.blacklistListCategory.missingPermission.title",
     "source_string": "Missing Permissions",
-    "translation": "Missing Permissions",
+    "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistListCategory -> missingPermission -> title",
     "labels": "unassigned",
     "max_length": null
@@ -33170,7 +33170,7 @@
   {
     "identifier": "commands.logs.blacklistListCategory.missingPermission.description",
     "source_string": "You need the administrator permission to use this command.",
-    "translation": "You need the administrator permission to use this command.",
+    "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistListCategory -> missingPermission -> description",
     "labels": "unassigned",
     "max_length": null
@@ -33178,7 +33178,7 @@
   {
     "identifier": "commands.logs.blacklistListCategory.title",
     "source_string": "Blacklisted Categories",
-    "translation": "Blacklisted Categories",
+    "translation": "Blockierte Kategorien",
     "context": "commands -> logs -> blacklistListCategory -> title",
     "labels": "unassigned",
     "max_length": null
@@ -33186,7 +33186,7 @@
   {
     "identifier": "commands.logs.blacklistListCategory.addCategory.placeholder",
     "source_string": "Select a category to add to the blacklist",
-    "translation": "Select a category to add to the blacklist",
+    "translation": "Wähle eine Kategorie aus, um sie zur Blacklist hinzuzufügen",
     "context": "commands -> logs -> blacklistListCategory -> addCategory -> placeholder",
     "labels": "unassigned",
     "max_length": null
@@ -33194,7 +33194,7 @@
   {
     "identifier": "commands.logs.blacklistListCategory.noBlacklistedCategories",
     "source_string": "No categories are blacklisted.",
-    "translation": "No categories are blacklisted.",
+    "translation": "Keine Kategorien sind auf der Blacklist.",
     "context": "commands -> logs -> blacklistListCategory -> noBlacklistedCategories",
     "labels": "unassigned",
     "max_length": null

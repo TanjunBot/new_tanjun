@@ -6,11 +6,7 @@ from localizer import tanjunLocalizer
 
 
 async def blacklist_remove_voice(command_info: utility.CommandInfo, channel: discord.VoiceChannel) -> None:
-    if (
-        isinstance(command_info.user, discord.Member)
-        and isinstance(command_info.channel, discord.abc.GuildChannel)
-        and not command_info.channel.permissions_for(command_info.user).administrator
-    ):
+    if isinstance(command_info.user, discord.Member) and not command_info.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
                 command_info.locale,

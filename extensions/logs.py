@@ -77,13 +77,6 @@ async def _is_channel_or_category_blacklisted(guild_id: str, channel: discord.ab
     return False
 
 
-async def _is_category_blacklisted(guild_id: str, category_id: str | None) -> bool:
-    """Check if a category ID is blacklisted."""
-    if category_id is None:
-        return False
-    return await is_log_entity_blacklisted(guild_id, category_id, LogBlacklistType.CATEGORY) is not None
-
-
 embeds = {}  # type: ignore[var-annotated]
 
 _log_queue: asyncio.Queue[tuple[str, discord.Embed]] = asyncio.Queue(maxsize=200)
@@ -318,7 +311,7 @@ class VoiceBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistv_add_description"),
     )
     @app_commands.describe(channel=app_commands.locale_str("logs_blacklistv_add_params_channel_description"))
-    async def add_blacklist_voice_cmd(self, ctx: discord.Interaction, channel: discord.VoiceChannel = None) -> None:  # type: ignore[assignment]
+    async def add_blacklist_voice_cmd(self, ctx: discord.Interaction, channel: discord.VoiceChannel | None = None) -> None:
         await ctx.response.defer()
         command_info = utility.CommandInfo(
             user=ctx.user,
@@ -571,10 +564,10 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if rule.channel_id is not None and await is_log_entity_blacklisted(
-            rule.guild.id, str(rule.channel_id), LogBlacklistType.CHANNEL
-        ):
-            return
+        if rule.channel_id is not None:
+            channel = rule.guild.get_channel(rule.channel_id)
+            if await _is_channel_or_category_blacklisted(rule.guild.id, channel):
+                return
 
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
         description_parts = []

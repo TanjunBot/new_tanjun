@@ -4,6 +4,8 @@ import utility
 from api import LogBlacklistType, add_log_blacklist, get_log_blacklist, remove_log_blacklist
 from localizer import tanjunLocalizer
 
+COMPONENT_TYPE_CHANNEL_SELECT = 8
+
 
 async def blacklist_list_voice(command_info: utility.command_info):
     if not command_info.user.guild_permissions.administrator:
@@ -23,9 +25,9 @@ async def blacklist_list_voice(command_info: utility.command_info):
     blacklisted_channels = await get_log_blacklist(command_info.guild.id, LogBlacklistType.VOICE_CHANNEL)
 
     class BlacklistView(discord.ui.View):
-        def __init__(self, channels: list, locale: str, guild: discord.Guild):
+        def __init__(self, channels: tuple, locale: str, guild: discord.Guild):
             super().__init__()
-            self.channels = channels
+            self.channels = tuple(channels)
             self.locale = locale
             self.guild = guild
             self.selectedIndex = 0
@@ -39,16 +41,20 @@ async def blacklist_list_voice(command_info: utility.command_info):
 
         @discord.ui.button(label="⬆️", custom_id="up")
         async def up(self, interaction: discord.Interaction, button: discord.ui.Button):
+            if not self.channels:
+                return
             self.selectedIndex = (self.selectedIndex - 1) % len(self.channels)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
         async def down(self, interaction: discord.Interaction, button: discord.ui.Button):
+            if not self.channels:
+                return
             self.selectedIndex = (self.selectedIndex + 1) % len(self.channels)
             await self.update_view(interaction)
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
-            if interaction.data["component_type"] == 8:  # ChannelSelect
+            if interaction.data["component_type"] == COMPONENT_TYPE_CHANNEL_SELECT:
                 channel_id = interaction.data["values"][0]
                 await add_log_blacklist(self.guild.id, channel_id, LogBlacklistType.VOICE_CHANNEL)
                 self.channels += (channel_id,)
