@@ -17,6 +17,7 @@ from aiohttp import ClientTimeout
 from api import execute_action, execute_query_iter, safe_execute_query
 from config import twitchId, twitchSecret
 from localizer import tanjunLocalizer
+from models import TwitchUserModel
 from utility import tanjunEmbed
 
 
@@ -117,7 +118,7 @@ class TwitchService:
             "Content-Type": "application/json",
         }
 
-    async def get_user_by_login(self, login_name: str) -> dict[str, str] | None:
+    async def get_user_by_login(self, login_name: str) -> TwitchUserModel | None:
         """Look up a Twitch user by their login name."""
         if self.session is None:
             return None
@@ -128,7 +129,7 @@ class TwitchService:
         async with self.session.get(url, headers=self.headers, params=params, timeout=ClientTimeout(total=10)) as response:
             data: dict[str, list[dict[str, str]]] = await response.json()
             if data["data"]:
-                return data["data"][0]
+                return TwitchUserModel.from_api_response(data["data"][0])
             return None
 
     async def get_streams(self, user_ids: list[str]) -> list[LiveStreamInfo]:

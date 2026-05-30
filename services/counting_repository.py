@@ -6,6 +6,7 @@ Replaces 21 individual API functions in api.py with a single typed service.
 from enum import IntEnum
 
 from api import execute_action, execute_query, invalidate_counting_cache
+from models import CountingConfigModel, CountingModesConfigModel
 
 
 class CountingMode(IntEnum):
@@ -185,7 +186,7 @@ class CountingRepository:
     @staticmethod
     async def get_configs(
         channel_id: str | int,
-    ) -> tuple[dict | None, dict | None, dict | None]:
+    ) -> tuple[CountingConfigModel | None, CountingConfigModel | None, CountingModesConfigModel | None]:
         """Fetch configs for all three counting modes in parallel.
 
         Returns (normal_config, challenge_config, modes_config).
@@ -208,25 +209,7 @@ class CountingRepository:
             execute_query(challenge_query, params),
             execute_query(modes_query, params),
         )
-        counting_config = (
-            {"progress": cr[0][0], "last_counter_id": cr[0][1], "guild_id": cr[0][2]}
-            if cr
-            else None
-        )
-        challenge_config = (
-            {"progress": ch_r[0][0], "last_counter_id": ch_r[0][1], "guild_id": ch_r[0][2]}
-            if ch_r
-            else None
-        )
-        modes_config = (
-            {
-                "progress": mr[0][0],
-                "mode": mr[0][1],
-                "goal": mr[0][2],
-                "last_counter_id": mr[0][3],
-                "guild_id": mr[0][4],
-            }
-            if mr
-            else None
-        )
+        counting_config = CountingConfigModel.from_row(cr[0]) if cr else None
+        challenge_config = CountingConfigModel.from_row(ch_r[0]) if ch_r else None
+        modes_config = CountingModesConfigModel.from_row(mr[0]) if mr else None
         return counting_config, challenge_config, modes_config
