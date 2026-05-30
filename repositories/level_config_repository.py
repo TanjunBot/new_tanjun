@@ -121,19 +121,15 @@ class LevelConfigRepository:
             return
 
         # Validate incoming values against LevelConfig domain model
-        valid_difficulties = {'easy', 'medium', 'hard', 'extreme', 'custom'}
+        valid_difficulties = {"easy", "medium", "hard", "extreme", "custom"}
 
         for key, value in kwargs.items():
             if key == "difficulty":
                 if value not in valid_difficulties:
-                    raise ValueError(
-                        f"Invalid difficulty: {value!r}. Must be one of {valid_difficulties}"
-                    )
+                    raise ValueError(f"Invalid difficulty: {value!r}. Must be one of {valid_difficulties}")
             elif key in ("text_cooldown", "voice_cooldown"):
                 if not isinstance(value, int) or value < 0:
-                    raise ValueError(
-                        f"Invalid {key}: {value!r}. Must be a non-negative integer."
-                    )
+                    raise ValueError(f"Invalid {key}: {value!r}. Must be a non-negative integer.")
             elif key == "active":
                 if not isinstance(value, bool):
                     raise ValueError(f"Invalid active: {value!r}. Must be a boolean.")
@@ -170,8 +166,8 @@ class LevelConfigRepository:
         columns = [field_map[k] for k in kwargs]
         placeholders = ["%s"] * len(kwargs)
         query = f"""
-        INSERT INTO levelConfig (guild_id, {', '.join(columns)})
-        VALUES (%s, {', '.join(placeholders)})
+        INSERT INTO levelConfig (guild_id, {", ".join(columns)})
+        VALUES (%s, {", ".join(placeholders)})
         ON DUPLICATE KEY UPDATE {set_str}
         """
         vals = tuple([guild_id] + list(params))

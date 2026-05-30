@@ -51,6 +51,7 @@ class TestPriorityConstants:
 # ------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 class TestRegistrationOrderByPriority:
     async def test_handlers_sorted_on_register(self) -> None:
         """Handlers should be sorted by priority when registered, not just at dispatch time."""
@@ -110,13 +111,13 @@ class TestRegistrationOrderByPriority:
 # ------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 class TestFiltering:
     async def test_ignore_bots(self) -> None:
         async def handler(_m: object) -> None:
             pass
 
-        register(handler, name="bot_safe",
-                 filters=MessageFilters(ignore_bots=True))
+        register(handler, name="bot_safe", filters=MessageFilters(ignore_bots=True))
         bot_msg = _make_message(author_bot=True, guild=MagicMock())
         user_msg = _make_message(author_bot=False, guild=MagicMock())
 
@@ -127,8 +128,7 @@ class TestFiltering:
         async def handler(_m: object) -> None:
             pass
 
-        register(handler, name="guild_only",
-                 filters=MessageFilters(only_guilds=True))
+        register(handler, name="guild_only", filters=MessageFilters(only_guilds=True))
         dm_msg = _make_message(guild=None)
         guild_msg = _make_message(guild=MagicMock())
 
@@ -139,8 +139,7 @@ class TestFiltering:
         async def handler(_m: object) -> None:
             pass
 
-        register(handler, name="channel_limited",
-                 filters=MessageFilters(channel_whitelist={100, 200}))
+        register(handler, name="channel_limited", filters=MessageFilters(channel_whitelist={100, 200}))
 
         matching = _make_message(guild=MagicMock(), channel_id=100)
         blocked = _make_message(guild=MagicMock(), channel_id=300)
@@ -152,8 +151,7 @@ class TestFiltering:
         async def handler(_m: object) -> None:
             pass
 
-        register(handler, name="channel_blocked",
-                 filters=MessageFilters(channel_blacklist={999}))
+        register(handler, name="channel_blocked", filters=MessageFilters(channel_blacklist={999}))
 
         allowed = _make_message(guild=MagicMock(), channel_id=100)
         blocked = _make_message(guild=MagicMock(), channel_id=999)
@@ -167,9 +165,7 @@ class TestFiltering:
 # ------------------------------------------------------------------
 
 
-pytestmark = pytest.mark.asyncio
-
-
+@pytest.mark.asyncio
 class TestDispatch:
     async def test_dispatch_no_handlers(self) -> None:
         clear()
@@ -195,8 +191,7 @@ class TestDispatch:
             nonlocal processed
             processed = True
 
-        register(guild_only, name="guild_only",
-                 filters=MessageFilters(only_guilds=True))
+        register(guild_only, name="guild_only", filters=MessageFilters(only_guilds=True))
 
         # DM message should be blocked by guild_only filter
         dm_msg = _make_message(guild=None)

@@ -265,9 +265,9 @@ class TwitchService:
     def parse_notification_message(self, message: str | None, locale: str, twitch_name: str) -> str:
         """Parse a notification message template, replacing {name} with the Twitch user's name."""
         if not message:
-            return tanjunLocalizer.localize(
-                locale, "commands.utility.twitch.defaultNotificationMessage"
-            ).replace("{name}", twitch_name)
+            return tanjunLocalizer.localize(locale, "commands.utility.twitch.defaultNotificationMessage").replace(
+                "{name}", twitch_name
+            )
         return message.replace("{name}", twitch_name)
 
 

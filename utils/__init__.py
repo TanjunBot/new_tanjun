@@ -1,7 +1,6 @@
 from .async_io import run_blocking
 from .cache import TTLCache
 from .dispatcher import (
-    HandlerRegistry,
     MessageFilters,
     MessageHandler,
     Priority,
@@ -9,9 +8,7 @@ from .dispatcher import (
     dispatch,
     freeze,
     register,
-    register_handler,
     registered_handlers,
-    registry,
     run_handlers_safe,
     run_handlers_sequential,
 )
@@ -19,7 +16,6 @@ from .dispatcher import (
 __all__ = [
     "run_blocking",
     "TTLCache",
-    "HandlerRegistry",
     "MessageFilters",
     "MessageHandler",
     "Priority",
@@ -27,9 +23,7 @@ __all__ = [
     "dispatch",
     "freeze",
     "register",
-    "register_handler",
     "registered_handlers",
-    "registry",
     "run_handlers_safe",
     "run_handlers_sequential",
 ]

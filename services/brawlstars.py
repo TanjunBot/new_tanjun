@@ -277,10 +277,9 @@ class BrawlStarsService:
                         if retry_after and retry_after.isdigit():
                             delay = float(retry_after)
                         else:
-                            delay = (2 ** attempt) * random.uniform(0.5, 1.5)
+                            delay = (2**attempt) * random.uniform(0.5, 1.5)
                         logger.warning(
-                            "Rate limit/server error on %s (attempt %d/%d): "
-                            "HTTP %d. Retrying in %.2fs",
+                            "Rate limit/server error on %s (attempt %d/%d): HTTP %d. Retrying in %.2fs",
                             path,
                             attempt + 1,
                             max_retries + 1,

@@ -9,6 +9,7 @@ Optimizations:
 - Uses quantized color palettes for smaller, higher-quality GIFs
 - Reuses shared helper functions instead of copy-pasting across three files
 """
+
 from __future__ import annotations
 
 import asyncio

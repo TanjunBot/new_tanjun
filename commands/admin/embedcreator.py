@@ -454,7 +454,15 @@ async def create_embed(command_info: utility.CommandInfo, channel: discord.TextC
                     view.command_info.locale,
                     "commands.admin.embed.modals.removeFieldModal.selectField",
                 ),
-                options=[discord.SelectOption(label=tanjunLocalizer.localize(view.command_info.locale, "commands.admin.embed.modals.removeFieldModal.fieldLabel", number=i+1), value=str(i)) for i in range(len(view.embed.fields))],
+                options=[
+                    discord.SelectOption(
+                        label=tanjunLocalizer.localize(
+                            view.command_info.locale, "commands.admin.embed.modals.removeFieldModal.fieldLabel", number=i + 1
+                        ),
+                        value=str(i),
+                    )
+                    for i in range(len(view.embed.fields))
+                ],
             )
             self.add_item(self.field_index)
 

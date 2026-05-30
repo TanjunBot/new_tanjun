@@ -21,6 +21,9 @@ def _log_loop_error(task_name: str) -> None:
             sentry_sdk.capture_exception(tags={"loop_task": task_name})
         except Exception:
             pass  # Don't let Sentry itself break the loop
+
+
+from ai.refill_token import refill_ai_token
 from commands.utility.claim_booster_channel import (
     remove_claimed_booster_channels_that_are_expired,
 )
@@ -33,7 +36,6 @@ from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
 from loops.giveaway import checkVoiceUsers, endGiveaways, sendReadyGiveaways
 from loops.level import addXpToVoiceUsers
-from ai.refill_token import refill_ai_token
 from minigames.add_level_xp import clearNotifiedUsers
 from services.twitch_service import get_twitch_service
 from utility import EmbedColor
@@ -146,8 +148,7 @@ class LoopCog(commands.Cog):
 
             # Batch notification for streams going live simultaneously
             newly_live = [
-                uuid for uuid in user_ids
-                if not twitch_service.stream_status.get(uuid, False) and uuid in live_streams
+                uuid for uuid in user_ids if not twitch_service.stream_status.get(uuid, False) and uuid in live_streams
             ]
 
             if newly_live:

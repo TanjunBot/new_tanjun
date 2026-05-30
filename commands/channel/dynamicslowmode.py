@@ -1,6 +1,5 @@
 """Dynamic slowmode commands — manage per-channel adaptive slowmode."""
 
-
 import time
 
 import discord
@@ -70,9 +69,7 @@ async def addDynamicslowmode(
         await command_info.reply(embed=embed)
         return
 
-    await _ds_service.configure(
-        str(command_info.guild.id), str(channel.id), messages, per, resetafter
-    )  # type: ignore[union-attr]
+    await _ds_service.configure(str(command_info.guild.id), str(channel.id), messages, per, resetafter)  # type: ignore[union-attr]
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.channel.dynamicslowmode.success.title"),
         description=tanjunLocalizer.localize(
@@ -193,7 +190,8 @@ async def dynamicslowmodeMessage(message: discord.Message) -> None:
 
     if cashed_slowmode_delay is None:
         await _ds_service.cache_current_slowmode(
-            str(message.channel.id), message.channel.slowmode_delay  # type: ignore[union-attr]
+            str(message.channel.id),
+            message.channel.slowmode_delay,  # type: ignore[union-attr]
         )
         cashed_slowmode_delay = message.channel.slowmode_delay  # type: ignore[union-attr]
 

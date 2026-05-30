@@ -58,7 +58,9 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
         embed = utility.tanjunEmbed(
             colour=EmbedColor.ERROR,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.missingPermission.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.missingPermission.description"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.admin.nuke.missingPermission.description"
+            ),
         )
         await command_info.reply(embed=embed)
         return
@@ -93,7 +95,9 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
     await view.wait()
 
     if view.value is None:
-        await command_info.channel.send(tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.timeoutMessage"))  # type: ignore[union-attr]
+        await command_info.channel.send(
+            tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.timeoutMessage")
+        )  # type: ignore[union-attr]
         return
     elif not view.value:  # type: ignore[unreachable]
         return
@@ -104,7 +108,9 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
     try:
         confirmation_message = await command_info.client.wait_for("message", check=check, timeout=30.0)
     except TimeoutError:
-        await command_info.channel.send(tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.timeoutMessage"))
+        await command_info.channel.send(
+            tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.timeoutMessage")
+        )
         return
 
     if (
@@ -129,8 +135,12 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
             )
         )
     except discord.Forbidden:
-        await command_info.channel.send(tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.forbiddenError"))
+        await command_info.channel.send(
+            tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.forbiddenError")
+        )
     except discord.HTTPException:
         await command_info.channel.send(tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.httpError"))
     except discord.NotFound:
-        await command_info.channel.send(tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.notfoundError"))
+        await command_info.channel.send(
+            tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nuke.notfoundError")
+        )
