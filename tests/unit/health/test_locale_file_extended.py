@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from locale_file_health_check import LocaleFileHealthCheck
+from health.checks.locales import LocaleFileHealthCheck
 
 from health.checks import HealthStatus
 

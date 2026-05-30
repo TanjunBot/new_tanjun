@@ -8,10 +8,19 @@ import health
 class TestHealthPackageInit:
     def test_exports_all_symbols(self):
         expected = {
+            "BrawlStarsHealthCheck",
+            "BytebinHealthCheck",
+            "DatabaseHealthCheck",
+            "GIPHYHealthCheck",
+            "GitHubAPIHealthCheck",
             "HealthCheck",
+            "HealthCheckManager",
             "HealthCheckResult",
             "HealthStatus",
-            "HealthCheckManager",
+            "ImgBBHealthCheck",
+            "LocaleFileHealthCheck",
+            "OpenAIHealthCheck",
+            "TwitchAPIHealthCheck",
             "notify_health_failures",
         }
         assert set(health.__all__) == expected

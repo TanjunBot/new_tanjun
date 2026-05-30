@@ -3,7 +3,7 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from external_api_health_checks import GIPHYHealthCheck
+from health.checks.external import GIPHYHealthCheck
 
 from health.checks import HealthStatus
 
@@ -25,7 +25,7 @@ async def test_giphy_healthy():
     session.__aexit__ = AsyncMock(return_value=False)
     with (
         patch("config.giphyAPIKey", "key"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await GIPHYHealthCheck().run()
     assert result.status == HealthStatus.HEALTHY

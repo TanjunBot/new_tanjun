@@ -54,6 +54,16 @@ def _load_config_module(env: dict[str, str]):
         "database_password",
         "database_user",
         "database_schema",
+        "MARIADB_HOST",
+        "MARIADB_PORT",
+        "MARIADB_USER",
+        "MARIADB_PASSWORD",
+        "MARIADB_DATABASE",
+        "MYSQL_HOST",
+        "MYSQL_PORT",
+        "MYSQL_USER",
+        "MYSQL_PASSWORD",
+        "MYSQL_DATABASE",
         "giphyAPIKey",
         "GithubAuthToken",
         "ImgBBApiKey",
@@ -71,7 +81,7 @@ def _load_config_module(env: dict[str, str]):
         "SENTRY_TRACES_SAMPLE_RATE",
         "SENTRY_ENVIRONMENT",
     }
-    for key in known_keys:
+    for key in known_keys | set(env.keys()):
         if key in env:
             os.environ[key] = env[key]
         else:
@@ -161,6 +171,33 @@ class TestSettingsClass:
             assert module.settings.database_port == 3306
         finally:
             _restore_config(saved)
+
+    def test_mariadb_env_aliases(self, monkeypatch):
+        env = _base_env()
+        env["MARIADB_HOST"] = "db.internal"
+        env["MARIADB_PORT"] = "3307"
+        env["MARIADB_USER"] = "mariadb_user"
+        env["MARIADB_PASSWORD"] = "mariadb_pass"
+        env["MARIADB_DATABASE"] = "mariadb_db"
+        del env["database_ip"]
+        del env["database_port"]
+        del env["database_user"]
+        del env["database_password"]
+        del env["database_schema"]
+        module, saved = _reload_with_env(env)
+        try:
+            assert module.settings.database_ip == "db.internal"
+            assert module.settings.database_port == 3307
+            assert module.settings.database_user == "mariadb_user"
+            assert module.settings.database_password.get_secret_value() == "mariadb_pass"
+            assert module.settings.database_schema == "mariadb_db"
+        finally:
+            _restore_config(saved)
+
+    def test_database_connect_retry_defaults(self, real_config_module):
+        assert real_config_module.settings.database_connect_max_retries == 10
+        assert real_config_module.settings.database_connect_retry_delay_sec == 3.0
+        assert real_config_module.settings.database_connect_timeout_sec == 10
 
     def test_openrouter_defaults(self, real_config_module):
         assert real_config_module.settings.openrouter_model == "deepseek/deepseek-v4-flash:free"

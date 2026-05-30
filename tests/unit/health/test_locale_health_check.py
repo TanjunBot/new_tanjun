@@ -7,7 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from locale_file_health_check import LocaleFileHealthCheck
+from health.checks.locales import LocaleFileHealthCheck
 
 from health.checks import HealthStatus
 
@@ -51,7 +51,7 @@ class TestLocaleFileHealthCheck:
         ):
             check_copy = LocaleFileHealthCheck()
             with patch.object(check_copy, "LOCALES", ["en"]):
-                with patch("locale_file_health_check.Path") as mock_path_cls:
+                with patch("health.checks.locales.Path") as mock_path_cls:
                     mock_path = mock_path_cls.return_value.__truediv__.return_value
                     mock_path.exists.return_value = True
                     mock_path.open.return_value.__enter__ = lambda s: s

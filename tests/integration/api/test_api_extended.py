@@ -920,9 +920,7 @@ class TestReportService:
         }
         with patch("services.report_service.report_service") as svc:
             svc.create = AsyncMock(return_value=1)
-            svc.accept = AsyncMock()
-            svc.reject = AsyncMock()
-            svc.resolve = AsyncMock()
+            svc.update_status = AsyncMock(return_value="pending")
             svc.delete = AsyncMock()
             svc.block_reporter = AsyncMock()
             svc.unblock_reporter = AsyncMock()

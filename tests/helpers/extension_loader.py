@@ -81,8 +81,8 @@ async def load_all_extensions(bot: MagicMock) -> list[str]:
         try:
             await load_extension(bot, ext)
             loaded.append(ext)
-        except Exception:
-            pass
+        except Exception as exc:
+            raise RuntimeError(f"Failed to load extension {ext!r}") from exc
     return loaded
 
 
