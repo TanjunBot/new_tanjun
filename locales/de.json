@@ -7352,6 +7352,38 @@
     "max_length": null
   },
   {
+    "identifier": "commands.utility.listscheduled.edit_button",
+    "source_string": "Bearbeiten",
+    "translation": "Bearbeiten",
+    "context": "commands -> utility -> listscheduled -> edit_button",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.cancel_button",
+    "source_string": "Löschen",
+    "translation": "Löschen",
+    "context": "commands -> utility -> listscheduled -> cancel_button",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_success.title",
+    "source_string": "Nachricht aktualisiert",
+    "translation": "Nachricht aktualisiert",
+    "context": "commands -> utility -> listscheduled -> edit_success -> title",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_success.description",
+    "source_string": "Die geplante Nachricht ${id} wurde aktualisiert.",
+    "translation": "Die geplante Nachricht ${id} wurde aktualisiert.",
+    "context": "commands -> utility -> listscheduled -> edit_success -> description",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
     "identifier": "commands.utility.removescheduled.select.placeholder",
     "source_string": "Wähle eine Nachricht aus",
     "translation": "Wähle eine Nachricht aus",
