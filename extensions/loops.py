@@ -103,6 +103,10 @@ class LoopCog(commands.Cog):
         except Exception:
             _log_loop_error("backupDatabaseLoop")
 
+    @backupDatabaseLoop.before_loop
+    async def before_backup_database(self) -> None:
+        await asyncio.sleep(3600)
+
     @tasks.loop(seconds=30)
     async def removeExpiredClaimedBoosterRoles(self) -> None:
         try:
@@ -207,19 +211,24 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
             self.bot._pool_ready = asyncio.Event()
         await self.bot._pool_ready.wait()
 
-        self.pollTwitchStreams.start()  # type: ignore[unused-awaitable]
-        self.sendSendReadyGiveaways.start()  # type: ignore[unused-awaitable]
-        self.endGiveawaysLoop.start()  # type: ignore[unused-awaitable]
-        self.checkVoiceUsers.start()  # type: ignore[unused-awaitable]
-        self.clearNotifiedUsersLoop.start()  # type: ignore[unused-awaitable]
-        self.addVoiceUserLoop.start()  # type: ignore[unused-awaitable]
-        self.refillAiTokenLoop.start()  # type: ignore[unused-awaitable]
-        self.pingServerLoop.start()  # type: ignore[unused-awaitable]
-        self.backupDatabaseLoop.start()  # type: ignore[unused-awaitable]
-        self.removeExpiredClaimedBoosterRoles.start()  # type: ignore[unused-awaitable]
-        self.removeExpiredClaimedBoosterChannels.start()  # type: ignore[unused-awaitable]
-        self.sendScheduledMessages.start()  # type: ignore[unused-awaitable]
-        self.sendPokemonWerbung.start()  # type: ignore[unused-awaitable]
+        loop_starts = [
+            self.pollTwitchStreams,
+            self.sendSendReadyGiveaways,
+            self.endGiveawaysLoop,
+            self.checkVoiceUsers,
+            self.clearNotifiedUsersLoop,
+            self.addVoiceUserLoop,
+            self.refillAiTokenLoop,
+            self.pingServerLoop,
+            self.backupDatabaseLoop,
+            self.removeExpiredClaimedBoosterRoles,
+            self.removeExpiredClaimedBoosterChannels,
+            self.sendScheduledMessages,
+            self.sendPokemonWerbung,
+        ]
+        for loop in loop_starts:
+            loop.start()  # type: ignore[unused-awaitable]
+            await asyncio.sleep(0.25)
 
 
 async def setup(bot: commands.Bot) -> None:

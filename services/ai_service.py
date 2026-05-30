@@ -10,13 +10,11 @@ service with Pydantic-validated parameter models.
 
 from __future__ import annotations
 
-import os
 from collections.abc import AsyncIterator
 from typing import Annotated
 
 from pydantic import BaseModel, Field, StringConstraints
 
-from config import openAiKey
 from tanjun_types import UserId
 
 # --- Pydantic models ---
@@ -78,11 +76,8 @@ class TokenOverview(BaseModel):
 class AiService:
     """Single responsible service for all AI-related concerns.
 
-    Handles token management, custom situation CRUD, and OpenAI chat.
+    Handles token management, custom situation CRUD, and OpenRouter chat.
     """
-
-    def __init__(self) -> None:
-        self._openai_key: str | None = openAiKey or os.getenv("OPENAI_API_KEY")
 
     # ── Token management ──────────────────────────────────────────────────
 

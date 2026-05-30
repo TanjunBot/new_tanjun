@@ -24,6 +24,8 @@ def patch_config_module() -> MagicMock:
     mock_config_module_instance.ImgBBApiKey = "mock_imgbb_key"
     mock_config_module_instance.openAIKey = "mock_openai_key"
     mock_config_module_instance.openAiKey = "mock_openai_key"
+    mock_config_module_instance.OPENROUTER_API_KEY = "mock_openrouter_key"
+    mock_config_module_instance.OPENROUTER_MODEL = "deepseek/deepseek-v4-flash:free"
     mock_config_module_instance.bytebin_url = "https://mock.bytebin.url"
     mock_config_module_instance.bytebin_password = "mock_bytebin_password"
     mock_config_module_instance.bytebin_username = "mock_bytebin_user"

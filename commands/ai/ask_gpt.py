@@ -1,17 +1,9 @@
-import os
-
-from openai import AsyncOpenAI
-
 import utility
-from config import openAiKey
 from localizer import tanjunLocalizer
 from services.ai_service import AiService
+from services.openrouter_client import get_openrouter_client, get_openrouter_model
 
-# Make OpenAI API key optional
-open_ai_key = openAiKey or os.getenv("OPENAI_API_KEY")
-
-# Initialize client only if API key is available
-client = AsyncOpenAI(api_key=open_ai_key) if open_ai_key else None
+client = get_openrouter_client()
 
 
 async def ask_gpt(
@@ -59,10 +51,10 @@ async def ask_gpt(
         return
 
     response = await client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=get_openrouter_model(),
         messages=[
-            {"role": "system", "content": [{"type": "text", "text": situation}]},
-            {"role": "user", "content": [{"type": "text", "text": prompt}]},
+            {"role": "system", "content": situation},
+            {"role": "user", "content": prompt},
         ],
         temperature=float(temperature),
         max_tokens=256,

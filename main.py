@@ -94,7 +94,7 @@ from health import (
     GitHubAPIHealthCheck,
     ImgBBHealthCheck,
     LocaleFileHealthCheck,
-    OpenAIHealthCheck,
+    OpenRouterHealthCheck,
     TwitchAPIHealthCheck,
 )
 from health.manager import HealthCheckManager
@@ -178,7 +178,7 @@ async def _init_database_pool() -> asyncmy.Pool | None:
                 user=database_user,
                 password=database_password,
                 db=database_schema,
-                maxsize=10,
+                maxsize=20,
                 minsize=1,
                 connect_timeout=database_connect_timeout_sec,
             )
@@ -303,7 +303,7 @@ async def main() -> None:
 
     # Step 5: Run startup health checks.
     health_manager = HealthCheckManager(bot)
-    health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
+    health_manager.register(OpenRouterHealthCheck())
     health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
     health_manager.register(DatabaseHealthCheck())  # Uses default 5-minute interval
     health_manager.register(TwitchAPIHealthCheck())  # Uses default 5-minute interval

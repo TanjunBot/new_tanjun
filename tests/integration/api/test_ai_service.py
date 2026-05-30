@@ -64,20 +64,6 @@ class TestAiModels:
             CreateSituationParams(user_id=USER_ID, situation="too short", name="validname")
 
 
-class TestAiServiceInit:
-    def test_reads_openai_key_from_config(self):
-        with patch("services.ai_service.openAiKey", "test-key"):
-            service = AiService()
-            assert service._openai_key == "test-key"
-
-    def test_falls_back_to_env(self, monkeypatch):
-        monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-        with patch("services.ai_service.openAiKey", None):
-            monkeypatch.setenv("OPENAI_API_KEY", "env-key")
-            service = AiService()
-            assert service._openai_key == "env-key"
-
-
 class TestAiTokenManagement:
     async def test_get_usage_found(self, bot_with_pool):
         _, cursor = bot_with_pool
