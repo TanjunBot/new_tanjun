@@ -194,15 +194,56 @@ class ErrorHandlerCog(commands.Cog):
             )
 
         else:
-            # Attach user/guild/command context to Sentry BEFORE logging.
-            _set_sentry_context(interaction)
+            # Use a temporary Sentry scope to avoid context bleed between interactions
+            if sentry_dsn:
+                try:
+                    import sentry_sdk
 
-            # Log unexpected errors with full traceback.
-            logger.exception(
-                "Unhandled app command error in %s: %s",
-                interaction.command.qualified_name if interaction.command else "unknown",
-                original,
-            )
+                    with sentry_sdk.push_scope() as scope:
+                        # User context — User ID + guild ID provide enough info to triage.
+                        scope.set_user({
+                            "id": str(interaction.user.id),
+                            "username": str(interaction.user),
+                        })
+
+                        # Guild context
+                        if interaction.guild:
+                            scope.set_tag("guild_id", str(interaction.guild.id))
+                            scope.set_tag("guild_name", interaction.guild.name)
+
+                        # Command context
+                        command = interaction.command
+                        if command:
+                            scope.set_tag("command", command.qualified_name)
+
+                        # Extra context
+                        scope.set_context("interaction", {
+                            "interaction_id": str(interaction.id),
+                            "channel_id": str(interaction.channel_id),
+                        })
+
+                        # Log unexpected errors with full traceback (Sentry will capture this)
+                        logger.exception(
+                            "Unhandled app command error in %s: %s",
+                            interaction.command.qualified_name if interaction.command else "unknown",
+                            original,
+                        )
+                except Exception:
+                    logger.debug("Failed to set Sentry context", exc_info=True)
+                    # Still log the error even if Sentry context fails
+                    logger.exception(
+                        "Unhandled app command error in %s: %s",
+                        interaction.command.qualified_name if interaction.command else "unknown",
+                        original,
+                    )
+            else:
+                # Log unexpected errors with full traceback when Sentry is disabled
+                logger.exception(
+                    "Unhandled app command error in %s: %s",
+                    interaction.command.qualified_name if interaction.command else "unknown",
+                    original,
+                )
+
             traceback.print_exception(type(original), original, original.__traceback__)
 
             embed = await self._build_error_embed(
