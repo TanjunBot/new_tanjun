@@ -12,16 +12,34 @@ from discord.ui import Modal, TextInput, View
 
 import utility
 from api import (
-    get_log_channel as api_get_log_channel,
-    get_log_enable as api_get_log_enable,
-    set_log_channel as api_set_log_channel,
-    set_log_enable as api_set_log_enable,
     get_level_system_status as api_get_level_system_status,
+)
+from api import (
+    get_log_channel as api_get_log_channel,
+)
+from api import (
+    get_log_enable as api_get_log_enable,
+)
+from api import (
     set_level_system_status as api_set_level_system_status,
+)
+from api import (
     set_levelup_channel as api_set_levelup_channel,
-    set_xp_scaling as api_set_xp_scaling,
+)
+from api import (
+    set_log_channel as api_set_log_channel,
+)
+from api import (
+    set_log_enable as api_set_log_enable,
+)
+from api import (
     set_text_cooldown as api_set_text_cooldown,
+)
+from api import (
     set_voice_cooldown as api_set_voice_cooldown,
+)
+from api import (
+    set_xp_scaling as api_set_xp_scaling,
 )
 from localizer import tanjunLocalizer
 from services.booster_service import BoosterService, BoosterType
@@ -35,13 +53,12 @@ _WIZARD_SESSION_TIMEOUT = 600  # 10 minutes
 
 def _require_admin(interaction: discord.Interaction) -> bool:
     """Check if the user has administrator permissions."""
-    if (
-        isinstance(interaction.user, discord.Member)
+    return (
+        interaction.guild is not None
+        and isinstance(interaction.user, discord.Member)
         and isinstance(interaction.channel, discord.abc.GuildChannel)
-        and not interaction.channel.permissions_for(interaction.user).administrator
-    ):
-        return False
-    return True
+        and interaction.channel.permissions_for(interaction.user).administrator
+    )
 
 
 async def _not_admin_reply(interaction: discord.Interaction) -> None:
@@ -190,6 +207,9 @@ class LogEventConfigView(View):
     async def enable_page(
         self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
     ) -> None:
+        if not _require_admin(interaction):
+            await _not_admin_reply(interaction)
+            return
         await self._load()
         assert self._log_enabled is not None
         for key in self._page_keys():
@@ -204,6 +224,9 @@ class LogEventConfigView(View):
     async def disable_page(
         self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
     ) -> None:
+        if not _require_admin(interaction):
+            await _not_admin_reply(interaction)
+            return
         await self._load()
         assert self._log_enabled is not None
         for key in self._page_keys():
@@ -218,6 +241,9 @@ class LogEventConfigView(View):
     async def prev_page(
         self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
     ) -> None:
+        if not _require_admin(interaction):
+            await _not_admin_reply(interaction)
+            return
         if self._current_page > 0:
             self._current_page -= 1
         embed = await self._render_embed()
@@ -227,6 +253,9 @@ class LogEventConfigView(View):
     async def next_page(
         self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
     ) -> None:
+        if not _require_admin(interaction):
+            await _not_admin_reply(interaction)
+            return
         total_pages = (len(LOG_OPTIONS) + self._items_per_page - 1) // self._items_per_page
         if self._current_page < total_pages - 1:
             self._current_page += 1
@@ -237,6 +266,9 @@ class LogEventConfigView(View):
     async def finish(
         self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
     ) -> None:
+        if not _require_admin(interaction):
+            await _not_admin_reply(interaction)
+            return
         embed = utility.tanjunEmbed(
             title="✅ Log Setup Complete",
             description="Logging has been configured successfully! Events will be tracked in the selected channel.",
@@ -259,6 +291,7 @@ class LevelSetupView(View):
         super().__init__(timeout=_WIZARD_SESSION_TIMEOUT)
         self.locale = locale
         self.guild = guild
+        self.completed = False
 
     @discord.ui.button(label="🟢 Easy", style=discord.ButtonStyle.success, row=0)
     async def easy(
@@ -301,17 +334,18 @@ class LevelSetupView(View):
             title="XP Scaling Set",
             description=f"XP difficulty set to **{scaling}**. Now let's configure cooldowns.",
         )
-        view = LevelCooldownView(self.locale, self.guild)
+        view = LevelCooldownView(self.locale, self.guild, self)
         await interaction.response.edit_message(embed=embed, view=view)
 
 
 class LevelCooldownView(View):
     """Step 2: Configure cooldowns."""
 
-    def __init__(self, locale: str, guild: discord.Guild) -> None:
+    def __init__(self, locale: str, guild: discord.Guild, setup_view: "LevelSetupView") -> None:
         super().__init__(timeout=_WIZARD_SESSION_TIMEOUT)
         self.locale = locale
         self.guild = guild
+        self.setup_view = setup_view
 
     @discord.ui.button(label="⚡ Fast (30s)", style=discord.ButtonStyle.success)
     async def fast(
@@ -347,17 +381,18 @@ class LevelCooldownView(View):
                 "Now let's set a level-up announcement channel (optional)."
             ),
         )
-        view = LevelChannelView(self.locale, self.guild)
+        view = LevelChannelView(self.locale, self.guild, self.setup_view)
         await interaction.response.edit_message(embed=embed, view=view)
 
 
 class LevelChannelView(View):
     """Step 3 (optional): Set level-up announcement channel."""
 
-    def __init__(self, locale: str, guild: discord.Guild) -> None:
+    def __init__(self, locale: str, guild: discord.Guild, setup_view: "LevelSetupView") -> None:
         super().__init__(timeout=_WIZARD_SESSION_TIMEOUT)
         self.locale = locale
         self.guild = guild
+        self.setup_view = setup_view
 
     @discord.ui.channel_select(
         placeholder="Select a channel for level-up announcements...",
@@ -373,10 +408,32 @@ class LevelChannelView(View):
             return
         if select.values:
             channel = cast(discord.TextChannel, select.values[0])
+
+            # Check bot permissions
+            assert interaction.client is not None and interaction.client.user is not None
+            self_member = self.guild.get_member(interaction.client.user.id)
+            if self_member is None:
+                embed = utility.tanjunEmbed(
+                    title="Error",
+                    description="Could not verify bot permissions.",
+                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+
+            perms = channel.permissions_for(self_member)
+            if not (perms.view_channel and perms.send_messages):
+                embed = utility.tanjunEmbed(
+                    title="Missing Permission",
+                    description="I don't have permission to send messages in that channel. Please select a different channel.",
+                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+
             await api_set_levelup_channel(str(self.guild.id), str(channel.id))
             msg = f"Level-up announcements will be sent to {channel.mention}."
         else:
             msg = "No level-up channel set."
+        self.setup_view.completed = True
         embed = utility.tanjunEmbed(
             title="Channel Set",
             description=msg + "\n\nLevel system setup is complete! 🎉",
@@ -390,9 +447,16 @@ class LevelChannelView(View):
     async def skip(
         self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
     ) -> None:
+        if not _require_admin(interaction):
+            await _not_admin_reply(interaction)
+            return
+        self.setup_view.completed = True
         embed = utility.tanjunEmbed(
             title="✅ Level Setup Complete",
-            description="The leveling system is now active! Members earn XP by chatting.\n\nTip: Use `/level add-level-role` to reward roles at specific levels.",
+            description=(
+                "The leveling system is now active! Members earn XP by chatting.\n\n"
+                "Tip: Use `/level add-level-role` to reward roles at specific levels."
+            ),
         )
         for item in self.children:
             item.disabled = True
@@ -469,6 +533,9 @@ class BoosterSetupView(View):
     async def finish(
         self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
     ) -> None:
+        if not _require_admin(interaction):
+            await _not_admin_reply(interaction)
+            return
         embed = utility.tanjunEmbed(
             title="✅ Booster Setup Complete",
             description="Boosters can now claim their perks!",
@@ -509,6 +576,14 @@ class BoosterChannelModal(Modal):
         channel = self.guild.get_channel(channel_id)
         if channel is None:
             embed = utility.tanjunEmbed(title="Channel Not Found", description="Could not find that channel in this server.")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        if not isinstance(channel, discord.VoiceChannel):
+            embed = utility.tanjunEmbed(
+                title="Invalid Channel Type",
+                description="Please provide a voice channel ID. The channel you selected is not a voice channel.",
+            )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
@@ -577,17 +652,28 @@ class SetupWizardsCog(commands.Cog):
 
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self._setup_commands = SetupWizardCommands()
+        self._setup_commands = SetupWizardCommands(bot)
         self.bot.tree.add_command(self._setup_commands)
 
     async def cog_unload(self) -> None:
         self.bot.tree.remove_command(self._setup_commands.name)
 
+
+class SetupWizardCommands(discord.app_commands.Group):
+    """Group for setup wizard commands."""
+
+    def __init__(self, bot: commands.Bot) -> None:
+        super().__init__(
+            name=app_commands.locale_str("setup_name"),
+            description=app_commands.locale_str("setup_description"),
+        )
+        self.bot = bot
+
     @app_commands.command(
         name=app_commands.locale_str("setup_logs_name"),
         description=app_commands.locale_str("setup_logs_description"),
     )
-    async def setup_logs(self, interaction: discord.Interaction) -> None:
+    async def logs(self, interaction: discord.Interaction) -> None:
         """Interactive wizard to configure logging."""
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -605,7 +691,10 @@ class SetupWizardsCog(commands.Cog):
 
         embed = utility.tanjunEmbed(
             title="📋 Log Setup Wizard",
-            description="Welcome! Let's get logging configured.\n\n**Step 1:** Select a text channel where log messages will be sent.",
+            description=(
+                "Welcome! Let's get logging configured.\n\n"
+                "**Step 1:** Select a text channel where log messages will be sent."
+            ),
         )
         view = LogChannelSelectView(_loc_or_en(interaction), interaction.guild)
         await interaction.response.send_message(embed=embed, view=view)
@@ -614,7 +703,7 @@ class SetupWizardsCog(commands.Cog):
         name=app_commands.locale_str("setup_level_name"),
         description=app_commands.locale_str("setup_level_description"),
     )
-    async def setup_level(self, interaction: discord.Interaction) -> None:
+    async def level(self, interaction: discord.Interaction) -> None:
         """Interactive wizard to configure the leveling system."""
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -642,16 +731,21 @@ class SetupWizardsCog(commands.Cog):
                 "• **Extreme** — grindy"
             ),
         )
-        # Enable the level system first
-        await api_set_level_system_status(str(interaction.guild.id), True)
         view = LevelSetupView(_loc_or_en(interaction), interaction.guild)
         await interaction.response.send_message(embed=embed, view=view)
+
+        # Wait for the wizard to complete
+        await view.wait()
+
+        # Enable the level system only if the wizard completed successfully
+        if view.completed:
+            await api_set_level_system_status(str(interaction.guild.id), True)
 
     @app_commands.command(
         name=app_commands.locale_str("setup_giveaway_name"),
         description=app_commands.locale_str("setup_giveaway_description"),
     )
-    async def setup_giveaway(self, interaction: discord.Interaction) -> None:
+    async def giveaway(self, interaction: discord.Interaction) -> None:
         """Interactive wizard to create a giveaway."""
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -689,7 +783,7 @@ class SetupWizardsCog(commands.Cog):
         name=app_commands.locale_str("setup_booster_name"),
         description=app_commands.locale_str("setup_booster_description"),
     )
-    async def setup_booster(self, interaction: discord.Interaction) -> None:
+    async def booster(self, interaction: discord.Interaction) -> None:
         """Interactive guide for booster perks configuration."""
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -706,16 +800,6 @@ class SetupWizardsCog(commands.Cog):
         )
         view = BoosterSetupView(_loc_or_en(interaction), interaction.guild)
         await interaction.response.send_message(embed=embed, view=view)
-
-
-class SetupWizardCommands(discord.app_commands.Group):
-    """Group for setup wizard commands."""
-
-    def __init__(self) -> None:
-        super().__init__(
-            name=app_commands.locale_str("setup_name"),
-            description=app_commands.locale_str("setup_description"),
-        )
 
 
 # ---------------------------------------------------------------------------
