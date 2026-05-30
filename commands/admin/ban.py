@@ -2,7 +2,7 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo, EmbedColor
+from utility import EmbedColor
 from utils.checks import can_moderate, send_check_failure
 
 

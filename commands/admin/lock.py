@@ -5,7 +5,6 @@ import discord
 import utility
 from api import clear_channel_overwrites, save_channel_overwrites
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 from utils.checks import check_bot_permission, check_user_permission, send_check_failure
 
 
@@ -16,7 +15,7 @@ async def lock_channel(command_info: utility.CommandInfo, channel: discord.TextC
         channel = cast(discord.TextChannel, command_info.channel)  # type: ignore[name-defined]
 
     # User permission check (channel-scoped)
-    result = check_user_permission(command_info, "manage_channels", use_guild_permissions=False)
+    result = check_user_permission(command_info, "manage_channels", use_guild_permissions=False, channel=channel)
     if await send_check_failure(command_info, "lock", result):
         return
 

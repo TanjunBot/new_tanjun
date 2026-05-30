@@ -112,10 +112,10 @@ async def removerole(
         # Single user, single role
         if role not in user.roles:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.notHasRole.title"),
+                title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.doesNotHaveRole.title"),
                 description=tanjunLocalizer.localize(
                     str(command_info.locale),
-                    "commands.admin.removerole.notHasRole.description",
+                    "commands.admin.removerole.doesNotHaveRole.description",
                 ),
             )
             await command_info.reply(embed=embed)

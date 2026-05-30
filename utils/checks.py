@@ -46,10 +46,8 @@ _CheckResult = tuple[str, ErrorEmbedCategory, bool] | None
 def _user_is_member_in_guild(
     command_info: CommandInfo,
 ) -> bool:
-    """Return ``True`` if the user is a ``discord.Member`` in a guild channel."""
-    return isinstance(command_info.user, discord.Member) and isinstance(
-        command_info.channel, discord.abc.GuildChannel
-    )
+    """Return ``True`` if the user is a ``discord.Member`` in a guild context."""
+    return isinstance(command_info.user, discord.Member)
 
 
 # ---------------------------------------------------------------------------
@@ -68,6 +66,7 @@ def check_user_permission(
     ],
     *,
     use_guild_permissions: bool = False,
+    channel: discord.abc.GuildChannel | None = None,
 ) -> _CheckResult:
     """Verify the command executor has the required permission.
 
@@ -84,6 +83,10 @@ def check_user_permission(
         is guild-scoped (e.g. ``kick_members``, ``ban_members``,
         ``moderate_members``, ``manage_roles``).  Keep ``False`` for
         channel-scoped permissions (e.g. ``manage_messages``).
+    channel
+        Optional channel to check channel-level permissions against.
+        If provided, permissions are checked for this channel instead of
+        the invocation channel. Only used when use_guild_permissions is False.
 
     Returns
     -------
@@ -96,8 +99,13 @@ def check_user_permission(
     if use_guild_permissions:
         has_perm = getattr(command_info.user.guild_permissions, permission, False)  # type: ignore[union-attr]
     else:
+        # Use the provided channel if available, otherwise fall back to command_info.channel
+        target_channel = channel if channel is not None else command_info.channel
+        # Validate that the channel supports permissions_for
+        if not hasattr(target_channel, "permissions_for"):
+            return ("missingPermission", ErrorEmbedCategory.PERMISSION, True)
         has_perm = getattr(
-            command_info.channel.permissions_for(command_info.user),  # type: ignore[union-attr]
+            target_channel.permissions_for(command_info.user),  # type: ignore[union-attr]
             permission,
             False,
         )

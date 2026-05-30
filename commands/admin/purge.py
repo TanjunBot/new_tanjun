@@ -18,7 +18,7 @@ async def purge(
         channel = cast(discord.TextChannel, command_info.channel)  # type: ignore[name-defined]
 
     # User permission check (channel-scoped)
-    result = check_user_permission(command_info, "manage_messages", use_guild_permissions=False)
+    result = check_user_permission(command_info, "manage_messages", use_guild_permissions=False, channel=channel)
     if await send_check_failure(command_info, "purge", result):
         return
 
