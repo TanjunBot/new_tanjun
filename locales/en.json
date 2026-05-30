@@ -31136,6 +31136,30 @@
     "max_length": null
   },
   {
+    "identifier": "commands.games.battleship.error.invalidCoordinate",
+    "source_string": "Invalid coordinate format. Use format like A5, B3, etc.",
+    "translation": "Invalid coordinate format. Use format like A5, B3, etc.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.error.invalidRow",
+    "source_string": "Invalid row. Use A-J.",
+    "translation": "Invalid row. Use A-J.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.error.invalidColumn",
+    "source_string": "Invalid column. Use 0-9.",
+    "translation": "Invalid column. Use 0-9.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.games.battleship.gameOver",
     "source_string": "Game Over",
     "translation": "Game Over",

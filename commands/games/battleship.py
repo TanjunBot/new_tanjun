@@ -282,11 +282,15 @@ class AttackModal(discord.ui.Modal, title="Enter Attack Coordinates"):
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         coord_str = self.coordinate.value.upper().strip()
+        locale = str(interaction.locale)
 
         # Parse coordinate
         if len(coord_str) < 2:
             await interaction.response.send_message(
-                "Invalid coordinate format. Use format like A5, B3, etc.",
+                tanjunLocalizer.localize(
+                    locale,
+                    "commands.games.battleship.error.invalidCoordinate",
+                ),
                 ephemeral=True,
             )
             return
@@ -296,7 +300,10 @@ class AttackModal(discord.ui.Modal, title="Enter Attack Coordinates"):
 
         if row_char not in ROW_LABELS:
             await interaction.response.send_message(
-                "Invalid row. Use A-J.",
+                tanjunLocalizer.localize(
+                    locale,
+                    "commands.games.battleship.error.invalidRow",
+                ),
                 ephemeral=True,
             )
             return
@@ -307,7 +314,10 @@ class AttackModal(discord.ui.Modal, title="Enter Attack Coordinates"):
                 raise ValueError
         except ValueError:
             await interaction.response.send_message(
-                "Invalid column. Use 0-9.",
+                tanjunLocalizer.localize(
+                    locale,
+                    "commands.games.battleship.error.invalidColumn",
+                ),
                 ephemeral=True,
             )
             return
@@ -476,33 +486,32 @@ class BattleshipView(discord.ui.View):
 
         current_turn = self.game.current_player.display_name if hasattr(self.game.current_player, "display_name") else "Tanjun"
 
+        enemy_board_text = tanjunLocalizer.localize(
+            locale,
+            'commands.games.battleship.helpEnemyBoard',
+            hit=HIT,
+            miss=MISS,
+            sunk=SHIP_SUNK,
+        )
+        legend_text = tanjunLocalizer.localize(
+            locale,
+            'commands.games.battleship.legend',
+            water=WATER,
+            hit=HIT,
+            miss=MISS,
+            sunk=SHIP_SUNK,
+        )
+
         msg = (
             f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpTitle')}**\n\n"
             f"📋 **{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpBoards')}**\n"
             f"- {tanjunLocalizer.localize(locale, 'commands.games.battleship.helpYourBoard')}\n"
-            f"- {
-                tanjunLocalizer.localize(
-                    locale,
-                    'commands.games.battleship.helpEnemyBoard',
-                    hit=HIT,
-                    miss=MISS,
-                    sunk=SHIP_SUNK,
-                )
-            }\n\n"
+            f"- {enemy_board_text}\n\n"
             f"🎯 **{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpToAttack')}** "
             f"{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpAttackInstruction')}\n\n"
             f"🏳️ **{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpGiveUp')}** "
             f"{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpGiveUpInstruction')}\n\n"
-            f"📖 **{
-                tanjunLocalizer.localize(
-                    locale,
-                    'commands.games.battleship.legend',
-                    water=WATER,
-                    hit=HIT,
-                    miss=MISS,
-                    sunk=SHIP_SUNK,
-                )
-            }**\n\n"
+            f"📖 **{legend_text}**\n\n"
             f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpPlayers')}** "
             f"{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpPlayersValue', p1=p1_name, p2=p2_name)}\n"
             f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpCurrentTurn')}** {current_turn}"
