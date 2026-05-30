@@ -29,6 +29,8 @@ from config import (
     database_user,
     prefix,
     sentry_dsn,
+    sentry_environment,
+    sentry_traces_sample_rate,
 )
 
 
@@ -70,11 +72,15 @@ def _should_discard_sentry_event(event: dict, hint: dict) -> dict | None:
 if sentry_dsn:
     import sentry_sdk
 
-    sentry_sdk.init(
-        dsn=sentry_dsn,
-        before_send=_should_discard_sentry_event,
-        traces_sample_rate=0.0,  # No performance tracing by default
-    )
+    init_kwargs = {
+        "dsn": sentry_dsn,
+        "before_send": _should_discard_sentry_event,
+        "traces_sample_rate": sentry_traces_sample_rate,
+    }
+    if sentry_environment:
+        init_kwargs["environment"] = sentry_environment
+
+    sentry_sdk.init(**init_kwargs)
 
 from DatabaseHealthCheck import DatabaseHealthCheck
 from di import services

@@ -58,6 +58,8 @@ class Settings(BaseSettings, cli_parse_args=False):
 
     # ── Sentry ─────────────────────────────────────────────────────────────────
     sentry_dsn: str = Field(default="", alias="sentry_dsn")
+    sentry_traces_sample_rate: float = Field(default=0.0, alias="SENTRY_TRACES_SAMPLE_RATE")
+    sentry_environment: str = Field(default="", alias="SENTRY_ENVIRONMENT")
 
     # ── Activity ──────────────────────────────────────────────────────────────
     activity: str = "Tanjun {version}"
@@ -122,6 +124,8 @@ prefix: str = settings.prefix  # type: ignore[assignment]
 OPENROUTER_API_KEY: str = settings.openrouter_api_key.get_secret_value()
 OPENROUTER_MODEL: str = settings.openrouter_model
 sentry_dsn: str = settings.sentry_dsn
+sentry_traces_sample_rate: float = settings.sentry_traces_sample_rate
+sentry_environment: str = settings.sentry_environment
 
 
 # ── Emoji identifiers for calculator ─────────────────────────────────────────

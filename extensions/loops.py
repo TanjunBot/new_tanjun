@@ -34,6 +34,7 @@ from loops.alivemonitor import ping_server
 from loops.create_database_backup import create_database_backup
 from loops.giveaway import checkVoiceUsers, endGiveaways, sendReadyGiveaways
 from loops.level import addXpToVoiceUsers
+from ai.refill_token import refill_ai_token
 from minigames.add_level_xp import clearNotifiedUsers
 from services.twitch_service import get_twitch_service
 from utility import EmbedColor

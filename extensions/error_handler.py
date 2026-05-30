@@ -50,9 +50,6 @@ def _set_sentry_context(interaction: discord.Interaction, error: Exception) -> N
             # Extra context
             scope.set_extra("interaction_id", str(interaction.id))
             scope.set_extra("channel_id", str(interaction.channel_id))
-
-            # Set the error as the current exception so Sentry groups correctly
-            scope._set_attr("exc_info", (type(error), error, error.__traceback__))
     except Exception:
         logger.debug("Failed to set Sentry context", exc_info=True)
 
@@ -196,6 +193,9 @@ class ErrorHandlerCog(commands.Cog):
             )
 
         else:
+            # Attach user/guild/command context to Sentry BEFORE logging.
+            _set_sentry_context(interaction, original)
+
             # Log unexpected errors with full traceback.
             logger.exception(
                 "Unhandled app command error in %s: %s",
@@ -203,9 +203,6 @@ class ErrorHandlerCog(commands.Cog):
                 original,
             )
             traceback.print_exception(type(original), original, original.__traceback__)
-
-            # Attach user/guild/command context to Sentry for real errors.
-            _set_sentry_context(interaction, original)
 
             embed = await self._build_error_embed(
                 interaction,
