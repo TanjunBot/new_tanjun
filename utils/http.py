@@ -27,7 +27,8 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:  # 
                 async with session.get(url) as response:
                     if response.status != 200:
                         return None
-                    return await response.json()
+                    response_json: dict = await response.json()
+                    return response_json
 
             r: dict[str, Any] | None = await fetch(
                 f"https://api.giphy.com/v1/gifs/search?api_key={giphyAPIKey}&q={query}&limit={limit}&rating=pg"

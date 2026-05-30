@@ -199,7 +199,7 @@ class TanjunEmbed(BaseModel):
         **kwargs: Any,
     ):
         super().__init__(**kwargs)
-        self.colour = colour if colour is not None else color
+        self.colour = colour if colour is not None else color  # type: ignore[assignment]
 
     # --- Public API (backward-compatible) ---
 
@@ -358,7 +358,7 @@ class TanjunEmbed(BaseModel):
 
     @color.setter
     def color(self, value: int | discord.Colour | EmbedColor | None) -> None:
-        self.colour = value
+        self.colour = value  # type: ignore[assignment]
 
     # --- Fluent-style builder methods ---
 

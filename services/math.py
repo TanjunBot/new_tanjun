@@ -211,13 +211,13 @@ class MathService:
         if op in "+-*/^":
             op2 = self._evaluate_stack(s)
             op1 = self._evaluate_stack(s)
-            return self._opn[op](op1, op2)
+            return self._opn[op](op1, op2)  # type: ignore[no-any-return]
         if op == "PI":
             return math.pi
         if op == "E":
             return math.e
         if op in self._fn:
-            return self._fn[op](self._evaluate_stack(s))
+            return self._fn[op](self._evaluate_stack(s))  # type: ignore[no-any-return]
         if op[0].isalpha():
             raise UndefinedVariable(f"Unknown identifier: {op}")
         # Handle variables that are numbers
