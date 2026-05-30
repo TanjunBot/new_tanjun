@@ -43,9 +43,7 @@ async def timeout(
                 "commands.admin.timeout.success.description",
                 user=member.mention,
                 duration=(
-                    f"{int(duration.total_seconds() // 60)} minutes"
-                    if isinstance(duration, timedelta)
-                    else str(duration)
+                    f"{int(duration.total_seconds() // 60)} minutes" if isinstance(duration, timedelta) else str(duration)
                 ),
             ),
         )

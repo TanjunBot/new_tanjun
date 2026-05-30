@@ -36,6 +36,7 @@ async def purge(
         return
 
     try:
+
         def check(m: discord.Message) -> bool:  # type: ignore[return]
             if setting == "all":
                 return True

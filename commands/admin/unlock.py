@@ -33,7 +33,11 @@ async def unlock_channel(command_info: utility.CommandInfo, channel: discord.Tex
             role = channel.guild.get_role(int(overwrite_record.role_id))
             if role is not None:
                 # Parse the saved overwrites JSON
-                overwrite_dict = json.loads(overwrite_record.overwrites) if isinstance(overwrite_record.overwrites, str) else overwrite_record.overwrites
+                overwrite_dict = (
+                    json.loads(overwrite_record.overwrites)
+                    if isinstance(overwrite_record.overwrites, str)
+                    else overwrite_record.overwrites
+                )
                 # Create PermissionOverwrite from the saved values
                 overwrite = discord.PermissionOverwrite(**overwrite_dict)
                 await channel.set_permissions(role, overwrite=overwrite)

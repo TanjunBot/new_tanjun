@@ -43,6 +43,7 @@ _CheckResult = tuple[str, ErrorEmbedCategory, bool] | None
 # Permission helpers
 # ---------------------------------------------------------------------------
 
+
 def _user_is_member_in_guild(
     command_info: CommandInfo,
 ) -> bool:
@@ -53,6 +54,7 @@ def _user_is_member_in_guild(
 # ---------------------------------------------------------------------------
 # User permission checks
 # ---------------------------------------------------------------------------
+
 
 def check_user_permission(
     command_info: CommandInfo,
@@ -120,6 +122,7 @@ def check_user_permission(
 # Bot permission checks
 # ---------------------------------------------------------------------------
 
+
 def check_bot_permission(
     command_info: CommandInfo,
     permission: Literal[
@@ -169,6 +172,7 @@ def check_bot_permission(
 # Role-hierarchy checks
 # ---------------------------------------------------------------------------
 
+
 def check_executor_hierarchy(
     command_info: CommandInfo,
     target: discord.Member,
@@ -201,6 +205,7 @@ def check_bot_hierarchy(
 # ---------------------------------------------------------------------------
 # Compound check helpers
 # ---------------------------------------------------------------------------
+
 
 def can_moderate(
     command_info: CommandInfo,
@@ -249,6 +254,7 @@ def can_moderate(
 # ---------------------------------------------------------------------------
 # Embed builders for check failures
 # ---------------------------------------------------------------------------
+
 
 async def send_check_failure(
     command_info: CommandInfo,
