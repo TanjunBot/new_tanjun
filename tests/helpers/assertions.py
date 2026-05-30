@@ -14,7 +14,9 @@ def assert_reply_embed(interaction: Any, *, called: bool = True) -> None:
     assert reply is not None, "interaction has no reply mock"
     if called:
         reply.assert_awaited()
-        assert "embed" in reply.await_args.kwargs
+        await_args = reply.await_args
+        assert await_args is not None
+        assert "embed" in await_args.kwargs
     else:
         reply.assert_not_awaited()
 
