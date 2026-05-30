@@ -5,6 +5,7 @@ Tanjun includes a variety of fun minigames that members can play in your server.
 ## Available Games
 
 ### Akinator
+
 The genie reads your mind! Think of a character and Akinator will guess who it is.
 
 ```
@@ -16,6 +17,7 @@ The genie reads your mind! Think of a character and Akinator will guess who it i
 - Cancel anytime with `/akinator cancel`
 
 ### Connect 4
+
 Classic two-player Connect 4.
 
 ```
@@ -27,6 +29,7 @@ Classic two-player Connect 4.
 - Play against another member
 
 ### Hangman
+
 Guess the word before the hangman is complete!
 
 ```
@@ -56,6 +59,7 @@ Guess the word before the hangman is complete!
 - Play against another member
 
 ### Wordle
+
 The popular word-guessing game.
 
 ```
@@ -70,6 +74,7 @@ The popular word-guessing game.
 - Stats are tracked per user
 
 ### Counting
+
 Keep the count going — one number at a time.
 
 - Members take turns counting up from 1
@@ -77,6 +82,7 @@ Keep the count going — one number at a time.
 - Messing up resets the count
 
 ### Flag Quiz
+
 Test your knowledge of world flags!
 
 ```
