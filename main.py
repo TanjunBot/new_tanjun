@@ -22,6 +22,9 @@ from discord.ext import commands
 
 import config
 from config import (
+    database_connect_max_retries,
+    database_connect_retry_delay_sec,
+    database_connect_timeout_sec,
     database_ip,
     database_password,
     database_port,
@@ -151,23 +154,53 @@ async def _load_all_extensions(bot: commands.AutoShardedBot) -> None:
             await loadextension(bot, extension)
 
 
+def _database_connect_hint() -> str:
+    if database_port == 3306:
+        return ""
+    return (
+        f"\nHint: The bot is configured for port {database_port}. "
+        "When the bot and MariaDB run in the same Docker network (e.g. Coolify), "
+        "use the internal service hostname and port 3306, not the host-published port."
+    )
+
+
 async def _init_database_pool() -> asyncmy.Pool | None:
     """Initialize and return the database connection pool."""
-    try:
-        pool = await asyncmy.create_pool(
-            host=database_ip,
-            port=database_port,
-            user=database_user,
-            password=database_password,
-            db=database_schema,
-            maxsize=10,
-            minsize=1,
-        )
-        print("Database pool initialized successfully!")
-        return pool
-    except Exception as e:
-        print(f"Failed to initialize database pool: {e}")
-        raise
+    max_retries = database_connect_max_retries
+    delay = database_connect_retry_delay_sec
+    last_error: BaseException | None = None
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            pool = await asyncmy.create_pool(
+                host=database_ip,
+                port=database_port,
+                user=database_user,
+                password=database_password,
+                db=database_schema,
+                maxsize=10,
+                minsize=1,
+                connect_timeout=database_connect_timeout_sec,
+            )
+            print("Database pool initialized successfully!")
+            return pool
+        except Exception as e:
+            last_error = e
+            if attempt < max_retries:
+                print(
+                    f"Failed to initialize database pool "
+                    f"(attempt {attempt}/{max_retries}): {e}"
+                )
+                print(f"Retrying in {delay}s...")
+                await asyncio.sleep(delay)
+            else:
+                print(f"Failed to initialize database pool after {max_retries} attempts: {e}")
+                hint = _database_connect_hint()
+                if hint:
+                    print(hint, file=sys.stderr)
+                raise last_error from e
+
+    raise RuntimeError("Database pool initialization failed with no exception")
 
 
 async def main() -> None:

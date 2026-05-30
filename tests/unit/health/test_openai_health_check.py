@@ -5,7 +5,7 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from OpenAIHealthCheck import OpenAIHealthCheck
+from health.checks.openai import OpenAIHealthCheck
 
 from health.checks import HealthStatus
 
@@ -29,7 +29,7 @@ class TestOpenAIHealthCheck:
 
     @pytest.mark.asyncio
     async def test_missing_key_critical(self, check: OpenAIHealthCheck):
-        with patch("OpenAIHealthCheck.openAiKey", "", create=True), patch("config.openAiKey", ""):
+        with patch("config.openAiKey", ""):
             result = await check.run()
         assert result.status == HealthStatus.CRITICAL
         assert "not configured" in result.message.lower()
@@ -42,7 +42,7 @@ class TestOpenAIHealthCheck:
         mock_session.__aexit__ = AsyncMock(return_value=None)
         mock_session.get = MagicMock(return_value=mock_resp)
 
-        with patch("OpenAIHealthCheck.ClientSession", return_value=mock_session):
+        with patch("health.checks.openai.ClientSession", return_value=mock_session):
             result = await check.run()
         assert result.status == HealthStatus.HEALTHY
 
@@ -54,7 +54,7 @@ class TestOpenAIHealthCheck:
         mock_session.__aexit__ = AsyncMock(return_value=None)
         mock_session.get = MagicMock(return_value=mock_resp)
 
-        with patch("OpenAIHealthCheck.ClientSession", return_value=mock_session):
+        with patch("health.checks.openai.ClientSession", return_value=mock_session):
             result = await check.run()
         assert result.status == HealthStatus.CRITICAL
         assert "401" in result.message
@@ -67,7 +67,7 @@ class TestOpenAIHealthCheck:
         mock_session.__aexit__ = AsyncMock(return_value=None)
         mock_session.get = MagicMock(return_value=mock_resp)
 
-        with patch("OpenAIHealthCheck.ClientSession", return_value=mock_session):
+        with patch("health.checks.openai.ClientSession", return_value=mock_session):
             result = await check.run()
         assert result.status == HealthStatus.DEGRADED
 
@@ -79,7 +79,7 @@ class TestOpenAIHealthCheck:
         mock_session.__aexit__ = AsyncMock(return_value=None)
         mock_session.get = MagicMock(return_value=mock_resp)
 
-        with patch("OpenAIHealthCheck.ClientSession", return_value=mock_session):
+        with patch("health.checks.openai.ClientSession", return_value=mock_session):
             result = await check.run()
         assert result.status == HealthStatus.DEGRADED
 
@@ -90,7 +90,7 @@ class TestOpenAIHealthCheck:
         mock_session.__aexit__ = AsyncMock(return_value=None)
         mock_session.get = MagicMock(side_effect=TimeoutError)
 
-        with patch("OpenAIHealthCheck.ClientSession", return_value=mock_session):
+        with patch("health.checks.openai.ClientSession", return_value=mock_session):
             result = await check.run()
         assert result.status == HealthStatus.DEGRADED
         assert "timed out" in result.message.lower()

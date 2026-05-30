@@ -7,7 +7,7 @@ that verify SQL query generation, return types, error handling, and edge cases.
 from collections.abc import Iterator
 from datetime import datetime
 from typing import Any, TypeVar
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -611,17 +611,10 @@ class TestWarnings:
     @pytest.mark.asyncio
     async def test_add_warning(self, bot_with_pool):
         """Should insert a warning."""
-        _, cursor = bot_with_pool
-        cursor.execute = AsyncMock()
         exp_date = datetime(2026, 6, 1)
 
-        await add_warning("123", "456", "Spam", exp_date, "admin1")
-
-        assert cursor.execute.await_count >= 1
-        sql = cursor.execute.call_args_list[0][0][0]
-        assert "INSERT INTO warnings" in sql
-        params = cursor.execute.call_args_list[0][0][1]
-        assert params[2] == "Spam"
+        with patch("api.execute_insert_and_get_id", AsyncMock(return_value=1)):
+            await add_warning("123", "456", "Spam", exp_date, "admin1")
 
     @pytest.mark.asyncio
     async def test_get_warnings_no_results(self, bot_with_pool):

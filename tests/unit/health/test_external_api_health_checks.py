@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from aiohttp import ClientError
-from external_api_health_checks import (
+from health.checks.external import (
     BrawlStarsHealthCheck,
     BytebinHealthCheck,
     GIPHYHealthCheck,
@@ -50,7 +50,7 @@ async def test_giphy_success():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.giphyAPIKey", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.HEALTHY
@@ -65,7 +65,7 @@ async def test_giphy_bad_status():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.giphyAPIKey", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -80,7 +80,7 @@ async def test_giphy_timeout():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.giphyAPIKey", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -95,7 +95,7 @@ async def test_giphy_client_error():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.giphyAPIKey", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -110,7 +110,7 @@ async def test_brawl_stars_403():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.brawlstarsToken", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -125,7 +125,7 @@ async def test_brawl_stars_timeout():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.brawlstarsToken", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -140,7 +140,7 @@ async def test_imgbb_success():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.ImgBBApiKey", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.HEALTHY
@@ -157,7 +157,7 @@ async def test_bytebin_auth_failure():
         patch("config.bytebin_url", "https://bytebin.test"),
         patch("config.bytebin_username", "u"),
         patch("config.bytebin_password", "p"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -172,7 +172,7 @@ async def test_github_401():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.GithubAuthToken", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -187,7 +187,7 @@ async def test_github_success():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.GithubAuthToken", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.HEALTHY
@@ -202,7 +202,7 @@ async def test_brawl_stars_success():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.brawlstarsToken", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.HEALTHY
@@ -217,7 +217,7 @@ async def test_brawl_stars_client_error():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.brawlstarsToken", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -232,7 +232,7 @@ async def test_imgbb_bad_status():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.ImgBBApiKey", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -247,7 +247,7 @@ async def test_imgbb_timeout():
     session.__aexit__ = AsyncMock(return_value=None)
     with (
         patch("config.ImgBBApiKey", "k"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -264,7 +264,7 @@ async def test_bytebin_500():
         patch("config.bytebin_url", "https://bytebin.test"),
         patch("config.bytebin_username", ""),
         patch("config.bytebin_password", ""),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.DEGRADED
@@ -281,7 +281,7 @@ async def test_bytebin_success():
         patch("config.bytebin_url", "https://bytebin.test"),
         patch("config.bytebin_username", "u"),
         patch("config.bytebin_password", "p"),
-        patch("external_api_health_checks.ClientSession", return_value=session),
+        patch("health.checks.external.ClientSession", return_value=session),
     ):
         result = await check.run()
     assert result.status == HealthStatus.HEALTHY

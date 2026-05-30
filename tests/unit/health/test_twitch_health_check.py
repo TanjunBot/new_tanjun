@@ -5,7 +5,7 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from TwitchAPIHealthCheck import TwitchAPIHealthCheck
+from health.checks.twitch import TwitchAPIHealthCheck
 
 from health.checks import HealthStatus
 
@@ -44,7 +44,7 @@ class TestTwitchAPIHealthCheck:
         mock_session.post = MagicMock(return_value=token_resp)
         mock_session.get = MagicMock(return_value=api_resp)
 
-        with patch("TwitchAPIHealthCheck.ClientSession", return_value=mock_session):
+        with patch("health.checks.twitch.ClientSession", return_value=mock_session):
             result = await check.run()
         assert result.status == HealthStatus.HEALTHY
 
@@ -56,7 +56,7 @@ class TestTwitchAPIHealthCheck:
         mock_session.__aexit__ = AsyncMock(return_value=None)
         mock_session.post = MagicMock(return_value=token_resp)
 
-        with patch("TwitchAPIHealthCheck.ClientSession", return_value=mock_session):
+        with patch("health.checks.twitch.ClientSession", return_value=mock_session):
             result = await check.run()
         assert result.status == HealthStatus.CRITICAL
 
@@ -70,6 +70,6 @@ class TestTwitchAPIHealthCheck:
         mock_session.post = MagicMock(return_value=token_resp)
         mock_session.get = MagicMock(return_value=api_resp)
 
-        with patch("TwitchAPIHealthCheck.ClientSession", return_value=mock_session):
+        with patch("health.checks.twitch.ClientSession", return_value=mock_session):
             result = await check.run()
         assert result.status == HealthStatus.DEGRADED
