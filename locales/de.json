@@ -192,6 +192,22 @@
     "max_length": null
   },
   {
+    "identifier": "commands.games.tic_tac_toe.cellAlreadyTaken",
+    "source_string": "Dieses Feld ist bereits belegt.",
+    "translation": "Dieses Feld ist bereits belegt.",
+    "context": "commands -> games -> tic_tac_toe -> cellAlreadyTaken",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.description",
+    "source_string": "Spieler 1: ${player1}\nSpieler 2: ${player2}",
+    "translation": "Spieler 1: ${player1}\nSpieler 2: ${player2}",
+    "context": "commands -> games -> tic_tac_toe -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.help.select.placeholder",
     "source_string": "Befehls-Kategorie",
     "translation": "Befehls-Kategorie",
@@ -3744,6 +3760,30 @@
     "max_length": 80
   },
   {
+    "identifier": "commands.admin.trigger_messages.configure.modal.case_sensitive.label",
+    "source_string": "Groß-/Kleinschreibung beachten",
+    "translation": "Groß-/Kleinschreibung beachten",
+    "context": "commands -> admin -> trigger_messages -> configure -> modal -> case_sensitive -> label",
+    "labels": "unassigned",
+    "max_length": 100
+  },
+  {
+    "identifier": "commands.admin.trigger_messages.configure.modal.case_sensitive.placeholder",
+    "source_string": "Ja oder Nein",
+    "translation": "Ja oder Nein",
+    "context": "commands -> admin -> trigger_messages -> configure -> modal -> case_sensitive -> placeholder",
+    "labels": "unassigned",
+    "max_length": 100
+  },
+  {
+    "identifier": "commands.admin.trigger_messages.configure.trigger.case_sensitive",
+    "source_string": "Groß-/Kleinschreibung beachten: ${case_sensitive}",
+    "translation": "Groß-/Kleinschreibung beachten: ${case_sensitive}",
+    "context": "commands -> admin -> trigger_messages -> configure -> trigger -> case_sensitive",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.create_ticket.missingPermission.title",
     "source_string": "Fehlende Berechtigung",
     "translation": "Fehlende Berechtigung",
@@ -3816,6 +3856,22 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.create_ticket.error.title",
+    "source_string": "Fehler beim Erstellen des Tickets",
+    "translation": "Fehler beim Erstellen des Tickets",
+    "context": "commands -> admin -> create_ticket -> error -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.create_ticket.error.description",
+    "source_string": "Beim Versuch, das Ticket zu erstellen, ist ein Fehler aufgetreten.",
+    "translation": "Beim Versuch, das Ticket zu erstellen, ist ein Fehler aufgetreten.",
+    "context": "commands -> admin -> create_ticket -> error -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.open_ticket.optedOutWarning.description",
     "source_string": "Beachte, dass du die Nachrichtenverfolgung deaktiviert hast. In diesem Ticket wird der Bot dennoch deine Nachrichten lesen und verarbeiten. Wenn du ein Ticket erstellst, erklärst du dich damit einverstanden, dass der Bot Nachrichten von dir, die du in diesem Ticket sendest, lesen und verarbeiten wird.",
     "translation": "Beachte, dass du die Nachrichtenverfolgung deaktiviert hast. In diesem Ticket wird der Bot dennoch deine Nachrichten lesen und verarbeiten. Wenn du ein Ticket erstellst, erklärst du dich damit einverstanden, dass der Bot Nachrichten von dir, die du in diesem Ticket sendest, lesen und verarbeiten wird.",
@@ -3877,6 +3933,14 @@
     "translation": "Ticket erfolgreich erstellt",
     "context": "commands -> admin -> open_ticket -> error -> success -> ticketCreated",
     "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.open_ticket.error.ticketNotCreated",
+    "source_string": "Das Ticket konnte nicht erstellt werden.",
+    "translation": "Das Ticket konnte nicht erstellt werden.",
+    "context": "commands -> admin -> open_ticket -> error -> ticketNotCreated",
+    "labels": "unassigned",
     "max_length": null
   },
   {
@@ -5077,6 +5141,22 @@
     "translation": "Es sind keine Kanäle in der Blacklist.",
     "context": "commands -> logs -> blacklistListChannel -> noBlacklistedChannels",
     "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListChannel.missingPermission.title",
+    "source_string": "Fehlende Berechtigung",
+    "translation": "Fehlende Berechtigung",
+    "context": "commands -> logs -> blacklistListChannel -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListChannel.missingPermission.description",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um die Log-Blacklist anzuzeigen.",
+    "translation": "Du hast nicht die erforderlichen Berechtigungen, um die Log-Blacklist anzuzeigen.",
+    "context": "commands -> logs -> blacklistListChannel -> missingPermission -> description",
+    "labels": "unassigned",
     "max_length": null
   },
   {
@@ -6440,6 +6520,30 @@
     "max_length": null
   },
   {
+    "identifier": "commands.math.plotfunction.error",
+    "source_string": "Fehler beim Plotten der Funktion: ${error}",
+    "translation": "Fehler beim Plotten der Funktion: ${error}",
+    "context": "commands -> math -> plotfunction -> error",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.math.plotfunction.no_functions_to_rename",
+    "source_string": "Es gibt keine Funktionen zum Umbenennen.",
+    "translation": "Es gibt keine Funktionen zum Umbenennen.",
+    "context": "commands -> math -> plotfunction -> no_functions_to_rename",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.math.plotfunction.unexpected_error",
+    "source_string": "Ein unerwarteter Fehler ist aufgetreten: ${error}",
+    "translation": "Ein unerwarteter Fehler ist aufgetreten: ${error}",
+    "context": "commands -> math -> plotfunction -> unexpected_error",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.math.faculty.success.title",
     "source_string": "Fakultät berechnet",
     "translation": "Fakultät berechnet",
@@ -7304,6 +7408,22 @@
     "max_length": null
   },
   {
+    "identifier": "commands.utility.deleteboosterchannel.missingPermission.title",
+    "source_string": "Fehlende Berechtigung",
+    "translation": "Fehlende Berechtigung",
+    "context": "commands -> utility -> deleteboosterchannel -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.deleteboosterchannel.missingPermission.description",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um den Boosterkanal zu löschen.",
+    "translation": "Du hast nicht die erforderlichen Berechtigungen, um den Boosterkanal zu löschen.",
+    "context": "commands -> utility -> deleteboosterchannel -> missingPermission -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.utility.claimboosterchannel.no_booster_channel.title",
     "source_string": "Kein Boosterkanal",
     "translation": "Kein Boosterkanal",
@@ -7397,6 +7517,22 @@
     "translation": "Der Boosterkanal wurde automatisch gelöscht, da der user dem der Channel gehört, kein Booster mehr ist.",
     "context": "commands -> utility -> claimboosterchannel -> expired -> reason",
     "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.claimboosterchannel.no_booster_role.title",
+    "source_string": "Keine Booster-Rolle",
+    "translation": "Keine Booster-Rolle",
+    "context": "commands -> utility -> claimboosterchannel -> no_booster_role -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.claimboosterchannel.no_booster_role.description",
+    "source_string": "Du hast keine Booster-Rolle, um diese Aktion auszuführen.",
+    "translation": "Du hast keine Booster-Rolle, um diese Aktion auszuführen.",
+    "context": "commands -> utility -> claimboosterchannel -> no_booster_role -> description",
+    "labels": "unassigned",
     "max_length": null
   },
   {
@@ -7534,6 +7670,22 @@
     "context": "commands -> utility -> listscheduled -> edit_success -> description",
     "labels": "de.json",
     "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_modal.title",
+    "source_string": "Nachricht bearbeiten",
+    "translation": "Nachricht bearbeiten",
+    "context": "commands -> utility -> listscheduled -> edit_modal -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_modal.content_label",
+    "source_string": "Nachricht",
+    "translation": "Nachricht",
+    "context": "commands -> utility -> listscheduled -> edit_modal -> content_label",
+    "labels": "unassigned",
+    "max_length": 100
   },
   {
     "identifier": "commands.utility.removescheduled.select.placeholder",
@@ -9152,6 +9304,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.utility.brawlstars.club.error.notFound",
+    "source_string": "Der Club wurde nicht gefunden.",
+    "translation": "Der Club wurde nicht gefunden.",
+    "context": "commands -> utility -> brawlstars -> club -> error -> notFound",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.utility.brawlstars.brawlers.error.notFound.title",
     "source_string": "Spieler nicht gefunden",
     "translation": "Spieler nicht gefunden",
@@ -9368,6 +9528,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.utility.brawlstars.events.error.notFound",
+    "source_string": "Es konnten keine Events gefunden werden.",
+    "translation": "Es konnten keine Events gefunden werden.",
+    "context": "commands -> utility -> brawlstars -> events -> error -> notFound",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.utility.brawlstars.link.error.notFound.title",
     "source_string": "Spieler nicht gefunden",
     "translation": "Spieler nicht gefunden",
@@ -9536,6 +9704,54 @@
     "max_length": null
   },
   {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.missingPermissions.title",
+    "source_string": "Fehlende Berechtigung",
+    "translation": "Fehlende Berechtigung",
+    "context": "commands -> utility -> twitch -> addTwitchLiveNotification -> error -> missingPermissions -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.missingPermissions.description",
+    "source_string": "Du benötigst Administratorrechte, um diese Aktion durchzuführen.",
+    "translation": "Du benötigst Administratorrechte, um diese Aktion durchzuführen.",
+    "context": "commands -> utility -> twitch -> addTwitchLiveNotification -> error -> missingPermissions -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.missingBotPermissions.title",
+    "source_string": "Fehlende Bot-Berechtigung",
+    "translation": "Fehlende Bot-Berechtigung",
+    "context": "commands -> utility -> twitch -> addTwitchLiveNotification -> error -> missingBotPermissions -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.missingBotPermissions.description",
+    "source_string": "Der Bot benötigt die Berechtigung 'Nachrichten senden' und 'Embed Links', um diese Aktion durchzuführen.",
+    "translation": "Der Bot benötigt die Berechtigung 'Nachrichten senden' und 'Embed Links', um diese Aktion durchzuführen.",
+    "context": "commands -> utility -> twitch -> addTwitchLiveNotification -> error -> missingBotPermissions -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.twitchNameNotFound.title",
+    "source_string": "Twitch Name nicht gefunden",
+    "translation": "Twitch Name nicht gefunden",
+    "context": "commands -> utility -> twitch -> addTwitchLiveNotification -> error -> twitchNameNotFound -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.twitchNameNotFound.description",
+    "source_string": "Der Twitch Name ${twitch_name} wurde nicht gefunden.",
+    "translation": "Der Twitch Name ${twitch_name} wurde nicht gefunden.",
+    "context": "commands -> utility -> twitch -> addTwitchLiveNotification -> error -> twitchNameNotFound -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.utility.twitch.listTwitchLiveNotifications.error.missingPermissions.title",
     "source_string": "Fehlende Berechtigung",
     "translation": "Fehlende Berechtigung",
@@ -9589,6 +9805,14 @@
     "translation": "Twitch Name: ${twitch_name}\nNachricht: ${message}\nKanal: <#${channel}>",
     "context": "commands -> utility -> twitch -> listTwitchLiveNotifications -> description",
     "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.twitch.listTwitchLiveNotifications.error.notYourNotification.description",
+    "source_string": "Du darfst nicht mit dieser Benachrichtigung interagieren.",
+    "translation": "Du darfst nicht mit dieser Benachrichtigung interagieren.",
+    "context": "commands -> utility -> twitch -> listTwitchLiveNotifications -> error -> notYourNotification -> description",
+    "labels": "unassigned",
     "max_length": null
   },
   {
@@ -10269,6 +10493,22 @@
     "translation": "Die Blacklist ist leer.",
     "context": "commands -> level -> blacklist -> show -> empty",
     "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.level.blacklist.show.error.no_permission.title",
+    "source_string": "Keine Berechtigung",
+    "translation": "Keine Berechtigung",
+    "context": "commands -> level -> blacklist -> show -> error -> no_permission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.level.blacklist.show.error.no_permission.description",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um die Blacklist anzuzeigen.",
+    "translation": "Du hast nicht die erforderlichen Berechtigungen, um die Blacklist anzuzeigen.",
+    "context": "commands -> level -> blacklist -> show -> error -> no_permission -> description",
+    "labels": "unassigned",
     "max_length": null
   },
   {
@@ -12016,6 +12256,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.giveaway.endedGiveaway.winnerDM",
+    "source_string": "Herzlichen Glückwunsch! Du hast das Gewinnspiel **${title}** auf **${guild_name}** gewonnen!",
+    "translation": "Herzlichen Glückwunsch! Du hast das Gewinnspiel **${title}** auf **${guild_name}** gewonnen!",
+    "context": "commands -> giveaway -> endedGiveaway -> winnerDM",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.giveaway.giveawayEmbed.title",
     "source_string": "${title}",
     "translation": "${title}",
@@ -12701,6 +12949,22 @@
     "translation": "Kanalanforderung abgebrochen",
     "context": "commands -> giveaway -> builder -> add_channel_requirement -> cancelled",
     "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.builder.add_channel_requirement.removed",
+    "source_string": "Kanal-Anforderung wurde entfernt.",
+    "translation": "Kanal-Anforderung wurde entfernt.",
+    "context": "commands -> giveaway -> builder -> add_channel_requirement -> removed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.builder.add_channel_requirement.value.description",
+    "source_string": "Wähle die Kanäle aus, in denen der Nutzer eine Nachricht geschrieben haben muss.",
+    "translation": "Wähle die Kanäle aus, in denen der Nutzer eine Nachricht geschrieben haben muss.",
+    "context": "commands -> giveaway -> builder -> add_channel_requirement -> value -> description",
+    "labels": "unassigned",
     "max_length": null
   },
   {
@@ -24608,6 +24872,14 @@
     "max_length": null
   },
   {
+    "identifier": "logs.guildUpdate.verificationLevel",
+    "source_string": "Sicherheitsstufe geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+    "translation": "Sicherheitsstufe geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+    "context": "logs -> guildUpdate -> verificationLevel",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "logs.inviteCreate.title",
     "source_string": "Einladung erstellt",
     "translation": "Einladung erstellt",
@@ -25405,6 +25677,14 @@
     "translation": "Rolle aktualisiert",
     "context": "logs -> guildRoleUpdate -> title",
     "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildRoleUpdate.icon",
+    "source_string": "Icon",
+    "translation": "Icon",
+    "context": "logs -> guildRoleUpdate -> icon",
+    "labels": "unassigned",
     "max_length": null
   },
   {
@@ -29560,6 +29840,22 @@
     "max_length": null
   },
   {
+    "identifier": "commands.utility.brawlstars.playerinfo.description.highest_trophies",
+    "source_string": "Höchste Trophäen: ${highest_trophies}",
+    "translation": "Höchste Trophäen: ${highest_trophies}",
+    "context": "commands -> utility -> brawlstars -> playerinfo -> description -> highest_trophies",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.playerinfo.error.notFound",
+    "source_string": "Der Spieler wurde nicht gefunden.",
+    "translation": "Der Spieler wurde nicht gefunden.",
+    "context": "commands -> utility -> brawlstars -> playerinfo -> error -> notFound",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.games.hangman.buttons.guess",
     "source_string": "erraten",
     "translation": "erraten",
@@ -30272,6 +30568,22 @@
     "max_length": 4096
   },
   {
+    "identifier": "commands.utility.brawlstars.brawlers.description.star_power",
+    "source_string": "**STAR POWER**",
+    "translation": "**STAR POWER**",
+    "context": "commands -> utility -> brawlstars -> brawlers -> description -> star_power",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.brawlers.description.star_powers",
+    "source_string": "**STAR POWERS**",
+    "translation": "**STAR POWERS**",
+    "context": "commands -> utility -> brawlstars -> brawlers -> description -> star_powers",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.utility.brawlstars.maps.Broiler Room",
     "source_string": "Broiler Room",
     "translation": "Broiler Room",
@@ -30468,6 +30780,14 @@
     "source_string": "XP Rangliste",
     "translation": "XP Rangliste",
     "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.level.leaderboard.notYourEmbed",
+    "source_string": "Das ist nicht deine Rangliste.",
+    "translation": "Das ist nicht deine Rangliste.",
+    "context": "commands -> level -> leaderboard -> notYourEmbed",
     "labels": "unassigned",
     "max_length": null
   },
@@ -30684,6 +31004,46 @@
     "source_string": "Der von dir Gepingte Nutzer hat seinen Account leider nicht verlinkt.",
     "translation": "Der von dir Gepingte Nutzer hat seinen Account leider nicht verlinkt.",
     "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.battle_time",
+    "source_string": "Kampfzeit: ${timestamp}",
+    "translation": "Kampfzeit: ${timestamp}",
+    "context": "commands -> utility -> brawlstars -> battlelog -> description -> battle_time",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.game_map",
+    "source_string": "Karte: ${game_map}",
+    "translation": "Karte: ${game_map}",
+    "context": "commands -> utility -> brawlstars -> battlelog -> description -> game_map",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.game_mode",
+    "source_string": "Spielmodus: ${game_mode}",
+    "translation": "Spielmodus: ${game_mode}",
+    "context": "commands -> utility -> brawlstars -> battlelog -> description -> game_mode",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.star_player",
+    "source_string": "Star Player: ${name} (${tag})",
+    "translation": "Star Player: ${name} (${tag})",
+    "context": "commands -> utility -> brawlstars -> battlelog -> description -> star_player",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.trophy_change",
+    "source_string": "Trophäenänderung: ${trophy_change}",
+    "translation": "Trophäenänderung: ${trophy_change}",
+    "context": "commands -> utility -> brawlstars -> battlelog -> description -> trophy_change",
     "labels": "unassigned",
     "max_length": null
   },
@@ -30912,6 +31272,22 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.reports.show_reports.not_your_reports",
+    "source_string": "Das sind nicht deine Reports.",
+    "translation": "Das sind nicht deine Reports.",
+    "context": "commands -> admin -> reports -> show_reports -> not_your_reports",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.show_reports.unblock.label",
+    "source_string": "Entsperren",
+    "translation": "Entsperren",
+    "context": "commands -> admin -> reports -> show_reports -> unblock -> label",
+    "labels": "unassigned",
+    "max_length": 80
+  },
+  {
     "identifier": "minigames.counting.modes.modes.double.name",
     "source_string": "Verdopplung",
     "translation": "Verdopplung",
@@ -30980,6 +31356,14 @@
     "source_string": "Gewinneranzahl aktualisiert",
     "translation": "Gewinneranzahl aktualisiert",
     "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.builder.channel_selected",
+    "source_string": "Kanal ausgewählt: ${channel}",
+    "translation": "Kanal ausgewählt: ${channel}",
+    "context": "commands -> giveaway -> builder -> channel_selected",
     "labels": "unassigned",
     "max_length": null
   },
@@ -31492,6 +31876,70 @@
     "source_string": "Das Gewinnspiel wurde erfolgreich beendet.",
     "translation": "Das Gewinnspiel wurde erfolgreich beendet.",
     "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.deleted.title",
+    "source_string": "Gewinnspiel beendet",
+    "translation": "Gewinnspiel beendet",
+    "context": "commands -> giveaway -> end_giveaway_command -> deleted -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.deleted.description",
+    "source_string": "Das Gewinnspiel wurde erfolgreich beendet und die Nachricht gelöscht.",
+    "translation": "Das Gewinnspiel wurde erfolgreich beendet und die Nachricht gelöscht.",
+    "context": "commands -> giveaway -> end_giveaway_command -> deleted -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.alreadyEnded.title",
+    "source_string": "Bereits beendet",
+    "translation": "Bereits beendet",
+    "context": "commands -> giveaway -> end_giveaway_command -> error -> alreadyEnded -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.alreadyEnded.description",
+    "source_string": "Dieses Gewinnspiel wurde bereits beendet.",
+    "translation": "Dieses Gewinnspiel wurde bereits beendet.",
+    "context": "commands -> giveaway -> end_giveaway_command -> error -> alreadyEnded -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.missingPermission.title",
+    "source_string": "Fehlende Berechtigung",
+    "translation": "Fehlende Berechtigung",
+    "context": "commands -> giveaway -> end_giveaway_command -> error -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.missingPermission.description",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um dieses Gewinnspiel zu beenden.",
+    "translation": "Du hast nicht die erforderlichen Berechtigungen, um dieses Gewinnspiel zu beenden.",
+    "context": "commands -> giveaway -> end_giveaway_command -> error -> missingPermission -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.notFound.title",
+    "source_string": "Nicht gefunden",
+    "translation": "Nicht gefunden",
+    "context": "commands -> giveaway -> end_giveaway_command -> error -> notFound -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.notFound.description",
+    "source_string": "Das angegebene Gewinnspiel wurde nicht gefunden.",
+    "translation": "Das angegebene Gewinnspiel wurde nicht gefunden.",
+    "context": "commands -> giveaway -> end_giveaway_command -> error -> notFound -> description",
     "labels": "unassigned",
     "max_length": null
   },
@@ -32208,6 +32656,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.level.disablelevelsystem.cancel.description",
+    "source_string": "Levelsystem wurde nicht deaktiviert.",
+    "translation": "Levelsystem wurde nicht deaktiviert.",
+    "context": "commands -> level -> disablelevelsystem -> cancel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.logs",
     "source_string": "Logs",
     "translation": "Logs",
@@ -32232,10 +32688,74 @@
     "max_length": null
   },
   {
+    "identifier": "commands.logs.configureLogs.configuration_embed.activate",
+    "source_string": "Aktivieren",
+    "translation": "Aktivieren",
+    "context": "commands -> logs -> configureLogs -> configuration_embed -> activate",
+    "labels": "unassigned",
+    "max_length": 80
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.deactivate",
+    "source_string": "Deaktivieren",
+    "translation": "Deaktivieren",
+    "context": "commands -> logs -> configureLogs -> configuration_embed -> deactivate",
+    "labels": "unassigned",
+    "max_length": 80
+  },
+  {
     "identifier": "commands.utility.removescheduled.error.timeout.title",
     "source_string": "Zeitüberschreitung",
     "translation": "Zeitüberschreitung",
     "context": "commands -> utility -> removescheduled -> error -> timeout -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.noBanner.title",
+    "source_string": "${user} hat kein Banner.",
+    "translation": "${user} hat kein Banner.",
+    "context": "commands -> utility -> noBanner -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.no_messages.title",
+    "source_string": "Keine Nachrichten",
+    "translation": "Keine Nachrichten",
+    "context": "commands -> utility -> removescheduled -> error -> no_messages -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.no_messages.description",
+    "source_string": "Es gibt keine geplanten Nachrichten zum Löschen.",
+    "translation": "Es gibt keine geplanten Nachrichten zum Löschen.",
+    "context": "commands -> utility -> removescheduled -> error -> no_messages -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.not_found.title",
+    "source_string": "Nicht gefunden",
+    "translation": "Nicht gefunden",
+    "context": "commands -> utility -> removescheduled -> error -> not_found -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.not_found.description",
+    "source_string": "Die Nachricht mit der ID ${id} wurde nicht gefunden.",
+    "translation": "Die Nachricht mit der ID ${id} wurde nicht gefunden.",
+    "context": "commands -> utility -> removescheduled -> error -> not_found -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.timeout.description",
+    "source_string": "Die Aktion hat zu lange gedauert und wurde abgebrochen.",
+    "translation": "Die Aktion hat zu lange gedauert und wurde abgebrochen.",
+    "context": "commands -> utility -> removescheduled -> error -> timeout -> description",
     "labels": "unassigned",
     "max_length": null
   },
@@ -32384,6 +32904,14 @@
     "max_length": null
   },
   {
+    "identifier": "logs.guildUpdate.defaultNotifications",
+    "source_string": "Standard-Benachrichtigungen geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+    "translation": "Standard-Benachrichtigungen geändert: \n<:empty:1312126155897442416>Vorher: ${before}\n<:empty:1312126155897442416>Nachher: ${after}",
+    "context": "logs -> guildUpdate -> defaultNotifications",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "logs.guildUpdate.explicitContentFilterLocales.all_members",
     "source_string": "Alle Mitglieder",
     "translation": "Alle Mitglieder",
@@ -32416,6 +32944,22 @@
     "max_length": null
   },
   {
+    "identifier": "logs.guildUpdate.name",
+    "source_string": "Name",
+    "translation": "Name",
+    "context": "logs -> guildUpdate -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildUpdate.owner",
+    "source_string": "Besitzer",
+    "translation": "Besitzer",
+    "context": "logs -> guildUpdate -> owner",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "logs.messageDelete.url_not_available_locale",
     "source_string": "Anhang konnte leider nicht gespeichert werden.",
     "translation": "Anhang konnte leider nicht gespeichert werden.",
@@ -32440,6 +32984,22 @@
     "max_length": null
   },
   {
+    "identifier": "logs.guild_channelCreate.created_at",
+    "source_string": "Erstellt am: ${created_at}",
+    "translation": "Erstellt am: ${created_at}",
+    "context": "logs -> guild_channelCreate -> created_at",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.category",
+    "source_string": "Kategorie: ${category}",
+    "translation": "Kategorie: ${category}",
+    "context": "logs -> guild_channelCreate -> category",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "logs.guild_channelDelete.types.",
     "source_string": "Typ:",
     "translation": "Typ:",
@@ -32448,10 +33008,194 @@
     "max_length": null
   },
   {
+    "identifier": "logs.guild_channelDelete.created_at",
+    "source_string": "Erstellt am: ${created_at}",
+    "translation": "Erstellt am: ${created_at}",
+    "context": "logs -> guild_channelDelete -> created_at",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.category",
+    "source_string": "Kategorie: ${category}",
+    "translation": "Kategorie: ${category}",
+    "context": "logs -> guild_channelDelete -> category",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.permissionOverwriteTarget",
+    "source_string": "Ziel: ${target}",
+    "translation": "Ziel: ${target}",
+    "context": "logs -> guild_channelDelete -> permissionOverwriteTarget",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.permissionOverwriteAllowed",
+    "source_string": "Erlaubt: ${permissions}",
+    "translation": "Erlaubt: ${permissions}",
+    "context": "logs -> guild_channelDelete -> permissionOverwriteAllowed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.permissionOverwriteDenied",
+    "source_string": "Verweigert: ${permissions}",
+    "translation": "Verweigert: ${permissions}",
+    "context": "logs -> guild_channelDelete -> permissionOverwriteDenied",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "logs.guild_channelUpdate.types.",
     "source_string": "Typ:",
     "translation": "Typ:",
     "context": "logs -> guild_channelUpdate -> types",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.name",
+    "source_string": "Name",
+    "translation": "Name",
+    "context": "logs -> guild_channelUpdate -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.category",
+    "source_string": "Kategorie",
+    "translation": "Kategorie",
+    "context": "logs -> guild_channelUpdate -> category",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.topic",
+    "source_string": "Thema",
+    "translation": "Thema",
+    "context": "logs -> guild_channelUpdate -> topic",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.slowmodeDelay",
+    "source_string": "Slowmode",
+    "translation": "Slowmode",
+    "context": "logs -> guild_channelUpdate -> slowmodeDelay",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.defaultAutoArchiveDuration",
+    "source_string": "Standard-Archivierungsdauer",
+    "translation": "Standard-Archivierungsdauer",
+    "context": "logs -> guild_channelUpdate -> defaultAutoArchiveDuration",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.defaultThreadAutoArchiveDuration",
+    "source_string": "Standard-Thread-Archivierungsdauer",
+    "translation": "Standard-Thread-Archivierungsdauer",
+    "context": "logs -> guild_channelUpdate -> defaultThreadAutoArchiveDuration",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteNew",
+    "source_string": "Neue Berechtigungsüberschreibung: ${target}",
+    "translation": "Neue Berechtigungsüberschreibung: ${target}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteNew",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteRemoved",
+    "source_string": "Berechtigungsüberschreibung entfernt: ${target}",
+    "translation": "Berechtigungsüberschreibung entfernt: ${target}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteRemoved",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteModified",
+    "source_string": "Berechtigungsüberschreibung geändert: ${target}",
+    "translation": "Berechtigungsüberschreibung geändert: ${target}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteModified",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteAllowed",
+    "source_string": "Erlaubt: ${permissions}",
+    "translation": "Erlaubt: ${permissions}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteAllowed",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteDenied",
+    "source_string": "Verweigert: ${permissions}",
+    "translation": "Verweigert: ${permissions}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteDenied",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteNeutral",
+    "source_string": "Neutral: ${permissions}",
+    "translation": "Neutral: ${permissions}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteNeutral",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteAddedAllow",
+    "source_string": "Hinzugefügt (erlaubt): ${permissions}",
+    "translation": "Hinzugefügt (erlaubt): ${permissions}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteAddedAllow",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteAddedDeny",
+    "source_string": "Hinzugefügt (verweigert): ${permissions}",
+    "translation": "Hinzugefügt (verweigert): ${permissions}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteAddedDeny",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteAddedNeutral",
+    "source_string": "Hinzugefügt (neutral): ${permissions}",
+    "translation": "Hinzugefügt (neutral): ${permissions}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteAddedNeutral",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteRemovedAllow",
+    "source_string": "Entfernt (erlaubt): ${permissions}",
+    "translation": "Entfernt (erlaubt): ${permissions}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteRemovedAllow",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteRemovedDeny",
+    "source_string": "Entfernt (verweigert): ${permissions}",
+    "translation": "Entfernt (verweigert): ${permissions}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteRemovedDeny",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteRemovedNeutral",
+    "source_string": "Entfernt (neutral): ${permissions}",
+    "translation": "Entfernt (neutral): ${permissions}",
+    "context": "logs -> guild_channelUpdate -> permissionOverwriteRemovedNeutral",
     "labels": "unassigned",
     "max_length": null
   },
@@ -33620,6 +34364,150 @@
     "source_string": "Deine Wordle-Statistiken",
     "translation": "Deine Wordle-Statistiken",
     "context": "Title for the Wordle stats display",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.guildOnly.title",
+    "source_string": "Serverfehler",
+    "translation": "Serverfehler",
+    "context": "errors -> guildOnly -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.guildOnly.description",
+    "source_string": "Dieser Befehl kann nur in einem Server verwendet werden.",
+    "translation": "Dieser Befehl kann nur in einem Server verwendet werden.",
+    "context": "errors -> guildOnly -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.noChannel.title",
+    "source_string": "Kein Kanal",
+    "translation": "Kein Kanal",
+    "context": "errors -> noChannel -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.noChannel.description",
+    "source_string": "Es wurde kein Kanal gefunden. Bitte gib einen gültigen Kanal an.",
+    "translation": "Es wurde kein Kanal gefunden. Bitte gib einen gültigen Kanal an.",
+    "context": "errors -> noChannel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.missingPermission.title",
+    "source_string": "Fehlende Berechtigung",
+    "translation": "Fehlende Berechtigung",
+    "context": "commands -> admin -> reports -> remove_channel -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.missingPermission.description",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Kanal zu entfernen.",
+    "translation": "Du hast nicht die erforderlichen Berechtigungen, um diesen Kanal zu entfernen.",
+    "context": "commands -> admin -> reports -> remove_channel -> missingPermission -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.noChannel.description",
+    "source_string": "Es wurde kein Report-Kanal für diesen Server gefunden.",
+    "translation": "Es wurde kein Report-Kanal für diesen Server gefunden.",
+    "context": "commands -> admin -> reports -> remove_channel -> noChannel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.success.description",
+    "source_string": "Der Report-Kanal wurde erfolgreich entfernt.",
+    "translation": "Der Report-Kanal wurde erfolgreich entfernt.",
+    "context": "commands -> admin -> reports -> remove_channel -> success -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.descriptionBotEnemy",
+    "source_string": "Schwierigkeit: ${difficulty}",
+    "translation": "Schwierigkeit: ${difficulty}",
+    "context": "commands -> games -> tic_tac_toe -> descriptionBotEnemy",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.winner",
+    "source_string": "Gewinner: ${winner}",
+    "translation": "Gewinner: ${winner}",
+    "context": "commands -> games -> tic_tac_toe -> winner",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.currentTurn",
+    "source_string": "Aktueller Zug: ${player}",
+    "translation": "Aktueller Zug: ${player}",
+    "context": "commands -> games -> tic_tac_toe -> currentTurn",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.error.unknown_filter.title",
+    "source_string": "Unbekannter Filter",
+    "translation": "Unbekannter Filter",
+    "context": "commands -> image -> error -> unknown_filter -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.error.unknown_filter.description",
+    "source_string": "Der angegebene Filter wurde nicht gefunden.",
+    "translation": "Der angegebene Filter wurde nicht gefunden.",
+    "context": "commands -> image -> error -> unknown_filter -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.report.reporter_blocked.description",
+    "source_string": "Dieser Reporter wurde vom Report-System ausgeschlossen.",
+    "translation": "Dieser Reporter wurde vom Report-System ausgeschlossen.",
+    "context": "commands -> utility -> report -> reporter_blocked -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.type",
+    "source_string": "Typ: ${type}",
+    "translation": "Typ: ${type}",
+    "context": "logs -> guild_channelCreate -> type",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.type",
+    "source_string": "Typ: ${type}",
+    "translation": "Typ: ${type}",
+    "context": "logs -> guild_channelDelete -> type",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.type",
+    "source_string": "Typ: ${type}",
+    "translation": "Typ: ${type}",
+    "context": "logs -> guild_channelUpdate -> type",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.nsfw",
+    "source_string": "NSFW: ${nsfw}",
+    "translation": "NSFW: ${nsfw}",
+    "context": "logs -> guild_channelUpdate -> nsfw",
     "labels": "unassigned",
     "max_length": null
   }
