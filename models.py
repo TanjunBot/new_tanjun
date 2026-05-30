@@ -882,6 +882,7 @@ class CountingMode(IntEnum):
 
 class WordleStatsModel(BaseModel):
     """Wordle player statistics tracked per user per guild."""
+
     model_config = ConfigDict(from_attributes=True)
 
     user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
