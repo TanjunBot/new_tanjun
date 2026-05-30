@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any
 
+from asyncmy import Pool  # type: ignore[import-not-found]
 from discord import Entitlement
 
 from models import (

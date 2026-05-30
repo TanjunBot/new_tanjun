@@ -55,7 +55,7 @@ class TestLogBlacklistRepository:
         with patch("api.execute_query", new_callable=AsyncMock) as mock_q:
             mock_q.return_value = [("111111111",)]
             result = await repo.is_entity_blacklisted("123", "111", LogBlacklistType.USER)
-            assert result == ("111111111",)
+            assert result == "111111111"
 
     @pytest.mark.asyncio
     async def test_is_entity_blacklisted_false(self, repo: LogBlacklistRepository):
