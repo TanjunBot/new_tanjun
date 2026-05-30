@@ -63,8 +63,8 @@ class LogBlacklistRepository:
         table = blacklist_type.table
         column = blacklist_type.column
         query = f"SELECT {column} FROM {table} WHERE guild_id = %s AND {column} = %s"
-        result = await execute_query(query, (guild_id, entity_id))
-        return result[0] if result else None
+        result: tuple[Any, ...] | None = await execute_query(query, (guild_id, entity_id))
+        return str(result[0]) if result else None
 
 
 # Module-level singleton for easy import

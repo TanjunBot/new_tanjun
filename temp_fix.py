@@ -1,6 +1,11 @@
+import discord
+
+from health.checks import HealthCheck, HealthCheckResult, HealthStatus
+
+
 class BackgroundLoopHealthCheck(HealthCheck):
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, bot: discord.Bot) -> None:
+        self.bot: discord.Bot = bot
 
     @property
     def name(self) -> str:

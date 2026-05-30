@@ -8,7 +8,7 @@ Validates:
 
 from __future__ import annotations
 
-from aiohttp import ClientError, ClientSession
+from aiohttp import ClientError, ClientSession, ClientTimeout
 
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 
@@ -45,7 +45,7 @@ class TwitchAPIHealthCheck(HealthCheck):
                 async with session.post(
                     "https://id.twitch.tv/oauth2/token",
                     params=auth_params,
-                    timeout=10,
+                    timeout=ClientTimeout(total=10),
                 ) as response:
                     if response.status != 200:
                         data = await response.json()
@@ -69,7 +69,7 @@ class TwitchAPIHealthCheck(HealthCheck):
                 async with session.get(
                     "https://api.twitch.tv/helix/streams",
                     headers=headers,
-                    timeout=10,
+                    timeout=ClientTimeout(total=10),
                 ) as response:
                     if response.status != 200:
                         return HealthCheckResult(
