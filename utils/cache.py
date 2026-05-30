@@ -23,7 +23,7 @@ from __future__ import annotations
 import time
 from collections import OrderedDict
 from collections.abc import Awaitable, Callable
-from typing import Any, Generic, TypeVar
+from typing import Generic, TypeVar
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -160,9 +160,7 @@ class TTLCache(Generic[K, V]):
         self.set(key, result, ttl=ttl)
         return result
 
-    async def _set_from_awaitable(
-        self, key: K, awaitable: Awaitable[V], *, ttl: float | None
-    ) -> V:
+    async def _set_from_awaitable(self, key: K, awaitable: Awaitable[V], *, ttl: float | None) -> V:
         value = await awaitable
         self.set(key, value, ttl=ttl)
         return value
@@ -211,7 +209,4 @@ class TTLCache(Generic[K, V]):
         return self.size
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}(ttl={self._ttl}, "
-            f"maxsize={self._maxsize}, size={self.size})"
-        )
+        return f"{self.__class__.__name__}(ttl={self._ttl}, maxsize={self._maxsize}, size={self.size})"

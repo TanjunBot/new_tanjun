@@ -52,9 +52,7 @@ class Settings(BaseSettings, cli_parse_args=False):
 
     # ── OpenRouter ────────────────────────────────────────────────────────────
     openrouter_api_key: SecretStr = Field(default=SecretStr(""), alias="OPENROUTER_API_KEY")
-    openrouter_model: str = Field(
-        default="deepseek/deepseek-v4-flash:free", alias="OPENROUTER_MODEL"
-    )
+    openrouter_model: str = Field(default="deepseek/deepseek-v4-flash:free", alias="OPENROUTER_MODEL")
 
     # ── Sentry ─────────────────────────────────────────────────────────────────
     sentry_dsn: str = Field(default="", alias="sentry_dsn")

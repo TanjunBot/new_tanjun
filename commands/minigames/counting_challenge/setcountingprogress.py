@@ -18,7 +18,8 @@ async def setCountingProgress(command_info: CommandInfo, channel: discord.TextCh
         return
 
     current_progress = await require_counting_channel(
-        command_info, channel.id,
+        command_info,
+        channel.id,
         lambda cid: _repo.get_progress(CountingMode.CHALLENGE, cid),
         LOCALE_KEY,
     )
