@@ -14,15 +14,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN useradd -m appuser && \
     mkdir -p /usr/local/app && \
     chown appuser:appuser /usr/local/app
-USER appuser
 
 # Install Python dependencies
-COPY pyproject.toml README.md LICENSE.txt ./
+COPY pyproject.toml README.md ./
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir .
 
 # Copy the entire application
-COPY . /usr/local/app/
+COPY --chown=appuser:appuser . /usr/local/app/
+
+USER appuser
 
 # Health check for container orchestration
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \

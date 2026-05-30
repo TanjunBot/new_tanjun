@@ -284,8 +284,6 @@ async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
 
     return outcomes
 
-    return outcomes
-
 
 # ---------------------------------------------------------------------------
 # Utility execution modes
