@@ -86,6 +86,8 @@ jobs:
             branch_exists=true
           fi
 
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "${RELEASE_BRANCH}" "${base_ref}"
           echo "${RELEASE_VERSION}" > VERSION
           git add VERSION
