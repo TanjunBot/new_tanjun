@@ -3376,6 +3376,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.reports.show_reports.report.status",
+    "source_string": "**Status**: ${status}",
+    "translation": "**Status**: ${status}",
+    "context": "commands -> admin -> reports -> show_reports -> report -> status",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.reports.show_reports.not_your_warns",
     "source_string": "Du darfst nicht mit den Buttons interagieren.",
     "translation": "Du darfst nicht mit den Buttons interagieren.",

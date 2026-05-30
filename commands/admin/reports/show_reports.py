@@ -220,6 +220,7 @@ async def show_reports(command_info: utility.CommandInfo, user: discord.Member |
             reporter_str = str(report.reporter_id)
             reason = str(report.reason)
             created_at = str(report.created_at)
+            status = str(report.status)
             accepted = bool(report.accepted)
             accepted_at = str(report.accepted_at)
             resolved = bool(report.resolved)
@@ -234,6 +235,13 @@ async def show_reports(command_info: utility.CommandInfo, user: discord.Member |
                 reporter=reporter_str,
                 reason=reason,
                 created_at=created_at,
+            )
+
+            # Status line
+            description += "\n" + tanjunLocalizer.localize(
+                locale,
+                "commands.admin.reports.show_reports.report.status",
+                status=status,
             )
 
             if accepted:

@@ -115,6 +115,9 @@ class ReportModel(BaseModel):
     reporter_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
     reason: Annotated[str | None, StringConstraints(max_length=500)] = None
     created_at: int  # UNIX_TIMESTAMP
+    status: str = "PENDING"
+    status_updated_at: int | None = None  # UNIX_TIMESTAMP
+    status_updated_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
     accepted: bool
     accepted_at: int | None  # UNIX_TIMESTAMP
     accepted_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
