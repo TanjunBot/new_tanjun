@@ -1230,6 +1230,10 @@ async def create_tables(bot=None) -> None:
          ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
          AFTER `attachments`,
          ADD INDEX `idx_discord_message` (`discord_message_id`)""",
+        # Add channel_type column to logBlacklistChannel for channel type support
+        """ALTER TABLE `logBlacklistChannel`
+         ADD COLUMN `channel_type` VARCHAR(10) NOT NULL DEFAULT 'text'
+         AFTER `channel_id`""",
     ]
     for migration in migrations:
         try:
@@ -1242,6 +1246,61 @@ async def create_tables(bot=None) -> None:
             else:
                 logging.exception("Unexpected migration error: %s", migration[:60])
                 raise
+
+    # Run complex multi-step migrations that require careful orchestration
+    # Migration: Update logBlacklistChannel primary key to include channel_type
+    try:
+        # Step 1: Ensure any NULL channel_type values are set to 'text'
+        # (should not happen with DEFAULT, but ensures data consistency)
+        await execute_action(
+            """UPDATE `logBlacklistChannel`
+               SET `channel_type` = 'text'
+               WHERE `channel_type` IS NULL OR `channel_type` = ''""",
+            bot=bot
+        )
+
+        # Step 2: Drop the old primary key if it exists (guild_id, channel_id)
+        # We check by attempting to drop it; if it doesn't exist or is already updated, this will fail gracefully
+        try:
+            await execute_action(
+                """ALTER TABLE `logBlacklistChannel`
+                   DROP PRIMARY KEY""",
+                bot=bot
+            )
+            logging.debug("Dropped old PRIMARY KEY on logBlacklistChannel")
+        except Exception as drop_exc:
+            drop_str = str(drop_exc).lower()
+            # If we can't drop the primary key, it might already be the new composite key
+            # We'll try to add the new one and let that step determine if migration is needed
+            logging.debug("Could not drop PRIMARY KEY on logBlacklistChannel (may already be migrated): %s", drop_str)
+
+        # Step 3: Add the new composite primary key (guild_id, channel_id, channel_type)
+        try:
+            await execute_action(
+                """ALTER TABLE `logBlacklistChannel`
+                   ADD PRIMARY KEY (`guild_id`, `channel_id`, `channel_type`)""",
+                bot=bot
+            )
+            logging.info("Successfully migrated logBlacklistChannel PRIMARY KEY to include channel_type")
+        except Exception as add_exc:
+            add_str = str(add_exc).lower()
+            # If adding the primary key fails with "multiple primary key defined" or "duplicate key",
+            # the new key already exists and migration is complete
+            if "multiple primary key" in add_str or "duplicate key" in add_str or "already exists" in add_str:
+                logging.debug("PRIMARY KEY on logBlacklistChannel already migrated")
+            else:
+                # Unexpected error during PRIMARY KEY addition
+                logging.exception("Failed to add new PRIMARY KEY to logBlacklistChannel")
+                raise
+
+    except Exception as exc:
+        exc_str = str(exc).lower()
+        # Check if this is a benign error indicating migration already complete
+        if "doesn't exist" in exc_str and "logblacklistchannel" in exc_str:
+            logging.debug("logBlacklistChannel table does not exist yet, skipping PK migration")
+        else:
+            logging.exception("Error during logBlacklistChannel PRIMARY KEY migration")
+            raise
 
 
 # ── Warning functions (delegated to WarningRepository) ───────────────────────────
