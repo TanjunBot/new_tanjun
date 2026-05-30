@@ -196,7 +196,7 @@ def set_bot(bot) -> None:
         db_manager._pool = None
 
 
-def _get_pool():
+def _get_pool() -> Pool | None:
     """Return the shared connection pool.
 
     Delegates to ``db_manager._pool`` so that all functions

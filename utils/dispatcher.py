@@ -14,6 +14,7 @@ import asyncio
 import logging
 import time
 from collections.abc import Awaitable, Callable
+from typing import Union
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -125,7 +126,10 @@ def register(
     name: str | None = None,
     filters: MessageFilters | None = None,
     priority: int = 0,
-) -> Callable[[Callable[[discord.Message], Awaitable[Any]]], Callable[[discord.Message], Awaitable[Any]]]:
+) -> Union[
+    Callable[[Callable[[discord.Message], Awaitable[Any]]], Callable[[discord.Message], Awaitable[Any]]],
+    Callable[[discord.Message], Awaitable[Any]],
+]:
     """Register a message handler.
 
     Can be used as a decorator::

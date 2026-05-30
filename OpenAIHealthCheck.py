@@ -1,4 +1,4 @@
-from aiohttp import ClientError, ClientSession
+from aiohttp import ClientError, ClientSession, ClientTimeout
 
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 
@@ -32,7 +32,7 @@ class OpenAIHealthCheck(HealthCheck):
                 async with session.get(
                     "https://api.openai.com/v1/models",
                     headers=headers,
-                    timeout=10,
+                    timeout=ClientTimeout(total=10),
                 ) as response:
                     if response.status == 401:
                         return HealthCheckResult(

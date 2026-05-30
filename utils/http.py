@@ -6,6 +6,8 @@ Extracted from ``utility.py`` as part of refactoring (issue #1608).
 import gzip
 import random
 
+from typing import Any
+
 import aiohttp
 from aiohttp import ClientTimeout
 
@@ -28,13 +30,13 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:  # 
                         return None
                     return await response.json()
 
-            r = await fetch(
+            r: dict[str, Any] | None = await fetch(
                 f"https://api.giphy.com/v1/gifs/search?api_key={giphyAPIKey}&q={query}&limit={limit}&rating=pg"
             )
 
             if r is None:
                 return []
-            results = r.get("data", [])
+            results: list[dict[str, Any]] = r.get("data", [])
             # nosec: B311
             random.shuffle(results)
 
@@ -43,7 +45,7 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:  # 
         return []
 
 
-async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict:
+async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict[str, Any]:
     async with aiohttp.ClientSession(timeout=ClientTimeout(total=30)) as session:
         form_data = aiohttp.FormData()
         form_data.add_field("key", ImgBBApiKey)
@@ -51,7 +53,7 @@ async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict
         form_data.add_field("name", "tbg")
 
         async with session.post("https://api.imgbb.com/1/upload", data=form_data) as response:
-            response_data = await response.json()
+            response_data: dict[str, Any] = await response.json()
 
     return response_data
 
