@@ -30,9 +30,7 @@ class WarningRepository:
         assert warning_id is not None, "Failed to insert warning, no ID returned"
         return warning_id
 
-    async def get_all(
-        self, guild_id: str | int, user_id: str | int | None = None
-    ) -> AsyncIterator[WarningModel]:
+    async def get_all(self, guild_id: str | int, user_id: str | int | None = None) -> AsyncIterator[WarningModel]:
         """Stream all active warnings for a guild (or a specific user)."""
         if user_id is not None:
             query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
@@ -43,9 +41,7 @@ class WarningRepository:
         async for row in WarningModel.iter_rows(query, params):
             yield row
 
-    async def get_detailed(
-        self, guild_id: str | int, user_id: str | int
-    ) -> AsyncIterator[DetailedWarningModel]:
+    async def get_detailed(self, guild_id: str | int, user_id: str | int) -> AsyncIterator[DetailedWarningModel]:
         """Stream detailed warnings for a specific user in a guild, ordered by creation date descending."""
         query = (
             "SELECT id, reason, created_at, expires_at, created_by "

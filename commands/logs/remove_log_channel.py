@@ -35,7 +35,9 @@ async def remove_log_channel(command_info: utility.CommandInfo) -> None:
     if not log_channel:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.removeLogChannel.notSet.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.removeLogChannel.notSet.description"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.logs.removeLogChannel.notSet.description"
+            ),
         )
         await command_info.reply(embed=embed)
         return

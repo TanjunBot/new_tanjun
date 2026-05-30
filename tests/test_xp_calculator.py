@@ -6,7 +6,6 @@ by mocking the XpBoostRepository dependency.
 
 from __future__ import annotations
 
-from typing import Optional
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -114,11 +113,13 @@ class TestAdditiveBoosts:
     @pytest.mark.asyncio
     async def test_additive_user_boost(self, calculator: XpCalculator, mock_boost_repo: MagicMock):
         """Additive user boost contributes to the additive sum."""
-        async def _side_effect(guild_id, entity_id, target=None) -> Optional[XpBoostModel]:
+
+        async def _side_effect(guild_id, entity_id, target=None) -> XpBoostModel | None:
             # Only return the boost for the user query (not channel)
             if target and target.name == "CHANNEL":
                 return None
             return _make_boost(3.0, additive=True)
+
         mock_boost_repo.get_boost.side_effect = _side_effect
         boost = await calculator.get_effective_boost(GUID, USER_ID, ROLE_IDS, CHANNEL_ID)
         # (1 + (3-1)) * 1.0 = 3.0
@@ -127,8 +128,9 @@ class TestAdditiveBoosts:
     @pytest.mark.asyncio
     async def test_additive_channel_boost(self, calculator: XpCalculator, mock_boost_repo: MagicMock):
         """Additive channel boost contributes to the additive sum."""
+
         # user_boost called first, channel_boost called second
-        async def _get_boost_side_effect(guild_id, entity_id, target=None) -> Optional[XpBoostModel]:
+        async def _get_boost_side_effect(guild_id, entity_id, target=None) -> XpBoostModel | None:
             if target and target.name == "CHANNEL":
                 return _make_boost(4.0, additive=True)
             return None
@@ -145,7 +147,7 @@ class TestAdditiveBoosts:
             _make_boost(2.0, additive=True),
         ]
 
-        async def _get_boost_side_effect(guild_id, entity_id, target=None) -> Optional[XpBoostModel]:
+        async def _get_boost_side_effect(guild_id, entity_id, target=None) -> XpBoostModel | None:
             if target and target.name == "CHANNEL":
                 return _make_boost(3.0, additive=True)
             return _make_boost(1.5, additive=True)  # user boost
@@ -190,7 +192,7 @@ class TestMultiplicativeBoosts:
             _make_boost(2.0, additive=False),
         ]
 
-        async def _get_boost_side_effect(guild_id, entity_id, target=None) -> Optional[XpBoostModel]:
+        async def _get_boost_side_effect(guild_id, entity_id, target=None) -> XpBoostModel | None:
             if target and target.name == "CHANNEL":
                 return _make_boost(3.0, additive=False)
             return _make_boost(1.5, additive=False)
@@ -241,7 +243,7 @@ class TestMixedBoosts:
             _make_boost(3.0, additive=False),
         ]
 
-        async def _get_boost_side_effect(guild_id, entity_id, target=None) -> Optional[XpBoostModel]:
+        async def _get_boost_side_effect(guild_id, entity_id, target=None) -> XpBoostModel | None:
             if target and target.name == "CHANNEL":
                 return _make_boost(2.0, additive=False)
             return _make_boost(4.0, additive=True)

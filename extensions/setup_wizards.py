@@ -197,15 +197,14 @@ class LogEventConfigView(View):
         total_pages = (len(LOG_OPTIONS) + self._items_per_page - 1) // self._items_per_page
         return utility.tanjunEmbed(
             title="Log Event Configuration",
-            description=(
-                "\n".join(lines)
-                + f"\n\nPage {self._current_page + 1}/{total_pages}"
-            ),
+            description=("\n".join(lines) + f"\n\nPage {self._current_page + 1}/{total_pages}"),
         )
 
     @discord.ui.button(label="✅ Enable page", style=discord.ButtonStyle.success)
     async def enable_page(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -222,7 +221,9 @@ class LogEventConfigView(View):
 
     @discord.ui.button(label="❌ Disable page", style=discord.ButtonStyle.danger)
     async def disable_page(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -239,7 +240,9 @@ class LogEventConfigView(View):
 
     @discord.ui.button(label="◀", style=discord.ButtonStyle.secondary)
     async def prev_page(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -251,7 +254,9 @@ class LogEventConfigView(View):
 
     @discord.ui.button(label="▶", style=discord.ButtonStyle.secondary)
     async def next_page(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -264,7 +269,9 @@ class LogEventConfigView(View):
 
     @discord.ui.button(label="✅ Finish Log Setup", style=discord.ButtonStyle.green, row=2)
     async def finish(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -295,31 +302,41 @@ class LevelSetupView(View):
 
     @discord.ui.button(label="🟢 Easy", style=discord.ButtonStyle.success, row=0)
     async def easy(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         await self._set_scaling(interaction, "easy")
 
     @discord.ui.button(label="🟡 Medium", style=discord.ButtonStyle.primary, row=0)
     async def medium(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         await self._set_scaling(interaction, "medium")
 
     @discord.ui.button(label="🟠 Hard", style=discord.ButtonStyle.secondary, row=1)
     async def hard(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         await self._set_scaling(interaction, "hard")
 
     @discord.ui.button(label="🔴 Very Hard", style=discord.ButtonStyle.danger, row=1)
     async def very_hard(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         await self._set_scaling(interaction, "very_hard")
 
     @discord.ui.button(label="💀 Extreme", style=discord.ButtonStyle.danger, row=1)
     async def extreme(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         await self._set_scaling(interaction, "extreme")
 
@@ -349,19 +366,25 @@ class LevelCooldownView(View):
 
     @discord.ui.button(label="⚡ Fast (30s)", style=discord.ButtonStyle.success)
     async def fast(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         await self._apply_cooldowns(interaction, 30, 60)
 
     @discord.ui.button(label="⏳ Normal (60s)", style=discord.ButtonStyle.primary)
     async def normal(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         await self._apply_cooldowns(interaction, 60, 120)
 
     @discord.ui.button(label="🐢 Slow (120s)", style=discord.ButtonStyle.secondary)
     async def slow(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         await self._apply_cooldowns(interaction, 120, 300)
 
@@ -445,7 +468,9 @@ class LevelChannelView(View):
 
     @discord.ui.button(label="⏭ Skip", style=discord.ButtonStyle.secondary)
     async def skip(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -467,9 +492,6 @@ class LevelChannelView(View):
 # ---------------------------------------------------------------------------
 # GIVEAWAY SETUP WIZARD
 # ---------------------------------------------------------------------------
-
-
-
 
 
 # ---------------------------------------------------------------------------
@@ -513,7 +535,9 @@ class BoosterSetupView(View):
 
     @discord.ui.button(label="🎤 Set Booster Channel", style=discord.ButtonStyle.primary)
     async def set_channel(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -522,7 +546,9 @@ class BoosterSetupView(View):
 
     @discord.ui.button(label="🎭 Set Booster Role", style=discord.ButtonStyle.primary)
     async def set_role(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -531,7 +557,9 @@ class BoosterSetupView(View):
 
     @discord.ui.button(label="✅ Finish Booster Setup", style=discord.ButtonStyle.green)
     async def finish(
-        self, interaction: discord.Interaction, _button: discord.ui.Button[Any]  # type: ignore[misc]
+        self,
+        interaction: discord.Interaction,
+        _button: discord.ui.Button[Any],  # type: ignore[misc]
     ) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -692,8 +720,7 @@ class SetupWizardCommands(discord.app_commands.Group):
         embed = utility.tanjunEmbed(
             title="📋 Log Setup Wizard",
             description=(
-                "Welcome! Let's get logging configured.\n\n"
-                "**Step 1:** Select a text channel where log messages will be sent."
+                "Welcome! Let's get logging configured.\n\n**Step 1:** Select a text channel where log messages will be sent."
             ),
         )
         view = LogChannelSelectView(_loc_or_en(interaction), interaction.guild)

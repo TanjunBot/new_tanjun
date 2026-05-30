@@ -103,19 +103,13 @@ class TicketService:
         channel_id: str,
     ) -> None:
         """Open a new ticket instance."""
-        query = (
-            "INSERT INTO tickets (guild_id, openerId, ticketMessageId, channel_id) "
-            "VALUES (%s, %s, %s, %s)"
-        )
+        query = "INSERT INTO tickets (guild_id, openerId, ticketMessageId, channel_id) VALUES (%s, %s, %s, %s)"
         await execute_action(query, (guild_id, opener_id, config_id, channel_id))
 
     @staticmethod
     async def close(guild_id: str, channel_id: int, closed_by: str) -> None:
         """Close a ticket instance."""
-        query = (
-            "UPDATE tickets SET closed = 1, closedAt = NOW(), closedBy = %s "
-            "WHERE guild_id = %s AND channel_id = %s"
-        )
+        query = "UPDATE tickets SET closed = 1, closedAt = NOW(), closedBy = %s WHERE guild_id = %s AND channel_id = %s"
         await execute_action(query, (closed_by, guild_id, channel_id))
 
     @staticmethod

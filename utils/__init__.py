@@ -11,7 +11,6 @@ from .dispatcher import (
     register,
     register_handler,
     registered_handlers,
-    registry,
     run_handlers_safe,
     run_handlers_sequential,
 )
@@ -29,7 +28,6 @@ __all__ = [
     "register",
     "register_handler",
     "registered_handlers",
-    "registry",
     "run_handlers_safe",
     "run_handlers_sequential",
 ]

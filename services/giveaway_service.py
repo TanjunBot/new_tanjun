@@ -122,19 +122,15 @@ class GiveawayService:
 
                 if params.channel_requirements:
                     channel_req_query = (
-                        "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) "
-                        "VALUES (%s, %s, %s)"
+                        "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)"
                     )
                     channel_req_params = [
-                        (giveaway_id, ch_id, amount)
-                        for ch_id, amount in params.channel_requirements.items()
+                        (giveaway_id, ch_id, amount) for ch_id, amount in params.channel_requirements.items()
                     ]
                     await cursor.executemany(channel_req_query, channel_req_params)
 
                 if params.role_requirement:
-                    role_req_query = (
-                        "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)"
-                    )
+                    role_req_query = "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)"
                     role_req_params = [(role_id, giveaway_id) for role_id in params.role_requirement]
                     await cursor.executemany(role_req_query, role_req_params)
         except Exception as e:
@@ -207,8 +203,7 @@ class GiveawayService:
                 if params.channel_requirements:
                     for ch_id, amount in params.channel_requirements.items():
                         await cursor.execute(
-                            "INSERT INTO giveaway_channelRequirement "
-                            "(giveaway_id, channel_id, amount) VALUES (%s, %s, %s)",
+                            "INSERT INTO giveaway_channelRequirement (giveaway_id, channel_id, amount) VALUES (%s, %s, %s)",
                             (giveaway_id, ch_id, amount),
                         )
                 await cursor.execute(
@@ -238,9 +233,7 @@ class GiveawayService:
         try:
             async with transaction() as conn, conn.cursor() as cursor:
                 for table in related_tables:
-                    await cursor.execute(
-                        f"DELETE FROM {table} WHERE giveaway_id = %s", (giveaway_id,)
-                    )
+                    await cursor.execute(f"DELETE FROM {table} WHERE giveaway_id = %s", (giveaway_id,))
                 await cursor.execute("DELETE FROM giveaway WHERE giveaway_id = %s", (giveaway_id,))
         except Exception as e:
             print(f"Error deleting giveaway {giveaway_id}: {e}")
@@ -251,9 +244,7 @@ class GiveawayService:
         """Delete old ended giveaways and their related data."""
         try:
             async with transaction() as conn, conn.cursor() as cursor:
-                await cursor.execute(
-                    "SELECT giveaway_id FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK"
-                )
+                await cursor.execute("SELECT giveaway_id FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK")
                 old_ids = [row[0] for row in await cursor.fetchall()]
                 if not old_ids:
                     return
@@ -268,12 +259,8 @@ class GiveawayService:
                 ]
                 for give_id in old_ids:
                     for table in related_tables:
-                        await cursor.execute(
-                            f"DELETE FROM {table} WHERE giveaway_id = %s", (give_id,)
-                        )
-                await cursor.execute(
-                    "DELETE FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK"
-                )
+                        await cursor.execute(f"DELETE FROM {table} WHERE giveaway_id = %s", (give_id,))
+                await cursor.execute("DELETE FROM giveaway WHERE ended = 1 AND endtime < NOW() - INTERVAL 1 WEEK")
         except Exception as e:
             print(f"Error deleting old giveaways: {e}")
             raise
@@ -321,9 +308,7 @@ class GiveawayService:
     async def get_send_ready() -> list[int]:
         """Get IDs of giveaways ready to be sent (started=0, starttime < now)."""
         giveaway_ids: list[int] = []
-        async for row in execute_query_iter(
-            "SELECT giveaway_id FROM giveaway WHERE started = 0 AND starttime < NOW()"
-        ):
+        async for row in execute_query_iter("SELECT giveaway_id FROM giveaway WHERE started = 0 AND starttime < NOW()"):
             giveaway_ids.append(row[0])
         return giveaway_ids
 
@@ -412,14 +397,9 @@ class GiveawayService:
         return result[0][0] if result else None
 
     @staticmethod
-    async def get_new_messages_channel(
-        giveaway_id: int, channel_id: str, user_id: str
-    ) -> int | None:
+    async def get_new_messages_channel(giveaway_id: int, channel_id: str, user_id: str) -> int | None:
         """Get the count of new messages in a specific channel for a user in a giveaway."""
-        query = (
-            "SELECT amount FROM giveaway_channelMessages "
-            "WHERE giveaway_id = %s AND channel_id = %s AND user_id = %s"
-        )
+        query = "SELECT amount FROM giveaway_channelMessages WHERE giveaway_id = %s AND channel_id = %s AND user_id = %s"
         params = (giveaway_id, channel_id, user_id)
         result = await safe_execute_query(query, params)
         return result[0][0] if result else None
@@ -455,9 +435,7 @@ class GiveawayService:
         await execute_action(query, (user_id, guild_id))
 
     @staticmethod
-    async def add_new_message_channel(
-        user_id: str, guild_id: str, channel_id: str
-    ) -> None:
+    async def add_new_message_channel(user_id: str, guild_id: str, channel_id: str) -> None:
         """Increment per-channel message count for active giveaways in a guild."""
         query = """
             INSERT INTO giveaway_channelMessages (giveaway_id, channel_id, user_id, amount)

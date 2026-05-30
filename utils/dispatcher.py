@@ -51,10 +51,7 @@ class MessageFilters:
             return False
         if self.channel_whitelist is not None and message.channel.id not in self.channel_whitelist:
             return False
-        return not (
-            self.channel_blacklist is not None
-            and message.channel.id in self.channel_blacklist
-        )
+        return not (self.channel_blacklist is not None and message.channel.id in self.channel_blacklist)
 
 
 # ---------------------------------------------------------------------------
@@ -222,8 +219,7 @@ async def _execute_with_logging(
     except Exception as exc:
         _elapsed = (time.monotonic() - _t0) * 1000
         log.exception(
-            "Handler '%s' raised an exception after %.1f ms "
-            "(message %s, channel %s): %s",
+            "Handler '%s' raised an exception after %.1f ms (message %s, channel %s): %s",
             name,
             _elapsed,
             message.id,
@@ -278,9 +274,7 @@ async def dispatch(message: discord.Message) -> list[tuple[str, Any]]:
         names: list[str] = [h.name for h in batch]
         log.debug("Dispatching %d handler(s) at priority %d: %s", len(batch), batch[0].priority, names)
 
-        coros: list[Awaitable[Any]] = [
-            _execute_with_logging(h.name, h.callback, message) for h in batch
-        ]
+        coros: list[Awaitable[Any]] = [_execute_with_logging(h.name, h.callback, message) for h in batch]
         results = await asyncio.gather(*coros, return_exceptions=True)
 
         for handler, result in zip(batch, results, strict=True):
@@ -336,8 +330,7 @@ async def run_handlers_safe(
         except Exception as exc:
             _elapsed = (time.monotonic() - _t0) * 1000
             log.exception(
-                "Handler '%s' raised an exception after %.1f ms "
-                "(message %s, channel %s): %s",
+                "Handler '%s' raised an exception after %.1f ms (message %s, channel %s): %s",
                 name,
                 _elapsed,
                 message.id,
@@ -392,8 +385,7 @@ async def run_handlers_sequential(
         except Exception as exc:
             _elapsed = (time.monotonic() - _t0) * 1000
             log.exception(
-                "Handler '%s' raised an exception after %.1f ms "
-                "(message %s, channel %s): %s",
+                "Handler '%s' raised an exception after %.1f ms (message %s, channel %s): %s",
                 name,
                 _elapsed,
                 message.id,
@@ -432,3 +424,8 @@ def freeze() -> None:
     global _ready
     _ready = True
     log.info("Dispatcher frozen with %d handler(s)", len(_handlers))
+
+
+# Backward compatibility alias
+HandlerRegistry = type("HandlerRegistry", (), {})
+register_handler = register

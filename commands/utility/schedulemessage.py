@@ -268,7 +268,6 @@ async def send_scheduled_messages(client: discord.Client) -> None:
                 send_kwargs["files"] = files
             sent_message = await target.send(**send_kwargs)
 
-            # Store the Discord message ID for exact-match deletion
             await ScheduledMessageService.update_discord_message_id(message_id, str(sent_message.id))
 
             # --- Repeat logic ---
@@ -301,7 +300,9 @@ async def send_scheduled_messages(client: discord.Client) -> None:
 
                     if new_amount > 0:
                         await ScheduledMessageService.update_repeat_and_send_time(
-                            message_id, new_amount, next_send_time,
+                            message_id,
+                            new_amount,
+                            next_send_time,
                         )
                     else:
                         # No more repeats remaining — cancel the task
