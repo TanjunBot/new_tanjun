@@ -14,7 +14,8 @@ async def removecountingchallengechannel(command_info: CommandInfo, channel: dis
         return
 
     current_progress = await require_counting_channel(
-        command_info, channel.id,
+        command_info,
+        channel.id,
         lambda cid: _repo.get_progress(CountingMode.CHALLENGE, cid),
         LOCALE_KEY,
     )
@@ -25,7 +26,9 @@ async def removecountingchallengechannel(command_info: CommandInfo, channel: dis
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), f"{LOCALE_KEY}.success.title"),
-        description=tanjunLocalizer.localize(command_info.locale, f"{LOCALE_KEY}.success.description", channel=channel.mention),
+        description=tanjunLocalizer.localize(
+            command_info.locale, f"{LOCALE_KEY}.success.description", channel=channel.mention
+        ),
     )
     await command_info.reply(embed=embed)
 

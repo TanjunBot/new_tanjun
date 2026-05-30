@@ -343,9 +343,7 @@ class TanjunEmbed(BaseModel):
         elif isinstance(value, int):
             self._colour = value
         else:
-            raise TypeError(
-                f"Expected discord.Colour, int, or None but received {value.__class__.__name__} instead."
-            )
+            raise TypeError(f"Expected discord.Colour, int, or None but received {value.__class__.__name__} instead.")
 
     @property
     def color(self) -> int:
@@ -398,9 +396,7 @@ class TanjunEmbed(BaseModel):
         return self
 
     def add_field(self, *, name: object, value: object, inline: bool | object = True) -> Self:
-        self.fields.append(
-            EmbedField(name=str(name), value=str(value), inline=bool(inline))
-        )
+        self.fields.append(EmbedField(name=str(name), value=str(value), inline=bool(inline)))
         return self
 
     def insert_field_at(self, index: int, *, name: object, value: object, inline: bool | object = True) -> Self:

@@ -43,11 +43,11 @@ from models import (
     WelcomeChannelModel,
     XpBoostModel,
 )
-from utils.cache import TTLCache
 
 # ── Log blacklist (delegated to LogBlacklistRepository) ─────────────────────────────
 from repositories.log_blacklist_repository import LogBlacklistType, log_blacklist_repo
 from utility import get_level_for_xp_async, get_xp_for_level_async
+from utils.cache import TTLCache
 
 
 async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
@@ -278,18 +278,14 @@ async def _execute_with_retry(
 # Centralised TTL caches.  Each cache owns its TTL and (optionally) max size;
 # LRU eviction happens automatically when ``maxsize`` is set.
 
-_blacklist_cache: TTLCache[str, dict[str, list[BlacklistEntryModel]]] = TTLCache(
-    ttl=30
-)
+_blacklist_cache: TTLCache[str, dict[str, list[BlacklistEntryModel]]] = TTLCache(ttl=30)
 _guild_config_cache: TTLCache[str, dict[str, Any]] = TTLCache(ttl=300, maxsize=2000)
 # In-memory cache for XP cooldowns: (guild_id, user_id) -> last_xp_gain_timestamp
 # Eliminates DB queries entirely when user is on cooldown
 _last_xp_gain_cache: dict[tuple[str, str], float] = {}
 # In-memory cache for counting configs: channel_id -> (counting_config, challenge_config, modes_config)
 # Reduces 3 DB queries per message to in-memory lookup
-_counting_cache: TTLCache[str, tuple[dict | None, dict | None, dict | None]] = TTLCache(
-    ttl=30
-)
+_counting_cache: TTLCache[str, tuple[dict | None, dict | None, dict | None]] = TTLCache(ttl=30)
 
 
 def _invalidate_guild_cache(guild_id: str) -> None:
@@ -1225,13 +1221,10 @@ async def create_tables(bot=None) -> None:
          ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
          AFTER `attachments`,
          ADD INDEX `idx_discord_message` (`discord_message_id`)""",
-        # Add composite index on level(guild_id, xp DESC) for leaderboard queries
         """ALTER TABLE `level`
          ADD INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)""",
-        # Add composite index on warnings(user_id, guild_id) for warning lookups
         """ALTER TABLE `warnings`
          ADD INDEX `idx_warnings_user_guild` (`user_id`, `guild_id`)""",
-        # Add composite index on giveaway(ended, endtime) for background loop queries
         """ALTER TABLE `giveaway`
          ADD INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)""",
     ]

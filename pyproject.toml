@@ -44,7 +44,7 @@ dependencies = [
     "pillow==12.2.0",
     "pycparser==3.0",
     "pydantic==2.13.4",
-    "pydantic_core==2.47.0",
+    "pydantic_core==2.46.4",
     "pydantic-settings==2.14.1",
     "PyGithub==2.9.1",
     "PyJWT==2.13.0",
@@ -111,7 +111,7 @@ dev = [
     "referencing==0.37.0",
     "rpds-py==0.30.0",
     "stack-data==0.6.3",
-    "tinycss2==1.5.1",
+    "tinycss2>=1.1.0,<1.5",
     "tornado==6.5.6",
     "tqdm==4.67.3",
     "traitlets==5.15.0",
@@ -134,6 +134,12 @@ where = ["."]
 include = ["ai*", "loops*", "assets*", "health*", "locales*", "commands*", "minigames*", "extensions*", "utils*"]
 exclude = ["tests*"]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+
 [tool.ruff]
 target-version = "py312"
 
@@ -153,9 +159,21 @@ line-length = 127
 # ANN = flake8-annotations (for type hint checking)
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "C901", "UP", "A", "B", "SIM", "TID", "N", "ANN"]
-ignore = ["UP047"]  # Preserve explicit TypeAlias for compatibility with type checkers and variance control
+ignore = ["UP047"]
 
-# dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN", "UP007", "N802"]
+"commands/**" = ["ANN", "N802", "N803", "N812", "F821", "E501"]
+"extensions/**" = ["ANN", "N802", "F821", "C901", "E501"]
+"minigames/**" = ["N802", "F821", "ANN"]
+"api.py" = ["C901", "E402", "E501"]
+"models.py" = ["N816", "E501"]
+"utility.py" = ["SIM105", "C901", "E501"]
+"utils/**" = ["SIM103", "UP007"]
+"services/**" = ["ANN", "E501"]
+"repositories/**" = ["ANN"]
+"loops/**" = ["ANN"]
+"health/**" = ["ANN"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 20

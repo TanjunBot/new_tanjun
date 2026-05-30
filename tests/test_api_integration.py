@@ -206,8 +206,7 @@ class TestLevelCRUD:
         user_id = "200003"
 
         await api.execute_action(
-            "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s) "
-            "ON DUPLICATE KEY UPDATE xp = xp + %s",
+            "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s",
             (user_id, guild_id, 50, 50),
         )
 
@@ -237,9 +236,7 @@ class TestLevelCRUD:
             )
             assert result is not None
             assert len(result) == 1
-            assert result[0][0] == expected_xp, (
-                f"Expected {expected_xp} XP for user {user_id}, got {result[0][0]}"
-            )
+            assert result[0][0] == expected_xp, f"Expected {expected_xp} XP for user {user_id}, got {result[0][0]}"
 
     async def test_bulk_update_user_xp_handles_empty(self, bot_with_integration_pool):
         """Bulk update with empty list should not raise."""
@@ -257,9 +254,7 @@ class TestBlacklistCRUD:
         await api.add_user_to_blacklist(guild_id, user_id, reason="spam")
         blacklist = await api.get_blacklist(guild_id)
 
-        assert user_id in blacklist.get("users", {}), (
-            f"User {user_id} should be in the blacklist"
-        )
+        assert user_id in blacklist.get("users", {}), f"User {user_id} should be in the blacklist"
         assert blacklist["users"][user_id] == "spam"
 
     async def test_add_and_check_blacklisted_channel(self, bot_with_integration_pool):
@@ -270,9 +265,7 @@ class TestBlacklistCRUD:
         await api.add_channel_to_blacklist(guild_id, channel_id, reason="testing")
         blacklist = await api.get_blacklist(guild_id)
 
-        assert channel_id in blacklist.get("channels", {}), (
-            f"Channel {channel_id} should be in the blacklist"
-        )
+        assert channel_id in blacklist.get("channels", {}), f"Channel {channel_id} should be in the blacklist"
 
 
 class TestOptOutCRUD:
@@ -460,9 +453,7 @@ class TestLevelRoleCRUD:
         await api.remove_level_role(role_id=role_id, guild_id=guild_id)
 
         roles = await api.get_level_roles(guild_id)
-        assert not any(r.role_id == role_id for r in roles), (
-            f"Role {role_id} should have been removed"
-        )
+        assert not any(r.role_id == role_id for r in roles), f"Role {role_id} should have been removed"
 
 
 class TestSafeExecuteQuery:

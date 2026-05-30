@@ -69,6 +69,7 @@ class TestXpForLevel:
     def test_invalid_scaling_falls_back_to_medium(self):
         """Unknown scaling name should fall back to medium formula."""
         from utility import get_xp_for_level
+
         medium_xp = get_xp_for_level(10, "medium")
         fallback_xp = get_xp_for_level(10, "nonexistent")
         assert fallback_xp == medium_xp
@@ -92,27 +93,21 @@ class TestLevelForXp:
         for level in self.TEST_LEVELS:
             xp = get_xp_for_level(level, "medium")
             computed = get_level_for_xp(xp, "medium")
-            assert abs(computed - level) <= 1, (
-                f"medium: level={level}, xp={xp}, got level={computed}"
-            )
+            assert abs(computed - level) <= 1, f"medium: level={level}, xp={xp}, got level={computed}"
 
     def test_hard_round_trip(self):
         """Hard scaling: round-trip with ≤1 level imprecision."""
         for level in self.TEST_LEVELS:
             xp = get_xp_for_level(level, "hard")
             computed = get_level_for_xp(xp, "hard")
-            assert abs(computed - level) <= 1, (
-                f"hard: level={level}, xp={xp}, got level={computed}"
-            )
+            assert abs(computed - level) <= 1, f"hard: level={level}, xp={xp}, got level={computed}"
 
     def test_extreme_round_trip(self):
         """Extreme scaling: round-trip with ≤1 level imprecision."""
         for level in self.TEST_LEVELS:
             xp = get_xp_for_level(level, "extreme")
             computed = get_level_for_xp(xp, "extreme")
-            assert abs(computed - level) <= 1, (
-                f"extreme: level={level}, xp={xp}, got level={computed}"
-            )
+            assert abs(computed - level) <= 1, f"extreme: level={level}, xp={xp}, got level={computed}"
 
     def test_xp_zero_returns_zero(self):
         """0 XP = level 0 for all scalings."""
@@ -204,9 +199,7 @@ class TestCustomFormula:
         for level in [1, 5, 10, 50, 100, 500, 1000]:
             xp = get_xp_for_level(level, "custom", formula)
             computed = get_level_for_xp(xp, "custom", formula)
-            assert computed == level, (
-                f"custom: level={level}, xp={xp}, got level={computed}"
-            )
+            assert computed == level, f"custom: level={level}, xp={xp}, got level={computed}"
 
 
 # =============================================================================
@@ -387,9 +380,7 @@ class TestLevelThresholdCache:
         """Built-in scalings use O(1) inversion, not the threshold cache."""
         get_level_for_xp(5000, "hard")
         custom_keys = [k for k in LevelThresholdCache._thresholds if k[0] == "custom"]
-        assert len(custom_keys) == 0, (
-            "Built-in scalings should not use the threshold cache"
-        )
+        assert len(custom_keys) == 0, "Built-in scalings should not use the threshold cache"
 
     def test_custom_formula_creates_cache_entry(self):
         """Custom formulas populate the cache."""

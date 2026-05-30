@@ -62,7 +62,9 @@ async def report(command_info: CommandInfo, reason: str, user: discord.Member) -
     if not report_channel.permissions_for(command_info.guild.me).send_messages:
         embed = tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.report.no_permission.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.report.no_permission.description"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.utility.report.no_permission.description"
+            ),
         )
         await command_info.reply(embed=embed)
         return
