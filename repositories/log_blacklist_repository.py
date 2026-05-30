@@ -7,9 +7,11 @@ from dataclasses import dataclass
 
 
 class LogBlacklistType(Enum):
-    """Enum representing the three log blacklist types with their table/column mapping."""
+    """Enum representing the log blacklist types with their table/column mapping."""
 
     CHANNEL = ("logBlacklistChannel", "channel_id")
+    CATEGORY = ("logBlacklistChannel", "channel_id")
+    VOICE_CHANNEL = ("logBlacklistChannel", "channel_id")
     ROLE = ("logRoleBlacklist", "role_id")
     USER = ("logUserBlacklist", "user_id")
 

@@ -5,7 +5,17 @@ from api import LogBlacklistType, add_log_blacklist, is_log_entity_blacklisted
 from localizer import tanjunLocalizer
 
 
-async def blacklist_channel(command_info: utility.CommandInfo, channel: discord.TextChannel) -> None:
+def _get_blacklist_type(
+    channel: discord.TextChannel | discord.VoiceChannel | discord.CategoryChannel,
+) -> LogBlacklistType:
+    if isinstance(channel, discord.CategoryChannel):
+        return LogBlacklistType.CATEGORY
+    if isinstance(channel, discord.VoiceChannel):
+        return LogBlacklistType.VOICE_CHANNEL
+    return LogBlacklistType.CHANNEL
+
+
+async def blacklist_channel(command_info: utility.CommandInfo, channel: discord.TextChannel | discord.VoiceChannel | discord.CategoryChannel) -> None:
     if (
         isinstance(command_info.user, discord.Member)
         and isinstance(command_info.channel, discord.abc.GuildChannel)
@@ -25,7 +35,10 @@ async def blacklist_channel(command_info: utility.CommandInfo, channel: discord.
         return
 
     assert command_info.guild is not None
-    is_blacklisted = await is_log_entity_blacklisted(command_info.guild.id, str(channel.id), LogBlacklistType.CHANNEL)
+    blacklist_type = _get_blacklist_type(channel)
+    is_blacklisted = await is_log_entity_blacklisted(
+        command_info.guild.id, str(channel.id), blacklist_type,
+    )
 
     if is_blacklisted:
         embed = utility.tanjunEmbed(
@@ -39,7 +52,7 @@ async def blacklist_channel(command_info: utility.CommandInfo, channel: discord.
             ),
         )
     else:
-        await add_log_blacklist(command_info.guild.id, str(channel.id), LogBlacklistType.CHANNEL)
+        await add_log_blacklist(command_info.guild.id, str(channel.id), blacklist_type)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.blacklistChannel.blacklisted.title"),
             description=tanjunLocalizer.localize(

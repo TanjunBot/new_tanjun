@@ -1,6 +1,7 @@
 import asyncio
 import difflib
 import logging
+import typing
 
 import discord
 from discord import app_commands
@@ -36,6 +37,31 @@ from utility import EmbedColor, upload_image_to_imgbb, upload_to_tanjun_logs
 embeds = {}  # type: ignore[var-annotated]
 
 _log_queue: asyncio.Queue[tuple[str, discord.Embed]] = asyncio.Queue(maxsize=200)
+
+
+async def is_channel_blacklisted(channel: discord.abc.GuildChannel) -> bool:
+    """Check if a channel (or its parent category) is blacklisted."""
+    guild = channel.guild
+    if not guild:
+        return False
+    channel_id = str(channel.id)
+
+    if isinstance(channel, discord.CategoryChannel):
+        if await is_log_entity_blacklisted(guild.id, channel_id, LogBlacklistType.CATEGORY):
+            return True
+    elif isinstance(channel, discord.VoiceChannel):
+        if await is_log_entity_blacklisted(guild.id, channel_id, LogBlacklistType.VOICE_CHANNEL):
+            return True
+    else:
+        if await is_log_entity_blacklisted(guild.id, channel_id, LogBlacklistType.CHANNEL):
+            return True
+
+    # Also check if the parent category is blacklisted
+    if hasattr(channel, "category") and channel.category:
+        if await is_log_entity_blacklisted(guild.id, str(channel.category.id), LogBlacklistType.CATEGORY):
+            return True
+
+    return False
 
 
 async def log_event_producer(guild_id: str, embed: discord.Embed) -> None:
@@ -75,7 +101,7 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistc_add_description"),
     )
     @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_add_params_channel_description"))
-    async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[assignment]
+    async def add_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: typing.Union[discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel] = None) -> None:  # type: ignore[assignment]
         await ctx.response.defer()
         command_info = utility.CommandInfo(
             user=ctx.user,
@@ -99,7 +125,7 @@ class ChannelBlacklistCommands(discord.app_commands.Group):
         description=app_commands.locale_str("logs_blacklistc_remove_description"),
     )
     @app_commands.describe(channel=app_commands.locale_str("logs_blacklistc_remove_params_channel_description"))
-    async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: discord.TextChannel = None) -> None:  # type: ignore[assignment]
+    async def remove_blacklist_channel_cmd(self, ctx: discord.Interaction, channel: typing.Union[discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel] = None) -> None:  # type: ignore[assignment]
         await ctx.response.defer()
         command_info = utility.CommandInfo(
             user=ctx.user,
@@ -925,7 +951,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(channel.guild.id, str(channel.id), LogBlacklistType.CHANNEL):
+        if await is_channel_blacklisted(channel):
             return
 
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
@@ -1020,7 +1046,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(channel.guild.id, str(channel.id), LogBlacklistType.CHANNEL):
+        if await is_channel_blacklisted(channel):
             return
 
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
@@ -1096,7 +1122,7 @@ class LogsCog(commands.Cog):
         if not log_enable:
             return
 
-        if await is_log_entity_blacklisted(after.guild.id, str(after.id), LogBlacklistType.CHANNEL):
+        if await is_channel_blacklisted(after):
             return
 
         locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"

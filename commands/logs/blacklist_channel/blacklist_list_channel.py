@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import discord
 
 import utility
@@ -21,76 +23,119 @@ async def blacklist_list_channel(command_info: utility.command_info):
         return
 
     blacklisted_channels = await get_log_blacklist(command_info.guild.id, LogBlacklistType.CHANNEL)
+    blacklisted_voice = await get_log_blacklist(command_info.guild.id, LogBlacklistType.VOICE_CHANNEL)
+    blacklisted_categories = await get_log_blacklist(command_info.guild.id, LogBlacklistType.CATEGORY)
+
+    # Store entries with their type for proper removal
+    all_entries: list[tuple[str, LogBlacklistType]] = []
+    for cid in blacklisted_channels:
+        all_entries.append((cid, LogBlacklistType.CHANNEL))
+    for cid in blacklisted_voice:
+        all_entries.append((cid, LogBlacklistType.VOICE_CHANNEL))
+    for cid in blacklisted_categories:
+        all_entries.append((cid, LogBlacklistType.CATEGORY))
 
     class BlacklistView(discord.ui.View):
-        def __init__(self, channels: list, locale: str, guild: discord.Guild):
+        def __init__(self, entries: list[tuple[str, LogBlacklistType]], locale: str, guild: discord.Guild):
             super().__init__()
-            self.channels = channels
+            self.entries = entries
             self.locale = locale
             self.guild = guild
             self.selectedIndex = 0
 
         @discord.ui.button(label="Remove", style=discord.ButtonStyle.danger)
         async def remove_channel(self, interaction: discord.Interaction, button: discord.ui.Button):
-            channel_id = self.channels[self.selectedIndex]
-            await remove_log_blacklist(self.guild.id, channel_id, LogBlacklistType.CHANNEL)
-            self.channels = tuple(x for x in self.channels if x != channel_id)
+            entity_id, bl_type = self.entries[self.selectedIndex]
+            await remove_log_blacklist(self.guild.id, entity_id, bl_type)
+            self.entries = [e for e in self.entries if e[0] != entity_id]
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬆️", custom_id="up")
         async def up(self, interaction: discord.Interaction, button: discord.ui.Button):
-            self.selectedIndex = (self.selectedIndex - 1) % len(self.channels)
+            self.selectedIndex = (self.selectedIndex - 1) % len(self.entries)
             await self.update_view(interaction)
 
         @discord.ui.button(label="⬇️", custom_id="down")
         async def down(self, interaction: discord.Interaction, button: discord.ui.Button):
-            self.selectedIndex = (self.selectedIndex + 1) % len(self.channels)
+            self.selectedIndex = (self.selectedIndex + 1) % len(self.entries)
             await self.update_view(interaction)
 
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
             if interaction.data["component_type"] == 8:  # ChannelSelect
                 channel_id = interaction.data["values"][0]
-                await add_log_blacklist(self.guild.id, channel_id, LogBlacklistType.CHANNEL)
-                self.channels += (channel_id,)
+                # Determine the type from the channel — we can look it up from the guild
+                channel = self.guild.get_channel(int(channel_id))
+                if isinstance(channel, discord.CategoryChannel):
+                    bl_type = LogBlacklistType.CATEGORY
+                elif isinstance(channel, discord.VoiceChannel):
+                    bl_type = LogBlacklistType.VOICE_CHANNEL
+                else:
+                    bl_type = LogBlacklistType.CHANNEL
+                await add_log_blacklist(self.guild.id, channel_id, bl_type)
+                self.entries.append((channel_id, bl_type))
                 await self.update_view(interaction)
             return True
 
         async def update_view(self, interaction: discord.Interaction):
-            if not self.channels or len(self.channels) == 0:
+            if not self.entries or len(self.entries) == 0:
                 description = tanjunLocalizer.localize(
                     self.locale,
                     "commands.logs.blacklistListChannel.noBlacklistedChannels",
                 )
             else:
-                if self.selectedIndex >= len(self.channels):
-                    self.selectedIndex = len(self.channels) - 1
-                description = "\n".join(
-                    [f"{'➤' if i == self.selectedIndex else ''} <#{channel}>" for i, channel in enumerate(self.channels)]
-                )
+                if self.selectedIndex >= len(self.entries):
+                    self.selectedIndex = len(self.entries) - 1
+                lines = []
+                for i, (entity_id, bl_type) in enumerate(self.entries):
+                    prefix = "➤" if i == self.selectedIndex else ""
+                    type_tag = ""
+                    if bl_type == LogBlacklistType.CATEGORY:
+                        type_tag = " [Category]"
+                    elif bl_type == LogBlacklistType.VOICE_CHANNEL:
+                        type_tag = " [Voice]"
+                    else:
+                        type_tag = " [Text]"
+                    lines.append(f"{prefix} <#{entity_id}>{type_tag}")
+                description = "\n".join(lines)
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListChannel.title"),
                 description=description,
             )
             await interaction.response.edit_message(embed=embed, view=self)
 
-    view = BlacklistView(blacklisted_channels, command_info.locale, command_info.guild)
+    view = BlacklistView(all_entries, command_info.locale, command_info.guild)
     view.add_item(
         discord.ui.ChannelSelect(
             custom_id="channel_select",
-            channel_types=[discord.ChannelType.text, discord.ChannelType.voice],
+            channel_types=[
+                discord.ChannelType.text,
+                discord.ChannelType.voice,
+                discord.ChannelType.category,
+            ],
             placeholder=tanjunLocalizer.localize(
                 command_info.locale,
                 "commands.logs.blacklistListChannel.addChannel.placeholder",
             ),
         )
     )
-    if not blacklisted_channels or len(blacklisted_channels) == 0:
+    if not all_entries or len(all_entries) == 0:
         description = tanjunLocalizer.localize(
             command_info.locale,
             "commands.logs.blacklistListChannel.noBlacklistedChannels",
         )
     else:
-        description = "\n".join([f"{'➤' if i == 0 else ''} <#{channel}>" for i, channel in enumerate(blacklisted_channels)])
+        lines = []
+        for i, (entity_id, bl_type) in enumerate(all_entries):
+            prefix = "➤" if i == 0 else ""
+            type_tag = ""
+            if bl_type == LogBlacklistType.CATEGORY:
+                type_tag = " [Category]"
+            elif bl_type == LogBlacklistType.VOICE_CHANNEL:
+                type_tag = " [Voice]"
+            else:
+                type_tag = " [Text]"
+            lines.append(f"{prefix} <#{entity_id}>{type_tag}")
+        description = "\n".join(lines)
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(command_info.locale, "commands.logs.blacklistListChannel.title"),
         description=description,
