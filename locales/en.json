@@ -96,6 +96,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.kick.noReasonProvided",
+    "source_string": "Kein Grund angegeben",
+    "translation": "No reason provided",
+    "context": "commands -> admin -> kick -> noReasonProvided",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.nuke.notfound.description",
     "source_string": "Der Kanal wurde nicht gefunden. Möglicherweise wurde er bereits gelöscht.",
     "translation": "The channel was not found. It may have already been deleted.",
@@ -108,6 +116,86 @@
     "source_string": "Kanal nicht gefunden",
     "translation": "Channel not found",
     "context": "commands -> admin -> nuke -> notfound -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.nuke.notfoundError",
+    "source_string": "Der Kanal wurde nicht gefunden. Möglicherweise wurde er bereits gelöscht.",
+    "translation": "The channel was not found. It may have already been deleted.",
+    "context": "commands -> admin -> nuke -> notfoundError",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.removerole.cancel.label",
+    "source_string": "Abbrechen",
+    "translation": "Cancel",
+    "context": "commands -> admin -> removerole -> cancel -> label",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.removerole.confirm.label",
+    "source_string": "Bestätigen",
+    "translation": "Confirm",
+    "context": "commands -> admin -> removerole -> confirm -> label",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.noChannel.title",
+    "source_string": "Kein Report-Kanal eingerichtet",
+    "translation": "No report channel set up",
+    "context": "commands -> admin -> reports -> remove_channel -> noChannel -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.success.title",
+    "source_string": "Report-Kanal entfernt",
+    "translation": "Report channel removed",
+    "context": "commands -> admin -> reports -> remove_channel -> success -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.draw",
+    "source_string": "Unentschieden!",
+    "translation": "Draw!",
+    "context": "commands -> games -> tic_tac_toe -> draw",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.invalidMove",
+    "source_string": "Ungültiger Zug! Bitte wähle ein freies Feld.",
+    "translation": "Invalid move! Please choose a free cell.",
+    "context": "commands -> games -> tic_tac_toe -> invalidMove",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.notYourGame",
+    "source_string": "Dies ist nicht dein Spiel!",
+    "translation": "This is not your game!",
+    "context": "commands -> games -> tic_tac_toe -> notYourGame",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.notYourTurn",
+    "source_string": "Du bist nicht am Zug!",
+    "translation": "It's not your turn!",
+    "context": "commands -> games -> tic_tac_toe -> notYourTurn",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.title",
+    "source_string": "Tic-Tac-Toe",
+    "translation": "Tic-Tac-Toe",
+    "context": "commands -> games -> tic_tac_toe -> title",
     "labels": "unassigned",
     "max_length": null
   },
@@ -4400,6 +4488,38 @@
     "max_length": null
   },
   {
+    "identifier": "commands.image.mirror.invalidaxis.description",
+    "source_string": "Die Achse muss entweder \"x\" (horizontal) oder \"y\" (vertikal) sein.",
+    "translation": "The axis must be either \"x\" (horizontal) or \"y\" (vertical).",
+    "context": "commands -> image -> mirror -> invalidaxis -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.mirror.invalidaxis.title",
+    "source_string": "Ungültige Achse",
+    "translation": "Invalid axis",
+    "context": "commands -> image -> mirror -> invalidaxis -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.mirror.success.description",
+    "source_string": "Das Bild wurde erfolgreich gespiegelt.",
+    "translation": "The image has been successfully mirrored.",
+    "context": "commands -> image -> mirror -> success -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.mirror.success.title",
+    "source_string": "Bild gespiegelt",
+    "translation": "Image mirrored",
+    "context": "commands -> image -> mirror -> success -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.logs.setLogChannel.missingPermission.title",
     "source_string": "Fehlende Berechtigung",
     "translation": "Missing authorization",
@@ -5776,6 +5896,14 @@
     "max_length": 100
   },
   {
+    "identifier": "commands.math.plotfunction.not_clickable",
+    "source_string": "Nicht klickbar",
+    "translation": "Not clickable",
+    "context": "commands -> math -> plotfunction -> not_clickable",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.math.randomnumber.success.title",
     "source_string": "Zufallszahlen generiert",
     "translation": "Random numbers generated",
@@ -6965,6 +7093,30 @@
     "translation": "The booster role was automatically deleted because the user to whom the role was assigned is no longer a booster.",
     "context": "commands -> utility -> claimboosterrole -> expired -> reason",
     "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.report.invalid_action.description",
+    "source_string": "Diese Aktion kann nicht ausgeführt werden. Der Report wurde möglicherweise bereits bearbeitet.",
+    "translation": "This action cannot be performed. The report may have already been processed.",
+    "context": "commands -> utility -> report -> invalid_action -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.report.invalid_action.title",
+    "source_string": "Ungültige Aktion",
+    "translation": "Invalid action",
+    "context": "commands -> utility -> report -> invalid_action -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.report.reporter_blocked.title",
+    "source_string": "Reporter blockiert",
+    "translation": "Reporter blocked",
+    "context": "commands -> utility -> report -> reporter_blocked -> title",
+    "labels": "unassigned",
     "max_length": null
   },
   {
