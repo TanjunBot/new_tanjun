@@ -32572,5 +32572,53 @@
 >>>>>>> development
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.buttons.playNormal",
+    "source_string": "Normal",
+    "translation": "Normal",
+    "context": "Button to play Wordle in normal mode",
+    "labels": "unassigned",
+    "max_length": 20
+  },
+  {
+    "identifier": "commands.games.wordle.buttons.playHard",
+    "source_string": "Hard Mode",
+    "translation": "Hard Mode",
+    "context": "Button to play Wordle in hard mode",
+    "labels": "unassigned",
+    "max_length": 20
+  },
+  {
+    "identifier": "commands.games.wordle.pickMode.title",
+    "source_string": "Wortspiel - Modus",
+    "translation": "Wortspiel - Modus",
+    "context": "Title for the mode selection screen",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.pickMode.description",
+    "source_string": "Wähle deinen Modus: Normal oder Hard Mode. Im Hard Mode musst du bereits erhaltene Hinweise in den folgenden Versuchen verwenden.",
+    "translation": "Wähle deinen Modus: Normal oder Hard Mode. Im Hard Mode musst du bereits erhaltene Hinweise in den folgenden Versuchen verwenden.",
+    "context": "Description for the mode selection screen",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.hardMode.title",
+    "source_string": "Wortspiel - Hard Mode",
+    "translation": "Wortspiel - Hard Mode",
+    "context": "Title when playing in hard mode",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.stats.title",
+    "source_string": "Deine Wordle-Statistiken",
+    "translation": "Deine Wordle-Statistiken",
+    "context": "Title for the Wordle stats display",
+    "labels": "unassigned",
+    "max_length": null
   }
 ]
