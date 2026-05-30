@@ -27,7 +27,7 @@ async def get_uuid_by_twitch_name(twitch_name: str) -> str | None:
     if service is None:
         return None
     user = await service.get_user_by_login(twitch_name)
-    return user["id"] if user else None
+    return user.id if user else None
 
 
 async def subscribe_to_twitch_online_notification(twitch_uuid: str) -> None:
