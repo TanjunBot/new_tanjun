@@ -59,7 +59,7 @@ class ReportService:
                 params.user_id,
                 params.reporter_id,
                 params.reason,
-                "ACTION_TAKEN",
+                "INVESTIGATING",
                 1,
                 datetime.now(),
                 params.reporter_id,
@@ -173,14 +173,14 @@ class ReportService:
         await execute_action(query, params)
 
     @staticmethod
-    async def resolve(guild_id: str, report_id: int | str) -> None:
+    async def resolve(guild_id: str, report_id: int | str, resolved_by: str | None = None) -> None:
         """Mark a report as resolved (ACTION_TAKEN)."""
         query = (
-            "UPDATE reports SET resolved = 1, resolved_at = NOW(), "
-            "status = 'ACTION_TAKEN', status_updated_at = NOW() "
+            "UPDATE reports SET resolved = 1, resolved_at = NOW(), resolvedBy = %s, "
+            "status = 'ACTION_TAKEN', status_updated_at = NOW(), status_updated_by = %s "
             "WHERE guild_id = %s AND id = %s"
         )
-        params = (guild_id, report_id)
+        params = (resolved_by, resolved_by, guild_id, report_id)
         await execute_action(query, params)
 
     @staticmethod

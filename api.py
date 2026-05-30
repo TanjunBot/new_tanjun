@@ -2683,10 +2683,10 @@ async def reject_report(guild_id: str, report_id: str) -> None:
     await _report_svc.reject(guild_id, report_id, accepted_by=None)
 
 
-async def resolve_report(guild_id: str, report_id: str) -> None:
+async def resolve_report(guild_id: str, report_id: str, resolved_by: str | None = None) -> None:
     from services.report_service import report_service as _report_svc
 
-    await _report_svc.resolve(guild_id, report_id)
+    await _report_svc.resolve(guild_id, report_id, resolved_by)
 
 
 async def set_report_status(guild_id: str, report_id: str, status: str, updated_by: str | None = None) -> None:
