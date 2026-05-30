@@ -177,3 +177,24 @@ class ScheduledMessageService:
         async for row in ScheduledMessageModel.iter_rows(query, tuple(db_params)):
             rows.append(row)
         return rows
+
+    @staticmethod
+    async def find_by_discord_message_id(discord_message_id: str) -> ScheduledMessageModel | None:
+        """Find a scheduled message by its Discord message ID."""
+
+        query = """
+        SELECT messageId, guild_id, channel_id, user_id, content, send_time,
+               repeatInterval, repeatAmount, attachments, discord_message_id, created_at
+        FROM scheduledMessages WHERE discord_message_id = %s
+        """
+        async for row in ScheduledMessageModel.iter_rows(query, (discord_message_id,)):
+            return row
+        return None
+
+    @staticmethod
+    async def set_discord_message_id(message_id: int, discord_message_id: str) -> None:
+        """Store the Discord message ID for a scheduled message."""
+        from api import execute_action
+
+        query = "UPDATE scheduledMessages SET discord_message_id = %s WHERE messageId = %s"
+        await execute_action(query, (discord_message_id, message_id))
