@@ -139,7 +139,14 @@ python main.py
 
 ## Running Tests
 
-The test suite uses `pytest`. Tests are located in the [`tests/`](tests/) directory.
+The test suite uses `pytest`. Tests are organized in tiers under [`tests/`](tests/):
+
+| Tier | Path | Purpose |
+|------|------|---------|
+| Unit | `tests/unit/` | Pure logic, services, models, utils (mocked I/O) |
+| Integration | `tests/integration/commands/`, `api/`, `extensions/` | Command handlers, `api.py`, extension cogs |
+| E2E (mock) | `tests/e2e/` | Extension load, startup, listener flows (no live Discord) |
+| E2E (live) | `tests/e2e_live/` | Optional real bot smoke tests |
 
 ### Run all tests
 
@@ -147,35 +154,59 @@ The test suite uses `pytest`. Tests are located in the [`tests/`](tests/) direct
 pytest
 ```
 
-### Run with coverage
+### Run by tier
 
 ```bash
-pytest --cov=. --cov-report=term-missing
+pytest tests/unit/
+pytest tests/integration/
+pytest tests/e2e/
 ```
 
-### Run a specific test file
+### Coverage (85% total + per-file gate)
+
+CI merges coverage from separate pytest runs. Locally:
 
 ```bash
-pytest tests/test_api.py
+rm -f .coverage coverage.json
+pytest tests/unit -q --cov=. --cov-report= --cov-fail-under=0
+pytest tests/integration/commands tests/integration/api -q --cov=. --cov-append --cov-report= --cov-fail-under=0
+pytest tests/integration/extensions -q --cov=. --cov-append --cov-report= --cov-fail-under=0
+pytest tests/e2e tests/e2e_live -q --cov=. --cov-append --cov-report= --cov-fail-under=0
+coverage json -o coverage.json
+coverage report --fail-under=85
+python scripts/check_coverage_per_file.py --min 85
 ```
 
-### Run with verbose output
+### Database integration tests
+
+API integration tests against MariaDB use `docker compose -f docker-compose.test.yml up -d` and:
+
+| Variable | Default |
+|----------|---------|
+| `TANJUN_TEST_DB_HOST` | `127.0.0.1` |
+| `TANJUN_TEST_DB_PORT` | `3307` |
+| `TANJUN_TEST_DB_USER` | `test_user` |
+| `TANJUN_TEST_DB_PASSWORD` | `test_password` |
+| `TANJUN_TEST_DB_NAME` | `tanjun_test` |
+
+Set `TANJUN_INTEGRATION=true` or leave DB unreachable to skip DB tests.
+
+### Live Discord E2E (optional)
 
 ```bash
-pytest -v
+export TANJUN_TEST_BOT_TOKEN=...
+export TANJUN_TEST_GUILD_ID=...
+export TANJUN_TEST_CHANNEL_ID=...
+pytest tests/e2e_live/ -m live_discord -v
 ```
+
+Without `TANJUN_TEST_BOT_TOKEN`, live tests are skipped automatically.
 
 ### CI test configuration
 
-The CI workflow runs:
+GitHub Actions runs lint, unit tests, integration (split commands/api vs extensions), mock E2E, optional live E2E, then a coverage gate (`fail-under=85` + `scripts/check_coverage_per_file.py`).
 
-```bash
-pytest --junitxml=test-results.xml
-```
-
-This produces a JUnit XML report that CI uses to track failures.
-
-> **Note:** The CI environment runs on a self-hosted runner with Python 3.12.8. If a test fails only in CI, check that your local Python version and dependency versions match.
+> **Note:** The CI environment uses Python 3.12. Match locally with `pip install -e ".[dev]"`.
 
 ---
 

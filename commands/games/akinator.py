@@ -48,8 +48,9 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
     aki.start_game()
 
     class AkinatorView(discord.ui.View):
-        def __init__(self) -> None:
+        def __init__(self, ci: utility.CommandInfo) -> None:
             super().__init__()
+            self.command_info = ci
 
         @discord.ui.button(
             label=tanjunLocalizer.localize(str(command_info.locale), "commands.games.akinator.yes"),
@@ -69,7 +70,7 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
         )
         async def akinator_no(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:  # type: ignore[misc]
                 await interaction.followup.send(
                     tanjunLocalizer.localize(str(command_info.locale), "commands.games.akinator.notYourGame"),
                     ephemeral=True,
@@ -85,7 +86,7 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
         )
         async def akinator_idk(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:  # type: ignore[misc]
                 await interaction.followup.send(
                     tanjunLocalizer.localize(str(command_info.locale), "commands.games.akinator.notYourGame"),
                     ephemeral=True,
@@ -101,7 +102,7 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
         )
         async def akinator_probably(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:  # type: ignore[misc]
                 await interaction.followup.send(
                     tanjunLocalizer.localize(str(command_info.locale), "commands.games.akinator.notYourGame"),
                     ephemeral=True,
@@ -117,7 +118,7 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
         )
         async def akinator_probably_not(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:  # type: ignore[misc]
                 await interaction.followup.send(
                     tanjunLocalizer.localize(str(command_info.locale), "commands.games.akinator.notYourGame"),
                     ephemeral=True,
@@ -133,7 +134,7 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
         )
         async def akinator_back(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             await interaction.response.defer()
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:  # type: ignore[misc]
                 await interaction.followup.send(
                     tanjunLocalizer.localize(str(command_info.locale), "commands.games.akinator.notYourGame"),
                     ephemeral=True,
@@ -190,7 +191,7 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
                 ),
             )
             embed.set_image(url=aki.akitude)
-            await interaction.followup.edit_message(message_id=interaction.message.id, embed=embed, view=AkinatorView())  # type: ignore[union-attr]
+            await interaction.followup.edit_message(message_id=interaction.message.id, embed=embed, view=AkinatorView(command_info))  # type: ignore[union-attr]
 
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.games.akinator.title"),
@@ -204,4 +205,4 @@ async def akinator(command_info: utility.CommandInfo, theme: str | None = None) 
     )
     embed.set_image(url=aki.akitude)
 
-    await command_info.reply(embed=embed, view=AkinatorView())
+    await command_info.reply(embed=embed, view=AkinatorView(command_info))

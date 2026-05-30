@@ -34,7 +34,7 @@ async def kick(command_info: utility.CommandInfo, target: discord.Member, reason
         await command_info.reply(embed=embed)
         return
 
-    if isinstance(command_info.user, discord.Member) and target.top_role >= CommandInfo.user.top_role:  # type: ignore[misc, union-attr]
+    if isinstance(command_info.user, discord.Member) and target.top_role >= command_info.user.top_role:  # type: ignore[misc, union-attr]
         embed = utility.tanjunEmbed(
             colour=EmbedColor.WARNING,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.kick.targetTooHigh.title"),

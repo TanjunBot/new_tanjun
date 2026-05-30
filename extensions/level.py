@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+from typing import cast
 
 import utility
 from commands.level.add_level_role import add_level_role_command

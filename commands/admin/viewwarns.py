@@ -24,7 +24,7 @@ class WarningView(View):
         super().__init__(timeout=300)  # 5 minutes timeout
         self.warnings: list[DetailedWarningModel] = warnings
         self.member: discord.Member = member
-        self.command_info: utility.CommandInfo = CommandInfo  # type: ignore[assignment]
+        self.command_info: utility.CommandInfo = command_info
         self.page: int = 0
         self.message: discord.Message | None = None
         self.update_buttons()
@@ -191,7 +191,7 @@ async def view_warnings(command_info: utility.CommandInfo, member: discord.Membe
         return
 
     assert command_info.guild is not None
-    guild_id = CommandInfo.guild.id  # type: ignore[misc, union-attr]
+    guild_id = command_info.guild.id  # type: ignore[misc, union-attr]
     user_id = member.id
 
     warnings = [w async for w in get_detailed_warnings(guild_id, user_id)]
