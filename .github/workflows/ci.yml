@@ -149,7 +149,6 @@ jobs:
             --ignore=tests/e2e_live \
             --ignore=tests/integration \
             --ignore=tests/unit/health \
-            --ignore=tests/unit/test_run_flake8.py \
             --cov=. --cov-report=term --cov-report=xml --cov-fail-under=0 --junitxml=test-results.xml -v
       - uses: actions/upload-artifact@v4
         if: always()
