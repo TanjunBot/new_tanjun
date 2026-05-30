@@ -73,6 +73,8 @@ class LocalizerService:
             return "de"
         if raw.startswith("ko"):
             return "ko"
+        if raw in ("bg", "bg-BG"):
+            return "bg"
         return raw
 
     @staticmethod
