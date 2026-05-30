@@ -43,12 +43,11 @@ from models import (
     WelcomeChannelModel,
     XpBoostModel,
 )
-from utility import get_level_for_xp_async, get_xp_for_level_async
 from utils.cache import TTLCache
-
 
 # ── Log blacklist (delegated to LogBlacklistRepository) ─────────────────────────────
 from repositories.log_blacklist_repository import LogBlacklistType, log_blacklist_repo
+from utility import get_level_for_xp_async, get_xp_for_level_async
 
 
 async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
@@ -606,7 +605,8 @@ def get_table_definitions() -> dict[str, str]:
         "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
         "  `expires_at` TIMESTAMP NULL,"
         "  `created_by` VARCHAR(20) NOT NULL,"
-        "  `escalation_level` INT DEFAULT 0"
+        "  `escalation_level` INT DEFAULT 0,"
+        "  INDEX `idx_warnings_user_guild` (`user_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["warn_config"] = (
@@ -673,7 +673,8 @@ def get_table_definitions() -> dict[str, str]:
         "  `customBackground` VARCHAR(255) DEFAULT NULL,"
         "  `last_xp_gain` DATETIME DEFAULT NOW(),"
         "  `last_voice_xp_gain` DATETIME DEFAULT NOW(),"
-        "  PRIMARY KEY(`user_id`, `guild_id`)"
+        "  PRIMARY KEY(`user_id`, `guild_id`),"
+        "  INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)"
         ") ENGINE=InnoDB"
     )
     tables["blacklistedUser"] = (
@@ -777,7 +778,8 @@ def get_table_definitions() -> dict[str, str]:
         `sendFailed` TINYINT(1) DEFAULT 0,
         `channel_id` VARCHAR(20),
         `messageId` VARCHAR(20) DEFAULT "pending",
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)
     ) ENGINE=InnoDB;
     """
     tables["giveaway_channelRequirement"] = """
@@ -1225,6 +1227,15 @@ async def create_tables(bot=None) -> None:
          ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
          AFTER `attachments`,
          ADD INDEX `idx_discord_message` (`discord_message_id`)""",
+        # Add composite index on level(guild_id, xp DESC) for leaderboard queries
+        """ALTER TABLE `level`
+         ADD INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)""",
+        # Add composite index on warnings(user_id, guild_id) for warning lookups
+        """ALTER TABLE `warnings`
+         ADD INDEX `idx_warnings_user_guild` (`user_id`, `guild_id`)""",
+        # Add composite index on giveaway(ended, endtime) for background loop queries
+        """ALTER TABLE `giveaway`
+         ADD INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)""",
     ]
     for migration in migrations:
         try:
