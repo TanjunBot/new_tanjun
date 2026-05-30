@@ -1,4 +1,5 @@
 from .async_io import run_blocking
+from .cache import TTLCache
 from .dispatcher import (
     HandlerRegistry,
     MessageFilters,
@@ -16,6 +17,7 @@ from .dispatcher import (
 
 __all__ = [
     "run_blocking",
+    "TTLCache",
     "HandlerRegistry",
     "MessageFilters",
     "MessageHandler",
