@@ -43,11 +43,11 @@ from models import (
     WelcomeChannelModel,
     XpBoostModel,
 )
-from utility import get_level_for_xp_async, get_xp_for_level_async
-
 
 # ── Log blacklist (delegated to LogBlacklistRepository) ─────────────────────────────
 from repositories.log_blacklist_repository import LogBlacklistType, log_blacklist_repo
+from utility import get_level_for_xp_async, get_xp_for_level_async
+from utils.cache import TTLCache
 
 
 async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
@@ -64,7 +64,6 @@ async def get_log_blacklist(guild_id: str, blacklist_type: LogBlacklistType) -> 
 
 async def is_log_entity_blacklisted(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> str | None:
     return await log_blacklist_repo.is_entity_blacklisted(guild_id, entity_id, blacklist_type)
-
 
 
 logger = logging.getLogger(__name__)
@@ -104,9 +103,7 @@ class DatabaseManager:
         async def _callback(cursor: Any, conn: Any) -> list[tuple[Any, ...]]:
             return await cursor.fetchall()
 
-        return await _execute_with_retry(
-            "execute_query", _callback, query, params
-        )
+        return await _execute_with_retry("execute_query", _callback, query, params)
 
     async def execute_action(
         self,
@@ -120,9 +117,7 @@ class DatabaseManager:
         async def _callback(cursor: Any, conn: Any) -> int:
             return cursor.rowcount
 
-        return await _execute_with_retry(
-            "execute_action", _callback, query, params, is_write=True
-        )
+        return await _execute_with_retry("execute_action", _callback, query, params, is_write=True)
 
     async def execute_batch(
         self,
@@ -137,9 +132,7 @@ class DatabaseManager:
             await cursor.executemany(query, params_list)
             return None
 
-        await _execute_with_retry(
-            "execute_batch", _callback, query, is_write=True
-        )
+        await _execute_with_retry("execute_batch", _callback, query, is_write=True)
 
     async def execute_insert_and_get_id(
         self,
@@ -154,9 +147,7 @@ class DatabaseManager:
             await conn.commit()
             return cursor.lastrowid
 
-        return await _execute_with_retry(
-            "execute_insert_and_get_id", _callback, query, params, is_write=True
-        )
+        return await _execute_with_retry("execute_insert_and_get_id", _callback, query, params, is_write=True)
 
     async def check_health(self) -> bool:
         """Check if the database pool is healthy by running SELECT 1."""
@@ -284,35 +275,27 @@ async def _execute_with_retry(
 
 
 # ── Cache System ──────────────────────────────────────────────────────────────
+# Centralised TTL caches.  Each cache owns its TTL and (optionally) max size;
+# LRU eviction happens automatically when ``maxsize`` is set.
 
-_BLACKLIST_CACHE_TTL = 30  # seconds
-_GUILD_CONFIG_CACHE_TTL = 300  # 5 minutes
-
-_blacklist_cache: dict[str, tuple[Any, float]] = {}
-_guild_config_cache: dict[str, tuple[dict[str, Any], float]] = {}
+_blacklist_cache: TTLCache[str, dict[str, list[BlacklistEntryModel]]] = TTLCache(ttl=30)
+_guild_config_cache: TTLCache[str, dict[str, Any]] = TTLCache(ttl=300, maxsize=2000)
 # In-memory cache for XP cooldowns: (guild_id, user_id) -> last_xp_gain_timestamp
 # Eliminates DB queries entirely when user is on cooldown
 _last_xp_gain_cache: dict[tuple[str, str], float] = {}
-# In-memory cache for counting configs: channel_id -> (counting_config, challenge_config, modes_config, timestamp)
+# In-memory cache for counting configs: channel_id -> (counting_config, challenge_config, modes_config)
 # Reduces 3 DB queries per message to in-memory lookup
-_COUNTING_CACHE_TTL = 30  # seconds
-_counting_cache: dict[str, tuple[dict | None, dict | None, dict | None, float]] = {}
-
-
-def _is_cache_valid(entry: tuple[Any, float] | None, ttl: float) -> bool:
-    if entry is None:
-        return False
-    return (time.time() - entry[1]) < ttl
+_counting_cache: TTLCache[str, tuple[dict | None, dict | None, dict | None]] = TTLCache(ttl=30)
 
 
 def _invalidate_guild_cache(guild_id: str) -> None:
-    _blacklist_cache.pop(guild_id, None)
-    _guild_config_cache.pop(guild_id, None)
+    _blacklist_cache.delete(guild_id)
+    _guild_config_cache.delete(guild_id)
 
 
 def invalidate_counting_cache(channel_id: str | int) -> None:
     """Remove the counting config cache entry for a specific channel."""
-    _counting_cache.pop(str(channel_id), None)
+    _counting_cache.delete(str(channel_id))
 
 
 async def preload_guild_configs(bot=None) -> None:
@@ -328,15 +311,15 @@ async def preload_guild_configs(bot=None) -> None:
     pool = _get_pool()
     if pool is None:
         return
-    global _guild_config_cache
-    _guild_config_cache = {}
+    _guild_config_cache.clear()
     try:
         conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
         async with conn, conn.cursor() as cursor:
             await asyncio.wait_for(cursor.execute(query), timeout=_QUERY_TIMEOUT)
             async for row in cursor:
                 guild_id = str(row[0])
-                _guild_config_cache[guild_id] = (
+                _guild_config_cache.set(
+                    guild_id,
                     {
                         "active": row[1],
                         "scaling": row[2],
@@ -347,7 +330,6 @@ async def preload_guild_configs(bot=None) -> None:
                         "text_cooldown": row[7],
                         "voice_cooldown": row[8],
                     },
-                    time.time(),
                 )
     except Exception as e:
         print(f"Error preloading guild configs: {e}")
@@ -356,18 +338,18 @@ async def preload_guild_configs(bot=None) -> None:
 async def _get_cached_blacklist(guild_id: str) -> dict[str, list[BlacklistEntryModel]]:
     """Get blacklist with TTL cache (30s), reducing per-message DB queries by ~97%."""
     cached = _blacklist_cache.get(guild_id)
-    if _is_cache_valid(cached, _BLACKLIST_CACHE_TTL):
-        return cached[0]
+    if cached is not None:
+        return cached
     data = await get_blacklist(guild_id)
-    _blacklist_cache[guild_id] = (data, time.time())
+    _blacklist_cache.set(guild_id, data)
     return data
 
 
 async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> Any:
     """Get a cached level config value with TTL check. Falls back to DB on miss."""
     cache_entry = _guild_config_cache.get(guild_id)
-    if _is_cache_valid(cache_entry, _GUILD_CONFIG_CACHE_TTL):
-        return cache_entry[0].get(key, default)
+    if cache_entry is not None:
+        return cache_entry.get(key, default)
     # Cache miss — reload from DB
     query = """
     SELECT guild_id, active, difficulty, customFormula, level_up_messageActive,
@@ -393,10 +375,10 @@ async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> An
                     "text_cooldown": row[7],
                     "voice_cooldown": row[8],
                 }
-                _guild_config_cache[guild_id] = (data, time.time())
+                _guild_config_cache.set(guild_id, data)
                 return data.get(key, default)
             # Cache the miss (no levelConfig row for this guild)
-            _guild_config_cache[guild_id] = ({}, time.time())
+            _guild_config_cache.set(guild_id, {})
     except Exception as e:
         print(f"Error caching guild config for {guild_id}: {e}")
     return default
@@ -507,11 +489,7 @@ async def execute_query_iter(
                 logger.error(f"Error after yielding rows during query iteration: {e} — {safe_id}")
                 raise
             err_str = str(e).lower()
-            retryable = (
-                "deadlock" in err_str
-                or "connection" in err_str
-                or "timeout" in err_str
-            )
+            retryable = "deadlock" in err_str or "connection" in err_str or "timeout" in err_str
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
                 print(f"Transient error on execute_query_iter attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
@@ -610,7 +588,8 @@ def get_table_definitions() -> dict[str, str]:
         "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
         "  `expires_at` TIMESTAMP NULL,"
         "  `created_by` VARCHAR(20) NOT NULL,"
-        "  `escalation_level` INT DEFAULT 0"
+        "  `escalation_level` INT DEFAULT 0,"
+        "  INDEX `idx_warnings_user_guild` (`user_id`, `guild_id`)"
         ") ENGINE=InnoDB"
     )
     tables["warn_config"] = (
@@ -677,7 +656,8 @@ def get_table_definitions() -> dict[str, str]:
         "  `customBackground` VARCHAR(255) DEFAULT NULL,"
         "  `last_xp_gain` DATETIME DEFAULT NOW(),"
         "  `last_voice_xp_gain` DATETIME DEFAULT NOW(),"
-        "  PRIMARY KEY(`user_id`, `guild_id`)"
+        "  PRIMARY KEY(`user_id`, `guild_id`),"
+        "  INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)"
         ") ENGINE=InnoDB"
     )
     tables["blacklistedUser"] = (
@@ -781,7 +761,8 @@ def get_table_definitions() -> dict[str, str]:
         `sendFailed` TINYINT(1) DEFAULT 0,
         `channel_id` VARCHAR(20),
         `messageId` VARCHAR(20) DEFAULT "pending",
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)
     ) ENGINE=InnoDB;
     """
     tables["giveaway_channelRequirement"] = """
@@ -1216,8 +1197,7 @@ async def create_tables(bot=None) -> None:
     while to_create:
         # Find all tables whose dependencies are satisfied (or have no dependencies)
         batch = {
-            name for name in to_create
-            if all(dep in created or dep not in to_create for dep in dependencies.get(name, []))
+            name for name in to_create if all(dep in created or dep not in to_create for dep in dependencies.get(name, []))
         }
         if not batch:
             # Circular dependency or missing parent - shouldn't happen with current schema
@@ -1228,9 +1208,7 @@ async def create_tables(bot=None) -> None:
 
     # Create tables in batches, parallelizing within each batch
     for batch in batches:
-        await asyncio.gather(
-            *[execute_action(tables[table_name], bot=bot) for table_name in batch]
-        )
+        await asyncio.gather(*[execute_action(tables[table_name], bot=bot) for table_name in batch])
 
     # Run schema migrations for existing tables that need column additions
     migrations = [
@@ -1243,6 +1221,12 @@ async def create_tables(bot=None) -> None:
          ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
          AFTER `attachments`,
          ADD INDEX `idx_discord_message` (`discord_message_id`)""",
+        """ALTER TABLE `level`
+         ADD INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)""",
+        """ALTER TABLE `warnings`
+         ADD INDEX `idx_warnings_user_guild` (`user_id`, `guild_id`)""",
+        """ALTER TABLE `giveaway`
+         ADD INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)""",
     ]
     for migration in migrations:
         try:
@@ -1289,7 +1273,9 @@ async def set_warn_config(
     kick_threshold: int,
     ban_threshold: int,
 ) -> None:
-    await warning_repo.set_config(guild_id, expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold)
+    await warning_repo.set_config(
+        guild_id, expiration_days, timeout_threshold, timeout_duration, kick_threshold, ban_threshold
+    )
 
 
 async def get_warn_config(guild_id: str | int) -> WarnConfigModel | None:
@@ -1349,7 +1335,7 @@ async def get_counting_configs(channel_id: str | int) -> tuple[dict | None, dict
     """
     key = str(channel_id)
     cached = _counting_cache.get(key)
-    if cached is not None and _is_cache_valid((cached, cached[3]), _COUNTING_CACHE_TTL):
+    if cached is not None:
         return cached[0], cached[1], cached[2]
 
     counting_query = "SELECT progress, last_counter_id, guild_id FROM counting WHERE channel_id = %s"
@@ -1382,7 +1368,7 @@ async def get_counting_configs(channel_id: str | int) -> tuple[dict | None, dict
         if modes_result
         else None
     )
-    _counting_cache[key] = (counting_config, challenge_config, modes_config, time.time())
+    _counting_cache.set(key, (counting_config, challenge_config, modes_config))
     return counting_config, challenge_config, modes_config
 
 
@@ -1564,8 +1550,6 @@ async def get_all_level_roles(guild_id: str) -> list[LevelRolesGroupModel]:
     from repositories.level_role_repository import level_role_repo
 
     return await level_role_repo.get_grouped_by_level(guild_id)
-
-
 
 
 # ── XP Boost (delegated to XpBoostRepository) ──────────────────────────────────
@@ -2451,8 +2435,6 @@ async def remove_log_channel(guild_id: str) -> None:
     query = "DELETE FROM log_channel WHERE guild_id = %s"
     params = (guild_id,)
     await execute_action(query, params)
-
-
 
 
 async def get_log_channel(guild_id: str) -> str | None:

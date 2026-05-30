@@ -73,7 +73,9 @@ async def deleterole(command_info: utility.CommandInfo, role: discord.Role, reas
     except discord.HTTPException as e:
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.deleterole.http_error.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.deleterole.http_error.description", status=e.status),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.admin.deleterole.http_error.description", status=e.status
+            ),
         )
         await command_info.reply(embed=embed)
         return
