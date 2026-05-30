@@ -36,7 +36,7 @@ def _get_font_path(language: str) -> str:
         "ja": "assets/fonts/NotoSansJP.ttf",
         "ko": "assets/fonts/NotoSansKR.ttf",
         "zh": "assets/fonts/NotoSansSC.ttf",
-        "hi": "assets/fonts/NotoSansThai.ttf",
+        "hi": "assets/fonts/Arial.ttf",
     }
     return font_map.get(language, "assets/fonts/Arial.ttf")
 
@@ -325,7 +325,7 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
             interaction: discord.Interaction,
             button: discord.ui.Button[Any],
         ) -> None:
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.notYourGame"),
                     ephemeral=True,
@@ -343,17 +343,17 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
             interaction: discord.Interaction,
             button: discord.ui.Button[Any],
         ) -> None:
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.notYourGame"),
                     ephemeral=True,
                 )
                 return
             # Fill remaining slots to show full grid
-            while len(guesses) < GRID_ROWS - 1:
+            while len(guesses) < GRID_ROWS:
                 guesses.append("NOTHING")
-            # Reveal word as last guess in the last row
-            guesses.append(word)
+            # Ensure the revealed word occupies the final visible row
+            guesses[GRID_ROWS - 1] = word
             await update_embed(interaction, given_up=True)
 
             # Save stats (lost)
@@ -394,7 +394,7 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
             interaction: discord.Interaction,
             button: discord.ui.Button[Any],
         ) -> None:
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.notYourGame"),
                     ephemeral=True,
@@ -445,7 +445,7 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
             await self._start_game(interaction)
 
         async def _start_game(self, interaction: discord.Interaction) -> None:
-            if interaction.user.id != CommandInfo.user.id:  # type: ignore[misc]
+            if interaction.user.id != self.command_info.user.id:
                 await interaction.response.send_message(
                     tanjunLocalizer.localize(str(command_info.locale), "commands.games.wordle.notYourGame"),
                     ephemeral=True,
@@ -453,23 +453,20 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
                 return
             img_byte_arr = await generate_wordle_image(guesses, word, language)
             mode_hint = " 🔴 Hard" if hard_mode else ""
+            # Compute Japanese extra description (if applicable)
+            ja_extra = tanjunLocalizer.localize(
+                str(command_info.locale),
+                'commands.games.wordle.initial.descriptionextra.ja',
+            ) if language == "ja" else ""
+            extra_description = f"\n\n{ja_extra}" if ja_extra else ""
+
             embed = utility.tanjunEmbed(
                 title=f"{tanjunLocalizer.localize(command_info.locale, 'commands.games.wordle.initial.title')}{mode_hint}",
                 description=tanjunLocalizer.localize(
                     command_info.locale,
                     "commands.games.wordle.initial.description",
                     guesses=0,
-                )
-                + (
-                    f"\n\n{
-                        tanjunLocalizer.localize(
-                            str(command_info.locale),
-                            'commands.games.wordle.initial.descriptionextra.ja',
-                        )
-                    }"
-                    if language == "ja"
-                    else ""
-                ),
+                ) + extra_description,
             )
             embed.set_image(url="attachment://wordle.png")
             game_view = WordleGameView(self.command_info, guesses, word, hard_mode)

@@ -1234,7 +1234,7 @@ async def create_tables(bot=None) -> None:
         except Exception as exc:
             exc_str = str(exc).lower()
             # Only suppress "column already exists" / duplicate column errors
-            if "column already exists" in exc_str or "duplicate column" in exc_str or "duplicate column name" in exc_str:
+            if "column already exists" in exc_str or "duplicate column" in exc_str or "duplicate column name" in exc_str or "duplicate key name" in exc_str:
                 logging.debug("Migration skipped (column already exists): %s", migration[:60])
             else:
                 logging.exception("Unexpected migration error: %s", migration[:60])

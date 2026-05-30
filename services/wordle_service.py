@@ -64,23 +64,24 @@ def validate_hard_mode_guess(guess: str, previous_guesses: list[str], word: str)
             revealed_yellow.append((i, char))
             word_chars[word_chars.index(char)] = None  # Mark as used
 
-    for i, (guess_char, prev_char, word_char) in enumerate(zip(guess, last_guess, word, strict=True)):
-        if prev_char == word_char:
-            # Previous guess had this letter in the correct position
-            if guess_char != word_char:
-                return f"Letter **{word_char.upper()}** must be in position {i + 1} (was correct before)"
-        elif prev_char in word and prev_char != word_char:
-            # Previous guess had this letter but wrong position
-            if prev_char not in guess:
-                return f"Letter **{prev_char.upper()}** must be used (was yellow before)"
-            # Count revealed instances (green + yellow) of prev_char
-            prev_count = sum(1 for pos, ch in revealed_green if ch == prev_char) + sum(
-                1 for pos, ch in revealed_yellow if ch == prev_char
-            )
-            # The letter must appear at least as many times as before
-            guess_count = sum(1 for c in guess if c == prev_char)
-            if guess_count < prev_count:
-                return f"Letter **{prev_char.upper()}** must appear at least {prev_count} time(s)"
+    # Check green constraints (positional)
+    for i, char in revealed_green:
+        if guess[i] != char:
+            return f"Letter **{char.upper()}** must be in position {i + 1} (was correct before)"
+
+    # Check yellow constraints (letter must be used with correct count)
+    required_counts: dict[str, int] = {}
+    for _, char in revealed_green:
+        required_counts[char] = required_counts.get(char, 0) + 1
+    for _, char in revealed_yellow:
+        required_counts[char] = required_counts.get(char, 0) + 1
+
+    for char, required in required_counts.items():
+        guess_count = sum(1 for c in guess if c == char)
+        if guess_count < required:
+            if guess_count == 0:
+                return f"Letter **{char.upper()}** must be used (was revealed before)"
+            return f"Letter **{char.upper()}** must appear at least {required} time(s)"
 
     return None
 

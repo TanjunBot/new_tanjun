@@ -885,8 +885,8 @@ class WordleStatsModel(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
-    guild_id: Annotated[str, StringConstraints(pattern=r"^\d{17,20}$")]
+    user_id: UserId
+    guild_id: GuildId
     games_played: int = Field(ge=0)
     games_won: int = Field(ge=0)
     current_streak: int = Field(ge=0)
