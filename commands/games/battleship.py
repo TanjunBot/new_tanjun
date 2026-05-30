@@ -143,7 +143,7 @@ class Battleship:
     def _all_ships_sunk(self, ships_list: list[dict[str, Any]]) -> bool:
         return all(ship["sunk"] for ship in ships_list)
 
-    def _board_to_str(self, board: list[list[str]], show_ships: bool = False) -> str:
+    def _board_to_str(self, board: list[list[str]]) -> str:
         """Convert board to a string using emojis."""
         rows = []
         for i, row in enumerate(board):
@@ -383,17 +383,6 @@ class BattleshipView(discord.ui.View):
         game = self.game
 
         if game.game_over:
-            return
-
-        # Check if it's the right player's turn (already checked in modal callback)
-        if interaction.user != game.current_player:
-            await interaction.followup.send(
-                tanjunLocalizer.localize(
-                    str(interaction.locale),
-                    "commands.games.battleship.notYourTurn",
-                ),
-                ephemeral=True,
-            )
             return
 
         # Determine which board to attack
