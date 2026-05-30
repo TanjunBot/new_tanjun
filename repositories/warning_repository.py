@@ -26,14 +26,15 @@ class WarningRepository:
 
         query = "INSERT INTO warnings (guild_id, user_id, reason, expires_at, created_by) VALUES (%s, %s, %s, %s, %s)"
         params = (guild_id, user_id, reason, expiration_date, created_by)
-        warning_id = await execute_insert_and_get_id(query, params)
+        warning_id: int | None = await execute_insert_and_get_id(query, params)
+        assert warning_id is not None, "Failed to insert warning, no ID returned"
         return warning_id
 
     async def get_all(self, guild_id: str | int, user_id: str | int | None = None) -> AsyncIterator[WarningModel]:
         """Stream all active warnings for a guild (or a specific user)."""
         if user_id is not None:
             query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND user_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
-            params = (guild_id, user_id)
+            params: tuple[str | int, ...] = (guild_id, user_id)
         else:
             query = "SELECT id, guild_id, user_id, reason, created_at, expires_at, created_by, escalation_level FROM warnings WHERE guild_id = %s AND (expires_at IS NULL OR expires_at > NOW())"
             params = (guild_id,)

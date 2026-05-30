@@ -81,11 +81,11 @@ class TriggerMessageRepository:
             AND (tc.channel_id = %s)
         """
         params = (guild_id, trigger, channel_id)
-        result = await execute_query(query, params)
-        result = result[0] if result and result[0] else None
-        if not result:
+        rows_result: list[tuple[Any, ...]] | None = await execute_query(query, params)
+        row: tuple[Any, ...] | None = rows_result[0] if rows_result and rows_result[0] else None
+        if not row:
             return None
-        trigger_message = TriggerMessageModel.from_row(result)
+        trigger_message = TriggerMessageModel.from_row(row)
         if trigger_message.case_sensitive:
             if trigger != trigger_message.trigger:
                 return None

@@ -3376,6 +3376,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.reports.show_reports.report.status",
+    "source_string": "**Status**: ${status}",
+    "translation": "**Status**: ${status}",
+    "context": "commands -> admin -> reports -> show_reports -> report -> status",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.reports.show_reports.not_your_warns",
     "source_string": "Du darfst nicht mit den Buttons interagieren.",
     "translation": "Du darfst nicht mit den Buttons interagieren.",
@@ -30872,6 +30880,22 @@
     "max_length": null
   },
   {
+    "identifier": "admin.copy7tv.description",
+    "source_string": "Durchsucht und importiert 7TV Emotes eines Streamers",
+    "translation": "Durchsucht und importiert 7TV Emotes eines Streamers",
+    "context": "admin -> copy7tv -> description",
+    "labels": "command_description, unassigned",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.copy7tv.params.twitch.username.description",
+    "source_string": "Der Twitch-Benutzername des Streamers",
+    "translation": "Der Twitch-Benutzername des Streamers",
+    "context": "admin -> copy7tv -> params -> twitch_username -> description",
+    "labels": "command_description, unassigned",
+    "max_length": 100
+  },
+  {
     "identifier": "emoji",
     "source_string": "emoji",
     "translation": "emoji",
@@ -32544,6 +32568,294 @@
     "max_length": null
   },
   {
+    "identifier": "commands.games.memory.title",
+    "source_string": "Memory Game",
+    "translation": "🧠 Memory-Spiel",
+    "context": "commands -> games -> memory -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.rules_intro",
+    "source_string": "Find all matching pairs of cards! Click on two cards to reveal them. If they match, they stay open.",
+    "translation": "Finde alle passenden Kartenpaare! Klicke auf zwei Karten, um sie aufzudecken. Wenn sie übereinstimmen, bleiben sie offen.",
+    "context": "commands -> games -> memory -> rules_intro",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.turns",
+    "source_string": "Turns",
+    "translation": "Züge",
+    "context": "commands -> games -> memory -> turns",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.pairs_found",
+    "source_string": "Pairs Found",
+    "translation": "Paare gefunden",
+    "context": "commands -> games -> memory -> pairs_found",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.player",
+    "source_string": "Player",
+    "translation": "Spieler",
+    "context": "commands -> games -> memory -> player",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.select_first",
+    "source_string": "Select the first card!",
+    "translation": "Wähle die erste Karte!",
+    "context": "commands -> games -> memory -> select_first",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.select_second",
+    "source_string": "Now select the second card!",
+    "translation": "Wähle jetzt die zweite Karte!",
+    "context": "commands -> games -> memory -> select_second",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.match",
+    "source_string": "Match found!",
+    "translation": "Paar gefunden!",
+    "context": "commands -> games -> memory -> match",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.no_match",
+    "source_string": "Not a match! Try again.",
+    "translation": "Kein Paar! Versuche es nochmal.",
+    "context": "commands -> games -> memory -> no_match",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.win",
+    "source_string": "You won! All pairs found!",
+    "translation": "Gewonnen! Alle Paare gefunden!",
+    "context": "commands -> games -> memory -> win",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.game_over",
+    "source_string": "Game Over",
+    "translation": "Spiel vorbei",
+    "context": "commands -> games -> memory -> game_over",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.memory.not_your_game",
+    "source_string": "This is not your game!",
+    "translation": "Das ist nicht dein Spiel!",
+    "context": "commands -> games -> memory -> not_your_game",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "games_memory_name",
+    "source_string": "memory",
+    "translation": "memory",
+    "context": "games -> memory -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "games_memory_description",
+    "source_string": "Play a memory matching game",
+    "translation": "Spiele ein Memory-Spiel",
+    "context": "games -> memory -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "games_memory_params_user_description",
+    "source_string": "The user to play against",
+    "translation": "Der Benutzer, gegen den gespielt wird",
+    "context": "games -> memory -> params -> user -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.missingPermission.title",
+    "source_string": "Fehlende Berechtigungen",
+    "translation": "Fehlende Berechtigungen",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.missingPermission.description",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Du benötigst die `emojis_verwalten` berechtigung.",
+    "translation": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Du benötigst die `emojis_verwalten` berechtigung.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.missingPermissionBot.title",
+    "source_string": "Mir fehlen Berechtigungen",
+    "translation": "Mir fehlen Berechtigungen",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.missingPermissionBot.description",
+    "source_string": "Ich benötige die `emojis_verwalten` Berechtigung, um Emojis auf diesen Server hinzuzufügen.",
+    "translation": "Ich benötige die `emojis_verwalten` Berechtigung, um Emojis auf diesen Server hinzuzufügen.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.error.notFound.title",
+    "source_string": "Keine Emotes gefunden",
+    "translation": "Keine Emotes gefunden",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.error.notFound.description",
+    "source_string": "Konnte keine 7TV Emotes für den Streamer `${username}` finden. Stelle sicher, dass der Twitch-Name korrekt ist und der Streamer ein 7TV Konto hat.",
+    "translation": "Konnte keine 7TV Emotes für den Streamer `${username}` finden. Stelle sicher, dass der Twitch-Name korrekt ist und der Streamer ein 7TV Konto hat.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.title",
+    "source_string": "🎭 7TV Emotes von ${username} (${total} insgesamt)",
+    "translation": "🎭 7TV Emotes von ${username} (${total} insgesamt)",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.footer",
+    "source_string": "Seite ${page}/${total_pages}",
+    "translation": "Seite ${page}/${total_pages}",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.noEmotes",
+    "source_string": "Keine Emotes auf dieser Seite.",
+    "translation": "Keine Emotes auf dieser Seite.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.notYourEmbed",
+    "source_string": "Diese Steuerung gehört nicht dir!",
+    "translation": "Diese Steuerung gehört nicht dir!",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.title",
+    "source_string": "Emote hinzufügen",
+    "translation": "Emote hinzufügen",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.label",
+    "source_string": "Emote Nummer",
+    "translation": "Emote Nummer",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.placeholder",
+    "source_string": "Gib die Nummer des Emotes ein (z.B. 1)",
+    "translation": "Gib die Nummer des Emotes ein (z.B. 1)",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.limitAnimated",
+    "source_string": "Dieser Server hat das Limit für animierte Emojis erreicht.",
+    "translation": "Dieser Server hat das Limit für animierte Emojis erreicht.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.limitStatic",
+    "source_string": "Dieser Server hat das Limit für statische Emojis erreicht.",
+    "translation": "Dieser Server hat das Limit für statische Emojis erreicht.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.downloadError",
+    "source_string": "Fehler beim Herunterladen des Emotes.",
+    "translation": "Fehler beim Herunterladen des Emotes.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.reason",
+    "source_string": "Emote via /admin copy_7tv hinzugefügt",
+    "translation": "Emote via /admin copy_7tv hinzugefügt",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.success.title",
+    "source_string": "Emote hinzugefügt ✅",
+    "translation": "Emote hinzugefügt ✅",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.success.description",
+    "source_string": "Das Emote ${emoji} (`:${name}:`) wurde erfolgreich zum Server hinzugefügt!",
+    "translation": "Das Emote ${emoji} (`:${name}:`) wurde erfolgreich zum Server hinzugefügt!",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.invalidNumber",
+    "source_string": "Ungültige Nummer. Bitte gib eine gültige Emote-Nummer aus der Liste ein.",
+    "translation": "Ungültige Nummer. Bitte gib eine gültige Emote-Nummer aus der Liste ein.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.error",
+    "source_string": "Fehler beim Erstellen des Emojis: ${error}",
+    "translation": "Fehler beim Erstellen des Emojis: ${error}",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "setup_name",
     "source_string": "setup",
     "translation": "setup",
@@ -32620,6 +32932,54 @@
     "source_string": "Interaktiver Assistent für Booster-Vorteile",
     "translation": "Interaktiver Assistent für Booster-Vorteile",
     "context": "Slash-Befehlsbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.buttons.playNormal",
+    "source_string": "Normal",
+    "translation": "Normal",
+    "context": "Button to play Wordle in normal mode",
+    "labels": "unassigned",
+    "max_length": 20
+  },
+  {
+    "identifier": "commands.games.wordle.buttons.playHard",
+    "source_string": "Hard Mode",
+    "translation": "Hard Mode",
+    "context": "Button to play Wordle in hard mode",
+    "labels": "unassigned",
+    "max_length": 20
+  },
+  {
+    "identifier": "commands.games.wordle.pickMode.title",
+    "source_string": "Wortspiel - Modus",
+    "translation": "Wortspiel - Modus",
+    "context": "Title for the mode selection screen",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.pickMode.description",
+    "source_string": "Wähle deinen Modus: Normal oder Hard Mode. Im Hard Mode musst du bereits erhaltene Hinweise in den folgenden Versuchen verwenden.",
+    "translation": "Wähle deinen Modus: Normal oder Hard Mode. Im Hard Mode musst du bereits erhaltene Hinweise in den folgenden Versuchen verwenden.",
+    "context": "Description for the mode selection screen",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.hardMode.title",
+    "source_string": "Wortspiel - Hard Mode",
+    "translation": "Wortspiel - Hard Mode",
+    "context": "Title when playing in hard mode",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.stats.title",
+    "source_string": "Deine Wordle-Statistiken",
+    "translation": "Deine Wordle-Statistiken",
+    "context": "Title for the Wordle stats display",
     "labels": "unassigned",
     "max_length": null
   }

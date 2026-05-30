@@ -274,14 +274,11 @@ async def main() -> None:
     health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
     health_manager.register(DatabaseHealthCheck())  # Uses default 5-minute interval
     health_manager.register(TwitchAPIHealthCheck())  # Uses default 5-minute interval
-    health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
     health_manager.register(GIPHYHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(BrawlStarsHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(ImgBBHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(BytebinHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(GitHubAPIHealthCheck(), interval=3600)  # 60 minutes
-    health_manager.register(OpenAIHealthCheck())  # Uses default 5-minute interval
-    health_manager.register(LocaleFileHealthCheck())  # Uses default 5-minute interval
     ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.

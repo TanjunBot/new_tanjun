@@ -1,3 +1,4 @@
+import json
 from typing import cast
 
 import discord
@@ -5,64 +6,50 @@ import discord
 import utility
 from api import clear_channel_overwrites, get_channel_overwrites
 from localizer import tanjunLocalizer
+from utils.checks import check_bot_permission, check_user_permission, send_check_failure
 
 
 async def unlock_channel(command_info: utility.CommandInfo, channel: discord.TextChannel | None = None) -> None:
     if channel is None:
-        assert command_info.channel is not None
+        if command_info.channel is None:
+            raise ValueError("Channel is missing in command_info")
         channel = cast(discord.TextChannel, command_info.channel)  # type: ignore[name-defined]
 
-    if (
-        isinstance(command_info.user, discord.Member)
-        and isinstance(command_info.channel, discord.abc.GuildChannel)
-        and not command_info.channel.permissions_for(command_info.user).manage_channels
-    ):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unlock.missingPermission.title"),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.admin.unlock.missingPermission.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
+    # User permission check (channel-scoped)
+    result = check_user_permission(command_info, "manage_channels", use_guild_permissions=False, channel=channel)
+    if await send_check_failure(command_info, "unlock", result):
         return
 
-    assert command_info.guild is not None
-    if not channel.permissions_for(command_info.guild.me).manage_channels:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unlock.missingPermissionBot.title"),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.admin.unlock.missingPermissionBot.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
+    # Bot permission check (channel-scoped)
+    result = check_bot_permission(command_info, "manage_channels", channel=channel)
+    if await send_check_failure(command_info, "unlock", result):
         return
 
     try:
-        # Retrieve saved overwrites
-        saved_overwrites = [o async for o in get_channel_overwrites(channel.id)]
+        # Restore saved overwrites from lock_channel
+        saved_overwrites_found = False
+        async for overwrite_record in get_channel_overwrites(channel.id):
+            saved_overwrites_found = True
+            role = channel.guild.get_role(int(overwrite_record.role_id))
+            if role is not None:
+                # Parse the saved overwrites JSON
+                overwrite_dict = (
+                    json.loads(overwrite_record.overwrites)
+                    if isinstance(overwrite_record.overwrites, str)
+                    else overwrite_record.overwrites
+                )
+                # Create PermissionOverwrite from the saved values
+                overwrite = discord.PermissionOverwrite(**overwrite_dict)
+                await channel.set_permissions(role, overwrite=overwrite)
 
-        if not saved_overwrites:
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unlock.notLocked.title"),
-                description=tanjunLocalizer.localize(
-                    command_info.locale,
-                    "commands.admin.unlock.notLocked.description",
-                    channel=channel.mention,
-                ),
-            )
-            await command_info.reply(embed=embed)
-            return
-
-        # Restore overwrites
-        for overwrite in saved_overwrites:
-            role = channel.guild.get_role(int(overwrite.role_id))
-            if role:
-                await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(**overwrite.overwrites))
-
-        # Clear saved overwrites
-        await clear_channel_overwrites(channel.id)
+        # Clear the saved overwrites after restoration
+        if saved_overwrites_found:
+            await clear_channel_overwrites(channel.id)
+        else:
+            # Fallback: if no saved overwrites, just reset default role permissions
+            default_permissions = channel.overwrites_for(channel.guild.default_role)
+            default_permissions.send_messages = None
+            await channel.set_permissions(channel.guild.default_role, overwrite=default_permissions)
 
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.unlock.success.title"),
@@ -76,7 +63,7 @@ async def unlock_channel(command_info: utility.CommandInfo, channel: discord.Tex
 
         # Send a message to the unlocked channel
         unlocked_message = tanjunLocalizer.localize(
-            command_info.locale,
+            str(command_info.locale),
             "commands.admin.unlock.channelUnlockedMessage",
             channel=channel.mention,
         )
