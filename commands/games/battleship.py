@@ -488,14 +488,14 @@ class BattleshipView(discord.ui.View):
 
         enemy_board_text = tanjunLocalizer.localize(
             locale,
-            'commands.games.battleship.helpEnemyBoard',
+            "commands.games.battleship.helpEnemyBoard",
             hit=HIT,
             miss=MISS,
             sunk=SHIP_SUNK,
         )
         legend_text = tanjunLocalizer.localize(
             locale,
-            'commands.games.battleship.legend',
+            "commands.games.battleship.legend",
             water=WATER,
             hit=HIT,
             miss=MISS,
