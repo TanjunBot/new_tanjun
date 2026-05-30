@@ -703,8 +703,17 @@ class UtilityCommands(discord.app_commands.Group):
     @app_commands.describe(
         user=app_commands.locale_str("utility_report_params_user_description"),
         reason=app_commands.locale_str("utility_report_params_reason_description"),
+        attachment=app_commands.locale_str("utility_report_params_attachment_description"),
+        anonymous=app_commands.locale_str("utility_report_params_anonymous_description"),
     )
-    async def report(self, ctx, user: discord.Member, reason: app_commands.Range[str, 12, 1024]) -> None:  # type: ignore[no-untyped-def]
+    async def report(
+        self,
+        ctx,
+        user: discord.Member,
+        reason: app_commands.Range[str, 12, 1024],  # type: ignore[no-untyped-def]
+        attachment: discord.Attachment | None = None,
+        anonymous: bool = False,
+    ) -> None:
         await ctx.response.defer(ephemeral=True)
         command_info = utility.CommandInfo(
             user=ctx.user,
@@ -717,7 +726,13 @@ class UtilityCommands(discord.app_commands.Group):
             reply=ctx.followup.send,
             client=ctx.client,
         )
-        await reportCommand(command_info=command_info, user=user, reason=reason)
+        await reportCommand(
+            command_info=command_info,
+            user=user,
+            reason=reason,
+            attachment=attachment,
+            anonymous=anonymous,
+        )
 
 
 class ScheduledMessageCommands(discord.app_commands.Group):
