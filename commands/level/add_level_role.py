@@ -1,4 +1,3 @@
-
 import discord
 
 from api import add_level_role, get_level_roles

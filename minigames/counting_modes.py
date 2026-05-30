@@ -383,11 +383,7 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         return
 
     try:
-        number = (
-            int(content, 2)
-            if mode == CountingMode.BINARY
-            else (int(content) if mode != CountingMode.ROMEAN else content)
-        )
+        number = int(content, 2) if mode == CountingMode.BINARY else (int(content) if mode != CountingMode.ROMEAN else content)
     except ValueError:
         await DiscordSafe.add_reaction(message, "💀")
         # nosec: B311
@@ -553,9 +549,9 @@ async def counting(message: discord.Message, config: dict | None = None) -> None
         correct_number = get_correct_next_number(mode, correct_number)
         # Display next number in the correct format for the mode
         display_number = (
-            bin(correct_number)[2:] if mode == CountingMode.BINARY else (
-                number_to_romeal(correct_number) if mode == CountingMode.ROMEAN else str(correct_number)
-            )
+            bin(correct_number)[2:]
+            if mode == CountingMode.BINARY
+            else (number_to_romeal(correct_number) if mode == CountingMode.ROMEAN else str(correct_number))
         )
         await DiscordSafe.send(message.channel, embed=tanjunEmbed(description=display_number))
         await repo.set_mode_progress(

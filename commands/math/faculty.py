@@ -39,7 +39,9 @@ async def faculty_command(command_info: utility.CommandInfo, number: int) -> Non
             ),
         )
 
-        embed.set_footer(text=tanjunLocalizer.localize(str(command_info.locale), "commands.math.randomnumber.not_truly_random"))
+        embed.set_footer(
+            text=tanjunLocalizer.localize(str(command_info.locale), "commands.math.randomnumber.not_truly_random")
+        )
     else:
         result = math.factorial(number)
         embed = utility.tanjunEmbed(
