@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import asyncmy
 from discord.ext import commands
-
 from pydantic import BaseModel, ConfigDict
 
 from api import DatabaseManager
