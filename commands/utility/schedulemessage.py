@@ -300,7 +300,9 @@ async def send_scheduled_messages(client: discord.Client) -> None:
 
                     if new_amount > 0:
                         await ScheduledMessageService.update_repeat_and_send_time(
-                            message_id, new_amount, next_send_time,
+                            message_id,
+                            new_amount,
+                            next_send_time,
                         )
                     else:
                         # No more repeats remaining — cancel the task

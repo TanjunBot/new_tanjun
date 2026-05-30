@@ -84,6 +84,7 @@ def mock_bot(mock_db_pool: MagicMock) -> MagicMock:
 
 # --- Integration test fixtures (requires test database container) ---
 
+
 @pytest.fixture(scope="session")
 def integration_mode() -> str:
     """
@@ -93,6 +94,7 @@ def integration_mode() -> str:
     Tests default to 'skip' to avoid requiring a running test DB.
     """
     import os
+
     return os.environ.get("TANJUN_INTEGRATION", "false").lower()
 
 
@@ -100,6 +102,7 @@ def integration_mode() -> str:
 def event_loop():
     """Create an event loop for the session-scoped integration fixtures."""
     import asyncio
+
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     yield loop
@@ -140,6 +143,7 @@ async def integration_db_pool():
     # Set the global pool so api._get_pool() resolves
     import api
     from api import set_bot
+
     _fake_bot = MagicMock()
     _fake_bot._pool = pool
     original_bot = api._bot
@@ -147,6 +151,7 @@ async def integration_db_pool():
 
     # Create all tables
     from api import create_tables
+
     await create_tables(_fake_bot)
 
     yield pool
@@ -154,8 +159,7 @@ async def integration_db_pool():
     # Clean up: drop all tables
     async with pool.acquire() as conn, conn.cursor() as cursor:
         await cursor.execute(
-            "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') "
-            "FROM information_schema.tables WHERE table_schema = %s",
+            "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') FROM information_schema.tables WHERE table_schema = %s",
             (db,),
         )
         drop_queries = await cursor.fetchall()

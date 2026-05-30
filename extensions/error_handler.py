@@ -31,10 +31,12 @@ def _set_sentry_context(interaction: discord.Interaction) -> None:
         import sentry_sdk
 
         # User context — User ID + guild ID provide enough info to triage.
-        sentry_sdk.set_user({
-            "id": str(interaction.user.id),
-            "username": str(interaction.user),
-        })
+        sentry_sdk.set_user(
+            {
+                "id": str(interaction.user.id),
+                "username": str(interaction.user),
+            }
+        )
 
         # Guild context
         if interaction.guild:
@@ -47,10 +49,13 @@ def _set_sentry_context(interaction: discord.Interaction) -> None:
             sentry_sdk.set_tag("command", command.qualified_name)
 
         # Extra context
-        sentry_sdk.set_context("interaction", {
-            "interaction_id": str(interaction.id),
-            "channel_id": str(interaction.channel_id),
-        })
+        sentry_sdk.set_context(
+            "interaction",
+            {
+                "interaction_id": str(interaction.id),
+                "channel_id": str(interaction.channel_id),
+            },
+        )
     except Exception:
         logger.debug("Failed to set Sentry context", exc_info=True)
 
@@ -72,7 +77,7 @@ def _get_locale(interaction: discord.Interaction) -> str:
         return "en"
 
     # Normalize to primary language subtag: "de-DE" -> "de", "en_US" -> "en"
-    primary_lang = str(locale_str).split('-')[0].split('_')[0].lower()
+    primary_lang = str(locale_str).split("-")[0].split("_")[0].lower()
     return primary_lang if primary_lang else "en"
 
 
@@ -147,7 +152,7 @@ class ErrorHandlerCog(commands.Cog):
             missing_permissions = None
             if isinstance(original, (app_commands.MissingPermissions, app_commands.BotMissingPermissions)):
                 # Extract missing permissions and format as comma-separated list
-                perms = getattr(original, 'missing_permissions', None)
+                perms = getattr(original, "missing_permissions", None)
                 if perms:
                     missing_permissions = ", ".join(str(p).replace("_", " ").title() for p in perms)
 
@@ -201,10 +206,12 @@ class ErrorHandlerCog(commands.Cog):
 
                     with sentry_sdk.push_scope() as scope:
                         # User context — User ID + guild ID provide enough info to triage.
-                        scope.set_user({
-                            "id": str(interaction.user.id),
-                            "username": str(interaction.user),
-                        })
+                        scope.set_user(
+                            {
+                                "id": str(interaction.user.id),
+                                "username": str(interaction.user),
+                            }
+                        )
 
                         # Guild context
                         if interaction.guild:
@@ -217,10 +224,13 @@ class ErrorHandlerCog(commands.Cog):
                             scope.set_tag("command", command.qualified_name)
 
                         # Extra context
-                        scope.set_context("interaction", {
-                            "interaction_id": str(interaction.id),
-                            "channel_id": str(interaction.channel_id),
-                        })
+                        scope.set_context(
+                            "interaction",
+                            {
+                                "interaction_id": str(interaction.id),
+                                "channel_id": str(interaction.channel_id),
+                            },
+                        )
 
                         # Log unexpected errors with full traceback (Sentry will capture this)
                         logger.exception(

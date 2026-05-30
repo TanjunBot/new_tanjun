@@ -59,7 +59,7 @@ def _safe_eval_node(node: ast.AST, x_val: np.ndarray | float) -> np.ndarray | fl
         if isinstance(node.op, ast.Div):
             return left / right
         if isinstance(node.op, ast.Pow):
-            return left ** right
+            return left**right
         if isinstance(node.op, ast.Mod):
             return left % right
         raise TypeError(f"Unsupported operator: {type(node.op).__name__}")
@@ -357,7 +357,10 @@ async def plot_function_command(
             disabled=True,
         )
         async def empty(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
-            await interaction.response.send_message(tanjunLocalizer.localize(self.plotter.command_info.locale, "commands.math.plotfunction.not_clickable"), ephemeral=True)
+            await interaction.response.send_message(
+                tanjunLocalizer.localize(self.plotter.command_info.locale, "commands.math.plotfunction.not_clickable"),
+                ephemeral=True,
+            )
 
         @discord.ui.button(
             emoji="<:math_add:1254372629456883793>",
@@ -500,7 +503,12 @@ async def plot_function_command(
         )
         async def rename_function(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             if not self.plotter.functions:
-                await interaction.response.send_message(tanjunLocalizer.localize(self.plotter.command_info.locale, "commands.math.plotfunction.no_functions_to_rename"), ephemeral=True)
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        self.plotter.command_info.locale, "commands.math.plotfunction.no_functions_to_rename"
+                    ),
+                    ephemeral=True,
+                )
                 return
 
             view = discord.ui.View()
@@ -604,9 +612,21 @@ async def plot_function_command(
                 await self.plotterView.update_plot(interaction)
                 self.update_options()
             except ValueError as e:
-                await interaction.response.send_message(tanjunLocalizer.localize(self.plotterView.plotter.command_info.locale, "commands.math.plotfunction.error", error=str(e)), ephemeral=True)
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        self.plotterView.plotter.command_info.locale, "commands.math.plotfunction.error", error=str(e)
+                    ),
+                    ephemeral=True,
+                )
             except Exception as e:
-                await interaction.response.send_message(tanjunLocalizer.localize(self.plotterView.plotter.command_info.locale, "commands.math.plotfunction.unexpected_error", error=str(e)), ephemeral=True)
+                await interaction.response.send_message(
+                    tanjunLocalizer.localize(
+                        self.plotterView.plotter.command_info.locale,
+                        "commands.math.plotfunction.unexpected_error",
+                        error=str(e),
+                    ),
+                    ephemeral=True,
+                )
 
     class ChangeTitleModal(
         discord.ui.Modal,

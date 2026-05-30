@@ -14,9 +14,7 @@ async def send_trigger_message(message: discord.Message) -> None:
     if not message.content:
         return
 
-    trigger_message = await trigger_message_service.match(
-        message.guild.id, message.content, message.channel.id
-    )
+    trigger_message = await trigger_message_service.match(message.guild.id, message.content, message.channel.id)
     if not trigger_message:
         return
 

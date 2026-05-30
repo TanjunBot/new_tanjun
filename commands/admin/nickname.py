@@ -40,7 +40,9 @@ async def change_nickname(command_info: utility.CommandInfo, member: discord.Mem
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nickname.targetTooHigh.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nickname.targetTooHigh.description"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.admin.nickname.targetTooHigh.description"
+            ),
         )
         await command_info.reply(embed=embed)
         return

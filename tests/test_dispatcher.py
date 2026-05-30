@@ -13,6 +13,7 @@ from utils.dispatcher import registry as _global_registry
 # Fixtures
 # ------------------------------------------------------------------
 
+
 @pytest.fixture
 def fresh_registry() -> HandlerRegistry:
     """Return a clean HandlerRegistry (no pre-registered handlers)."""
@@ -38,6 +39,7 @@ def _make_message(
 # MessageHandler dataclass
 # ------------------------------------------------------------------
 
+
 class TestMessageHandler:
     """Basic structural tests for MessageHandler."""
 
@@ -52,6 +54,7 @@ class TestMessageHandler:
 
     def test_custom_values(self) -> None:
         async def dummy(m: object) -> None: ...
+
         handler = MessageHandler(
             name="custom",
             callback=dummy,
@@ -73,6 +76,7 @@ class TestMessageHandler:
 # HandlerRegistry
 # ------------------------------------------------------------------
 
+
 class TestHandlerRegistry:
     """Tests for the HandlerRegistry class."""
 
@@ -84,6 +88,7 @@ class TestHandlerRegistry:
 
     def test_register_single(self, fresh_registry: HandlerRegistry) -> None:
         async def handler(m: object) -> None: ...
+
         h = MessageHandler(name="h1", callback=handler)
         fresh_registry.register(h)
         assert fresh_registry.count == 1
@@ -91,15 +96,19 @@ class TestHandlerRegistry:
     def test_register_multiple(self, fresh_registry: HandlerRegistry) -> None:
         async def h1(m: object) -> None: ...
         async def h2(m: object) -> None: ...
-        fresh_registry.register_multiple([
-            MessageHandler(name="h1", callback=h1),
-            MessageHandler(name="h2", callback=h2),
-        ])
+
+        fresh_registry.register_multiple(
+            [
+                MessageHandler(name="h1", callback=h1),
+                MessageHandler(name="h2", callback=h2),
+            ]
+        )
         assert fresh_registry.count == 2
 
     def test_get_handlers_sorted_by_priority(self, fresh_registry: HandlerRegistry) -> None:
         async def low(m: object) -> None: ...
         async def high(m: object) -> None: ...
+
         fresh_registry.register(MessageHandler(name="high", callback=high, priority=50))
         fresh_registry.register(MessageHandler(name="low", callback=low, priority=200))
         guild = MagicMock()
@@ -115,6 +124,7 @@ class TestHandlerRegistry:
 
     def test_ignore_bots_true_skips_bot_message(self, fresh_registry: HandlerRegistry) -> None:
         async def handler(m: object) -> None: ...
+
         fresh_registry.register(MessageHandler(name="h", callback=handler, ignore_bots=True))
         guild = MagicMock()
         msg = _make_message(author_bot=True, guild=guild)
@@ -122,6 +132,7 @@ class TestHandlerRegistry:
 
     def test_ignore_bots_false_allows_bot(self, fresh_registry: HandlerRegistry) -> None:
         async def handler(m: object) -> None: ...
+
         fresh_registry.register(MessageHandler(name="h", callback=handler, ignore_bots=False))
         guild = MagicMock()
         msg = _make_message(author_bot=True, guild=guild)
@@ -133,12 +144,14 @@ class TestHandlerRegistry:
 
     def test_only_guilds_true_skips_dm(self, fresh_registry: HandlerRegistry) -> None:
         async def handler(m: object) -> None: ...
+
         fresh_registry.register(MessageHandler(name="h", callback=handler, only_guilds=True))
         msg = _make_message(guild=None)  # DM
         assert fresh_registry.get_handlers(msg) == []
 
     def test_only_guilds_false_allows_dm(self, fresh_registry: HandlerRegistry) -> None:
         async def handler(m: object) -> None: ...
+
         fresh_registry.register(MessageHandler(name="h", callback=handler, only_guilds=False))
         msg = _make_message(guild=None)
         assert len(fresh_registry.get_handlers(msg)) == 1
@@ -149,18 +162,16 @@ class TestHandlerRegistry:
 
     def test_channel_whitelist_matches(self, fresh_registry: HandlerRegistry) -> None:
         async def handler(m: object) -> None: ...
-        fresh_registry.register(
-            MessageHandler(name="h", callback=handler, channel_whitelist={100, 200})
-        )
+
+        fresh_registry.register(MessageHandler(name="h", callback=handler, channel_whitelist={100, 200}))
         guild = MagicMock()
         msg = _make_message(guild=guild, channel_id=100)
         assert len(fresh_registry.get_handlers(msg)) == 1
 
     def test_channel_whitelist_blocks(self, fresh_registry: HandlerRegistry) -> None:
         async def handler(m: object) -> None: ...
-        fresh_registry.register(
-            MessageHandler(name="h", callback=handler, channel_whitelist={200})
-        )
+
+        fresh_registry.register(MessageHandler(name="h", callback=handler, channel_whitelist={200}))
         guild = MagicMock()
         msg = _make_message(guild=guild, channel_id=100)
         assert fresh_registry.get_handlers(msg) == []
@@ -171,26 +182,32 @@ class TestHandlerRegistry:
 
     def test_combined_filters_all_pass(self, fresh_registry: HandlerRegistry) -> None:
         async def handler(m: object) -> None: ...
-        fresh_registry.register(MessageHandler(
-            name="h",
-            callback=handler,
-            only_guilds=True,
-            ignore_bots=True,
-            channel_whitelist={100},
-        ))
+
+        fresh_registry.register(
+            MessageHandler(
+                name="h",
+                callback=handler,
+                only_guilds=True,
+                ignore_bots=True,
+                channel_whitelist={100},
+            )
+        )
         guild = MagicMock()
         msg = _make_message(guild=guild, channel_id=100)
         assert len(fresh_registry.get_handlers(msg)) == 1
 
     def test_combined_filters_one_fails(self, fresh_registry: HandlerRegistry) -> None:
         async def handler(m: object) -> None: ...
-        fresh_registry.register(MessageHandler(
-            name="h",
-            callback=handler,
-            only_guilds=True,
-            ignore_bots=True,
-            channel_whitelist={100},
-        ))
+
+        fresh_registry.register(
+            MessageHandler(
+                name="h",
+                callback=handler,
+                only_guilds=True,
+                ignore_bots=True,
+                channel_whitelist={100},
+            )
+        )
         # Bot message in wrong channel
         guild = MagicMock()
         msg = _make_message(author_bot=True, guild=guild, channel_id=100)
@@ -203,6 +220,7 @@ class TestHandlerRegistry:
 # ------------------------------------------------------------------
 # Convenience decorator: register_handler
 # ------------------------------------------------------------------
+
 
 class TestRegisterHandlerDecorator:
     """Tests for the @register_handler decorator."""
@@ -223,9 +241,7 @@ class TestRegisterHandlerDecorator:
         assert registered[0].callback is my_handler
 
         # Clean up
-        _global_registry._handlers = [
-            h for h in _global_registry._handlers if h.name != "my_handler"
-        ]
+        _global_registry._handlers = [h for h in _global_registry._handlers if h.name != "my_handler"]
 
     def test_decorator_custom_name(self) -> None:
         initial_count = _global_registry.count
@@ -244,9 +260,7 @@ class TestRegisterHandlerDecorator:
         assert registered[0].priority == 5
 
         # Clean up
-        _global_registry._handlers = [
-            h for h in _global_registry._handlers if h.name != "custom_name"
-        ]
+        _global_registry._handlers = [h for h in _global_registry._handlers if h.name != "custom_name"]
 
     def test_decorator_with_kwargs(self) -> None:
         initial_count = _global_registry.count
@@ -261,14 +275,13 @@ class TestRegisterHandlerDecorator:
         assert registered[0].kwargs == {"extra": "value"}
 
         # Clean up
-        _global_registry._handlers = [
-            h for h in _global_registry._handlers if h.name != "test_kwargs"
-        ]
+        _global_registry._handlers = [h for h in _global_registry._handlers if h.name != "test_kwargs"]
 
 
 # ------------------------------------------------------------------
 # Singleton registry
 # ------------------------------------------------------------------
+
 
 class TestGlobalRegistry:
     """The module-level singleton exists and is usable."""
@@ -278,17 +291,18 @@ class TestGlobalRegistry:
 
     def test_global_registry_can_register(self) -> None:
         async def handler(m: object) -> None: ...
+
         try:
-            _global_registry.register(MessageHandler(
-                name="_test_global",
-                callback=handler,
-                only_guilds=True,
-                ignore_bots=True,
-            ))
+            _global_registry.register(
+                MessageHandler(
+                    name="_test_global",
+                    callback=handler,
+                    only_guilds=True,
+                    ignore_bots=True,
+                )
+            )
             found = [h for h in _global_registry._handlers if h.name == "_test_global"]
             assert len(found) == 1
         finally:
             # Clean up so we don't pollute other tests
-            _global_registry._handlers = [
-                h for h in _global_registry._handlers if h.name != "_test_global"
-            ]
+            _global_registry._handlers = [h for h in _global_registry._handlers if h.name != "_test_global"]

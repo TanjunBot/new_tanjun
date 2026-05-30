@@ -40,7 +40,7 @@ def _should_discard_sentry_event(event: dict, hint: dict) -> dict | None:
 
     Returns ``None`` to discard the event, or the ``event`` dict to send it.
     """
-    exc_info = hint.get("exc_info", None)
+    exc_info = hint.get("exc_info")
     if exc_info is None:
         return event
     _exc_type, exc_value, _tb = exc_info
@@ -185,10 +185,7 @@ async def main() -> None:
 
     # Wait for the pool first so we can start table creation while extensions finish.
     # Use fail-fast: if pool_task or ext_task raises, cancel the other.
-    done, pending = await asyncio.wait(
-        {ext_task, pool_task},
-        return_when=asyncio.FIRST_EXCEPTION
-    )
+    done, pending = await asyncio.wait({ext_task, pool_task}, return_when=asyncio.FIRST_EXCEPTION)
 
     # Check if any task raised an exception
     exception_to_raise = None
@@ -228,10 +225,7 @@ async def main() -> None:
     table_task = asyncio.create_task(create_tables(bot))
 
     # Wait for both ext_task and table_task with fail-fast behavior
-    done, pending = await asyncio.wait(
-        {ext_task, table_task},
-        return_when=asyncio.FIRST_EXCEPTION
-    )
+    done, pending = await asyncio.wait({ext_task, table_task}, return_when=asyncio.FIRST_EXCEPTION)
 
     # Check if any task raised an exception
     for task in done:

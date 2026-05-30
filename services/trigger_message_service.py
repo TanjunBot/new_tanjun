@@ -56,15 +56,9 @@ class TriggerMessageService:
         """Create a new trigger message."""
         # Validate parameters using Pydantic model
         validated = TriggerMessageCreateParams(
-            guild_id=guild_id,
-            trigger=trigger,
-            response=response,
-            case_sensitive=case_sensitive
+            guild_id=guild_id, trigger=trigger, response=response, case_sensitive=case_sensitive
         )
-        query = (
-            "INSERT INTO triggerMessages (guild_id, `trigger`, response, case_sensitive) "
-            "VALUES (%s, %s, %s, %s)"
-        )
+        query = "INSERT INTO triggerMessages (guild_id, `trigger`, response, case_sensitive) VALUES (%s, %s, %s, %s)"
         params = (validated.guild_id, validated.trigger, validated.response, validated.case_sensitive)
         await execute_action(query, params)
 
@@ -76,10 +70,7 @@ class TriggerMessageService:
 
     async def get_all(self, guild_id: str) -> list[TriggerMessageModel]:
         """Get all trigger messages for a guild."""
-        query = (
-            "SELECT id, guild_id, `trigger`, response, case_sensitive "
-            "FROM triggerMessages WHERE guild_id = %s"
-        )
+        query = "SELECT id, guild_id, `trigger`, response, case_sensitive FROM triggerMessages WHERE guild_id = %s"
         params = (guild_id,)
         rows: list[TriggerMessageModel] = []
         async for row in TriggerMessageModel.iter_rows(query, params):
@@ -93,33 +84,20 @@ class TriggerMessageService:
     async def add_channel(self, guild_id: str, channel_id: str, trigger_id: int) -> None:
         """Restrict a trigger message to a specific channel."""
         # Validate parameters using Pydantic model
-        validated = TriggerMessageChannelAddParams(
-            guild_id=guild_id,
-            channel_id=channel_id,
-            trigger_id=trigger_id
-        )
-        query = (
-            "INSERT INTO triggerMessagesChannel (guild_id, channel_id, triggerId) "
-            "VALUES (%s, %s, %s)"
-        )
+        validated = TriggerMessageChannelAddParams(guild_id=guild_id, channel_id=channel_id, trigger_id=trigger_id)
+        query = "INSERT INTO triggerMessagesChannel (guild_id, channel_id, triggerId) VALUES (%s, %s, %s)"
         params = (validated.guild_id, validated.channel_id, validated.trigger_id)
         await execute_action(query, params)
 
     async def remove_channel(self, guild_id: str, channel_id: str, trigger_id: int) -> None:
         """Remove a channel restriction from a trigger message."""
-        query = (
-            "DELETE FROM triggerMessagesChannel "
-            "WHERE guild_id = %s AND channel_id = %s AND triggerId = %s"
-        )
+        query = "DELETE FROM triggerMessagesChannel WHERE guild_id = %s AND channel_id = %s AND triggerId = %s"
         params = (guild_id, channel_id, trigger_id)
         await execute_action(query, params)
 
     async def get_trigger_channels(self, guild_id: str, trigger_id: int) -> list[TriggerMessageChannelModel]:
         """Get all channel restrictions for a specific trigger message."""
-        query = (
-            "SELECT guild_id, channel_id, triggerId "
-            "FROM triggerMessagesChannel WHERE guild_id = %s AND triggerId = %s"
-        )
+        query = "SELECT guild_id, channel_id, triggerId FROM triggerMessagesChannel WHERE guild_id = %s AND triggerId = %s"
         params = (guild_id, trigger_id)
         rows: list[TriggerMessageChannelModel] = []
         async for row in TriggerMessageChannelModel.iter_rows(query, params):
@@ -128,10 +106,7 @@ class TriggerMessageService:
 
     async def get_channel_triggers(self, guild_id: str, channel_id: str) -> list[TriggerMessageChannelModel]:
         """Get all trigger message channel restrictions for a specific channel."""
-        query = (
-            "SELECT guild_id, channel_id, triggerId "
-            "FROM triggerMessagesChannel WHERE guild_id = %s AND channel_id = %s"
-        )
+        query = "SELECT guild_id, channel_id, triggerId FROM triggerMessagesChannel WHERE guild_id = %s AND channel_id = %s"
         params = (guild_id, channel_id)
         rows: list[TriggerMessageChannelModel] = []
         async for row in TriggerMessageChannelModel.iter_rows(query, params):

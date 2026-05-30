@@ -47,6 +47,8 @@ async def random_number_command(command_info: utility.CommandInfo, min: int, max
             ),
         )
 
-        embed.set_footer(text=tanjunLocalizer.localize(str(command_info.locale), "commands.math.randomnumber.not_truly_random"))
+        embed.set_footer(
+            text=tanjunLocalizer.localize(str(command_info.locale), "commands.math.randomnumber.not_truly_random")
+        )
 
     await command_info.reply(embed=embed)
