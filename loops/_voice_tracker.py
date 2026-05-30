@@ -97,14 +97,12 @@ class VoiceUserManager:
         active_members_before = [
             member
             for member in channel_members_before
-            if not (member.voice.self_mute or member.voice.self_deaf)
-            and not await check_if_opted_out(member.id)
+            if not (member.voice.self_mute or member.voice.self_deaf) and not await check_if_opted_out(member.id)
         ]
         active_members_after = [
             member
             for member in channel_members_after
-            if not (member.voice.self_mute or member.voice.self_deaf)
-            and not await check_if_opted_out(member.id)
+            if not (member.voice.self_mute or member.voice.self_deaf) and not await check_if_opted_out(member.id)
         ]
 
         # Collect all affected active member IDs

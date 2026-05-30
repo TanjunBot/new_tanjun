@@ -14,20 +14,13 @@ import os
 from collections.abc import AsyncIterator
 from typing import Annotated
 
-from pydantic import BaseModel, BeforeValidator, Field, StringConstraints
+from pydantic import BaseModel, Field, StringConstraints
 
 from config import openAiKey
-
-# --- Type aliases ---
-
-UserId = Annotated[
-    str,
-    BeforeValidator(lambda v: str(v) if isinstance(v, int) else v),
-    StringConstraints(pattern=r"^\d{17,20}$"),
-]
-
+from tanjun_types import UserId
 
 # --- Pydantic models ---
+
 
 class AiTokenUsage(BaseModel):
     """Represents a user's current AI token balance."""
@@ -81,6 +74,7 @@ class TokenOverview(BaseModel):
 
 # --- Service ---
 
+
 class AiService:
     """Single responsible service for all AI-related concerns.
 
@@ -97,10 +91,7 @@ class AiService:
         """Return token usage overview for a user."""
         from api import execute_query
 
-        query = (
-            "SELECT user_id, freeToken, plusToken, paidToken, usedToken "
-            "FROM aiToken WHERE user_id = %s"
-        )
+        query = "SELECT user_id, freeToken, plusToken, paidToken, usedToken FROM aiToken WHERE user_id = %s"
         result = await execute_query(query, (user_id,))
         if not result:
             return None
@@ -210,10 +201,7 @@ class AiService:
         """Return the raw token overview (free, plus, paid, used)."""
         from api import execute_query
 
-        query = (
-            "SELECT freeToken, plusToken, paidToken, usedToken "
-            "FROM aiToken WHERE user_id = %s"
-        )
+        query = "SELECT freeToken, plusToken, paidToken, usedToken FROM aiToken WHERE user_id = %s"
         result = await execute_query(query, (user_id,))
         if not result:
             return None
@@ -296,9 +284,18 @@ class AiService:
                                   frequency_penalty, presence_penalty)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
-        await execute_action(query, (params.user_id, params.situation, params.name,
-                                     params.temperature, params.top_p,
-                                     params.frequency_penalty, params.presence_penalty))
+        await execute_action(
+            query,
+            (
+                params.user_id,
+                params.situation,
+                params.name,
+                params.temperature,
+                params.top_p,
+                params.frequency_penalty,
+                params.presence_penalty,
+            ),
+        )
 
     @staticmethod
     async def delete_situation(user_id: UserId) -> None:
@@ -329,7 +326,5 @@ class AiService:
         """Iterate over all unlocked situation names one at a time."""
         from api import execute_query_iter
 
-        async for row in execute_query_iter(
-            "SELECT name FROM aiSituations WHERE unlocked = 1"
-        ):
+        async for row in execute_query_iter("SELECT name FROM aiSituations WHERE unlocked = 1"):
             yield row[0]

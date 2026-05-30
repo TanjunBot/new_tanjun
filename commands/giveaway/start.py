@@ -218,7 +218,9 @@ class EndTimeModal(ui.Modal):
     async def on_submit(self, interaction: discord.Interaction):
         end_time = self.children[0].value
         self.view.giveaway_data["end_time"] = end_time
-        self.view.last_action = tanjunLocalizer.localize(self.command_info.locale, "commands.giveaway.builder.end_time.updated")
+        self.view.last_action = tanjunLocalizer.localize(
+            self.command_info.locale, "commands.giveaway.builder.end_time.updated"
+        )
         await self.view.update_embed(interaction.response.edit_message)
 
 

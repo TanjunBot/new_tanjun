@@ -258,8 +258,6 @@ async def battlelog(command_info: command_info, player_tag: str = None):
             ),
             description=""
             if not battle_log_items
-            else BattleLogPaginator(battle_log_items, command_info, player_tag, player_name)
-            .generate_page(0)
-            .description,
+            else BattleLogPaginator(battle_log_items, command_info, player_tag, player_name).generate_page(0).description,
         )
         await command_info.reply(embed=embed)
