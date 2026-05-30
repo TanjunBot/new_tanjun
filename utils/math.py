@@ -11,7 +11,8 @@ import concurrent.futures
 import math
 import operator as op
 import re
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
+from typing import cast
 
 # Thread pool executor for CPU-bound formula evaluation (module-level singleton)
 _eval_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
@@ -39,7 +40,7 @@ class NumericStringParser:
         )
         from pyparsing import Optional as Opt
 
-        self.exprStack = []
+        self.exprStack: list[str] = []
 
         point = Literal(".")
         e = CaselessLiteral("E")
@@ -66,7 +67,7 @@ class NumericStringParser:
         self.bnf = expr
 
         # Function map
-        self.fn = {
+        self.fn: dict[str, Callable[..., float] | float] = {
             "sin": math.sin,
             "cos": math.cos,
             "tan": math.tan,
@@ -99,7 +100,7 @@ class NumericStringParser:
         }
 
         # Operator map
-        self.opn = {
+        self.opn: dict[str, Callable[[float, float], float]] = {
             "+": op.add,
             "-": op.sub,
             "*": op.mul,
@@ -127,7 +128,10 @@ class NumericStringParser:
         elif op_token == "E":
             return math.e
         elif op_token in self.fn:
-            return self.fn[op_token](self.evaluate_stack(s))
+            fn_val = self.fn[op_token]
+            if callable(fn_val):
+                return fn_val(self.evaluate_stack(s))  # type: ignore[operator]
+            return fn_val  # float constant
         elif op_token[0].isalpha():
             raise Exception(f"Invalid identifier: {op_token}")
         else:
@@ -144,21 +148,22 @@ class NumericStringParser:
 # AST-based expression evaluation
 # ---------------------------------------------------------------------------
 
-_operators = {
+_OperatorsT = dict[type, Callable[..., float]]
+_operators: _OperatorsT = {
     ast.Add: op.add,
     ast.Sub: op.sub,
     ast.Mult: op.mul,
     ast.Div: op.truediv,
     ast.FloorDiv: op.floordiv,
     ast.Pow: op.pow,
-    ast.BitXor: op.xor,
+    ast.BitXor: op.xor,  # type: ignore[arg-type]
     ast.USub: op.neg,
     ast.Mod: op.mod,
 }
 
 
 def sqrt_n(x: float, n: float = 2) -> float:
-    return x ** (1 / n)
+    return cast(float, x ** (1 / n))
 
 
 def log_n(x: float, base: float = math.e) -> float:
@@ -212,17 +217,19 @@ def eval_expr(expr: str, variables: Mapping[str, float] | None = None) -> float:
 
 def _eval_ast(node: ast.AST, variables: Mapping[str, float]) -> float:
     if isinstance(node, ast.Constant):
-        return node.value
+        return cast(float, node.value)
     elif isinstance(node, ast.BinOp):
-        return _operators[type(node.op)](_eval_ast(node.left, variables), _eval_ast(node.right, variables))
+        bin_op_func = cast(Callable[[float, float], float], _operators[type(node.op)])
+        return bin_op_func(_eval_ast(node.left, variables), _eval_ast(node.right, variables))
     elif isinstance(node, ast.UnaryOp):
-        return _operators[type(node.op)](_eval_ast(node.operand, variables))
+        un_op_func = cast(Callable[[float], float], _operators[type(node.op)])
+        return un_op_func(_eval_ast(node.operand, variables))
     elif isinstance(node, ast.Call):
         if isinstance(node.func, ast.Attribute):
             if node.func.value.id == "math":
                 func = getattr(math, node.func.attr)
                 args = [_eval_ast(arg, variables) for arg in node.args]
-                return func(*args)
+                return cast(float, func(*args))
         elif isinstance(node.func, ast.Name):
             if node.func.id == "sqrt_n":
                 args = [_eval_ast(arg, variables) for arg in node.args]
@@ -232,7 +239,7 @@ def _eval_ast(node: ast.AST, variables: Mapping[str, float]) -> float:
                 return log_n(*args)
             elif node.func.id == "abs":
                 args = [_eval_ast(arg, variables) for arg in node.args]
-                return abs(*args)
+                return cast(float, abs(*args))
         raise TypeError(f"Unsupported function call: {node.func}")
     elif isinstance(node, ast.Name):
         if node.id in variables:
@@ -246,7 +253,7 @@ def _eval_ast(node: ast.AST, variables: Mapping[str, float]) -> float:
 # Level / XP calculations
 # ---------------------------------------------------------------------------
 
-LEVEL_SCALINGS = {
+LEVEL_SCALINGS: dict[str, Callable[[int], int]] = {
     "easy": lambda level: 100 * level,
     "medium": lambda level: 100 * (level**1.5),
     "hard": lambda level: 100 * (level**2),
@@ -254,7 +261,7 @@ LEVEL_SCALINGS = {
 }
 
 # Inverse formulas for built-in scalings: O(1) lookups instead of O(log n) threshold scans.
-_LEVEL_INVERSES: dict[str, callable] = {
+_LEVEL_INVERSES: dict[str, Callable[[int], int]] = {
     "easy": lambda xp: xp // 100,
     "medium": lambda xp: int((xp / 100) ** (1 / 1.5)),
     "hard": lambda xp: int(math.sqrt(xp / 100)),
@@ -269,7 +276,8 @@ def _invert_get_level_for_xp(xp: int, scaling: str) -> int:
     """
     if xp <= 0:
         return 0
-    level = _LEVEL_INVERSES.get(scaling, lambda _: 0)(xp)
+    level_func: Callable[[int], int] = _LEVEL_INVERSES.get(scaling, lambda _: 0)
+    level = cast(int, level_func(xp))
     if level < 0:
         return 0
     while get_xp_for_level(level + 1, scaling) <= xp and level < 10000:

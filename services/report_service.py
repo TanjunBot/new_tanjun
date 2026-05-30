@@ -162,7 +162,7 @@ class ReportService:
         )
         if not current:
             return None
-        old_status = current[0][0]
+        old_status = current[0][0]  # type: ignore[no-any-return]
 
         query = (
             "UPDATE reports SET status = %s, status_updated_at = NOW(), "
@@ -171,7 +171,7 @@ class ReportService:
         )
         params = (new_status, updated_by, note, guild_id, int(report_id))
         await execute_action(query, params)
-        return old_status
+        return old_status  # type: ignore[no-any-return]
 
     @staticmethod
     async def set_anonymous(guild_id: str, report_id: int | str, anonymous: bool) -> None:

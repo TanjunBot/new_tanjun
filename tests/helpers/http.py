@@ -7,7 +7,7 @@ import pytest
 
 
 @pytest.fixture
-def mock_aiohttp_session():
+def mock_aiohttp_session() -> Any:
     with patch("aiohttp.ClientSession") as mock_session:
         yield mock_session
 
