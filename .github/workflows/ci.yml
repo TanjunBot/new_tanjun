@@ -52,10 +52,13 @@ jobs:
         run: pip install ruff==${{ env.RUFF_VERSION }}
 
       - name: Run Ruff Linter
-        run: ruff check . --fix --exit-zero
+        run: ruff check .
 
       - name: Run Ruff Formatter
-        run: ruff format .
+        run: ruff format . --check
+
+      - name: Lint test quality
+        run: python scripts/lint_tests.py
 
   type-check:
     name: Type Check (Mypy)
@@ -129,7 +132,7 @@ jobs:
             --ignore=tests/integration \
             --ignore=tests/unit/health \
             --ignore=tests/unit/test_run_flake8.py \
-            --cov=. --cov-report=term --cov-report=xml --junitxml=test-results.xml -v
+            --cov=. --cov-report=term --cov-report=xml --cov-fail-under=0 --junitxml=test-results.xml -v
       - uses: actions/upload-artifact@v4
         if: always()
         with:
