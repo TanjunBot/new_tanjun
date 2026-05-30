@@ -99,17 +99,6 @@ def integration_mode() -> str:
 
 
 @pytest.fixture(scope="session")
-def event_loop():
-    """Create an event loop for the session-scoped integration fixtures."""
-    import asyncio
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    yield loop
-    loop.close()
-
-
-@pytest.fixture(scope="session")
 async def integration_db_pool():
     """
     Create a real database connection pool pointing at the test database.

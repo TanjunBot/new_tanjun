@@ -51,6 +51,7 @@ class TestPriorityConstants:
 # ------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 class TestRegistrationOrderByPriority:
     async def test_handlers_sorted_on_register(self) -> None:
         """Handlers should be sorted by priority when registered, not just at dispatch time."""
@@ -110,6 +111,7 @@ class TestRegistrationOrderByPriority:
 # ------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 class TestFiltering:
     async def test_ignore_bots(self) -> None:
         async def handler(_m: object) -> None:
@@ -163,9 +165,7 @@ class TestFiltering:
 # ------------------------------------------------------------------
 
 
-pytestmark = pytest.mark.asyncio
-
-
+@pytest.mark.asyncio
 class TestDispatch:
     async def test_dispatch_no_handlers(self) -> None:
         clear()
