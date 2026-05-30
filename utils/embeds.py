@@ -5,7 +5,7 @@ Extracted from ``utility.py`` as part of refactoring (issue #1608).
 
 import datetime
 import enum
-from collections.abc import Mapping
+from collections.abc import AbstractSet, Mapping
 from typing import Annotated, Any, Self
 
 import discord
@@ -294,7 +294,14 @@ class TanjunEmbed(BaseModel):
             embed.add_field(name=field.name, value=field.value, inline=field.inline)
         return embed
 
-    def copy(self) -> Self:
+    def copy(
+        self,
+        *,
+        include: AbstractSet[int] | AbstractSet[str] | Mapping[int, Any] | Mapping[str, Any] | None = None,
+        exclude: AbstractSet[int] | AbstractSet[str] | Mapping[int, Any] | Mapping[str, Any] | None = None,
+        update: dict[str, Any] | None = None,
+        deep: bool = False,
+    ) -> Self:
         """Return a shallow copy of the embed."""
         data = self.model_dump()
         data["colour"] = self._colour

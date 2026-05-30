@@ -83,13 +83,13 @@ class LocaleFileHealthCheck(HealthCheck):
 
         # Cross-locale comparison: warn about keys in en.json missing from de.json
         if "en" in locale_data and "de" in locale_data:
-            en_ids = {
-                entry.get("identifier")
+            en_ids: set[str] = {
+                str(entry["identifier"])
                 for entry in locale_data["en"]
                 if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
             }
-            de_ids = {
-                entry.get("identifier")
+            de_ids: set[str] = {
+                str(entry["identifier"])
                 for entry in locale_data["de"]
                 if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
             }

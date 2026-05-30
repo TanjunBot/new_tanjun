@@ -10,7 +10,7 @@ Provides health checks for:
 
 from __future__ import annotations
 
-from aiohttp import ClientError, ClientSession
+from aiohttp import ClientError, ClientSession, ClientTimeout
 
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 
@@ -42,7 +42,7 @@ class GIPHYHealthCheck(HealthCheck):
                 session.get(
                     "https://api.giphy.com/v1/gifs/trending",
                     params={"api_key": giphyAPIKey, "limit": "1"},
-                    timeout=10,
+                    timeout=ClientTimeout(total=10),
                 ) as response,
             ):
                 if response.status != 200:
@@ -100,7 +100,7 @@ class BrawlStarsHealthCheck(HealthCheck):
                 session.get(
                     "https://api.brawlstars.com/v1/brawlers",
                     headers=headers,
-                    timeout=10,
+                    timeout=ClientTimeout(total=10),
                 ) as response,
             ):
                 if response.status == 403:
@@ -164,7 +164,7 @@ class ImgBBHealthCheck(HealthCheck):
                 session.get(
                     "https://api.imgbb.com/1/upload",
                     params={"key": ImgBBApiKey},
-                    timeout=10,
+                    timeout=ClientTimeout(total=10),
                 ) as response,
             ):
                 if response.status not in (200, 400):
@@ -222,7 +222,10 @@ class BytebinHealthCheck(HealthCheck):
             headers["Authorization"] = f"Basic {auth}"
 
         try:
-            async with ClientSession() as session, session.get(bytebin_url, headers=headers, timeout=10) as response:
+            async with (
+                ClientSession() as session,
+                session.get(bytebin_url, headers=headers, timeout=ClientTimeout(total=10)) as response,
+            ):
                 if bytebin_username and bytebin_password and response.status in (401, 403):
                     return HealthCheckResult(
                         check_name=self.name,
@@ -284,7 +287,7 @@ class GitHubAPIHealthCheck(HealthCheck):
                 session.get(
                     "https://api.github.com/user",
                     headers=headers,
-                    timeout=10,
+                    timeout=ClientTimeout(total=10),
                 ) as response,
             ):
                 if response.status == 401:

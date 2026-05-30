@@ -21,7 +21,7 @@ class ReportFilter(BaseModel):
     guild_id: str
     user_id: str | None = None
     reporter_id: str | None = None
-    status: str | None = None  # "PENDING" | "ACCEPTED" | "RESOLVED" | "REJECTED"
+    status: str | None = None  # "PENDING" | "INVESTIGATING" | "ACTION_TAKEN" | "DISMISSED"
 
 
 class ReportCreateParams(BaseModel):
@@ -37,6 +37,8 @@ class ReportCreateParams(BaseModel):
 class ReportService:
     """Service for managing reports, blocked reporters, and report channels."""
 
+    VALID_STATUSES = ("PENDING", "INVESTIGATING", "ACTION_TAKEN", "DISMISSED")
+
     # ------------------------------------------------------------------ #
     # Reports
     # ------------------------------------------------------------------ #
@@ -47,8 +49,8 @@ class ReportService:
         if params.is_moderator:
             query = (
                 "INSERT INTO reports "
-                "(guild_id, user_id, reporterId, reason, accepted, accepted_at, acceptedBy) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                "(guild_id, user_id, reporterId, reason, status, accepted, accepted_at, acceptedBy) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
             )
             from datetime import datetime
 
@@ -57,13 +59,14 @@ class ReportService:
                 params.user_id,
                 params.reporter_id,
                 params.reason,
+                "INVESTIGATING",
                 1,
                 datetime.now(),
                 params.reporter_id,
             )
         else:
-            query = "INSERT INTO reports (guild_id, user_id, reporterId, reason) VALUES (%s, %s, %s, %s)"
-            vals = (params.guild_id, params.user_id, params.reporter_id, params.reason)
+            query = "INSERT INTO reports (guild_id, user_id, reporterId, reason, status) VALUES (%s, %s, %s, %s, %s)"
+            vals = (params.guild_id, params.user_id, params.reporter_id, params.reason, "PENDING")
         return await execute_insert_and_get_id(query, vals)
 
     @staticmethod
@@ -72,6 +75,9 @@ class ReportService:
         query = """
             SELECT id, guild_id, user_id, reporterId, reason,
                    UNIX_TIMESTAMP(created_at) as created_at,
+                   status,
+                   UNIX_TIMESTAMP(status_updated_at) as status_updated_at,
+                   status_updated_by,
                    accepted,
                    UNIX_TIMESTAMP(accepted_at) as accepted_at,
                    acceptedBy,
@@ -89,14 +95,8 @@ class ReportService:
             query += " AND reporterId = %s"
             params.append(filter_.reporter_id)
         if filter_.status is not None:
-            if filter_.status == "PENDING":
-                query += " AND accepted = 0 AND resolved = 0"
-            elif filter_.status == "ACCEPTED":
-                query += " AND accepted = 1"
-            elif filter_.status == "RESOLVED":
-                query += " AND resolved = 1"
-            elif filter_.status == "REJECTED":
-                query += " AND accepted = 0 AND resolved = 1"
+            query += " AND status = %s"
+            params.append(filter_.status)
 
         rows: list[ReportModel] = []
         async for row in ReportModel.iter_rows(query, tuple(params)):
@@ -109,6 +109,9 @@ class ReportService:
         query = """
             SELECT id, guild_id, user_id, reporterId, reason,
                    UNIX_TIMESTAMP(created_at) as created_at,
+                   status,
+                   UNIX_TIMESTAMP(status_updated_at) as status_updated_at,
+                   status_updated_by,
                    accepted,
                    UNIX_TIMESTAMP(accepted_at) as accepted_at,
                    acceptedBy,
@@ -124,27 +127,55 @@ class ReportService:
         return rows
 
     @staticmethod
+    async def set_status(
+        guild_id: str,
+        report_id: int | str,
+        status: str,
+        updated_by: str | None = None,
+    ) -> None:
+        """Update the status of a report."""
+        status_upper = status.upper()
+        if status_upper not in ReportService.VALID_STATUSES:
+            msg = f"Invalid status '{status}'. Must be one of {ReportService.VALID_STATUSES}"
+            raise ValueError(msg)
+
+        query = (
+            "UPDATE reports SET status = %s, status_updated_at = NOW(), status_updated_by = %s WHERE guild_id = %s AND id = %s"
+        )
+        params = (status_upper, updated_by, guild_id, report_id)
+        await execute_action(query, params)
+
+    @staticmethod
     async def accept(guild_id: str, report_id: int | str, accepted_by: str | None = None) -> None:
-        """Mark a report as accepted."""
-        query = "UPDATE reports SET accepted = 1, accepted_at = NOW(), acceptedBy = %s WHERE guild_id = %s AND id = %s"
-        params = (accepted_by, guild_id, report_id)
+        """Mark a report as accepted (and set status to INVESTIGATING)."""
+        query = (
+            "UPDATE reports SET accepted = 1, accepted_at = NOW(), acceptedBy = %s, "
+            "status = 'INVESTIGATING', status_updated_at = NOW(), status_updated_by = %s "
+            "WHERE guild_id = %s AND id = %s"
+        )
+        params = (accepted_by, accepted_by, guild_id, report_id)
         await execute_action(query, params)
 
     @staticmethod
     async def reject(guild_id: str, report_id: int | str, accepted_by: str | None = None) -> None:
-        """Mark a report as rejected."""
+        """Mark a report as rejected (and set status to DISMISSED)."""
         query = (
-            "UPDATE reports SET accepted = 0, accepted_at = NOW(), acceptedBy = %s, resolved = 2 "
+            "UPDATE reports SET accepted = 0, accepted_at = NOW(), acceptedBy = %s, resolved = 2, "
+            "status = 'DISMISSED', status_updated_at = NOW(), status_updated_by = %s "
             "WHERE guild_id = %s AND id = %s"
         )
-        params = (accepted_by, guild_id, report_id)
+        params = (accepted_by, accepted_by, guild_id, report_id)
         await execute_action(query, params)
 
     @staticmethod
-    async def resolve(guild_id: str, report_id: int | str) -> None:
-        """Mark a report as resolved."""
-        query = "UPDATE reports SET resolved = 1, resolved_at = NOW() WHERE guild_id = %s AND id = %s"
-        params = (guild_id, report_id)
+    async def resolve(guild_id: str, report_id: int | str, resolved_by: str | None = None) -> None:
+        """Mark a report as resolved (ACTION_TAKEN)."""
+        query = (
+            "UPDATE reports SET resolved = 1, resolved_at = NOW(), resolvedBy = %s, "
+            "status = 'ACTION_TAKEN', status_updated_at = NOW(), status_updated_by = %s "
+            "WHERE guild_id = %s AND id = %s"
+        )
+        params = (resolved_by, resolved_by, guild_id, report_id)
         await execute_action(query, params)
 
     @staticmethod

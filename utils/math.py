@@ -26,7 +26,7 @@ class NumericStringParser:
     Most of this code comes from the fourFn.py pyparsing example
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         from pyparsing import (
             CaselessLiteral,
             Combine,
