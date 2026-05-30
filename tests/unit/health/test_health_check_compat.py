@@ -14,7 +14,7 @@ class TestHealthCheckCompatModule:
     def test_exports_concrete_checks(self):
         assert health_check.DatabaseHealthCheck is not None
         assert health_check.LocaleFileHealthCheck is not None
-        assert health_check.OpenAIHealthCheck is not None
+        assert health_check.OpenRouterHealthCheck is not None
         assert health_check.TwitchAPIHealthCheck is not None
 
     def test_all_list_matches_exports(self):

@@ -9,6 +9,7 @@ This shim will be removed after all imports have been migrated.
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 from health.checks.database import DatabaseHealthCheck
 from health.checks.locales import LocaleFileHealthCheck
+from health.checks.openrouter import OpenRouterHealthCheck
 from health.checks.openai import OpenAIHealthCheck
 from health.checks.twitch import TwitchAPIHealthCheck
 
@@ -18,6 +19,7 @@ __all__ = [
     "HealthCheckResult",
     "HealthStatus",
     "LocaleFileHealthCheck",
+    "OpenRouterHealthCheck",
     "OpenAIHealthCheck",
     "TwitchAPIHealthCheck",
 ]

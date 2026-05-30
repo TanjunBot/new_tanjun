@@ -60,11 +60,11 @@ async def test_root_command_name_is_games_name():
     assert get_tree_command_names(bot) == ["games_name"]
 
 
-async def test_root_group_has_7_entries():
+async def test_root_group_has_10_entries():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "games_name")
     assert root is not None
-    assert len(get_subcommand_names(root)) == 7
+    assert len(get_subcommand_names(root)) == 10
 
 
 async def test_subcommand_games_ttt_name_registered():

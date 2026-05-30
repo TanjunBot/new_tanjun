@@ -15,6 +15,7 @@ import discord
 from aiohttp import web
 from discord.ext import commands, tasks
 
+from config import metrics_port
 from services.metrics_service import (
     bot_start_time,
     command_duration,
@@ -50,9 +51,11 @@ class PrometheusMetricsCog(commands.Cog):
         self._start_time = time.time()
         bot_start_time.set(self._start_time)
 
-        # Start the Prometheus HTTP endpoint (port 8000).
         await self._start_http_server()
-        logger.info("Prometheus metrics HTTP server started on port 8000")
+        if self._site is not None:
+            logger.info("Prometheus metrics HTTP server started on port %s", metrics_port)
+        else:
+            logger.warning("Prometheus metrics HTTP server disabled (port %s unavailable)", metrics_port)
 
         # Start background metrics collection.
         self.collect_system_metrics.start()
@@ -76,7 +79,7 @@ class PrometheusMetricsCog(commands.Cog):
     # ── HTTP server for Prometheus scraping ──────────────────────────────────
 
     async def _start_http_server(self) -> None:
-        """Start the aiohttp-based Prometheus metrics endpoint on port 8000."""
+        """Start the aiohttp-based Prometheus metrics endpoint."""
         app = web.Application()
 
         async def metrics_handler(request: web.Request) -> web.Response:
@@ -95,9 +98,20 @@ class PrometheusMetricsCog(commands.Cog):
 
         self._runner = web.AppRunner(app)
         await self._runner.setup()
-        self._site = web.TCPSite(self._runner, "0.0.0.0", 8000)
-        await self._site.start()
-        logger.info("Prometheus /metrics endpoint ready on 0.0.0.0:8000")
+        self._site = web.TCPSite(self._runner, "0.0.0.0", metrics_port)
+        try:
+            await self._site.start()
+        except OSError as e:
+            await self._runner.cleanup()
+            self._runner = None
+            self._site = None
+            logger.warning(
+                "Could not bind Prometheus metrics to 0.0.0.0:%s (%s); metrics HTTP disabled",
+                metrics_port,
+                e,
+            )
+            return
+        logger.info("Prometheus /metrics endpoint ready on 0.0.0.0:%s", metrics_port)
 
     # ── Background collection tasks ──────────────────────────────────────────
 

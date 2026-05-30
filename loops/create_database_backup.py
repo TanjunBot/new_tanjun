@@ -7,7 +7,7 @@ from typing import cast
 
 from discord import Client, File, TextChannel
 
-from config import database_ip, database_password, database_port, database_user
+from config import database_ip, database_password, database_port, database_schema, database_user
 
 
 def _write_defaults_file(user: str, password: str, host: str, port: int) -> str:
@@ -29,8 +29,9 @@ async def dump_database_schema(user: str, password: str, host: str, port: int, o
         dump_command = [
             "mysqldump",
             f"--defaults-extra-file={defaults_file}",
-            "--all-databases",
-            "--ignore-database=shlink",
+            "--single-transaction",
+            "--quick",
+            database_schema,
         ]
 
         with open(output_file, "w") as file:

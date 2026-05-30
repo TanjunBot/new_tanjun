@@ -56,19 +56,22 @@ class Settings(BaseSettings, cli_parse_args=False):
     twitch_secret: SecretStr = Field(default=SecretStr(""), alias="twitchSecret")
     twitch_id: str = Field(default="", alias="twitchId")
 
+    # ── OpenRouter (AI chat) ──────────────────────────────────────────────────
+    openrouter_api_key: SecretStr = Field(default=SecretStr(""), alias="OPENROUTER_API_KEY")
+    openrouter_model: str = Field(default="deepseek/deepseek-v4-flash:free", alias="OPENROUTER_MODEL")
+
     # ── Bytebin ───────────────────────────────────────────────────────────────
     bytebin_url: str = ""
     bytebin_password: SecretStr = SecretStr("")
     bytebin_username: str = ""
 
-    # ── OpenRouter ────────────────────────────────────────────────────────────
-    openrouter_api_key: SecretStr = Field(default=SecretStr(""), alias="OPENROUTER_API_KEY")
-    openrouter_model: str = Field(default="deepseek/deepseek-v4-flash:free", alias="OPENROUTER_MODEL")
-
     # ── Sentry ─────────────────────────────────────────────────────────────────
     sentry_dsn: str = Field(default="", alias="sentry_dsn")
     sentry_traces_sample_rate: float = Field(default=0.0, alias="SENTRY_TRACES_SAMPLE_RATE")
     sentry_environment: str = Field(default="", alias="SENTRY_ENVIRONMENT")
+
+    # ── Metrics ───────────────────────────────────────────────────────────────
+    metrics_port: int = Field(default=8001, alias="METRICS_PORT")
 
     # ── Activity ──────────────────────────────────────────────────────────────
     activity: str = "Tanjun {version}"
@@ -138,6 +141,7 @@ OPENROUTER_MODEL: str = settings.openrouter_model
 sentry_dsn: str = settings.sentry_dsn
 sentry_traces_sample_rate: float = settings.sentry_traces_sample_rate
 sentry_environment: str = settings.sentry_environment
+metrics_port: int = settings.metrics_port
 
 
 # ── Emoji identifiers for calculator ─────────────────────────────────────────

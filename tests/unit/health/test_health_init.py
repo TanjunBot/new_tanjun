@@ -19,7 +19,7 @@ class TestHealthPackageInit:
             "HealthStatus",
             "ImgBBHealthCheck",
             "LocaleFileHealthCheck",
-            "OpenAIHealthCheck",
+            "OpenRouterHealthCheck",
             "TwitchAPIHealthCheck",
             "notify_health_failures",
         }
