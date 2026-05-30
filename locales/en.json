@@ -120,14 +120,6 @@
     "max_length": null
   },
   {
-    "identifier": "commands.admin.nuke.notfoundError",
-    "source_string": "Der Kanal wurde nicht gefunden. Möglicherweise wurde er bereits gelöscht.",
-    "translation": "The channel was not found. It may have already been deleted.",
-    "context": "commands -> admin -> nuke -> notfoundError",
-    "labels": "unassigned",
-    "max_length": null
-  },
-  {
     "identifier": "commands.admin.removerole.cancel.label",
     "source_string": "Abbrechen",
     "translation": "Cancel",
