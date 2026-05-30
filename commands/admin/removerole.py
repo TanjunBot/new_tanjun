@@ -5,6 +5,8 @@ import discord
 import utility
 from localizer import tanjunLocalizer
 from utility import CommandInfo
+from utils.checks import check_bot_permission, check_user_permission, send_check_failure
+from utils.embeds import ErrorEmbedCategory, categorized_error_embed
 
 
 async def removerole(
@@ -12,39 +14,14 @@ async def removerole(
     user: discord.Member | None = None,
     role: discord.Role | None = None,
 ) -> None:
-    if (
-        isinstance(command_info.user, discord.Member)
-        and isinstance(command_info.channel, discord.abc.GuildChannel)
-        and command_info.user.guild_permissions
-        and not command_info.user.guild_permissions.manage_roles
-    ):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.missingPermission.title"),
-            description=tanjunLocalizer.localize(
-                str(command_info.locale),
-                "commands.admin.removerole.missingPermission.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
-
+    # User permission check
+    result = check_user_permission(command_info, "manage_roles", use_guild_permissions=True)
+    if await send_check_failure(command_info, "removerole", result):
         return
 
-    if command_info.guild is None:
-        raise ValueError("Guild is missing in command_info")
-
-    if command_info.guild.me.guild_permissions.manage_roles is False:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                str(command_info.locale),
-                "commands.admin.removerole.missingPermissionBot.title",
-            ),
-            description=tanjunLocalizer.localize(
-                str(command_info.locale),
-                "commands.admin.removerole.missingPermissionBot.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
-
+    # Bot permission check
+    result = check_bot_permission(command_info, "manage_roles")
+    if await send_check_failure(command_info, "removerole", result):
         return
 
     class RoleManagementView(discord.ui.View):
@@ -72,15 +49,15 @@ async def removerole(
             )
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.confirm"),
+            label=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.confirm.label"),
             style=discord.ButtonStyle.green,
         )
         async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
             if not self.selected_roles or not self.selected_users:
                 await interaction.response.send_message(
-                    content=tanjunLocalizer.localize(
+                    tanjunLocalizer.localize(
                         self.command_info.locale,
-                        f"commands.admin.{self.action}role.noSelection",
+                        "commands.admin.removerole.noSelection",
                     ),
                     ephemeral=True,
                 )
@@ -89,19 +66,14 @@ async def removerole(
             success_count = 0
             for user in self.selected_users:
                 for role in self.selected_roles:
-                    if self.action == "remove":
-                        if role in user.roles:
-                            await user.remove_roles(role)
-                            success_count += 1
-                    else:
-                        if role not in user.roles:
-                            await user.add_roles(role)
-                            success_count += 1
+                    if role in user.roles:
+                        await user.remove_roles(role)
+                        success_count += 1
 
             await interaction.response.edit_message(
                 content=tanjunLocalizer.localize(
-                    str(self.command_info.locale),
-                    f"commands.admin.{self.action}role.multipleSuccess",
+                    self.command_info.locale,
+                    "commands.admin.removerole.multipleSuccess",
                     count=success_count,
                 ),
                 view=discord.ui.View(),
@@ -109,92 +81,74 @@ async def removerole(
             self.stop()
 
         @discord.ui.button(
-            label=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.cancel"),
+            label=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.cancel.label"),
             style=discord.ButtonStyle.red,
         )
         async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button[Any]) -> None:  # type: ignore[misc]
-            await interaction.response.edit_message(  # type: ignore[misc]
-                tanjunLocalizer.localize(
-                    str(self.command_info.locale),
-                    f"commands.admin.{self.action}role.cancelled",
+            await interaction.response.edit_message(
+                content=tanjunLocalizer.localize(
+                    self.command_info.locale,
+                    "commands.admin.removerole.cancelled",
                 ),
                 view=discord.ui.View(),
             )
             self.stop()
 
-        async def on_error(
-            self,
-            interaction: discord.Interaction,
-            error: Exception,
-            item: discord.ui.Item,  # type: ignore[type-arg]
-        ) -> None:
-            await interaction.response.send_message(
-                tanjunLocalizer.localize(self.command_info.locale, "commands.admin.removerole.error"),
-                ephemeral=True,
-            )
-
         async def interaction_check(self, interaction: discord.Interaction) -> bool:
-            data = cast(dict[str, object], interaction.data)
-            if data.get("component_type") == 6:  # RoleSelect
-                if interaction.guild is None:
-                    raise ValueError("Guild is missing")
-                values = cast(list[str], data.get("values", []))
+            data = cast(Any, interaction.data)
+            if data and data.get("component_type") == 6:  # RoleSelect
+                assert interaction.guild is not None
+                values = data.get("values", [])
                 self.selected_roles = [r for r in [interaction.guild.get_role(int(rid)) for rid in values] if r is not None]
                 await interaction.response.defer()
-            elif data.get("component_type") == 5:  # UserSelect
-                if interaction.guild is None:
-                    raise ValueError("Guild is missing")
-                values = cast(list[str], data.get("values", []))
+            elif data and data.get("component_type") == 5:  # UserSelect
+                assert interaction.guild is not None
+                values = data.get("values", [])
                 self.selected_users = [await interaction.guild.fetch_member(int(uid)) for uid in values]
                 await interaction.response.defer()
             return True
 
-    if user is not None and role is not None:
+    if user and role:
         # Single user, single role
         if role not in user.roles:
             embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(
-                    str(command_info.locale),
-                    "commands.admin.removerole.doesNotHaveRole.title",
-                ),
+                title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.notHasRole.title"),
                 description=tanjunLocalizer.localize(
                     str(command_info.locale),
-                    "commands.admin.removerole.doesNotHaveRole.description",
+                    "commands.admin.removerole.notHasRole.description",
                 ),
             )
             await command_info.reply(embed=embed)
-
             return
 
+        # Hierarchy checks
+        assert command_info.guild is not None
         if isinstance(command_info.user, discord.Member) and command_info.user.top_role.position <= role.position:
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.roleTooHigh.title"),
-                description=tanjunLocalizer.localize(
-                    str(command_info.locale),
-                    "commands.admin.removerole.roleTooHigh.description",
-                ),
+            embed = categorized_error_embed(
+                ErrorEmbedCategory.PERMISSION,
+                tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.roleTooHigh.title"),
+                tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.roleTooHigh.description"),
             )
             await command_info.reply(embed=embed)
-
             return
 
         if command_info.guild.me.top_role.position <= role.position:
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.roleTooHighBot.title"),
-                description=tanjunLocalizer.localize(
+            embed = categorized_error_embed(
+                ErrorEmbedCategory.PERMISSION,
+                tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.roleTooHighBot.title"),
+                tanjunLocalizer.localize(
                     str(command_info.locale),
                     "commands.admin.removerole.roleTooHighBot.description",
                 ),
             )
             await command_info.reply(embed=embed)
-
             return
 
         await user.remove_roles(role)
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.removerole.success.title"),
             description=tanjunLocalizer.localize(
-                str(command_info.locale),
+                command_info.locale,
                 "commands.admin.removerole.success.description",
                 user=user.mention,
                 role=role.mention,

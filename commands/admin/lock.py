@@ -5,6 +5,8 @@ import discord
 import utility
 from api import clear_channel_overwrites, save_channel_overwrites
 from localizer import tanjunLocalizer
+from utility import CommandInfo
+from utils.checks import check_bot_permission, check_user_permission, send_check_failure
 
 
 async def lock_channel(command_info: utility.CommandInfo, channel: discord.TextChannel | None = None) -> None:
@@ -13,31 +15,14 @@ async def lock_channel(command_info: utility.CommandInfo, channel: discord.TextC
             raise ValueError("Channel is missing in command_info")
         channel = cast(discord.TextChannel, command_info.channel)  # type: ignore[name-defined]
 
-    if (
-        isinstance(command_info.user, discord.Member)
-        and isinstance(command_info.channel, discord.abc.GuildChannel)
-        and not command_info.channel.permissions_for(command_info.user).manage_channels
-    ):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.lock.missingPermission.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.lock.missingPermission.description"),
-        )
-        await command_info.reply(embed=embed)
+    # User permission check (channel-scoped)
+    result = check_user_permission(command_info, "manage_channels", use_guild_permissions=False)
+    if await send_check_failure(command_info, "lock", result):
         return
 
-    if command_info.guild is None:
-        raise ValueError("Guild is missing in command_info")
-
-    if channel.permissions_for(command_info.guild.me).manage_channels is False:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.lock.missingPermissionBot.title"),
-            description=tanjunLocalizer.localize(
-                str(command_info.locale),
-                "commands.admin.lock.missingPermissionBot.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
-
+    # Bot permission check (channel-scoped)
+    result = check_bot_permission(command_info, "manage_channels", channel=channel)
+    if await send_check_failure(command_info, "lock", result):
         return
 
     try:
