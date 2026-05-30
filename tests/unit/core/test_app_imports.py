@@ -9,3 +9,7 @@ def test_utils_embeds_imports():
 
 def test_utility_imports():
     import utility  # noqa: F401
+
+
+def test_api_imports():
+    import api  # noqa: F401

@@ -28,7 +28,7 @@ jobs:
         run: pip install ruff
 
       - name: Run Ruff Linter (auto-fix)
-        run: ruff check . --fix --exit-zero
+        run: ruff check . --fix
 
       - name: Run Ruff Formatter
         run: ruff format .
