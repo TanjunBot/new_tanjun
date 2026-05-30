@@ -573,172 +573,376 @@ async def bulk_update_user_xp(
         print(f"Error during bulk XP update: {e} — {safe_id}")
 
 
+def get_table_defs() -> dict[str, "TableDef"]:
+    """Return table definitions as Pydantic TableDef models.
+
+    Use this for introspection, testing, and programmatic schema access.
+    Converted incrementally from get_table_definitions().
+    """
+    from table_def_models.table_def import TableDef, col, idx
+
+    _t: dict[str, TableDef] = {}
+
+    # ── Simple tables (mostly 1-3 columns, no FKs) ────────────────────────
+    _t["channel_overwrites"] = TableDef(
+        name="channel_overwrites",
+        columns=[
+            col("id", "INT", pk=True, ai=True),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+            col("role_id", "VARCHAR(20)", nullable=False),
+            col("overwrites", "JSON"),
+            col("created_at", "TIMESTAMP", default="CURRENT_TIMESTAMP"),
+        ],
+    )
+    _t["message_tracking_opt_out"] = TableDef(
+        name="message_tracking_opt_out",
+        columns=[col("user_id", "VARCHAR(20)", pk=True)],
+    )
+    _t["counting"] = TableDef(
+        name="counting",
+        columns=[
+            col("channel_id", "VARCHAR(20)", pk=True),
+            col("progress", "INT UNSIGNED", default="0"),
+            col("last_counter_id", "VARCHAR(20)", default="NULL"),
+            col("guild_id", "VARCHAR(20)"),
+        ],
+    )
+    _t["counting_challenge"] = TableDef(
+        name="counting_challenge",
+        columns=[
+            col("channel_id", "VARCHAR(20)", pk=True),
+            col("progress", "INT UNSIGNED", default="0"),
+            col("last_counter_id", "VARCHAR(20)", default="NULL"),
+            col("guild_id", "VARCHAR(20)"),
+        ],
+    )
+    _t["counting_modes"] = TableDef(
+        name="counting_modes",
+        columns=[
+            col("channel_id", "VARCHAR(20)", pk=True),
+            col("progress", "INT", default="0"),
+            col("mode", "TINYINT UNSIGNED", default="0"),
+            col("goal", "INT"),
+            col("last_counter_id", "VARCHAR(20)", default="NULL"),
+            col("guild_id", "VARCHAR(20)"),
+        ],
+    )
+    _t["wordchain"] = TableDef(
+        name="wordchain",
+        columns=[
+            col("channel_id", "VARCHAR(20)", pk=True),
+            col("word", "VARCHAR(1028)", default="NULL"),
+            col("last_user_id", "VARCHAR(20)", default="NULL"),
+            col("guild_id", "VARCHAR(20)"),
+        ],
+    )
+    _t["blacklistedUser"] = TableDef(
+        name="blacklistedUser",
+        primary_key=["user_id", "guild_id"],
+        columns=[
+            col("user_id", "VARCHAR(20)", nullable=False),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("reason", "VARCHAR(255)", default="NULL"),
+            col("blacklisted_at", "TIMESTAMP", default="CURRENT_TIMESTAMP"),
+        ],
+    )
+    _t["blacklisted_role"] = TableDef(
+        name="blacklisted_role",
+        primary_key=["role_id", "guild_id"],
+        columns=[
+            col("role_id", "VARCHAR(20)", nullable=False),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("reason", "VARCHAR(255)", default="NULL"),
+            col("blacklisted_at", "TIMESTAMP", default="CURRENT_TIMESTAMP"),
+        ],
+    )
+    _t["blacklistedChannel"] = TableDef(
+        name="blacklistedChannel",
+        primary_key=["channel_id", "guild_id"],
+        columns=[
+            col("channel_id", "VARCHAR(20)", nullable=False),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("reason", "VARCHAR(255)", default="NULL"),
+            col("blacklisted_at", "TIMESTAMP", default="CURRENT_TIMESTAMP"),
+        ],
+    )
+    _t["userXpBoost"] = TableDef(
+        name="userXpBoost",
+        primary_key=["user_id", "guild_id"],
+        columns=[
+            col("user_id", "VARCHAR(20)", nullable=False),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("boost", "DECIMAL(4, 2) UNSIGNED", default="1"),
+            col("additive", "TINYINT(1)", default="0"),
+            col("boosted_at", "TIMESTAMP", default="CURRENT_TIMESTAMP"),
+        ],
+    )
+    _t["roleXpBoost"] = TableDef(
+        name="roleXpBoost",
+        primary_key=["role_id", "guild_id"],
+        columns=[
+            col("role_id", "VARCHAR(20)", nullable=False),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("boost", "DECIMAL(4, 2) UNSIGNED", default="1"),
+            col("additive", "TINYINT(1)", default="0"),
+            col("boosted_at", "TIMESTAMP", default="CURRENT_TIMESTAMP"),
+        ],
+    )
+    _t["channelXpBoost"] = TableDef(
+        name="channelXpBoost",
+        primary_key=["channel_id", "guild_id"],
+        columns=[
+            col("channel_id", "VARCHAR(20)", nullable=False),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("boost", "DECIMAL(4, 2) UNSIGNED", default="1"),
+            col("additive", "TINYINT(1)", default="0"),
+            col("boosted_at", "TIMESTAMP", default="CURRENT_TIMESTAMP"),
+        ],
+    )
+    _t["levelRole"] = TableDef(
+        name="levelRole",
+        primary_key=["role_id", "guild_id"],
+        columns=[
+            col("role_id", "VARCHAR(20)", nullable=False),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("level", "INT UNSIGNED", default="0"),
+        ],
+    )
+    _t["autopublish"] = TableDef(
+        name="autopublish",
+        columns=[col("channel_id", "VARCHAR(20)", pk=True)],
+    )
+    _t["feedbackBlocked"] = TableDef(
+        name="feedbackBlocked",
+        columns=[col("user_id", "VARCHAR(20)", pk=True)],
+    )
+    _t["afk_users"] = TableDef(
+        name="afk_users",
+        columns=[
+            col("user_id", "VARCHAR(20)", pk=True),
+            col("reason", "VARCHAR(1024)"),
+        ],
+    )
+    _t["mediaChannel"] = TableDef(
+        name="mediaChannel",
+        columns=[
+            col("channel_id", "VARCHAR(20)", pk=True),
+            col("guild_id", "VARCHAR(20)"),
+        ],
+    )
+    _t["brawlstarsLinkedAccounts"] = TableDef(
+        name="brawlstarsLinkedAccounts",
+        columns=[
+            col("user_id", "VARCHAR(20)", pk=True),
+            col("brawlstarsTag", "VARCHAR(20)"),
+        ],
+    )
+
+    # ── Medium tables (5-10 columns, PK, indices) ─────────────────────────
+    _t["warnings"] = TableDef(
+        name="warnings",
+        columns=[
+            col("id", "INT", pk=True, ai=True),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("user_id", "VARCHAR(20)", nullable=False),
+            col("reason", "VARCHAR(255)"),
+            col("created_at", "TIMESTAMP", default="CURRENT_TIMESTAMP"),
+            col("expires_at", "TIMESTAMP", default="NULL"),
+            col("created_by", "VARCHAR(20)", nullable=False),
+            col("escalation_level", "INT", default="0"),
+        ],
+        indices=[idx("idx_warnings_user_guild", "user_id", "guild_id")],
+    )
+    _t["warn_config"] = TableDef(
+        name="warn_config",
+        columns=[
+            col("guild_id", "VARCHAR(20)", pk=True),
+            col("expiration_days", "INT", default="0"),
+            col("timeout_threshold", "INT", default="0"),
+            col("timeout_duration", "INT", default="0"),
+            col("kick_threshold", "INT", default="0"),
+            col("ban_threshold", "INT", default="0"),
+        ],
+    )
+    _t["level"] = TableDef(
+        name="level",
+        primary_key=["user_id", "guild_id"],
+        columns=[
+            col("user_id", "VARCHAR(20)", nullable=False),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("xp", "INT UNSIGNED", default="0"),
+            col("customBackground", "VARCHAR(255)", default="NULL"),
+            col("last_xp_gain", "DATETIME", default="NOW()"),
+            col("last_voice_xp_gain", "DATETIME", default="NOW()"),
+        ],
+        indices=[idx("idx_level_guild_xp", "guild_id", "xp DESC")],
+    )
+    _t["levelConfig"] = TableDef(
+        name="levelConfig",
+        engine="InnoDB",
+        charset="utf8mb4",
+        columns=[
+            col("guild_id", "VARCHAR(20)", pk=True),
+            col("difficulty", "ENUM('easy', 'medium', 'hard', 'extreme', 'custom')", default="'medium'"),
+            col("customFormula", "VARCHAR(255)", default="NULL"),
+            col("level_up_messageActive", "TINYINT(1)", default="1"),
+            col("level_up_message", "VARCHAR(1000)", default="NULL"),
+            col("level_up_channel_id", "VARCHAR(20)", default="NULL"),
+            col("active", "TINYINT(1)", default="1"),
+            col("textCooldown", "INT", default="60"),
+            col("voiceCooldown", "INT", default="60"),
+        ],
+    )
+    _t["aiToken"] = TableDef(
+        name="aiToken",
+        columns=[
+            col("freeToken", "SMALLINT UNSIGNED", default="500"),
+            col("plusToken", "SMALLINT UNSIGNED", default="0"),
+            col("paidToken", "INT UNSIGNED", default="0"),
+            col("usedToken", "INT UNSIGNED", default="0"),
+            col("user_id", "VARCHAR(20)", pk=True),
+        ],
+    )
+    _t["afkMessages"] = TableDef(
+        name="afkMessages",
+        columns=[
+            col("user_id", "VARCHAR(20)", nullable=False),
+            col("messageId", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)"),
+        ],
+        primary_key=["user_id", "messageId"],
+    )
+    _t["giveawayParticipant"] = TableDef(
+        name="giveawayParticipant",
+        columns=[
+            col("user_id", "VARCHAR(20)", nullable=False),
+            col("giveaway_id", "INT UNSIGNED", nullable=False),
+        ],
+        primary_key=["user_id", "giveaway_id"],
+    )
+    _t["giveawayRoleRequirement"] = TableDef(
+        name="giveawayRoleRequirement",
+        columns=[
+            col("role_id", "VARCHAR(20)", nullable=False),
+            col("giveaway_id", "INT UNSIGNED", nullable=False),
+        ],
+        primary_key=["role_id", "giveaway_id"],
+    )
+    _t["giveawayBlacklistedRole"] = TableDef(
+        name="giveawayBlacklistedRole",
+        columns=[
+            col("role_id", "VARCHAR(20)", pk=True),
+            col("guild_id", "VARCHAR(20)"),
+            col("reason", "VARCHAR(255)", default="NULL"),
+        ],
+    )
+    _t["giveawayBlacklistedUser"] = TableDef(
+        name="giveawayBlacklistedUser",
+        columns=[
+            col("user_id", "VARCHAR(20)", nullable=False),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("reason", "VARCHAR(255)", default="NULL"),
+        ],
+        primary_key=["user_id", "guild_id"],
+    )
+    _t["blockedReporters"] = TableDef(
+        name="blockedReporters",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("user_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "user_id"],
+    )
+    _t["reportchannel"] = TableDef(
+        name="reportchannel",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
+    _t["booster_channel"] = TableDef(
+        name="booster_channel",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
+    _t["boosterRole"] = TableDef(
+        name="boosterRole",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("role_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "role_id"],
+    )
+    _t["log_channel"] = TableDef(
+        name="log_channel",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
+    _t["log_channel_blacklist"] = TableDef(
+        name="log_channel_blacklist",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
+    _t["logRoleBlacklist"] = TableDef(
+        name="logRoleBlacklist",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("role_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "role_id"],
+    )
+    _t["logBlacklistChannel"] = TableDef(
+        name="logBlacklistChannel",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
+    _t["logUserBlacklist"] = TableDef(
+        name="logUserBlacklist",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("user_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "user_id"],
+    )
+    _t["join_to_create_channel"] = TableDef(
+        name="join_to_create_channel",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
+
+    return _t
+
+
 def get_table_definitions() -> dict[str, str]:
     """Return the table DDL definitions used by create_tables.
 
     Exported for testing purposes to avoid DDL duplication.
+    Now uses Pydantic TableDef models for a growing subset of tables;
+    remaining tables still use raw SQL strings.
     """
-    tables = {}
-    tables["warnings"] = (
-        "CREATE TABLE IF NOT EXISTS `warnings` ("
-        "  `id` INT AUTO_INCREMENT PRIMARY KEY,"
-        "  `guild_id` VARCHAR(20) NOT NULL,"
-        "  `user_id` VARCHAR(20) NOT NULL,"
-        "  `reason` VARCHAR(255),"
-        "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-        "  `expires_at` TIMESTAMP NULL,"
-        "  `created_by` VARCHAR(20) NOT NULL,"
-        "  `escalation_level` INT DEFAULT 0,"
-        "  INDEX `idx_warnings_user_guild` (`user_id`, `guild_id`)"
-        ") ENGINE=InnoDB"
-    )
-    tables["warn_config"] = (
-        "CREATE TABLE IF NOT EXISTS `warn_config` ("
-        "  `guild_id` VARCHAR(20) PRIMARY KEY,"
-        "  `expiration_days` INT DEFAULT 0,"
-        "  `timeout_threshold` INT DEFAULT 0,"
-        "  `timeout_duration` INT DEFAULT 0,"
-        "  `kick_threshold` INT DEFAULT 0,"
-        "  `ban_threshold` INT DEFAULT 0"
-        ") ENGINE=InnoDB"
-    )
-    tables["channel_overwrites"] = (
-        "CREATE TABLE IF NOT EXISTS `channel_overwrites` ("
-        "  `id` INT AUTO_INCREMENT PRIMARY KEY,"
-        "  `channel_id` VARCHAR(20) NOT NULL,"
-        "  `role_id` VARCHAR(20) NOT NULL,"
-        "  `overwrites` JSON,"
-        "  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-        ") ENGINE=InnoDB"
-    )
-    tables["message_tracking_opt_out"] = (
-        "CREATE TABLE IF NOT EXISTS `message_tracking_opt_out` (  `user_id` VARCHAR(20) PRIMARY KEY) ENGINE=InnoDB"
-    )
-    tables["counting"] = (
-        "CREATE TABLE IF NOT EXISTS `counting` ("
-        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
-        "  `progress` INT UNSIGNED DEFAULT 0,"
-        "  `last_counter_id` VARCHAR(20) DEFAULT NULL,"
-        "  `guild_id` VARCHAR(20)"
-        ") ENGINE=InnoDB"
-    )
-    tables["counting_challenge"] = (
-        "CREATE TABLE IF NOT EXISTS `counting_challenge` ("
-        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
-        "  `progress` INT UNSIGNED DEFAULT 0,"
-        "  `last_counter_id` VARCHAR(20) DEFAULT NULL,"
-        "  `guild_id` VARCHAR(20)"
-        ") ENGINE=InnoDB"
-    )
-    tables["counting_modes"] = (
-        "CREATE TABLE IF NOT EXISTS `counting_modes` ("
-        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
-        "  `progress` INT DEFAULT 0,"
-        "  `mode` TINYINT UNSIGNED DEFAULT 0,"
-        "  `goal` INT,"
-        "  `last_counter_id` VARCHAR(20) DEFAULT NULL,"
-        "  `guild_id` VARCHAR(20)"
-        ") ENGINE=InnoDB"
-    )
-    tables["wordchain"] = (
-        "CREATE TABLE IF NOT EXISTS `wordchain` ("
-        "  `channel_id` VARCHAR(20) PRIMARY KEY,"
-        "  `word` VARCHAR(1028) DEFAULT NULL,"
-        "  `last_user_id` VARCHAR(20) DEFAULT NULL,"
-        "  `guild_id` VARCHAR(20)"
-        ") ENGINE=InnoDB"
-    )
-    tables["level"] = (
-        "CREATE TABLE IF NOT EXISTS `level` ("
-        "  `user_id` VARCHAR(20) NOT NULL,"
-        "  `guild_id` VARCHAR(20) NOT NULL,"
-        "  `xp` INT UNSIGNED DEFAULT 0,"
-        "  `customBackground` VARCHAR(255) DEFAULT NULL,"
-        "  `last_xp_gain` DATETIME DEFAULT NOW(),"
-        "  `last_voice_xp_gain` DATETIME DEFAULT NOW(),"
-        "  PRIMARY KEY(`user_id`, `guild_id`),"
-        "  INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)"
-        ") ENGINE=InnoDB"
-    )
-    tables["blacklistedUser"] = (
-        "CREATE TABLE IF NOT EXISTS `blacklistedUser` ("
-        "  `user_id` VARCHAR(20) NOT NULL,"
-        "  `guild_id` VARCHAR(20) NOT NULL,"
-        "  `reason` VARCHAR(255) DEFAULT NULL,"
-        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-        "  PRIMARY KEY(`user_id`, `guild_id`)"
-        ") ENGINE=InnoDB"
-    )
-    tables["blacklisted_role"] = (
-        "CREATE TABLE IF NOT EXISTS `blacklisted_role` ("
-        "  `role_id` VARCHAR(20) NOT NULL,"
-        "  `guild_id` VARCHAR(20) NOT NULL,"
-        "  `reason` VARCHAR(255) DEFAULT NULL,"
-        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-        "  PRIMARY KEY(`role_id`, `guild_id`)"
-        ") ENGINE=InnoDB"
-    )
-    tables["blacklistedChannel"] = (
-        "CREATE TABLE IF NOT EXISTS `blacklistedChannel` ("
-        "  `channel_id` VARCHAR(20) NOT NULL,"
-        "  `guild_id` VARCHAR(20) NOT NULL,"
-        "  `reason` VARCHAR(255) DEFAULT NULL,"
-        "  `blacklisted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-        "  PRIMARY KEY(`channel_id`, `guild_id`)"
-        ") ENGINE=InnoDB"
-    )
-    tables["userXpBoost"] = (
-        "CREATE TABLE IF NOT EXISTS `userXpBoost` ("
-        "  `user_id` VARCHAR(20) NOT NULL,"
-        "  `guild_id` VARCHAR(20) NOT NULL,"
-        "  `boost` DECIMAL(4, 2) UNSIGNED DEFAULT 1,"
-        "  `additive` TINYINT(1) DEFAULT 0,"
-        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-        "  PRIMARY KEY(`user_id`, `guild_id`)"
-        ") ENGINE=InnoDB"
-    )
-    tables["roleXpBoost"] = (
-        "CREATE TABLE IF NOT EXISTS `roleXpBoost` ("
-        "  `role_id` VARCHAR(20) NOT NULL,"
-        "  `guild_id` VARCHAR(20) NOT NULL,"
-        "  `boost` DECIMAL(4, 2) UNSIGNED DEFAULT 1,"
-        "  `additive` TINYINT(1) DEFAULT 0,"
-        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-        "  PRIMARY KEY(`role_id`, `guild_id`)"
-        ") ENGINE=InnoDB"
-    )
-    tables["channelXpBoost"] = (
-        "CREATE TABLE IF NOT EXISTS `channelXpBoost` ("
-        "  `channel_id` VARCHAR(20) NOT NULL,"
-        "  `guild_id` VARCHAR(20) NOT NULL,"
-        "  `boost` DECIMAL(4, 2) UNSIGNED DEFAULT 1,"
-        "  `additive` TINYINT(1) DEFAULT 0,"
-        "  `boosted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-        "  PRIMARY KEY(`channel_id`, `guild_id`)"
-        ") ENGINE=InnoDB"
-    )
-    tables["levelRole"] = (
-        "CREATE TABLE IF NOT EXISTS `levelRole` ("
-        "  `role_id` VARCHAR(20) NOT NULL,"
-        "  `guild_id` VARCHAR(20) NOT NULL,"
-        "  `level` INT UNSIGNED DEFAULT 0,"
-        "  PRIMARY KEY(`role_id`, `guild_id`)"
-        ") ENGINE=InnoDB"
-    )
-    tables["levelConfig"] = (
-        "CREATE TABLE IF NOT EXISTS `levelConfig` ("
-        "  `guild_id` VARCHAR(20) PRIMARY KEY,"
-        "  `difficulty` ENUM('easy', 'medium', 'hard', 'extreme', 'custom') "
-        "DEFAULT 'medium',"
-        "  `customFormula` VARCHAR(255) DEFAULT NULL,"
-        "  `level_up_messageActive` TINYINT(1) DEFAULT 1,"
-        "  `level_up_message` VARCHAR(1000) DEFAULT NULL,"
-        "  `level_up_channel_id` VARCHAR(20) DEFAULT NULL,"
-        "  `active` TINYINT(1) DEFAULT 1,"
-        "  `textCooldown` INT DEFAULT 60,"
-        "  `voiceCooldown` INT DEFAULT 60"
-        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
-    )
+    tables: dict[str, str] = {}
+
+    # Convert model-backed tables
+    for name, tdef in get_table_defs().items():
+        tables[name] = tdef.to_sql()
+
+    # ── Tables still using raw SQL (not yet converted to models) ────────
     tables["giveaway"] = """
     CREATE TABLE IF NOT EXISTS `giveaway` (
         `giveaway_id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -773,20 +977,6 @@ def get_table_definitions() -> dict[str, str]:
         PRIMARY KEY(`giveaway_id`, `channel_id`)
     ) ENGINE=InnoDB;
     """
-    tables["giveawayParticipant"] = """
-    CREATE TABLE IF NOT EXISTS `giveawayParticipant` (
-        `user_id` VARCHAR(20),
-        `giveaway_id` INT UNSIGNED,
-        PRIMARY KEY(`user_id`, `giveaway_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["giveawayRoleRequirement"] = """
-    CREATE TABLE IF NOT EXISTS `giveawayRoleRequirement` (
-        `role_id` VARCHAR(20),
-        `giveaway_id` INT UNSIGNED,
-        PRIMARY KEY(`role_id`, `giveaway_id`)
-    ) ENGINE=InnoDB;
-    """
     tables["giveawayVoiceTime"] = """
     CREATE TABLE IF NOT EXISTS `giveawayVoiceTime` (
         `giveaway_id` INT UNSIGNED,
@@ -803,21 +993,6 @@ def get_table_definitions() -> dict[str, str]:
         PRIMARY KEY(`giveaway_id`, `user_id`)
     ) ENGINE=InnoDB;
     """
-    tables["giveawayBlacklistedRole"] = """
-    CREATE TABLE IF NOT EXISTS `giveawayBlacklistedRole` (
-        `role_id` VARCHAR(20) PRIMARY KEY,
-        `guild_id` VARCHAR(20),
-        `reason` VARCHAR(255) DEFAULT NULL
-    ) ENGINE=InnoDB;
-    """
-    tables["giveawayBlacklistedUser"] = """
-    CREATE TABLE IF NOT EXISTS `giveawayBlacklistedUser` (
-        `user_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        `reason` VARCHAR(255) DEFAULT NULL,
-        PRIMARY KEY(`user_id`, `guild_id`)
-    ) ENGINE=InnoDB;
-    """
     tables["giveaway_channelMessages"] = """
     CREATE TABLE IF NOT EXISTS `giveaway_channelMessages` (
         `giveaway_id` INT UNSIGNED,
@@ -825,15 +1000,6 @@ def get_table_definitions() -> dict[str, str]:
         `user_id` VARCHAR(20),
         `amount` MEDIUMINT UNSIGNED DEFAULT 0,
         PRIMARY KEY(`giveaway_id`, `channel_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["aiToken"] = """
-    CREATE TABLE IF NOT EXISTS `aiToken` (
-        `freeToken` SMALLINT UNSIGNED DEFAULT 500,
-        `plusToken` SMALLINT UNSIGNED DEFAULT 0,
-        `paidToken` INT UNSIGNED DEFAULT 0,
-        `usedToken` INT UNSIGNED DEFAULT 0,
-        `user_id` VARCHAR(20) PRIMARY KEY
     ) ENGINE=InnoDB;
     """
     tables["aiSituations"] = """
@@ -849,37 +1015,6 @@ def get_table_definitions() -> dict[str, str]:
         `unlocked` TINYINT(1) DEFAULT 0
     ) ENGINE=InnoDB;
     """
-    tables["autopublish"] = """
-    CREATE TABLE IF NOT EXISTS `autopublish` (
-        `channel_id` VARCHAR(20) PRIMARY KEY
-    ) ENGINE=InnoDB;
-    """
-    tables["feedbackBlocked"] = """
-    CREATE TABLE IF NOT EXISTS `feedbackBlocked` (
-        `user_id` VARCHAR(20) PRIMARY KEY
-    ) ENGINE=InnoDB;
-    """
-    tables["afk_users"] = """
-    CREATE TABLE IF NOT EXISTS `afk_users` (
-        `user_id` VARCHAR(20) PRIMARY KEY,
-        `reason` VARCHAR(1024)
-    ) ENGINE=InnoDB;
-    """
-    tables["afkMessages"] = """
-    CREATE TABLE IF NOT EXISTS `afkMessages` (
-        `user_id` VARCHAR(20),
-        `messageId` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        PRIMARY KEY(`user_id`, `messageId`)
-    ) ENGINE=InnoDB;
-    """
-    tables["booster_channel"] = """
-    CREATE TABLE IF NOT EXISTS `booster_channel` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
     tables["claimedBoosterChannel"] = """
     CREATE TABLE IF NOT EXISTS `claimedBoosterChannel` (
         `user_id` VARCHAR(20),
@@ -888,54 +1023,12 @@ def get_table_definitions() -> dict[str, str]:
         PRIMARY KEY(`user_id`, `channel_id`)
     ) ENGINE=InnoDB;
     """
-    tables["boosterRole"] = """
-    CREATE TABLE IF NOT EXISTS `boosterRole` (
-        `guild_id` VARCHAR(20),
-        `role_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `role_id`)
-    ) ENGINE=InnoDB;
-    """
     tables["claimedBoosterRole"] = """
     CREATE TABLE IF NOT EXISTS `claimedBoosterRole` (
         `user_id` VARCHAR(20),
         `role_id` VARCHAR(20),
         `guild_id` VARCHAR(20),
         PRIMARY KEY(`user_id`, `role_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["log_channel"] = """
-    CREATE TABLE IF NOT EXISTS `log_channel` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["log_channel_blacklist"] = """
-    CREATE TABLE IF NOT EXISTS `log_channel_blacklist` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["logRoleBlacklist"] = """
-    CREATE TABLE IF NOT EXISTS `logRoleBlacklist` (
-        `guild_id` VARCHAR(20),
-        `role_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `role_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["logBlacklistChannel"] = """
-    CREATE TABLE IF NOT EXISTS `logBlacklistChannel` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["logUserBlacklist"] = """
-    CREATE TABLE IF NOT EXISTS `logUserBlacklist` (
-        `guild_id` VARCHAR(20),
-        `user_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `user_id`)
     ) ENGINE=InnoDB;
     """
     tables["log_enables"] = """
@@ -1004,20 +1097,6 @@ def get_table_definitions() -> dict[str, str]:
         PRIMARY KEY(`id`)
     ) ENGINE=InnoDB;
     """
-    tables["blockedReporters"] = """
-    CREATE TABLE IF NOT EXISTS `blockedReporters` (
-        `guild_id` VARCHAR(20),
-        `user_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["reportchannel"] = """
-    CREATE TABLE IF NOT EXISTS `reportchannel` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
     tables["triggerMessages"] = """
     CREATE TABLE IF NOT EXISTS `triggerMessages` (
         `id` INT AUTO_INCREMENT,
@@ -1068,20 +1147,6 @@ def get_table_definitions() -> dict[str, str]:
         FOREIGN KEY (`guild_id`, `ticketMessageId`)
             REFERENCES `ticketMessages`(`guild_id`, `id`)
             ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["join_to_create_channel"] = """
-    CREATE TABLE IF NOT EXISTS `join_to_create_channel` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["mediaChannel"] = """
-    CREATE TABLE IF NOT EXISTS `mediaChannel` (
-        `channel_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        PRIMARY KEY(`channel_id`)
     ) ENGINE=InnoDB;
     """
     tables["welcome_channel"] = """
@@ -1141,13 +1206,7 @@ def get_table_definitions() -> dict[str, str]:
         INDEX `idx_guild` (`guild_id`)
     ) ENGINE=InnoDB;
     """
-    tables["brawlstarsLinkedAccounts"] = """
-    CREATE TABLE IF NOT EXISTS `brawlstarsLinkedAccounts` (
-        `user_id` VARCHAR(20),
-        `brawlstarsTag` VARCHAR(20),
-        PRIMARY KEY(`user_id`)
-    ) ENGINE=InnoDB;
-    """
+
     return tables
 
 
