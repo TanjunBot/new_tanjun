@@ -26,22 +26,19 @@ class LevelConfigRepository:
         # Check cache first
         cache_entry = _guild_config_cache.get(guild_id)
         if _is_cache_valid(cache_entry, _GUILD_CONFIG_CACHE_TTL) and cache_entry is not None:
-            # Reconstruct LevelConfig from cached dict
-            data = cache_entry[0]
-            if data:  # Non-empty cache entry means we have config
+            cache_data, cache_time = cache_entry  # type: ignore[misc]
+            if cache_data:  # Non-empty cache entry means we have config
                 return LevelConfig(
                     guild_id=guild_id,
-                    active=data.get("active", True),
-                    difficulty=data.get("scaling", "medium"),  # Note: cache uses "scaling" key
-                    custom_formula=data.get("custom_formula"),
-                    level_up_message_active=data.get("level_up_message_active", True),
-                    level_up_message=data.get("level_up_message"),
-                    level_up_channel_id=data.get("level_up_channel_id"),
-                    text_cooldown=data.get("text_cooldown", 60),
-                    voice_cooldown=data.get("voice_cooldown", 60),
+                    active=cache_data.get("active", True),
+                    difficulty=cache_data.get("scaling", "medium"),  # Note: cache uses "scaling" key
+                    custom_formula=cache_data.get("custom_formula"),
+                    level_up_message_active=cache_data.get("level_up_message_active", True),
+                    level_up_message=cache_data.get("level_up_message"),
+                    level_up_channel_id=cache_data.get("level_up_channel_id"),
+                    text_cooldown=cache_data.get("text_cooldown", 60),
+                    voice_cooldown=cache_data.get("voice_cooldown", 60),
                 )
-            # Empty cache entry means no DB row exists
-            return LevelConfig(guild_id=guild_id)
 
         # Cache miss - fetch from DB
         query = """
@@ -54,7 +51,7 @@ class LevelConfigRepository:
         if result and len(result) > 0:
             config = LevelConfig.from_row(result[0])
             # Populate cache
-            _guild_config_cache[guild_id] = (
+            _guild_config_cache[guild_id] = (  # type: ignore[index]
                 {
                     "active": config.active,
                     "scaling": config.difficulty,
@@ -69,7 +66,7 @@ class LevelConfigRepository:
             )
             return config
         # No DB row - cache the miss
-        _guild_config_cache[guild_id] = ({}, time.time())
+        _guild_config_cache[guild_id] = ({}, time.time())  # type: ignore[index]
         return LevelConfig(guild_id=guild_id)
 
     async def save_config(self, config: LevelConfig) -> None:

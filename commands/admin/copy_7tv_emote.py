@@ -29,9 +29,7 @@ async def copy_7tv_emote(  # noqa: C901
     ):
         embed = utility.tanjunEmbed(
             colour=EmbedColor.ERROR,
-            title=tanjunLocalizer.localize(
-                str(command_info.locale), "commands.admin.copy7tv.missingPermission.title"
-            ),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copy7tv.missingPermission.title"),
             description=tanjunLocalizer.localize(
                 str(command_info.locale), "commands.admin.copy7tv.missingPermission.description"
             ),
@@ -43,9 +41,7 @@ async def copy_7tv_emote(  # noqa: C901
     if not command_info.guild.me.guild_permissions.manage_emojis:
         embed = utility.tanjunEmbed(
             colour=EmbedColor.ERROR,
-            title=tanjunLocalizer.localize(
-                str(command_info.locale), "commands.admin.copy7tv.missingPermissionBot.title"
-            ),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copy7tv.missingPermissionBot.title"),
             description=tanjunLocalizer.localize(
                 str(command_info.locale), "commands.admin.copy7tv.missingPermissionBot.description"
             ),
@@ -60,9 +56,7 @@ async def copy_7tv_emote(  # noqa: C901
     if user is None or not user.emotes:
         embed = utility.tanjunEmbed(
             colour=EmbedColor.ERROR,
-            title=tanjunLocalizer.localize(
-                str(command_info.locale), "commands.admin.copy7tv.error.notFound.title"
-            ),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copy7tv.error.notFound.title"),
             description=tanjunLocalizer.localize(
                 str(command_info.locale),
                 "commands.admin.copy7tv.error.notFound.description",
@@ -89,9 +83,7 @@ async def copy_7tv_emote(  # noqa: C901
 
         description = "\n".join(description_lines)
         if not description:
-            description = tanjunLocalizer.localize(
-                str(command_info.locale), "commands.admin.copy7tv.noEmotes"
-            )
+            description = tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copy7tv.noEmotes")
 
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(
@@ -126,9 +118,7 @@ async def copy_7tv_emote(  # noqa: C901
         async def previous(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
             if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(
-                        str(command_info.locale), "commands.admin.copy7tv.notYourEmbed"
-                    ),
+                    tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copy7tv.notYourEmbed"),
                     ephemeral=True,
                 )
                 return
@@ -146,9 +136,7 @@ async def copy_7tv_emote(  # noqa: C901
         async def next(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
             if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(
-                        str(command_info.locale), "commands.admin.copy7tv.notYourEmbed"
-                    ),
+                    tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copy7tv.notYourEmbed"),
                     ephemeral=True,
                 )
                 return
@@ -167,9 +155,7 @@ async def copy_7tv_emote(  # noqa: C901
             """Open a modal to pick which emote number to add."""
             if interaction.user.id != command_info.user.id:
                 await interaction.response.send_message(
-                    tanjunLocalizer.localize(
-                        str(command_info.locale), "commands.admin.copy7tv.notYourEmbed"
-                    ),
+                    tanjunLocalizer.localize(str(command_info.locale), "commands.admin.copy7tv.notYourEmbed"),
                     ephemeral=True,
                 )
                 return
@@ -183,19 +169,11 @@ async def copy_7tv_emote(  # noqa: C901
         ) -> None:
             self.cmd_info = cmd_info
             self.emotes = emotes
-            super().__init__(
-                title=tanjunLocalizer.localize(
-                    str(cmd_info.locale), "commands.admin.copy7tv.addModal.title"
-                )
-            )
+            super().__init__(title=tanjunLocalizer.localize(str(cmd_info.locale), "commands.admin.copy7tv.addModal.title"))
             self.add_item(
                 discord.ui.TextInput(
-                    label=tanjunLocalizer.localize(
-                        str(cmd_info.locale), "commands.admin.copy7tv.addModal.label"
-                    ),
-                    placeholder=tanjunLocalizer.localize(
-                        str(cmd_info.locale), "commands.admin.copy7tv.addModal.placeholder"
-                    ),
+                    label=tanjunLocalizer.localize(str(cmd_info.locale), "commands.admin.copy7tv.addModal.label"),
+                    placeholder=tanjunLocalizer.localize(str(cmd_info.locale), "commands.admin.copy7tv.addModal.placeholder"),
                     required=True,
                     max_length=3,
                 )
@@ -261,9 +239,7 @@ async def copy_7tv_emote(  # noqa: C901
 
                 embed = utility.tanjunEmbed(
                     colour=EmbedColor.SUCCESS,
-                    title=tanjunLocalizer.localize(
-                        str(self.cmd_info.locale), "commands.admin.copy7tv.addModal.success.title"
-                    ),
+                    title=tanjunLocalizer.localize(str(self.cmd_info.locale), "commands.admin.copy7tv.addModal.success.title"),
                     description=tanjunLocalizer.localize(
                         str(self.cmd_info.locale),
                         "commands.admin.copy7tv.addModal.success.description",
