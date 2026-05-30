@@ -32286,5 +32286,37 @@
     "context": "math -> plot_function -> unexpected_error",
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "games.advanced_ttt.name",
+    "source_string": "erweitertes Tic-Tac-Toe",
+    "translation": "erweitertes-tic-tac-toe",
+    "context": "games -> advanced_ttt -> name",
+    "labels": "command_name, en.json",
+    "max_length": 32
+  },
+  {
+    "identifier": "games.advanced_ttt.description",
+    "source_string": "Erweiterte Version von Tic-Tac-Toe (9 Felder in 3x3 Anordnung)",
+    "translation": "Erweiterte Version von Tic-Tac-Toe (9 Felder in 3x3 Anordnung)",
+    "context": "games -> advanced_ttt -> description",
+    "labels": "command_description, en.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "games.advanced_ttt.params.user.name",
+    "source_string": "nutzer",
+    "translation": "nutzer",
+    "context": "games -> advanced_ttt -> params -> user -> name",
+    "labels": "command_name, en.json",
+    "max_length": 32
+  },
+  {
+    "identifier": "games.advanced_ttt.params.user.description",
+    "source_string": "Der Nutzer, gegen den das Spiel gespielt werden soll (optional)",
+    "translation": "Der Nutzer, gegen den das Spiel gespielt werden soll (optional)",
+    "context": "games -> advanced_ttt -> params -> user -> description",
+    "labels": "command_description, en.json",
+    "max_length": 100
   }
 ]

@@ -5,6 +5,7 @@ from discord import app_commands
 from discord.ext import commands
 
 import utility
+from commands.games.advanced_tictactoe import advanced_tic_tac_toe
 from commands.games.akinator import akinator
 from commands.games.connect4 import connect4
 from commands.games.flag_quiz import flag_quiz
@@ -15,6 +16,28 @@ from commands.games.wordle import wordle
 
 
 class GameCommands(discord.app_commands.Group):
+    @app_commands.command(
+        name=app_commands.locale_str("games_advanced_ttt_name"),
+        description=app_commands.locale_str("games_advanced_ttt_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str("games_advanced_ttt_params_user_description"),
+    )
+    async def advanced_tictactoe_cmd(self, interaction: discord.Interaction, user: discord.Member = None) -> None:  # type: ignore[assignment]
+        await interaction.response.defer()
+        command_info = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
+        )
+        await advanced_tic_tac_toe(command_info, interaction.user, user)  # type: ignore[name-defined]
+
     @app_commands.command(
         name=app_commands.locale_str("games_ttt_name"),
         description=app_commands.locale_str("games_ttt_description"),
