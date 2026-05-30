@@ -2,7 +2,8 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo, EmbedColor
+from utility import EmbedColor
+from utils.checks import can_moderate, send_check_failure
 
 
 async def ban(
@@ -11,39 +12,9 @@ async def ban(
     reason: str | None = None,
     delete_message_days: int = 0,
 ) -> None:
-    if (
-        isinstance(command_info.user, discord.Member)
-        and isinstance(command_info.channel, discord.abc.GuildChannel)
-        and not command_info.channel.permissions_for(command_info.user).ban_members
-    ):
-        embed = utility.tanjunEmbed(
-            colour=EmbedColor.ERROR,
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.missingPermission.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.missingPermission.description"),
-        )
-        await command_info.reply(embed=embed)
-        return
-
-    assert command_info.guild is not None
-    if not command_info.guild.me.guild_permissions.ban_members:
-        embed = utility.tanjunEmbed(
-            colour=EmbedColor.ERROR,
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.missingPermissionBot.title"),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.admin.ban.missingPermissionBot.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
-        return
-
-    if isinstance(command_info.user, discord.Member) and target.top_role >= CommandInfo.user.top_role:  # type: ignore[misc, union-attr]
-        embed = utility.tanjunEmbed(
-            colour=EmbedColor.WARNING,
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.targetTooHigh.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.ban.targetTooHigh.description"),
-        )
-        await command_info.reply(embed=embed)
+    # Centralised permission and hierarchy checks
+    result = can_moderate(command_info, target, "ban_members", "ban_members")
+    if await send_check_failure(command_info, "ban", result):
         return
 
     try:

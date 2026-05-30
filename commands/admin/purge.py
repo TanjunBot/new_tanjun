@@ -4,6 +4,7 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utils.checks import check_bot_permission, check_user_permission, send_check_failure
 
 
 async def purge(
@@ -16,30 +17,14 @@ async def purge(
         assert command_info.channel is not None
         channel = cast(discord.TextChannel, command_info.channel)  # type: ignore[name-defined]
 
-    if (
-        isinstance(command_info.user, discord.Member)
-        and isinstance(command_info.channel, discord.abc.GuildChannel)
-        and not command_info.channel.permissions_for(command_info.user).manage_messages
-    ):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.purge.missingPermission.title"),
-            description=tanjunLocalizer.localize(
-                str(command_info.locale), "commands.admin.purge.missingPermission.description"
-            ),
-        )
-        await command_info.reply(embed=embed)
+    # User permission check (channel-scoped)
+    result = check_user_permission(command_info, "manage_messages", use_guild_permissions=False, channel=channel)
+    if await send_check_failure(command_info, "purge", result):
         return
 
-    assert command_info.guild is not None
-    if not channel.permissions_for(command_info.guild.me).manage_messages:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.purge.missingPermissionBot.title"),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.admin.purge.missingPermissionBot.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
+    # Bot permission check (channel-scoped for purge)
+    result = check_bot_permission(command_info, "manage_messages", channel=channel)
+    if await send_check_failure(command_info, "purge", result):
         return
 
     if amount <= 0:
@@ -80,7 +65,7 @@ async def purge(
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.purge.success.title"),
             description=tanjunLocalizer.localize(
-                command_info.locale,
+                str(command_info.locale),
                 "commands.admin.purge.success.description",
                 amount=len(deleted),
                 channel=channel.mention,
