@@ -24,21 +24,26 @@ import pytest
 
 class _LocaleBase:
     """Stands in for discord.Locale – real type for isinstance checks."""
+
     pass
 
 
 class _Locale(_LocaleBase):
     """Locale-like object with a .value attribute (mirrors discord.Locale)."""
+
     def __init__(self, v: str):
         self.value = v
 
 
 class _TranslatorBase:
     """Stands in for discord.app_commands.Translator – real base class for isinstance checks."""
+
     async def load(self) -> None:
         pass
+
     async def translate(self, string: object, locale: object, context: object) -> str | None:  # noqa: ANN001
         return None
+
     async def unload(self) -> None:
         pass
 
@@ -47,9 +52,9 @@ class _TranslatorBase:
 _orig_discord = __import__("sys").modules.get("discord")
 if _orig_discord is not None:
     _orig_discord.Locale = _LocaleBase
-    _orig_discord.app_commands = MagicMock() if isinstance(
-        _orig_discord.app_commands, MagicMock
-    ) else _orig_discord.app_commands
+    _orig_discord.app_commands = (
+        MagicMock() if isinstance(_orig_discord.app_commands, MagicMock) else _orig_discord.app_commands
+    )
     _orig_discord.app_commands.Translator = _TranslatorBase
 
 import tests.mock_config  # noqa: F401, E402 – side-effect import
@@ -71,6 +76,7 @@ FAKE_EN_GB = _Locale("en-GB")
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _chdir(d: Path) -> Callable[[], None]:
     """Return a callable that restores cwd after changing to d.parent."""
     old = os.getcwd()
@@ -81,6 +87,7 @@ def _chdir(d: Path) -> Callable[[], None]:
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def service() -> LocalizerService:
@@ -121,6 +128,7 @@ def locale_dir(tmp_path: Path) -> Path:
 # TranslationEntry
 # ===================================================================
 
+
 class TestTranslationEntry:
     def test_basic(self):
         e = TranslationEntry(identifier="g.hi", translation="Hello, $name!", description="greet")
@@ -154,6 +162,7 @@ class TestTranslationEntry:
 # _normalize_locale
 # ===================================================================
 
+
 class TestNormalizeLocale:
     def test_fake_de(self, service: LocalizerService):
         assert service._normalize_locale(FAKE_DE) == "de"
@@ -184,6 +193,7 @@ class TestNormalizeLocale:
 # _validate_json
 # ===================================================================
 
+
 class TestValidateJson:
     def test_valid(self, service: LocalizerService):
         r = service._validate_json([{"identifier": "a", "translation": "A"}])
@@ -207,6 +217,7 @@ class TestValidateJson:
 # _find_entry
 # ===================================================================
 
+
 class TestFindEntry:
     def test_exact(self, service: LocalizerService, sample_entries: list[TranslationEntry]) -> None:
         r = service._find_entry(sample_entries, "test.hello")
@@ -225,6 +236,7 @@ class TestFindEntry:
 # ===================================================================
 # _load_sync
 # ===================================================================
+
 
 class TestLoadSync:
     def test_load_en(self, service: LocalizerService, locale_dir: Path) -> None:
@@ -298,6 +310,7 @@ class TestLoadSync:
 # localize
 # ===================================================================
 
+
 class TestLocalize:
     def test_placeholder(self, service: LocalizerService, locale_dir):
         restore = _chdir(locale_dir)
@@ -333,6 +346,7 @@ class TestLocalize:
 # test_localize
 # ===================================================================
 
+
 class TestTestLocalize:
     def test_found(self, service: LocalizerService, locale_dir):
         restore = _chdir(locale_dir)
@@ -362,6 +376,7 @@ class TestTestLocalize:
 # Async load_locale
 # ===================================================================
 
+
 class TestLoadLocaleAsync:
     def test_async(self, service: LocalizerService, locale_dir):
         restore = _chdir(locale_dir)
@@ -378,6 +393,7 @@ class TestLoadLocaleAsync:
 # get_translation
 # ===================================================================
 
+
 class TestGetTranslation:
     def test_found(self, service: LocalizerService, sample_entries):
         assert service.get_translation(sample_entries, "test.hello") is not None
@@ -392,6 +408,7 @@ class TestGetTranslation:
 # ===================================================================
 # Cache management
 # ===================================================================
+
 
 class TestCacheManagement:
     def test_reload(self, service: LocalizerService, locale_dir):
@@ -421,9 +438,11 @@ class TestCacheManagement:
 # _report_missing
 # ===================================================================
 
+
 class TestReportMissing:
     def test_tracks(self, service: LocalizerService):
         from localizer import reported_locales
+
         reported_locales.clear()
         with patch("localizer.missingLocalization", new_callable=AsyncMock):
             service._report_missing("xx")
@@ -431,6 +450,7 @@ class TestReportMissing:
 
     def test_dedup(self, service: LocalizerService):
         from localizer import reported_locales
+
         reported_locales.clear()
         with patch("localizer.missingLocalization", new_callable=AsyncMock):
             service._report_missing("xx")
@@ -441,6 +461,7 @@ class TestReportMissing:
 # ===================================================================
 # TanjunTranslator
 # ===================================================================
+
 
 class TestTanjunTranslator:
     """Tests for the real TanjunTranslator class (not a fake)."""
@@ -557,6 +578,7 @@ class TestTanjunTranslator:
 # Constants
 # ===================================================================
 
+
 class TestConstants:
     def test_not_found(self):
         assert TRANSLATION_NOT_FOUND == "err: no translation found."
@@ -569,6 +591,7 @@ class TestConstants:
 # Global instance
 # ===================================================================
 
+
 class TestGlobalInstance:
     def test_exists(self):
         assert isinstance(tanjunLocalizer, LocalizerService)
@@ -576,12 +599,14 @@ class TestGlobalInstance:
     def test_singleton(self):
         # tanjunLocalizer is a singleton - verify two imports return the same instance
         import localizer as _localizer_mod
+
         assert tanjunLocalizer is _localizer_mod.tanjunLocalizer
 
 
 # ===================================================================
 # Deprecated API
 # ===================================================================
+
 
 class TestDeprecatedApi:
     def test_sync(self, service: LocalizerService, locale_dir):
@@ -608,8 +633,6 @@ class TestDeprecatedApi:
             a = loop.run_until_complete(service.load_translations_async("de"))
             loop.close()
             s = service._load_sync("de")
-            assert len(a) == len(s) and all(
-                ai.identifier == si.identifier for ai, si in zip(a, s, strict=True)
-            )
+            assert len(a) == len(s) and all(ai.identifier == si.identifier for ai, si in zip(a, s, strict=True))
         finally:
             restore()

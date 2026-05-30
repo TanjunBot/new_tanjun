@@ -47,26 +47,20 @@ class DynamicSlowmodeService:
     def __init__(self) -> None:
         # In-memory message tracking per channel
         # Maps channel_id -> deque of timestamps (pruned by reset_after window)
-        self._recent_messages: dict[int, deque[float]] = defaultdict(
-            lambda: deque()
-        )
+        self._recent_messages: dict[int, deque[float]] = defaultdict(lambda: deque())
 
     # ------------------------------------------------------------------
     # Config CRUD
     # ------------------------------------------------------------------
 
-    async def get_all_configs(
-        self, guild_id: str
-    ) -> list[DynamicSlowmodeConfig]:
+    async def get_all_configs(self, guild_id: str) -> list[DynamicSlowmodeConfig]:
         """Fetch all dynamic slowmode configs for a guild."""
         from api import get_dynamicslowmode_channels
 
         db_models = await get_dynamicslowmode_channels(guild_id)
         return [DynamicSlowmodeConfig.from_db_model(m) for m in db_models]
 
-    async def get_config(
-        self, channel_id: str
-    ) -> DynamicSlowmodeConfig | None:
+    async def get_config(self, channel_id: str) -> DynamicSlowmodeConfig | None:
         """Fetch slowmode config for a single channel."""
         from api import get_dynamicslowmode
 
@@ -105,25 +99,19 @@ class DynamicSlowmodeService:
     # Message tracking
     # ------------------------------------------------------------------
 
-    async def track_message(
-        self, channel_id: str, message_id: str, send_time: datetime
-    ) -> None:
+    async def track_message(self, channel_id: str, message_id: str, send_time: datetime) -> None:
         """Record a message in the tracking tables."""
         from api import add_dynamicslowmode_message
 
         await add_dynamicslowmode_message(channel_id, message_id, send_time)
 
-    async def get_recent_messages(
-        self, channel_id: str
-    ) -> list[DynamicSlowmodeMessageModel]:
+    async def get_recent_messages(self, channel_id: str) -> list[DynamicSlowmodeMessageModel]:
         """Fetch tracked messages for a channel from the DB."""
         from api import get_dynamicslowmode_messages
 
         return await get_dynamicslowmode_messages(channel_id)
 
-    async def clean_old(
-        self, channel_id: str, older_than: datetime
-    ) -> None:
+    async def clean_old(self, channel_id: str, older_than: datetime) -> None:
         """Delete tracked messages older than a cutoff."""
         from api import clear_old_dynamicslowmode_messages
 
@@ -133,9 +121,7 @@ class DynamicSlowmodeService:
     # Slowmode management
     # ------------------------------------------------------------------
 
-    async def cache_current_slowmode(
-        self, channel_id: str, delay: int
-    ) -> None:
+    async def cache_current_slowmode(self, channel_id: str, delay: int) -> None:
         """Cache the current channel slowmode delay before adjusting it."""
         from api import cash_slowmode_delay
 
@@ -147,9 +133,7 @@ class DynamicSlowmodeService:
 
         await remove_cashed_slowmode_delay(channel_id)
 
-    async def should_throttle(
-        self, channel_id: int, config: DynamicSlowmodeConfig
-    ) -> bool:
+    async def should_throttle(self, channel_id: int, config: DynamicSlowmodeConfig) -> bool:
         """Check if a channel should be throttled based on recent message rate.
 
         Uses in-memory tracking for fast checks. Returns True if the
@@ -163,8 +147,6 @@ class DynamicSlowmodeService:
 
         # Count messages in the time window
         cutoff = now - config.reset_after
-        messages_in_window = sum(
-            1 for t in self._recent_messages[channel_int] if t > cutoff
-        )
+        messages_in_window = sum(1 for t in self._recent_messages[channel_int] if t > cutoff)
 
         return messages_in_window > config.messages

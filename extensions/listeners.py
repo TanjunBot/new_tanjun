@@ -157,9 +157,6 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message) -> None:
-        # Look up the scheduled message by Discord message ID for exact-match deletion.
-        # When a scheduled message is sent, its Discord message ID is stored in the
-        # scheduled_messages table, allowing reliable cancellation on delete.
         scheduled = await ScheduledMessageService.find_by_discord_message_id(str(message.id))
         if scheduled is not None:
             await ScheduledMessageService.cancel(scheduled.message_id)

@@ -54,6 +54,8 @@ async def setupBoosterRole(command_info: CommandInfo, role: discord.Role) -> Non
 
     embed = tanjunEmbed(
         title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.setupboosterrole.success.title"),
-        description=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.setupboosterrole.success.description"),
+        description=tanjunLocalizer.localize(
+            str(command_info.locale), "commands.utility.setupboosterrole.success.description"
+        ),
     )
     await command_info.reply(embed=embed)

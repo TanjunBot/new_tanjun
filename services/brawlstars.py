@@ -21,7 +21,7 @@ import random
 from typing import Any
 
 import aiohttp
-from pydantic import AliasPath, BaseModel, ConfigDict, Field
+from pydantic import AliasPath, BaseModel, ConfigDict, Field, TypeAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -277,10 +277,9 @@ class BrawlStarsService:
                         if retry_after and retry_after.isdigit():
                             delay = float(retry_after)
                         else:
-                            delay = (2 ** attempt) * random.uniform(0.5, 1.5)
+                            delay = (2**attempt) * random.uniform(0.5, 1.5)
                         logger.warning(
-                            "Rate limit/server error on %s (attempt %d/%d): "
-                            "HTTP %d. Retrying in %.2fs",
+                            "Rate limit/server error on %s (attempt %d/%d): HTTP %d. Retrying in %.2fs",
                             path,
                             attempt + 1,
                             max_retries + 1,
@@ -334,7 +333,8 @@ class BrawlStarsService:
         if data is None:
             return []
         items = data.get("items", [])
-        return [BrawlStarsBattle.model_validate(b) for b in items]
+        battle_adapter = TypeAdapter(list[BrawlStarsBattle])
+        return battle_adapter.validate_python(items)
 
     async def get_brawler_list(self) -> list[BrawlStarPlayerBrawler]:
         """Fetch the full list of all brawlers available in the game."""
@@ -342,7 +342,8 @@ class BrawlStarsService:
         if data is None:
             return []
         items = data.get("items", [])
-        return [BrawlStarPlayerBrawler.model_validate(b) for b in items]
+        brawler_adapter = TypeAdapter(list[BrawlStarPlayerBrawler])
+        return brawler_adapter.validate_python(items)
 
     # ── Club endpoints ──────────────────────────────────────────────────────
 
@@ -364,7 +365,8 @@ class BrawlStarsService:
         Returns parsed BrawlStarsEvent model instances.
         """
         data = await self._get_list("/events/rotation")
-        return [BrawlStarsEvent.model_validate(event) for event in data]
+        event_adapter = TypeAdapter(list[BrawlStarsEvent])
+        return event_adapter.validate_python(data)
 
     # ── Account linking helpers (database-backed) ───────────────────────────
 

@@ -34,9 +34,7 @@ async def close_ticket(interaction: discord.Interaction) -> None:
         )
         return
 
-    ticket = await ticket_service.get_by_config_and_channel(
-        str(guild.id), int(ticket_id), ticket_channel_id
-    )
+    ticket = await ticket_service.get_by_config_and_channel(str(guild.id), int(ticket_id), ticket_channel_id)
 
     if not ticket:
         await interaction.followup.send(

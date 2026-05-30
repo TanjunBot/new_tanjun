@@ -1,4 +1,3 @@
-
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -200,7 +199,9 @@ class BoosterRoleCommands(discord.app_commands.Group):
         embed = utility.tanjunEmbed(
             colour=EmbedColor.INFO,
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.boosterroleinfo.info.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.utility.boosterroleinfo.info.description"),
+            description=tanjunLocalizer.localize(
+                str(command_info.locale), "commands.utility.boosterroleinfo.info.description"
+            ),
         )
         await command_info.reply(embed=embed)
 
@@ -789,8 +790,22 @@ class ScheduledMessageCommands(discord.app_commands.Group):
             client=ctx.client,
         )
 
-        attachments: list[discord.Attachment] = [a for a in [attachment1, attachment2, attachment3, attachment4, attachment5,
-                                                             attachment6, attachment7, attachment8, attachment9, attachment10] if a is not None]
+        attachments: list[discord.Attachment] = [
+            a
+            for a in [
+                attachment1,
+                attachment2,
+                attachment3,
+                attachment4,
+                attachment5,
+                attachment6,
+                attachment7,
+                attachment8,
+                attachment9,
+                attachment10,
+            ]
+            if a is not None
+        ]
 
         await scheduleMessageCommand(
             command_info=command_info,
