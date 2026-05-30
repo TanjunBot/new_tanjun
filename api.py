@@ -1309,7 +1309,6 @@ async def create_tables(bot=None) -> None:
          ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
          AFTER `attachments`,
          ADD INDEX `idx_discord_message` (`discord_message_id`)""",
-        # Add status column to reports for status transitions
         """ALTER TABLE `reports`
          ADD COLUMN `status` VARCHAR(20) DEFAULT 'PENDING'
          AFTER `created_at`,

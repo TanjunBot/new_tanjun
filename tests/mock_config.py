@@ -20,6 +20,7 @@ def patch_config_module() -> MagicMock:
     mock_config_module_instance.GithubAuthToken = "mock_github_token"
     mock_config_module_instance.ImgBBApiKey = "mock_imgbb_key"
     mock_config_module_instance.openAIKey = "mock_openai_key"
+    mock_config_module_instance.openAiKey = "mock_openai_key"
     mock_config_module_instance.bytebin_url = "https://mock.bytebin.url"
     mock_config_module_instance.bytebin_password = "mock_bytebin_password"
     mock_config_module_instance.bytebin_username = "mock_bytebin_user"
@@ -27,6 +28,9 @@ def patch_config_module() -> MagicMock:
     mock_config_module_instance.twitchSecret = "mock_twitch_secret"
     mock_config_module_instance.twitchId = "mock_twitch_id_123"
     mock_config_module_instance.prefix = "?mock?"
+    mock_config_module_instance.sentry_dsn = None
+    mock_config_module_instance.sentry_environment = None
+    mock_config_module_instance.sentry_traces_sample_rate = 0.0
 
     mock_env_dict = {
         "token": mock_config_module_instance.token,

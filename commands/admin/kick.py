@@ -7,7 +7,6 @@ from utils.checks import can_moderate, send_check_failure
 
 
 async def kick(command_info: utility.CommandInfo, target: discord.Member, reason: str | None = None) -> None:
-    # Centralised permission and hierarchy checks
     result = can_moderate(command_info, target, "kick_members", "kick_members")
     if await send_check_failure(command_info, "kick", result):
         return

@@ -425,6 +425,5 @@ def freeze() -> None:
     log.info("Dispatcher frozen with %d handler(s)", len(_handlers))
 
 
-# Backward compatibility alias
 HandlerRegistry = type("HandlerRegistry", (), {})
 register_handler = register

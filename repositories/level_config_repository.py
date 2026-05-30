@@ -19,28 +19,24 @@ class LevelConfigRepository:
 
     async def get_config(self, guild_id: str) -> LevelConfig:
         """Load the full LevelConfig for a guild, returning defaults if none exists."""
-        import time
+        from api import _guild_config_cache, execute_query
 
-        from api import _GUILD_CONFIG_CACHE_TTL, _guild_config_cache, _is_cache_valid, execute_query
-
-        # Check cache first
-        cache_entry = _guild_config_cache.get(guild_id)
-        if _is_cache_valid(cache_entry, _GUILD_CONFIG_CACHE_TTL) and cache_entry is not None:
-            cache_data, cache_time = cache_entry  # type: ignore[misc]
-            if cache_data:  # Non-empty cache entry means we have config
+        cached = _guild_config_cache.get(guild_id)
+        if cached is not None:
+            if cached:
                 return LevelConfig(
                     guild_id=guild_id,
-                    active=cache_data.get("active", True),
-                    difficulty=cache_data.get("scaling", "medium"),  # Note: cache uses "scaling" key
-                    custom_formula=cache_data.get("custom_formula"),
-                    level_up_message_active=cache_data.get("level_up_message_active", True),
-                    level_up_message=cache_data.get("level_up_message"),
-                    level_up_channel_id=cache_data.get("level_up_channel_id"),
-                    text_cooldown=cache_data.get("text_cooldown", 60),
-                    voice_cooldown=cache_data.get("voice_cooldown", 60),
+                    active=cached.get("active", True),
+                    difficulty=cached.get("scaling", "medium"),
+                    custom_formula=cached.get("custom_formula"),
+                    level_up_message_active=cached.get("level_up_message_active", True),
+                    level_up_message=cached.get("level_up_message"),
+                    level_up_channel_id=cached.get("level_up_channel_id"),
+                    text_cooldown=cached.get("text_cooldown", 60),
+                    voice_cooldown=cached.get("voice_cooldown", 60),
                 )
+            return LevelConfig(guild_id=guild_id)
 
-        # Cache miss - fetch from DB
         query = """
         SELECT guild_id, active, difficulty, customFormula, level_up_messageActive,
                level_up_message, level_up_channel_id, textCooldown, voiceCooldown
@@ -50,8 +46,8 @@ class LevelConfigRepository:
         result = await execute_query(query, params)
         if result and len(result) > 0:
             config = LevelConfig.from_row(result[0])
-            # Populate cache
-            _guild_config_cache[guild_id] = (  # type: ignore[index]
+            _guild_config_cache.set(
+                guild_id,
                 {
                     "active": config.active,
                     "scaling": config.difficulty,
@@ -62,11 +58,9 @@ class LevelConfigRepository:
                     "text_cooldown": config.text_cooldown,
                     "voice_cooldown": config.voice_cooldown,
                 },
-                time.time(),
             )
             return config
-        # No DB row - cache the miss
-        _guild_config_cache[guild_id] = ({}, time.time())  # type: ignore[index]
+        _guild_config_cache.set(guild_id, {})
         return LevelConfig(guild_id=guild_id)
 
     async def save_config(self, config: LevelConfig) -> None:
@@ -117,7 +111,6 @@ class LevelConfigRepository:
         if not kwargs:
             return
 
-        # Validate incoming values against LevelConfig domain model
         valid_difficulties = {"easy", "medium", "hard", "extreme", "custom"}
 
         for key, value in kwargs.items():
@@ -134,11 +127,9 @@ class LevelConfigRepository:
                 if not isinstance(value, bool):
                     raise ValueError(f"Invalid level_up_message_active: {value!r}. Must be a boolean.")
             elif key in ("custom_formula", "level_up_message", "level_up_channel_id"):
-                # These can be str or None
                 if value is not None and not isinstance(value, str):
                     raise ValueError(f"Invalid {key}: {value!r}. Must be a string or None.")
 
-        # Map Python field names to DB column names
         field_map = {
             "active": "active",
             "difficulty": "difficulty",
@@ -188,5 +179,4 @@ class LevelConfigRepository:
         _invalidate_guild_cache(guild_id)
 
 
-# Module-level singleton for easy import in existing callers
 level_config_repo = LevelConfigRepository()

@@ -94,3 +94,7 @@ class BackgroundLoopHealthCheck(HealthCheck):
             HealthStatus.HEALTHY,
             f"All {len(loop_specs)} background loops are running.",
         )
+
+
+async def setup(bot: Any) -> None:
+    pass
