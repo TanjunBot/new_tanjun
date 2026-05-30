@@ -128,7 +128,7 @@ dev = [
 "Bug Tracker" = "https://github.com/TanjunBot/new_tanjun/issues"
 
 [tool.setuptools]
-py-modules = ["api", "config", "localizer", "utility", "models", "translator", "main", "healthcheck", "health_check", "free_tier_guarantee", "locale_file_health_check", "OpenAIHealthCheck"]
+py-modules = ["api", "config", "localizer", "utility", "models", "translator", "main", "healthcheck", "health_check"]
 
 [tool.setuptools.packages.find]
 where = ["."]
