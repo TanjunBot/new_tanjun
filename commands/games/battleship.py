@@ -1,3 +1,4 @@
+import contextlib
 import random
 from typing import Any
 
@@ -12,7 +13,7 @@ SHIPS = [
     ("Battleship", 4, "🟧"),
     ("Cruiser", 3, "🟨"),
     ("Submarine", 3, "🟩"),
-    ("Destroyer", 2, "🟦"),
+    ("Destroyer", 2, "🟪"),
 ]
 
 # Emojis for the board
@@ -146,8 +147,8 @@ class Battleship:
         header = "  " + COL_LABELS
         return header + "\n" + "\n".join(rows)
 
-    def _format_battle_embed(self, locale: str) -> discord.Embed:
-        """Build the battle phase embed showing both boards."""
+    def _format_battle_embed(self, locale: str, viewer: discord.Member | str | None = None) -> discord.Embed:
+        """Build the battle phase embed showing both boards, personalized for the viewer."""
         p1_name = self.player1.display_name
         p2_name = self.player2.display_name if self.player2 != "tanjun" else "Tanjun"  # type: ignore[union-attr]
 
@@ -159,27 +160,45 @@ class Battleship:
         p2_own = self._board_to_str(self.board2)
         p2_view = self._board_to_str(self.view2)
 
-        desc = (
-            f"## **{p1_name}**\n"
-            f"```\n{p1_own}\n```\n"
-            f"## **{p2_name}** (your view)\n"
-            f"```\n{p2_view}\n```\n"
-        )
+        # Personalize based on viewer
+        if viewer == self.player1:
+            desc = (
+                f"## **{p1_name}** (your board)\n"
+                f"```\n{p1_own}\n```\n"
+                f"## **{p2_name}** (your view)\n"
+                f"```\n{p1_view}\n```\n"
+            )
+        elif viewer == self.player2:
+            desc = (
+                f"## **{p2_name}** (your board)\n"
+                f"```\n{p2_own}\n```\n"
+                f"## **{p1_name}** (your view)\n"
+                f"```\n{p2_view}\n```\n"
+            )
+        else:
+            # Spectator or no viewer specified - show masked views only
+            desc = (
+                f"## **{p1_name}** (opponent view)\n"
+                f"```\n{p2_view}\n```\n"
+                f"## **{p2_name}** (opponent view)\n"
+                f"```\n{p1_view}\n```\n"
+            )
 
         if self.game_over:
             if self.winner:
                 winner_name = self.winner.display_name if hasattr(self.winner, "display_name") else "Tanjun"
                 desc += f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.winner', player=winner_name)}**"
             else:
-                desc += "**Game Over**"
+                desc += f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.gameOver')}**"
         else:
             current = self.current_player.mention if self.current_player != "tanjun" else "Tanjun"
             desc += tanjunLocalizer.localize(locale, "commands.games.battleship.currentTurn", player=current)
 
-        legend = (
-            f"\n**Legend:** {WATER}=Water | {HIT}=Hit | {MISS}=Miss | {SHIP_SUNK}=Sunk"
+        legend = tanjunLocalizer.localize(
+            locale, "commands.games.battleship.legend",
+            water=WATER, hit=HIT, miss=MISS, sunk=SHIP_SUNK
         )
-        desc += legend
+        desc += f"\n**{legend}**"
 
         title = tanjunLocalizer.localize(locale, "commands.games.battleship.battleTitle")
         return utility.tanjunEmbed(title=title, description=desc)
@@ -218,29 +237,106 @@ class Battleship:
         self.current_player = self.player1
 
     async def show_board(
-        self, interaction: discord.Interaction, initial: bool = False,
+        self, interaction: discord.Interaction | utility.CommandInfo, initial: bool = False,
     ) -> None:
         """Display the current game state."""
         locale = str(interaction.locale)
-        embed = self._format_battle_embed(locale)
+
+        # Determine viewer for personalized embed
+        viewer = None
+        if hasattr(interaction, 'user'):
+            viewer = interaction.user
+
+        embed = self._format_battle_embed(locale, viewer=viewer)
         view = BattleshipView(self, self.game_over)
 
         if initial:
-            self.message = await interaction.followup.send(embed=embed, view=view)  # type: ignore[attr-defined]
+            # Handle CommandInfo vs Interaction
+            if hasattr(interaction, 'reply'):
+                self.message = await interaction.reply(embed=embed, view=view)  # type: ignore[attr-defined]
+            else:
+                self.message = await interaction.followup.send(embed=embed, view=view)  # type: ignore[attr-defined]
         else:
-            await interaction.followup.edit_message(
-                message_id=interaction.message.id, embed=embed, view=view,
+            # Handle edit for CommandInfo vs Interaction
+            if hasattr(interaction, 'edit_message'):
+                await interaction.edit_message(embed=embed, view=view)  # type: ignore[attr-defined]
+            else:
+                await interaction.followup.edit_message(
+                    message_id=interaction.message.id, embed=embed, view=view,
+                )
+
+
+class AttackModal(discord.ui.Modal, title="Enter Attack Coordinates"):
+    """Modal for entering attack coordinates."""
+
+    coordinate = discord.ui.TextInput(
+        label="Coordinate (e.g., A5, B3, J9)",
+        placeholder="Enter coordinate like A5",
+        min_length=2,
+        max_length=3,
+    )
+
+    def __init__(self, game: Battleship) -> None:
+        super().__init__()
+        self.game = game
+
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        coord_str = self.coordinate.value.upper().strip()
+
+        # Parse coordinate
+        if len(coord_str) < 2:
+            await interaction.response.send_message(
+                "Invalid coordinate format. Use format like A5, B3, etc.",
+                ephemeral=True,
             )
+            return
+
+        row_char = coord_str[0]
+        col_str = coord_str[1:]
+
+        if row_char not in ROW_LABELS:
+            await interaction.response.send_message(
+                "Invalid row. Use A-J.",
+                ephemeral=True,
+            )
+            return
+
+        try:
+            col = int(col_str)
+            if col < 0 or col >= BOARD_SIZE:
+                raise ValueError
+        except ValueError:
+            await interaction.response.send_message(
+                "Invalid column. Use 0-9.",
+                ephemeral=True,
+            )
+            return
+
+        row = ROW_LABELS.index(row_char)
+
+        # Handle the attack using existing logic
+        view = BattleshipView(self.game, self.game.game_over)
+        await view._handle_attack(interaction, row, col)
 
 
 class BattleshipView(discord.ui.View):
-    """View with the 10x10 attack grid for the current player."""
+    """View with attack modal and utility buttons."""
 
     def __init__(self, game: Battleship, disabled: bool = False) -> None:
         super().__init__(timeout=300)
         self.game = game
 
-        # Add give-up button on row 0
+        # Add attack button
+        attack_btn = discord.ui.Button(
+            label="🎯 Attack",
+            style=discord.ButtonStyle.primary,
+            disabled=disabled or game.game_over,
+            row=0,
+        )
+        attack_btn.callback = self._attack_callback
+        self.add_item(attack_btn)
+
+        # Add give-up button
         give_up = discord.ui.Button(label="🏳️ Give Up", style=discord.ButtonStyle.danger, row=0)
         give_up.callback = self._give_up_callback
         self.add_item(give_up)
@@ -250,32 +346,35 @@ class BattleshipView(discord.ui.View):
         help_btn.callback = self._help_callback
         self.add_item(help_btn)
 
-        # Create 10x10 grid of buttons (rows 1-10)
-        for row in range(BOARD_SIZE):
-            for col in range(BOARD_SIZE):
-                button = discord.ui.Button(
-                    label=f"{ROW_LABELS[row]}{col}",
-                    style=discord.ButtonStyle.secondary,
-                    custom_id=f"attack_{row}_{col}",
-                    row=row + 1,
-                    disabled=disabled or game.game_over,
-                )
-                button.callback = self._make_callback(row, col)
-                self.add_item(button)
+    async def _attack_callback(self, interaction: discord.Interaction) -> None:
+        """Open modal for coordinate input."""
+        if self.game.game_over:
+            return
 
-    def _make_callback(self, row: int, col: int):
-        async def callback(interaction: discord.Interaction) -> None:
-            await self._handle_attack(interaction, row, col)
-        return callback
+        # Check if it's the right player's turn
+        if interaction.user != self.game.current_player:
+            await interaction.response.send_message(
+                tanjunLocalizer.localize(
+                    str(interaction.locale), "commands.games.battleship.notYourTurn",
+                ),
+                ephemeral=True,
+            )
+            return
+
+        modal = AttackModal(self.game)
+        await interaction.response.send_modal(modal)
 
     async def _handle_attack(self, interaction: discord.Interaction, row: int, col: int) -> None:
-        await interaction.response.defer()
+        # Defer response if not already responded (modal already responds)
+        if not interaction.response.is_done():
+            await interaction.response.defer()
+
         game = self.game
 
         if game.game_over:
             return
 
-        # Check if it's the right player's turn
+        # Check if it's the right player's turn (already checked in modal callback)
         if interaction.user != game.current_player:
             await interaction.followup.send(
                 tanjunLocalizer.localize(
@@ -361,23 +460,37 @@ class BattleshipView(discord.ui.View):
         p1_name = self.game.player1.display_name
         p2_name = self.game.player2.display_name if self.game.player2 != "tanjun" else "Tanjun"  # type: ignore[union-attr]
 
-        if interaction.user not in (self.game.player1, self.game.player2 if isinstance(self.game.player2, discord.Member) else None):
+        if interaction.user not in (
+            self.game.player1,
+            self.game.player2 if isinstance(self.game.player2, discord.Member) else None,
+        ):
             await interaction.followup.send(
                 tanjunLocalizer.localize(locale, "commands.games.battleship.notYourGame"),
                 ephemeral=True,
             )
             return
 
+        current_turn = self.game.current_player.display_name if hasattr(self.game.current_player, 'display_name') else 'Tanjun'
+
         msg = (
-            f"**Battleship Help**\n\n"
-            f"📋 **Boards shown:**\n"
-            f"- Your board (top) shows YOUR ships: colored blocks\n"
-            f"- Enemy board (bottom) shows your attacks: {HIT} = hit, {MISS} = miss, {SHIP_SUNK} = sunk\n\n"
-            f"🎯 **To attack:** Click a button on the grid below the boards.\n\n"
-            f"🏳️ **Give up:** Click the Give Up button to concede.\n\n"
-            f"📖 **Legend:** {WATER} Water | {HIT} Hit | {MISS} Miss | {SHIP_SUNK} Sunk\n\n"
-            f"**Players:** {p1_name} vs {p2_name}\n"
-            f"**Current turn:** {self.game.current_player.display_name if hasattr(self.game.current_player, 'display_name') else 'Tanjun'}"
+            f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpTitle')}**\n\n"
+            f"📋 **{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpBoards')}**\n"
+            f"- {tanjunLocalizer.localize(locale, 'commands.games.battleship.helpYourBoard')}\n"
+            f"- {tanjunLocalizer.localize(
+                locale, 'commands.games.battleship.helpEnemyBoard',
+                hit=HIT, miss=MISS, sunk=SHIP_SUNK,
+            )}\n\n"
+            f"🎯 **{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpToAttack')}** "
+            f"{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpAttackInstruction')}\n\n"
+            f"🏳️ **{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpGiveUp')}** "
+            f"{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpGiveUpInstruction')}\n\n"
+            f"📖 **{tanjunLocalizer.localize(
+                locale, 'commands.games.battleship.legend',
+                water=WATER, hit=HIT, miss=MISS, sunk=SHIP_SUNK,
+            )}**\n\n"
+            f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpPlayers')}** "
+            f"{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpPlayersValue', p1=p1_name, p2=p2_name)}\n"
+            f"**{tanjunLocalizer.localize(locale, 'commands.games.battleship.helpCurrentTurn')}** {current_turn}"
         )
         await interaction.followup.send(msg, ephemeral=True)
 
@@ -385,10 +498,8 @@ class BattleshipView(discord.ui.View):
         for child in self.children:
             child.disabled = True  # type: ignore[attr-defined]
         if self.game.message:
-            try:
+            with contextlib.suppress(Exception):
                 await self.game.message.edit(view=self)
-            except Exception:
-                pass
 
 
 async def battleship(

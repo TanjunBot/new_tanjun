@@ -31104,6 +31104,110 @@
     "max_length": null
   },
   {
+    "identifier": "commands.games.battleship.gameOver",
+    "source_string": "Game Over",
+    "translation": "Game Over",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.legend",
+    "source_string": "Legend: $water=Water | $hit=Hit | $miss=Miss | $sunk=Sunk",
+    "translation": "Legend: $water=Water | $hit=Hit | $miss=Miss | $sunk=Sunk",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpTitle",
+    "source_string": "Battleship Help",
+    "translation": "Battleship Help",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpBoards",
+    "source_string": "Boards shown:",
+    "translation": "Boards shown:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpYourBoard",
+    "source_string": "Your board (top) shows YOUR ships: colored blocks",
+    "translation": "Your board (top) shows YOUR ships: colored blocks",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpEnemyBoard",
+    "source_string": "Enemy board (bottom) shows your attacks: $hit = hit, $miss = miss, $sunk = sunk",
+    "translation": "Enemy board (bottom) shows your attacks: $hit = hit, $miss = miss, $sunk = sunk",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpToAttack",
+    "source_string": "To attack:",
+    "translation": "To attack:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpAttackInstruction",
+    "source_string": "Click the Attack button and enter coordinates (e.g., A5, B3).",
+    "translation": "Click the Attack button and enter coordinates (e.g., A5, B3).",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpGiveUp",
+    "source_string": "Give up:",
+    "translation": "Give up:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpGiveUpInstruction",
+    "source_string": "Click the Give Up button to concede.",
+    "translation": "Click the Give Up button to concede.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpPlayers",
+    "source_string": "Players:",
+    "translation": "Players:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpPlayersValue",
+    "source_string": "$p1 vs $p2",
+    "translation": "$p1 vs $p2",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpCurrentTurn",
+    "source_string": "Current turn:",
+    "translation": "Current turn:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "logs.permissions.add_reactions",
     "source_string": "Reaktionen hinzufügen",
     "translation": "Add reactions",

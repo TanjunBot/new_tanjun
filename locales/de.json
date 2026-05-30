@@ -31104,6 +31104,110 @@
     "max_length": null
   },
   {
+    "identifier": "commands.games.battleship.gameOver",
+    "source_string": "Spiel beendet",
+    "translation": "Spiel beendet",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.legend",
+    "source_string": "Legende: $water=Wasser | $hit=Treffer | $miss=Verfehlt | $sunk=Versenkt",
+    "translation": "Legende: $water=Wasser | $hit=Treffer | $miss=Verfehlt | $sunk=Versenkt",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpTitle",
+    "source_string": "Schiffe versenken Hilfe",
+    "translation": "Schiffe versenken Hilfe",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpBoards",
+    "source_string": "Angezeigte Spielfelder:",
+    "translation": "Angezeigte Spielfelder:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpYourBoard",
+    "source_string": "Dein Spielfeld (oben) zeigt DEINE Schiffe: farbige Blöcke",
+    "translation": "Dein Spielfeld (oben) zeigt DEINE Schiffe: farbige Blöcke",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpEnemyBoard",
+    "source_string": "Gegnerisches Spielfeld (unten) zeigt deine Angriffe: $hit = Treffer, $miss = Verfehlt, $sunk = Versenkt",
+    "translation": "Gegnerisches Spielfeld (unten) zeigt deine Angriffe: $hit = Treffer, $miss = Verfehlt, $sunk = Versenkt",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpToAttack",
+    "source_string": "Zum Angreifen:",
+    "translation": "Zum Angreifen:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpAttackInstruction",
+    "source_string": "Klicke auf die Angriff-Schaltfläche und gib Koordinaten ein (z.B. A5, B3).",
+    "translation": "Klicke auf die Angriff-Schaltfläche und gib Koordinaten ein (z.B. A5, B3).",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpGiveUp",
+    "source_string": "Aufgeben:",
+    "translation": "Aufgeben:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpGiveUpInstruction",
+    "source_string": "Klicke auf die Aufgeben-Schaltfläche, um aufzugeben.",
+    "translation": "Klicke auf die Aufgeben-Schaltfläche, um aufzugeben.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpPlayers",
+    "source_string": "Spieler:",
+    "translation": "Spieler:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpPlayersValue",
+    "source_string": "$p1 gegen $p2",
+    "translation": "$p1 gegen $p2",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpCurrentTurn",
+    "source_string": "Aktueller Zug:",
+    "translation": "Aktueller Zug:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "logs.permissions.add_reactions",
     "source_string": "Reaktionen hinzufügen",
     "translation": "Reaktionen hinzufügen",
