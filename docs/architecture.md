@@ -132,7 +132,7 @@ The main entry point:
 3. Loads all extensions (cogs)
 4. Creates database tables
 5. Starts background loops
-6. Launches the bot's webserver (API)
+6. Launches the bot's web server (API)
 7. Connects to Discord
 
 ### Database Layer (`api.py`)
