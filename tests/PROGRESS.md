@@ -13,10 +13,10 @@
 | 8 extensions | done | ~800 | admin/logs 90%+ | comprehensive suites |
 | 9 E2E mock | done | 176 | — | tests/e2e/ |
 | 10 Live e2e | done | 2+ | — | tests/e2e_live/, skips without token |
-| 11 Gap fill | in progress | +400 | **76% total**, ~100 files &lt;85% | continue gap-fill |
+| 11 Gap fill | done | +1450 | **~93% total**, **0 files** &lt;85% | batch 19: giveaway gaps, calculator, plot_function, listscheduled |
 | 12 PR | in progress | — | — | branch `test/comprehensive-testing-expansion` |
 
-**Collected tests:** ~3360 (local)
+**Collected tests:** 4598 (local)
 
 **Resume coverage measurement:**
 ```bash
@@ -30,4 +30,4 @@ coverage report --fail-under=85
 python scripts/check_coverage_per_file.py --min 85
 ```
 
-Last updated: gap-fill in progress (76% total, ~100 files below 85%)
+Last updated: batch 19 — **per-file gate PASS** (274 files ≥85%); 4598 tests collected

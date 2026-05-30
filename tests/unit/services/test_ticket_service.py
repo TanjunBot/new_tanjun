@@ -69,3 +69,44 @@ class TestTicketService:
             result = await TicketService.get_by_channel(GUILD_ID, CHANNEL_ID)
         assert result is not None
         assert result.opener_id == USER_ID
+
+    @pytest.mark.asyncio
+    async def test_get_configs(self):
+        from models import TicketMessageModel
+
+        row = (1, GUILD_ID, CHANNEL_ID, None, None, "Support", None, None)
+
+        async def fake_iter(*args, **kwargs):
+            yield TicketMessageModel.from_row(row)
+
+        with patch.object(TicketMessageModel, "iter_rows", side_effect=fake_iter):
+            result = await TicketService.get_configs(GUILD_ID)
+        assert len(result) == 1
+        assert result[0].name == "Support"
+
+    @pytest.mark.asyncio
+    async def test_get_tickets(self):
+        row = (GUILD_ID, USER_ID, 1700000000, False, None, None, CHANNEL_ID, 1)
+
+        async def fake_iter(*args, **kwargs):
+            from models import TicketModel
+            yield TicketModel.from_row(row)
+
+        from models import TicketModel
+        with patch.object(TicketModel, "iter_rows", side_effect=fake_iter):
+            result = await TicketService.get_tickets(GUILD_ID)
+        assert len(result) == 1
+
+    @pytest.mark.asyncio
+    async def test_get_by_config_and_channel(self):
+        row = (GUILD_ID, USER_ID, 1700000000, False, None, None, CHANNEL_ID, 1)
+        with patch("services.ticket_service.execute_query", new_callable=AsyncMock) as mock_q:
+            mock_q.return_value = [row]
+            result = await TicketService.get_by_config_and_channel(GUILD_ID, 1, CHANNEL_ID)
+        assert result is not None
+
+    @pytest.mark.asyncio
+    async def test_get_by_config_and_channel_none(self):
+        with patch("services.ticket_service.execute_query", new_callable=AsyncMock, return_value=[]):
+            result = await TicketService.get_by_config_and_channel(GUILD_ID, 1, CHANNEL_ID)
+        assert result is None

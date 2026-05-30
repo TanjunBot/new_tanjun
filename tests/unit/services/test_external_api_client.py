@@ -94,3 +94,51 @@ class TestExternalApiClient:
         await client.close()
         mock_session.close.assert_awaited_once()
         assert client._session is None
+
+    @pytest.mark.asyncio
+    async def test_upload_imgbb_no_key(self):
+        client = ExternalApiClient(imgbb_key="", giphy_key="k", github_token="t", bytebin_url="u", bytebin_username="", bytebin_password="")
+        assert await client.upload_to_imgbb(b"x", "png") is None
+
+    @pytest.mark.asyncio
+    async def test_search_giphy_no_key(self):
+        client = ExternalApiClient(imgbb_key="k", giphy_key="", github_token="t", bytebin_url="u", bytebin_username="", bytebin_password="")
+        assert await client.search_giphy("cat") is None
+
+    @pytest.mark.asyncio
+    async def test_upload_bytebin_no_url(self, client: ExternalApiClient):
+        client.bytebin_url = ""
+        assert await client.upload_to_bytebin("data") is None
+
+    @pytest.mark.asyncio
+    async def test_upload_imgbb_bad_status(self, client: ExternalApiClient):
+        mock_resp = _mock_resp(500)
+        mock_session = AsyncMock()
+        mock_session.post = MagicMock(return_value=mock_resp)
+        with patch.object(client, "get_session", new_callable=AsyncMock, return_value=mock_session):
+            assert await client.upload_to_imgbb(b"data", "png") is None
+
+    @pytest.mark.asyncio
+    async def test_search_giphy_invalid_json(self, client: ExternalApiClient):
+        from pydantic import ValidationError
+
+        mock_resp = _mock_resp(200, {"data": "bad"})
+        mock_session = AsyncMock()
+        mock_session.get = MagicMock(return_value=mock_resp)
+        with (
+            patch.object(client, "get_session", new_callable=AsyncMock, return_value=mock_session),
+            patch("services.external_api_client.GiphyResponse.model_validate", side_effect=ValidationError.from_exception_data("GiphyResponse", [])),
+        ):
+            assert await client.search_giphy("cat") is None
+
+    def test_create_github_issue_no_token(self):
+        client = ExternalApiClient(imgbb_key="", giphy_key="", github_token="", bytebin_url="", bytebin_username="", bytebin_password="")
+        client.create_github_issue("t", "b", [])
+
+    @pytest.mark.asyncio
+    async def test_upload_bytebin_invalid_response(self, client: ExternalApiClient):
+        mock_resp = _mock_resp(201, {})
+        mock_session = AsyncMock()
+        mock_session.post = MagicMock(return_value=mock_resp)
+        with patch.object(client, "get_session", new_callable=AsyncMock, return_value=mock_session):
+            assert await client.upload_to_bytebin("data") is None

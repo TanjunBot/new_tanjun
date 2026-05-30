@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import types
 from typing import Any, Callable
 from unittest.mock import AsyncMock, MagicMock
 
@@ -67,6 +68,7 @@ def iter_app_command_methods(obj: Any) -> list[tuple[str, Callable[..., Any]]]:
 async def invoke_interaction_command(
     handler: Callable[..., Any],
     *,
+    owner: Any | None = None,
     user: MagicMock | None = None,
     guild: MagicMock | None = None,
     channel: MagicMock | None = None,
@@ -81,6 +83,8 @@ async def invoke_interaction_command(
         kwargs.update(extra_kwargs)
 
     call_target = getattr(handler, "callback", handler)
+    if getattr(handler, "callback", None) is not None and owner is not None:
+        call_target = types.MethodType(call_target, owner)
     try:
         sig = inspect.signature(call_target)
         allowed = {k: v for k, v in kwargs.items() if k in sig.parameters}

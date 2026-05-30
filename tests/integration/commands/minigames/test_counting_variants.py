@@ -50,6 +50,36 @@ async def test_set_modes_counting_channel(mock_mod, mock_bot, mock_repo, admin_c
     mock_repo.set_mode_progress.assert_awaited_once()
 
 
+@patch("commands.minigames.counting_challenge.removecountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=True)
+async def test_remove_challenge_no_perm(mock_mod, admin_command_info):
+    channel = make_text_channel(guild=admin_command_info.guild)
+    await removecountingchallengechannel(admin_command_info, channel)
+    admin_command_info.reply.assert_not_awaited()
+
+
+@patch("commands.minigames.counting_challenge.removecountingchannel.require_counting_channel", new_callable=AsyncMock, return_value=None)
+@patch("commands.minigames.counting_challenge.removecountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False)
+async def test_remove_challenge_no_channel(mock_mod, mock_req, admin_command_info):
+    channel = make_text_channel(guild=admin_command_info.guild)
+    await removecountingchallengechannel(admin_command_info, channel)
+    admin_command_info.reply.assert_not_awaited()
+
+
+@patch("commands.minigames.counting_modes.removecountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=True)
+async def test_remove_modes_no_perm(mock_mod, admin_command_info):
+    channel = make_text_channel(guild=admin_command_info.guild)
+    await removecountingmodeschannel(admin_command_info, channel)
+    admin_command_info.reply.assert_not_awaited()
+
+
+@patch("commands.minigames.counting_modes.removecountingchannel.require_counting_channel", new_callable=AsyncMock, return_value=None)
+@patch("commands.minigames.counting_modes.removecountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False)
+async def test_remove_modes_no_channel(mock_mod, mock_req, admin_command_info):
+    channel = make_text_channel(guild=admin_command_info.guild)
+    await removecountingmodeschannel(admin_command_info, channel)
+    admin_command_info.reply.assert_not_awaited()
+
+
 @patch("commands.minigames.counting_modes.removecountingchannel._repo")
 @patch("commands.minigames.counting_modes.removecountingchannel.require_counting_channel", new_callable=AsyncMock, return_value=2)
 @patch("commands.minigames.counting_modes.removecountingchannel.require_moderate_members", new_callable=AsyncMock, return_value=False)

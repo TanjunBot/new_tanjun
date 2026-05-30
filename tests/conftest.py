@@ -84,6 +84,7 @@ def _app_command(*args, **kwargs):
 
 _discord_mock.app_commands.Group = _FakeAppGroup
 _discord_mock.app_commands.command = _app_command
+_discord_mock.app_commands.autocomplete = lambda *a, **k: (lambda f: f)
 _discord_mock.app_commands.locale_str = lambda s: s
 _discord_mock.app_commands.describe = lambda **kw: lambda f: f
 _discord_mock.app_commands.choices = lambda *a, **kw: lambda f: f

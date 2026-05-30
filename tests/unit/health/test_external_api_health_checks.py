@@ -102,7 +102,99 @@ async def test_giphy_client_error():
 
 
 @pytest.mark.asyncio
-async def test_brawl_stars_with_key():
+async def test_brawl_stars_403():
+    check = BrawlStarsHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(return_value=_mock_resp(403))
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.brawlstarsToken", "k"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.DEGRADED
+
+
+@pytest.mark.asyncio
+async def test_brawl_stars_timeout():
+    check = BrawlStarsHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(side_effect=TimeoutError())
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.brawlstarsToken", "k"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.DEGRADED
+
+
+@pytest.mark.asyncio
+async def test_imgbb_success():
+    check = ImgBBHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(return_value=_mock_resp(400))
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.ImgBBApiKey", "k"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.HEALTHY
+
+
+@pytest.mark.asyncio
+async def test_bytebin_auth_failure():
+    check = BytebinHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(return_value=_mock_resp(401))
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.bytebin_url", "https://bytebin.test"),
+        patch("config.bytebin_username", "u"),
+        patch("config.bytebin_password", "p"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.DEGRADED
+
+
+@pytest.mark.asyncio
+async def test_github_401():
+    check = GitHubAPIHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(return_value=_mock_resp(401))
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.GithubAuthToken", "k"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.DEGRADED
+
+
+@pytest.mark.asyncio
+async def test_github_success():
+    check = GitHubAPIHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(return_value=_mock_resp(200))
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.GithubAuthToken", "k"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.HEALTHY
+
+
+@pytest.mark.asyncio
+async def test_brawl_stars_success():
     check = BrawlStarsHealthCheck()
     session = AsyncMock()
     session.get = MagicMock(return_value=_mock_resp(200))
@@ -113,4 +205,83 @@ async def test_brawl_stars_with_key():
         patch("external_api_health_checks.ClientSession", return_value=session),
     ):
         result = await check.run()
-    assert result.status in (HealthStatus.HEALTHY, HealthStatus.DEGRADED)
+    assert result.status == HealthStatus.HEALTHY
+
+
+@pytest.mark.asyncio
+async def test_brawl_stars_client_error():
+    check = BrawlStarsHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(side_effect=ClientError())
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.brawlstarsToken", "k"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.DEGRADED
+
+
+@pytest.mark.asyncio
+async def test_imgbb_bad_status():
+    check = ImgBBHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(return_value=_mock_resp(500))
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.ImgBBApiKey", "k"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.DEGRADED
+
+
+@pytest.mark.asyncio
+async def test_imgbb_timeout():
+    check = ImgBBHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(side_effect=TimeoutError())
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.ImgBBApiKey", "k"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.DEGRADED
+
+
+@pytest.mark.asyncio
+async def test_bytebin_500():
+    check = BytebinHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(return_value=_mock_resp(503))
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.bytebin_url", "https://bytebin.test"),
+        patch("config.bytebin_username", ""),
+        patch("config.bytebin_password", ""),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.DEGRADED
+
+
+@pytest.mark.asyncio
+async def test_bytebin_success():
+    check = BytebinHealthCheck()
+    session = AsyncMock()
+    session.get = MagicMock(return_value=_mock_resp(200))
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    with (
+        patch("config.bytebin_url", "https://bytebin.test"),
+        patch("config.bytebin_username", "u"),
+        patch("config.bytebin_password", "p"),
+        patch("external_api_health_checks.ClientSession", return_value=session),
+    ):
+        result = await check.run()
+    assert result.status == HealthStatus.HEALTHY

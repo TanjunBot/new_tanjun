@@ -59,6 +59,46 @@ class TestImageService:
             embed = ImageService.format_error_embed("en-US", "invalid_format")
         assert embed is not None
 
+    def test_validate_attachment_filesize(self):
+        attachment = MagicMock()
+        attachment.filename = "file.png"
+        attachment.size = ImageService.MAX_FILE_SIZE + 1
+        assert ImageService.validate_attachment(attachment) == "filesize"
+
+    def test_image_filter_format_methods(self):
+        with patch("localizer.tanjunLocalizer.localize", return_value="ok"):
+            assert ImageFilter.SHARPEN.format_success_title("en") == "ok"
+            assert ImageFilter.CONTOUR.format_success_description("en") == "ok"
+
+    @pytest.mark.asyncio
+    async def test_process_no_op_returns_original(self):
+        data = b"raw"
+        result = await ImageService.process(data, ImageOperation())
+        assert result == data
+
+    @pytest.mark.asyncio
+    async def test_process_invalid_image_raises(self):
+        with pytest.raises(ValueError):
+            await ImageService.process(b"not-an-image", ImageOperation(resize=(10, 10)))
+
+    @pytest.mark.asyncio
+    async def test_process_compress_jpeg(self):
+        img = Image.new("RGBA", (20, 20), (255, 0, 0, 255))
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        operation = ImageOperation(compress_quality=80)
+        result = await ImageService.process(buf.getvalue(), operation)
+        assert len(result) > 0
+
+    @pytest.mark.asyncio
+    async def test_process_scale_and_filter(self):
+        img = Image.new("RGB", (40, 40), color="green")
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        operation = ImageOperation(filter_name=ImageFilter.EMBOSS, scale=0.5, mirror_axis="y")
+        result = await ImageService.process(buf.getvalue(), operation)
+        assert len(result) > 0
+
 
 class TestPillowService:
     def test_create_circular_mask(self):

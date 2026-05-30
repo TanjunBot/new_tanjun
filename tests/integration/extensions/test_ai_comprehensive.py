@@ -43,12 +43,26 @@ def mock_cmds():
         ),
         (CustomSituationCommands, "delete_custom", {}),
         (AiCommands, "ask_gpt_command", {"prompt": "hi", "temperature": 1.0, "topp": 1.0, "frequencypenalty": 0.0, "presencepenalty": 0.0}),
+        (
+            AiCommands,
+            "ask_custom_situation",
+            {"prompt": "hello", "personality": "Friendly"},
+        ),
+        (
+            AiCommands,
+            "ask_tanjuwun_command",
+            {"prompt": "hello", "temperature": 1.0, "topp": 1.0, "frequencypenalty": 0.0, "presencepenalty": 0.0},
+        ),
     ],
-    ids=["add", "delete", "ask_gpt"],
+    ids=["add", "delete", "ask_gpt", "ask_custom", "ask_tanjuwun"],
 )
 async def test_ai_commands(group_cls, method, extra, mock_cmds) -> None:
     group = group_cls(name="test", description="test")
-    await invoke_interaction_command(getattr(group, method), extra_kwargs=extra)
+    if method == "ask_custom_situation":
+        with patch.object(ai_ext.AiService, "get_situation", new_callable=AsyncMock, return_value=None):
+            await invoke_interaction_command(getattr(group, method), owner=group, extra_kwargs=extra)
+        return
+    await invoke_interaction_command(getattr(group, method), owner=group, extra_kwargs=extra)
 
 
 async def test_ai_autocomplete(mock_cmds) -> None:
