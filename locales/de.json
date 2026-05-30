@@ -7352,6 +7352,38 @@
     "max_length": null
   },
   {
+    "identifier": "commands.utility.listscheduled.edit_button",
+    "source_string": "Bearbeiten",
+    "translation": "Bearbeiten",
+    "context": "commands -> utility -> listscheduled -> edit_button",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.cancel_button",
+    "source_string": "Löschen",
+    "translation": "Löschen",
+    "context": "commands -> utility -> listscheduled -> cancel_button",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_success.title",
+    "source_string": "Nachricht aktualisiert",
+    "translation": "Nachricht aktualisiert",
+    "context": "commands -> utility -> listscheduled -> edit_success -> title",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_success.description",
+    "source_string": "Die geplante Nachricht ${id} wurde aktualisiert.",
+    "translation": "Die geplante Nachricht ${id} wurde aktualisiert.",
+    "context": "commands -> utility -> listscheduled -> edit_success -> description",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
     "identifier": "commands.utility.removescheduled.select.placeholder",
     "source_string": "Wähle eine Nachricht aus",
     "translation": "Wähle eine Nachricht aus",
@@ -32318,5 +32350,85 @@
     "context": "games -> advanced_ttt -> params -> user -> description",
     "labels": "command_description, en.json",
     "max_length": 100
+  },
+  {
+    "identifier": "setup_name",
+    "source_string": "setup",
+    "translation": "setup",
+    "context": "Slash-Befehlsgruppenname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_description",
+    "source_string": "Interaktive Einrichtungsassistenten",
+    "translation": "Interaktive Einrichtungsassistenten",
+    "context": "Slash-Befehlsgruppenbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_logs_name",
+    "source_string": "logs",
+    "translation": "logs",
+    "context": "Slash-Befehlsname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_logs_description",
+    "source_string": "Interaktiver Assistent zur Protokollkonfiguration",
+    "translation": "Interaktiver Assistent zur Protokollkonfiguration",
+    "context": "Slash-Befehlsbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_level_name",
+    "source_string": "level",
+    "translation": "level",
+    "context": "Slash-Befehlsname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_level_description",
+    "source_string": "Interaktiver Assistent zur Konfiguration des Levelsystems",
+    "translation": "Interaktiver Assistent zur Konfiguration des Levelsystems",
+    "context": "Slash-Befehlsbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_giveaway_name",
+    "source_string": "giveaway",
+    "translation": "giveaway",
+    "context": "Slash-Befehlsname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_giveaway_description",
+    "source_string": "Interaktiver Assistent zum Erstellen eines Gewinnspiels",
+    "translation": "Interaktiver Assistent zum Erstellen eines Gewinnspiels",
+    "context": "Slash-Befehlsbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_booster_name",
+    "source_string": "booster",
+    "translation": "booster",
+    "context": "Slash-Befehlsname",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "setup_booster_description",
+    "source_string": "Interaktiver Assistent für Booster-Vorteile",
+    "translation": "Interaktiver Assistent für Booster-Vorteile",
+    "context": "Slash-Befehlsbeschreibung",
+    "labels": "unassigned",
+    "max_length": null
   }
 ]

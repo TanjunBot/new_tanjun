@@ -157,19 +157,12 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message) -> None:
-        """
-        Best-effort cancel when a message is deleted.
-
-        NOTE: message.id is a Discord snowflake, not a scheduled-message DB ID.
-        This only works if the deleted message happens to have the same ID as a
-        scheduled-message entry — which is extremely unlikely.
-
-        A proper fix requires storing the Discord message ID returned by
-        message.send() in a dedicated `discord_message_id` column on the
-        scheduledMessages table, then looking up the scheduled entry by that
-        column on delete. See issues #1629 and #1630.
-        """
-        await ScheduledMessageService.cancel(message.id)
+        # Look up the scheduled message by Discord message ID for exact-match deletion.
+        # When a scheduled message is sent, its Discord message ID is stored in the
+        # scheduled_messages table, allowing reliable cancellation on delete.
+        scheduled = await ScheduledMessageService.find_by_discord_message_id(str(message.id))
+        if scheduled is not None:
+            await ScheduledMessageService.cancel(scheduled.message_id)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:
