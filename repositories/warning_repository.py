@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
-from datetime import datetime
 from dataclasses import dataclass
+from datetime import datetime
 
 from models import DetailedWarningModel, WarnConfigModel, WarningModel
 
