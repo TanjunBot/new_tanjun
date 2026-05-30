@@ -88,7 +88,7 @@ async def setFarewellChannel(
                 image_background.filename.split(".")[-1],  # type: ignore[arg-type, call-overload, name-defined]
             )
         )["data"][  # type: ignore[index, arg-type, call-overload, name-defined]
-          "url"
+            "url"
         ]
     else:
         img_url = "https://i.ibb.co/4ppwFGG/default-join-and-leave-background.png"  # type: ignore[unreachable]

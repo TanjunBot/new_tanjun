@@ -240,9 +240,7 @@ class ReportService:
     @staticmethod
     async def get_channel(guild_id: str) -> str | None:
         """Get the report channel ID for a guild, or None."""
-        result = await execute_query(
-            "SELECT channel_id FROM reportchannel WHERE guild_id = %s", (guild_id,)
-        )
+        result = await execute_query("SELECT channel_id FROM reportchannel WHERE guild_id = %s", (guild_id,))
         return result[0][0] if result else None
 
     @staticmethod

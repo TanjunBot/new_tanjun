@@ -6,8 +6,19 @@ from enum import IntEnum
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
-from tanjun_types import GuildId, UserId, ChannelId, MessageId, RoleId, DiscordId, OptionalGuildId, OptionalUserId, OptionalChannelId, OptionalRoleId
 
+from tanjun_types import (
+    ChannelId,
+    DiscordId,
+    GuildId,
+    MessageId,
+    OptionalChannelId,
+    OptionalGuildId,
+    OptionalRoleId,
+    OptionalUserId,
+    RoleId,
+    UserId,
+)
 
 
 def _from_row(cls, row: tuple):
@@ -15,8 +26,7 @@ def _from_row(cls, row: tuple):
     field_names = tuple(cls.model_fields.keys())
     if len(row) != len(field_names):
         raise ValueError(
-            f"{cls.__name__}.from_row expected {len(field_names)} columns, got {len(row)}. "
-            "Check query projection/order."
+            f"{cls.__name__}.from_row expected {len(field_names)} columns, got {len(row)}. Check query projection/order."
         )
     return cls(**dict(zip(field_names, row, strict=True)))
 
@@ -669,8 +679,7 @@ class LogEnableModel(BaseModel):
         expected_count = len(cls._OPTION_KEYS) + 1
         if len(row) != expected_count:
             raise ValueError(
-                f"{cls.__name__}.from_row expected {expected_count} columns, got {len(row)}. "
-                "Check query projection/order."
+                f"{cls.__name__}.from_row expected {expected_count} columns, got {len(row)}. Check query projection/order."
             )
         guild_id = row[0]
         actual_values = row[1:]
@@ -806,11 +815,12 @@ class ChannelOverwriteModel(BaseModel):
 
 class LevelConfig(BaseModel):
     """Pydantic model for a guild's level configuration."""
+
     model_config = ConfigDict(from_attributes=True)
 
     guild_id: GuildId
     active: bool = True
-    difficulty: Literal['easy', 'medium', 'hard', 'extreme', 'custom'] = "medium"
+    difficulty: Literal["easy", "medium", "hard", "extreme", "custom"] = "medium"
     custom_formula: Annotated[str | None, StringConstraints(max_length=255)] = None
     level_up_message_active: bool = True
     level_up_message: Annotated[str | None, StringConstraints(max_length=1024)] = None
@@ -820,9 +830,15 @@ class LevelConfig(BaseModel):
 
     # Column -> field mapping for DB result rows (in SELECT order)
     _COLUMN_ORDER: ClassVar[list[str]] = [
-        "guild_id", "active", "difficulty", "custom_formula",
-        "level_up_message_active", "level_up_message",
-        "level_up_channel_id", "text_cooldown", "voice_cooldown",
+        "guild_id",
+        "active",
+        "difficulty",
+        "custom_formula",
+        "level_up_message_active",
+        "level_up_message",
+        "level_up_channel_id",
+        "text_cooldown",
+        "voice_cooldown",
     ]
 
     @classmethod
@@ -872,3 +888,61 @@ class LevelRolesGroupModel(BaseModel):
 
     level: int = Field(ge=0)
     role_ids: list[RoleId]
+
+
+# ── Counting Models ──────────────────────────────────────────────────────────
+
+
+class CountingConfigModel(BaseModel):
+    """Counting progress and last counter state for normal/challenge tables."""
+
+    progress: int = Field(ge=0)
+    last_counter_id: UserId
+    guild_id: GuildId
+
+    @classmethod
+    def from_row(cls, row: tuple) -> CountingConfigModel:
+        return cls(progress=row[0], last_counter_id=row[1], guild_id=row[2])
+
+
+class CountingModesConfigModel(BaseModel):
+    """Counting progress and state for the counting_modes table (includes mode & goal)."""
+
+    progress: int = Field(ge=0)
+    mode: int
+    goal: int = Field(ge=0)
+    last_counter_id: UserId
+    guild_id: GuildId
+
+    @classmethod
+    def from_row(cls, row: tuple) -> CountingModesConfigModel:
+        return cls(
+            progress=row[0],
+            mode=row[1],
+            goal=row[2],
+            last_counter_id=row[3],
+            guild_id=row[4],
+        )
+
+
+# ── Twitch Models ────────────────────────────────────────────────────────────
+
+
+class TwitchUserModel(BaseModel):
+    """A Twitch user returned by the Helix API /users endpoint."""
+
+    id: str
+    login: str
+    display_name: str
+    type: str = ""
+    broadcaster_type: str = ""
+    description: str = ""
+    profile_image_url: str = ""
+    offline_image_url: str = ""
+    view_count: int = 0
+    created_at: str = ""
+
+    @classmethod
+    def from_api_response(cls, data: dict[str, str]) -> TwitchUserModel:
+        """Create a TwitchUserModel from a raw Helix API user dict."""
+        return cls(**data)

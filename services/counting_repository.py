@@ -6,6 +6,7 @@ Replaces 21 individual API functions in api.py with a single typed service.
 from enum import IntEnum
 
 from api import execute_action, execute_query, invalidate_counting_cache
+from models import CountingConfigModel, CountingModesConfigModel
 
 
 class CountingMode(IntEnum):
@@ -46,16 +47,13 @@ class CountingRepository:
         """Insert or update progress for a counting channel."""
         table = _TABLE_MAP[mode]
         query = (
-            f"INSERT INTO {table} (channel_id, progress, guild_id) "
-            "VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
+            f"INSERT INTO {table} (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
         )
         await execute_action(query, (channel_id, progress, guild_id, progress))
         invalidate_counting_cache(channel_id)
 
     @staticmethod
-    async def get_progress(
-        mode: CountingMode, channel_id: str | int
-    ) -> int | None:
+    async def get_progress(mode: CountingMode, channel_id: str | int) -> int | None:
         """Get the current progress for a channel, or None if not configured."""
         table = _TABLE_MAP[mode]
         query = f"SELECT progress FROM {table} WHERE channel_id = %s"
@@ -63,9 +61,7 @@ class CountingRepository:
         return result[0][0] if result else None
 
     @staticmethod
-    async def get_channel_count(
-        mode: CountingMode, guild_id: str | int
-    ) -> int:
+    async def get_channel_count(mode: CountingMode, guild_id: str | int) -> int:
         """Count how many channels have a non-null progress for this mode."""
         table = _TABLE_MAP[mode]
         query = f"SELECT COUNT(progress) FROM {table} WHERE guild_id = %s"
@@ -75,9 +71,7 @@ class CountingRepository:
     # ── Last counter / increment ─────────────────────────────
 
     @staticmethod
-    async def get_last_counter_id(
-        mode: CountingMode, channel_id: str | int
-    ) -> str | None:
+    async def get_last_counter_id(mode: CountingMode, channel_id: str | int) -> str | None:
         """Get the last counter's user ID for a channel."""
         table = _TABLE_MAP[mode]
         query = f"SELECT last_counter_id FROM {table} WHERE channel_id = %s"
@@ -92,11 +86,7 @@ class CountingRepository:
     ) -> None:
         """Increment progress by 1 and update the last counter ID."""
         table = _TABLE_MAP[mode]
-        query = (
-            f"UPDATE {table} "
-            "SET progress = progress + 1, last_counter_id = %s "
-            "WHERE channel_id = %s"
-        )
+        query = f"UPDATE {table} SET progress = progress + 1, last_counter_id = %s WHERE channel_id = %s"
         await execute_action(query, (last_counter_id, channel_id))
         invalidate_counting_cache(channel_id)
 
@@ -174,8 +164,7 @@ class CountingRepository:
         """
         table = _TABLE_MAP[mode]
         query = (
-            f"INSERT INTO {table} (channel_id, progress, guild_id) "
-            "VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
+            f"INSERT INTO {table} (channel_id, progress, guild_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE progress = %s"
         )
         await execute_action(query, (channel_id, progress, guild_id, progress))
         invalidate_counting_cache(channel_id)
@@ -185,48 +174,23 @@ class CountingRepository:
     @staticmethod
     async def get_configs(
         channel_id: str | int,
-    ) -> tuple[dict | None, dict | None, dict | None]:
+    ) -> tuple[CountingConfigModel | None, CountingConfigModel | None, CountingModesConfigModel | None]:
         """Fetch configs for all three counting modes in parallel.
 
         Returns (normal_config, challenge_config, modes_config).
         """
         import asyncio
 
-        counting_query = (
-            "SELECT progress, last_counter_id, guild_id FROM counting WHERE channel_id = %s"
-        )
-        challenge_query = (
-            "SELECT progress, last_counter_id, guild_id FROM counting_challenge WHERE channel_id = %s"
-        )
-        modes_query = (
-            "SELECT progress, mode, goal, last_counter_id, guild_id "
-            "FROM counting_modes WHERE channel_id = %s"
-        )
+        counting_query = "SELECT progress, last_counter_id, guild_id FROM counting WHERE channel_id = %s"
+        challenge_query = "SELECT progress, last_counter_id, guild_id FROM counting_challenge WHERE channel_id = %s"
+        modes_query = "SELECT progress, mode, goal, last_counter_id, guild_id FROM counting_modes WHERE channel_id = %s"
         params = (channel_id,)
         cr, ch_r, mr = await asyncio.gather(
             execute_query(counting_query, params),
             execute_query(challenge_query, params),
             execute_query(modes_query, params),
         )
-        counting_config = (
-            {"progress": cr[0][0], "last_counter_id": cr[0][1], "guild_id": cr[0][2]}
-            if cr
-            else None
-        )
-        challenge_config = (
-            {"progress": ch_r[0][0], "last_counter_id": ch_r[0][1], "guild_id": ch_r[0][2]}
-            if ch_r
-            else None
-        )
-        modes_config = (
-            {
-                "progress": mr[0][0],
-                "mode": mr[0][1],
-                "goal": mr[0][2],
-                "last_counter_id": mr[0][3],
-                "guild_id": mr[0][4],
-            }
-            if mr
-            else None
-        )
+        counting_config = CountingConfigModel.from_row(cr[0]) if cr else None
+        challenge_config = CountingConfigModel.from_row(ch_r[0]) if ch_r else None
+        modes_config = CountingModesConfigModel.from_row(mr[0]) if mr else None
         return counting_config, challenge_config, modes_config

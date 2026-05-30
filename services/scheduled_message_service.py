@@ -12,7 +12,7 @@ from typing import Any
 from pydantic import BaseModel, Field, StringConstraints
 
 from models import ScheduledMessageModel
-from tanjun_types import GuildId, ChannelId, UserId
+from tanjun_types import ChannelId, GuildId, UserId
 
 
 class Attachment(BaseModel):

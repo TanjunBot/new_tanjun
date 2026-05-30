@@ -27,7 +27,7 @@ async def get_uuid_by_twitch_name(twitch_name: str) -> str | None:
     if service is None:
         return None
     user = await service.get_user_by_login(twitch_name)
-    return user["id"] if user else None
+    return user.id if user else None
 
 
 async def subscribe_to_twitch_online_notification(twitch_uuid: str) -> None:
@@ -46,8 +46,8 @@ def parse_twitch_notification_message(message: str | None, locale: str, twitch_n
         if not message:
             from localizer import tanjunLocalizer
 
-            return tanjunLocalizer.localize(
-                locale, "commands.utility.twitch.defaultNotificationMessage"
-            ).replace("{name}", twitch_name)
+            return tanjunLocalizer.localize(locale, "commands.utility.twitch.defaultNotificationMessage").replace(
+                "{name}", twitch_name
+            )
         return message.replace("{name}", twitch_name)
     return service.parse_notification_message(message, locale, twitch_name)
