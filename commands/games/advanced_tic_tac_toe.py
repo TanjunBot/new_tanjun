@@ -7,12 +7,10 @@ sub-board the opponent must play in next.
 """
 
 import random
-from typing import Any
 
 import discord
 
 import utility
-from localizer import tanjunLocalizer
 
 
 class AdvancedTicTacToe:

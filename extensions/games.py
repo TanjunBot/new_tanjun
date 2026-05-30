@@ -5,11 +5,11 @@ from discord import app_commands
 from discord.ext import commands
 
 import utility
+from commands.games.advanced_tic_tac_toe import advanced_tic_tac_toe
 from commands.games.akinator import akinator
 from commands.games.connect4 import connect4
 from commands.games.flag_quiz import flag_quiz
 from commands.games.hangman import hangman
-from commands.games.advanced_tic_tac_toe import advanced_tic_tac_toe
 from commands.games.rps import rps
 from commands.games.tic_tac_toe import tic_tac_toe
 from commands.games.wordle import wordle
