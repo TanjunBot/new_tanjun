@@ -120,22 +120,18 @@ class GiveawayBlacklistEntryModel(BaseModel):
 class ReportModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    # Matches SELECT order from get_reports()
+    # Matches SELECT order from reports table
     id: int
     guild_id: GuildId
     user_id: UserId
     reporter_id: UserId
-    reason: Annotated[str | None, StringConstraints(max_length=500)] = None
+    reason: Annotated[str | None, StringConstraints(max_length=1024)] = None
     created_at: int  # UNIX_TIMESTAMP
-    status: str = "PENDING"
-    status_updated_at: int | None = None  # UNIX_TIMESTAMP
-    status_updated_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
-    accepted: bool
-    accepted_at: int | None  # UNIX_TIMESTAMP
-    accepted_by: OptionalUserId = None
-    resolved: bool
-    resolved_at: int | None  # UNIX_TIMESTAMP
-    resolved_by: OptionalUserId = None
+    status: str  # "pending", "investigating", "action_taken", "dismissed"
+    status_updated_at: int | None  # UNIX_TIMESTAMP
+    status_updated_by: OptionalUserId = None
+    status_note: str | None = None
+    anonymous: bool = False
 
     @classmethod
     def from_row(cls, row: tuple) -> ReportModel:
@@ -143,6 +139,53 @@ class ReportModel(BaseModel):
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ReportModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
+
+class ReportEvidenceModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    guild_id: GuildId
+    report_id: int
+    url: Annotated[str, StringConstraints(max_length=2048)]
+    filename: str | None = None
+    uploaded_by: OptionalUserId = None
+    uploaded_at: int  # UNIX_TIMESTAMP
+
+    @classmethod
+    def from_row(cls, row: tuple) -> ReportEvidenceModel:
+        return _from_row(cls, row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ReportEvidenceModel]:
+        from api import execute_query_iter
+
+        async for row in execute_query_iter(query, params):
+            yield cls.from_row(row)
+
+
+class ReportModActionModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    guild_id: GuildId
+    report_id: int
+    action_type: str  # "ban", "kick", "timeout", "warning", "note"
+    target_id: UserId
+    performed_by: UserId
+    details: str | None = None
+    created_at: int  # UNIX_TIMESTAMP
+
+    @classmethod
+    def from_row(cls, row: tuple) -> ReportModActionModel:
+        return _from_row(cls, row)
+
+    @classmethod
+    async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ReportModActionModel]:
         from api import execute_query_iter
 
         async for row in execute_query_iter(query, params):

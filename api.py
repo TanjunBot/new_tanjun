@@ -995,17 +995,14 @@ def get_table_definitions() -> dict[str, str]:
         `reporterId` VARCHAR(20),
         `reason` VARCHAR(1024),
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        `status` VARCHAR(20) DEFAULT 'PENDING',
+        `status` VARCHAR(20) DEFAULT 'pending',
         `status_updated_at` TIMESTAMP DEFAULT NULL,
         `status_updated_by` VARCHAR(20) DEFAULT NULL,
-        `accepted` TINYINT(1) DEFAULT 0,
-        `accepted_at` TIMESTAMP DEFAULT NULL,
-        `acceptedBy` VARCHAR(20) DEFAULT NULL,
-        `resolved` TINYINT(1) DEFAULT 0,
-        `resolved_at` TIMESTAMP DEFAULT NULL,
-        `resolvedBy` VARCHAR(20) DEFAULT NULL,
+        `status_note` VARCHAR(1024) DEFAULT NULL,
+        `anonymous` TINYINT(1) DEFAULT 0,
         PRIMARY KEY(`id`),
-        INDEX `idx_status` (`status`)
+        INDEX `idx_status` (`status`),
+        INDEX `idx_guild` (`guild_id`)
     ) ENGINE=InnoDB;
     """
     tables["blockedReporters"] = """
@@ -1020,6 +1017,53 @@ def get_table_definitions() -> dict[str, str]:
         `guild_id` VARCHAR(20),
         `channel_id` VARCHAR(20),
         PRIMARY KEY(`guild_id`, `channel_id`)
+    ) ENGINE=InnoDB;
+    """
+    tables["report_evidence"] = """
+    CREATE TABLE IF NOT EXISTS `report_evidence` (
+        `id` INT AUTO_INCREMENT,
+        `guild_id` VARCHAR(20),
+        `report_id` INT,
+        `url` VARCHAR(2048),
+        `filename` VARCHAR(255) DEFAULT NULL,
+        `uploaded_by` VARCHAR(20) DEFAULT NULL,
+        `uploaded_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY(`id`),
+        INDEX `idx_report` (`guild_id`, `report_id`),
+        FOREIGN KEY (`guild_id`, `report_id`)
+            REFERENCES `reports`(`guild_id`, `id`)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    """
+    tables["report_mod_actions"] = """
+    CREATE TABLE IF NOT EXISTS `report_mod_actions` (
+        `id` INT AUTO_INCREMENT,
+        `guild_id` VARCHAR(20),
+        `report_id` INT,
+        `action_type` VARCHAR(20),
+        `target_id` VARCHAR(20),
+        `performed_by` VARCHAR(20),
+        `details` VARCHAR(1024) DEFAULT NULL,
+        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY(`id`),
+        INDEX `idx_report` (`guild_id`, `report_id`),
+        FOREIGN KEY (`guild_id`, `report_id`)
+            REFERENCES `reports`(`guild_id`, `id`)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    """
+    tables["report_anonymity"] = """
+    CREATE TABLE IF NOT EXISTS `report_anonymity` (
+        `guild_id` VARCHAR(20),
+        `enabled` TINYINT(1) DEFAULT 0,
+        PRIMARY KEY(`guild_id`)
+    ) ENGINE=InnoDB;
+    """
+    tables["report_notification_optout"] = """
+    CREATE TABLE IF NOT EXISTS `report_notification_optout` (
+        `guild_id` VARCHAR(20),
+        `user_id` VARCHAR(20),
+        PRIMARY KEY(`guild_id`, `user_id`)
     ) ENGINE=InnoDB;
     """
     tables["triggerMessages"] = """
@@ -2757,26 +2801,19 @@ async def report_user(
 async def accept_report(guild_id: str, report_id: str) -> None:
     from services.report_service import report_service as _report_svc
 
-    await _report_svc.accept(guild_id, report_id, accepted_by=None)
+    await _report_svc.update_status(guild_id, report_id, "investigating", updated_by=None)
 
 
 async def reject_report(guild_id: str, report_id: str) -> None:
     from services.report_service import report_service as _report_svc
 
-    await _report_svc.reject(guild_id, report_id, accepted_by=None)
+    await _report_svc.update_status(guild_id, report_id, "dismissed", updated_by=None)
 
 
 async def resolve_report(guild_id: str, report_id: str, resolved_by: str | None = None) -> None:
     from services.report_service import report_service as _report_svc
 
-    await _report_svc.resolve(guild_id, report_id, resolved_by)
-
-
-async def set_report_status(guild_id: str, report_id: str, status: str, updated_by: str | None = None) -> None:
-    """Set the status of a report."""
-    from services.report_service import report_service as _report_svc
-
-    await _report_svc.set_status(guild_id, report_id, status, updated_by)
+    await _report_svc.update_status(guild_id, report_id, "action_taken", updated_by=resolved_by)
 
 
 async def delete_report(guild_id: str, report_id: str) -> None:
