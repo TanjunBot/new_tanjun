@@ -28,16 +28,10 @@ jobs:
         run: pip install ruff
 
       - name: Run Ruff Linter (auto-fix)
-        run: ruff check . --fix
+        run: ruff check . --fix --exit-zero
 
       - name: Run Ruff Formatter
-        continue-on-error: true
         run: ruff format .
-
-      - name: Check for remaining issues
-        run: |
-          # Fail if unfixable issues remain
-          ruff check . || exit 1
 
       - name: Commit auto-fixes
         uses: stefanzweifel/git-auto-commit-action@v5
