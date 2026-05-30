@@ -11,9 +11,8 @@ import logging
 import time
 from typing import Any
 
-import aiohttp
-from aiohttp import web
 import discord
+from aiohttp import web
 from discord.ext import commands, tasks
 
 from services.metrics_service import (
