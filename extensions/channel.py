@@ -9,7 +9,7 @@ from commands.channel.dynamicslowmode import (
     addDynamicslowmode as addDynamicslowmodeCommand,
 )
 from commands.channel.dynamicslowmode import (
-    getDynamicslowmodeChannels as getDynamicslowmodeChannelsCommand,
+    getDynamicslowmode_channels as getDynamicslowmodeChannelsCommand,
 )
 from commands.channel.dynamicslowmode import (
     removeDynamicslowmode as removeDynamicslowmodeCommand,

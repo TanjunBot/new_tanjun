@@ -127,7 +127,8 @@ class LogChannelSelectView(View):
         self.locale = locale
         self.guild = guild
 
-    @discord.ui.channel_select(
+    @discord.ui.select(
+        cls=discord.ui.ChannelSelect,
         placeholder="Select a text channel for logging...",
         channel_types=[discord.ChannelType.text],
     )
@@ -144,7 +145,6 @@ class LogChannelSelectView(View):
 
         channel = cast(discord.TextChannel, select.values[0])
 
-        # Check bot permissions
         assert interaction.client is not None and interaction.client.user is not None
         self_member = self.guild.get_member(interaction.client.user.id)
         if self_member is None or not channel.permissions_for(self_member).send_messages:
@@ -155,7 +155,6 @@ class LogChannelSelectView(View):
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
-        # Save the channel
         await api_set_log_channel(str(self.guild.id), str(channel.id))
 
         embed = utility.tanjunEmbed(
@@ -417,7 +416,8 @@ class LevelChannelView(View):
         self.guild = guild
         self.setup_view = setup_view
 
-    @discord.ui.channel_select(
+    @discord.ui.select(
+        cls=discord.ui.ChannelSelect,
         placeholder="Select a channel for level-up announcements...",
         channel_types=[discord.ChannelType.text],
     )
