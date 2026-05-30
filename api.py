@@ -287,6 +287,14 @@ async def _execute_with_retry(
             raise
 
     if last_exception:
+        # Record the exhaustion as a DB error metric.
+        _elapsed = time.monotonic() - _start
+        try:
+            from extensions.prometheus_metrics import record_db_query
+
+            record_db_query(operation, _elapsed, error=True)
+        except ImportError:
+            pass
         print(f"All retries exhausted for {operation}: {safe_id}")
         raise last_exception
 
@@ -430,6 +438,7 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
 
     last_exception = None
     safe_id = _query_safe_id(query)
+    _start = time.monotonic()
     for attempt in range(_MAX_DB_RETRIES):
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
@@ -455,10 +464,24 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
                 last_exception = e
                 continue
             # Non-retryable error or final attempt: raise instead of silently failing
+            _elapsed = time.monotonic() - _start
+            try:
+                from extensions.prometheus_metrics import record_db_query
+
+                record_db_query("execute_batch", _elapsed, error=True)
+            except ImportError:
+                pass
             print(f"Error during execute_batch: {e} — {safe_id}")
             raise
 
     if last_exception:
+        _elapsed = time.monotonic() - _start
+        try:
+            from extensions.prometheus_metrics import record_db_query
+
+            record_db_query("execute_batch", _elapsed, error=True)
+        except ImportError:
+            pass
         print(f"All retries exhausted for execute_batch: {safe_id}")
         raise last_exception
 

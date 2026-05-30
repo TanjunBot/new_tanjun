@@ -198,13 +198,16 @@ def _get_process_stats() -> dict[str, float]:
     try:
         with open("/proc/self/stat") as f:
             parts = f.read().split()
-            # man 5 proc: field 12 (utime) + field 13 (stime) = total CPU
-            utime = int(parts[11]) / 100  # clock ticks → seconds (usually 100 Hz)
-            stime = int(parts[12]) / 100
+            # man 5 proc: fields 14 (utime) and 15 (stime) (zero-indexed 13, 14)
+            # Divide by clock ticks per second to get seconds.
+            clk_tck = os.sysconf("SC_CLK_TCK") if os.name == "posix" else 100
+            utime = int(parts[13]) / clk_tck
+            stime = int(parts[14]) / clk_tck
             stats["cpu_user_seconds"] = utime
             stats["cpu_system_seconds"] = stime
             stats["cpu_seconds_total"] = utime + stime
-            stats["threads"] = float(parts[10]) if len(parts) > 10 else 0.0  # num_threads at offset 20 in other formats
+            # num_threads at field 20 (zero-indexed 19)
+            stats["threads"] = float(parts[19]) if len(parts) > 19 else 0.0
     except (FileNotFoundError, IndexError, ValueError):
         pass
 

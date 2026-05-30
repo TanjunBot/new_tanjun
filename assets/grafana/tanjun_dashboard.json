@@ -412,7 +412,15 @@
           "unit": "bytes",
           "color": { "mode": "palette-classic" },
           "custom": { "drawStyle": "line", "lineInterpolation": "smooth", "lineWidth": 2, "fillOpacity": 10, "showPoints": "never" }
-        }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "CPU usage" },
+            "properties": [
+              { "id": "unit", "value": "cps" }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "right", "showLegend": true },
