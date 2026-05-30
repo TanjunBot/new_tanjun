@@ -1,3 +1,8 @@
+from commands.logs.blacklist_category import (
+    blacklist_category,
+    blacklist_list_category,
+    blacklist_remove_category,
+)
 from commands.logs.blacklist_channel import (
     blacklist_channel,
     blacklist_list_channel,
@@ -17,11 +22,6 @@ from commands.logs.blacklist_voice import (
     blacklist_list_voice,
     blacklist_remove_voice,
     blacklist_voice,
-)
-from commands.logs.blacklist_category import (
-    blacklist_list_category,
-    blacklist_remove_category,
-    blacklist_category,
 )
 from commands.logs.configure_logs import configure_logs
 from commands.logs.remove_log_channel import remove_log_channel

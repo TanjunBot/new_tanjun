@@ -25,9 +25,7 @@ async def blacklist_remove_category(command_info: utility.CommandInfo, channel: 
         return
 
     assert command_info.guild is not None
-    is_blacklisted = await is_log_entity_blacklisted(
-        command_info.guild.id, str(channel.id), LogBlacklistType.CATEGORY
-    )
+    is_blacklisted = await is_log_entity_blacklisted(command_info.guild.id, str(channel.id), LogBlacklistType.CATEGORY)
 
     if not is_blacklisted:
         embed = utility.tanjunEmbed(
@@ -43,9 +41,7 @@ async def blacklist_remove_category(command_info: utility.CommandInfo, channel: 
     else:
         await remove_log_blacklist(command_info.guild.id, str(channel.id), LogBlacklistType.CATEGORY)
         embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                str(command_info.locale), "commands.logs.blacklistRemoveCategory.success.title"
-            ),
+            title=tanjunLocalizer.localize(str(command_info.locale), "commands.logs.blacklistRemoveCategory.success.title"),
             description=tanjunLocalizer.localize(
                 command_info.locale,
                 "commands.logs.blacklistRemoveCategory.success.description",

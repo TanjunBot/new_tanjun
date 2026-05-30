@@ -65,10 +65,7 @@ async def blacklist_list_voice(command_info: utility.command_info):
                 if self.selectedIndex >= len(self.channels):
                     self.selectedIndex = len(self.channels) - 1
                 description = "\n".join(
-                    [
-                        f"{'➤' if i == self.selectedIndex else ''} <#{channel}>"
-                        for i, channel in enumerate(self.channels)
-                    ]
+                    [f"{'➤' if i == self.selectedIndex else ''} <#{channel}>" for i, channel in enumerate(self.channels)]
                 )
             embed = utility.tanjunEmbed(
                 title=tanjunLocalizer.localize(self.locale, "commands.logs.blacklistListVoiceChannel.title"),
@@ -93,12 +90,7 @@ async def blacklist_list_voice(command_info: utility.command_info):
             "commands.logs.blacklistListVoiceChannel.noBlacklistedChannels",
         )
     else:
-        description = "\n".join(
-            [
-                f"{'➤' if i == 0 else ''} <#{channel}>"
-                for i, channel in enumerate(blacklisted_channels)
-            ]
-        )
+        description = "\n".join([f"{'➤' if i == 0 else ''} <#{channel}>" for i, channel in enumerate(blacklisted_channels)])
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(command_info.locale, "commands.logs.blacklistListVoiceChannel.title"),
         description=description,

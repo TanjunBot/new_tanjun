@@ -25,9 +25,7 @@ async def blacklist_remove_voice(command_info: utility.CommandInfo, channel: dis
         return
 
     assert command_info.guild is not None
-    is_blacklisted = await is_log_entity_blacklisted(
-        command_info.guild.id, str(channel.id), LogBlacklistType.VOICE_CHANNEL
-    )
+    is_blacklisted = await is_log_entity_blacklisted(command_info.guild.id, str(channel.id), LogBlacklistType.VOICE_CHANNEL)
 
     if not is_blacklisted:
         embed = utility.tanjunEmbed(
