@@ -13,7 +13,6 @@ from services.wordle_service import (
     upsert_wordle_stats,
     validate_hard_mode_guess,
 )
-from utility import CommandInfo
 
 # Color palette inspired by official Wordle
 GREEN = (106, 170, 100)
@@ -454,10 +453,14 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
             img_byte_arr = await generate_wordle_image(guesses, word, language)
             mode_hint = " 🔴 Hard" if hard_mode else ""
             # Compute Japanese extra description (if applicable)
-            ja_extra = tanjunLocalizer.localize(
-                str(command_info.locale),
-                'commands.games.wordle.initial.descriptionextra.ja',
-            ) if language == "ja" else ""
+            ja_extra = (
+                tanjunLocalizer.localize(
+                    str(command_info.locale),
+                    "commands.games.wordle.initial.descriptionextra.ja",
+                )
+                if language == "ja"
+                else ""
+            )
             extra_description = f"\n\n{ja_extra}" if ja_extra else ""
 
             embed = utility.tanjunEmbed(
@@ -466,7 +469,8 @@ async def wordle(command_info: utility.CommandInfo, language: str = "own") -> No
                     command_info.locale,
                     "commands.games.wordle.initial.description",
                     guesses=0,
-                ) + extra_description,
+                )
+                + extra_description,
             )
             embed.set_image(url="attachment://wordle.png")
             game_view = WordleGameView(self.command_info, guesses, word, hard_mode)
