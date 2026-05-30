@@ -42,6 +42,7 @@ dependencies = [
     "numpy==2.4.6",
     "openai==2.38.0",
     "pillow==12.2.0",
+    "prometheus-client==0.25.0",
     "pycparser==3.0",
     "pydantic==2.13.4",
     "pydantic_core==2.46.4",

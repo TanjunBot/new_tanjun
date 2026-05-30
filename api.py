@@ -240,12 +240,22 @@ async def _execute_with_retry(
 
     last_exception = None
     safe_id = _sanitize_for_log(query)
+    _start = time.monotonic()
     for attempt in range(_MAX_DB_RETRIES):
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
             async with conn, conn.cursor() as cursor:
                 await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
-                return await callback(cursor, conn)
+                _result = await callback(cursor, conn)
+                _elapsed = time.monotonic() - _start
+                # Record metrics if available
+                try:
+                    from extensions.prometheus_metrics import record_db_query
+
+                    record_db_query(operation, _elapsed, error=False)
+                except ImportError:
+                    pass
+                return _result
         except TimeoutError:
             msg = f"Timeout on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}"
             print(msg)
@@ -266,6 +276,13 @@ async def _execute_with_retry(
                 last_exception = e
                 continue
             # Non-retryable error or final attempt: raise instead of silently returning None
+            _elapsed = time.monotonic() - _start
+            try:
+                from extensions.prometheus_metrics import record_db_query
+
+                record_db_query(operation, _elapsed, error=True)
+            except ImportError:
+                pass
             print(f"Error during {operation}: {e} — {safe_id}")
             raise
 
