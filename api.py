@@ -958,6 +958,22 @@ def get_table_defs() -> dict[str, "TableDef"]:
         ],
         primary_key=["guild_id", "user_id"],
     )
+    _t["logVoiceBlacklist"] = TableDef(
+        name="logVoiceBlacklist",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
+    _t["logCategoryBlacklist"] = TableDef(
+        name="logCategoryBlacklist",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
     _t["join_to_create_channel"] = TableDef(
         name="join_to_create_channel",
         columns=[
