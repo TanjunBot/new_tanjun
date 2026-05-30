@@ -7,7 +7,7 @@ service with typed parameter models and clear method names.
 
 import json
 from datetime import datetime
-from typing import Any
+from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, StringConstraints
 

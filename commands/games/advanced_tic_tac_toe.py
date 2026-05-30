@@ -304,14 +304,11 @@ class AdvancedTicTacToe:
                     if self.game_over:
                         await i.response.send_message("Game is over.", ephemeral=True)
                         return
-                    if (
-                        i.user.id
-                        not in [
-                            (self.player1.id if isinstance(self.player1, discord.Member) else 0),
-                            (self.player2.id if isinstance(self.player2, discord.Member) else 0),
-                        ]
-                        and self.player2 != "tanjun"
-                    ):
+                    # Compute allowed participant IDs
+                    allowed_ids = {self.player1.id}
+                    if isinstance(self.player2, discord.Member):
+                        allowed_ids.add(self.player2.id)
+                    if i.user.id not in allowed_ids:
                         await i.response.send_message("This is not your game!", ephemeral=True)
                         return
                     if i.user != self.current_player and self.current_player != "tanjun":

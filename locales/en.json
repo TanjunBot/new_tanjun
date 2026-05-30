@@ -20280,6 +20280,38 @@
     "max_length": 100
   },
   {
+    "identifier": "games.battleship.name",
+    "source_string": "battleship",
+    "translation": "battleship",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "games.battleship.description",
+    "source_string": "Play Battleship",
+    "translation": "Play Battleship",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "games.battleship.params.user.name",
+    "source_string": "user",
+    "translation": "user",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "games.battleship.params.user.description",
+    "source_string": "The user against whom the game is to be played (optional)",
+    "translation": "The user against whom the game is to be played (optional)",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "level.leaderboard.name",
     "source_string": "rangliste",
     "translation": "leaderboard",
@@ -31059,6 +31091,198 @@
     "identifier": "commands.games.connect4.error.no_plus.description",
     "source_string": "Du benötigst Tanjun Plus um 4-Gewinnt mit anderen Spielfeldgrößen zu spielen.",
     "translation": "You need Tanjun Plus to play Match 4 with other playing field sizes.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.battleTitle",
+    "source_string": "Battleship",
+    "translation": "Battleship",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.placementTitle",
+    "source_string": "Battleship - Ship Placement",
+    "translation": "Battleship - Ship Placement",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.placementDescription",
+    "source_string": "Place your ships! \\$player, place the **\\$ship** (size \\$size, symbol \\$symbol) on your board.",
+    "translation": "Place your ships! \\$player, place the **\\$ship** (size \\$size, symbol \\$symbol) on your board.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.winner",
+    "source_string": "\\$player has won the Battleship game!",
+    "translation": "\\$player has won the Battleship game!",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.currentTurn",
+    "source_string": "Current turn: \\$player",
+    "translation": "Current turn: \\$player",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.notYourTurn",
+    "source_string": "It's not your turn yet. Please wait for your opponent.",
+    "translation": "It's not your turn yet. Please wait for your opponent.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.notYourGame",
+    "source_string": "This is not your game. Please create your own game.",
+    "translation": "This is not your game. Please create your own game.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.alreadyAttacked",
+    "source_string": "You have already attacked this cell. Please choose another one.",
+    "translation": "You have already attacked this cell. Please choose another one.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.error.invalidCoordinate",
+    "source_string": "Invalid coordinate format. Use format like A5, B3, etc.",
+    "translation": "Invalid coordinate format. Use format like A5, B3, etc.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.error.invalidRow",
+    "source_string": "Invalid row. Use A-J.",
+    "translation": "Invalid row. Use A-J.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.error.invalidColumn",
+    "source_string": "Invalid column. Use 0-9.",
+    "translation": "Invalid column. Use 0-9.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.gameOver",
+    "source_string": "Game Over",
+    "translation": "Game Over",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.legend",
+    "source_string": "Legend: $water=Water | $hit=Hit | $miss=Miss | $sunk=Sunk",
+    "translation": "Legend: $water=Water | $hit=Hit | $miss=Miss | $sunk=Sunk",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpTitle",
+    "source_string": "Battleship Help",
+    "translation": "Battleship Help",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpBoards",
+    "source_string": "Boards shown:",
+    "translation": "Boards shown:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpYourBoard",
+    "source_string": "Your board (top) shows YOUR ships: colored blocks",
+    "translation": "Your board (top) shows YOUR ships: colored blocks",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpEnemyBoard",
+    "source_string": "Enemy board (bottom) shows your attacks: $hit = hit, $miss = miss, $sunk = sunk",
+    "translation": "Enemy board (bottom) shows your attacks: $hit = hit, $miss = miss, $sunk = sunk",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpToAttack",
+    "source_string": "To attack:",
+    "translation": "To attack:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpAttackInstruction",
+    "source_string": "Click the Attack button and enter coordinates (e.g., A5, B3).",
+    "translation": "Click the Attack button and enter coordinates (e.g., A5, B3).",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpGiveUp",
+    "source_string": "Give up:",
+    "translation": "Give up:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpGiveUpInstruction",
+    "source_string": "Click the Give Up button to concede.",
+    "translation": "Click the Give Up button to concede.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpPlayers",
+    "source_string": "Players:",
+    "translation": "Players:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpPlayersValue",
+    "source_string": "$p1 vs $p2",
+    "translation": "$p1 vs $p2",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpCurrentTurn",
+    "source_string": "Current turn:",
+    "translation": "Current turn:",
     "context": null,
     "labels": "unassigned",
     "max_length": null
