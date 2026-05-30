@@ -1,8 +1,14 @@
 name: Tanjun CI
+
 on:
   push:
     branches-ignore:
       - l10n*
+  pull_request:
+    branches:
+      - development
+      - master
+      - main
   workflow_dispatch:
     inputs:
       ref:
@@ -10,214 +16,170 @@ on:
         required: false
         type: string
 
+env:
+  PYTHON_VERSION: '3.12'
+  RUFF_VERSION: '0.11.5'
+
 jobs:
+  lint:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Ruff
+        run: pip install ruff==${{ env.RUFF_VERSION }}
+
+      - name: Run Ruff Linter
+        run: ruff check . --output-format=github
+
+      - name: Check Ruff Formatting
+        run: ruff format --check . --diff
+
+  type-check:
+    name: Type Check (Mypy)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run Mypy
+        run: |
+          mypy . \
+            --explicit-package-bases \
+            --no-error-summary \
+            --show-error-codes \
+            --soft-error-limit -1 2>&1
+        continue-on-error: true
+
   test:
-    runs-on: self-hosted
+    name: Tests (pytest with coverage)
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       issues: write
 
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: test
+          MARIADB_DATABASE: tanjun_test
+          MARIADB_USER: test_user
+          MARIADB_PASSWORD: test_password
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="healthcheck.sh --su-mysql --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=30s
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ inputs.ref || github.sha }}
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          # Added xmlstarlet for XML parsing and jq for JSON processing
-          sudo apt-get install -y build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev \
-                                 libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
-                                 libncursesw5-dev xz-utils tk-dev liblzma-dev python3-venv \
-                                 python3-pip xmlstarlet jq
-
-      - name: Cache Python Build Source
-        uses: actions/cache@v4
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
         with:
-          path: |
-            ~/.local/python-build-cache # Caching downloaded/extracted Python source
-          key: python-3.12.8-build-source-${{ runner.os }}
-
-      - name: Check and Install Python 3.12.8
-        run: |
-          if ! command -v python3.12 &>/dev/null || [ "$(python3.12 --version 2>&1 | awk '{print $2}')" != "3.12.8" ]; then
-            echo "Python 3.12.8 not found or version mismatch. Installing..."
-            mkdir -p ~/.local/python-build-cache # Ensure cache directory exists
-            cd ~/.local/python-build-cache # Work in the cache directory
-            if [ ! -f Python-3.12.8.tgz ]; then
-              curl -O https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz
-            fi
-            if [ ! -d Python-3.12.8 ]; then
-              tar xvf Python-3.12.8.tgz
-            fi
-            cd Python-3.12.8
-            # Optimization: Check if already configured/built to speed up reruns if source is cached
-            if [ ! -f "Makefile" ]; then
-              ./configure --enable-optimizations
-            fi
-            if ! command -v python3.12 &>/dev/null || [ "$(python3.12 --version 2>&1 | awk '{print $2}')" != "3.12.8" ]; then
-              make -j$(nproc)
-              sudo make altinstall
-            else
-              echo "Python 3.12.8 seems to be installed correctly by make altinstall target."
-            fi
-            cd ../.. # Back to original directory
-          else
-            echo "Python 3.12.8 already installed and version matches."
-          fi
-
-      - name: Create and activate virtual environment
-        run: |
-          python3.12 -m venv venv
-          . venv/bin/activate
-          python -m pip install --upgrade pip
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
-          . venv/bin/activate
           python -m pip install --upgrade pip
-          pip install .
-          pip install pytest # Assuming pytest is used for testing
+          pip install -e ".[dev]"
+          pip install pytest pytest-cov pytest-asyncio
 
-      - name: Run tests
-        id: run_tests
-        run: |
-          . venv/bin/activate
-          # Replace with your actual test command.
-          # Ensure it generates JUnit XML output to 'test-results.xml'.
-          # Example with pytest:
-          pytest --junitxml=test-results.xml || true
-          # '|| true' allows the workflow to continue even if tests fail,
-          # so the next step can process the failures.
-
-      - name: Process Test Failures and Manage GitHub Issue
-        if: steps.run_tests.outcome == 'failure'
+      - name: Run tests with coverage
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_NAME: ${{ github.repository }}
-          ISSUE_TITLE: "Automated Test Failures"
-          ISSUE_LABEL: "bug,failed-tests" 
-          TEST_RESULTS_FILE: "test-results.xml"
+          TANJUN_DB_HOST: 127.0.0.1
+          TANJUN_DB_PORT: 3307
+          TANJUN_DB_USER: test_user
+          TANJUN_DB_PASSWORD: test_password
+          TANJUN_DB_NAME: tanjun_test
         run: |
-          echo "Test run failed. Processing failures..."
+          pytest --cov=. --cov-report=term --cov-report=xml --junitxml=test-results.xml -v
 
-          if [ ! -f "$TEST_RESULTS_FILE" ]; then
-            echo "::error::Test results file '$TEST_RESULTS_FILE' not found."
-            exit 1
-          fi
+      - name: Upload coverage to Codecov
+        if: github.event_name == 'pull_request'
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
 
-          # Extract failed test cases using xmlstarlet
-          # This extracts 'classname.name' for each failed testcase
-          FAILED_TESTS=$(xmlstarlet sel -t -m "//testcase[failure]" -v "concat(@classname, '.', @name)" -n "$TEST_RESULTS_FILE" 2>/dev/null)
+      - name: Upload test results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_id }}
+          path: test-results.xml
 
-          if [ -z "$FAILED_TESTS" ]; then
-            echo "No failed tests found in $TEST_RESULTS_FILE, but test step indicated failure. Check test runner output."
-            # Optionally, still create/update a generic issue, or investigate why test step failed without specific test failures in XML
-            exit 0 # Or handle as an error
-          fi
-
-          echo "Failed tests identified:"
-          echo "$FAILED_TESTS"
-
-          ISSUE_BODY_HEADER="The following automated tests are currently failing:"
-          CHECKLIST_ITEMS=""
-          while IFS= read -r test_name; do
-            CHECKLIST_ITEMS="${CHECKLIST_ITEMS}- [ ] ${test_name}\n"
-          done <<< "$FAILED_TESTS"
-
-          CURRENT_DATETIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          ISSUE_BODY="${ISSUE_BODY_HEADER}\n\n${CHECKLIST_ITEMS}\n---\nLast updated: ${CURRENT_DATETIME} by GitHub Action (${{ github.run_id }})"
-
-          echo "Generated Issue Body:"
-          echo "$ISSUE_BODY"
-
-          # Check for existing issue
-          EXISTING_ISSUE_URL=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                                   -H "Accept: application/vnd.github.v3+json" \
-                                   "https://api.github.com/repos/$REPO_NAME/issues?labels=$ISSUE_LABEL&state=open&creator=app/github-actions" | \
-                                   jq -r --arg title "$ISSUE_TITLE" '.[] | select(.title == $title) | .url' | head -n 1)
-          
-          # If no issue by creator, try searching more broadly (less precise)
-          if [ -z "$EXISTING_ISSUE_URL" ]; then
-             EXISTING_ISSUE_URL=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                                   -H "Accept: application/vnd.github.v3+json" \
-                                   "https://api.github.com/repos/$REPO_NAME/issues?labels=$ISSUE_LABEL&state=open" | \
-                                   jq -r --arg title "$ISSUE_TITLE" '.[] | select(.title == $title) | .url' | head -n 1)
-          fi
-
-
-          if [ -n "$EXISTING_ISSUE_URL" ]; then
-            echo "Existing issue found: $EXISTING_ISSUE_URL"
-            # Fetch existing body to compare (optional, could just update)
-            # For simplicity, we'll just update the body directly here.
-            # A more complex script could compare and only update if changed.
-            
-            # Update existing issue
-            curl -s -X PATCH -H "Authorization: token $GITHUB_TOKEN" \
-                 -H "Accept: application/vnd.github.v3+json" \
-                 "$EXISTING_ISSUE_URL" \
-                 -d "$(jq -n --arg body "$ISSUE_BODY" '{body: $body}')"
-            echo "Updated existing issue."
-          else
-            echo "No existing issue found. Creating a new one."
-            # Create new issue
-            CREATE_PAYLOAD=$(jq -n --arg title "$ISSUE_TITLE" --arg body "$ISSUE_BODY" --arglabels "$ISSUE_LABEL" '{title: $title, body: $body, labels: ($arglabels | split(","))}')
-            echo "Create payload: $CREATE_PAYLOAD"
-            curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" \
-                 -H "Accept: application/vnd.github.v3+json" \
-                 "https://api.github.com/repos/$REPO_NAME/issues" \
-                 -d "$CREATE_PAYLOAD"
-            echo "Created new issue."
-          fi
-
-  notify_discord:
+  notify:
+    name: Discord Notification
     runs-on: ubuntu-latest
-    needs: test
-    if: (startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/Development') || startsWith(github.ref, 'refs/heads/development') || startsWith(github.ref, 'refs/heads/dev') || startsWith(github.ref, 'refs/heads/ver/'))
+    needs: [lint, type-check, test]
+    if: |
+      always() && (
+        github.ref == 'refs/heads/master' ||
+        github.ref == 'refs/heads/development' ||
+        github.ref == 'refs/heads/dev' ||
+        startsWith(github.ref, 'refs/heads/ver/')
+      )
     steps:
       - name: Checkout repository
-        uses: actions/checkout@main
-      - name: Extract event information
-        id: event_info
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Extract commit information
+        id: commit_info
         run: |
-          # Ensure git commands run in the checked-out repo
-          # If shallow clone, git log -1 might be enough. If full history needed, ensure fetch-depth: 0
           COMMIT_TITLE=$(git log --format=%s -1 HEAD)
           GITHUB_AUTHOR_NAME=$(git log -1 --pretty=format:'%an' HEAD)
-          # GITHUB_AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae' HEAD) # Email not used in payload
-          GITHUB_AUTHOR_PROFILE_ICON="https://avatars.githubusercontent.com/${{ github.actor }}" # Use github.actor for consistent avatar
           COMMIT_HASH=$(git log -1 --pretty=format:'%H' HEAD)
-          COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI' HEAD) # ISO 8601 strict
+          COMMIT_TIMESTAMP=$(git log -1 --pretty=format:'%cI' HEAD)
 
-          echo "title<<EOF" >> $GITHUB_ENV
-          echo "${COMMIT_TITLE}" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          echo "title=$COMMIT_TITLE" >> $GITHUB_ENV
+          echo "author_name=$GITHUB_AUTHOR_NAME" >> $GITHUB_ENV
+          echo "commit_hash=$COMMIT_HASH" >> $GITHUB_ENV
+          echo "timestamp=$COMMIT_TIMESTAMP" >> $GITHUB_ENV
 
-          echo "author_name<<EOF" >> $GITHUB_ENV
-          echo "${GITHUB_AUTHOR_NAME}" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-          echo "author_url=https://github.com/${{ github.actor }}" >> $GITHUB_ENV # Use github.actor for author URL
-          echo "author_profileicon=${GITHUB_AUTHOR_PROFILE_ICON}" >> $GITHUB_ENV
-          echo "timestamp=${COMMIT_TIMESTAMP}" >> $GITHUB_ENV
-          echo "footer_text=${COMMIT_HASH}" >> $GITHUB_ENV
-          echo "color=13317109" >> $GITHUB_ENV
-          echo "username=Tanjun Changelog" >> $GITHUB_ENV
       - name: Check commit message
-        id: check_commit_message
+        id: check_skip
         run: |
-          # Ensure title is properly escaped if it contains special characters for JSON later
-          # However, the current usage passes it as an env var and then substitutes in JSON string,
-          # which can be risky. Better to construct JSON carefully.
           if [[ "${{ env.title }}" == *"[ignore changelog]"* ]]; then
-            echo "::warning::Commit message includes '[ignore changelog]'. Skipping Discord notification."
-            echo "skip_discord_notification=true" >> $GITHUB_ENV
+            echo "skip=true" >> $GITHUB_ENV
           else
-            echo "skip_discord_notification=false" >> $GITHUB_ENV
+            echo "skip=false" >> $GITHUB_ENV
           fi
+
       - name: Post update on Discord
-        if: env.skip_discord_notification != 'true'
+        if: env.skip != 'true'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
@@ -226,22 +188,38 @@ jobs:
             exit 1
           fi
 
-          # Prepare JSON payload more safely using jq
-          JSON_PAYLOAD=$(jq -n --arg title "$title" \
-                               --arg color "$color" \
-                               --arg author_name "$author_name" \
-                               --arg author_url "$author_url" \
-                               --arg author_icon "$author_profileicon" \
-                               --arg footer_text "$footer_text" \
-                               --arg timestamp "$timestamp" \
-                               --arg username "$username" \
+          LINT_STATUS="${{ needs.lint.result }}"
+          TYPE_STATUS="${{ needs.type-check.result }}"
+          TEST_STATUS="${{ needs.test.result }}"
+          OVERALL="${{ needs.test.result }}"
+
+          if [ "$LINT_STATUS" = "success" ] && [ "$TYPE_STATUS" = "success" ] && [ "$TEST_STATUS" = "success" ]; then
+            COLOR="5763719"
+            DESCRIPTION="All checks passed ✅"
+          else
+            COLOR="15548997"
+            DESCRIPTION="Checks failed ❌ (Lint: $LINT_STATUS, Type: $TYPE_STATUS, Test: $TEST_STATUS)"
+          fi
+
+          JSON_PAYLOAD=$(jq -n \
+            --arg title "$title" \
+            --argjson color "$COLOR" \
+            --arg description "$DESCRIPTION" \
+            --arg author_name "$author_name" \
+            --arg author_url "https://github.com/${{ github.actor }}" \
+            --arg author_icon "https://avatars.githubusercontent.com/${{ github.actor }}" \
+            --arg footer_text "$commit_hash" \
+            --arg timestamp "$timestamp" \
+            --arg username "Tanjun CI" \
+            --arg run_url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
           '{
             "content": null,
             "embeds": [
               {
                 "title": $title,
-                "description": null,
-                "color": ($color | tonumber),
+                "description": $description,
+                "color": $color,
+                "url": $run_url,
                 "author": {
                   "name": $author_name,
                   "url": $author_url,
@@ -257,25 +235,18 @@ jobs:
             "attachments": []
           }')
 
-          echo "Discord Payload:"
-          echo "$JSON_PAYLOAD"
-
           for i in {1..5}; do
             response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
               -H 'Content-Type: application/json' \
               -d "$JSON_PAYLOAD" \
               "$DISCORD_WEBHOOK_URL")
-            if [ "$response" -eq 204 ] || [ "$response" -eq 200 ] || [ "$response" -eq 201 ]; then # Accept 200/201 as well
-              echo "Discord notification sent successfully (HTTP $response)."
+            if [ "$response" -eq 204 ] || [ "$response" -eq 200 ] || [ "$response" -eq 201 ]; then
+              echo "Discord notification sent (HTTP $response)."
               break
-            else
-              echo "::warning::Failed to send Discord notification (HTTP $response). Attempt $i of 5."
-              sleep 10
             fi
+            sleep 10
           done
           if ! ( [ "$response" -eq 204 ] || [ "$response" -eq 200 ] || [ "$response" -eq 201 ] ); then
             echo "::error::Failed to send Discord notification after 5 attempts (Last HTTP: $response)."
-            # Optionally, output the payload again on final failure for debugging
-            # echo "Failed Payload: $JSON_PAYLOAD"
             exit 1
           fi
