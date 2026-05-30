@@ -8,6 +8,7 @@ import utility
 from commands.admin.addrole import addrole as addroleCommand
 from commands.admin.ban import ban as banCommand
 from commands.admin.boosterrole import create_booster_role as CreateBoosterRoleCommand
+from commands.admin.copy_7tv_emote import copy_7tv_emote as copy7tvEmoteCommand
 from commands.admin.copy_emoji import copy_emoji as copyEmojiCommand
 from commands.admin.copyrole import copyrole as copyRoleCommand
 from commands.admin.createemoji import create_emoji as createEmojiCommand
@@ -1274,6 +1275,29 @@ class AdministrationCommands(discord.app_commands.Group):
             client=interaction.client,
         )
         await copyEmojiCommand(command_info=command_info, emoji=emoji)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_copy7tv_name"),
+        description=app_commands.locale_str("admin_copy7tv_description"),
+    )
+    @app_commands.describe(
+        twitch_username=app_commands.locale_str("admin_copy7tv_params_twitch_username_description"),
+    )
+    async def copy_7tv(self, interaction: discord.Interaction, twitch_username: str) -> None:
+        await interaction.response.defer()
+        command_info = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
+        )
+        await copy7tvEmoteCommand(command_info=command_info, twitch_username=twitch_username)
         return
 
 

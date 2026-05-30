@@ -4,6 +4,8 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
+from utils.checks import check_bot_permission, check_user_permission, send_check_failure
+from utils.embeds import ErrorEmbedCategory, categorized_error_embed
 
 
 async def addrole(
@@ -11,31 +13,14 @@ async def addrole(
     user: discord.Member | None = None,
     role: discord.Role | None = None,
 ) -> None:
-    if (
-        isinstance(command_info.user, discord.Member)
-        and isinstance(command_info.channel, discord.abc.GuildChannel)
-        and not command_info.channel.permissions_for(command_info.user).manage_roles
-    ):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.addrole.missingPermission.title"),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.admin.addrole.missingPermission.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
+    # User permission check
+    result = check_user_permission(command_info, "manage_roles", use_guild_permissions=True)
+    if await send_check_failure(command_info, "addrole", result):
         return
 
-    assert command_info.guild is not None
-    if not command_info.guild.me.guild_permissions.manage_roles:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.addrole.missingPermissionBot.title"),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.admin.addrole.missingPermissionBot.description",
-            ),
-        )
-        await command_info.reply(embed=embed)
+    # Bot permission check
+    result = check_bot_permission(command_info, "manage_roles")
+    if await send_check_failure(command_info, "addrole", result):
         return
 
     class RoleManagementView(discord.ui.View):
@@ -171,23 +156,22 @@ async def addrole(
             await command_info.reply(embed=embed)
             return
 
+        # Hierarchy checks
+        assert command_info.guild is not None
         if isinstance(command_info.user, discord.Member) and command_info.user.top_role <= role:
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.addrole.roleTooHigh.title"),
-                description=tanjunLocalizer.localize(
-                    str(command_info.locale), "commands.admin.addrole.roleTooHigh.description"
-                ),
+            embed = categorized_error_embed(
+                ErrorEmbedCategory.PERMISSION,
+                tanjunLocalizer.localize(str(command_info.locale), "commands.admin.addrole.roleTooHigh.title"),
+                tanjunLocalizer.localize(str(command_info.locale), "commands.admin.addrole.roleTooHigh.description"),
             )
             await command_info.reply(embed=embed)
             return
 
         if command_info.guild.me.top_role <= role:
-            embed = utility.tanjunEmbed(
-                title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.addrole.roleTooHighBot.title"),
-                description=tanjunLocalizer.localize(
-                    command_info.locale,
-                    "commands.admin.addrole.roleTooHighBot.description",
-                ),
+            embed = categorized_error_embed(
+                ErrorEmbedCategory.PERMISSION,
+                tanjunLocalizer.localize(str(command_info.locale), "commands.admin.addrole.roleTooHighBot.title"),
+                tanjunLocalizer.localize(command_info.locale, "commands.admin.addrole.roleTooHighBot.description"),
             )
             await command_info.reply(embed=embed)
             return

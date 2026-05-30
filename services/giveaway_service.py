@@ -116,7 +116,7 @@ class GiveawayService:
                 await cursor.execute(query, sql_params)
                 await cursor.execute("SELECT LAST_INSERT_ID()")
                 last_id = await cursor.fetchone()
-                giveaway_id = last_id[0] if last_id else None
+                giveaway_id: int | None = last_id[0] if last_id else None
                 if giveaway_id is None:
                     raise RuntimeError("Failed to get last insert ID for giveaway")
 

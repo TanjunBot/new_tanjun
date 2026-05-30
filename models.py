@@ -127,6 +127,9 @@ class ReportModel(BaseModel):
     reporter_id: UserId
     reason: Annotated[str | None, StringConstraints(max_length=500)] = None
     created_at: int  # UNIX_TIMESTAMP
+    status: str = "PENDING"
+    status_updated_at: int | None = None  # UNIX_TIMESTAMP
+    status_updated_by: Annotated[str | None, StringConstraints(pattern=r"^\d{17,20}$")] = None
     accepted: bool
     accepted_at: int | None  # UNIX_TIMESTAMP
     accepted_by: OptionalUserId = None
@@ -878,6 +881,26 @@ class CountingMode(IntEnum):
     ROMEAN = 12
     SQUARE = 13
     CUBE = 14
+
+
+class WordleStatsModel(BaseModel):
+    """Wordle player statistics tracked per user per guild."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    user_id: UserId
+    guild_id: GuildId
+    games_played: int = Field(ge=0)
+    games_won: int = Field(ge=0)
+    current_streak: int = Field(ge=0)
+    max_streak: int = Field(ge=0)
+    guess_distribution: str = "0,0,0,0,0,0"  # comma-separated: guesses 1-6
+    hard_mode_games_played: int = Field(ge=0)
+    hard_mode_games_won: int = Field(ge=0)
+
+    @classmethod
+    def from_row(cls, row: tuple) -> WordleStatsModel:
+        return _from_row(cls, row)
 
 
 class LevelRolesGroupModel(BaseModel):

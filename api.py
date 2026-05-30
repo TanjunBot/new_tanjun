@@ -187,7 +187,7 @@ def set_bot(bot) -> None:
         db_manager._pool = None
 
 
-def _get_pool():
+def _get_pool() -> Pool | None:
     """Return the shared connection pool.
 
     Delegates to ``db_manager._pool`` so that all functions
@@ -1009,13 +1009,17 @@ def get_table_definitions() -> dict[str, str]:
         `reporterId` VARCHAR(20),
         `reason` VARCHAR(1024),
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        `status` VARCHAR(20) DEFAULT 'PENDING',
+        `status_updated_at` TIMESTAMP DEFAULT NULL,
+        `status_updated_by` VARCHAR(20) DEFAULT NULL,
         `accepted` TINYINT(1) DEFAULT 0,
         `accepted_at` TIMESTAMP DEFAULT NULL,
         `acceptedBy` VARCHAR(20) DEFAULT NULL,
         `resolved` TINYINT(1) DEFAULT 0,
         `resolved_at` TIMESTAMP DEFAULT NULL,
         `resolvedBy` VARCHAR(20) DEFAULT NULL,
-        PRIMARY KEY(`id`)
+        PRIMARY KEY(`id`),
+        INDEX `idx_status` (`status`)
     ) ENGINE=InnoDB;
     """
     tables["blockedReporters"] = """
@@ -1096,6 +1100,20 @@ def get_table_definitions() -> dict[str, str]:
         `channel_id` VARCHAR(20),
         `guild_id` VARCHAR(20),
         PRIMARY KEY(`channel_id`)
+    ) ENGINE=InnoDB;
+    """
+    tables["wordle_stats"] = """
+    CREATE TABLE IF NOT EXISTS `wordle_stats` (
+        `user_id` VARCHAR(20) NOT NULL,
+        `guild_id` VARCHAR(20) NOT NULL,
+        `games_played` INT UNSIGNED DEFAULT 0,
+        `games_won` INT UNSIGNED DEFAULT 0,
+        `current_streak` INT UNSIGNED DEFAULT 0,
+        `max_streak` INT UNSIGNED DEFAULT 0,
+        `guess_distribution` VARCHAR(64) DEFAULT '0,0,0,0,0,0',
+        `hard_mode_games_played` INT UNSIGNED DEFAULT 0,
+        `hard_mode_games_won` INT UNSIGNED DEFAULT 0,
+        PRIMARY KEY (`user_id`, `guild_id`)
     ) ENGINE=InnoDB;
     """
     tables["welcome_channel"] = """
@@ -1221,6 +1239,15 @@ async def create_tables(bot=None) -> None:
          ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
          AFTER `attachments`,
          ADD INDEX `idx_discord_message` (`discord_message_id`)""",
+        # Add status column to reports for status transitions
+        """ALTER TABLE `reports`
+         ADD COLUMN `status` VARCHAR(20) DEFAULT 'PENDING'
+         AFTER `created_at`,
+         ADD COLUMN `status_updated_at` TIMESTAMP DEFAULT NULL
+         AFTER `status`,
+         ADD COLUMN `status_updated_by` VARCHAR(20) DEFAULT NULL
+         AFTER `status_updated_at`,
+         ADD INDEX `idx_status` (`status`)""",
         """ALTER TABLE `level`
          ADD INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)""",
         """ALTER TABLE `warnings`
@@ -1234,7 +1261,12 @@ async def create_tables(bot=None) -> None:
         except Exception as exc:
             exc_str = str(exc).lower()
             # Only suppress "column already exists" / duplicate column errors
-            if "column already exists" in exc_str or "duplicate column" in exc_str or "duplicate column name" in exc_str:
+            if (
+                "column already exists" in exc_str
+                or "duplicate column" in exc_str
+                or "duplicate column name" in exc_str
+                or "duplicate key name" in exc_str
+            ):
                 logging.debug("Migration skipped (column already exists): %s", migration[:60])
             else:
                 logging.exception("Unexpected migration error: %s", migration[:60])
@@ -1322,6 +1354,99 @@ async def opt_in(user_id: str | int) -> None:
     query = "DELETE FROM message_tracking_opt_out WHERE user_id = %s"
     params = (user_id,)
     await execute_action(query, params)
+
+
+async def get_wordle_stats(user_id: str, guild_id: str) -> dict | None:
+    """Fetch Wordle stats for a user in a guild."""
+    from models import WordleStatsModel
+
+    query = """SELECT user_id, guild_id, games_played, games_won, current_streak,
+                      max_streak, guess_distribution, hard_mode_games_played, hard_mode_games_won
+               FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"""
+    rows = await execute_query(query, (user_id, guild_id))
+    if not rows:
+        return None
+    return WordleStatsModel.from_row(rows[0]).model_dump()
+
+
+async def upsert_wordle_stats(
+    user_id: str,
+    guild_id: str,
+    won: bool,
+    guesses: int,
+    hard_mode: bool = False,
+) -> dict:
+    """Update or insert Wordle stats after a game completes."""
+    from models import WordleStatsModel
+
+    query = """SELECT user_id, guild_id, games_played, games_won, current_streak,
+                      max_streak, guess_distribution, hard_mode_games_played, hard_mode_games_won
+               FROM `wordle_stats` WHERE user_id = %s AND guild_id = %s"""
+    rows = await execute_query(query, (user_id, guild_id))
+
+    if rows:
+        stats = WordleStatsModel.from_row(rows[0])
+    else:
+        stats = WordleStatsModel(
+            user_id=user_id,
+            guild_id=guild_id,
+            games_played=0,
+            games_won=0,
+            current_streak=0,
+            max_streak=0,
+            guess_distribution="0,0,0,0,0,0",
+            hard_mode_games_played=0,
+            hard_mode_games_won=0,
+        )
+
+    stats.games_played += 1
+    if hard_mode:
+        stats.hard_mode_games_played += 1
+
+    if won:
+        stats.games_won += 1
+        stats.current_streak += 1
+        if stats.current_streak > stats.max_streak:
+            stats.max_streak = stats.current_streak
+        # Update guess distribution (1-indexed, capped at 6)
+        dist = [int(x) for x in stats.guess_distribution.split(",")]
+        idx = max(0, min(guesses - 1, 5))
+        dist[idx] += 1
+        stats.guess_distribution = ",".join(str(d) for d in dist)
+        if hard_mode:
+            stats.hard_mode_games_won += 1
+    else:
+        stats.current_streak = 0
+
+    upsert_query = """
+        INSERT INTO `wordle_stats`
+            (user_id, guild_id, games_played, games_won, current_streak,
+             max_streak, guess_distribution, hard_mode_games_played, hard_mode_games_won)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            games_played = VALUES(games_played),
+            games_won = VALUES(games_won),
+            current_streak = VALUES(current_streak),
+            max_streak = VALUES(max_streak),
+            guess_distribution = VALUES(guess_distribution),
+            hard_mode_games_played = VALUES(hard_mode_games_played),
+            hard_mode_games_won = VALUES(hard_mode_games_won)
+    """
+    await execute_action(
+        upsert_query,
+        (
+            stats.user_id,
+            stats.guild_id,
+            stats.games_played,
+            stats.games_won,
+            stats.current_streak,
+            stats.max_streak,
+            stats.guess_distribution,
+            stats.hard_mode_games_played,
+            stats.hard_mode_games_won,
+        ),
+    )
+    return stats.model_dump()
 
 
 async def get_counting_configs(channel_id: str | int) -> tuple[dict | None, dict | None, dict | None]:
@@ -2655,10 +2780,17 @@ async def reject_report(guild_id: str, report_id: str) -> None:
     await _report_svc.reject(guild_id, report_id, accepted_by=None)
 
 
-async def resolve_report(guild_id: str, report_id: str) -> None:
+async def resolve_report(guild_id: str, report_id: str, resolved_by: str | None = None) -> None:
     from services.report_service import report_service as _report_svc
 
-    await _report_svc.resolve(guild_id, report_id)
+    await _report_svc.resolve(guild_id, report_id, resolved_by)
+
+
+async def set_report_status(guild_id: str, report_id: str, status: str, updated_by: str | None = None) -> None:
+    """Set the status of a report."""
+    from services.report_service import report_service as _report_svc
+
+    await _report_svc.set_status(guild_id, report_id, status, updated_by)
 
 
 async def delete_report(guild_id: str, report_id: str) -> None:

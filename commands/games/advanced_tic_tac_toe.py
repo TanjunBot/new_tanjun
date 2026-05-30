@@ -20,9 +20,7 @@ class AdvancedTicTacToe:
         self.player1 = player1
         self.player2 = player2 or "tanjun"  # type: ignore[assignment]
         # boards[meta_row][meta_col] is a 3x3 list of sub-board cells
-        self.boards: list[list[list[list[str]]]] = [
-            [[["-"] * 3 for _ in range(3)] for _ in range(3)] for _ in range(3)
-        ]
+        self.boards: list[list[list[list[str]]]] = [[[["-"] * 3 for _ in range(3)] for _ in range(3)] for _ in range(3)]
         # Track winners of each sub-board: None = ongoing, "⭕" or "❌" or "D" (draw)
         self.board_winners: list[list[str | None]] = [[None] * 3 for _ in range(3)]
         # Which sub-board the next player MUST play in (None = free choice)
@@ -233,8 +231,10 @@ class AdvancedTicTacToe:
 
         if self.game_over:
             if self.winner:
-                winner_name = self.player1.mention if self.winner == self.player1_move else (
-                    self.player2.mention if self.player2 != "tanjun" else "Tanjun"
+                winner_name = (
+                    self.player1.mention
+                    if self.winner == self.player1_move
+                    else (self.player2.mention if self.player2 != "tanjun" else "Tanjun")
                 )
                 description += f"🏆 **{winner_name} wins the game!** 🏆"
             else:
@@ -254,7 +254,9 @@ class AdvancedTicTacToe:
             self.message = await interaction.reply(embed=embed, view=view)  # type: ignore[attr-defined]
         else:
             await interaction.followup.edit_message(
-                message_id=interaction.message.id, view=view, embed=embed  # type: ignore[union-attr]
+                message_id=interaction.message.id,
+                view=view,
+                embed=embed,  # type: ignore[union-attr]
             )
 
     def get_board_view(self, timeout: int = 3600, disable_on_timeout: bool = True) -> discord.ui.View:
@@ -293,10 +295,14 @@ class AdvancedTicTacToe:
                     if self.game_over:
                         await i.response.send_message("Game is over.", ephemeral=True)
                         return
-                    if i.user.id not in [
-                        (self.player1.id if isinstance(self.player1, discord.Member) else 0),
-                        (self.player2.id if isinstance(self.player2, discord.Member) else 0),
-                    ] and self.player2 != "tanjun":
+                    if (
+                        i.user.id
+                        not in [
+                            (self.player1.id if isinstance(self.player1, discord.Member) else 0),
+                            (self.player2.id if isinstance(self.player2, discord.Member) else 0),
+                        ]
+                        and self.player2 != "tanjun"
+                    ):
                         await i.response.send_message("This is not your game!", ephemeral=True)
                         return
                     if i.user != self.current_player and self.current_player != "tanjun":
@@ -382,9 +388,12 @@ class AdvancedTicTacToe:
                     await self.update_board(i)
 
                     # If game is not over and opponent is bot, make bot move
-                    if not self.game_over and (self.player2 == "tanjun" or (
-                        hasattr(self.player2, "bot") and self.player2.bot  # type: ignore[union-attr]
-                    )):
+                    if not self.game_over and (
+                        self.player2 == "tanjun"
+                        or (
+                            hasattr(self.player2, "bot") and self.player2.bot  # type: ignore[union-attr]
+                        )
+                    ):
                         bot_m = self.bot_move()
                         if bot_m:
                             self.make_move(*bot_m)

@@ -10,6 +10,7 @@ from commands.games.akinator import akinator
 from commands.games.connect4 import connect4
 from commands.games.flag_quiz import flag_quiz
 from commands.games.hangman import hangman
+from commands.games.memory import memory
 from commands.games.rps import rps
 from commands.games.tic_tac_toe import tic_tac_toe
 from commands.games.wordle import wordle
@@ -417,6 +418,25 @@ class GameCommands(discord.app_commands.Group):
             client=interaction.client,
         )
         await rps(command_info, user)
+
+    @app_commands.command(
+        name=app_commands.locale_str("games_memory_name"),
+        description=app_commands.locale_str("games_memory_description"),
+    )
+    async def memory_cmd(self, interaction: discord.Interaction) -> None:
+        await interaction.response.defer()
+        command_info = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
+        )
+        await memory(command_info, interaction.user)
 
     @app_commands.command(
         name=app_commands.locale_str("games_advanced_ttt_name"),
