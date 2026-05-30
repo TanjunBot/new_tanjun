@@ -28,7 +28,60 @@ from config import (
     database_schema,
     database_user,
     prefix,
+    sentry_dsn,
+    sentry_environment,
+    sentry_traces_sample_rate,
 )
+
+
+# ── Sentry event filter ──────────────────────────────────────────────────────
+def _should_discard_sentry_event(event: dict, hint: dict) -> dict | None:
+    """Drop noisy known-safe Discord API errors to save Sentry quota.
+
+    Returns ``None`` to discard the event, or the ``event`` dict to send it.
+    """
+    exc_info = hint.get("exc_info", None)
+    if exc_info is None:
+        return event
+    _exc_type, exc_value, _tb = exc_info
+
+    # Discord HTTP 403 Forbidden — expected when the bot lacks a permission.
+    if isinstance(exc_value, discord.Forbidden):
+        return None
+
+    # Discord HTTP 404 — Unknown Message, Unknown Interaction, etc.
+    if isinstance(exc_value, discord.NotFound):
+        return None
+
+    # Discord HTTP 429 — rate-limited; logged locally, not actionable via Sentry.
+    if isinstance(exc_value, discord.HTTPException):
+        if exc_value.status in (429,):
+            return None
+
+    # Discord 10008 "Unknown Message" — common race when a message is deleted
+    # between when a component interaction fires and the bot tries to respond.
+    if isinstance(exc_value, discord.DiscordException):
+        msg = str(exc_value).lower()
+        if "10008" in msg and "unknown message" in msg:
+            return None
+
+    return event
+
+
+# ── Sentry initialization (must be early) ────────────────────────────────────
+if sentry_dsn:
+    import sentry_sdk
+
+    init_kwargs = {
+        "dsn": sentry_dsn,
+        "before_send": _should_discard_sentry_event,
+        "traces_sample_rate": sentry_traces_sample_rate,
+    }
+    if sentry_environment:
+        init_kwargs["environment"] = sentry_environment
+
+    sentry_sdk.init(**init_kwargs)
+
 from DatabaseHealthCheck import DatabaseHealthCheck
 from di import services
 from external_api_health_checks import (
