@@ -96,7 +96,9 @@ async def blacklist_list_category(command_info: utility.command_info):
             "commands.logs.blacklistListCategory.noBlacklistedCategories",
         )
     else:
-        description = "\n".join([f"{'➤' if i == 0 else ''} <#{category}>" for i, category in enumerate(blacklisted_categories)])
+        description = "\n".join(
+            [f"{'➤' if i == 0 else ''} <#{category}>" for i, category in enumerate(blacklisted_categories)]
+        )
     embed = utility.tanjunEmbed(
         title=tanjunLocalizer.localize(command_info.locale, "commands.logs.blacklistListCategory.title"),
         description=description,
