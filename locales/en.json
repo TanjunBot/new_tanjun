@@ -3376,6 +3376,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.reports.show_reports.report.status",
+    "source_string": "**Status**: ${status}",
+    "translation": "**Status**: ${status}",
+    "context": "commands -> admin -> reports -> show_reports -> report -> status",
+    "labels": "de.json",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.reports.show_reports.not_your_warns",
     "source_string": "Du darfst nicht mit den Buttons interagieren.",
     "translation": "You are not allowed to interact with the buttons.",
@@ -30840,6 +30848,22 @@
     "max_length": null
   },
   {
+    "identifier": "admin.copy7tv.description",
+    "source_string": "Durchsucht und importiert 7TV Emotes eines Streamers",
+    "translation": "Browse and import a streamer's 7TV emotes",
+    "context": "admin -> copy7tv -> description",
+    "labels": "command_description, unassigned",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.copy7tv.params.twitch.username.description",
+    "source_string": "Der Twitch-Benutzername des Streamers",
+    "translation": "The Twitch username of the streamer",
+    "context": "admin -> copy7tv -> params -> twitch_username -> description",
+    "labels": "command_description, unassigned",
+    "max_length": 100
+  },
+  {
     "identifier": "emoji",
     "source_string": "emoji",
     "translation": "emoji",
@@ -32440,6 +32464,174 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.copy7tv.missingPermission.title",
+    "source_string": "Fehlende Berechtigungen",
+    "translation": "Missing permissions",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.missingPermission.description",
+    "source_string": "Du hast nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen. Du benötigst die `emojis_verwalten` berechtigung.",
+    "translation": "You do not have the required permissions to run this command. You need the `manage_emojis` permission.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.missingPermissionBot.title",
+    "source_string": "Mir fehlen Berechtigungen",
+    "translation": "I am missing permissions",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.missingPermissionBot.description",
+    "source_string": "Ich benötige die `emojis_verwalten` Berechtigung, um Emojis auf diesen Server hinzuzufügen.",
+    "translation": "I need the `manage_emojis` permission to add emojis to this server.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.error.notFound.title",
+    "source_string": "Keine Emotes gefunden",
+    "translation": "No emotes found",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.error.notFound.description",
+    "source_string": "Konnte keine 7TV Emotes für den Streamer `${username}` finden. Stelle sicher, dass der Twitch-Name korrekt ist und der Streamer ein 7TV Konto hat.",
+    "translation": "Could not find 7TV emotes for streamer `${username}`. Make sure the Twitch name is correct and the streamer has a 7TV account.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.title",
+    "source_string": "🎭 7TV Emotes von ${username} (${total} insgesamt)",
+    "translation": "🎭 7TV Emotes from ${username} (${total} total)",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.footer",
+    "source_string": "Seite ${page}/${total_pages}",
+    "translation": "Page ${page}/${total_pages}",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.noEmotes",
+    "source_string": "Keine Emotes auf dieser Seite.",
+    "translation": "No emotes on this page.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.notYourEmbed",
+    "source_string": "Diese Steuerung gehört nicht dir!",
+    "translation": "This control is not yours!",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.title",
+    "source_string": "Emote hinzufügen",
+    "translation": "Add Emote",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.label",
+    "source_string": "Emote Nummer",
+    "translation": "Emote Number",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.placeholder",
+    "source_string": "Gib die Nummer des Emotes ein (z.B. 1)",
+    "translation": "Enter the emote number (e.g. 1)",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.limitAnimated",
+    "source_string": "Dieser Server hat das Limit für animierte Emojis erreicht.",
+    "translation": "This server has reached the animated emoji limit.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.limitStatic",
+    "source_string": "Dieser Server hat das Limit für statische Emojis erreicht.",
+    "translation": "This server has reached the static emoji limit.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.downloadError",
+    "source_string": "Fehler beim Herunterladen des Emotes.",
+    "translation": "Error downloading the emote image.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.reason",
+    "source_string": "Emote via /admin copy_7tv hinzugefügt",
+    "translation": "Emote added via /admin copy_7tv",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.success.title",
+    "source_string": "Emote hinzugefügt ✅",
+    "translation": "Emote added ✅",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.success.description",
+    "source_string": "Das Emote ${emoji} (`:${name}:`) wurde erfolgreich zum Server hinzugefügt!",
+    "translation": "The emote ${emoji} (`:${name}:`) has been added to the server!",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.invalidNumber",
+    "source_string": "Ungültige Nummer. Bitte gib eine gültige Emote-Nummer aus der Liste ein.",
+    "translation": "Invalid number. Please enter a valid emote number from the list.",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.copy7tv.addModal.error",
+    "source_string": "Fehler beim Erstellen des Emojis: ${error}",
+    "translation": "Error creating emoji: ${error}",
+    "context": "commands -> admin -> copy7tv",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "setup_name",
     "source_string": "setup",
     "translation": "setup",
@@ -32516,6 +32708,54 @@
     "source_string": "Interactive wizard for booster perks configuration",
     "translation": "Interactive wizard for booster perks configuration",
     "context": "Slash command description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.buttons.playNormal",
+    "source_string": "Normal",
+    "translation": "Normal",
+    "context": "Button to play Wordle in normal mode",
+    "labels": "unassigned",
+    "max_length": 20
+  },
+  {
+    "identifier": "commands.games.wordle.buttons.playHard",
+    "source_string": "Hard Mode",
+    "translation": "Hard Mode",
+    "context": "Button to play Wordle in hard mode",
+    "labels": "unassigned",
+    "max_length": 20
+  },
+  {
+    "identifier": "commands.games.wordle.pickMode.title",
+    "source_string": "Wordle - Mode",
+    "translation": "Wordle - Mode",
+    "context": "Title for the mode selection screen",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.pickMode.description",
+    "source_string": "Choose your mode: Normal or Hard Mode. In Hard Mode, any revealed hints must be used in subsequent guesses.",
+    "translation": "Choose your mode: Normal or Hard Mode. In Hard Mode, any revealed hints must be used in subsequent guesses.",
+    "context": "Description for the mode selection screen",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.hardMode.title",
+    "source_string": "Wordle - Hard Mode",
+    "translation": "Wordle - Hard Mode",
+    "context": "Title when playing in hard mode",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.wordle.stats.title",
+    "source_string": "Your Wordle Statistics",
+    "translation": "Your Wordle Statistics",
+    "context": "Title for the Wordle stats display",
     "labels": "unassigned",
     "max_length": null
   }
