@@ -20280,6 +20280,38 @@
     "max_length": 100
   },
   {
+    "identifier": "games.battleship.name",
+    "source_string": "schiffe_versenken",
+    "translation": "schiffe_versenken",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "games.battleship.description",
+    "source_string": "Spiele Schiffe versenken",
+    "translation": "Spiele Schiffe versenken",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "games.battleship.params.user.name",
+    "source_string": "nutzer",
+    "translation": "nutzer",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "games.battleship.params.user.description",
+    "source_string": "Der Benutzer, gegen den das Spiel gespielt werden soll (optional)",
+    "translation": "Der Benutzer, gegen den das Spiel gespielt werden soll (optional)",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "level.leaderboard.name",
     "source_string": "rangliste",
     "translation": "rangliste",
@@ -31059,6 +31091,198 @@
     "identifier": "commands.games.connect4.error.no_plus.description",
     "source_string": "Du benötigst Tanjun Plus um 4-Gewinnt mit anderen Spielfeldgrößen zu spielen.",
     "translation": "Du benötigst Tanjun Plus um 4-Gewinnt mit anderen Spielfeldgrößen zu spielen.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.battleTitle",
+    "source_string": "Schiffe versenken",
+    "translation": "Schiffe versenken",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.placementTitle",
+    "source_string": "Schiffe versenken - Schiffe platzieren",
+    "translation": "Schiffe versenken - Schiffe platzieren",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.placementDescription",
+    "source_string": "Platziere deine Schiffe! \\$player, platziere das **\\$ship** (Größe \\$size, Symbol \\$symbol) auf deinem Spielfeld.",
+    "translation": "Platziere deine Schiffe! \\$player, platziere das **\\$ship** (Größe \\$size, Symbol \\$symbol) auf deinem Spielfeld.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.winner",
+    "source_string": "\\$player hat das Schiffe versenken-Spiel gewonnen!",
+    "translation": "\\$player hat das Schiffe versenken-Spiel gewonnen!",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.currentTurn",
+    "source_string": "Aktueller Zug: \\$player",
+    "translation": "Aktueller Zug: \\$player",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.notYourTurn",
+    "source_string": "Du bist noch nicht an der Reihe. Bitte warte auf deinen Gegner.",
+    "translation": "Du bist noch nicht an der Reihe. Bitte warte auf deinen Gegner.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.notYourGame",
+    "source_string": "Dies ist nicht dein Spiel. Bitte erstelle dein eigenes Spiel.",
+    "translation": "Dies ist nicht dein Spiel. Bitte erstelle dein eigenes Spiel.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.alreadyAttacked",
+    "source_string": "Du hast dieses Feld bereits angegriffen. Bitte wähle ein anderes.",
+    "translation": "Du hast dieses Feld bereits angegriffen. Bitte wähle ein anderes.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.error.invalidCoordinate",
+    "source_string": "Ungültiges Koordinatenformat. Verwende ein Format wie A5, B3, usw.",
+    "translation": "Ungültiges Koordinatenformat. Verwende ein Format wie A5, B3, usw.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.error.invalidRow",
+    "source_string": "Ungültige Zeile. Verwende A-J.",
+    "translation": "Ungültige Zeile. Verwende A-J.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.error.invalidColumn",
+    "source_string": "Ungültige Spalte. Verwende 0-9.",
+    "translation": "Ungültige Spalte. Verwende 0-9.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.gameOver",
+    "source_string": "Spiel beendet",
+    "translation": "Spiel beendet",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.legend",
+    "source_string": "Legende: $water=Wasser | $hit=Treffer | $miss=Verfehlt | $sunk=Versenkt",
+    "translation": "Legende: $water=Wasser | $hit=Treffer | $miss=Verfehlt | $sunk=Versenkt",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpTitle",
+    "source_string": "Schiffe versenken Hilfe",
+    "translation": "Schiffe versenken Hilfe",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpBoards",
+    "source_string": "Angezeigte Spielfelder:",
+    "translation": "Angezeigte Spielfelder:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpYourBoard",
+    "source_string": "Dein Spielfeld (oben) zeigt DEINE Schiffe: farbige Blöcke",
+    "translation": "Dein Spielfeld (oben) zeigt DEINE Schiffe: farbige Blöcke",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpEnemyBoard",
+    "source_string": "Gegnerisches Spielfeld (unten) zeigt deine Angriffe: $hit = Treffer, $miss = Verfehlt, $sunk = Versenkt",
+    "translation": "Gegnerisches Spielfeld (unten) zeigt deine Angriffe: $hit = Treffer, $miss = Verfehlt, $sunk = Versenkt",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpToAttack",
+    "source_string": "Zum Angreifen:",
+    "translation": "Zum Angreifen:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpAttackInstruction",
+    "source_string": "Klicke auf die Angriff-Schaltfläche und gib Koordinaten ein (z.B. A5, B3).",
+    "translation": "Klicke auf die Angriff-Schaltfläche und gib Koordinaten ein (z.B. A5, B3).",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpGiveUp",
+    "source_string": "Aufgeben:",
+    "translation": "Aufgeben:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpGiveUpInstruction",
+    "source_string": "Klicke auf die Aufgeben-Schaltfläche, um aufzugeben.",
+    "translation": "Klicke auf die Aufgeben-Schaltfläche, um aufzugeben.",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpPlayers",
+    "source_string": "Spieler:",
+    "translation": "Spieler:",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpPlayersValue",
+    "source_string": "$p1 gegen $p2",
+    "translation": "$p1 gegen $p2",
+    "context": null,
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.battleship.helpCurrentTurn",
+    "source_string": "Aktueller Zug:",
+    "translation": "Aktueller Zug:",
     "context": null,
     "labels": "unassigned",
     "max_length": null

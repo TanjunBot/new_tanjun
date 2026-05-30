@@ -20,7 +20,16 @@ class AdvancedTicTacToe:
         self.player1 = player1
         self.player2 = player2 or "tanjun"  # type: ignore[assignment]
         # boards[meta_row][meta_col] is a 3x3 list of sub-board cells
-        self.boards: list[list[list[list[str]]]] = [[[["-"] * 3 for _ in range(3)] for _ in range(3)] for _ in range(3)]
+        self.boards: list[list[list[list[str]]]] = [
+            [  # meta_row
+                [  # meta_col
+                    ["-"] * 3  # row of sub-board
+                    for _ in range(3)
+                ]
+                for _ in range(3)
+            ]
+            for _ in range(3)
+        ]
         # Track winners of each sub-board: None = ongoing, "⭕" or "❌" or "D" (draw)
         self.board_winners: list[list[str | None]] = [[None] * 3 for _ in range(3)]
         # Which sub-board the next player MUST play in (None = free choice)
@@ -295,14 +304,11 @@ class AdvancedTicTacToe:
                     if self.game_over:
                         await i.response.send_message("Game is over.", ephemeral=True)
                         return
-                    if (
-                        i.user.id
-                        not in [
-                            (self.player1.id if isinstance(self.player1, discord.Member) else 0),
-                            (self.player2.id if isinstance(self.player2, discord.Member) else 0),
-                        ]
-                        and self.player2 != "tanjun"
-                    ):
+                    # Compute allowed participant IDs
+                    allowed_ids = {self.player1.id}
+                    if isinstance(self.player2, discord.Member):
+                        allowed_ids.add(self.player2.id)
+                    if i.user.id not in allowed_ids:
                         await i.response.send_message("This is not your game!", ephemeral=True)
                         return
                     if i.user != self.current_player and self.current_player != "tanjun":

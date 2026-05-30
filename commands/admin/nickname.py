@@ -2,7 +2,6 @@ import discord
 
 import utility
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def change_nickname(command_info: utility.CommandInfo, member: discord.Member, nickname: str | None = None) -> None:
@@ -35,8 +34,8 @@ async def change_nickname(command_info: utility.CommandInfo, member: discord.Mem
 
     if (
         isinstance(command_info.user, discord.Member)
-        and member.top_role >= CommandInfo.user.top_role  # type: ignore[misc, union-attr]
-        and command_info.user != CommandInfo.guild.owner  # type: ignore[misc, union-attr]
+        and member.top_role >= command_info.user.top_role  # type: ignore[misc, union-attr]
+        and command_info.user != command_info.guild.owner  # type: ignore[misc, union-attr]
     ):
         embed = utility.tanjunEmbed(
             title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.nickname.targetTooHigh.title"),

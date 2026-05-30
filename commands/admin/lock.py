@@ -14,7 +14,6 @@ async def lock_channel(command_info: utility.CommandInfo, channel: discord.TextC
             raise ValueError("Channel is missing in command_info")
         channel = cast(discord.TextChannel, command_info.channel)  # type: ignore[name-defined]
 
-    # User permission check (channel-scoped)
     result = check_user_permission(command_info, "manage_channels", use_guild_permissions=False, channel=channel)
     if await send_check_failure(command_info, "lock", result):
         return

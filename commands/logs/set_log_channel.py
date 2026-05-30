@@ -8,7 +8,6 @@ from api import (
     set_log_channel as set_log_channel_api,
 )
 from localizer import tanjunLocalizer
-from utility import CommandInfo
 
 
 async def set_log_channel(command_info: utility.CommandInfo, channel: discord.TextChannel) -> None:
@@ -32,7 +31,7 @@ async def set_log_channel(command_info: utility.CommandInfo, channel: discord.Te
 
     assert command_info.guild is not None
     assert command_info.client.user is not None
-    self_member = CommandInfo.guild.get_member(command_info.client.user.id)  # type: ignore[misc, union-attr]
+    self_member = command_info.guild.get_member(command_info.client.user.id)  # type: ignore[misc, union-attr]
     permissions = channel.permissions_for(self_member)  # type: ignore[arg-type]
 
     if not permissions.send_messages:

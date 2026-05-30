@@ -12,7 +12,6 @@ async def ban(
     reason: str | None = None,
     delete_message_days: int = 0,
 ) -> None:
-    # Centralised permission and hierarchy checks
     result = can_moderate(command_info, target, "ban_members", "ban_members")
     if await send_check_failure(command_info, "ban", result):
         return

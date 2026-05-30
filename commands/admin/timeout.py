@@ -14,7 +14,6 @@ async def timeout(
     duration: int | timedelta,
     reason: str | None = None,
 ) -> None:
-    # Centralised permission and hierarchy checks
     result = can_moderate(command_info, member, "moderate_members", "moderate_members")
     if await send_check_failure(command_info, "timeout", result):
         return
