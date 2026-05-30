@@ -16,6 +16,7 @@ from .dispatcher import (
 __all__ = [
     "run_blocking",
     "TTLCache",
+    "HandlerRegistry",
     "MessageFilters",
     "MessageHandler",
     "Priority",

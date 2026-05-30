@@ -1,9 +1,20 @@
-from aiohttp import ClientError, ClientSession
+"""OpenAI API health check for Tanjun bot.
+
+Validates:
+1. openAiKey is configured
+2. API is reachable with valid credentials
+"""
+
+from __future__ import annotations
+
+from aiohttp import ClientError, ClientSession, ClientTimeout
 
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 
 
 class OpenAIHealthCheck(HealthCheck):
+    """Health check for the OpenAI API."""
+
     @property
     def name(self) -> str:
         return "OpenAI API"
@@ -32,7 +43,7 @@ class OpenAIHealthCheck(HealthCheck):
                 async with session.get(
                     "https://api.openai.com/v1/models",
                     headers=headers,
-                    timeout=10,
+                    timeout=ClientTimeout(total=10),
                 ) as response:
                     if response.status == 401:
                         return HealthCheckResult(

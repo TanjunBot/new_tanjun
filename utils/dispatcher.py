@@ -15,7 +15,7 @@ import logging
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Union
 
 import discord
 
@@ -122,7 +122,10 @@ def register(
     name: str | None = None,
     filters: MessageFilters | None = None,
     priority: int = 0,
-) -> Callable[[Callable[[discord.Message], Awaitable[Any]]], Callable[[discord.Message], Awaitable[Any]]]:
+) -> Union[
+    Callable[[Callable[[discord.Message], Awaitable[Any]]], Callable[[discord.Message], Awaitable[Any]]],
+    Callable[[discord.Message], Awaitable[Any]],
+]:
     """Register a message handler.
 
     Can be used as a decorator::
@@ -420,3 +423,9 @@ def freeze() -> None:
     global _ready
     _ready = True
     log.info("Dispatcher frozen with %d handler(s)", len(_handlers))
+
+
+
+# Backward compatibility alias
+HandlerRegistry = type("HandlerRegistry", (), {})
+register_handler = register
