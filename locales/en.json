@@ -30808,6 +30808,22 @@
     "max_length": null
   },
   {
+    "identifier": "admin.copy7tv.description",
+    "source_string": "Durchsucht und importiert 7TV Emotes eines Streamers",
+    "translation": "Browse and import a streamer's 7TV emotes",
+    "context": "admin -> copy7tv -> description",
+    "labels": "command_description, unassigned",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.copy7tv.params.twitch.username.description",
+    "source_string": "Der Twitch-Benutzername des Streamers",
+    "translation": "The Twitch username of the streamer",
+    "context": "admin -> copy7tv -> params -> twitch_username -> description",
+    "labels": "command_description, unassigned",
+    "max_length": 100
+  },
+  {
     "identifier": "emoji",
     "source_string": "emoji",
     "translation": "emoji",
@@ -32290,7 +32306,7 @@
   {
     "identifier": "commands.admin.copy7tv.missingPermission.title",
     "source_string": "Fehlende Berechtigungen",
-    "translation": "Missing authorizations",
+    "translation": "Missing permissions",
     "context": "commands -> admin -> copy7tv",
     "labels": "unassigned",
     "max_length": null
@@ -32306,7 +32322,7 @@
   {
     "identifier": "commands.admin.copy7tv.missingPermissionBot.title",
     "source_string": "Mir fehlen Berechtigungen",
-    "translation": "I am missing authorizations",
+    "translation": "I am missing permissions",
     "context": "commands -> admin -> copy7tv",
     "labels": "unassigned",
     "max_length": null

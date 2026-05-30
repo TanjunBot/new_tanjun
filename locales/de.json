@@ -30808,6 +30808,22 @@
     "max_length": null
   },
   {
+    "identifier": "admin.copy7tv.description",
+    "source_string": "Durchsucht und importiert 7TV Emotes eines Streamers",
+    "translation": "Durchsucht und importiert 7TV Emotes eines Streamers",
+    "context": "admin -> copy7tv -> description",
+    "labels": "command_description, unassigned",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.copy7tv.params.twitch.username.description",
+    "source_string": "Der Twitch-Benutzername des Streamers",
+    "translation": "Der Twitch-Benutzername des Streamers",
+    "context": "admin -> copy7tv -> params -> twitch_username -> description",
+    "labels": "command_description, unassigned",
+    "max_length": 100
+  },
+  {
     "identifier": "emoji",
     "source_string": "emoji",
     "translation": "emoji",
@@ -32418,7 +32434,7 @@
   {
     "identifier": "commands.admin.copy7tv.addModal.reason",
     "source_string": "Emote via /admin copy_7tv hinzugefügt",
-    "translation": "Emote added via /admin copy_7tv",
+    "translation": "Emote via /admin copy_7tv hinzugefügt",
     "context": "commands -> admin -> copy7tv",
     "labels": "unassigned",
     "max_length": null
@@ -32426,7 +32442,7 @@
   {
     "identifier": "commands.admin.copy7tv.addModal.success.title",
     "source_string": "Emote hinzugefügt ✅",
-    "translation": "Emote added ✅",
+    "translation": "Emote hinzugefügt ✅",
     "context": "commands -> admin -> copy7tv",
     "labels": "unassigned",
     "max_length": null

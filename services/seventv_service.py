@@ -12,7 +12,6 @@ from typing import Any
 import aiohttp
 from aiohttp import ClientTimeout
 
-
 SEVENTV_API_BASE = "https://7tv.io/v3"
 SEVENTV_CDN_BASE = "https://cdn.7tv.app"
 
@@ -54,7 +53,7 @@ class SevenTVEmote:
                 # Fallback to 4x.webp
                 image_url = f"https:{cdn_url}/4x.webp"
         else:
-            image_url = f"https://cdn.7tv.app/emote/{emote_id}/4x.png"
+            image_url = f"{SEVENTV_CDN_BASE}/emote/{emote_id}/4x.png"
 
         return cls(
             id=emote_id,

@@ -8,9 +8,7 @@ from __future__ import annotations
 
 import logging
 
-import aiohttp
 import discord
-from aiohttp import ClientTimeout
 
 import utility
 from localizer import tanjunLocalizer
@@ -18,7 +16,7 @@ from services.seventv_service import SevenTVEmote, get_seventv_service
 from utility import EmbedColor
 
 
-async def copy_7tv_emote(
+async def copy_7tv_emote(  # noqa: C901
     command_info: utility.CommandInfo,
     twitch_username: str,
 ) -> None:
@@ -175,18 +173,16 @@ async def copy_7tv_emote(
                     ephemeral=True,
                 )
                 return
-            await interaction.response.send_modal(AddEmoteModal(command_info, user.emotes, self.current_page))
+            await interaction.response.send_modal(AddEmoteModal(command_info, user.emotes))
 
     class AddEmoteModal(discord.ui.Modal):
         def __init__(
             self,
             cmd_info: utility.CommandInfo,
             emotes: list[SevenTVEmote],
-            current_page: int,
         ) -> None:
             self.cmd_info = cmd_info
             self.emotes = emotes
-            self.current_page = current_page
             super().__init__(
                 title=tanjunLocalizer.localize(
                     str(cmd_info.locale), "commands.admin.copy7tv.addModal.title"
@@ -297,10 +293,6 @@ async def copy_7tv_emote(
                 )
 
     # Show the first page with paginator
-    if total_emotes > emotes_per_page:
-        first_page = await generate_page(0)
-        view = CopyEmotePaginator()
-        await command_info.reply(embed=first_page, view=view)
-    else:
-        first_page = await generate_page(0)
-        await command_info.reply(embed=first_page)
+    first_page = await generate_page(0)
+    view = CopyEmotePaginator()
+    await command_info.reply(embed=first_page, view=view)
