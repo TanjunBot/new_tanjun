@@ -106,10 +106,7 @@ async def report(
     if not anonymous:
         anonymous = await report_service.get_anonymity_setting(guild.id)
 
-    is_mod = (
-        isinstance(command_info.user, discord.Member)
-        and command_info.user.guild_permissions.manage_messages
-    )
+    is_mod = isinstance(command_info.user, discord.Member) and command_info.user.guild_permissions.manage_messages
 
     # Create the report
     report_id = await report_user(
@@ -162,7 +159,7 @@ async def report(
         embed_desc += f"\n\n📎 **Evidence:** {evidence_urls[0]}"
 
     if anonymous:
-        embed_desc += f"\n\n🔒 **Note:** This report was submitted anonymously."
+        embed_desc += "\n\n🔒 **Note:** This report was submitted anonymously."
 
     # Build action buttons
     view = discord.ui.View()
@@ -240,9 +237,7 @@ async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> 
 
     if report_action in status_map:
         new_status = status_map[report_action]
-        old_status = await report_service.update_status(
-            guild.id, report_id, new_status, updated_by=mod_id, note=note
-        )
+        old_status = await report_service.update_status(guild.id, report_id, new_status, updated_by=mod_id, note=note)
         if old_status is None:
             embed = tanjunEmbed(
                 title=tanjunLocalizer.localize(locale, "commands.utility.report.invalid_action.title"),

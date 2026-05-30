@@ -14,7 +14,7 @@ from pydantic import BaseModel
 
 # Re-export core API functions that ReportService wraps
 from api import execute_action, execute_insert_and_get_id, execute_query
-from models import BlockedReporterModel, ReportEvidenceModel, ReportModel, ReportModActionModel
+from models import BlockedReporterModel, ReportEvidenceModel, ReportModActionModel, ReportModel
 
 
 class ReportFilter(BaseModel):
@@ -38,6 +38,7 @@ class ReportCreateParams(BaseModel):
 
 class ReportNotifyParams(BaseModel):
     """Parameters for sending a status-change notification to a reporter."""
+
     guild_id: str
     report_id: int
     reporter_id: str
@@ -57,7 +58,6 @@ class ReportService:
     @staticmethod
     async def create(params: ReportCreateParams) -> int | None:
         """Create a new report with explicit status and return its ID."""
-        from api import execute_query
 
         if params.is_moderator:
             query = (
@@ -76,11 +76,7 @@ class ReportService:
                 params.reporter_id,
             )
         else:
-            query = (
-                "INSERT INTO reports "
-                "(guild_id, user_id, reporterId, reason, status) "
-                "VALUES (%s, %s, %s, %s, %s)"
-            )
+            query = "INSERT INTO reports (guild_id, user_id, reporterId, reason, status) VALUES (%s, %s, %s, %s, %s)"
             vals = (params.guild_id, params.user_id, params.reporter_id, params.reason, "pending")
         return await execute_insert_and_get_id(query, vals)
 
@@ -214,11 +210,7 @@ class ReportService:
         uploaded_by: str | None = None,
     ) -> int | None:
         """Add evidence (file URL) to a report."""
-        query = (
-            "INSERT INTO report_evidence "
-            "(guild_id, report_id, url, filename, uploaded_by) "
-            "VALUES (%s, %s, %s, %s, %s)"
-        )
+        query = "INSERT INTO report_evidence (guild_id, report_id, url, filename, uploaded_by) VALUES (%s, %s, %s, %s, %s)"
         vals = (guild_id, int(report_id), url, filename, uploaded_by)
         return await execute_insert_and_get_id(query, vals)
 
