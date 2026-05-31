@@ -172,7 +172,7 @@ class MathService:
             "exp": math.exp,
             "abs": abs,
             "trunc": lambda x: float(math.trunc(x)),
-            "round": round,
+            "round": lambda x: float(round(x)),
             "sgn": lambda a: abs(a) > 1e-12 and float(self._cmp(a, 0)) or 0.0,
             "sqrt": math.sqrt,
             "factorial": lambda x: float(math.factorial(int(x))),
