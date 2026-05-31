@@ -33838,5 +33838,29 @@
     "context": "Server locale group description",
     "labels": "cs.json",
     "max_length": 100
+  },
+  {
+    "identifier": "admin.copy7tv.name",
+    "source_string": "copy_7tv",
+    "translation": "copy_7tv",
+    "context": "admin -> copy7tv -> name",
+    "labels": "cs.json",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.copy7tv.params.twitch.username.name",
+    "source_string": "twitch_username",
+    "translation": "twitch_username",
+    "context": "admin -> copy7tv -> params -> twitch_username -> name",
+    "labels": "cs.json",
+    "max_length": 32
+  },
+  {
+    "identifier": "twitch.username",
+    "source_string": "twitch_username",
+    "translation": "twitch_username",
+    "context": "admin -> copy7tv -> params -> twitch_username -> name",
+    "labels": "cs.json",
+    "max_length": 32
   }
 ]

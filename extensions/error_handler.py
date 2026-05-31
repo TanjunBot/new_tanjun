@@ -192,6 +192,8 @@ class ErrorHandlerCog(commands.Cog):
             )
 
         elif isinstance(original, discord.HTTPException):
+            if original.status == 400 and original.code == 40060:
+                return
             embed = await self._build_error_embed(
                 interaction,
                 ErrorEmbedCategory.UNEXPECTED,
@@ -298,6 +300,10 @@ class ErrorHandlerCog(commands.Cog):
                 await interaction.followup.send(embed=embed, ephemeral=True)
             else:
                 await interaction.response.send_message(embed=embed, ephemeral=True)
+        except discord.HTTPException as send_error:
+            if send_error.status == 400 and send_error.code == 40060:
+                return
+            logger.exception("Failed to send error embed — giving up.")
         except Exception:
             logger.exception("Failed to send error embed — giving up.")
 

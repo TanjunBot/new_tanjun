@@ -16,31 +16,29 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def _parse_alert_config() -> tuple[int, int]:
+def _parse_alert_config() -> tuple[int, int] | None:
     """Read and validate alert config from environment variables.
 
     Returns:
-        A tuple of (channel_id, user_id).
-
-    Raises:
-        RuntimeError: If either env var is missing or not a valid integer.
+        A tuple of (channel_id, user_id), or ``None`` when alerting is not configured.
     """
     channel_str = os.environ.get("HEALTH_ALERT_CHANNEL_ID")
     user_str = os.environ.get("HEALTH_ALERT_USER_ID")
 
-    if channel_str is None:
-        raise RuntimeError("Missing required env var: HEALTH_ALERT_CHANNEL_ID")
+    if not channel_str or not user_str:
+        return None
+
     try:
         channel_id = int(channel_str)
-    except ValueError as exc:
-        raise RuntimeError(f"HEALTH_ALERT_CHANNEL_ID must be an integer, got: {channel_str!r}") from exc
+    except ValueError:
+        logger.warning("HEALTH_ALERT_CHANNEL_ID must be an integer, got: %r", channel_str)
+        return None
 
-    if user_str is None:
-        raise RuntimeError("Missing required env var: HEALTH_ALERT_USER_ID")
     try:
         user_id = int(user_str)
-    except ValueError as exc:
-        raise RuntimeError(f"HEALTH_ALERT_USER_ID must be an integer, got: {user_str!r}") from exc
+    except ValueError:
+        logger.warning("HEALTH_ALERT_USER_ID must be an integer, got: %r", user_str)
+        return None
 
     return channel_id, user_id
 
@@ -58,7 +56,12 @@ async def notify_health_failures(
     if not failures:
         return
 
-    channel_id, user_id = _parse_alert_config()
+    alert_config = _parse_alert_config()
+    if alert_config is None:
+        logger.debug("Health alert env vars not configured; skipping failure notification")
+        return
+
+    channel_id, user_id = alert_config
     import discord
 
     # Try cache first, fall back to API fetch for uncached channels
