@@ -22,7 +22,7 @@ def check_metrics_health() -> bool:
     url = f"http://127.0.0.1:{METRICS_PORT}/health"
     try:
         with urllib.request.urlopen(url, timeout=5) as response:
-            return response.status == 200
+            return bool(response.status == 200)
     except (urllib.error.URLError, TimeoutError, OSError):
         return False
 

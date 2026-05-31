@@ -65,7 +65,12 @@ class LocalizerService:
 
     @staticmethod
     def _normalize_locale(locale: discord.Locale | str) -> str:
-        """Normalize a locale value to a short identifier (e.g. ``de``, ``en``)."""
+        """Normalize a locale value to a short identifier (e.g. ``de``, ``en``).
+
+        Unsupported Discord locales (e.g. ``ja``, ``zh-TW``, ``es-419``) are
+        silently mapped to ``"en"`` to avoid creating spam "missing localization"
+        GitHub issues for languages that the bot does not ship locale files for.
+        """
         raw = str(locale.value if isinstance(locale, discord.Locale) else locale)
         if raw in ("en", "en-US", "en-GB"):
             return "en"
@@ -73,7 +78,43 @@ class LocalizerService:
             return "de"
         if raw.startswith("ko"):
             return "ko"
-        return raw
+        if raw.startswith("da"):
+            return "da"
+        if raw.startswith("hr"):
+            return "hr"
+        if raw.startswith("bg"):
+            return "bg"
+        if raw.startswith("it"):
+            return "it"
+        if raw.startswith("cs"):
+            return "cs"
+        if raw.startswith("lt"):
+            return "lt"
+        if raw in ("zh-CN", "zh-Hans"):
+            return "zh-CN"
+        if raw in ("zh-TW", "zh-Hant"):
+            return "zh-TW"
+        if raw.startswith("ja") or raw == "jp":
+            return "ja"
+        if raw.startswith("id"):
+            return "id"
+        if raw in ("es", "es-ES", "es-419"):
+            return "es-419"
+        if raw.startswith("hu"):
+            return "hu"
+        if raw.startswith("el"):
+            return "el"
+        if raw.startswith("nl"):
+            return "nl"
+        if raw.startswith("fr"):
+            return "fr"
+        if raw.startswith("fi"):
+            return "fi"
+        if raw.startswith("hi"):
+            return "hi"
+        if raw.startswith("vi"):
+            return "vi"
+        return "en"
 
     @staticmethod
     def _validate_json(data: object) -> list[TranslationEntry] | None:
