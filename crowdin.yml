@@ -9,7 +9,7 @@
 # Each file contains an array of translation entries with the following fields:
 #   identifier    - Unique dot-separated key for the translation string
 #                   (e.g. "commands.help.select.placeholder")
-#   source_string - Source text (typically German, the bot's primary language)
+#   source_string - Source text in English (the bot's source language)
 #   translation   - Translated text in the target language
 #   context       - Description of where/how the string is used
 #   labels        - Comma-separated labels for categorization

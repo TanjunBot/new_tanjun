@@ -15089,7 +15089,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.all",
-    "source_string": "Delete all messages",
+    "source_string": "All messages",
     "translation": "Delete all messages",
     "context": "admin -> purge -> params -> setting -> all",
     "labels": "de.json",
@@ -15097,7 +15097,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.user",
-    "source_string": "only delete messages from users",
+    "source_string": "Users only",
     "translation": "only delete messages from users",
     "context": "admin -> purge -> params -> setting -> user",
     "labels": "de.json",
@@ -15105,7 +15105,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.bot",
-    "source_string": "only delete messages from bots",
+    "source_string": "Bots only",
     "translation": "only delete messages from bots",
     "context": "admin -> purge -> params -> setting -> bot",
     "labels": "de.json",
@@ -15113,7 +15113,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.notPinned",
-    "source_string": "Delete only unattached messages",
+    "source_string": "Unpinned only",
     "translation": "Delete only unattached messages",
     "context": "admin -> purge -> params -> setting -> notPinned",
     "labels": "de.json",
@@ -15121,7 +15121,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.userNotPinned",
-    "source_string": "only delete unattached messages from users",
+    "source_string": "Users, unpinned",
     "translation": "only delete unattached messages",
     "context": "admin -> purge -> params -> setting -> userNotPinned",
     "labels": "de.json",
@@ -15129,7 +15129,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.botNotPinned",
-    "source_string": "only delete unattached messages from bots",
+    "source_string": "Bots, unpinned",
     "translation": "only delete unattached messages",
     "context": "admin -> purge -> params -> setting -> botNotPinned",
     "labels": "de.json",
@@ -15137,7 +15137,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.notAdmin",
-    "source_string": "only delete messages from non-administrators (incl. bots)",
+    "source_string": "Non-admins",
     "translation": "only delete messages from",
     "context": "admin -> purge -> params -> setting -> notAdmin",
     "labels": "de.json",
@@ -15145,7 +15145,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.notUserAdmin",
-    "source_string": "only delete messages from non-administrators except bots",
+    "source_string": "Non-admins (no bots)",
     "translation": "only delete messages from",
     "context": "admin -> purge -> params -> setting -> notUserAdmin",
     "labels": "de.json",
@@ -15153,7 +15153,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.embeds",
-    "source_string": "only delete messages with embed",
+    "source_string": "With embeds",
     "translation": "only delete messages with embed",
     "context": "admin -> purge -> params -> setting -> embeds",
     "labels": "de.json",
@@ -15161,7 +15161,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.files",
-    "source_string": "only delete messages with file attachments",
+    "source_string": "With files",
     "translation": "only delete messages with file",
     "context": "admin -> purge -> params -> setting -> files",
     "labels": "de.json",
@@ -15169,7 +15169,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.notAdminNotPinned",
-    "source_string": "only delete unattached messages from non-administrators (incl. bots)",
+    "source_string": "Non-admins, unpinned",
     "translation": "only delete unattached messages",
     "context": "admin -> purge -> params -> setting -> notAdminNotPinned",
     "labels": "de.json",
@@ -15177,7 +15177,7 @@
   },
   {
     "identifier": "admin.purge.params.setting.description",
-    "source_string": "Which messages should be deleted",
+    "source_string": "Messages to delete",
     "translation": "Which messages should be deleted",
     "context": "admin -> purge -> params -> setting -> description",
     "labels": "command_description, de.json",
@@ -17177,7 +17177,7 @@
   },
   {
     "identifier": "utility.autopublish.name",
-    "source_string": "hinzufügen",
+    "source_string": "add",
     "translation": "hinzufügen",
     "context": "Name of the /utility autobublish add command",
     "labels": "command_name, de.json",
@@ -33625,7 +33625,7 @@
   },
   {
     "identifier": "utility.schedulemessage.params.attachment.description",
-    "source_string": "Optional file attachment",
+    "source_string": "Attachment (optional)",
     "translation": "Optional file attachment",
     "context": "utility -> schedulemessage -> params -> attachment -> description",
     "labels": "it.json",
@@ -33633,7 +33633,7 @@
   },
   {
     "identifier": "attachment1",
-    "source_string": "attachment_1",
+    "source_string": "file_1",
     "translation": "attachment_1",
     "context": "utility -> schedulemessage -> attachment1",
     "labels": "it.json",
@@ -33641,7 +33641,7 @@
   },
   {
     "identifier": "attachment2",
-    "source_string": "attachment_2",
+    "source_string": "file_2",
     "translation": "attachment_2",
     "context": "utility -> schedulemessage -> attachment2",
     "labels": "it.json",
@@ -33649,7 +33649,7 @@
   },
   {
     "identifier": "attachment3",
-    "source_string": "attachment_3",
+    "source_string": "file_3",
     "translation": "attachment_3",
     "context": "utility -> schedulemessage -> attachment3",
     "labels": "it.json",
@@ -33657,7 +33657,7 @@
   },
   {
     "identifier": "attachment4",
-    "source_string": "attachment_4",
+    "source_string": "file_4",
     "translation": "attachment_4",
     "context": "utility -> schedulemessage -> attachment4",
     "labels": "it.json",
@@ -33665,7 +33665,7 @@
   },
   {
     "identifier": "attachment5",
-    "source_string": "attachment_5",
+    "source_string": "file_5",
     "translation": "attachment_5",
     "context": "utility -> schedulemessage -> attachment5",
     "labels": "it.json",
@@ -33673,7 +33673,7 @@
   },
   {
     "identifier": "attachment6",
-    "source_string": "attachment_6",
+    "source_string": "file_6",
     "translation": "attachment_6",
     "context": "utility -> schedulemessage -> attachment6",
     "labels": "it.json",
@@ -33681,7 +33681,7 @@
   },
   {
     "identifier": "attachment7",
-    "source_string": "attachment_7",
+    "source_string": "file_7",
     "translation": "attachment_7",
     "context": "utility -> schedulemessage -> attachment7",
     "labels": "it.json",
@@ -33689,7 +33689,7 @@
   },
   {
     "identifier": "attachment8",
-    "source_string": "attachment_8",
+    "source_string": "file_8",
     "translation": "attachment_8",
     "context": "utility -> schedulemessage -> attachment8",
     "labels": "it.json",
@@ -33697,7 +33697,7 @@
   },
   {
     "identifier": "attachment9",
-    "source_string": "attachment_9",
+    "source_string": "file_9",
     "translation": "attachment_9",
     "context": "utility -> schedulemessage -> attachment9",
     "labels": "it.json",
@@ -33705,7 +33705,7 @@
   },
   {
     "identifier": "attachment10",
-    "source_string": "attachment_10",
+    "source_string": "file_10",
     "translation": "attachment_10",
     "context": "utility -> schedulemessage -> attachment10",
     "labels": "it.json",
