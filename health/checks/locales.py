@@ -31,7 +31,6 @@ class LocaleFileHealthCheck(HealthCheck):
     ]
 
     LOCALE_DIR = "locales"
-    LOCALES = ["en", "de", "ko", "zh-CN"]
 
     @property
     def name(self) -> str:
