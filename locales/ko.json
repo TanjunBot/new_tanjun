@@ -31680,6 +31680,22 @@
     "max_length": null
   },
   {
+    "identifier": "errors.guildOnly.title",
+    "source_string": "Nur in Servern nutzbar",
+    "translation": "서버에서만 사용 가능",
+    "context": "errors -> guildOnly -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.guildOnly.description",
+    "source_string": "Dieser Befehl kann nur in einem Server verwendet werden.",
+    "translation": "이 명령어는 서버에서만 사용할 수 있습니다.",
+    "context": "errors -> guildOnly -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "errors.http_error.title",
     "source_string": "Discord API-Fehler",
     "translation": "Discord API error",
