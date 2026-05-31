@@ -4,6 +4,7 @@ Replaces the previous existence-only tests with proper behavioral tests
 that verify SQL query generation, return types, error handling, and edge cases.
 """
 
+import os
 from collections.abc import Iterator
 from datetime import datetime
 from typing import Any, TypeVar
@@ -262,11 +263,32 @@ class TestCheckPoolHealth:
     """Tests for check_pool_health."""
 
     @pytest.mark.asyncio
-    async def test_returns_true_on_successful_ping(self, bot_with_pool):
-        """Should return True when SELECT 1 succeeds."""
-        _, cursor = bot_with_pool
-        cursor.execute = AsyncMock()
+    async def test_returns_true_on_successful_ping(self):
+        """Should return True when standalone connection succeeds."""
+        env_patch = patch.dict(os.environ, {
+            "MARIADB_HOST": "localhost",
+            "MARIADB_PORT": "3306",
+            "MARIADB_USER": "test",
+            "MARIADB_PASSWORD": "test",
+            "MARIADB_DATABASE": "test",
+        })
+        mock_cursor = AsyncMock()
+        mock_cursor.execute = AsyncMock()
+        mock_conn = MagicMock()
+        mock_conn.cursor.return_value.__aenter__.return_value = mock_cursor
+        mock_conn.close = MagicMock()
+        asyncmy_connect = AsyncMock(return_value=mock_conn)
 
+        with env_patch, patch("asyncmy.connect", new=asyncmy_connect):
+            result = await check_pool_health()
+
+        assert result is True
+        mock_cursor.execute.assert_awaited_once()
+        asyncmy_connect.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_returns_true_when_pool_available(self, bot_with_pool):
+        """Should return True when no DB env vars but pool exists."""
         result = await check_pool_health()
         assert result is True
 
@@ -277,13 +299,22 @@ class TestCheckPoolHealth:
         assert result is False
 
     @pytest.mark.asyncio
-    async def test_returns_false_on_exception(self, bot_with_pool):
-        """Should return False when the query throws."""
-        _, cursor = bot_with_pool
-        cursor.execute.side_effect = Exception("DB connection lost")
+    async def test_returns_false_on_connection_exception(self):
+        """Should return False when the standalone connection throws."""
+        env_patch = patch.dict(os.environ, {
+            "MARIADB_HOST": "localhost",
+            "MARIADB_PORT": "3306",
+            "MARIADB_USER": "test",
+            "MARIADB_PASSWORD": "test",
+            "MARIADB_DATABASE": "test",
+        })
+        asyncmy_connect = AsyncMock(side_effect=Exception("Connection refused"))
 
-        result = await check_pool_health()
+        with env_patch, patch("asyncmy.connect", new=asyncmy_connect):
+            result = await check_pool_health()
+
         assert result is False
+        asyncmy_connect.assert_awaited_once()
 
 
 # ---------------------------------------------------------------------------
