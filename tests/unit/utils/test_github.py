@@ -4,9 +4,52 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import discord
 import pytest
 
-from utils.github import addFeedback, missingLocalization
+from utils.github import (
+    addFeedback,
+    missingLocalization,
+    report_bot_exception,
+    report_bot_exception_sync,
+    should_report_exception,
+)
+
+
+class TestShouldReportException:
+    def test_reports_generic_exception(self):
+        assert should_report_exception(RuntimeError("boom")) is True
+
+    def test_skips_forbidden(self):
+        assert should_report_exception(discord.Forbidden(MagicMock(), "missing perms")) is False
+
+    def test_skips_not_found(self):
+        assert should_report_exception(discord.NotFound(MagicMock(), "missing")) is False
+
+
+class TestReportBotException:
+    @pytest.mark.asyncio
+    async def test_reports_via_run_blocking(self):
+        with patch("utils.github.run_blocking", new_callable=AsyncMock) as mock_run:
+            mock_run.return_value = None
+            await report_bot_exception(RuntimeError("boom"), source="test")
+            mock_run.assert_called_once()
+
+    def test_sync_reports_when_token_present(self):
+        with patch("utils.github.GithubAuthToken", "token"), patch("utils.github.Github") as mock_github:
+            mock_repo = MagicMock()
+            mock_github.return_value.get_repo.return_value = mock_repo
+            report_bot_exception_sync(RuntimeError("boom"), source="test", context={"command": "/ping"})
+            mock_repo.create_issue.assert_called_once()
+
+    def test_dedup_prevents_duplicate_reports(self):
+        with patch("utils.github.GithubAuthToken", "token"), patch("utils.github.Github") as mock_github:
+            mock_repo = MagicMock()
+            mock_github.return_value.get_repo.return_value = mock_repo
+            exc = RuntimeError("same error")
+            report_bot_exception_sync(exc, source="first")
+            report_bot_exception_sync(exc, source="second")
+            assert mock_repo.create_issue.call_count == 1
 
 
 class TestMissingLocalization:
