@@ -229,6 +229,11 @@ class TestFindEntry:
     def test_not_found(self, service: LocalizerService, sample_entries: list[TranslationEntry]) -> None:
         assert service._find_entry(sample_entries, "nope") is None
 
+    def test_underscore_dot_fallback(self, service: LocalizerService) -> None:
+        entries = [TranslationEntry(identifier="setup_name", translation="setup")]
+        assert service._find_entry(entries, "setup.name") is not None
+        assert service._find_entry(entries, "setup.name").translation == "setup"
+
     def test_empty(self, service: LocalizerService) -> None:
         assert service._find_entry([], "x") is None
 

@@ -18,29 +18,25 @@ class TestParseAlertConfig:
         assert channel_id == 123456789
         assert user_id == 987654321
 
-    def test_missing_channel_raises(self, monkeypatch):
+    def test_missing_channel_returns_none(self, monkeypatch):
         monkeypatch.delenv("HEALTH_ALERT_CHANNEL_ID", raising=False)
         monkeypatch.setenv("HEALTH_ALERT_USER_ID", "1")
-        with pytest.raises(RuntimeError, match="HEALTH_ALERT_CHANNEL_ID"):
-            _parse_alert_config()
+        assert _parse_alert_config() is None
 
-    def test_missing_user_raises(self, monkeypatch):
+    def test_missing_user_returns_none(self, monkeypatch):
         monkeypatch.setenv("HEALTH_ALERT_CHANNEL_ID", "1")
         monkeypatch.delenv("HEALTH_ALERT_USER_ID", raising=False)
-        with pytest.raises(RuntimeError, match="HEALTH_ALERT_USER_ID"):
-            _parse_alert_config()
+        assert _parse_alert_config() is None
 
-    def test_invalid_channel_id_raises(self, monkeypatch):
+    def test_invalid_channel_id_returns_none(self, monkeypatch):
         monkeypatch.setenv("HEALTH_ALERT_CHANNEL_ID", "not-int")
         monkeypatch.setenv("HEALTH_ALERT_USER_ID", "1")
-        with pytest.raises(RuntimeError, match="must be an integer"):
-            _parse_alert_config()
+        assert _parse_alert_config() is None
 
-    def test_invalid_user_id_raises(self, monkeypatch):
+    def test_invalid_user_id_returns_none(self, monkeypatch):
         monkeypatch.setenv("HEALTH_ALERT_CHANNEL_ID", "1")
         monkeypatch.setenv("HEALTH_ALERT_USER_ID", "bad")
-        with pytest.raises(RuntimeError, match="must be an integer"):
-            _parse_alert_config()
+        assert _parse_alert_config() is None
 
 
 class TestNotifyHealthFailures:
@@ -48,6 +44,17 @@ class TestNotifyHealthFailures:
     async def test_empty_failures_is_noop(self):
         bot = MagicMock()
         await notify_health_failures(bot, [])
+
+    @pytest.mark.asyncio
+    async def test_skips_when_alert_config_missing(self, monkeypatch):
+        monkeypatch.delenv("HEALTH_ALERT_CHANNEL_ID", raising=False)
+        monkeypatch.delenv("HEALTH_ALERT_USER_ID", raising=False)
+        bot = MagicMock()
+        failures = [HealthCheckResult("DB", HealthStatus.CRITICAL, "down")]
+        with patch("health.notifier.logger") as log:
+            await notify_health_failures(bot, failures)
+        bot.get_channel.assert_not_called()
+        log.debug.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_sends_embed_to_cached_channel(self, monkeypatch):

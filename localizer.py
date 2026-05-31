@@ -178,6 +178,12 @@ class LocalizerService:
         for entry in entries:
             if entry.identifier.lower() == lower_key:
                 return entry
+
+        alt_key = lower_key.replace(".", "_") if "." in lower_key else lower_key.replace("_", ".")
+        if alt_key != lower_key:
+            for entry in entries:
+                if entry.identifier.lower() == alt_key:
+                    return entry
         return None
 
     def _report_missing(self, locale_str: str, key: str) -> None:

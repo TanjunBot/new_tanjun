@@ -33622,5 +33622,125 @@
     "context": "Title for the Wordle stats display",
     "labels": "unassigned",
     "max_length": null
+  },
+  {
+    "identifier": "admin.channels.description",
+    "source_string": "Channel management",
+    "translation": "Channel management",
+    "context": "admin -> channels -> description",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.channels.name",
+    "source_string": "channels",
+    "translation": "channels",
+    "context": "admin -> channels -> name",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.emoji.description",
+    "source_string": "Emoji commands",
+    "translation": "Emoji commands",
+    "context": "admin -> emoji -> description",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.emoji.name",
+    "source_string": "emoji",
+    "translation": "emoji",
+    "context": "admin -> emoji -> name",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.messaging.description",
+    "source_string": "Messaging commands",
+    "translation": "Messaging commands",
+    "context": "admin -> messaging -> description",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.messaging.name",
+    "source_string": "messaging",
+    "translation": "messaging",
+    "context": "admin -> messaging -> name",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.moderation.description",
+    "source_string": "Moderation commands",
+    "translation": "Moderation commands",
+    "context": "admin -> moderation -> description",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.moderation.name",
+    "source_string": "mod",
+    "translation": "mod",
+    "context": "admin -> moderation -> name",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.purgegroup.description",
+    "source_string": "Purge messages",
+    "translation": "Purge messages",
+    "context": "Purge messages group description",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.purgegroup.name",
+    "source_string": "purge",
+    "translation": "purge",
+    "context": "Purge messages group",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.rolemanage.description",
+    "source_string": "Advanced role management",
+    "translation": "Advanced role management",
+    "context": "admin -> rolemanage -> description",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.rolemanage.name",
+    "source_string": "role_manage",
+    "translation": "role_manage",
+    "context": "admin -> rolemanage -> name",
+    "labels": "lt.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.copy7tv.name",
+    "source_string": "copy_7tv",
+    "translation": "copy_7tv",
+    "context": "admin -> copy7tv -> name",
+    "labels": "lt.json",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.copy7tv.params.twitch.username.name",
+    "source_string": "twitch_username",
+    "translation": "twitch_username",
+    "context": "admin -> copy7tv -> params -> twitch_username -> name",
+    "labels": "lt.json",
+    "max_length": 32
+  },
+  {
+    "identifier": "twitch.username",
+    "source_string": "twitch_username",
+    "translation": "twitch_username",
+    "context": "admin -> copy7tv -> params -> twitch_username -> name",
+    "labels": "lt.json",
+    "max_length": 32
   }
 ]
