@@ -17,9 +17,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      - name: Run unit and mock integration tests
+      - name: Run unit tests
+        run: pytest tests/unit -m "not slow" -q
+      - name: Run integration tests with coverage
         run: |
-          pytest tests/unit tests/integration -m "not slow and not live_discord" \
+          pytest tests/integration -m "not slow and not live_discord" \
             --cov --cov-report=term-missing --cov-fail-under=85 -q
 
   integration-db:
@@ -45,6 +47,7 @@ jobs:
           TANJUN_TEST_DB_NAME: tanjun_test
         run: |
           pytest tests/integration/api/test_db_read_cache_live.py \
+            tests/integration/api/test_db_read_cache.py \
             tests/integration/api/test_api_integration.py -v --timeout=120
       - name: Stop test database
         if: always()

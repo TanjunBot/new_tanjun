@@ -16,11 +16,14 @@ class CallCounter:
             if original is not None:
                 if isinstance(original, list):
                     idx = min(self.count - 1, len(original) - 1)
-                    result = original[idx]
+                    result: object = original[idx]
                     if asyncio_iscoroutine(result):
                         return await result
                     return result
-                return await original(*args, **kwargs)
+                result = original(*args, **kwargs)
+                if asyncio_iscoroutine(result):
+                    return await result
+                return result
             return mock.return_value
 
         mock.side_effect = _wrapper

@@ -348,3 +348,61 @@ class TestXpCooldownCache:
             await update_user_xp(GUILD_ID, other_user, 5, respect_cooldown=True)
         action.assert_awaited_once()
 
+
+class TestLogEnableTtlExpiry:
+    async def test_log_enable_ttl_expiry_forces_refetch(self) -> None:
+        execute = AsyncMock(return_value=[_LOG_ENABLE_ROW])
+        t = 1000.0
+        with patch("api.execute_query", new=execute), patch(
+            "utils.cache.time.monotonic", side_effect=lambda: t
+        ):
+            await get_log_enable(GUILD_ID)
+            assert _log_enable_calls(execute) == 1
+        t += 61.0
+        with patch("api.execute_query", new=execute), patch(
+            "utils.cache.time.monotonic", side_effect=lambda: t
+        ):
+            await get_log_enable(GUILD_ID)
+        assert _log_enable_calls(execute) == 2
+
+
+class TestPreloadGuildConfigs:
+    async def test_preload_guild_configs_single_query(self) -> None:
+        from api import _guild_config_cache, preload_guild_configs, set_bot
+
+        rows = [
+            (GUILD_ID, 1, "medium", None, 1, "msg", CHANNEL_ID, 60, 60),
+            ("900000000000000002", 0, "easy", None, 0, None, None, 30, 30),
+        ]
+        cursor = MagicMock()
+        cursor.execute = AsyncMock()
+
+        async def async_iter():
+            for row in rows:
+                yield row
+
+        cursor.__aiter__ = lambda self: async_iter()
+        cursor_cm = MagicMock()
+        cursor_cm.__aenter__ = AsyncMock(return_value=cursor)
+        cursor_cm.__aexit__ = AsyncMock(return_value=False)
+
+        conn = MagicMock()
+        conn.cursor.return_value = cursor_cm
+        conn.__aenter__ = AsyncMock(return_value=conn)
+        conn.__aexit__ = AsyncMock(return_value=False)
+
+        pool = MagicMock()
+        pool.acquire = AsyncMock(return_value=conn)
+
+        bot = MagicMock()
+        bot._pool = pool
+        set_bot(bot)
+
+        _guild_config_cache.set("stale_guild", {"active": False})
+        await preload_guild_configs(bot)
+
+        cursor.execute.assert_awaited_once()
+        assert _guild_config_cache.get("stale_guild") is None
+        assert _guild_config_cache.get(GUILD_ID) is not None
+        assert _guild_config_cache.get("900000000000000002") is not None
+
