@@ -40,7 +40,7 @@ def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
     bot._pool = pool or MagicMock()
     bot._pool_ready = asyncio.Event()
     bot._pool_ready.set()
-    bot._tree_commands = []  # type: ignore[misc]
+    bot._tree_commands = []
 
     def _add_command(cmd: Any) -> None:
         bot._tree_commands.append(cmd)
@@ -52,7 +52,7 @@ def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
     bot.tree.walk_commands = MagicMock(return_value=[])
     bot.tree.on_error = None
     bot.load_extension = AsyncMock()
-    bot.cogs = {}  # type: ignore[misc]
+    bot.cogs = {}
     bot.loop = MagicMock()
     bot.loop.create_task = MagicMock(return_value=MagicMock(done=lambda: False))
 
