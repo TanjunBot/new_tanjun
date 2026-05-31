@@ -13,14 +13,21 @@ mock_config.patch_config_module()
 
 from api import (  # noqa: E402
     _LOG_ENABLE_SELECT,
+    _blacklist_cache,
+    _guild_config_cache,
+    _last_xp_gain_cache,
     clear_db_read_caches,
+    get_counting_configs,
     get_log_blacklist,
     get_log_channel,
     get_log_enable,
+    invalidate_counting_cache,
     set_log_enable,
+    update_user_xp,
 )
 from repositories.log_blacklist_repository import LogBlacklistType  # noqa: E402
 from services.booster_service import BoosterService, ClaimedBoosterType, clear_booster_read_cache  # noqa: E402
+from tests.helpers.concurrency import stress_concurrent
 from tests.helpers.factories import CHANNEL_ID, GUILD_ID, ROLE_ID, USER_ID  # noqa: E402
 
 pytestmark = pytest.mark.asyncio
@@ -58,9 +65,15 @@ _LOG_ENABLE_ROW = (
 def _reset_caches() -> None:
     clear_db_read_caches()
     clear_booster_read_cache()
+    _blacklist_cache.clear()
+    _guild_config_cache.clear()
+    _last_xp_gain_cache.clear()
     yield
     clear_db_read_caches()
     clear_booster_read_cache()
+    _blacklist_cache.clear()
+    _guild_config_cache.clear()
+    _last_xp_gain_cache.clear()
 
 
 def _log_enable_calls(execute: AsyncMock) -> int:
@@ -195,3 +208,143 @@ class TestSetLogEnableInvalidatesCache:
             await set_log_enable(GUILD_ID, memberJoin=False)
             await get_log_enable(GUILD_ID)
         assert _log_enable_calls(execute) == 2
+
+
+class TestLogEnableCacheErrors:
+    async def test_fetch_error_not_cached(self) -> None:
+        calls = 0
+
+        async def flaky_query(query: str, params=None, bot=None):
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                raise RuntimeError("db down")
+            return [_LOG_ENABLE_ROW]
+
+        with patch("api.execute_query", side_effect=flaky_query):
+            with pytest.raises(RuntimeError, match="db down"):
+                await get_log_enable(GUILD_ID)
+            result = await get_log_enable(GUILD_ID)
+        assert result.guild_id == GUILD_ID
+        assert calls == 2
+
+
+class TestLogBlacklistCrossTypeIsolation:
+    async def test_role_invalidation_does_not_flush_user_cache(self) -> None:
+        from api import add_log_blacklist
+
+        responses: dict[str, list[str]] = {
+            "ROLE": ["role1", "role2"],
+            "USER": ["user1"],
+        }
+        call_counts: dict[str, int] = {"ROLE": 0, "USER": 0}
+
+        async def get_all(guild_id: str, blacklist_type: LogBlacklistType) -> list[str]:
+            key = blacklist_type.name
+            idx = call_counts[key]
+            call_counts[key] += 1
+            return [responses[key][min(idx, len(responses[key]) - 1)]]
+
+        with (
+            patch("api.log_blacklist_repo.add", new=AsyncMock()),
+            patch("api.log_blacklist_repo.get_all", side_effect=get_all),
+        ):
+            await get_log_blacklist(GUILD_ID, LogBlacklistType.ROLE)
+            await get_log_blacklist(GUILD_ID, LogBlacklistType.USER)
+            await add_log_blacklist(GUILD_ID, "999", LogBlacklistType.ROLE)
+            role_again = await get_log_blacklist(GUILD_ID, LogBlacklistType.ROLE)
+            user_again = await get_log_blacklist(GUILD_ID, LogBlacklistType.USER)
+        assert role_again == ["role2"]
+        assert user_again == ["user1"]
+        assert call_counts["ROLE"] == 2
+        assert call_counts["USER"] == 1
+
+
+class TestLogChannelNoneCaching:
+    async def test_concurrent_none_miss_single_query(self) -> None:
+        execute = AsyncMock(return_value=[])
+        with patch("api.execute_query", new=execute):
+            results = await stress_concurrent(lambda: get_log_channel(GUILD_ID), n=50)
+        assert all(r is None for r in results)
+        channel_queries = [c for c in execute.await_args_list if "log_channel" in c.args[0]]
+        assert len(channel_queries) == 1
+
+    async def test_none_result_cached_on_sequential_reads(self) -> None:
+        execute = AsyncMock(return_value=[])
+        with patch("api.execute_query", new=execute):
+            assert await get_log_channel(GUILD_ID) is None
+            assert await get_log_channel(GUILD_ID) is None
+        channel_queries = [c for c in execute.await_args_list if "log_channel" in c.args[0]]
+        assert len(channel_queries) == 1
+
+
+class TestGuildConfigCache:
+    async def test_cached_config_skips_db(self) -> None:
+        _guild_config_cache.set(GUILD_ID, {"text_cooldown": 120, "voice_cooldown": 90})
+        with patch("api.execute_query", new=AsyncMock()) as execute:
+            from api import _get_cached_config
+
+            text = await _get_cached_config(GUILD_ID, "text_cooldown", 60)
+            voice = await _get_cached_config(GUILD_ID, "voice_cooldown", 60)
+        assert text == 120
+        assert voice == 90
+        execute.assert_not_awaited()
+
+    async def test_invalidate_guild_cache_on_level_status_change(self) -> None:
+        _guild_config_cache.set(GUILD_ID, {"active": True})
+        with patch("api.execute_action", new=AsyncMock()):
+            await __import__("api").set_level_system_status(GUILD_ID, False)
+        assert _guild_config_cache.get(GUILD_ID) is None
+
+
+class TestBlacklistCacheIsolation:
+    async def test_blacklist_cached_per_guild(self) -> None:
+        other_guild = "900000000000000001"
+        with patch(
+            "api.get_blacklist",
+            new=AsyncMock(side_effect=[{"users": []}, {"users": ["x"]}]),
+        ) as get_bl:
+            from api import _get_cached_blacklist
+
+            first = await _get_cached_blacklist(GUILD_ID)
+            second = await _get_cached_blacklist(GUILD_ID)
+            other = await _get_cached_blacklist(other_guild)
+        assert first == {"users": []}
+        assert second == {"users": []}
+        assert other == {"users": ["x"]}
+        assert get_bl.await_count == 2
+
+
+class TestCountingCacheInvalidation:
+    async def test_invalidate_counting_cache_refetches(self) -> None:
+        invalidate_counting_cache(CHANNEL_ID)
+        with patch("api.execute_query", new=AsyncMock(return_value=None)) as execute:
+            await get_counting_configs(CHANNEL_ID)
+            await get_counting_configs(CHANNEL_ID)
+            assert execute.await_count == 3
+        invalidate_counting_cache(CHANNEL_ID)
+        with patch("api.execute_query", new=AsyncMock(return_value=None)) as execute2:
+            await get_counting_configs(CHANNEL_ID)
+            assert execute2.await_count == 3
+
+
+class TestXpCooldownCache:
+    async def test_cooldown_skips_db_write(self) -> None:
+        import time
+
+        _guild_config_cache.set(GUILD_ID, {"text_cooldown": 60})
+        _last_xp_gain_cache[(GUILD_ID, USER_ID)] = time.time()
+        with patch("api.execute_action", new=AsyncMock()) as action:
+            await update_user_xp(GUILD_ID, USER_ID, 5, respect_cooldown=True)
+        action.assert_not_awaited()
+
+    async def test_different_users_independent_cooldowns(self) -> None:
+        import time
+
+        other_user = "900000000000000002"
+        _guild_config_cache.set(GUILD_ID, {"text_cooldown": 60})
+        _last_xp_gain_cache[(GUILD_ID, USER_ID)] = time.time()
+        with patch("api.execute_action", new=AsyncMock()) as action:
+            await update_user_xp(GUILD_ID, other_user, 5, respect_cooldown=True)
+        action.assert_awaited_once()
+

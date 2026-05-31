@@ -98,3 +98,113 @@ async def test_concurrent_member_updates_one_log_enable_query() -> None:
         await asyncio.gather(*[cog.on_member_update(before, after) for _ in range(30)])
 
     assert _count_log_enable_queries(execute) == 1
+
+
+async def test_concurrent_message_deletes_one_log_enable_query() -> None:
+    bot = await load_extension_bot(EXTENSION, fire_ready=False)
+    cog = bot.cogs["LogsCog"]
+    guild = make_guild(guild_id=int(GUILD_ID))
+    message = MagicMock()
+    message.guild = guild
+    message.author = make_member()
+    message.channel = MagicMock()
+    message.channel.id = 123456789
+    message.content = "hello"
+    message.attachments = []
+    message.embeds = []
+
+    log_enable_row = (
+        GUILD_ID,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+    )
+
+    execute = AsyncMock(
+        side_effect=lambda q, p=None, bot=None: (
+            [log_enable_row]
+            if _LOG_ENABLE_SELECT in q
+            else ([] if "logRoleBlacklist" in q or "logUserBlacklist" in q else None)
+        )
+    )
+
+    with (
+        patch("api.execute_query", new=execute),
+        patch("extensions.logs.is_log_entity_blacklisted", new=AsyncMock(return_value=None)),
+        patch("extensions.logs.get_log_blacklist", new=AsyncMock(return_value=[])),
+        patch("extensions.logs.log_event_producer", new=AsyncMock()),
+    ):
+        await asyncio.gather(*[cog.on_message_delete(message) for _ in range(30)])
+
+    assert _count_log_enable_queries(execute) == 1
+
+
+async def test_set_log_enable_invalidates_shared_cache() -> None:
+    execute = AsyncMock(
+        side_effect=lambda q, p=None, bot=None: (
+            [
+                (
+                    GUILD_ID,
+                    1,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                )
+            ]
+            if _LOG_ENABLE_SELECT in q
+            else None
+        )
+    )
+    from api import get_log_enable, set_log_enable
+
+    with (
+        patch("api.execute_query", new=execute),
+        patch("api.execute_action", new=AsyncMock()),
+    ):
+        await asyncio.gather(*[get_log_enable(GUILD_ID) for _ in range(30)])
+        assert _count_log_enable_queries(execute) == 1
+        await set_log_enable(GUILD_ID, memberJoin=False)
+        await asyncio.gather(*[get_log_enable(GUILD_ID) for _ in range(30)])
+    assert _count_log_enable_queries(execute) == 2
+
