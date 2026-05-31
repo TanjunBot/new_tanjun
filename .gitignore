@@ -173,6 +173,23 @@ lib64
 
 # Debug / temporary files
 tmp.py
+temp_*.py
+temp_*.txt
+temp_*.sql
+
+# Database dumps
+*.sql
+!docs/**/*.sql
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# uv (project uses pip)
+uv.lock
 
 # Mypy Logs
 current_mypy.txt
