@@ -39,35 +39,73 @@ async def _cog() -> ErrorHandlerCog:
     return bot.cogs["ErrorHandlerCog"]
 
 
-def _make_error(kind: str) -> Exception:
-    if kind == "cooldown":
-        return app_commands.CommandOnCooldown(retry_after=8.3)
-    if kind == "missing_permissions":
-        return app_commands.MissingPermissions(["manage_messages", "ban_members"])
-    if kind == "not_found":
-        return discord.NotFound(MagicMock(), "resource missing")
-    if kind == "unknown":
-        return RuntimeError("unexpected failure")
-    raise ValueError(f"unknown error kind: {kind}")
+def _http_exception(status: int) -> discord.HTTPException:
+    exc = discord.HTTPException(MagicMock(), "server error")
+    exc.status = status
+    return exc
 
 
 @pytest.mark.parametrize(
-    ("error_kind", "locale_key", "category"),
+    ("error_factory", "locale_key", "category"),
     [
-        ("cooldown", "errors.cooldown", ErrorEmbedCategory.RATE_LIMIT),
-        ("missing_permissions", "errors.missing_permissions", ErrorEmbedCategory.PERMISSION),
-        ("not_found", "errors.unexpected_error", ErrorEmbedCategory.UNEXPECTED),
-        ("unknown", "errors.unexpected_error", ErrorEmbedCategory.UNEXPECTED),
+        pytest.param(
+            lambda: app_commands.CommandOnCooldown(retry_after=8.3),
+            "errors.cooldown",
+            ErrorEmbedCategory.RATE_LIMIT,
+            id="cooldown",
+        ),
+        pytest.param(
+            lambda: app_commands.MissingPermissions(["manage_messages", "ban_members"]),
+            "errors.missing_permissions",
+            ErrorEmbedCategory.PERMISSION,
+            id="missing_permissions",
+        ),
+        pytest.param(
+            lambda: app_commands.BotMissingPermissions(["send_messages"]),
+            "errors.missing_permissions",
+            ErrorEmbedCategory.PERMISSION,
+            id="bot_missing_permissions",
+        ),
+        pytest.param(
+            lambda: app_commands.CheckFailure("generic check failed"),
+            "errors.missing_permissions",
+            ErrorEmbedCategory.PERMISSION,
+            id="check_failure",
+        ),
+        pytest.param(
+            lambda: discord.Forbidden(MagicMock(), "forbidden"),
+            "errors.forbidden",
+            ErrorEmbedCategory.PERMISSION,
+            id="forbidden",
+        ),
+        pytest.param(
+            lambda: _http_exception(503),
+            "errors.http_error",
+            ErrorEmbedCategory.UNEXPECTED,
+            id="http_exception",
+        ),
+        pytest.param(
+            lambda: app_commands.TransformerError(MagicMock(), ValueError("bad input")),
+            "errors.transformer_error",
+            ErrorEmbedCategory.VALIDATION,
+            id="transformer_error",
+        ),
+        pytest.param(
+            lambda: RuntimeError("unexpected failure"),
+            "errors.unexpected_error",
+            ErrorEmbedCategory.UNEXPECTED,
+            id="unknown",
+        ),
     ],
 )
 async def test_on_app_command_error_matrix(
-    error_kind: str,
+    error_factory: Callable[[], Exception],
     locale_key: str,
     category: ErrorEmbedCategory,
 ) -> None:
     cog = await _cog()
     ix = _interaction()
-    error = _make_error(error_kind)
+    error = error_factory()
     localized_keys: list[str] = []
 
     def _capture(_locale: str, key: str, **kwargs: Any) -> str:
@@ -87,12 +125,38 @@ async def test_on_app_command_error_matrix(
     assert sent_embed.colour == category.value
 
 
+async def test_command_not_found_sends_no_embed() -> None:
+    cog = await _cog()
+    ix = _interaction()
+    with patch("extensions.error_handler.sentry_dsn", ""):
+        await cog._on_app_command_error(ix, app_commands.CommandNotFound("missing", []))
+    ix.response.send_message.assert_not_called()
+    ix.followup.send.assert_not_called()
+
+
+async def test_unknown_error_reports_to_sentry_when_configured() -> None:
+    cog = await _cog()
+    ix = _interaction()
+    push_scope = MagicMock()
+    push_scope.__enter__ = MagicMock(return_value=MagicMock())
+    push_scope.__exit__ = MagicMock(return_value=False)
+
+    with (
+        patch("extensions.error_handler.sentry_dsn", "https://example@sentry.io/1"),
+        patch("sentry_sdk.push_scope", return_value=push_scope),
+        patch("extensions.error_handler.tanjunLocalizer.localize", side_effect=lambda _l, k, **kw: k),
+    ):
+        await cog._on_app_command_error(ix, RuntimeError("boom"))
+
+    ix.response.send_message.assert_awaited_once()
+
+
 @pytest.mark.parametrize(
     "error_factory",
     [
         pytest.param(lambda: app_commands.CommandOnCooldown(retry_after=1.0), id="cooldown"),
         pytest.param(lambda: app_commands.MissingPermissions(["kick_members"]), id="missing_permissions"),
-        pytest.param(lambda: discord.NotFound(MagicMock(), "missing"), id="not_found"),
+        pytest.param(lambda: discord.Forbidden(MagicMock(), "forbidden"), id="forbidden"),
         pytest.param(lambda: ValueError("unknown"), id="unknown"),
     ],
 )
