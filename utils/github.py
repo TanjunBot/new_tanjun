@@ -166,15 +166,37 @@ async def missingLocalization(locale: str, key: str) -> None:  # noqa: N802
     await run_blocking(_sync_create_missing_localization_issue, locale, key)
 
 
+def _missing_localization_issue_title(locale: str, key: str) -> str:
+    return f"Missing localization: {key} ({locale})"
+
+
+def _missing_localization_issue_exists(g: Github, locale: str, key: str) -> bool:
+    title = _missing_localization_issue_title(locale, key)
+    escaped_title = title.replace('"', '\\"')
+    query = f'repo:{_REPO} is:issue in:title "{escaped_title}" state:open'
+    return g.search_issues(query).totalCount > 0
+
+
 def _sync_create_missing_localization_issue(locale: str, key: str) -> None:
-    g = Github(GithubAuthToken)
-    repo = g.get_repo(_REPO)
-    label = repo.get_label("missing localization")
-    repo.create_issue(
-        title=f"Missing localization: {key} ({locale})",
-        body=f"Missing translation for key `{key}` in locale `{locale}`.",
-        labels=[label],
-    )
+    if not GithubAuthToken:
+        return
+
+    title = _missing_localization_issue_title(locale, key)
+
+    try:
+        g = Github(GithubAuthToken)
+        if _missing_localization_issue_exists(g, locale, key):
+            return
+
+        repo = g.get_repo(_REPO)
+        label = repo.get_label("missing localization")
+        repo.create_issue(
+            title=title,
+            body=f"Missing translation for key `{key}` in locale `{locale}`.",
+            labels=[label],
+        )
+    except Exception as report_error:
+        logger.error("Failed to create missing localization issue: %s", report_error)
 
 
 async def addFeedback(content: str, author: str) -> None:  # noqa: N802
