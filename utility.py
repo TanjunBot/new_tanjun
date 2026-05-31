@@ -128,6 +128,7 @@ class CommandInfo:
         self.locale = kwargs.get("locale")
         self.message = kwargs.get("message")
         self.permissions = kwargs.get("permissions")
+        self.reply = kwargs.get("reply")
         self.client = kwargs.get("client")
 
 

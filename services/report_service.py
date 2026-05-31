@@ -162,7 +162,7 @@ class ReportService:
         )
         if not current:
             return None
-        old_status = current[0][0]  # type: ignore[no-any-return]
+        old_status = current[0][0]
 
         query = (
             "UPDATE reports SET status = %s, status_updated_at = NOW(), "
