@@ -89,7 +89,7 @@ async def test_all_top_level_groups_registered():
     names = get_tree_command_names(bot)
     assert len(names) == len(UTILITY_TOP_LEVEL_GROUPS)
     for expected in UTILITY_TOP_LEVEL_GROUPS:
-        assert expected in names, f"Missing top-level group: {expected}
+        assert expected in names, f"Missing top-level group: {expected}"
 
 
 async def test_root_command_name_is_utilitycmd_name():
