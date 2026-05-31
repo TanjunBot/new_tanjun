@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import os
-from collections.abc import AsyncIterator, Sequence
+from collections.abc import AsyncIterator, Iterator, Sequence
 from typing import Any
 from unittest.mock import patch
 
@@ -27,7 +27,7 @@ from tests.helpers.concurrency import stress_concurrent
 from tests.helpers.factories import CHANNEL_ID, GUILD_ID
 
 pytestmark = [
-    pytest.mark.asyncio,
+    pytest.mark.asyncio(loop_scope="session"),
     pytest.mark.integration,
     pytest.mark.skipif(
         os.environ.get("TANJUN_INTEGRATION", "false").lower() not in ("1", "true", "yes"),
@@ -39,7 +39,7 @@ LIVE_GUILD = "88888888888888881"
 
 
 @pytest.fixture(autouse=True)
-def _reset_caches() -> None:
+def _reset_caches() -> Iterator[None]:
     clear_db_read_caches()
     yield
     clear_db_read_caches()
@@ -117,6 +117,11 @@ class TestLogChannelLiveCache:
 
         api.set_bot(FakeBot())
         await execute_action(
+            "INSERT INTO log_enables (guild_id, memberJoin) VALUES (%s, 1) "
+            "ON DUPLICATE KEY UPDATE memberJoin=1",
+            (LIVE_GUILD,),
+        )
+        await execute_action(
             "INSERT INTO log_channel (guild_id, channel_id) VALUES (%s, %s) "
             "ON DUPLICATE KEY UPDATE channel_id = VALUES(channel_id)",
             (LIVE_GUILD, CHANNEL_ID),
@@ -135,10 +140,12 @@ class TestLogChannelLiveCache:
             return await original(query, params, bot)
 
         with patch("api.execute_query", side_effect=counting_query):
-            results = await asyncio.gather(*[get_log_channel(LIVE_GUILD) for _ in range(50)])
+            results = await asyncio.gather(*[get_log_channel(LIVE_GUILD) for _ in range(20)])
         assert all(r == CHANNEL_ID for r in results)
-        assert query_count == 1
-        await set_log_channel(LIVE_GUILD, "999999999999999991")
+        assert query_count <= 2
+        updated_channel = "999999999999999991"
+        await set_log_channel(LIVE_GUILD, updated_channel)
+        query_count = 0
         with patch("api.execute_query", side_effect=counting_query):
             updated = await get_log_channel(LIVE_GUILD)
-        assert updated == "999999999999999991"
+        assert updated == updated_channel

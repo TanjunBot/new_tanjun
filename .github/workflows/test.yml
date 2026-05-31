@@ -17,12 +17,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      - name: Run unit tests
-        run: pytest tests/unit -m "not slow" -q
+      - name: Run unit tests with coverage
+        run: pytest tests/unit -m "not slow" -q --cov --cov-report= --cov-fail-under=0
       - name: Run integration tests with coverage
         run: |
           pytest tests/integration -m "not slow and not live_discord" \
-            --cov --cov-report=term-missing --cov-fail-under=85 -q
+            --cov --cov-append --cov-report=term-missing --cov-fail-under=85 -q
       - name: Check command test coverage mapping
         run: python scripts/check_command_test_coverage.py
 

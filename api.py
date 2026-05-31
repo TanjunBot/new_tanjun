@@ -583,8 +583,13 @@ async def safe_execute_query(
     query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
 ) -> list[tuple[Any, ...]]:
     """Like execute_query but always returns a list (empty on error)."""
-    result = await execute_query(query, params, bot)
-    return result if result is not None else []
+    try:
+        result = await execute_query(query, params, bot)
+        if not result:
+            return []
+        return list(result)
+    except Exception:
+        return []
 
 
 @asynccontextmanager
@@ -2461,7 +2466,7 @@ async def getTokenOverview(user_id: str) -> TokenOverviewModel | None:
 
 
 async def includeToToken(user_id: str) -> None:
-    query = "INSERT INTO aiToken (user_id) VALUES (%s)"
+    query = "INSERT IGNORE INTO aiToken (user_id) VALUES (%s)"
     params = (user_id,)
     await execute_action(query, params)
 
@@ -2733,14 +2738,15 @@ async def get_claimed_booster_role(
 
 
 async def set_log_channel(guild_id: str, channel_id: str) -> None:
-    query = "INSERT INTO log_channel (guild_id, channel_id) VALUES (%s, %s)"
-    params: Any = (guild_id, channel_id)
     existing = await execute_query("SELECT 1 FROM log_enables WHERE guild_id = %s", (guild_id,))
     if not existing:
-        query = "REPLACE INTO log_enables (guild_id) VALUES (%s)"
-        params = (guild_id,)
+        await execute_action("REPLACE INTO log_enables (guild_id) VALUES (%s)", (guild_id,))
         _log_enable_cache.invalidate(str(guild_id))
-    await execute_action(query, params)
+    await execute_action("DELETE FROM log_channel WHERE guild_id = %s", (guild_id,))
+    await execute_action(
+        "INSERT INTO log_channel (guild_id, channel_id) VALUES (%s, %s)",
+        (guild_id, channel_id),
+    )
     _log_channel_cache.invalidate(str(guild_id))
 
 

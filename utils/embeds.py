@@ -350,7 +350,7 @@ class TanjunEmbed(BaseModel):
         return self._colour
 
     @colour.setter
-    def colour(self, value: int | discord.Colour | EmbedColor | None) -> None:  # type: ignore[assignment]
+    def colour(self, value: int | discord.Colour | EmbedColor | None) -> None:
         if value is None:
             self._colour = EmbedColor.BRAND.value
         elif isinstance(value, (discord.Colour, EmbedColor)):

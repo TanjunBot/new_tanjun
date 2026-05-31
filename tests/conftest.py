@@ -4,6 +4,7 @@ import sys
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+import pytest_asyncio
 
 import tests.mock_config as mock_config
 
@@ -290,7 +291,7 @@ def integration_mode() -> str:
     return os.environ.get("TANJUN_INTEGRATION", "false").lower()
 
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session", loop_scope="session")
 async def integration_db_pool():
     """
     Create a real database connection pool pointing at the test database.
@@ -301,6 +302,7 @@ async def integration_db_pool():
     Yields the pool and drops + recreates all tables on teardown so each
     test session starts with a clean schema.
     """
+    import asyncio
     import os
 
     import asyncmy
@@ -318,8 +320,8 @@ async def integration_db_pool():
             user=user,
             password=password,
             db=db,
-            minsize=1,
-            maxsize=2,
+            minsize=2,
+            maxsize=16,
         )
     except Exception as exc:
         pytest.skip(f"Test database not available: {exc}")
@@ -340,18 +342,10 @@ async def integration_db_pool():
 
     yield pool
 
-    # Clean up: drop all tables
-    async with pool.acquire() as conn, conn.cursor() as cursor:
-        await cursor.execute(
-            "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') FROM information_schema.tables WHERE table_schema = %s",
-            (db,),
-        )
-        drop_queries = await cursor.fetchall()
-        for (dq,) in drop_queries:
-            await cursor.execute(dq)
-
     pool.close()
-    await pool.wait_closed()
+    try:
+        await asyncio.wait_for(pool.wait_closed(), timeout=5.0)
+    except TimeoutError:
+        pass
 
-    # Restore original bot state
     set_bot(original_bot)

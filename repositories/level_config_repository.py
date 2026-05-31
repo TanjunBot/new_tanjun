@@ -158,7 +158,7 @@ class LevelConfigRepository:
         VALUES (%s, {", ".join(placeholders)})
         ON DUPLICATE KEY UPDATE {set_str}
         """
-        vals = tuple([guild_id] + list(params))
+        vals = tuple([guild_id] + list(params) + list(params))
         await execute_action(query, vals)
         self._invalidate(guild_id=guild_id)
 
