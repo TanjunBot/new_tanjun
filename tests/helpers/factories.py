@@ -41,7 +41,7 @@ def giveaway_row(**overrides: int | tuple) -> tuple:
         return base
     data = list(base)
     for idx, val in overrides.items():
-        data[int(idx)] = val  # type: ignore[call-overload]
+        data[int(idx)] = val
     return tuple(data)
 
 
@@ -51,7 +51,7 @@ def warning_row(**overrides: int | tuple) -> tuple:
         return base
     data = list(base)
     for idx, val in overrides.items():
-        data[int(idx)] = val  # type: ignore[call-overload]
+        data[int(idx)] = val
     return tuple(data)
 
 
