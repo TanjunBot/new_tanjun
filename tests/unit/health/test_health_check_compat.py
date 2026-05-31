@@ -1,25 +1,25 @@
-"""Tests for health_check.py backwards-compatibility re-exports."""
+"""Tests for health package public exports."""
 
 from __future__ import annotations
 
-import health_check
+import health
 
 
-class TestHealthCheckCompatModule:
+class TestHealthPackageExports:
     def test_exports_health_check_base_classes(self):
-        assert health_check.HealthCheck is not None
-        assert health_check.HealthCheckResult is not None
-        assert health_check.HealthStatus is not None
+        assert health.HealthCheck is not None
+        assert health.HealthCheckResult is not None
+        assert health.HealthStatus is not None
 
     def test_exports_concrete_checks(self):
-        assert health_check.DatabaseHealthCheck is not None
-        assert health_check.LocaleFileHealthCheck is not None
-        assert health_check.OpenRouterHealthCheck is not None
-        assert health_check.TwitchAPIHealthCheck is not None
+        assert health.DatabaseHealthCheck is not None
+        assert health.LocaleFileHealthCheck is not None
+        assert health.OpenRouterHealthCheck is not None
+        assert health.TwitchAPIHealthCheck is not None
 
     def test_all_list_matches_exports(self):
-        for name in health_check.__all__:
-            assert hasattr(health_check, name)
+        for name in health.__all__:
+            assert hasattr(health, name)
 
     def test_health_status_from_reexport(self):
-        assert health_check.HealthStatus.HEALTHY.value == "healthy"
+        assert health.HealthStatus.HEALTHY.value == "healthy"
