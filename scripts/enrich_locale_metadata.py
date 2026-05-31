@@ -295,10 +295,10 @@ def parse_identifier(identifier: str) -> ParsedKey:
     if "params" in lower:
         idx = lower.index("params")
         param_name = parts[idx + 1] if idx + 1 < len(parts) else ""
-        field = parts[-1].lower() if parts[-1].lower() in STANDARD_FIELDS else None
+        found_field = parts[-1].lower() if parts[-1].lower() in STANDARD_FIELDS else None
         return ParsedKey(
             parts=parts,
-            field=field,
+            field=found_field,
             param_name=param_name,
             is_params=True,
             kind="slash_option",
