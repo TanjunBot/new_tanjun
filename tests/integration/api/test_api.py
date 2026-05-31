@@ -138,10 +138,13 @@ def pool_conn_cursor() -> tuple[Any, Any, Any]:
 def reset_globals() -> Iterator[None]:
     """Reset global state in api.py between tests."""
     set_bot(None)
-    from api import _blacklist_cache, _guild_config_cache
+    from api import _blacklist_cache, _guild_config_cache, clear_db_read_caches
+    from services.booster_service import clear_booster_read_cache
 
     _guild_config_cache.clear()
     _blacklist_cache.clear()
+    clear_db_read_caches()
+    clear_booster_read_cache()
     yield
 
 
