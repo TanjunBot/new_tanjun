@@ -6,6 +6,7 @@ that verify SQL query generation, return types, error handling, and edge cases.
 
 from collections.abc import Iterator
 from datetime import datetime
+import os
 from typing import Any, TypeVar
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -259,30 +260,40 @@ class TestExecuteAction:
 
 
 class TestCheckPoolHealth:
-    """Tests for check_pool_health."""
+    """Tests for check_pool_health.
+
+    The new implementation uses a standalone asyncmy connection when DB env vars
+    are set, falling back to checking pool initialization otherwise.
+    """
 
     @pytest.mark.asyncio
-    async def test_returns_true_on_successful_ping(self, bot_with_pool):
-        """Should return True when SELECT 1 succeeds."""
-        _, cursor = bot_with_pool
-        cursor.execute = AsyncMock()
-
+    async def test_returns_true_when_pool_initialized(self, bot_with_pool):
+        """Should return True when pool is initialized (no env vars = fallback path)."""
         result = await check_pool_health()
         assert result is True
 
     @pytest.mark.asyncio
     async def test_returns_false_when_no_pool(self):
-        """Should return False when pool is not available."""
+        """Should return False when pool is not available (no env vars = fallback path)."""
         result = await check_pool_health()
         assert result is False
 
     @pytest.mark.asyncio
-    async def test_returns_false_on_exception(self, bot_with_pool):
-        """Should return False when the query throws."""
-        _, cursor = bot_with_pool
-        cursor.execute.side_effect = Exception("DB connection lost")
-
-        result = await check_pool_health()
+    async def test_returns_false_when_db_env_set_and_connect_fails(self):
+        """Should return False when asyncmy.connect raises an exception."""
+        env_patch = patch.dict(
+            os.environ,
+            {
+                "MARIADB_HOST": "localhost",
+                "MARIADB_PORT": "3306",
+                "MARIADB_USER": "test_user",
+                "MARIADB_PASSWORD": "test_pass",
+                "MARIADB_DATABASE": "test_db",
+            },
+        )
+        asyncmy_connect = AsyncMock(side_effect=Exception("Connection refused"))
+        with env_patch, patch("asyncmy.connect", new=asyncmy_connect):
+            result = await check_pool_health()
         assert result is False
 
 
