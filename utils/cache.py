@@ -20,6 +20,7 @@ Usage::
 
 from __future__ import annotations
 
+import asyncio
 import time
 from collections import OrderedDict
 from collections.abc import Awaitable, Callable
@@ -121,7 +122,17 @@ class TTLCache(Generic[K, V]):
 
     def contains(self, key: K) -> bool:
         """Check if *key* exists and is not expired (O(1))."""
-        return self.get(key) is not None
+        return self.is_cached(key)
+
+    def is_cached(self, key: K) -> bool:
+        """Return whether *key* has a non-expired entry (including ``None`` values)."""
+        deadline = self._deadline.get(key)
+        if deadline is None:
+            return False
+        if time.monotonic() > deadline:
+            self._discard(key)
+            return False
+        return True
 
     def keys(self) -> list[K]:
         """Return a snapshot of valid (non-expired) keys."""
@@ -210,3 +221,42 @@ class TTLCache(Generic[K, V]):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(ttl={self._ttl}, maxsize={self._maxsize}, size={self.size})"
+
+
+class StampedeProtectedCache(Generic[K, V]):
+    """TTL cache with per-key ``asyncio.Lock`` to prevent concurrent cache-miss stampedes."""
+
+    __slots__ = ("_cache", "_locks")
+
+    def __init__(self, ttl: float, maxsize: int | None = None) -> None:
+        self._cache = TTLCache[K, V](ttl=ttl, maxsize=maxsize)
+        self._locks: dict[K, asyncio.Lock] = {}
+
+    @property
+    def ttl(self) -> float:
+        return self._cache.ttl
+
+    def get(self, key: K) -> V | None:
+        return self._cache.get(key)
+
+    def set(self, key: K, value: V, *, ttl: float | None = None) -> None:
+        self._cache.set(key, value, ttl=ttl)
+
+    def invalidate(self, key: K) -> None:
+        self._cache.invalidate(key)
+
+    def clear(self) -> None:
+        self._cache.clear()
+        self._locks.clear()
+
+    async def get_or_fetch(self, key: K, fetch: Callable[[], Awaitable[V]]) -> V:
+        if self._cache.is_cached(key):
+            return self._cache.get(key)  # type: ignore[return-value]
+
+        lock = self._locks.setdefault(key, asyncio.Lock())
+        async with lock:
+            if self._cache.is_cached(key):
+                return self._cache.get(key)  # type: ignore[return-value]
+            value = await fetch()
+            self._cache.set(key, value)
+            return value

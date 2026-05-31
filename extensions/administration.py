@@ -439,7 +439,7 @@ class AdministrationCog(commands.Cog):
     async def testgithubauthtoken(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
         if ctx.author.id not in config.adminIds:
             return
-        await missingLocalization("JUSTATEST.IGNORETHIS.JUSTATEST")
+        await missingLocalization("test", "JUSTATEST.IGNORETHIS.JUSTATEST")
         await ctx.send(
             embed=success_embed(
                 tanjunLocalizer.localize(self._locale(ctx), "commands.admin.administration.github_auth_test"),

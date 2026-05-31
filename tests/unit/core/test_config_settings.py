@@ -217,7 +217,8 @@ class TestSettingsClass:
         assert real_config_module.WELCOME_EMOJI_ID == 1266369876524666920
 
     def test_version_constant(self, real_config_module):
-        assert real_config_module.version == "1.1.4"
+        version_file = Path(__file__).resolve().parents[3] / "VERSION"
+        assert real_config_module.version == version_file.read_text(encoding="utf-8").strip()
 
     def test_missing_token_exits(self, monkeypatch):
         env = _base_env()
