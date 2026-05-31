@@ -20,7 +20,7 @@ _REQUIRED_COMMAND_GROUPS = {
 }
 
 
-async def test_commands(self: commands.Cog, ctx: commands.Context) -> None:  # type: ignore[type-arg]
+async def test_commands(self: commands.Cog, ctx: commands.Context) -> None:
     """Verify critical commands are registered on the bot's tree."""
     tree = ctx.bot.tree
     if tree is None:

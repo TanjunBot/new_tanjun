@@ -9,7 +9,7 @@ from discord.ext import commands
 __test__ = False
 
 
-async def test_database(self: commands.Cog, ctx: commands.Context) -> None:  # type: ignore[type-arg]
+async def test_database(self: commands.Cog, ctx: commands.Context) -> None:
     """Verify the bot can query the database."""
     pool = getattr(ctx.bot, "_pool", None)
     if pool is None:

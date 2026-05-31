@@ -130,7 +130,7 @@ class NumericStringParser:
         elif op_token in self.fn:
             fn_val = self.fn[op_token]
             if callable(fn_val):
-                return fn_val(self.evaluate_stack(s))  # type: ignore[operator]
+                return fn_val(self.evaluate_stack(s))
             return fn_val  # float constant
         elif op_token[0].isalpha():
             raise Exception(f"Invalid identifier: {op_token}")
@@ -156,7 +156,7 @@ _operators: _OperatorsT = {
     ast.Div: op.truediv,
     ast.FloorDiv: op.floordiv,
     ast.Pow: op.pow,
-    ast.BitXor: op.xor,  # type: ignore[arg-type]
+    ast.BitXor: op.xor,
     ast.USub: op.neg,
     ast.Mod: op.mod,
 }
@@ -239,7 +239,7 @@ def _eval_ast(node: ast.AST, variables: Mapping[str, float]) -> float:
                 return log_n(*args)
             elif node.func.id == "abs":
                 args = [_eval_ast(arg, variables) for arg in node.args]
-                return cast(float, abs(*args))
+                return abs(*args)
         raise TypeError(f"Unsupported function call: {node.func}")
     elif isinstance(node, ast.Name):
         if node.id in variables:
@@ -277,7 +277,7 @@ def _invert_get_level_for_xp(xp: int, scaling: str) -> int:
     if xp <= 0:
         return 0
     level_func: Callable[[int], int] = _LEVEL_INVERSES.get(scaling, lambda _: 0)
-    level = cast(int, level_func(xp))
+    level = level_func(xp)
     if level < 0:
         return 0
     while get_xp_for_level(level + 1, scaling) <= xp and level < 10000:

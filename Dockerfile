@@ -25,9 +25,9 @@ COPY --chown=appuser:appuser . /usr/local/app/
 
 USER appuser
 
-# Health check for container orchestration
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+# Health check for container orchestration (Discord ready can take 2+ minutes on cold start)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=5 \
   CMD ["python", "/usr/local/app/healthcheck.py"]
 
-EXPOSE 8080
+EXPOSE 8001
 CMD ["python", "main.py"]

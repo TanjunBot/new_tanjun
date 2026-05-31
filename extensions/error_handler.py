@@ -15,6 +15,8 @@ from discord.ext import commands
 from config import sentry_dsn
 from localizer import tanjunLocalizer
 from utility import ErrorEmbedCategory
+from utils.exception_reporter import handle_discord_event_error
+from utils.github import report_bot_exception
 
 logger = logging.getLogger(__name__)
 
@@ -92,6 +94,25 @@ class ErrorHandlerCog(commands.Cog):
         """Replace the default tree.on_error with our handler once the bot is ready."""
         self.bot.tree.on_error = self._on_app_command_error
         logger.info("Global app command error handler registered on ready.")
+
+    @commands.Cog.listener()
+    async def on_error(self, event: str, *_args: Any, **_kwargs: Any) -> None:
+        handle_discord_event_error(event, *_args, **_kwargs)
+
+    @staticmethod
+    def _interaction_context(interaction: discord.Interaction) -> dict[str, str]:
+        context: dict[str, str] = {
+            "interaction_id": str(interaction.id),
+            "channel_id": str(interaction.channel_id),
+            "user": str(interaction.user),
+            "user_id": str(interaction.user.id),
+        }
+        if interaction.guild:
+            context["guild"] = interaction.guild.name
+            context["guild_id"] = str(interaction.guild.id)
+        if interaction.command:
+            context["command"] = interaction.command.qualified_name
+        return context
 
     async def _build_error_embed(
         self,
@@ -190,8 +211,12 @@ class ErrorHandlerCog(commands.Cog):
             )
 
         elif isinstance(original, commands.CommandInvokeError):
-            # This shouldn't normally reach here but just in case.
             traceback.print_exception(type(original), original, original.__traceback__)
+            await report_bot_exception(
+                original,
+                source="app_command",
+                context=self._interaction_context(interaction),
+            )
             embed = await self._build_error_embed(
                 interaction,
                 ErrorEmbedCategory.UNEXPECTED,
@@ -255,6 +280,11 @@ class ErrorHandlerCog(commands.Cog):
                 )
 
             traceback.print_exception(type(original), original, original.__traceback__)
+            await report_bot_exception(
+                original,
+                source="app_command",
+                context=self._interaction_context(interaction),
+            )
 
             embed = await self._build_error_embed(
                 interaction,
