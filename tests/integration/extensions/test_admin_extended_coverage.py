@@ -5,7 +5,14 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 import extensions.admin as admin_ext
-from extensions.admin import AdministrationCommands, ReportCommands
+from extensions.admin import (
+    AdminChannelCommands,
+    AdminEmojiCommands,
+    AdminMessagingCommands,
+    AdminPurgeCommands,
+    AdminSetupCommands,
+    ReportCommands,
+)
 from tests.helpers.discord import make_interaction, make_member, make_role, make_text_channel
 from tests.helpers.extensions import invoke_interaction_command
 
@@ -63,7 +70,7 @@ async def test_report_set_channel_default_channel(mock_cmds) -> None:
 
 
 async def test_purge_all_setting(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminPurgeCommands(name="a", description="a")
     await _invoke_ctx_command(
         group,
         "purge",
@@ -74,7 +81,7 @@ async def test_purge_all_setting(mock_cmds) -> None:
 
 
 async def test_purge_choice_setting(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminPurgeCommands(name="a", description="a")
     await _invoke_ctx_command(
         group,
         "purge",
@@ -85,12 +92,12 @@ async def test_purge_choice_setting(mock_cmds) -> None:
 
 
 async def test_slowmode(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminChannelCommands(name="a", description="a")
     await _invoke_ctx_command(group, "slowmode", seconds=30, channel=make_text_channel())
 
 
 async def test_say_with_explicit_channel(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminMessagingCommands(name="a", description="a")
     await _invoke_ctx_command(
         group,
         "say",
@@ -100,27 +107,27 @@ async def test_say_with_explicit_channel(mock_cmds) -> None:
 
 
 async def test_say_defaults_channel(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminMessagingCommands(name="a", description="a")
     await _invoke_ctx_command(group, "say", message="default channel", channel=None)
 
 
 async def test_embed_with_channel(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminMessagingCommands(name="a", description="a")
     await _invoke_ctx_command(group, "embed", title="Title", channel=make_text_channel())
 
 
 async def test_embed_defaults_channel(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminMessagingCommands(name="a", description="a")
     await _invoke_ctx_command(group, "embed", title="Default", channel=None)
 
 
 async def test_nuke_defaults_channel(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminChannelCommands(name="a", description="a")
     await _invoke_ctx_command(group, "nuke", channel=None)
 
 
 async def test_create_ticket_defaults_channel(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminSetupCommands(name="a", description="a")
     await _invoke_ctx_command(
         group,
         "create_ticket",
@@ -134,7 +141,7 @@ async def test_create_ticket_defaults_channel(mock_cmds) -> None:
 
 
 async def test_createemoji_sends_role_select(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminEmojiCommands(name="a", description="a")
     interaction = make_interaction()
     interaction.guild.default_role = make_role()
     interaction.followup.send = AsyncMock()
