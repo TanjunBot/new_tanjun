@@ -31529,8 +31529,8 @@
   },
   {
     "identifier": "commands.admin.update_text.confirm",
-    "source_string": "Willst du wirklich die Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
-    "translation": "Willst du wirklich die Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
+    "source_string": "Willst du wirklich den Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
+    "translation": "Willst du wirklich den Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
     "context": "Confirmation prompt before sending update to all admins",
     "labels": "unassigned",
     "max_length": null
@@ -31593,8 +31593,8 @@
   },
   {
     "identifier": "commands.admin.demo_message.confirm",
-    "source_string": "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
-    "translation": "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
+    "source_string": "Willst du wirklich die Demo-Dankesnachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
+    "translation": "Willst du wirklich die Demo-Dankesnachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
     "context": "Confirmation prompt before sending demo thank you message to all admins",
     "labels": "unassigned",
     "max_length": null
