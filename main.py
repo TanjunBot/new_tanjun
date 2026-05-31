@@ -10,6 +10,10 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
+from utils.exception_reporter import handle_asyncio_exception, install_exception_reporter
+
+install_exception_reporter()
+
 import asyncio
 import os
 import sys
@@ -212,6 +216,9 @@ async def _init_database_pool() -> asyncmy.Pool | None:
 async def main() -> None:
     print("starting bot...")
     print("discord.py version: ", discord.__version__)
+
+    loop = asyncio.get_running_loop()
+    loop.set_exception_handler(handle_asyncio_exception)
 
     # Create pool-ready event before any tasks start
     # so LoopCog.on_ready can wait on it asyncio.Event-style instead of polling
