@@ -23,11 +23,11 @@ async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:  # 
     try:
         async with aiohttp.ClientSession(timeout=ClientTimeout(total=10)) as session:
 
-            async def fetch(url: str) -> dict | None:
+            async def fetch(url: str) -> dict[str, Any] | None:
                 async with session.get(url) as response:
                     if response.status != 200:
                         return None
-                    response_json: dict = await response.json()
+                    response_json: dict[str, Any] | None = await response.json()
                     return response_json if isinstance(response_json, dict) else None
 
             r: dict[str, Any] | None = await fetch(

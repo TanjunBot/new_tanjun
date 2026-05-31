@@ -6,7 +6,7 @@ they can be updated without changing Python source code.
 
 import json
 import os
-from typing import Final, cast
+from typing import Final
 
 _DATA_DIR: Final[str] = os.path.join(os.path.dirname(__file__), "..", "..", "..", "data")
 
@@ -15,7 +15,8 @@ def _load_emoji_map(filename: str) -> dict[str, str]:
     path = os.path.join(_DATA_DIR, filename)
     try:
         with open(path, encoding="utf-8") as f:
-            return cast(dict[str, str], json.load(f))
+            data: dict[str, str] = json.load(f)
+            return data
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
 
