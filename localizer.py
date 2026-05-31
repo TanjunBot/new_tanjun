@@ -73,6 +73,13 @@ class LocalizerService:
         """
         raw = str(locale.value if isinstance(locale, discord.Locale) else locale)
         if raw in ("en", "en-US", "en-GB"):
+        if raw.startswith("da"):
+        if raw.startswith("hr"):
+        if raw.startswith("bg"):
+        if raw.startswith("it"):
+        if raw.startswith("cs"):
+        if raw.startswith("lt"):
+        if raw in ("zh-CN", "zh-TW", "zh-Hans", "zh-Hant"):
             return "en"
         if raw.startswith("de"):
             return "de"
