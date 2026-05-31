@@ -104,3 +104,42 @@ async def test_cog_unload_cleans_up_http_runner(metrics_port: int) -> None:
     await cog.cog_unload()
     assert cog._runner is None
     assert cog._site is None
+
+
+async def test_cog_unload_emits_no_unclosed_session_warning(metrics_port: int) -> None:
+    import warnings
+
+    bot = make_bot_for_extensions()
+    cog = await _load_metrics_cog(bot, metrics_port)
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", ResourceWarning)
+        await cog.cog_unload()
+    unclosed = [w for w in caught if "Unclosed client session" in str(w.message)]
+    assert not unclosed
+
+
+async def test_record_db_query_updates_scrape_metrics(metrics_port: int) -> None:
+    import tests.mock_config as mock_config
+    from unittest.mock import AsyncMock
+
+    mock_config.patch_config_module()
+
+    from api import execute_query, set_bot
+    from tests.integration.api.test_api import make_mock_pool
+
+    pool, _, cursor = make_mock_pool()
+    cursor.fetchall = AsyncMock(return_value=[(1,)])
+    bot = make_bot_for_extensions()
+    bot._pool = pool
+    set_bot(bot)
+
+    cog = await _load_metrics_cog(bot, metrics_port)
+    try:
+        await execute_query("SELECT 1", ())
+        async with ClientSession() as session:
+            async with session.get(f"http://127.0.0.1:{metrics_port}/metrics") as resp:
+                body = await resp.text()
+        assert "tanjun_database_tanjun_db_query_duration_seconds" in body
+        assert 'operation="execute_query"' in body
+    finally:
+        await cog.cog_unload()

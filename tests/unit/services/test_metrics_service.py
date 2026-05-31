@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
+import pytest
 from prometheus_client import REGISTRY
 
 from services import metrics_service
@@ -98,6 +99,56 @@ class TestLabelCardinality:
     def test_guild_scoped_counters_use_guild_id_label(self):
         for metric in self._GUILD_ID_LABEL_METRICS:
             assert "guild_id" in metric._labelnames, metric._name
+
+
+_ALL_METRICS = (
+    metrics_service.command_usage,
+    metrics_service.command_duration,
+    metrics_service.db_query_duration,
+    metrics_service.db_query_errors,
+    metrics_service.db_pool_size,
+    metrics_service.shard_latency,
+    metrics_service.shard_connected,
+    metrics_service.guild_count,
+    metrics_service.user_count,
+    metrics_service.messages_processed,
+    metrics_service.message_processing_duration,
+    metrics_service.process_memory_bytes,
+    metrics_service.process_cpu_seconds,
+    metrics_service.process_open_fds,
+    metrics_service.process_threads,
+    metrics_service.bot_start_time,
+    metrics_service.loop_running,
+    metrics_service.loop_iteration_duration,
+    metrics_service.loop_iteration_errors,
+)
+
+
+class TestEveryMetricReferenced:
+    @pytest.mark.parametrize("metric", _ALL_METRICS, ids=lambda m: m._name)
+    def test_metric_name_registered(self, metric):
+        assert metric._name in REGISTRY._names_to_collectors
+
+    def test_each_metric_can_be_observed_or_set(self):
+        metrics_service.command_usage.labels(command="x", guild_id="1", status="ok").inc()
+        metrics_service.command_duration.labels(command="x").observe(0.01)
+        metrics_service.db_query_duration.labels(operation="read").observe(0.001)
+        metrics_service.db_query_errors.labels(operation="read").inc()
+        metrics_service.db_pool_size.labels(type="used").set(1)
+        metrics_service.shard_latency.labels(shard_id="0").set(0.05)
+        metrics_service.shard_connected.labels(shard_id="0").set(1)
+        metrics_service.guild_count.set(10)
+        metrics_service.user_count.set(100)
+        metrics_service.messages_processed.labels(guild_id="1").inc()
+        metrics_service.message_processing_duration.observe(0.002)
+        metrics_service.process_memory_bytes.set(1024)
+        metrics_service.process_cpu_seconds.set(1.0)
+        metrics_service.process_open_fds.set(5)
+        metrics_service.process_threads.set(2)
+        metrics_service.bot_start_time.set(1_700_000_000)
+        metrics_service.loop_running.labels(loop_name="giveaway").set(1)
+        metrics_service.loop_iteration_duration.labels(loop_name="giveaway").observe(0.1)
+        metrics_service.loop_iteration_errors.labels(loop_name="giveaway").inc()
 
 
 class TestUpdateProcessMetricsLive:
