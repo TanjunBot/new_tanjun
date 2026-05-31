@@ -27,6 +27,7 @@ class LocaleFileHealthCheck(HealthCheck):
     ]
 
     LOCALE_DIR = "locales"
+    LOCALES = ["en", "de", "ko", "bg", "cs", "da", "el", "es-419", "fi", "fr", "hi", "hr", "hu", "id", "it", "ja", "lt", "nl", "vi", "zh-CN", "zh-TW"]
 
     @property
     def name(self) -> str:
