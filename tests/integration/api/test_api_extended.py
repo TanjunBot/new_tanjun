@@ -86,11 +86,13 @@ ROLE_VARIANTS = [ROLE_ID, "88888888888888888", "99999999999999999"]
 @pytest.fixture(autouse=True)
 def reset_globals() -> Iterator[None]:
     set_bot(None)
-    from api import _blacklist_cache, _counting_cache, _guild_config_cache
+    from api import _blacklist_cache, _counting_cache, _guild_config_cache, _log_enable_cache, _log_enable_fetch_locks
 
     _guild_config_cache.clear()
     _blacklist_cache.clear()
     _counting_cache.clear()
+    _log_enable_cache.clear()
+    _log_enable_fetch_locks.clear()
     yield
 
 
@@ -799,6 +801,32 @@ class TestLogChannelApi:
         with patch("api.execute_query", new=AsyncMock(return_value=[_LOG_ENABLE_ROW] if has_row else None)):
             result = await get_log_enable(GUILD_ID)
         assert result.guild_id == GUILD_ID
+
+    @pytest.mark.asyncio
+    async def test_get_log_enable_uses_cache(self, bot_with_pool):
+        from api import get_log_enable
+
+        execute = AsyncMock(return_value=[_LOG_ENABLE_ROW])
+        with patch("api.execute_query", new=execute):
+            first = await get_log_enable(GUILD_ID)
+            second = await get_log_enable(GUILD_ID)
+        assert first.member_join is True
+        assert second.member_join is True
+        execute.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_set_log_enable_invalidates_cache(self, bot_with_pool):
+        from api import get_log_enable, set_log_enable
+
+        execute = AsyncMock(return_value=[_LOG_ENABLE_ROW])
+        with (
+            patch("api.execute_query", new=execute),
+            patch("api.execute_action", new=AsyncMock()),
+        ):
+            await get_log_enable(GUILD_ID)
+            await set_log_enable(GUILD_ID, memberJoin=False)
+            await get_log_enable(GUILD_ID)
+        assert execute.await_count == 2
 
     @pytest.mark.parametrize("field", ["memberJoin", "messageEdit", "reactionAdd"])
     @pytest.mark.asyncio

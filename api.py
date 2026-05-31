@@ -317,6 +317,8 @@ async def _execute_with_retry(
 
 _blacklist_cache: TTLCache[str, dict[str, list[BlacklistEntryModel]]] = TTLCache(ttl=30)
 _guild_config_cache: TTLCache[str, dict[str, Any]] = TTLCache(ttl=300, maxsize=2000)
+_log_enable_cache: TTLCache[str, LogEnableModel] = TTLCache(ttl=60, maxsize=5000)
+_log_enable_fetch_locks: dict[str, asyncio.Lock] = {}
 # In-memory cache for XP cooldowns: (guild_id, user_id) -> last_xp_gain_timestamp
 # Eliminates DB queries entirely when user is on cooldown
 _last_xp_gain_cache: dict[tuple[str, str], float] = {}
@@ -2719,6 +2721,7 @@ async def set_log_channel(guild_id: str, channel_id: str) -> None:
     if not existing:
         query = "REPLACE INTO log_enables (guild_id) VALUES (%s)"
         params = (guild_id,)
+        _log_enable_cache.delete(str(guild_id))
     await execute_action(query, params)
 
 
@@ -2784,14 +2787,10 @@ async def set_log_enable(guild_id: str, **kwargs: Any) -> None:
     query = query.rstrip(", ") + end_query
 
     await execute_action(query, tuple(params))
+    _log_enable_cache.delete(str(guild_id))
 
 
-async def get_log_enable(guild_id: str | int) -> LogEnableModel:
-    query = "SELECT guild_id, automodRuleCreate, automodRuleUpdate, automodRuleDelete, automodAction, guild_channelDelete, guild_channelCreate, guild_channelUpdate, guildUpdate, inviteCreate, inviteDelete, memberJoin, memberLeave, memberUpdate, userUpdate, memberBan, memberUnban, presenceUpdate, messageEdit, messageDelete, reactionAdd, reactionRemove, guildRoleCreate, guildRoleDelete, guildRoleUpdate FROM log_enables WHERE guild_id = %s"
-    params = (str(guild_id),)
-    result = await execute_query(query, params)
-    if result and result[0]:
-        return LogEnableModel.from_row(result[0])
+def _default_log_enable(guild_id: str | int) -> LogEnableModel:
     return LogEnableModel(
         guild_id=str(guild_id),
         automod_rule_create=True,
@@ -2819,6 +2818,45 @@ async def get_log_enable(guild_id: str | int) -> LogEnableModel:
         guild_role_delete=True,
         guild_role_update=True,
     )
+
+
+_LOG_ENABLE_SELECT = (
+    "SELECT guild_id, automodRuleCreate, automodRuleUpdate, automodRuleDelete, automodAction, "
+    "guild_channelDelete, guild_channelCreate, guild_channelUpdate, guildUpdate, inviteCreate, "
+    "inviteDelete, memberJoin, memberLeave, memberUpdate, userUpdate, memberBan, memberUnban, "
+    "presenceUpdate, messageEdit, messageDelete, reactionAdd, reactionRemove, guildRoleCreate, "
+    "guildRoleDelete, guildRoleUpdate FROM log_enables WHERE guild_id = %s"
+)
+
+
+async def _fetch_log_enable_from_db(guild_id: str) -> LogEnableModel:
+    result = await execute_query(_LOG_ENABLE_SELECT, (guild_id,))
+    if result and result[0]:
+        return LogEnableModel.from_row(result[0])
+    return _default_log_enable(guild_id)
+
+
+def _log_enable_lock(guild_id: str) -> asyncio.Lock:
+    lock = _log_enable_fetch_locks.get(guild_id)
+    if lock is None:
+        lock = asyncio.Lock()
+        _log_enable_fetch_locks[guild_id] = lock
+    return lock
+
+
+async def get_log_enable(guild_id: str | int) -> LogEnableModel:
+    gid = str(guild_id)
+    cached = _log_enable_cache.get(gid)
+    if cached is not None:
+        return cached
+
+    async with _log_enable_lock(gid):
+        cached = _log_enable_cache.get(gid)
+        if cached is not None:
+            return cached
+        model = await _fetch_log_enable_from_db(gid)
+        _log_enable_cache.set(gid, model)
+        return model
 
 
 async def add_scheduled_message(
