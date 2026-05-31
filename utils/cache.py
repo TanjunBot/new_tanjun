@@ -122,7 +122,17 @@ class TTLCache(Generic[K, V]):
 
     def contains(self, key: K) -> bool:
         """Check if *key* exists and is not expired (O(1))."""
-        return self.get(key) is not None
+        return self.is_cached(key)
+
+    def is_cached(self, key: K) -> bool:
+        """Return whether *key* has a non-expired entry (including ``None`` values)."""
+        deadline = self._deadline.get(key)
+        if deadline is None:
+            return False
+        if time.monotonic() > deadline:
+            self._discard(key)
+            return False
+        return True
 
     def keys(self) -> list[K]:
         """Return a snapshot of valid (non-expired) keys."""
@@ -240,15 +250,13 @@ class StampedeProtectedCache(Generic[K, V]):
         self._locks.clear()
 
     async def get_or_fetch(self, key: K, fetch: Callable[[], Awaitable[V]]) -> V:
-        cached = self._cache.get(key)
-        if cached is not None:
-            return cached
+        if self._cache.is_cached(key):
+            return self._cache.get(key)  # type: ignore[return-value]
 
         lock = self._locks.setdefault(key, asyncio.Lock())
         async with lock:
-            cached = self._cache.get(key)
-            if cached is not None:
-                return cached
+            if self._cache.is_cached(key):
+                return self._cache.get(key)  # type: ignore[return-value]
             value = await fetch()
             self._cache.set(key, value)
             return value
