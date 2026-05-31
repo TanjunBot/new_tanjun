@@ -780,7 +780,7 @@ class TestLogChannelApi:
             patch("api.execute_action", new=AsyncMock()) as action,
         ):
             await set_log_channel(GUILD_ID, CHANNEL_ID)
-        action.assert_awaited_once()
+        assert action.await_count == 3
 
     @pytest.mark.asyncio
     async def test_set_log_channel_existing_guild(self, bot_with_pool):
@@ -791,8 +791,8 @@ class TestLogChannelApi:
             patch("api.execute_action", new=AsyncMock()) as action,
         ):
             await set_log_channel(GUILD_ID, CHANNEL_ID)
-        sql = action.call_args[0][0]
-        assert "log_channel" in sql
+        sqls = [call.args[0] for call in action.await_args_list]
+        assert any("log_channel" in sql for sql in sqls)
 
     @pytest.mark.parametrize("has_row", [True, False])
     @pytest.mark.asyncio

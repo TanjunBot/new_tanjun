@@ -30,6 +30,7 @@ from minigames.counting_modes import counting as countingModes
 from minigames.wordchain import wordchain
 from services.scheduled_message_service import ScheduledMessageService
 from utils.dispatcher import run_handlers_safe, run_handlers_sequential
+from utils.github import report_bot_exception
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +78,7 @@ class ListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction) -> None:
+        custom_id: str | None = None
         try:
             if not interaction.data:
                 return
@@ -121,8 +123,20 @@ class ListenerCog(commands.Cog):
             locale = interaction.locale  # type: ignore[assignment]
             error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.http", status=e.status)
             await self._send_error(interaction, error_msg)
-        except Exception:
+        except Exception as exc:
             logging.exception("Unexpected error in on_interaction listener")
+            await report_bot_exception(
+                exc,
+                source="on_interaction",
+                context={
+                    "custom_id": custom_id,
+                    "interaction_id": str(interaction.id),
+                    "channel_id": str(interaction.channel_id),
+                    "user": str(interaction.user),
+                    "user_id": str(interaction.user.id),
+                    "guild_id": str(interaction.guild_id) if interaction.guild_id else "dm",
+                },
+            )
             locale = interaction.locale  # type: ignore[assignment]
             error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.unexpected")
             await self._send_error(interaction, error_msg)
