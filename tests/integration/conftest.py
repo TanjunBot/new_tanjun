@@ -13,7 +13,7 @@ def pytest_configure(config: pytest.Config) -> None:
     def _choice(**kwargs: object) -> object:
         return type("Choice", (), kwargs)()
 
-    discord.app_commands.Choice = _choice  # type: ignore[attr-defined]
+    discord.app_commands.Choice = _choice
     _ensure_discord_types()
 
 
@@ -25,4 +25,4 @@ def _reset_discord_types() -> None:
     def _choice(**kwargs: object) -> object:
         return type("Choice", (), kwargs)()
 
-    discord.app_commands.Choice = _choice  # type: ignore[attr-defined]
+    discord.app_commands.Choice = _choice

@@ -10,6 +10,10 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
+from utils.exception_reporter import handle_asyncio_exception, install_exception_reporter
+
+install_exception_reporter()
+
 import asyncio
 import os
 import sys
@@ -137,9 +141,15 @@ intents.presences = False
 bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)  # type: ignore[arg-type]
 
 
+def _bot_ready_path() -> Path:
+    return Path(os.environ.get("BOT_READY_FILE", "/usr/local/app/.bot_ready"))
+
+
 @bot.event
 async def on_ready() -> None:
-    Path(tempfile.gettempdir(), "bot_ready").touch()
+    ready_path = _bot_ready_path()
+    ready_path.parent.mkdir(parents=True, exist_ok=True)
+    ready_path.touch()
     user = bot.user
     if user is not None:
         print(f"Logged in as {user} (ID: {user.id})")
@@ -206,6 +216,9 @@ async def _init_database_pool() -> asyncmy.Pool | None:
 async def main() -> None:
     print("starting bot...")
     print("discord.py version: ", discord.__version__)
+
+    loop = asyncio.get_running_loop()
+    loop.set_exception_handler(handle_asyncio_exception)
 
     # Create pool-ready event before any tasks start
     # so LoopCog.on_ready can wait on it asyncio.Event-style instead of polling
