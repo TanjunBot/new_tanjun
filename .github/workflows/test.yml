@@ -23,6 +23,8 @@ jobs:
         run: |
           pytest tests/integration -m "not slow and not live_discord" \
             --cov --cov-report=term-missing --cov-fail-under=85 -q
+      - name: Check command test coverage mapping
+        run: python scripts/check_command_test_coverage.py
 
   integration-db:
     runs-on: ubuntu-latest

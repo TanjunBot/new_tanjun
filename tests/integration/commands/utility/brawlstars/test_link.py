@@ -71,3 +71,11 @@ async def test_link_adds_hash_prefix(mock_service, admin_command_info):
             await link(admin_command_info, "ABC123")
             mock_add.assert_awaited_once()
             assert mock_add.await_args.args[1] == "#ABC123"
+
+
+def test_bshelper_emoji_helpers_return_strings() -> None:
+    from commands.utility.brawlstars.bshelper import getLevelEmoji, getStarPowerEmoji, parseName
+
+    assert isinstance(getLevelEmoji(1), str)
+    assert isinstance(getStarPowerEmoji(1), str)
+    assert parseName("test-name") == "Test Name"
