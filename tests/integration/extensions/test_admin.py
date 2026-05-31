@@ -21,6 +21,23 @@ pytestmark = pytest.mark.asyncio
 EXTENSION = "extensions.admin"
 COG_NAME = "AdminCog"
 
+# The admin extension registers 13 top-level groups on on_ready
+ADMIN_TOP_LEVEL_GROUPS = [
+    "admin_warn_name",
+    "admin_role_name",
+    "admin_rolemanage_name",
+    "admin_report_name",
+    "admin_triggermessages_name",
+    "admin_jointocreate_name",
+    "admin_moderation_name",
+    "admin_purgegroup_name",
+    "admin_channels_name",
+    "admin_messaging_name",
+    "admin_emoji_name",
+    "admin_setup_name",
+    "admin_localegroup_name",
+]
+
 
 async def test_module_exposes_setup():
     module = importlib.import_module(EXTENSION)
@@ -48,358 +65,297 @@ async def test_cog_stores_bot_reference():
     assert bot.cogs[COG_NAME].bot is bot
 
 
-async def test_on_ready_adds_command_to_tree():
+async def test_on_ready_adds_all_groups_to_tree():
     bot = make_bot_for_extensions()
     await load_extension(bot, EXTENSION)
     assert get_tree_commands(bot) == []
     await fire_cog_on_ready(bot)
-    assert len(get_tree_commands(bot)) == 1
+    assert len(get_tree_commands(bot)) == len(ADMIN_TOP_LEVEL_GROUPS)
 
 
-async def test_root_command_name_is_admin_name():
+async def test_all_top_level_groups_registered():
     bot = await load_extension_bot(EXTENSION)
-    assert get_tree_command_names(bot) == ["admin_name"]
+    names = get_tree_command_names(bot)
+    assert len(names) == len(ADMIN_TOP_LEVEL_GROUPS)
+    for expected in ADMIN_TOP_LEVEL_GROUPS:
+        assert expected in names, f"Missing top-level group: {expected}"
 
 
-async def test_root_group_has_24_entries():
+async def test_admin_warn_group_has_3_commands():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert len(get_subcommand_names(root)) == 24
+    group = find_tree_group(bot, "admin_warn_name")
+    assert group is not None
+    assert len(get_subcommand_names(group)) == 3
 
 
-async def test_subcommand_admin_kick_name_registered():
+async def test_admin_role_group_has_6_commands():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_kick_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_role_name")
+    assert group is not None
+    assert len(get_subcommand_names(group)) == 6
 
 
-async def test_subcommand_admin_ban_name_registered():
+async def test_admin_report_group_has_4_commands():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_ban_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_report_name")
+    assert group is not None
+    assert len(get_subcommand_names(group)) == 4
 
 
-async def test_subcommand_admin_unban_name_registered():
+async def test_admin_triggermessages_group_has_2_commands():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_unban_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_triggermessages_name")
+    assert group is not None
+    assert len(get_subcommand_names(group)) == 2
 
 
-async def test_subcommand_admin_timeout_name_registered():
+async def test_admin_jointocreate_group_has_2_commands():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_timeout_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_jointocreate_name")
+    assert group is not None
+    assert len(get_subcommand_names(group)) == 2
 
 
-async def test_subcommand_admin_removetimeout_name_registered():
+async def test_admin_moderation_kick_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_removetimeout_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_kick_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_purge_name_registered():
+async def test_admin_moderation_ban_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_purge_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_ban_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_nickname_name_registered():
+async def test_admin_moderation_unban_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_nickname_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_unban_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_slowmode_name_registered():
+async def test_admin_moderation_timeout_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_slowmode_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_timeout_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_lock_name_registered():
+async def test_admin_moderation_removetimeout_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_lock_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_removetimeout_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_unlock_name_registered():
+async def test_admin_moderation_nickname_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_unlock_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_nickname_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_nuke_name_registered():
+async def test_admin_moderation_lock_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_nuke_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_lock_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_say_name_registered():
+async def test_admin_moderation_unlock_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_say_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_unlock_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_embed_name_registered():
+async def test_admin_moderation_slowmode_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_embed_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_slowmode_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_createemoji_name_registered():
+async def test_admin_moderation_purge_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_createemoji_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_purge_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_boosterrole_name_registered():
+async def test_admin_moderation_nuke_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_boosterrole_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_nuke_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_createticket_name_registered():
+async def test_admin_moderation_say_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_createticket_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_say_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_setlocale_name_registered():
+async def test_admin_moderation_embed_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_setlocale_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_embed_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_copyemoji_name_registered():
+async def test_admin_moderation_claimboosterrole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_copyemoji_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_boosterrole_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_warn_name_registered():
+async def test_admin_moderation_createticket_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_warn_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_createticket_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_role_name_registered():
+async def test_admin_moderation_setlocale_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_role_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_setlocale_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_report_name_registered():
+async def test_admin_moderation_copyemoji_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_report_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_copyemoji_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_triggermessages_name_registered():
+async def test_admin_moderation_createemoji_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_triggermessages_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_moderation_name")
+    assert group is not None
+    assert "admin_createemoji_name" in get_subcommand_names(group)
 
 
-async def test_subcommand_admin_jointocreate_name_registered():
+async def test_admin_warn_add_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    assert root is not None
-    assert "admin_jointocreate_name" in get_subcommand_names(root)
+    group = find_tree_group(bot, "admin_warn_name")
+    assert group is not None
+    assert "admin_warn_add_name" in get_subcommand_names(group)
 
 
-async def test_nested_group_admin_warn_name_has_3_commands():
+async def test_admin_warn_view_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_warn_name")
-    assert nested is not None
-    assert len(get_subcommand_names(nested)) == 3
+    group = find_tree_group(bot, "admin_warn_name")
+    assert group is not None
+    assert "admin_warn_view_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_warn_name_admin_warn_add_name_registered():
+async def test_admin_warn_config_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_warn_name")
-    assert nested is not None
-    assert "admin_warn_add_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_warn_name")
+    assert group is not None
+    assert "admin_warn_config_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_warn_name_admin_warn_view_name_registered():
+async def test_admin_role_addrole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_warn_name")
-    assert nested is not None
-    assert "admin_warn_view_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_role_name")
+    assert group is not None
+    assert "admin_addrole_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_warn_name_admin_warn_config_name_registered():
+async def test_admin_role_removerole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_warn_name")
-    assert nested is not None
-    assert "admin_warn_config_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_role_name")
+    assert group is not None
+    assert "admin_removerole_name" in get_subcommand_names(group)
 
 
-async def test_nested_group_admin_role_name_has_6_commands():
+async def test_admin_role_createrole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_role_name")
-    assert nested is not None
-    assert len(get_subcommand_names(nested)) == 6
+    group = find_tree_group(bot, "admin_role_name")
+    assert group is not None
+    assert "admin_createrole_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_role_name_admin_addrole_name_registered():
+async def test_admin_role_deleterole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_role_name")
-    assert nested is not None
-    assert "admin_addrole_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_role_name")
+    assert group is not None
+    assert "admin_deleterole_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_role_name_admin_removerole_name_registered():
+async def test_admin_role_moverole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_role_name")
-    assert nested is not None
-    assert "admin_removerole_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_role_name")
+    assert group is not None
+    assert "admin_moverole_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_role_name_admin_createrole_name_registered():
+async def test_admin_role_copyrole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_role_name")
-    assert nested is not None
-    assert "admin_createrole_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_role_name")
+    assert group is not None
+    assert "admin_copyrole_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_role_name_admin_deleterole_name_registered():
+async def test_admin_report_setchannel_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_role_name")
-    assert nested is not None
-    assert "admin_deleterole_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_report_name")
+    assert group is not None
+    assert "admin_rps_setchannel_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_role_name_admin_moverole_name_registered():
+async def test_admin_report_removechannel_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_role_name")
-    assert nested is not None
-    assert "admin_moverole_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_report_name")
+    assert group is not None
+    assert "admin_rps_removechannel_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_role_name_admin_copyrole_name_registered():
+async def test_admin_report_showreports_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_role_name")
-    assert nested is not None
-    assert "admin_copyrole_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_report_name")
+    assert group is not None
+    assert "admin_rps_showreports_name" in get_subcommand_names(group)
 
 
-async def test_nested_group_admin_report_name_has_4_commands():
+async def test_admin_report_unblockreporter_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_report_name")
-    assert nested is not None
-    assert len(get_subcommand_names(nested)) == 4
+    group = find_tree_group(bot, "admin_report_name")
+    assert group is not None
+    assert "admin_rps_unblockreporter_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_report_name_admin_rps_setchannel_name_registered():
+async def test_admin_triggermessages_configure_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_report_name")
-    assert nested is not None
-    assert "admin_rps_setchannel_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_triggermessages_name")
+    assert group is not None
+    assert "admin_tm_configure_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_report_name_admin_rps_removechannel_name_registered():
+async def test_admin_triggermessages_add_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_report_name")
-    assert nested is not None
-    assert "admin_rps_removechannel_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_triggermessages_name")
+    assert group is not None
+    assert "admin_tm_add_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_report_name_admin_rps_showreports_name_registered():
+async def test_admin_jointocreate_setchannel_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_report_name")
-    assert nested is not None
-    assert "admin_rps_showreports_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_jointocreate_name")
+    assert group is not None
+    assert "admin_jtc_setchannel_name" in get_subcommand_names(group)
 
 
-async def test_nested_admin_report_name_admin_rps_unblockreporter_name_registered():
+async def test_admin_jointocreate_removechannel_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_report_name")
-    assert nested is not None
-    assert "admin_rps_unblockreporter_name" in get_subcommand_names(nested)
-
-
-async def test_nested_group_admin_triggermessages_name_has_2_commands():
-    bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_triggermessages_name")
-    assert nested is not None
-    assert len(get_subcommand_names(nested)) == 2
-
-
-async def test_nested_admin_triggermessages_name_admin_tm_configure_name_registered():
-    bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_triggermessages_name")
-    assert nested is not None
-    assert "admin_tm_configure_name" in get_subcommand_names(nested)
-
-
-async def test_nested_admin_triggermessages_name_admin_tm_add_name_registered():
-    bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_triggermessages_name")
-    assert nested is not None
-    assert "admin_tm_add_name" in get_subcommand_names(nested)
-
-
-async def test_nested_group_admin_jointocreate_name_has_2_commands():
-    bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_jointocreate_name")
-    assert nested is not None
-    assert len(get_subcommand_names(nested)) == 2
-
-
-async def test_nested_admin_jointocreate_name_admin_jtc_setchannel_name_registered():
-    bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_jointocreate_name")
-    assert nested is not None
-    assert "admin_jtc_setchannel_name" in get_subcommand_names(nested)
-
-
-async def test_nested_admin_jointocreate_name_admin_jtc_removechannel_name_registered():
-    bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "admin_name")
-    nested = find_nested_group(root, "admin_jointocreate_name")
-    assert nested is not None
-    assert "admin_jtc_removechannel_name" in get_subcommand_names(nested)
+    group = find_tree_group(bot, "admin_jointocreate_name")
+    assert group is not None
+    assert "admin_jtc_removechannel_name" in get_subcommand_names(group)
