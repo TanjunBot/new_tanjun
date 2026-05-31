@@ -32200,6 +32200,14 @@
     "max_length": 32
   },
   {
+    "identifier": "twitch.username",
+    "source_string": "twitch_username",
+    "translation": "twitch_username",
+    "context": "The twitch_username param in the copy7tv command",
+    "labels": "command_name, unassigned",
+    "max_length": 32
+  },
+  {
     "identifier": "twitchname",
     "source_string": "twitch_name",
     "translation": "twitch_name",
