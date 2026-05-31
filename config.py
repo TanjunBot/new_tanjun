@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 from typing import ClassVar
 
 from dotenv import load_dotenv
@@ -8,6 +9,14 @@ from pydantic import AliasChoices, Field, SecretStr, ValidationError, computed_f
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
+
+_VERSION_FILE = Path(__file__).resolve().parent / "VERSION"
+
+
+def _read_version() -> str:
+    if _VERSION_FILE.is_file():
+        return _VERSION_FILE.read_text(encoding="utf-8").strip()
+    return "0.0.0"
 
 
 class Settings(BaseSettings, cli_parse_args=False):
@@ -112,7 +121,7 @@ except ValidationError as e:
 # ...`` keeps working without changes.  Over time, consumers should migrate to
 # ``from config import settings`` and use ``settings.<snake_case_name>``.
 
-version = "1.1.4"
+version = _read_version()
 token: str = settings.token.get_secret_value()
 applicationId: str = settings.application_id
 adminIds: list[int] = settings.admin_ids

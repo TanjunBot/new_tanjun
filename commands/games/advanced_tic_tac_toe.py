@@ -18,7 +18,7 @@ class AdvancedTicTacToe:
 
     def __init__(self, player1: discord.Member, player2: discord.Member | None = None) -> None:
         self.player1 = player1
-        self.player2 = player2 or "tanjun"  # type: ignore[assignment]
+        self.player2 = player2 or "tanjun"
         # boards[meta_row][meta_col] is a 3x3 list of sub-board cells
         self.boards: list[list[list[list[str]]]] = [
             [  # meta_row
@@ -128,10 +128,10 @@ class AdvancedTicTacToe:
         return True
 
     def toggle_turn(self) -> None:
-        if self.player2 == "tanjun" or (hasattr(self.player2, "bot") and self.player2.bot):  # type: ignore[union-attr]
+        if self.player2 == "tanjun" or (hasattr(self.player2, "bot") and self.player2.bot):
             self.current_player = self.player1
         else:
-            self.current_player = self.player2 if self.current_player == self.player1 else self.player1  # type: ignore[assignment]
+            self.current_player = self.player2 if self.current_player == self.player1 else self.player1
 
     def get_valid_moves(self) -> list[tuple[int, int, int, int]]:
         """Return list of (meta_row, meta_col, sub_row, sub_col) valid moves."""
@@ -265,7 +265,7 @@ class AdvancedTicTacToe:
             await interaction.followup.edit_message(
                 message_id=interaction.message.id,
                 view=view,
-                embed=embed,  # type: ignore[union-attr]
+                embed=embed,
             )
 
     def get_board_view(self, timeout: int = 3600, disable_on_timeout: bool = True) -> discord.ui.View:
@@ -397,7 +397,7 @@ class AdvancedTicTacToe:
                     if not self.game_over and (
                         self.player2 == "tanjun"
                         or (
-                            hasattr(self.player2, "bot") and self.player2.bot  # type: ignore[union-attr]
+                            hasattr(self.player2, "bot") and self.player2.bot
                         )
                     ):
                         bot_m = self.bot_move()
@@ -437,7 +437,7 @@ async def advanced_tic_tac_toe(
     player2: discord.Member | None = None,
 ) -> None:
     if player2 is None:
-        player2 = "tanjun"  # type: ignore[assignment]
+        player2 = "tanjun"
 
     game = AdvancedTicTacToe(player1, player2)
-    await game.update_board(command_info, initial=True)  # type: ignore[arg-type]
+    await game.update_board(command_info, initial=True)
