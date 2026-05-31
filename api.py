@@ -622,22 +622,44 @@ async def transaction(bot=None):
 
 
 async def check_pool_health(bot=None) -> bool:
-    """Check if the database pool is healthy by running SELECT 1."""
-    pool = _get_pool()
-    if pool is None:
-        return False
-    for attempt in range(_MAX_DB_RETRIES):
+    """Check if the database is responsive.
+
+    Uses a short-lived standalone connection instead of the shared pool
+    so that repeated health checks cannot exhaust the connection pool.
+    Previously, this function acquired from the pool with a timeout;
+    if the pool was full, the timeout leaked connections until the pool
+    was completely drained.
+    """
+    try:
+        import asyncmy
+        import os
+
+        host = os.environ.get("MARIADB_HOST") or os.environ.get("MYSQL_HOST")
+        port = int(os.environ.get("MARIADB_PORT") or os.environ.get("MYSQL_PORT", "3306"))
+        user = os.environ.get("MARIADB_USER") or os.environ.get("MYSQL_USER")
+        password = os.environ.get("MARIADB_PASSWORD") or os.environ.get("MYSQL_PASSWORD")
+        db = os.environ.get("MARIADB_DATABASE") or os.environ.get("MYSQL_DATABASE")
+
+        if not all((host, user, password, db)):
+            # No DB config available — just verify pool was initialized
+            pool = _get_pool()
+            return pool is not None
+
+        conn = await asyncio.wait_for(
+            asyncmy.connect(
+                host=host, port=port, user=user, password=password, db=db,
+                connect_timeout=5,
+            ),
+            timeout=8,
+        )
         try:
-            conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-            async with conn, conn.cursor() as cursor:
-                await asyncio.wait_for(cursor.execute("SELECT 1"), timeout=_QUERY_TIMEOUT)
+            async with conn.cursor() as cursor:
+                await asyncio.wait_for(cursor.execute("SELECT 1"), timeout=5)
             return True
-        except Exception:
-            if attempt < _MAX_DB_RETRIES - 1:
-                await asyncio.sleep(0.5 * (attempt + 1))
-                continue
-            return False
-    return False
+        finally:
+            conn.close()
+    except Exception:
+        return False
 
 
 async def bulk_update_user_xp(
