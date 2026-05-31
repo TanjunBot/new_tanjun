@@ -34562,9 +34562,9 @@
   {
     "identifier": "admin.messaging.description",
     "source_string": "Messaging commands",
-    "translation": "Messaging commands",
+    "translation": "Comandos de mensajería",
     "context": "Short description of `/messaging` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
+    "labels": "es-419.json",
     "max_length": 100
   },
   {
