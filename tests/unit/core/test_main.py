@@ -149,25 +149,30 @@ class TestLoadAllExtensions:
 
 
 class TestOnReady:
+    def test_bot_ready_path_uses_configured_location(self, monkeypatch, tmp_path):
+        ready_path = tmp_path / ".bot_ready"
+        monkeypatch.setenv("BOT_READY_FILE", str(ready_path))
+        assert main_mod._bot_ready_path() == ready_path
+
     @pytest.mark.asyncio
-    async def test_on_ready_writes_ready_file_and_presence(self):
-        ready_path = Path(tempfile.gettempdir()) / "bot_ready"
-        if ready_path.exists():
-            ready_path.unlink()
+    async def test_on_ready_writes_ready_file_and_presence(self, monkeypatch, tmp_path):
+        ready_path = tmp_path / ".bot_ready"
+        monkeypatch.setenv("BOT_READY_FILE", str(ready_path))
         bot = MagicMock()
         bot.user = MagicMock(id=123)
         bot.change_presence = AsyncMock()
 
-        Path(tempfile.gettempdir(), "bot_ready").touch()
+        ready_path.parent.mkdir(parents=True, exist_ok=True)
+        ready_path.touch()
         if bot.user is not None:
-            pass
-        await bot.change_presence(
-            activity=main_mod.discord.Game(name=main_mod.config.activity.format(version=main_mod.config.version))
-        )
+            await bot.change_presence(
+                activity=main_mod.discord.Game(
+                    name=main_mod.config.activity.format(version=main_mod.config.version)
+                )
+            )
 
-        assert ready_path.exists()
+        assert ready_path.is_file()
         bot.change_presence.assert_awaited_once()
-        ready_path.unlink(missing_ok=True)
 
 
 class TestMainFlow:

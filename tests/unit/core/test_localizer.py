@@ -186,7 +186,7 @@ class TestNormalizeLocale:
         assert service._normalize_locale("en") == "en"
 
     def test_str_unknown(self, service: LocalizerService):
-        assert service._normalize_locale("fr") == "fr"
+        assert service._normalize_locale("fr") == "en"
 
 
 # ===================================================================
@@ -441,21 +441,30 @@ class TestCacheManagement:
 
 class TestReportMissing:
     def test_tracks(self, service: LocalizerService):
-        from localizer import reported_locales
+        from localizer import reported_missing
 
-        reported_locales.clear()
+        reported_missing.clear()
         with patch("localizer.missingLocalization", new_callable=AsyncMock):
-            service._report_missing("xx")
-            assert "xx" in reported_locales
+            service._report_missing("xx", "test.key")
+            assert ("xx", "test.key") in reported_missing
 
     def test_dedup(self, service: LocalizerService):
-        from localizer import reported_locales
+        from localizer import reported_missing
 
-        reported_locales.clear()
+        reported_missing.clear()
         with patch("localizer.missingLocalization", new_callable=AsyncMock):
-            service._report_missing("xx")
-            service._report_missing("xx")
-        assert reported_locales.count("xx") == 1
+            service._report_missing("xx", "test.key")
+            service._report_missing("xx", "test.key")
+        assert len(reported_missing) == 1
+
+    def test_dedup_per_key(self, service: LocalizerService):
+        from localizer import reported_missing
+
+        reported_missing.clear()
+        with patch("localizer.missingLocalization", new_callable=AsyncMock):
+            service._report_missing("xx", "test.key.one")
+            service._report_missing("xx", "test.key.two")
+        assert len(reported_missing) == 2
 
 
 # ===================================================================
@@ -552,8 +561,9 @@ class TestTanjunTranslator:
             loop = asyncio.new_event_loop()
             r = loop.run_until_complete(t.translate(s, unsupported_locale, MagicMock()))
             loop.close()
-            # '_normalize_locale("fr")' returns "fr", which has no locale file,
-            # so _load_sync falls back to English -> "Operation successful."
+            # '_normalize_locale("fr")' now returns "en" because unknown locales
+            # are silently mapped to English to avoid creating spam "missing
+            # localization" GitHub issues.  The English file is loaded directly.
             assert r == "Operation successful."
         finally:
             restore()
