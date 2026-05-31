@@ -1386,5 +1386,9 @@ class AdminCog(commands.Cog):
             self.bot.tree.add_command(group)
 
 
+# Backward-compatible alias for tests that still import the old class name
+AdministrationCommands = AdminModerationCommands
+
+
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(AdminCog(bot))
