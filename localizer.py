@@ -73,29 +73,47 @@ class LocalizerService:
         """
         raw = str(locale.value if isinstance(locale, discord.Locale) else locale)
         if raw in ("en", "en-US", "en-GB"):
-        if raw.startswith("da"):
-        if raw.startswith("hr"):
-        if raw.startswith("bg"):
-        if raw.startswith("it"):
-        if raw.startswith("cs"):
-        if raw.startswith("lt"):
-        if raw in ("zh-CN", "zh-TW", "zh-Hans", "zh-Hant"):
-        if raw.startswith("ja") or raw == "jp":
-        if raw.startswith("id"):
-        if raw in ("es", "es-ES", "es-419"):
-        if raw.startswith("hu"):
-        if raw.startswith("el"):
-        if raw.startswith("nl"):
-        if raw in ("zh-CN", "zh-Hans"):
-        if raw in ("zh-TW", "zh-Hant"):
-        if raw.startswith("fr"):
-        if raw.startswith("fi"):
             return "en"
         if raw.startswith("de"):
             return "de"
         if raw.startswith("ko"):
             return "ko"
-        # Any other unknown or unsupported locale falls back to English
+        if raw.startswith("da"):
+            return "da"
+        if raw.startswith("hr"):
+            return "hr"
+        if raw.startswith("bg"):
+            return "bg"
+        if raw.startswith("it"):
+            return "it"
+        if raw.startswith("cs"):
+            return "cs"
+        if raw.startswith("lt"):
+            return "lt"
+        if raw in ("zh-CN", "zh-Hans"):
+            return "zh-CN"
+        if raw in ("zh-TW", "zh-Hant"):
+            return "zh-TW"
+        if raw.startswith("ja") or raw == "jp":
+            return "ja"
+        if raw.startswith("id"):
+            return "id"
+        if raw in ("es", "es-ES", "es-419"):
+            return "es-419"
+        if raw.startswith("hu"):
+            return "hu"
+        if raw.startswith("el"):
+            return "el"
+        if raw.startswith("nl"):
+            return "nl"
+        if raw.startswith("fr"):
+            return "fr"
+        if raw.startswith("fi"):
+            return "fi"
+        if raw.startswith("hi"):
+            return "hi"
+        if raw.startswith("vi"):
+            return "vi"
         return "en"
 
     @staticmethod

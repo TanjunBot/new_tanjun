@@ -186,7 +186,7 @@ class TestNormalizeLocale:
         assert service._normalize_locale("en") == "en"
 
     def test_str_unknown(self, service: LocalizerService):
-        assert service._normalize_locale("fr") == "en"
+        assert service._normalize_locale("sv") == "en"
 
 
 # ===================================================================

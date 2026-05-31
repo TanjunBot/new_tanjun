@@ -1,5 +1,8 @@
 """Locale file integrity health check for Tanjun bot.
 
+Verifies that locale files listed in LOCALES exist, are valid JSON,
+contain all required translation keys, and are not missing any keys
+compared to the primary language (en.json).
 """
 
 from __future__ import annotations
@@ -14,6 +17,7 @@ class LocaleFileHealthCheck(HealthCheck):
     """Health check for locale file integrity.
 
     Checks:
+    1. All locale files in LOCALES exist
     2. All files parse as valid JSON
     3. All required translation keys are present in all files
     4. No missing translations compared to en.json (warning only)
