@@ -85,8 +85,9 @@ class TestSyncHelpers:
         mock_repo.get_label.return_value = mock_label
         mock_g = MagicMock()
         mock_g.get_repo.return_value = mock_repo
+        mock_g.search_issues.return_value.totalCount = 0
 
-        with patch("utils.github.Github", return_value=mock_g):
+        with patch("utils.github.GithubAuthToken", "token"), patch("utils.github.Github", return_value=mock_g):
             _sync_create_missing_localization_issue("fr-FR", "commands.test.title")
 
         mock_repo.create_issue.assert_called_once()
@@ -94,6 +95,27 @@ class TestSyncHelpers:
         assert "fr-FR" in call_kwargs["body"]
         assert "commands.test.title" in call_kwargs["body"]
         assert "commands.test.title" in call_kwargs["title"]
+
+    def test_sync_create_missing_localization_issue_skips_existing(self):
+        from utils.github import _sync_create_missing_localization_issue
+
+        mock_repo = MagicMock()
+        mock_g = MagicMock()
+        mock_g.get_repo.return_value = mock_repo
+        mock_g.search_issues.return_value.totalCount = 1
+
+        with patch("utils.github.GithubAuthToken", "token"), patch("utils.github.Github", return_value=mock_g):
+            _sync_create_missing_localization_issue("fr-FR", "commands.test.title")
+
+        mock_repo.create_issue.assert_not_called()
+
+    def test_sync_create_missing_localization_issue_skips_without_token(self):
+        from utils.github import _sync_create_missing_localization_issue
+
+        with patch("utils.github.GithubAuthToken", ""), patch("utils.github.Github") as mock_github:
+            _sync_create_missing_localization_issue("fr-FR", "commands.test.title")
+
+        mock_github.assert_not_called()
 
     def test_sync_create_feedback_issue(self):
         from utils.github import _sync_create_feedback_issue
