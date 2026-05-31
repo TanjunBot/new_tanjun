@@ -6,6 +6,7 @@ that verify SQL query generation, return types, error handling, and edge cases.
 
 from collections.abc import Iterator
 from datetime import datetime
+import os
 from typing import Any, TypeVar
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -277,13 +278,23 @@ class TestCheckPoolHealth:
         assert result is False
 
     @pytest.mark.asyncio
-    async def test_returns_false_on_exception(self, bot_with_pool):
-        """Should return False when the query throws."""
-        _, cursor = bot_with_pool
-        cursor.execute.side_effect = Exception("DB connection lost")
-
-        result = await check_pool_health()
+    async def test_returns_false_on_exception(self):
+        """Should return False when the standalone connection throws."""
+        env_patch = patch.dict(
+            os.environ,
+            {
+                "MARIADB_HOST": "localhost",
+                "MARIADB_PORT": "3306",
+                "MARIADB_USER": "test_user",
+                "MARIADB_PASSWORD": "test_pass",
+                "MARIADB_DATABASE": "test_db",
+            },
+        )
+        asyncmy_connect = AsyncMock(side_effect=Exception("Connection refused"))
+        with env_patch, patch("asyncmy.connect", new=asyncmy_connect):
+            result = await check_pool_health()
         assert result is False
+        asyncmy_connect.assert_awaited_once()
 
 
 # ---------------------------------------------------------------------------
