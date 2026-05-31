@@ -14,6 +14,7 @@ import functools
 import math
 import operator as op
 import re
+from collections.abc import Callable
 from typing import Any
 
 from pydantic import BaseModel
@@ -152,7 +153,7 @@ class MathService:
     def _build_parser(self) -> None:
         """Set up the pyparsing grammar (function and operator maps only)."""
         # Function map
-        self._fn: dict[str, Any] = {
+        self._fn: dict[str, Callable[[float], float]] = {
             "sin": math.sin,
             "cos": math.cos,
             "tan": math.tan,
@@ -170,22 +171,26 @@ class MathService:
             "log2": math.log2,
             "exp": math.exp,
             "abs": abs,
-            "trunc": math.trunc,
-            "round": round,
-            "sgn": lambda a: abs(a) > 1e-12 and self._cmp(a, 0) or 0,
+            "trunc": lambda x: float(math.trunc(x)),
+            "round": lambda x: float(round(x)),
+            "sgn": lambda a: abs(a) > 1e-12 and float(self._cmp(a, 0)) or 0.0,
             "sqrt": math.sqrt,
-            "factorial": math.factorial,
+            "factorial": lambda x: float(math.factorial(int(x))),
             "degrees": math.degrees,
             "radians": math.radians,
-            "ceil": math.ceil,
-            "floor": math.floor,
+            "ceil": lambda x: float(math.ceil(x)),
+            "floor": lambda x: float(math.floor(x)),
+            "fac": lambda x: float(math.factorial(int(x))),
+        }
+
+        # Constants lookup (non-callable values)
+        self._constants: dict[str, float] = {
             "pi": math.pi,
             "e": math.e,
-            "fac": math.factorial,
         }
 
         # Operator map
-        self._opn: dict[str, Any] = {
+        self._opn: dict[str, Callable[[float, float], float]] = {
             "+": op.add,
             "-": op.sub,
             "*": op.mul,
@@ -211,13 +216,15 @@ class MathService:
         if op in "+-*/^":
             op2 = self._evaluate_stack(s)
             op1 = self._evaluate_stack(s)
-            return self._opn[op](op1, op2)
+            return float(self._opn[op](op1, op2))
         if op == "PI":
             return math.pi
         if op == "E":
             return math.e
         if op in self._fn:
-            return self._fn[op](self._evaluate_stack(s))
+            return float(self._fn[op](self._evaluate_stack(s)))
+        if op in self._constants:
+            return self._constants[op]
         if op[0].isalpha():
             raise UndefinedVariable(f"Unknown identifier: {op}")
         # Handle variables that are numbers
