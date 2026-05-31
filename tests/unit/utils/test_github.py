@@ -14,10 +14,11 @@ class TestMissingLocalization:
     async def test_creates_issue_via_run_blocking(self):
         with patch("utils.github.run_blocking", new_callable=AsyncMock) as mock_run:
             mock_run.return_value = None
-            await missingLocalization("de-DE")
+            await missingLocalization("de-DE", "test.key")
             mock_run.assert_called_once()
             args = mock_run.call_args[0]
             assert args[1] == "de-DE"
+            assert args[2] == "test.key"
 
 
 class TestAddFeedback:
@@ -43,11 +44,13 @@ class TestSyncHelpers:
         mock_g.get_repo.return_value = mock_repo
 
         with patch("utils.github.Github", return_value=mock_g):
-            _sync_create_missing_localization_issue("fr-FR")
+            _sync_create_missing_localization_issue("fr-FR", "commands.test.title")
 
         mock_repo.create_issue.assert_called_once()
         call_kwargs = mock_repo.create_issue.call_args[1]
         assert "fr-FR" in call_kwargs["body"]
+        assert "commands.test.title" in call_kwargs["body"]
+        assert "commands.test.title" in call_kwargs["title"]
 
     def test_sync_create_feedback_issue(self):
         from utils.github import _sync_create_feedback_issue

@@ -441,21 +441,30 @@ class TestCacheManagement:
 
 class TestReportMissing:
     def test_tracks(self, service: LocalizerService):
-        from localizer import reported_locales
+        from localizer import reported_missing
 
-        reported_locales.clear()
+        reported_missing.clear()
         with patch("localizer.missingLocalization", new_callable=AsyncMock):
-            service._report_missing("xx")
-            assert "xx" in reported_locales
+            service._report_missing("xx", "test.key")
+            assert ("xx", "test.key") in reported_missing
 
     def test_dedup(self, service: LocalizerService):
-        from localizer import reported_locales
+        from localizer import reported_missing
 
-        reported_locales.clear()
+        reported_missing.clear()
         with patch("localizer.missingLocalization", new_callable=AsyncMock):
-            service._report_missing("xx")
-            service._report_missing("xx")
-        assert reported_locales.count("xx") == 1
+            service._report_missing("xx", "test.key")
+            service._report_missing("xx", "test.key")
+        assert len(reported_missing) == 1
+
+    def test_dedup_per_key(self, service: LocalizerService):
+        from localizer import reported_missing
+
+        reported_missing.clear()
+        with patch("localizer.missingLocalization", new_callable=AsyncMock):
+            service._report_missing("xx", "test.key.one")
+            service._report_missing("xx", "test.key.two")
+        assert len(reported_missing) == 2
 
 
 # ===================================================================
