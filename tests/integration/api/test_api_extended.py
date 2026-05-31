@@ -86,13 +86,14 @@ ROLE_VARIANTS = [ROLE_ID, "88888888888888888", "99999999999999999"]
 @pytest.fixture(autouse=True)
 def reset_globals() -> Iterator[None]:
     set_bot(None)
-    from api import _blacklist_cache, _counting_cache, _guild_config_cache, _log_enable_cache, _log_enable_fetch_locks
+    from api import _blacklist_cache, _counting_cache, _guild_config_cache, clear_db_read_caches
+    from services.booster_service import clear_booster_read_cache
 
     _guild_config_cache.clear()
     _blacklist_cache.clear()
     _counting_cache.clear()
-    _log_enable_cache.clear()
-    _log_enable_fetch_locks.clear()
+    clear_db_read_caches()
+    clear_booster_read_cache()
     yield
 
 
@@ -815,18 +816,27 @@ class TestLogChannelApi:
         execute.assert_awaited_once()
 
     @pytest.mark.asyncio
-    async def test_set_log_enable_invalidates_cache(self, bot_with_pool):
-        from api import get_log_enable, set_log_enable
+    async def test_get_log_channel_uses_cache(self, bot_with_pool):
+        from api import get_log_channel
 
-        execute = AsyncMock(return_value=[_LOG_ENABLE_ROW])
-        with (
-            patch("api.execute_query", new=execute),
-            patch("api.execute_action", new=AsyncMock()),
-        ):
-            await get_log_enable(GUILD_ID)
-            await set_log_enable(GUILD_ID, memberJoin=False)
-            await get_log_enable(GUILD_ID)
-        assert execute.await_count == 2
+        execute = AsyncMock(return_value=[(CHANNEL_ID,)])
+        with patch("api.execute_query", new=execute):
+            assert await get_log_channel(GUILD_ID) == CHANNEL_ID
+            assert await get_log_channel(GUILD_ID) == CHANNEL_ID
+        channel_queries = [c for c in execute.await_args_list if "log_channel" in c.args[0]]
+        assert len(channel_queries) == 1
+
+    @pytest.mark.asyncio
+    async def test_get_log_blacklist_uses_cache(self, bot_with_pool):
+        from api import get_log_blacklist
+
+        with patch(
+            "api.log_blacklist_repo.get_all",
+            new=AsyncMock(return_value=["role1"]),
+        ) as get_all:
+            assert await get_log_blacklist(GUILD_ID, LogBlacklistType.ROLE) == ["role1"]
+            assert await get_log_blacklist(GUILD_ID, LogBlacklistType.ROLE) == ["role1"]
+        assert get_all.await_count == 1
 
     @pytest.mark.parametrize("field", ["memberJoin", "messageEdit", "reactionAdd"])
     @pytest.mark.asyncio
