@@ -3,24 +3,176 @@
 Extracted from ``utility.py`` as part of refactoring (issue #1608).
 """
 
-from github import Github
+from __future__ import annotations
 
-from config import GithubAuthToken
+import hashlib
+import logging
+import time
+import traceback
+from typing import Any
+
+import discord
+from github import Github, GithubException
+
+from config import GithubAuthToken, sentry_environment, version
 from utils.async_io import run_blocking
 
+logger = logging.getLogger(__name__)
 
-async def missingLocalization(locale: str) -> None:  # noqa: N802
+_REPO = "TanjunBot/new_tanjun"
+_EXCEPTION_LABELS = ("bug", "bot exception")
+_DEDUP_TTL_SEC = 3600.0
+_recent_reports: dict[str, float] = {}
+
+
+def _is_discord_instance(exc: BaseException, exc_type: Any) -> bool:
+    if not isinstance(exc_type, type):
+        return False
+    return isinstance(exc, exc_type)
+
+
+def should_report_exception(exc: BaseException) -> bool:
+    if _is_discord_instance(exc, discord.Forbidden):
+        return False
+
+    if _is_discord_instance(exc, discord.NotFound):
+        return False
+
+    if _is_discord_instance(exc, discord.HTTPException) and exc.status == 429:
+        return False
+
+    if _is_discord_instance(exc, discord.DiscordException):
+        msg = str(exc).lower()
+        if "10008" in msg and "unknown message" in msg:
+            return False
+
+    return True
+
+
+def _exception_fingerprint(exc: BaseException) -> str:
+    tb_lines = traceback.format_exception(type(exc), exc, exc.__traceback__)
+    location = ""
+    for line in reversed(tb_lines):
+        stripped = line.strip()
+        if stripped.startswith('File "'):
+            location = stripped
+            break
+
+    payload = f"{type(exc).__name__}:{exc!s}:{location}"
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _dedup_allows_report(fingerprint: str) -> bool:
+    now = time.monotonic()
+    expired = [key for key, seen_at in _recent_reports.items() if now - seen_at >= _DEDUP_TTL_SEC]
+    for key in expired:
+        del _recent_reports[key]
+
+    last_seen = _recent_reports.get(fingerprint)
+    if last_seen is not None and now - last_seen < _DEDUP_TTL_SEC:
+        return False
+
+    _recent_reports[fingerprint] = now
+    return True
+
+
+def _format_context(context: dict[str, Any] | None) -> str:
+    if not context:
+        return "_No additional context._"
+
+    lines = [f"- **{key}:** {value}" for key, value in context.items()]
+    return "\n".join(lines)
+
+
+def _resolve_labels(repo: Any) -> list[Any]:
+    labels = []
+    for label_name in _EXCEPTION_LABELS:
+        try:
+            labels.append(repo.get_label(label_name))
+        except GithubException:
+            continue
+    return labels
+
+
+def _sync_create_bot_exception_issue(
+    exc: BaseException,
+    *,
+    source: str,
+    context: dict[str, Any] | None = None,
+) -> None:
+    if not GithubAuthToken:
+        return
+
+    if not should_report_exception(exc):
+        return
+
+    fingerprint = _exception_fingerprint(exc)
+    if not _dedup_allows_report(fingerprint):
+        return
+
+    tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+    exc_name = type(exc).__name__
+    exc_message = str(exc) or "(no message)"
+    title = f"[Bot Exception] {exc_name} in {source}: {exc_message}"
+    if len(title) > 240:
+        title = title[:237] + "..."
+
+    environment = sentry_environment or "unknown"
+    body = f"""## Bot Exception Report
+
+**Source:** `{source}`
+**Exception:** `{exc_name}: {exc_message}`
+**Version:** `{version}`
+**Environment:** `{environment}`
+
+### Context
+{_format_context(context)}
+
+### Traceback
+```
+{tb}
+```
+"""
+
+    try:
+        g = Github(GithubAuthToken)
+        repo = g.get_repo(_REPO)
+        labels = _resolve_labels(repo)
+        repo.create_issue(title=title, body=body, labels=labels)
+    except Exception as report_error:
+        logger.error("Failed to create GitHub issue for bot exception: %s", report_error)
+
+
+def report_bot_exception_sync(
+    exc: BaseException,
+    *,
+    source: str = "unknown",
+    context: dict[str, Any] | None = None,
+) -> None:
+    _sync_create_bot_exception_issue(exc, source=source, context=context)
+
+
+async def report_bot_exception(
+    exc: BaseException,
+    *,
+    source: str = "unknown",
+    context: dict[str, Any] | None = None,
+) -> None:
+    await run_blocking(_sync_create_bot_exception_issue, exc, source=source, context=context)
+
+
+async def missingLocalization(locale: str, key: str) -> None:  # noqa: N802
     """Create a GitHub issue reporting a missing localization."""
-    await run_blocking(_sync_create_missing_localization_issue, locale)
+    await run_blocking(_sync_create_missing_localization_issue, locale, key)
 
 
-def _sync_create_missing_localization_issue(locale: str) -> None:
+def _sync_create_missing_localization_issue(locale: str, key: str) -> None:
     g = Github(GithubAuthToken)
-    repo = g.get_repo("TanjunBot/new_tanjun")
+    repo = g.get_repo(_REPO)
     label = repo.get_label("missing localization")
     repo.create_issue(
-        title="Missing localization",
-        body=f"Missing localization for {locale}",
+        title=f"Missing localization: {key} ({locale})",
+        body=f"Missing translation for key `{key}` in locale `{locale}`.",
         labels=[label],
     )
 
@@ -32,7 +184,7 @@ async def addFeedback(content: str, author: str) -> None:  # noqa: N802
 
 def _sync_create_feedback_issue(content: str, author: str) -> None:
     g = Github(GithubAuthToken)
-    repo = g.get_repo("TanjunBot/new_tanjun")
+    repo = g.get_repo(_REPO)
     label = repo.get_label("Feedback")
     repo.create_issue(
         title="Feedback",
