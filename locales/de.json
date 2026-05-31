@@ -31824,6 +31824,22 @@
     "max_length": null
   },
   {
+    "identifier": "errors.guildOnly.title",
+    "source_string": "Nur in Servern nutzbar",
+    "translation": "Nur in Servern nutzbar",
+    "context": "errors -> guildOnly -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.guildOnly.description",
+    "source_string": "Dieser Befehl kann nur in einem Server verwendet werden.",
+    "translation": "Dieser Befehl kann nur in einem Server verwendet werden.",
+    "context": "errors -> guildOnly -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "errors.http_error.title",
     "source_string": "Discord API-Fehler",
     "translation": "Discord API-Fehler",
