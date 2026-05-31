@@ -95,7 +95,7 @@ class TestEffectiveBoostHypothesis:
         assert result == pytest.approx(expected)
 
     @given(role_boosts=boost_list, user_boost=optional_boost, channel_boost=optional_boost)
-    @settings(max_examples=80)
+    @settings(max_examples=120)
     @pytest.mark.asyncio
     async def test_result_at_least_one_with_non_negative_boosts(
         self,
@@ -118,7 +118,7 @@ class TestEffectiveBoostHypothesis:
             max_size=5,
         )
     )
-    @settings(max_examples=40)
+    @settings(max_examples=120)
     @pytest.mark.asyncio
     async def test_additive_role_boosts_stack(self, role_boosts: list[tuple[float, bool]]) -> None:
         role_models = [_make_boost(b, a) for b, a in role_boosts]
@@ -129,7 +129,7 @@ class TestEffectiveBoostHypothesis:
         assert result == pytest.approx(1.0 + additive_sum)
 
     @given(channel_boost=boost_pair)
-    @settings(max_examples=40)
+    @settings(max_examples=120)
     @pytest.mark.asyncio
     async def test_channel_boost_isolation(self, channel_boost: tuple[float, bool]) -> None:
         channel_model = _make_boost(*channel_boost)
@@ -162,7 +162,7 @@ class TestCalculateXpHypothesis:
         channel_boost=optional_boost,
         base=base_xp,
     )
-    @settings(max_examples=80)
+    @settings(max_examples=120)
     @pytest.mark.asyncio
     async def test_calculate_xp_returns_int_in_valid_range(
         self,
@@ -183,3 +183,80 @@ class TestCalculateXpHypothesis:
         assert isinstance(xp, int)
         assert xp == int(base * effective)
         assert xp >= int(base * 1.0)
+
+
+class TestBoostEdgeCasesHypothesis:
+    @given(channel_boost=boost_pair)
+    @settings(max_examples=120)
+    @pytest.mark.asyncio
+    async def test_empty_role_boosts_with_channel_only(self, channel_boost: tuple[float, bool]) -> None:
+        channel_model = _make_boost(*channel_boost)
+        repo = _make_repo([], None, channel_model)
+        calculator = XpCalculator(boost_repo=repo)
+        result = await calculator.get_effective_boost(GUID, USER_ID, [], CHANNEL_A)
+        assert result == pytest.approx(_expected_boost([], None, channel_boost))
+
+    @given(user_boost=boost_pair)
+    @settings(max_examples=120)
+    @pytest.mark.asyncio
+    async def test_multiplicative_user_only(self, user_boost: tuple[float, bool]) -> None:
+        user_model = _make_boost(*user_boost)
+        calculator = XpCalculator(boost_repo=_make_repo([], user_model, None))
+        result = await calculator.get_effective_boost(GUID, USER_ID, ROLE_IDS, CHANNEL_A)
+        assert result == pytest.approx(_expected_boost([], user_boost, None))
+
+    @given(user_boost=st.tuples(st.floats(min_value=1.0, max_value=5.0), st.just(True)))
+    @settings(max_examples=120)
+    @pytest.mark.asyncio
+    async def test_additive_user_only(self, user_boost: tuple[float, bool]) -> None:
+        user_model = _make_boost(*user_boost)
+        calculator = XpCalculator(boost_repo=_make_repo([], user_model, None))
+        result = await calculator.get_effective_boost(GUID, USER_ID, ROLE_IDS, CHANNEL_A)
+        assert result == pytest.approx(1.0 + (user_boost[0] - 1))
+
+    @given(
+        role_boosts=st.lists(
+            st.tuples(st.floats(min_value=1.0, max_value=3.0), st.just(False)),
+            min_size=1,
+            max_size=4,
+        )
+    )
+    @settings(max_examples=120)
+    @pytest.mark.asyncio
+    async def test_multiplicative_role_product(self, role_boosts: list[tuple[float, bool]]) -> None:
+        role_models = [_make_boost(b, a) for b, a in role_boosts]
+        calculator = XpCalculator(boost_repo=_make_repo(role_models, None, None))
+        result = await calculator.get_effective_boost(GUID, USER_ID, ROLE_IDS, CHANNEL_A)
+        expected = 1.0
+        for boost, _ in role_boosts:
+            expected *= boost
+        assert result == pytest.approx(expected)
+
+    @given(
+        role_boosts=boost_list,
+        channel_boost=boost_pair,
+    )
+    @settings(max_examples=120)
+    @pytest.mark.asyncio
+    async def test_channel_does_not_affect_other_channel(
+        self,
+        role_boosts: list[tuple[float, bool]],
+        channel_boost: tuple[float, bool],
+    ) -> None:
+        role_models = [_make_boost(b, a) for b, a in role_boosts]
+        channel_model = _make_boost(*channel_boost)
+
+        async def _get_boost(guild_id: str, entity_id: str, target=None) -> XpBoostModel | None:
+            if target == BoostTarget.CHANNEL and entity_id == CHANNEL_A:
+                return channel_model
+            return None
+
+        repo = MagicMock()
+        repo.get_boosts_for_target = AsyncMock(return_value=role_models)
+        repo.get_boost = AsyncMock(side_effect=_get_boost)
+        calculator = XpCalculator(boost_repo=repo)
+
+        with_channel = await calculator.get_effective_boost(GUID, USER_ID, ROLE_IDS, CHANNEL_A)
+        without_channel = await calculator.get_effective_boost(GUID, USER_ID, ROLE_IDS, CHANNEL_B)
+        assert with_channel >= without_channel
+        assert without_channel == pytest.approx(_expected_boost(role_boosts, None, None))

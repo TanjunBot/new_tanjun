@@ -69,3 +69,32 @@ class TestXpCooldownCache:
             await update_user_xp(GUILD_ID, USER_ID, 5, respect_cooldown=False)
             await update_user_xp(GUILD_ID, USER_ID, 5, respect_cooldown=False)
         assert action.await_count == 2
+
+
+class TestVoiceXpCooldownCache:
+    async def test_voice_cooldown_skips_second_write(self) -> None:
+        from api import update_user_xp_from_voice
+
+        _guild_config_cache.set(GUILD_ID, {"voice_cooldown": 60})
+        base_time = 3_000_000.0
+        with (
+            patch("api.time.time", return_value=base_time),
+            patch("api.execute_action", new_callable=AsyncMock) as action,
+        ):
+            await update_user_xp_from_voice(GUILD_ID, USER_ID, 5, respect_cooldown=True)
+            await update_user_xp_from_voice(GUILD_ID, USER_ID, 5, respect_cooldown=True)
+        assert action.await_count == 1
+
+    async def test_voice_cooldown_allows_write_after_expiry(self) -> None:
+        from api import update_user_xp_from_voice
+
+        _guild_config_cache.set(GUILD_ID, {"voice_cooldown": 60})
+        base_time = 4_000_000.0
+        with (
+            patch("api.time.time", side_effect=[base_time, base_time + 30, base_time + 61]),
+            patch("api.execute_action", new_callable=AsyncMock) as action,
+        ):
+            await update_user_xp_from_voice(GUILD_ID, USER_ID, 5, respect_cooldown=True)
+            await update_user_xp_from_voice(GUILD_ID, USER_ID, 5, respect_cooldown=True)
+            await update_user_xp_from_voice(GUILD_ID, USER_ID, 5, respect_cooldown=True)
+        assert action.await_count == 2
