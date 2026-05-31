@@ -129,6 +129,8 @@ dev = [
     "aioresponses>=0.7",
     "freezegun>=1.4",
     "hypothesis>=6.100",
+    "mypy>=1.11",
+    "ruff==0.11.5",
 ]
 
 [project.urls]

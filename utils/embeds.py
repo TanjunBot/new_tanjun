@@ -199,7 +199,15 @@ class TanjunEmbed(BaseModel):
         **kwargs: Any,
     ):
         super().__init__(**kwargs)
-        self.colour = colour if colour is not None else color
+        value = colour if colour is not None else color
+        if isinstance(value, discord.Colour):
+            self._colour = value.value
+        elif isinstance(value, EmbedColor):
+            self._colour = value.value
+        elif isinstance(value, int):
+            self._colour = value
+        else:
+            self._colour = 0xCB33F5
 
     # --- Public API (backward-compatible) ---
 
@@ -358,7 +366,7 @@ class TanjunEmbed(BaseModel):
 
     @color.setter
     def color(self, value: int | discord.Colour | EmbedColor | None) -> None:
-        self.colour = value
+        self.colour = value  # type: ignore[assignment]
 
     # --- Fluent-style builder methods ---
 

@@ -7,11 +7,13 @@ from enum import Enum
 
 
 class LogBlacklistType(Enum):
-    """Enum representing the three log blacklist types with their table/column mapping."""
+    """Enum representing log blacklist types with their table/column mapping."""
 
     CHANNEL = ("logBlacklistChannel", "channel_id")
     ROLE = ("logRoleBlacklist", "role_id")
     USER = ("logUserBlacklist", "user_id")
+    VOICE_CHANNEL = ("logVoiceBlacklist", "channel_id")
+    CATEGORY = ("logCategoryBlacklist", "channel_id")
 
     @property
     def table(self) -> str:

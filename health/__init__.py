@@ -14,7 +14,7 @@ from health.checks.external import (
     ImgBBHealthCheck,
 )
 from health.checks.locales import LocaleFileHealthCheck
-from health.checks.openai import OpenAIHealthCheck
+from health.checks.openrouter import OpenRouterHealthCheck
 from health.checks.twitch import TwitchAPIHealthCheck
 from health.manager import HealthCheckManager
 from health.notifier import notify_health_failures
@@ -31,7 +31,7 @@ __all__ = [
     "HealthCheckManager",
     "ImgBBHealthCheck",
     "LocaleFileHealthCheck",
-    "OpenAIHealthCheck",
+    "OpenRouterHealthCheck",
     "TwitchAPIHealthCheck",
     "notify_health_failures",
 ]

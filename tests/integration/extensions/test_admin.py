@@ -61,11 +61,11 @@ async def test_root_command_name_is_admin_name():
     assert get_tree_command_names(bot) == ["admin_name"]
 
 
-async def test_root_group_has_23_entries():
+async def test_root_group_has_24_entries():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "admin_name")
     assert root is not None
-    assert len(get_subcommand_names(root)) == 23
+    assert len(get_subcommand_names(root)) == 24
 
 
 async def test_subcommand_admin_kick_name_registered():

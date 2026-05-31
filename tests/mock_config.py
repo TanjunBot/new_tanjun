@@ -16,11 +16,16 @@ def patch_config_module() -> MagicMock:
     mock_config_module_instance.database_password = "mock_db_password"
     mock_config_module_instance.database_user = "mock_db_user"
     mock_config_module_instance.database_schema = "mock_db_schema"
+    mock_config_module_instance.database_connect_max_retries = 10
+    mock_config_module_instance.database_connect_retry_delay_sec = 3.0
+    mock_config_module_instance.database_connect_timeout_sec = 10
     mock_config_module_instance.giphyAPIKey = "mock_giphy_api_key"
     mock_config_module_instance.GithubAuthToken = "mock_github_token"
     mock_config_module_instance.ImgBBApiKey = "mock_imgbb_key"
     mock_config_module_instance.openAIKey = "mock_openai_key"
     mock_config_module_instance.openAiKey = "mock_openai_key"
+    mock_config_module_instance.OPENROUTER_API_KEY = "mock_openrouter_key"
+    mock_config_module_instance.OPENROUTER_MODEL = "deepseek/deepseek-v4-flash:free"
     mock_config_module_instance.bytebin_url = "https://mock.bytebin.url"
     mock_config_module_instance.bytebin_password = "mock_bytebin_password"
     mock_config_module_instance.bytebin_username = "mock_bytebin_user"

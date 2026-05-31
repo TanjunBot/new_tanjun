@@ -115,9 +115,26 @@ class TestDatabasePool:
 
     @pytest.mark.asyncio
     async def test_init_database_pool_failure(self):
-        with patch("asyncmy.create_pool", new=AsyncMock(side_effect=OSError("db down"))):
+        with (
+            patch.object(main_mod, "database_connect_max_retries", 1),
+            patch("asyncmy.create_pool", new=AsyncMock(side_effect=OSError("db down"))),
+        ):
             with pytest.raises(OSError, match="db down"):
                 await main_mod._init_database_pool()
+
+    @pytest.mark.asyncio
+    async def test_init_database_pool_retries_then_succeeds(self):
+        mock_pool = MagicMock()
+        create_pool = AsyncMock(side_effect=[OSError("db down"), mock_pool])
+        with (
+            patch.object(main_mod, "database_connect_max_retries", 2),
+            patch.object(main_mod, "database_connect_retry_delay_sec", 0),
+            patch("asyncmy.create_pool", new=create_pool),
+            patch.object(main_mod.asyncio, "sleep", new=AsyncMock()),
+        ):
+            pool = await main_mod._init_database_pool()
+        assert pool is mock_pool
+        assert create_pool.await_count == 2
 
 
 class TestLoadAllExtensions:

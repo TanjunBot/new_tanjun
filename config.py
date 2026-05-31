@@ -4,7 +4,7 @@ import sys
 from typing import ClassVar
 
 from dotenv import load_dotenv
-from pydantic import Field, SecretStr, ValidationError, computed_field
+from pydantic import AliasChoices, Field, SecretStr, ValidationError, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
@@ -21,6 +21,7 @@ class Settings(BaseSettings, cli_parse_args=False):
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
+        populate_by_name=True,
     )
 
     # ── Bot fundamentals ──────────────────────────────────────────────────────
@@ -30,11 +31,21 @@ class Settings(BaseSettings, cli_parse_args=False):
     prefix: str
 
     # ── Database ──────────────────────────────────────────────────────────────
-    database_ip: str
-    database_port: int = 3306
-    database_password: SecretStr
-    database_user: str
-    database_schema: str
+    database_ip: str = Field(validation_alias=AliasChoices("database_ip", "MARIADB_HOST", "MYSQL_HOST"))
+    database_port: int = Field(
+        default=3306,
+        validation_alias=AliasChoices("database_port", "MARIADB_PORT", "MYSQL_PORT"),
+    )
+    database_password: SecretStr = Field(
+        validation_alias=AliasChoices("database_password", "MARIADB_PASSWORD", "MYSQL_PASSWORD"),
+    )
+    database_user: str = Field(validation_alias=AliasChoices("database_user", "MARIADB_USER", "MYSQL_USER"))
+    database_schema: str = Field(
+        validation_alias=AliasChoices("database_schema", "MARIADB_DATABASE", "MYSQL_DATABASE"),
+    )
+    database_connect_max_retries: int = Field(default=10, ge=1, le=60)
+    database_connect_retry_delay_sec: float = Field(default=3.0, ge=0.5, le=60.0)
+    database_connect_timeout_sec: int = Field(default=10, ge=1, le=120)
 
     # ── External API keys ─────────────────────────────────────────────────────
     giphy_api_key: SecretStr = Field(default=SecretStr(""), alias="giphyAPIKey")
@@ -45,19 +56,22 @@ class Settings(BaseSettings, cli_parse_args=False):
     twitch_secret: SecretStr = Field(default=SecretStr(""), alias="twitchSecret")
     twitch_id: str = Field(default="", alias="twitchId")
 
+    # ── OpenRouter (AI chat) ──────────────────────────────────────────────────
+    openrouter_api_key: SecretStr = Field(default=SecretStr(""), alias="OPENROUTER_API_KEY")
+    openrouter_model: str = Field(default="deepseek/deepseek-v4-flash:free", alias="OPENROUTER_MODEL")
+
     # ── Bytebin ───────────────────────────────────────────────────────────────
     bytebin_url: str = ""
     bytebin_password: SecretStr = SecretStr("")
     bytebin_username: str = ""
 
-    # ── OpenRouter ────────────────────────────────────────────────────────────
-    openrouter_api_key: SecretStr = Field(default=SecretStr(""), alias="OPENROUTER_API_KEY")
-    openrouter_model: str = Field(default="deepseek/deepseek-v4-flash:free", alias="OPENROUTER_MODEL")
-
     # ── Sentry ─────────────────────────────────────────────────────────────────
     sentry_dsn: str = Field(default="", alias="sentry_dsn")
     sentry_traces_sample_rate: float = Field(default=0.0, alias="SENTRY_TRACES_SAMPLE_RATE")
     sentry_environment: str = Field(default="", alias="SENTRY_ENVIRONMENT")
+
+    # ── Metrics ───────────────────────────────────────────────────────────────
+    metrics_port: int = Field(default=8001, alias="METRICS_PORT")
 
     # ── Activity ──────────────────────────────────────────────────────────────
     activity: str = "Tanjun {version}"
@@ -108,6 +122,9 @@ database_port: int = settings.database_port
 database_password: str = settings.database_password.get_secret_value()
 database_user: str = settings.database_user
 database_schema: str = settings.database_schema
+database_connect_max_retries: int = settings.database_connect_max_retries
+database_connect_retry_delay_sec: float = settings.database_connect_retry_delay_sec
+database_connect_timeout_sec: int = settings.database_connect_timeout_sec
 giphyAPIKey: str = settings.giphy_api_key.get_secret_value()
 GithubAuthToken: str = settings.github_auth_token.get_secret_value()
 ImgBBApiKey: str = settings.imgbb_api_key.get_secret_value()
@@ -124,6 +141,7 @@ OPENROUTER_MODEL: str = settings.openrouter_model
 sentry_dsn: str = settings.sentry_dsn
 sentry_traces_sample_rate: float = settings.sentry_traces_sample_rate
 sentry_environment: str = settings.sentry_environment
+metrics_port: int = settings.metrics_port
 
 
 # ── Emoji identifiers for calculator ─────────────────────────────────────────

@@ -100,27 +100,29 @@ async def test_report_btn_no_permission():
     interaction.response.send_message.assert_awaited_once()
 
 
-@patch("commands.utility.report.accept_report", new_callable=AsyncMock)
-async def test_report_btn_accept(mock_accept):
+@patch("commands.utility.report.report_service.update_status", new_callable=AsyncMock, return_value="pending")
+async def test_report_btn_accept(mock_update):
     interaction = make_view_interaction()
     interaction.channel = make_text_channel()
     interaction.guild = interaction.channel.guild
     interaction.channel.permissions_for = MagicMock(return_value=make_permissions(manage_messages=True))
-    await report_btn_click(interaction, "report_accept;1;2")
-    mock_accept.assert_awaited_once()
+    with patch("commands.utility.report.report_service.has_opted_out_of_notifications", AsyncMock(return_value=True)):
+        await report_btn_click(interaction, "report_accept;1;2")
+    mock_update.assert_awaited_once()
 
 
-@patch("commands.utility.report.reject_report", new_callable=AsyncMock)
-async def test_report_btn_reject(mock_reject):
+@patch("commands.utility.report.report_service.update_status", new_callable=AsyncMock, return_value="pending")
+async def test_report_btn_reject(mock_update):
     interaction = make_view_interaction()
     interaction.channel = make_text_channel()
     interaction.guild = interaction.channel.guild
     interaction.channel.permissions_for = MagicMock(return_value=make_permissions(manage_messages=True))
-    await report_btn_click(interaction, "report_reject;1;2")
-    mock_reject.assert_awaited_once()
+    with patch("commands.utility.report.report_service.has_opted_out_of_notifications", AsyncMock(return_value=True)):
+        await report_btn_click(interaction, "report_reject;1;2")
+    mock_update.assert_awaited_once()
 
 
-@patch("commands.utility.report.block_reporter", new_callable=AsyncMock)
+@patch("commands.utility.report.report_service.block_reporter", new_callable=AsyncMock)
 async def test_report_btn_block(mock_block):
     interaction = make_view_interaction()
     interaction.channel = make_text_channel()

@@ -40,7 +40,7 @@ def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
     bot._pool = pool or MagicMock()
     bot._pool_ready = asyncio.Event()
     bot._pool_ready.set()
-    bot._tree_commands: list[Any] = []
+    bot._tree_commands = []  # type: ignore[misc]
 
     def _add_command(cmd: Any) -> None:
         bot._tree_commands.append(cmd)
@@ -52,7 +52,7 @@ def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
     bot.tree.walk_commands = MagicMock(return_value=[])
     bot.tree.on_error = None
     bot.load_extension = AsyncMock()
-    bot.cogs: dict[str, Any] = {}
+    bot.cogs = {}  # type: ignore[misc]
     bot.loop = MagicMock()
     bot.loop.create_task = MagicMock(return_value=MagicMock(done=lambda: False))
 
@@ -81,8 +81,8 @@ async def load_all_extensions(bot: MagicMock) -> list[str]:
         try:
             await load_extension(bot, ext)
             loaded.append(ext)
-        except Exception:
-            pass
+        except Exception as exc:
+            raise RuntimeError(f"Failed to load extension {ext!r}") from exc
     return loaded
 
 
