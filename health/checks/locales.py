@@ -1,6 +1,6 @@
 """Locale file integrity health check for Tanjun bot.
 
-Verifies that locale files (en.json, de.json, ko.json, it.json) exist, are valid JSON,
+Verifies that locale files (en.json, de.json, ko.json, it.json, zh-TW.json, cs.json, es-419.json) exist, are valid JSON,
 contain all required translation keys, and are not missing any keys
 compared to the primary language (en.json).
 """
@@ -31,7 +31,7 @@ class LocaleFileHealthCheck(HealthCheck):
     ]
 
     LOCALE_DIR = "locales"
-    LOCALES = ["en", "de", "ko", "it", "zh-TW"]
+    LOCALES = ["en", "de", "ko", "it", "zh-TW", "cs", "es-419"]
 
     @property
     def name(self) -> str:
