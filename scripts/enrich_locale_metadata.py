@@ -295,10 +295,10 @@ def parse_identifier(identifier: str) -> ParsedKey:
     if "params" in lower:
         idx = lower.index("params")
         param_name = parts[idx + 1] if idx + 1 < len(parts) else ""
-        field = parts[-1].lower() if parts[-1].lower() in STANDARD_FIELDS else None
+        param_field = parts[-1].lower() if parts[-1].lower() in STANDARD_FIELDS else None
         return ParsedKey(
             parts=parts,
-            field=field,
+            field=param_field,
             param_name=param_name,
             is_params=True,
             kind="slash_option",
@@ -383,8 +383,8 @@ def slash_ref(pk: ParsedKey) -> str:
             return base
         return f"`/{parts[1]}`"
     if parts[0] == "channel" and len(parts) >= 2:
-        rest = humanize_token(" ".join(parts[1:]))
-        return f"`/channel` ({rest})"
+        channel_rest = humanize_token(" ".join(parts[1:]))
+        return f"`/channel` ({channel_rest})"
     if parts[0] == "admin" and len(parts) >= 2:
         return f"`/{parts[1]}`"
     if len(parts) >= 2:
