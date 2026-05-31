@@ -16,7 +16,7 @@ TRANSLATION_NOT_FOUND: str = "err: no translation found."
 
 CACHE_TTL: float = 300.0  # 5 minutes
 
-reported_locales: list[str] = []
+reported_missing: set[tuple[str, str]] = set()
 
 
 class TranslationEntry(BaseModel):
@@ -139,31 +139,31 @@ class LocalizerService:
                 return entry
         return None
 
-    def _report_missing(self, locale_str: str) -> None:
-        """Report a missing locale to the bot so developers can add it."""
-        if locale_str in reported_locales:
+    def _report_missing(self, locale_str: str, key: str) -> None:
+        """Report a missing translation key to the bot so developers can add it."""
+        report_id = (locale_str, key)
+        if report_id in reported_missing:
             return
-        reported_locales.append(locale_str)
+        reported_missing.add(report_id)
         try:
-            task = asyncio.create_task(missingLocalization(locale_str))
+            task = asyncio.create_task(missingLocalization(locale_str, key))
 
             def _handle_task_exception(t: asyncio.Task[Any]) -> None:
                 if t.cancelled():
                     return
                 exc = t.exception()
                 if exc is not None:
-                    print(f"Exception in missingLocalization task for locale '{locale_str}': {exc}")
+                    print(f"Exception in missingLocalization task for key '{key}' in locale '{locale_str}': {exc}")
                     import traceback
 
                     traceback.print_exception(type(exc), exc, exc.__traceback__)
 
             task.add_done_callback(_handle_task_exception)
         except RuntimeError:
-            # No running loop — fall back to blocking call
             try:
-                asyncio.run(missingLocalization(locale_str))
+                asyncio.run(missingLocalization(locale_str, key))
             except Exception as e:
-                print(f"Exception in missingLocalization for locale '{locale_str}': {e}")
+                print(f"Exception in missingLocalization for key '{key}' in locale '{locale_str}': {e}")
 
     # ------------------------------------------------------------------
     # Public API
@@ -240,7 +240,7 @@ class LocalizerService:
 
         if entry is None:
             print(f"No translation found for key '{key}' in locale '{locale_str}'.")
-            self._report_missing(locale_str)
+            self._report_missing(locale_str, key)
             return TRANSLATION_NOT_FOUND
 
         template = Template(entry.translation)

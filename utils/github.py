@@ -9,18 +9,18 @@ from config import GithubAuthToken
 from utils.async_io import run_blocking
 
 
-async def missingLocalization(locale: str) -> None:  # noqa: N802
+async def missingLocalization(locale: str, key: str) -> None:  # noqa: N802
     """Create a GitHub issue reporting a missing localization."""
-    await run_blocking(_sync_create_missing_localization_issue, locale)
+    await run_blocking(_sync_create_missing_localization_issue, locale, key)
 
 
-def _sync_create_missing_localization_issue(locale: str) -> None:
+def _sync_create_missing_localization_issue(locale: str, key: str) -> None:
     g = Github(GithubAuthToken)
     repo = g.get_repo("TanjunBot/new_tanjun")
     label = repo.get_label("missing localization")
     repo.create_issue(
-        title="Missing localization",
-        body=f"Missing localization for {locale}",
+        title=f"Missing localization: {key} ({locale})",
+        body=f"Missing translation for key `{key}` in locale `{locale}`.",
         labels=[label],
     )
 
