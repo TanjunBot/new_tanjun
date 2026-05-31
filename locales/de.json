@@ -3777,8 +3777,8 @@
   },
   {
     "identifier": "commands.admin.trigger_messages.configure.trigger.case_sensitive",
-    "source_string": "Groß-/Kleinschreibung beachten: ${case_sensitive}",
-    "translation": "Groß-/Kleinschreibung beachten: ${case_sensitive}",
+    "source_string": "Groß-/Kleinschreibung beachten",
+    "translation": "Groß-/Kleinschreibung beachten",
     "context": "commands -> admin -> trigger_messages -> configure -> trigger -> case_sensitive",
     "labels": "unassigned",
     "max_length": null
