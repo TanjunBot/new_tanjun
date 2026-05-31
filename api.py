@@ -208,7 +208,7 @@ _MAX_DB_RETRIES = 3
 # Pool acquire timeout in seconds
 _POOL_ACQUIRE_TIMEOUT = 10
 # Query execution timeout in seconds
-_QUERY_TIMEOUT = 30
+_QUERY_TIMEOUT = 60
 
 
 def _query_safe_id(query: str) -> str:
@@ -219,6 +219,12 @@ def _query_safe_id(query: str) -> str:
 def _sanitize_for_log(query: str, params: Any = None) -> str:
     """Log a safe query identifier without exposing raw SQL or parameters."""
     return f"q={_query_safe_id(query)}"
+
+
+def _release_pool_connection(pool, conn, *, broken: bool = False) -> None:
+    if broken:
+        conn.close()
+    pool.release(conn)
 
 
 async def _execute_with_retry(
@@ -243,21 +249,23 @@ async def _execute_with_retry(
     safe_id = _sanitize_for_log(query)
     _start = time.monotonic()
     for attempt in range(_MAX_DB_RETRIES):
+        conn = None
+        broken_connection = False
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-            async with conn, conn.cursor() as cursor:
+            async with conn.cursor() as cursor:
                 await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
                 _result = await callback(cursor, conn)
-                _elapsed = time.monotonic() - _start
-                # Record metrics if available
-                try:
-                    from extensions.prometheus_metrics import record_db_query
+            _elapsed = time.monotonic() - _start
+            try:
+                from extensions.prometheus_metrics import record_db_query
 
-                    record_db_query(operation, _elapsed, error=False)
-                except ImportError:
-                    pass
-                return _result
+                record_db_query(operation, _elapsed, error=False)
+            except ImportError:
+                pass
+            return _result
         except TimeoutError:
+            broken_connection = True
             msg = f"Timeout on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}"
             print(msg)
             last_exception = TimeoutError(msg)
@@ -266,17 +274,18 @@ async def _execute_with_retry(
             continue
         except Exception as e:
             err_str = str(e).lower()
-            # Determine which errors are safe to retry
-            retryable = "deadlock" in err_str or "duplicate" in err_str or "abort" in err_str
+            if is_write and ("duplicate column" in err_str or "duplicate key name" in err_str):
+                raise
+            retryable = "deadlock" in err_str or "abort" in err_str
             if not is_write:
-                # Reads can also retry on connection/timeout issues
                 retryable = retryable or "connection" in err_str or "timeout" in err_str
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
                 print(f"Transient error on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
                 last_exception = e
+                if "connection" in err_str or "timeout" in err_str:
+                    broken_connection = True
                 continue
-            # Non-retryable error or final attempt: raise instead of silently returning None
             _elapsed = time.monotonic() - _start
             try:
                 from extensions.prometheus_metrics import record_db_query
@@ -286,9 +295,11 @@ async def _execute_with_retry(
                 pass
             print(f"Error during {operation}: {e} — {safe_id}")
             raise
+        finally:
+            if conn is not None:
+                _release_pool_connection(pool, conn, broken=broken_connection)
 
     if last_exception:
-        # Record the exhaustion as a DB error metric.
         _elapsed = time.monotonic() - _start
         try:
             from extensions.prometheus_metrics import record_db_query
@@ -509,15 +520,18 @@ async def execute_query_iter(
     safe_id = _query_safe_id(query)
     yielded_any = False
     for attempt in range(_MAX_DB_RETRIES):
+        conn = None
+        broken_connection = False
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-            async with conn, conn.cursor() as cursor:
+            async with conn.cursor() as cursor:
                 await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
                 async for row in cursor:
                     yielded_any = True
                     yield row
             return
         except TimeoutError:
+            broken_connection = True
             if yielded_any:
                 logger.error(f"Timeout after yielding rows on execute_query_iter: {safe_id}")
                 raise
@@ -534,9 +548,14 @@ async def execute_query_iter(
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
                 print(f"Transient error on execute_query_iter attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
+                if "connection" in err_str or "timeout" in err_str:
+                    broken_connection = True
                 continue
             print(f"Error during query iteration: {e} — {safe_id}")
             return
+        finally:
+            if conn is not None:
+                _release_pool_connection(pool, conn, broken=broken_connection)
     print(f"All retries exhausted for execute_query_iter: {safe_id}")
 
 
@@ -958,6 +977,22 @@ def get_table_defs() -> dict[str, "TableDef"]:
         ],
         primary_key=["guild_id", "user_id"],
     )
+    _t["logVoiceBlacklist"] = TableDef(
+        name="logVoiceBlacklist",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
+    _t["logCategoryBlacklist"] = TableDef(
+        name="logCategoryBlacklist",
+        columns=[
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)", nullable=False),
+        ],
+        primary_key=["guild_id", "channel_id"],
+    )
     _t["join_to_create_channel"] = TableDef(
         name="join_to_create_channel",
         columns=[
@@ -1150,8 +1185,8 @@ def get_table_definitions() -> dict[str, str]:
         `uploaded_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY(`id`),
         INDEX `idx_report` (`guild_id`, `report_id`),
-        FOREIGN KEY (`guild_id`, `report_id`)
-            REFERENCES `reports`(`guild_id`, `id`)
+        FOREIGN KEY (`report_id`)
+            REFERENCES `reports`(`id`)
             ON DELETE CASCADE
     ) ENGINE=InnoDB;
     """
@@ -1167,8 +1202,8 @@ def get_table_definitions() -> dict[str, str]:
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY(`id`),
         INDEX `idx_report` (`guild_id`, `report_id`),
-        FOREIGN KEY (`guild_id`, `report_id`)
-            REFERENCES `reports`(`guild_id`, `id`)
+        FOREIGN KEY (`report_id`)
+            REFERENCES `reports`(`id`)
             ON DELETE CASCADE
     ) ENGINE=InnoDB;
     """
@@ -1334,6 +1369,8 @@ async def create_tables(bot=None) -> None:
         "triggerMessagesChannel": ["triggerMessages"],
         "tickets": ["ticketMessages"],
         "dynamicslowmode_messages": ["dynamicslowmode"],
+        "report_evidence": ["reports"],
+        "report_mod_actions": ["reports"],
     }
 
     # Filter to only tables that need to be created
@@ -1354,9 +1391,10 @@ async def create_tables(bot=None) -> None:
         to_create -= batch
         created.update(batch)
 
-    # Create tables in batches, parallelizing within each batch
+    # Create tables in dependency order, one at a time to avoid DDL lock contention.
     for batch in batches:
-        await asyncio.gather(*[execute_action(tables[table_name], bot=bot) for table_name in batch])
+        for table_name in sorted(batch):
+            await execute_action(tables[table_name], bot=bot)
 
     # Run schema migrations for existing tables that need column additions
     migrations = [
@@ -1389,14 +1427,13 @@ async def create_tables(bot=None) -> None:
             await execute_action(migration, bot=bot)
         except Exception as exc:
             exc_str = str(exc).lower()
-            # Only suppress "column already exists" / duplicate column errors
             if (
                 "column already exists" in exc_str
                 or "duplicate column" in exc_str
                 or "duplicate column name" in exc_str
                 or "duplicate key name" in exc_str
             ):
-                logging.debug("Migration skipped (column already exists): %s", migration[:60])
+                logging.debug("Migration skipped (already applied): %s", migration[:60])
             else:
                 logging.exception("Unexpected migration error: %s", migration[:60])
                 raise
@@ -2694,8 +2731,6 @@ async def remove_log_channel(guild_id: str) -> None:
 async def get_log_channel(guild_id: str) -> str | None:
     query = "SELECT channel_id FROM log_channel WHERE guild_id = %s"
     params = (guild_id,)
-    print("query: ", query)
-    print("params: ", params)
     result = await execute_query(query, params)
     return result[0][0] if result else None
 

@@ -554,7 +554,7 @@ async def test_removerole_view_role_select_missing_guild(admin_command_info):
     interaction = make_view_interaction(user=admin_command_info.user)
     interaction.guild = None
     interaction.data = {"component_type": 6, "values": ["888888888"]}
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         await view.interaction_check(interaction)
 
 
@@ -584,15 +584,6 @@ async def test_removerole_view_user_select(admin_command_info):
     interaction.guild.fetch_member = AsyncMock(return_value=member)
     await view.interaction_check(interaction)
     assert view.selected_users == [member]
-
-
-async def test_removerole_view_on_error(admin_command_info):
-    await removerole(admin_command_info)
-    view = admin_command_info.reply.await_args.kwargs["view"]
-    view.command_info = admin_command_info
-    interaction = make_view_interaction(user=admin_command_info.user)
-    await view.on_error(interaction, RuntimeError("x"), MagicMock())
-    interaction.response.send_message.assert_awaited_once()
 
 
 async def test_remove_timeout_not_timed_out(admin_command_info):

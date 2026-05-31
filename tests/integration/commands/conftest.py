@@ -112,13 +112,28 @@ def no_permissions() -> MagicMock:
 
 
 @pytest.fixture
+def no_guild_command_info(no_permissions: MagicMock, reply: AsyncMock) -> MagicMock:
+    user = make_member(top_role_position=1)
+    user.guild_permissions = no_permissions
+    channel = make_text_channel()
+    channel.guild = None
+    channel.permissions_for = MagicMock(return_value=no_permissions)
+    info = make_command_info(user=user, channel=channel, reply=reply)
+    info.guild = None
+    return info
+
+
+@pytest.fixture
 def admin_command_info(full_permissions: MagicMock, reply: AsyncMock) -> MagicMock:
     user = make_member(top_role_position=50)
     user.guild_permissions = full_permissions
     guild = make_guild(me_permissions=full_permissions, me_top_role_position=100)
+    guild.get_member = MagicMock(side_effect=lambda uid: guild.me if uid == guild.me.id else None)
     channel = make_text_channel(guild=guild)
     channel.permissions_for = MagicMock(return_value=full_permissions)
-    return make_command_info(user=user, guild=guild, channel=channel, reply=reply)
+    client = MagicMock()
+    client.user = MagicMock(id=guild.me.id)
+    return make_command_info(user=user, guild=guild, channel=channel, reply=reply, client=client)
 
 
 @pytest.fixture

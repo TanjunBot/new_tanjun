@@ -17,9 +17,9 @@ class LocaleFileHealthCheck(HealthCheck):
     """Health check for locale file integrity.
 
     Checks:
-    1. Both en.json and de.json files exist
-    2. Both files parse as valid JSON
-    3. All required translation keys are present in both files
+    1. en.json, de.json, and ko.json files exist
+    2. All files parse as valid JSON
+    3. All required translation keys are present in all files
     4. No missing translations compared to en.json (warning only)
     """
 
@@ -31,7 +31,7 @@ class LocaleFileHealthCheck(HealthCheck):
     ]
 
     LOCALE_DIR = "locales"
-    LOCALES = ["en", "de"]
+    LOCALES = ["en", "de", "ko"]
 
     @property
     def name(self) -> str:
@@ -81,28 +81,28 @@ class LocaleFileHealthCheck(HealthCheck):
                 if key not in identifiers:
                     missing_keys.append(f"{locale}:{key}")
 
-        # Cross-locale comparison: warn about keys in en.json missing from de.json
-        if "en" in locale_data and "de" in locale_data:
+        # Cross-locale comparison: warn about keys in en.json missing from others
+        for other_locale in [loc for loc in self.LOCALES if loc != "en" and loc in locale_data]:
             en_ids: set[str] = {
                 str(entry["identifier"])
                 for entry in locale_data["en"]
                 if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
             }
-            de_ids: set[str] = {
+            other_ids: set[str] = {
                 str(entry["identifier"])
-                for entry in locale_data["de"]
+                for entry in locale_data[other_locale]
                 if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
             }
-            missing_from_de = en_ids - de_ids
-            if missing_from_de:
+            missing_from_other = en_ids - other_ids
+            if missing_from_other:
                 # Limit to first 20 to avoid absurdly long messages
-                sample = sorted(missing_from_de)[:20]
-                if len(missing_from_de) > 20:
+                sample = sorted(missing_from_other)[:20]
+                if len(missing_from_other) > 20:
                     warnings.append(
-                        f"en.json has {len(missing_from_de)} entries not in de.json (showing first 20): {', '.join(sample)}"
+                        f"en.json has {len(missing_from_other)} entries not in {other_locale}.json (showing first 20): {', '.join(sample)}"
                     )
                 else:
-                    warnings.append(f"en.json has {len(missing_from_de)} entries not in de.json: {', '.join(sample)}")
+                    warnings.append(f"en.json has {len(missing_from_other)} entries not in {other_locale}.json: {', '.join(sample)}")
 
         issues: list[str] = []
         status = HealthStatus.HEALTHY

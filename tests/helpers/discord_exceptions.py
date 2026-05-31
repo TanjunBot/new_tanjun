@@ -40,7 +40,7 @@ class FakeEmbed:
         self.footer = _FakeEmbedPart(text="", icon_url=None)
         self.image = _FakeEmbedPart(url="")
         self.thumbnail = _FakeEmbedPart(url="")
-        self.author = None
+        self.author: _FakeEmbedPart | None = None
 
     def set_footer(self, *, text: str | None = None, icon_url: str | None = None) -> None:
         self.footer = _FakeEmbedPart(text=text or "", icon_url=icon_url)

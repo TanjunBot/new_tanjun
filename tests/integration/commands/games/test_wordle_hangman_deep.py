@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -17,41 +18,35 @@ def _view_from_reply(info):
     return kwargs.get("view")
 
 
+async def _start_wordle_game(info):
+    png = io.BytesIO(b"\x89PNG\r\n\x1a\n\xff")
+    with patch("commands.games.wordle.random.choice", return_value="about"):
+        with patch("commands.games.wordle.generate_wordle_image", AsyncMock(return_value=png)):
+            await wordle(info, "en")
+    start_view = _view_from_reply(info)
+    interaction = make_view_interaction(info.user)
+    interaction.response.edit_message = AsyncMock()
+    await start_view.normal_button_callback(interaction, MagicMock())
+    return interaction.response.edit_message.await_args.kwargs["view"], interaction
+
+
 @patch("commands.games.wordle.random.choice", return_value="about")
-@patch("commands.games.wordle.Image.open")
-async def test_wordle_start(mock_open, mock_choice, admin_command_info):
-    img = Image.new("RGBA", (500, 600), (20, 20, 20, 255))
-    mock_open.return_value = img.copy()
-    await wordle(admin_command_info, "en")
+async def test_wordle_start(mock_choice, admin_command_info):
+    png = io.BytesIO(b"\x89PNG\r\n\x1a\n\xff")
+    with patch("commands.games.wordle.generate_wordle_image", AsyncMock(return_value=png)):
+        await wordle(admin_command_info, "en")
     admin_command_info.reply.assert_awaited_once()
     assert _view_from_reply(admin_command_info) is not None
 
 
-@patch("commands.games.wordle.random.choice", return_value="about")
-@patch("commands.games.wordle.Image.open")
-async def test_wordle_give_up(mock_open, mock_choice, admin_command_info):
-    img = Image.new("RGBA", (500, 600), (20, 20, 20, 255))
-    mock_open.return_value = img.copy()
-    await wordle(admin_command_info, "en")
-    view = _view_from_reply(admin_command_info)
-    interaction = make_view_interaction(admin_command_info.user)
-    interaction.response.edit_message = AsyncMock()
-    for child in view.children:
-        if hasattr(child, "callback") and "give" in getattr(child, "label", "").lower():
-            await child.callback(interaction, MagicMock())
-            break
-    else:
-        await view.give_up_button_callback(interaction, MagicMock())
-    interaction.response.edit_message.assert_awaited_once()
+async def test_wordle_give_up(admin_command_info):
+    view, interaction = await _start_wordle_game(admin_command_info)
+    await view.give_up_button_callback(interaction, MagicMock())
+    interaction.response.edit_message.assert_awaited()
 
 
-@patch("commands.games.wordle.random.choice", return_value="about")
-@patch("commands.games.wordle.Image.open")
-async def test_wordle_wrong_user(mock_open, mock_choice, admin_command_info):
-    img = Image.new("RGBA", (500, 600), (20, 20, 20, 255))
-    mock_open.return_value = img.copy()
-    await wordle(admin_command_info, "en")
-    view = _view_from_reply(admin_command_info)
+async def test_wordle_wrong_user(admin_command_info):
+    view, _interaction = await _start_wordle_game(admin_command_info)
     wrong = make_view_interaction(MagicMock(id=99999))
     await view.guess_button_callback(wrong, MagicMock())
     wrong.response.send_message.assert_awaited_once()
@@ -73,14 +68,8 @@ async def test_hangman_give_up(mock_choice, admin_command_info):
     interaction.response.edit_message.assert_awaited_once()
 
 
-@patch("commands.games.wordle.random.choice", return_value="about")
-@patch("commands.games.wordle.Image.open")
-async def test_wordle_correct_guess(mock_open, mock_choice, admin_command_info):
-    img = Image.new("RGBA", (500, 600), (20, 20, 20, 255))
-    mock_open.return_value = img.copy()
-    await wordle(admin_command_info, "en")
-    view = _view_from_reply(admin_command_info)
-    interaction = make_view_interaction(admin_command_info.user)
+async def test_wordle_correct_guess(admin_command_info):
+    view, interaction = await _start_wordle_game(admin_command_info)
     await view.guess_button_callback(interaction, MagicMock())
     modal = interaction.response.send_modal.await_args.args[0]
     modal.children[0].value = "about"
@@ -89,14 +78,8 @@ async def test_wordle_correct_guess(mock_open, mock_choice, admin_command_info):
     interaction.response.edit_message.assert_awaited_once()
 
 
-@patch("commands.games.wordle.random.choice", return_value="about")
-@patch("commands.games.wordle.Image.open")
-async def test_wordle_invalid_guess(mock_open, mock_choice, admin_command_info):
-    img = Image.new("RGBA", (500, 600), (20, 20, 20, 255))
-    mock_open.return_value = img.copy()
-    await wordle(admin_command_info, "en")
-    view = _view_from_reply(admin_command_info)
-    interaction = make_view_interaction(admin_command_info.user)
+async def test_wordle_invalid_guess(admin_command_info):
+    view, interaction = await _start_wordle_game(admin_command_info)
     await view.guess_button_callback(interaction, MagicMock())
     modal = interaction.response.send_modal.await_args.args[0]
     modal.children[0].value = "zzzzz"

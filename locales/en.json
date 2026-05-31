@@ -96,6 +96,14 @@
     "max_length": null
   },
   {
+    "identifier": "commands.admin.kick.noReasonProvided",
+    "source_string": "Kein Grund angegeben",
+    "translation": "No reason provided",
+    "context": "commands -> admin -> kick -> noReasonProvided",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.nuke.notfound.description",
     "source_string": "Der Kanal wurde nicht gefunden. Möglicherweise wurde er bereits gelöscht.",
     "translation": "The channel was not found. It may have already been deleted.",
@@ -108,6 +116,78 @@
     "source_string": "Kanal nicht gefunden",
     "translation": "Channel not found",
     "context": "commands -> admin -> nuke -> notfound -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.removerole.cancel.label",
+    "source_string": "Abbrechen",
+    "translation": "Cancel",
+    "context": "commands -> admin -> removerole -> cancel -> label",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.removerole.confirm.label",
+    "source_string": "Bestätigen",
+    "translation": "Confirm",
+    "context": "commands -> admin -> removerole -> confirm -> label",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.noChannel.title",
+    "source_string": "Kein Report-Kanal eingerichtet",
+    "translation": "No report channel set up",
+    "context": "commands -> admin -> reports -> remove_channel -> noChannel -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.success.title",
+    "source_string": "Report-Kanal entfernt",
+    "translation": "Report channel removed",
+    "context": "commands -> admin -> reports -> remove_channel -> success -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.draw",
+    "source_string": "Unentschieden!",
+    "translation": "Draw!",
+    "context": "commands -> games -> tic_tac_toe -> draw",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.invalidMove",
+    "source_string": "Ungültiger Zug! Bitte wähle ein freies Feld.",
+    "translation": "Invalid move! Please choose a free cell.",
+    "context": "commands -> games -> tic_tac_toe -> invalidMove",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.notYourGame",
+    "source_string": "Dies ist nicht dein Spiel!",
+    "translation": "This is not your game!",
+    "context": "commands -> games -> tic_tac_toe -> notYourGame",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.notYourTurn",
+    "source_string": "Du bist nicht am Zug!",
+    "translation": "It's not your turn!",
+    "context": "commands -> games -> tic_tac_toe -> notYourTurn",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.title",
+    "source_string": "Tic-Tac-Toe",
+    "translation": "Tic-Tac-Toe",
+    "context": "commands -> games -> tic_tac_toe -> title",
     "labels": "unassigned",
     "max_length": null
   },
@@ -4400,6 +4480,38 @@
     "max_length": null
   },
   {
+    "identifier": "commands.image.mirror.invalidaxis.description",
+    "source_string": "Die Achse muss entweder \"x\" (horizontal) oder \"y\" (vertikal) sein.",
+    "translation": "The axis must be either \"x\" (horizontal) or \"y\" (vertical).",
+    "context": "commands -> image -> mirror -> invalidaxis -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.mirror.invalidaxis.title",
+    "source_string": "Ungültige Achse",
+    "translation": "Invalid axis",
+    "context": "commands -> image -> mirror -> invalidaxis -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.mirror.success.description",
+    "source_string": "Das Bild wurde erfolgreich gespiegelt.",
+    "translation": "The image has been successfully mirrored.",
+    "context": "commands -> image -> mirror -> success -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.mirror.success.title",
+    "source_string": "Bild gespiegelt",
+    "translation": "Image mirrored",
+    "context": "commands -> image -> mirror -> success -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.logs.setLogChannel.missingPermission.title",
     "source_string": "Fehlende Berechtigung",
     "translation": "Missing authorization",
@@ -5776,6 +5888,14 @@
     "max_length": 100
   },
   {
+    "identifier": "commands.math.plotfunction.not_clickable",
+    "source_string": "Nicht klickbar",
+    "translation": "Not clickable",
+    "context": "commands -> math -> plotfunction -> not_clickable",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.math.randomnumber.success.title",
     "source_string": "Zufallszahlen generiert",
     "translation": "Random numbers generated",
@@ -6965,6 +7085,30 @@
     "translation": "The booster role was automatically deleted because the user to whom the role was assigned is no longer a booster.",
     "context": "commands -> utility -> claimboosterrole -> expired -> reason",
     "labels": "de.json",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.report.invalid_action.description",
+    "source_string": "Diese Aktion kann nicht ausgeführt werden. Der Report wurde möglicherweise bereits bearbeitet.",
+    "translation": "This action cannot be performed. The report may have already been processed.",
+    "context": "commands -> utility -> report -> invalid_action -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.report.invalid_action.title",
+    "source_string": "Ungültige Aktion",
+    "translation": "Invalid action",
+    "context": "commands -> utility -> report -> invalid_action -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.report.reporter_blocked.title",
+    "source_string": "Reporter blockiert",
+    "translation": "Reporter blocked",
+    "context": "commands -> utility -> report -> reporter_blocked -> title",
+    "labels": "unassigned",
     "max_length": null
   },
   {
@@ -32568,6 +32712,14 @@
     "max_length": null
   },
   {
+    "identifier": "logs_blacklistv_name",
+    "source_string": "voice-blacklist",
+    "translation": "voice-blacklist",
+    "context": "logs -> blacklist -> voice -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "commands.games.memory.title",
     "source_string": "Memory Game",
     "translation": "🧠 Memory Match",
@@ -32864,10 +33016,26 @@
     "max_length": null
   },
   {
+    "identifier": "logs_blacklistv_description",
+    "source_string": "Manage the voice channel blacklist for logging",
+    "translation": "Manage the voice channel blacklist for logging",
+    "context": "logs -> blacklist -> voice -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "setup_description",
     "source_string": "Interactive setup wizards",
     "translation": "Interactive setup wizards",
     "context": "Slash command group description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistv_add_name",
+    "source_string": "add-voice",
+    "translation": "add-voice",
+    "context": "logs -> blacklist -> voice -> add -> name",
     "labels": "unassigned",
     "max_length": null
   },
@@ -32880,10 +33048,26 @@
     "max_length": null
   },
   {
+    "identifier": "logs_blacklistv_add_description",
+    "source_string": "Blacklist a voice channel from logs",
+    "translation": "Blacklist a voice channel from logs",
+    "context": "logs -> blacklist -> voice -> add -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "setup_logs_description",
     "source_string": "Interactive wizard to configure logging",
     "translation": "Interactive wizard to configure logging",
     "context": "Slash command description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistv_add_params_channel_description",
+    "source_string": "The voice channel to blacklist",
+    "translation": "The voice channel to blacklist",
+    "context": "logs -> blacklist -> voice -> add -> params -> channel -> description",
     "labels": "unassigned",
     "max_length": null
   },
@@ -32896,10 +33080,26 @@
     "max_length": null
   },
   {
+    "identifier": "logs_blacklistv_remove_name",
+    "source_string": "remove-voice",
+    "translation": "remove-voice",
+    "context": "logs -> blacklist -> voice -> remove -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "setup_level_description",
     "source_string": "Interactive wizard to configure the leveling system",
     "translation": "Interactive wizard to configure the leveling system",
     "context": "Slash command description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistv_remove_description",
+    "source_string": "Remove a voice channel from the log blacklist",
+    "translation": "Remove a voice channel from the log blacklist",
+    "context": "logs -> blacklist -> voice -> remove -> description",
     "labels": "unassigned",
     "max_length": null
   },
@@ -32912,6 +33112,14 @@
     "max_length": null
   },
   {
+    "identifier": "logs_blacklistv_remove_params_channel_description",
+    "source_string": "The voice channel to remove from blacklist",
+    "translation": "The voice channel to remove from blacklist",
+    "context": "logs -> blacklist -> voice -> remove -> params -> channel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "setup_giveaway_description",
     "source_string": "Interactive wizard to create a giveaway",
     "translation": "Interactive wizard to create a giveaway",
@@ -32920,10 +33128,442 @@
     "max_length": null
   },
   {
+    "identifier": "logs_blacklistv_show_name",
+    "source_string": "list-voice",
+    "translation": "list-voice",
+    "context": "logs -> blacklist -> voice -> show -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "setup_booster_name",
     "source_string": "booster",
     "translation": "booster",
     "context": "Slash command name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistv_show_description",
+    "source_string": "Show blacklisted voice channels",
+    "translation": "Show blacklisted voice channels",
+    "context": "logs -> blacklist -> voice -> show -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistVoiceChannel.missingPermission.title",
+    "source_string": "Missing Permissions",
+    "translation": "Missing Permissions",
+    "context": "commands -> logs -> blacklistVoiceChannel -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistVoiceChannel.missingPermission.description",
+    "source_string": "You need the administrator permission to use this command.",
+    "translation": "You need the administrator permission to use this command.",
+    "context": "commands -> logs -> blacklistVoiceChannel -> missingPermission -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistVoiceChannel.alreadyBlacklisted.title",
+    "source_string": "Already Blacklisted",
+    "translation": "Already Blacklisted",
+    "context": "commands -> logs -> blacklistVoiceChannel -> alreadyBlacklisted -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistVoiceChannel.alreadyBlacklisted.description",
+    "source_string": "This voice channel is already blacklisted.",
+    "translation": "This voice channel is already blacklisted.",
+    "context": "commands -> logs -> blacklistVoiceChannel -> alreadyBlacklisted -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistVoiceChannel.blacklisted.title",
+    "source_string": "Blacklisted",
+    "translation": "Blacklisted",
+    "context": "commands -> logs -> blacklistVoiceChannel -> blacklisted -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistVoiceChannel.blacklisted.description",
+    "source_string": "The voice channel has been blacklisted from logs.",
+    "translation": "The voice channel has been blacklisted from logs.",
+    "context": "commands -> logs -> blacklistVoiceChannel -> blacklisted -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistVoiceChannel.missingChannel.title",
+    "source_string": "Missing Channel",
+    "translation": "Missing Channel",
+    "context": "commands -> logs -> blacklistVoiceChannel -> missingChannel -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistVoiceChannel.missingChannel.description",
+    "source_string": "Please specify a voice channel.",
+    "translation": "Please specify a voice channel.",
+    "context": "commands -> logs -> blacklistVoiceChannel -> missingChannel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingPermission.title",
+    "source_string": "Missing Permissions",
+    "translation": "Missing Permissions",
+    "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingPermission.description",
+    "source_string": "You need the administrator permission to use this command.",
+    "translation": "You need the administrator permission to use this command.",
+    "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingPermission -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveVoiceChannel.notBlacklisted.title",
+    "source_string": "Not Blacklisted",
+    "translation": "Not Blacklisted",
+    "context": "commands -> logs -> blacklistRemoveVoiceChannel -> notBlacklisted -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveVoiceChannel.notBlacklisted.description",
+    "source_string": "This voice channel is not blacklisted.",
+    "translation": "This voice channel is not blacklisted.",
+    "context": "commands -> logs -> blacklistRemoveVoiceChannel -> notBlacklisted -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveVoiceChannel.success.title",
+    "source_string": "Removed",
+    "translation": "Removed",
+    "context": "commands -> logs -> blacklistRemoveVoiceChannel -> success -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveVoiceChannel.success.description",
+    "source_string": "The voice channel has been removed from the log blacklist.",
+    "translation": "The voice channel has been removed from the log blacklist.",
+    "context": "commands -> logs -> blacklistRemoveVoiceChannel -> success -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingChannel.title",
+    "source_string": "Missing Channel",
+    "translation": "Missing Channel",
+    "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingChannel -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingChannel.description",
+    "source_string": "Please specify a voice channel.",
+    "translation": "Please specify a voice channel.",
+    "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingChannel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListVoiceChannel.missingPermission.title",
+    "source_string": "Missing Permissions",
+    "translation": "Missing Permissions",
+    "context": "commands -> logs -> blacklistListVoiceChannel -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListVoiceChannel.missingPermission.description",
+    "source_string": "You need the administrator permission to use this command.",
+    "translation": "You need the administrator permission to use this command.",
+    "context": "commands -> logs -> blacklistListVoiceChannel -> missingPermission -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListVoiceChannel.title",
+    "source_string": "Blacklisted Voice Channels",
+    "translation": "Blacklisted Voice Channels",
+    "context": "commands -> logs -> blacklistListVoiceChannel -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListVoiceChannel.addChannel.placeholder",
+    "source_string": "Select a voice channel to add to the blacklist",
+    "translation": "Select a voice channel to add to the blacklist",
+    "context": "commands -> logs -> blacklistListVoiceChannel -> addChannel -> placeholder",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListVoiceChannel.noBlacklistedChannels",
+    "source_string": "No voice channels are blacklisted.",
+    "translation": "No voice channels are blacklisted.",
+    "context": "commands -> logs -> blacklistListVoiceChannel -> noBlacklistedChannels",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_name",
+    "source_string": "category-blacklist",
+    "translation": "category-blacklist",
+    "context": "logs -> blacklist -> category -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_description",
+    "source_string": "Manage the category blacklist for logging",
+    "translation": "Manage the category blacklist for logging",
+    "context": "logs -> blacklist -> category -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_add_name",
+    "source_string": "add-category",
+    "translation": "add-category",
+    "context": "logs -> blacklist -> category -> add -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_add_description",
+    "source_string": "Blacklist a category from logs",
+    "translation": "Blacklist a category from logs",
+    "context": "logs -> blacklist -> category -> add -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_add_params_channel_description",
+    "source_string": "The category to blacklist",
+    "translation": "The category to blacklist",
+    "context": "logs -> blacklist -> category -> add -> params -> channel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_remove_name",
+    "source_string": "remove-category",
+    "translation": "remove-category",
+    "context": "logs -> blacklist -> category -> remove -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_remove_description",
+    "source_string": "Remove a category from the log blacklist",
+    "translation": "Remove a category from the log blacklist",
+    "context": "logs -> blacklist -> category -> remove -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_remove_params_channel_description",
+    "source_string": "The category to remove from blacklist",
+    "translation": "The category to remove from blacklist",
+    "context": "logs -> blacklist -> category -> remove -> params -> channel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_show_name",
+    "source_string": "list-category",
+    "translation": "list-category",
+    "context": "logs -> blacklist -> category -> show -> name",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "logs_blacklistcat_show_description",
+    "source_string": "Show blacklisted categories",
+    "translation": "Show blacklisted categories",
+    "context": "logs -> blacklist -> category -> show -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistCategory.missingPermission.title",
+    "source_string": "Missing Permissions",
+    "translation": "Missing Permissions",
+    "context": "commands -> logs -> blacklistCategory -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistCategory.missingPermission.description",
+    "source_string": "You need the administrator permission to use this command.",
+    "translation": "You need the administrator permission to use this command.",
+    "context": "commands -> logs -> blacklistCategory -> missingPermission -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistCategory.alreadyBlacklisted.title",
+    "source_string": "Already Blacklisted",
+    "translation": "Already Blacklisted",
+    "context": "commands -> logs -> blacklistCategory -> alreadyBlacklisted -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistCategory.alreadyBlacklisted.description",
+    "source_string": "This category is already blacklisted.",
+    "translation": "This category is already blacklisted.",
+    "context": "commands -> logs -> blacklistCategory -> alreadyBlacklisted -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistCategory.blacklisted.title",
+    "source_string": "Blacklisted",
+    "translation": "Blacklisted",
+    "context": "commands -> logs -> blacklistCategory -> blacklisted -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistCategory.blacklisted.description",
+    "source_string": "The category has been blacklisted from logs.",
+    "translation": "The category has been blacklisted from logs.",
+    "context": "commands -> logs -> blacklistCategory -> blacklisted -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistCategory.missingChannel.title",
+    "source_string": "Missing Category",
+    "translation": "Missing Category",
+    "context": "commands -> logs -> blacklistCategory -> missingChannel -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistCategory.missingChannel.description",
+    "source_string": "Please specify a category.",
+    "translation": "Please specify a category.",
+    "context": "commands -> logs -> blacklistCategory -> missingChannel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveCategory.missingPermission.title",
+    "source_string": "Missing Permissions",
+    "translation": "Missing Permissions",
+    "context": "commands -> logs -> blacklistRemoveCategory -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveCategory.missingPermission.description",
+    "source_string": "You need the administrator permission to use this command.",
+    "translation": "You need the administrator permission to use this command.",
+    "context": "commands -> logs -> blacklistRemoveCategory -> missingPermission -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveCategory.notBlacklisted.title",
+    "source_string": "Not Blacklisted",
+    "translation": "Not Blacklisted",
+    "context": "commands -> logs -> blacklistRemoveCategory -> notBlacklisted -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveCategory.notBlacklisted.description",
+    "source_string": "This category is not blacklisted.",
+    "translation": "This category is not blacklisted.",
+    "context": "commands -> logs -> blacklistRemoveCategory -> notBlacklisted -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveCategory.success.title",
+    "source_string": "Removed",
+    "translation": "Removed",
+    "context": "commands -> logs -> blacklistRemoveCategory -> success -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveCategory.success.description",
+    "source_string": "The category has been removed from the log blacklist.",
+    "translation": "The category has been removed from the log blacklist.",
+    "context": "commands -> logs -> blacklistRemoveCategory -> success -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveCategory.missingChannel.title",
+    "source_string": "Missing Category",
+    "translation": "Missing Category",
+    "context": "commands -> logs -> blacklistRemoveCategory -> missingChannel -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistRemoveCategory.missingChannel.description",
+    "source_string": "Please specify a category.",
+    "translation": "Please specify a category.",
+    "context": "commands -> logs -> blacklistRemoveCategory -> missingChannel -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListCategory.missingPermission.title",
+    "source_string": "Missing Permissions",
+    "translation": "Missing Permissions",
+    "context": "commands -> logs -> blacklistListCategory -> missingPermission -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListCategory.missingPermission.description",
+    "source_string": "You need the administrator permission to use this command.",
+    "translation": "You need the administrator permission to use this command.",
+    "context": "commands -> logs -> blacklistListCategory -> missingPermission -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListCategory.title",
+    "source_string": "Blacklisted Categories",
+    "translation": "Blacklisted Categories",
+    "context": "commands -> logs -> blacklistListCategory -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListCategory.addCategory.placeholder",
+    "source_string": "Select a category to add to the blacklist",
+    "translation": "Select a category to add to the blacklist",
+    "context": "commands -> logs -> blacklistListCategory -> addCategory -> placeholder",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListCategory.noBlacklistedCategories",
+    "source_string": "No categories are blacklisted.",
+    "translation": "No categories are blacklisted.",
+    "context": "commands -> logs -> blacklistListCategory -> noBlacklistedCategories",
     "labels": "unassigned",
     "max_length": null
   },

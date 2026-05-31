@@ -5,6 +5,8 @@ services:
     image: ghcr.io/tanjunbot/new_tanjun:latest
     container_name: tanjunbot
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=Europe/Berlin

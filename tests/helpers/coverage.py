@@ -8,7 +8,7 @@ from typing import Any
 def assert_callable_covers(obj: Any, method_name: str) -> Callable[..., Any]:
     fn = getattr(obj, method_name)
     assert callable(fn), f"{method_name} is not callable"
-    return fn
+    return fn  # type: ignore[no-any-return]
 
 
 def get_uncovered_functions(module: Any, covered: set[str]) -> list[str]:

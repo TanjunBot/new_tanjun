@@ -143,7 +143,11 @@ async def test_init_database_pool_success():
 
 @pytest.mark.asyncio
 async def test_init_database_pool_failure():
-    with patch("asyncmy.create_pool", new=AsyncMock(side_effect=OSError("db down"))), pytest.raises(OSError):
+    with (
+        patch.object(main_mod, "database_connect_max_retries", 1),
+        patch("asyncmy.create_pool", new=AsyncMock(side_effect=OSError("db down"))),
+        pytest.raises(OSError),
+    ):
         await main_mod._init_database_pool()
 
 

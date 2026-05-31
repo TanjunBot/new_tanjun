@@ -41,28 +41,28 @@ class MockRole:
         if isinstance(other, MockRole):
             return self.position >= other.position
         if hasattr(other, "position"):
-            return self.position >= other.position  # type: ignore[union-attr]
+            return self.position >= other.position  # type: ignore[no-any-return]
         return NotImplemented
 
     def __le__(self, other: object) -> bool:
         if isinstance(other, MockRole):
             return self.position <= other.position
         if hasattr(other, "position"):
-            return self.position <= other.position  # type: ignore[union-attr]
+            return self.position <= other.position  # type: ignore[no-any-return]
         return NotImplemented
 
     def __gt__(self, other: object) -> bool:
         if isinstance(other, MockRole):
             return self.position > other.position
         if hasattr(other, "position"):
-            return self.position > other.position  # type: ignore[union-attr]
+            return self.position > other.position  # type: ignore[no-any-return]
         return NotImplemented
 
     def __lt__(self, other: object) -> bool:
         if isinstance(other, MockRole):
             return self.position < other.position
         if hasattr(other, "position"):
-            return self.position < other.position  # type: ignore[union-attr]
+            return self.position < other.position  # type: ignore[no-any-return]
         return NotImplemented
 
 
@@ -123,7 +123,7 @@ class _UIButtonDescriptor:
         return await self.callback(*args, **kwargs)
 
 
-def _ui_button(*args: Any, **kwargs: Any):
+def _ui_button(*args: Any, **kwargs: Any) -> Callable[[Any], _UIButtonDescriptor]:
     def decorator(func: Any) -> _UIButtonDescriptor:
         return _UIButtonDescriptor(func, **kwargs)
 
@@ -184,34 +184,34 @@ class MockAttachment:
 def _ensure_discord_types() -> None:
     import discord
 
-    discord.Member = MockMember
-    discord.Guild = MockGuild
-    discord.TextChannel = MockTextChannel
-    discord.Role = MockRole
-    discord.VoiceChannel = MockVoiceChannel
+    discord.Member = MockMember  # type: ignore[misc, assignment]
+    discord.Guild = MockGuild  # type: ignore[misc, assignment]
+    discord.TextChannel = MockTextChannel  # type: ignore[misc, assignment]
+    discord.Role = MockRole  # type: ignore[misc, assignment]
+    discord.VoiceChannel = MockVoiceChannel  # type: ignore[misc, assignment]
     if not hasattr(discord, "abc") or discord.abc is None:
-        discord.abc = MagicMock()
-    discord.abc.GuildChannel = MockGuild
-    discord.Forbidden = Forbidden
-    discord.HTTPException = HTTPException
-    discord.NotFound = NotFound
-    discord.Embed = FakeEmbed
+        discord.abc = MagicMock()  # type: ignore[misc, assignment]
+    discord.abc.GuildChannel = MockGuild  # type: ignore[misc, assignment]
+    discord.Forbidden = Forbidden  # type: ignore[misc, assignment]
+    discord.HTTPException = HTTPException  # type: ignore[misc, assignment]
+    discord.NotFound = NotFound  # type: ignore[misc, assignment]
+    discord.Embed = FakeEmbed  # type: ignore[misc, assignment]
     if not hasattr(discord, "utils") or discord.utils is None:
-        discord.utils = MagicMock()
-    discord.utils.utcnow = lambda: datetime.now(UTC)
-    discord.utils.get = _mock_discord_get
+        discord.utils = MagicMock()  # type: ignore[misc, assignment]
+    discord.utils.utcnow = lambda: datetime.now(UTC)  # type: ignore[misc, assignment]
+    discord.utils.get = _mock_discord_get  # type: ignore[misc, assignment]
     if not hasattr(discord, "ui") or discord.ui is None:
-        discord.ui = MagicMock()
-    discord.ui.View = MockView
-    discord.ui.Modal = MockModal
-    discord.ui.button = _ui_button
-    discord.ui.TextInput = _ui_item(type("TextInput", (), {}))
-    discord.ui.RoleSelect = _ui_item(type("RoleSelect", (), {}))
-    discord.ui.UserSelect = _ui_item(type("UserSelect", (), {}))
-    discord.ui.Button = _ui_item(type("Button", (), {}))
-    discord.Attachment = MockAttachment
-    discord.Color = MockColor
-    discord.Thread = type("Thread", (), {})
+        discord.ui = MagicMock()  # type: ignore[misc, assignment]
+    discord.ui.View = MockView  # type: ignore[misc, assignment]
+    discord.ui.Modal = MockModal  # type: ignore[misc, assignment]
+    discord.ui.button = _ui_button  # type: ignore[misc, assignment]
+    discord.ui.TextInput = _ui_item(type("TextInput", (), {}))  # type: ignore[misc, assignment]
+    discord.ui.RoleSelect = _ui_item(type("RoleSelect", (), {}))  # type: ignore[misc, assignment]
+    discord.ui.UserSelect = _ui_item(type("UserSelect", (), {}))  # type: ignore[misc, assignment]
+    discord.ui.Button = _ui_item(type("Button", (), {}))  # type: ignore[misc, assignment]
+    discord.Attachment = MockAttachment  # type: ignore[misc, assignment]
+    discord.Color = MockColor  # type: ignore[misc, assignment]
+    discord.Thread = type("Thread", (), {})  # type: ignore[misc, assignment]
 
 
 _ensure_discord_types()
@@ -301,7 +301,7 @@ def make_command_info(
     reply: AsyncMock | None = None,
     client: MagicMock | None = None,
     **kwargs: Any,
-) -> MagicMock:
+) -> CommandInfo:
     from utility import CommandInfo
 
     user = user or make_member()

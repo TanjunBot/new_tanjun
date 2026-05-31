@@ -71,6 +71,8 @@ class LocalizerService:
             return "en"
         if raw.startswith("de"):
             return "de"
+        if raw.startswith("ko"):
+            return "ko"
         return raw
 
     @staticmethod
