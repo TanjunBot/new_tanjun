@@ -186,7 +186,7 @@ class TestNormalizeLocale:
         assert service._normalize_locale("en") == "en"
 
     def test_str_unknown(self, service: LocalizerService):
-        assert service._normalize_locale("fr") == "fr"
+        assert service._normalize_locale("fr") == "en"
 
 
 # ===================================================================
@@ -552,8 +552,9 @@ class TestTanjunTranslator:
             loop = asyncio.new_event_loop()
             r = loop.run_until_complete(t.translate(s, unsupported_locale, MagicMock()))
             loop.close()
-            # '_normalize_locale("fr")' returns "fr", which has no locale file,
-            # so _load_sync falls back to English -> "Operation successful."
+            # '_normalize_locale("fr")' now returns "en" because unknown locales
+            # are silently mapped to English to avoid creating spam "missing
+            # localization" GitHub issues.  The English file is loaded directly.
             assert r == "Operation successful."
         finally:
             restore()

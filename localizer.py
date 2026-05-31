@@ -65,7 +65,12 @@ class LocalizerService:
 
     @staticmethod
     def _normalize_locale(locale: discord.Locale | str) -> str:
-        """Normalize a locale value to a short identifier (e.g. ``de``, ``en``)."""
+        """Normalize a locale value to a short identifier (e.g. ``de``, ``en``).
+
+        Unsupported Discord locales (e.g. ``ja``, ``zh-TW``, ``es-419``) are
+        silently mapped to ``"en"`` to avoid creating spam "missing localization"
+        GitHub issues for languages that the bot does not ship locale files for.
+        """
         raw = str(locale.value if isinstance(locale, discord.Locale) else locale)
         if raw in ("en", "en-US", "en-GB"):
             return "en"
@@ -73,7 +78,8 @@ class LocalizerService:
             return "de"
         if raw.startswith("ko"):
             return "ko"
-        return raw
+        # Any other unknown or unsupported locale falls back to English
+        return "en"
 
     @staticmethod
     def _validate_json(data: object) -> list[TranslationEntry] | None:
