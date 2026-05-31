@@ -75,6 +75,16 @@ class LocalizerService:
             return "ko"
         if raw.startswith("da"):
             return "da"
+        if raw.startswith("hr"):
+            return "hr"
+        if raw.startswith("bg"):
+            return "bg"
+        if raw.startswith("it"):
+            return "it"
+        if raw.startswith("cs"):
+            return "cs"
+        if raw in ("zh-CN", "zh-TW", "zh-Hans", "zh-Hant"):
+            return "en"
         return raw
 
     @staticmethod
