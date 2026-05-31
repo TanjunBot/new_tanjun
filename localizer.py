@@ -83,6 +83,7 @@ class LocalizerService:
         if raw.startswith("ja") or raw == "jp":
         if raw.startswith("id"):
         if raw in ("es", "es-ES", "es-419"):
+        if raw.startswith("hu"):
             return "en"
         if raw.startswith("de"):
             return "de"
