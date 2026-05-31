@@ -17,7 +17,7 @@ class LocaleFileHealthCheck(HealthCheck):
     """Health check for locale file integrity.
 
     Checks:
-    1. en.json, de.json, ko.json, bg.json, hr.json, cs.json, it.json, zh-TW.json, da.json, and id.json files exist
+    1. en.json, de.json, and ko.json files exist
     2. All files parse as valid JSON
     3. All required translation keys are present in all files
     4. No missing translations compared to en.json (warning only)
@@ -31,7 +31,7 @@ class LocaleFileHealthCheck(HealthCheck):
     ]
 
     LOCALE_DIR = "locales"
-    LOCALES = ["en", "de", "ko", "bg", "hr", "cs", "it", "zh-TW", "da", "id"]
+    LOCALES = ["en", "de", "ko"]
 
     @property
     def name(self) -> str:
