@@ -190,6 +190,8 @@ class RoleCommands(discord.app_commands.Group):
         await removeroleCommand(command_info=command_info, user=user, role=role)
         return
 
+
+class RoleManageCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_createrole_name"),
         description=app_commands.locale_str("admin_createrole_description"),
@@ -358,6 +360,7 @@ class RoleCommands(discord.app_commands.Group):
             copy_members=copymembers.value == "true",
         )
         return
+
 
 
 class ReportCommands(discord.app_commands.Group):
@@ -580,7 +583,7 @@ class JoinToCreateCommands(discord.app_commands.Group):
         return
 
 
-class AdministrationCommands(discord.app_commands.Group):
+class AdminModerationCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_kick_name"),
         description=app_commands.locale_str("admin_kick_description"),
@@ -741,6 +744,38 @@ class AdministrationCommands(discord.app_commands.Group):
         return
 
     @app_commands.command(
+        name=app_commands.locale_str("admin_nickname_name"),
+        description=app_commands.locale_str("admin_nickname_description"),
+    )
+    @app_commands.describe(
+        user=app_commands.locale_str("admin_nickname_params_member_description"),
+        nickname=app_commands.locale_str("admin_nickname_params_nickname_description"),
+    )
+    async def nickname(  # type: ignore[no-untyped-def]
+        self,
+        interaction: discord.Interaction,
+        user: discord.Member,
+        nickname: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
+    ) -> None:
+        await interaction.response.defer()  # type: ignore[name-defined]
+        command_info = utility.CommandInfo(
+            user=interaction.user,  # type: ignore[name-defined]
+            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
+            guild=interaction.guild,  # type: ignore[name-defined]
+            command=interaction.command,  # type: ignore[name-defined]
+            locale=interaction.locale,  # type: ignore[name-defined]
+            message=interaction.message,  # type: ignore[name-defined]
+            permissions=interaction.permissions,  # type: ignore[name-defined]
+            reply=interaction.followup.send,  # type: ignore[name-defined]
+            client=interaction.client,  # type: ignore[name-defined]
+        )
+
+        await changeNicknameCommand(command_info=command_info, member=user, nickname=nickname)
+        return
+
+
+class AdminPurgeCommands(discord.app_commands.Group):
+    @app_commands.command(
         name=app_commands.locale_str("admin_purge_name"),
         description=app_commands.locale_str("admin_purge_description"),
     )
@@ -825,36 +860,8 @@ class AdministrationCommands(discord.app_commands.Group):
         )
         return
 
-    @app_commands.command(
-        name=app_commands.locale_str("admin_nickname_name"),
-        description=app_commands.locale_str("admin_nickname_description"),
-    )
-    @app_commands.describe(
-        user=app_commands.locale_str("admin_nickname_params_member_description"),
-        nickname=app_commands.locale_str("admin_nickname_params_nickname_description"),
-    )
-    async def nickname(  # type: ignore[no-untyped-def]
-        self,
-        interaction: discord.Interaction,
-        user: discord.Member,
-        nickname: app_commands.Range[str, 0, 100] = None,  # type: ignore[assignment]
-    ) -> None:
-        await interaction.response.defer()  # type: ignore[name-defined]
-        command_info = utility.CommandInfo(
-            user=interaction.user,  # type: ignore[name-defined]
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
-            guild=interaction.guild,  # type: ignore[name-defined]
-            command=interaction.command,  # type: ignore[name-defined]
-            locale=interaction.locale,  # type: ignore[name-defined]
-            message=interaction.message,  # type: ignore[name-defined]
-            permissions=interaction.permissions,  # type: ignore[name-defined]
-            reply=interaction.followup.send,  # type: ignore[name-defined]
-            client=interaction.client,  # type: ignore[name-defined]
-        )
 
-        await changeNicknameCommand(command_info=command_info, member=user, nickname=nickname)
-        return
-
+class AdminChannelCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_slowmode_name"),
         description=app_commands.locale_str("admin_slowmode_description"),
@@ -960,6 +967,8 @@ class AdministrationCommands(discord.app_commands.Group):
         await nukeChannelCommand(command_info=command_info, channel=channel)
         return
 
+
+class AdminMessagingCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_say_name"),
         description=app_commands.locale_str("admin_say_description"),
@@ -1026,6 +1035,8 @@ class AdministrationCommands(discord.app_commands.Group):
         await createEmbedCommand(command_info=command_info, channel=channel, title=title)
         return
 
+
+class AdminEmojiCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_createemoji_name"),
         description=app_commands.locale_str("admin_createemoji_description"),
@@ -1070,6 +1081,54 @@ class AdministrationCommands(discord.app_commands.Group):
         )
 
     @app_commands.command(
+        name=app_commands.locale_str("admin_copyemoji_name"),
+        description=app_commands.locale_str("admin_copyemoji_description"),
+    )
+    @app_commands.describe(
+        emoji=app_commands.locale_str("admin_copyemoji_params_emoji_description"),
+    )
+    async def copy_emoji(self, interaction: discord.Interaction, emoji: str) -> None:
+        await interaction.response.defer()
+        command_info = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
+        )
+        await copyEmojiCommand(command_info=command_info, emoji=emoji)
+        return
+
+    @app_commands.command(
+        name=app_commands.locale_str("admin_copy7tv_name"),
+        description=app_commands.locale_str("admin_copy7tv_description"),
+    )
+    @app_commands.describe(
+        twitch_username=app_commands.locale_str("admin_copy7tv_params_twitch_username_description"),
+    )
+    async def copy_7tv(self, interaction: discord.Interaction, twitch_username: str) -> None:
+        await interaction.response.defer()
+        command_info = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
+        )
+        await copy7tvEmoteCommand(command_info=command_info, twitch_username=twitch_username)
+        return
+
+
+
+    @app_commands.command(
         name=app_commands.locale_str("admin_boosterrole_name"),
         description=app_commands.locale_str("admin_boosterrole_description"),
     )
@@ -1091,6 +1150,8 @@ class AdministrationCommands(discord.app_commands.Group):
         )
         await CreateBoosterRoleCommand(command_info=command_info, role=role)
 
+
+class AdminSetupCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_createticket_name"),
         description=app_commands.locale_str("admin_createticket_description"),
@@ -1140,6 +1201,8 @@ class AdministrationCommands(discord.app_commands.Group):
         )
         return
 
+
+class AdminLocaleCommands(discord.app_commands.Group):
     @app_commands.command(
         name=app_commands.locale_str("admin_setlocale_name"),
         description=app_commands.locale_str("admin_setlocale_description"),
@@ -1256,51 +1319,7 @@ class AdministrationCommands(discord.app_commands.Group):
         await setLocaleCommand(command_info=command_info, locale=locale)
         return
 
-    @app_commands.command(
-        name=app_commands.locale_str("admin_copyemoji_name"),
-        description=app_commands.locale_str("admin_copyemoji_description"),
-    )
-    @app_commands.describe(
-        emoji=app_commands.locale_str("admin_copyemoji_params_emoji_description"),
-    )
-    async def copy_emoji(self, interaction: discord.Interaction, emoji: str) -> None:
-        await interaction.response.defer()
-        command_info = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,  # type: ignore[arg-type]
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-        await copyEmojiCommand(command_info=command_info, emoji=emoji)
-        return
 
-    @app_commands.command(
-        name=app_commands.locale_str("admin_copy7tv_name"),
-        description=app_commands.locale_str("admin_copy7tv_description"),
-    )
-    @app_commands.describe(
-        twitch_username=app_commands.locale_str("admin_copy7tv_params_twitch_username_description"),
-    )
-    async def copy_7tv(self, interaction: discord.Interaction, twitch_username: str) -> None:
-        await interaction.response.defer()
-        command_info = utility.CommandInfo(
-            user=interaction.user,
-            channel=cast(discord.abc.GuildChannel, interaction.channel),
-            guild=interaction.guild,
-            command=interaction.command,
-            locale=interaction.locale,
-            message=interaction.message,
-            permissions=interaction.permissions,
-            reply=interaction.followup.send,
-            client=interaction.client,
-        )
-        await copy7tvEmoteCommand(command_info=command_info, twitch_username=twitch_username)
-        return
 
 
 class AdminCog(commands.Cog):
@@ -1309,36 +1328,66 @@ class AdminCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        admincmds = AdministrationCommands(
-            name=app_commands.locale_str("admin_name"),
-            description=app_commands.locale_str("admin_description"),
-        )
-        warncmds = WarnCommands(
-            name=app_commands.locale_str("admin_warn_name"),
-            description=app_commands.locale_str("admin_warn_description"),
-        )
-        admincmds.add_command(warncmds)
-        rolecmds = RoleCommands(
-            name=app_commands.locale_str("admin_role_name"),
-            description=app_commands.locale_str("admin_role_description"),
-        )
-        admincmds.add_command(rolecmds)
-        reportcmds = ReportCommands(
-            name=app_commands.locale_str("admin_report_name"),
-            description=app_commands.locale_str("admin_report_description"),
-        )
-        admincmds.add_command(reportcmds)
-        trigger_messages_cmds = TriggerMessagesCommands(
-            name=app_commands.locale_str("admin_triggermessages_name"),
-            description=app_commands.locale_str("admin_triggermessages_description"),
-        )
-        admincmds.add_command(trigger_messages_cmds)
-        join_to_create_cmds = JoinToCreateCommands(
-            name=app_commands.locale_str("admin_jointocreate_name"),
-            description=app_commands.locale_str("admin_jointocreate_description"),
-        )
-        admincmds.add_command(join_to_create_cmds)
-        self.bot.tree.add_command(admincmds)
+        top_level_groups = [
+            WarnCommands(
+                name=app_commands.locale_str("admin_warn_name"),
+                description=app_commands.locale_str("admin_warn_description"),
+            ),
+            RoleCommands(
+                name=app_commands.locale_str("admin_role_name"),
+                description=app_commands.locale_str("admin_role_description"),
+            ),
+            RoleManageCommands(
+                name=app_commands.locale_str("admin_rolemanage_name"),
+                description=app_commands.locale_str("admin_rolemanage_description"),
+            ),
+            ReportCommands(
+                name=app_commands.locale_str("admin_report_name"),
+                description=app_commands.locale_str("admin_report_description"),
+            ),
+            TriggerMessagesCommands(
+                name=app_commands.locale_str("admin_triggermessages_name"),
+                description=app_commands.locale_str("admin_triggermessages_description"),
+            ),
+            JoinToCreateCommands(
+                name=app_commands.locale_str("admin_jointocreate_name"),
+                description=app_commands.locale_str("admin_jointocreate_description"),
+            ),
+            AdminModerationCommands(
+                name=app_commands.locale_str("admin_moderation_name"),
+                description=app_commands.locale_str("admin_moderation_description"),
+            ),
+            AdminPurgeCommands(
+                name=app_commands.locale_str("admin_purgegroup_name"),
+                description=app_commands.locale_str("admin_purgegroup_description"),
+            ),
+            AdminChannelCommands(
+                name=app_commands.locale_str("admin_channels_name"),
+                description=app_commands.locale_str("admin_channels_description"),
+            ),
+            AdminMessagingCommands(
+                name=app_commands.locale_str("admin_messaging_name"),
+                description=app_commands.locale_str("admin_messaging_description"),
+            ),
+            AdminEmojiCommands(
+                name=app_commands.locale_str("admin_emoji_name"),
+                description=app_commands.locale_str("admin_emoji_description"),
+            ),
+            AdminSetupCommands(
+                name=app_commands.locale_str("admin_setup_name"),
+                description=app_commands.locale_str("admin_setup_description"),
+            ),
+            AdminLocaleCommands(
+                name=app_commands.locale_str("admin_localegroup_name"),
+                description=app_commands.locale_str("admin_localegroup_description"),
+            ),
+        ]
+        for group in top_level_groups:
+            self.bot.tree.add_command(group)
+
+
+# Backward-compatible alias for tests that still import the old class name
+AdministrationCommands = AdminModerationCommands
 
 
 async def setup(bot: commands.Bot) -> None:

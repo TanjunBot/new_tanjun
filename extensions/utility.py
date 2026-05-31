@@ -920,7 +920,7 @@ class UtilityCog(commands.Cog):
             name=app_commands.locale_str("utility_scheduledmessage_name"),
             description=app_commands.locale_str("utility_scheduledmessage_description"),
         )
-        utility_cmds.add_command(scheduled_message_cmds)
+        self.bot.tree.add_command(scheduled_message_cmds)
         brawl_stars_cmds = BrawlStarsCommands(
             name=app_commands.locale_str("utility_bs_name"),
             description=app_commands.locale_str("utility_bs_description"),
