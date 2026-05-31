@@ -79,13 +79,12 @@ pytestmark = pytest.mark.asyncio
 def reset_api() -> Iterator[None]:
     set_bot(None)
     db_manager._pool = None
-    from api import _blacklist_cache, _counting_cache, _guild_config_cache, _log_enable_cache, _log_enable_fetch_locks
+    from api import _blacklist_cache, _counting_cache, _guild_config_cache, clear_db_read_caches
 
     _blacklist_cache.clear()
     _guild_config_cache.clear()
     _counting_cache.clear()
-    _log_enable_cache.clear()
-    _log_enable_fetch_locks.clear()
+    clear_db_read_caches()
     yield
     set_bot(None)
     db_manager._pool = None

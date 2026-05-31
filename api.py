@@ -48,19 +48,29 @@ from models import (
 # ── Log blacklist (delegated to LogBlacklistRepository) ─────────────────────────────
 from repositories.log_blacklist_repository import LogBlacklistType, log_blacklist_repo
 from utility import get_level_for_xp_async, get_xp_for_level_async
-from utils.cache import TTLCache
+from utils.cache import StampedeProtectedCache, TTLCache
+
+
+def _log_blacklist_cache_key(guild_id: str | int, blacklist_type: LogBlacklistType) -> tuple[str, str]:
+    return (str(guild_id), blacklist_type.name)
 
 
 async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
     await log_blacklist_repo.add(guild_id, entity_id, blacklist_type)
+    _log_blacklist_cache.invalidate(_log_blacklist_cache_key(guild_id, blacklist_type))
 
 
 async def remove_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
     await log_blacklist_repo.remove(guild_id, entity_id, blacklist_type)
+    _log_blacklist_cache.invalidate(_log_blacklist_cache_key(guild_id, blacklist_type))
 
 
 async def get_log_blacklist(guild_id: str, blacklist_type: LogBlacklistType) -> list[str]:
-    return await log_blacklist_repo.get_all(guild_id, blacklist_type)
+    key = _log_blacklist_cache_key(guild_id, blacklist_type)
+    return await _log_blacklist_cache.get_or_fetch(
+        key,
+        lambda: log_blacklist_repo.get_all(guild_id, blacklist_type),
+    )
 
 
 async def is_log_entity_blacklisted(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> str | None:
@@ -317,8 +327,16 @@ async def _execute_with_retry(
 
 _blacklist_cache: TTLCache[str, dict[str, list[BlacklistEntryModel]]] = TTLCache(ttl=30)
 _guild_config_cache: TTLCache[str, dict[str, Any]] = TTLCache(ttl=300, maxsize=2000)
-_log_enable_cache: TTLCache[str, LogEnableModel] = TTLCache(ttl=60, maxsize=5000)
-_log_enable_fetch_locks: dict[str, asyncio.Lock] = {}
+_log_enable_cache: StampedeProtectedCache[str, LogEnableModel] = StampedeProtectedCache(ttl=60, maxsize=5000)
+_log_blacklist_cache: StampedeProtectedCache[tuple[str, str], list[str]] = StampedeProtectedCache(ttl=30, maxsize=5000)
+_log_channel_cache: StampedeProtectedCache[str, str | None] = StampedeProtectedCache(ttl=60, maxsize=5000)
+
+
+def clear_db_read_caches() -> None:
+    """Reset hot-path read caches (for tests and maintenance)."""
+    _log_enable_cache.clear()
+    _log_blacklist_cache.clear()
+    _log_channel_cache.clear()
 # In-memory cache for XP cooldowns: (guild_id, user_id) -> last_xp_gain_timestamp
 # Eliminates DB queries entirely when user is on cooldown
 _last_xp_gain_cache: dict[tuple[str, str], float] = {}
@@ -2721,21 +2739,28 @@ async def set_log_channel(guild_id: str, channel_id: str) -> None:
     if not existing:
         query = "REPLACE INTO log_enables (guild_id) VALUES (%s)"
         params = (guild_id,)
-        _log_enable_cache.delete(str(guild_id))
+        _log_enable_cache.invalidate(str(guild_id))
     await execute_action(query, params)
+    _log_channel_cache.invalidate(str(guild_id))
 
 
 async def remove_log_channel(guild_id: str) -> None:
     query = "DELETE FROM log_channel WHERE guild_id = %s"
     params = (guild_id,)
     await execute_action(query, params)
+    _log_channel_cache.invalidate(str(guild_id))
 
 
-async def get_log_channel(guild_id: str) -> str | None:
+async def _fetch_log_channel_from_db(guild_id: str) -> str | None:
     query = "SELECT channel_id FROM log_channel WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
+
+
+async def get_log_channel(guild_id: str) -> str | None:
+    gid = str(guild_id)
+    return await _log_channel_cache.get_or_fetch(gid, lambda: _fetch_log_channel_from_db(gid))
 
 
 _LOG_ENABLE_COLUMNS = frozenset(
@@ -2787,7 +2812,7 @@ async def set_log_enable(guild_id: str, **kwargs: Any) -> None:
     query = query.rstrip(", ") + end_query
 
     await execute_action(query, tuple(params))
-    _log_enable_cache.delete(str(guild_id))
+    _log_enable_cache.invalidate(str(guild_id))
 
 
 def _default_log_enable(guild_id: str | int) -> LogEnableModel:
@@ -2836,27 +2861,9 @@ async def _fetch_log_enable_from_db(guild_id: str) -> LogEnableModel:
     return _default_log_enable(guild_id)
 
 
-def _log_enable_lock(guild_id: str) -> asyncio.Lock:
-    lock = _log_enable_fetch_locks.get(guild_id)
-    if lock is None:
-        lock = asyncio.Lock()
-        _log_enable_fetch_locks[guild_id] = lock
-    return lock
-
-
 async def get_log_enable(guild_id: str | int) -> LogEnableModel:
     gid = str(guild_id)
-    cached = _log_enable_cache.get(gid)
-    if cached is not None:
-        return cached
-
-    async with _log_enable_lock(gid):
-        cached = _log_enable_cache.get(gid)
-        if cached is not None:
-            return cached
-        model = await _fetch_log_enable_from_db(gid)
-        _log_enable_cache.set(gid, model)
-        return model
+    return await _log_enable_cache.get_or_fetch(gid, lambda: _fetch_log_enable_from_db(gid))
 
 
 async def add_scheduled_message(
