@@ -216,13 +216,13 @@ class MathService:
         if op in "+-*/^":
             op2 = self._evaluate_stack(s)
             op1 = self._evaluate_stack(s)
-            return self._opn[op](op1, op2)
+            return float(self._opn[op](op1, op2))
         if op == "PI":
             return math.pi
         if op == "E":
             return math.e
         if op in self._fn:
-            return self._fn[op](self._evaluate_stack(s))
+            return float(self._fn[op](self._evaluate_stack(s)))
         if op in self._constants:
             return self._constants[op]
         if op[0].isalpha():

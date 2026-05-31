@@ -31505,7 +31505,7 @@
   },
   {
     "identifier": "commands.admin.feedback.added",
-    "source_string": "Feedback wurde hinzugefuegt. Vielen dank!",
+    "source_string": "Feedback wurde hinzugefügt. Vielen Dank!",
     "translation": "Feedback wurde hinzugefügt. Vielen Dank!",
     "context": "Message after adding feedback",
     "labels": "unassigned",
@@ -31529,8 +31529,8 @@
   },
   {
     "identifier": "commands.admin.update_text.confirm",
-    "source_string": "Willst du wirklich die Update-Text an alle Admins senden? (y/n)",
-    "translation": "Willst du wirklich die Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
+    "source_string": "Willst du wirklich den Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
+    "translation": "Willst du wirklich den Update-Text an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
     "context": "Confirmation prompt before sending update to all admins",
     "labels": "unassigned",
     "max_length": null
@@ -31593,15 +31593,15 @@
   },
   {
     "identifier": "commands.admin.demo_message.confirm",
-    "source_string": "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)",
-    "translation": "Willst du wirklich die Demo Dankes Nachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
+    "source_string": "Willst du wirklich die Demo-Dankesnachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
+    "translation": "Willst du wirklich die Demo-Dankesnachricht an alle Admins senden? (y/n)\nWenn du das startest kannst du das nicht mehr abbrechen! Es wird eine Nachricht an ganz viele Menschen gesendet!",
     "context": "Confirmation prompt before sending demo thank you message to all admins",
     "labels": "unassigned",
     "max_length": null
   },
   {
     "identifier": "commands.admin.database_sync.no_attachment",
-    "source_string": "Bitte stelle einen direkten Link oder einen Dateianhang fuer den SQL Dump bereit.",
+    "source_string": "Bitte stelle einen direkten Link oder einen Dateianhang für den SQL Dump bereit.\n**Tipp:** Wenn die Datei für Discord zu groß ist (mehr als 25MB), kannst du sie z.B. bei **[Catbox.moe](https://catbox.moe)** hochladen (unterstützt bis zu 200MB, direkter Download-Link) oder in der Kommandozeile über Transfer.sh senden:\n`curl --upload-file ./dein-dump.sql https://transfer.sh/dump.sql`",
     "translation": "Bitte stelle einen direkten Link oder einen Dateianhang für den SQL Dump bereit.\n**Tipp:** Wenn die Datei für Discord zu groß ist (mehr als 25MB), kannst du sie z.B. bei **[Catbox.moe](https://catbox.moe)** hochladen (unterstützt bis zu 200MB, direkter Download-Link) oder in der Kommandozeile über Transfer.sh senden:\n`curl --upload-file ./dein-dump.sql https://transfer.sh/dump.sql`",
     "context": "Message when no attachment or URL is provided for database_sync",
     "labels": "unassigned",
@@ -31633,7 +31633,7 @@
   },
   {
     "identifier": "commands.admin.database_sync.analyzing",
-    "source_string": "Analysiere SQL Dump fuer Schemata...",
+    "source_string": "Analysiere SQL Dump für Schemata...",
     "translation": "Analysiere SQL Dump für Schemata...",
     "context": "Status message while analyzing SQL dump schemas",
     "labels": "unassigned",
@@ -31641,7 +31641,7 @@
   },
   {
     "identifier": "commands.admin.database_sync.schema_prompt",
-    "source_string": "Ich habe folgende Schemata im Dump gefunden:",
+    "source_string": "Ich habe folgende Schemata im Dump gefunden:\n${schema_list}\n\n**Welches Schema soll geladen werden?** Bitte tippe den exakten Namen des Schemas in den Chat (oder `abbrechen` um abzubrechen).",
     "translation": "Ich habe folgende Schemata im Dump gefunden:\n${schema_list}\n\n**Welches Schema soll geladen werden?** Bitte tippe den exakten Namen des Schemas in den Chat (oder `abbrechen` um abzubrechen).",
     "context": "Prompt asking which schema to import",
     "labels": "unassigned",
@@ -31689,7 +31689,7 @@
   },
   {
     "identifier": "commands.admin.database_sync.preparing_import",
-    "source_string": "Bereite Import fuer Schema '${schema}' vor und erstelle Backup...",
+    "source_string": "Bereite Import für Schema '${schema}' vor und erstelle Backup...",
     "translation": "Bereite Import für Schema '${schema}' vor und erstelle Backup...",
     "context": "Status message before starting database import",
     "labels": "unassigned",
@@ -31705,7 +31705,7 @@
   },
   {
     "identifier": "commands.admin.database_sync.backup_error",
-    "source_string": "Fehler beim Erstellen des Backups: ${error}",
+    "source_string": "Fehler beim Erstellen des Backups: ${error}\nAbbruch aus Sicherheitsgründen.",
     "translation": "Fehler beim Erstellen des Backups: ${error}\nAbbruch aus Sicherheitsgründen.",
     "context": "Message when backup fails",
     "labels": "unassigned",
@@ -31721,7 +31721,7 @@
   },
   {
     "identifier": "commands.admin.database_sync.importing",
-    "source_string": "Loesche aktuelle Datenbank und importiere neues Schema...",
+    "source_string": "Lösche aktuelle Datenbank (`${schema}`) und importiere neues Schema...",
     "translation": "Lösche aktuelle Datenbank (`${schema}`) und importiere neues Schema...",
     "context": "Status message while importing database",
     "labels": "unassigned",
@@ -31737,7 +31737,7 @@
   },
   {
     "identifier": "commands.admin.database_sync.import_error",
-    "source_string": "Fehler beim Importieren der Datenbank: ${error}",
+    "source_string": "Fehler beim Importieren der Datenbank: ${error}\nBitte überprüfe das Backup-SQL!",
     "translation": "Fehler beim Importieren der Datenbank: ${error}\nBitte überprüfe das Backup-SQL!",
     "context": "Message when database import fails",
     "labels": "unassigned",
@@ -31824,6 +31824,22 @@
     "max_length": null
   },
   {
+    "identifier": "errors.guildOnly.title",
+    "source_string": "Nur in Servern nutzbar",
+    "translation": "Nur in Servern nutzbar",
+    "context": "errors -> guildOnly -> title",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
+    "identifier": "errors.guildOnly.description",
+    "source_string": "Dieser Befehl kann nur in einem Server verwendet werden.",
+    "translation": "Dieser Befehl kann nur in einem Server verwendet werden.",
+    "context": "errors -> guildOnly -> description",
+    "labels": "unassigned",
+    "max_length": null
+  },
+  {
     "identifier": "errors.http_error.title",
     "source_string": "Discord API-Fehler",
     "translation": "Discord API-Fehler",
@@ -31873,7 +31889,7 @@
   },
   {
     "identifier": "errors.permission.title",
-    "source_string": "Permission Denied",
+    "source_string": "Zugriff verweigert",
     "translation": "Zugriff verweigert",
     "context": "Title for permission denied error embeds",
     "labels": "unassigned",
@@ -31881,7 +31897,7 @@
   },
   {
     "identifier": "errors.permission.description",
-    "source_string": "You don't have permission to use this command.",
+    "source_string": "Du hast keine Berechtigung, diesen Befehl zu verwenden.",
     "translation": "Du hast keine Berechtigung, diesen Befehl zu verwenden.",
     "context": "Description for generic permission denied error",
     "labels": "unassigned",
@@ -31889,7 +31905,7 @@
   },
   {
     "identifier": "errors.permission.bot_cannot_send",
-    "source_string": "I don't have permission to send messages in that channel.",
+    "source_string": "Ich habe keine Berechtigung, Nachrichten in diesem Kanal zu senden.",
     "translation": "Ich habe keine Berechtigung, Nachrichten in diesem Kanal zu senden.",
     "context": "Error when bot can't send messages",
     "labels": "unassigned",
@@ -31897,7 +31913,7 @@
   },
   {
     "identifier": "errors.permission.bot_cannot_embed",
-    "source_string": "I don't have permission to send embeds in that channel.",
+    "source_string": "Ich habe keine Berechtigung, Embeds in diesem Kanal zu senden.",
     "translation": "Ich habe keine Berechtigung, Embeds in diesem Kanal zu senden.",
     "context": "Error when bot can't send embeds",
     "labels": "unassigned",
@@ -31905,7 +31921,7 @@
   },
   {
     "identifier": "errors.permission.bot_cannot_read",
-    "source_string": "I don't have permission to read messages in that channel.",
+    "source_string": "Ich habe keine Berechtigung, Nachrichten in diesem Kanal zu lesen.",
     "translation": "Ich habe keine Berechtigung, Nachrichten in diesem Kanal zu lesen.",
     "context": "Error when bot can't read messages",
     "labels": "unassigned",
@@ -31913,7 +31929,7 @@
   },
   {
     "identifier": "errors.permission.bot_cannot_react",
-    "source_string": "I don't have permission to add reactions in that channel.",
+    "source_string": "Ich habe keine Berechtigung, Reaktionen in diesem Kanal hinzuzufügen.",
     "translation": "Ich habe keine Berechtigung, Reaktionen in diesem Kanal hinzuzufügen.",
     "context": "Error when bot can't add reactions",
     "labels": "unassigned",
@@ -31921,7 +31937,7 @@
   },
   {
     "identifier": "errors.permission.bot_needs_manage_roles",
-    "source_string": "I need the \"Manage Roles\" permission to do this.",
+    "source_string": "Ich benötige die \"Rollen verwalten\"-Berechtigung, um dies zu tun.",
     "translation": "Ich benötige die \"Rollen verwalten\"-Berechtigung, um dies zu tun.",
     "context": "Error when bot needs manage roles permission",
     "labels": "unassigned",
@@ -31929,7 +31945,7 @@
   },
   {
     "identifier": "errors.permission.bot_needs_manage_channels",
-    "source_string": "I need the \"Manage Channels\" permission to do this.",
+    "source_string": "Ich benötige die \"Kanäle verwalten\"-Berechtigung, um dies zu tun.",
     "translation": "Ich benötige die \"Kanäle verwalten\"-Berechtigung, um dies zu tun.",
     "context": "Error when bot needs manage channels permission",
     "labels": "unassigned",
@@ -31937,7 +31953,7 @@
   },
   {
     "identifier": "errors.permission.bot_needs_ban",
-    "source_string": "I need the \"Ban Members\" permission to do this.",
+    "source_string": "Ich benötige die \"Mitglieder bannen\"-Berechtigung, um dies zu tun.",
     "translation": "Ich benötige die \"Mitglieder bannen\"-Berechtigung, um dies zu tun.",
     "context": "Error when bot needs ban permission",
     "labels": "unassigned",
@@ -31945,7 +31961,7 @@
   },
   {
     "identifier": "errors.permission.bot_needs_kick",
-    "source_string": "I need the \"Kick Members\" permission to do this.",
+    "source_string": "Ich benötige die \"Mitglieder kicken\"-Berechtigung, um dies zu tun.",
     "translation": "Ich benötige die \"Mitglieder kicken\"-Berechtigung, um dies zu tun.",
     "context": "Error when bot needs kick permission",
     "labels": "unassigned",
@@ -31953,7 +31969,7 @@
   },
   {
     "identifier": "errors.permission.user_needs_manage_messages",
-    "source_string": "You need the \"Manage Messages\" permission to do this.",
+    "source_string": "Du benötigst die \"Nachrichten verwalten\"-Berechtigung, um dies zu tun.",
     "translation": "Du benötigst die \"Nachrichten verwalten\"-Berechtigung, um dies zu tun.",
     "context": "Error when user needs manage messages permission",
     "labels": "unassigned",
@@ -31961,7 +31977,7 @@
   },
   {
     "identifier": "errors.permission.user_needs_administrator",
-    "source_string": "You need Administrator permissions to do this.",
+    "source_string": "Du benötigst Administrator-Berechtigungen, um dies zu tun.",
     "translation": "Du benötigst Administrator-Berechtigungen, um dies zu tun.",
     "context": "Error when user needs admin permission",
     "labels": "unassigned",
@@ -31969,7 +31985,7 @@
   },
   {
     "identifier": "errors.permission.hierarchy",
-    "source_string": "You cannot manage this user/role — they are above you in the role hierarchy.",
+    "source_string": "Du kannst diesen Benutzer/diese Rolle nicht verwalten — sie sind in der Rollenhierarchie über dir.",
     "translation": "Du kannst diesen Benutzer/diese Rolle nicht verwalten — sie sind in der Rollenhierarchie über dir.",
     "context": "Error when target is above user in hierarchy",
     "labels": "unassigned",
@@ -31977,7 +31993,7 @@
   },
   {
     "identifier": "errors.not_found.title",
-    "source_string": "Not Found",
+    "source_string": "Nicht gefunden",
     "translation": "Nicht gefunden",
     "context": "Title for not found error embeds",
     "labels": "unassigned",
@@ -31985,7 +32001,7 @@
   },
   {
     "identifier": "errors.not_found.description",
-    "source_string": "The requested resource was not found.",
+    "source_string": "Die angeforderte Ressource wurde nicht gefunden.",
     "translation": "Die angeforderte Ressource wurde nicht gefunden.",
     "context": "Description for generic not found error",
     "labels": "unassigned",
@@ -31993,7 +32009,7 @@
   },
   {
     "identifier": "errors.not_found.user",
-    "source_string": "Could not find that user.",
+    "source_string": "Dieser Benutzer konnte nicht gefunden werden.",
     "translation": "Dieser Benutzer konnte nicht gefunden werden.",
     "context": "Error when user is not found",
     "labels": "unassigned",
@@ -32001,7 +32017,7 @@
   },
   {
     "identifier": "errors.not_found.channel",
-    "source_string": "Could not find that channel.",
+    "source_string": "Dieser Kanal konnte nicht gefunden werden.",
     "translation": "Dieser Kanal konnte nicht gefunden werden.",
     "context": "Error when channel is not found",
     "labels": "unassigned",
@@ -32009,7 +32025,7 @@
   },
   {
     "identifier": "errors.not_found.role",
-    "source_string": "Could not find that role.",
+    "source_string": "Diese Rolle konnte nicht gefunden werden.",
     "translation": "Diese Rolle konnte nicht gefunden werden.",
     "context": "Error when role is not found",
     "labels": "unassigned",
@@ -32017,7 +32033,7 @@
   },
   {
     "identifier": "errors.not_found.message",
-    "source_string": "Could not find that message — it may have been deleted.",
+    "source_string": "Diese Nachricht konnte nicht gefunden werden — sie wurde möglicherweise gelöscht.",
     "translation": "Diese Nachricht konnte nicht gefunden werden — sie wurde möglicherweise gelöscht.",
     "context": "Error when message is not found",
     "labels": "unassigned",
@@ -32025,7 +32041,7 @@
   },
   {
     "identifier": "errors.not_found.guild",
-    "source_string": "Could not find that server.",
+    "source_string": "Dieser Server konnte nicht gefunden werden.",
     "translation": "Dieser Server konnte nicht gefunden werden.",
     "context": "Error when guild is not found",
     "labels": "unassigned",
@@ -32033,7 +32049,7 @@
   },
   {
     "identifier": "errors.http.title",
-    "source_string": "Discord API Error",
+    "source_string": "Discord API-Fehler",
     "translation": "Discord API-Fehler",
     "context": "Title for Discord HTTP error embeds",
     "labels": "unassigned",
@@ -32041,7 +32057,7 @@
   },
   {
     "identifier": "errors.http.description",
-    "source_string": "Discord returned an error (code $status). Please try again.",
+    "source_string": "Discord hat einen Fehler zurückgegeben (Code $status). Bitte versuche es erneut.",
     "translation": "Discord hat einen Fehler zurückgegeben (Code $status). Bitte versuche es erneut.",
     "context": "Description for HTTP error with status code",
     "labels": "unassigned",
@@ -32049,7 +32065,7 @@
   },
   {
     "identifier": "errors.http.rate_limit",
-    "source_string": "Too many requests! Please wait $retry_after seconds.",
+    "source_string": "Zu viele Anfragen! Bitte warte $retry_after Sekunden.",
     "translation": "Zu viele Anfragen! Bitte warte $retry_after Sekunden.",
     "context": "Error when rate limited by Discord API",
     "labels": "unassigned",
@@ -32057,7 +32073,7 @@
   },
   {
     "identifier": "errors.http.timeout",
-    "source_string": "The request timed out. Discord may be experiencing issues.",
+    "source_string": "Die Anfrage hat das Zeitlimit überschritten. Discord hat möglicherweise Probleme.",
     "translation": "Die Anfrage hat das Zeitlimit überschritten. Discord hat möglicherweise Probleme.",
     "context": "Error when Discord request times out",
     "labels": "unassigned",
@@ -32065,7 +32081,7 @@
   },
   {
     "identifier": "errors.interaction.title",
-    "source_string": "Interaction Expired",
+    "source_string": "Interaktion abgelaufen",
     "translation": "Interaktion abgelaufen",
     "context": "Title for interaction timeout errors",
     "labels": "unassigned",
@@ -32073,7 +32089,7 @@
   },
   {
     "identifier": "errors.interaction.description",
-    "source_string": "This interaction timed out. Please try again.",
+    "source_string": "Diese Interaktion ist abgelaufen. Bitte versuche es erneut.",
     "translation": "Diese Interaktion ist abgelaufen. Bitte versuche es erneut.",
     "context": "Description when interaction times out",
     "labels": "unassigned",
@@ -32081,7 +32097,7 @@
   },
   {
     "identifier": "errors.interaction.already_responded",
-    "source_string": "This button/menu was already used.",
+    "source_string": "Dieser Button/dieses Menü wurde bereits verwendet.",
     "translation": "Dieser Button/dieses Menü wurde bereits verwendet.",
     "context": "Error when interaction was already responded to",
     "labels": "unassigned",
@@ -32089,7 +32105,7 @@
   },
   {
     "identifier": "errors.validation.title",
-    "source_string": "Invalid Input",
+    "source_string": "Ungültige Eingabe",
     "translation": "Ungültige Eingabe",
     "context": "Title for validation error embeds",
     "labels": "unassigned",
@@ -32097,7 +32113,7 @@
   },
   {
     "identifier": "errors.validation.description",
-    "source_string": "The value you provided is not valid.",
+    "source_string": "Der von dir angegebene Wert ist nicht gültig.",
     "translation": "Der von dir angegebene Wert ist nicht gültig.",
     "context": "Description for generic validation error",
     "labels": "unassigned",
@@ -32105,7 +32121,7 @@
   },
   {
     "identifier": "errors.validation.too_long",
-    "source_string": "That input is too long (max $max_length characters).",
+    "source_string": "Diese Eingabe ist zu lang (max. $max_length Zeichen).",
     "translation": "Diese Eingabe ist zu lang (max. $max_length Zeichen).",
     "context": "Error when input exceeds max length",
     "labels": "unassigned",
@@ -32113,7 +32129,7 @@
   },
   {
     "identifier": "errors.validation.too_short",
-    "source_string": "That input is too short (min $min_length characters).",
+    "source_string": "Diese Eingabe ist zu kurz (min. $min_length Zeichen).",
     "translation": "Diese Eingabe ist zu kurz (min. $min_length Zeichen).",
     "context": "Error when input is below min length",
     "labels": "unassigned",
@@ -32121,7 +32137,7 @@
   },
   {
     "identifier": "errors.validation.invalid_number",
-    "source_string": "That is not a valid number.",
+    "source_string": "Das ist keine gültige Zahl.",
     "translation": "Das ist keine gültige Zahl.",
     "context": "Error when input is not a valid number",
     "labels": "unassigned",
@@ -32129,7 +32145,7 @@
   },
   {
     "identifier": "errors.validation.invalid_choice",
-    "source_string": "That is not a valid option.",
+    "source_string": "Das ist keine gültige Option.",
     "translation": "Das ist keine gültige Option.",
     "context": "Error when input is not a valid choice",
     "labels": "unassigned",
@@ -32137,7 +32153,7 @@
   },
   {
     "identifier": "errors.unexpected.bug_report",
-    "source_string": "If this keeps happening, please report it to the bot developers.",
+    "source_string": "Wenn dies weiterhin passiert, melde es bitte den Bot-Entwicklern.",
     "translation": "Wenn dies weiterhin passiert, melde es bitte den Bot-Entwicklern.",
     "context": "Bug report prompt for unexpected errors",
     "labels": "unassigned",
@@ -32713,7 +32729,7 @@
   },
   {
     "identifier": "logs_blacklistv_name",
-    "source_string": "voice-blacklist",
+    "source_string": "Voice-Blacklist",
     "translation": "Voice-Blacklist",
     "context": "logs -> blacklist -> voice -> name",
     "labels": "unassigned",
@@ -32721,7 +32737,7 @@
   },
   {
     "identifier": "commands.games.memory.title",
-    "source_string": "Memory Game",
+    "source_string": "🧠 Memory-Spiel",
     "translation": "🧠 Memory-Spiel",
     "context": "commands -> games -> memory -> title",
     "labels": "unassigned",
@@ -32729,7 +32745,7 @@
   },
   {
     "identifier": "commands.games.memory.rules_intro",
-    "source_string": "Find all matching pairs of cards! Click on two cards to reveal them. If they match, they stay open.",
+    "source_string": "Finde alle passenden Kartenpaare! Klicke auf zwei Karten, um sie aufzudecken. Wenn sie übereinstimmen, bleiben sie offen.",
     "translation": "Finde alle passenden Kartenpaare! Klicke auf zwei Karten, um sie aufzudecken. Wenn sie übereinstimmen, bleiben sie offen.",
     "context": "commands -> games -> memory -> rules_intro",
     "labels": "unassigned",
@@ -32737,7 +32753,7 @@
   },
   {
     "identifier": "commands.games.memory.turns",
-    "source_string": "Turns",
+    "source_string": "Züge",
     "translation": "Züge",
     "context": "commands -> games -> memory -> turns",
     "labels": "unassigned",
@@ -32745,7 +32761,7 @@
   },
   {
     "identifier": "commands.games.memory.pairs_found",
-    "source_string": "Pairs Found",
+    "source_string": "Paare gefunden",
     "translation": "Paare gefunden",
     "context": "commands -> games -> memory -> pairs_found",
     "labels": "unassigned",
@@ -32753,7 +32769,7 @@
   },
   {
     "identifier": "commands.games.memory.player",
-    "source_string": "Player",
+    "source_string": "Spieler",
     "translation": "Spieler",
     "context": "commands -> games -> memory -> player",
     "labels": "unassigned",
@@ -32761,7 +32777,7 @@
   },
   {
     "identifier": "commands.games.memory.select_first",
-    "source_string": "Select the first card!",
+    "source_string": "Wähle die erste Karte!",
     "translation": "Wähle die erste Karte!",
     "context": "commands -> games -> memory -> select_first",
     "labels": "unassigned",
@@ -32769,7 +32785,7 @@
   },
   {
     "identifier": "commands.games.memory.select_second",
-    "source_string": "Now select the second card!",
+    "source_string": "Wähle jetzt die zweite Karte!",
     "translation": "Wähle jetzt die zweite Karte!",
     "context": "commands -> games -> memory -> select_second",
     "labels": "unassigned",
@@ -32777,7 +32793,7 @@
   },
   {
     "identifier": "commands.games.memory.match",
-    "source_string": "Match found!",
+    "source_string": "Paar gefunden!",
     "translation": "Paar gefunden!",
     "context": "commands -> games -> memory -> match",
     "labels": "unassigned",
@@ -32785,7 +32801,7 @@
   },
   {
     "identifier": "commands.games.memory.no_match",
-    "source_string": "Not a match! Try again.",
+    "source_string": "Kein Paar! Versuche es nochmal.",
     "translation": "Kein Paar! Versuche es nochmal.",
     "context": "commands -> games -> memory -> no_match",
     "labels": "unassigned",
@@ -32793,7 +32809,7 @@
   },
   {
     "identifier": "commands.games.memory.win",
-    "source_string": "You won! All pairs found!",
+    "source_string": "Gewonnen! Alle Paare gefunden!",
     "translation": "Gewonnen! Alle Paare gefunden!",
     "context": "commands -> games -> memory -> win",
     "labels": "unassigned",
@@ -32801,7 +32817,7 @@
   },
   {
     "identifier": "commands.games.memory.game_over",
-    "source_string": "Game Over",
+    "source_string": "Spiel vorbei",
     "translation": "Spiel vorbei",
     "context": "commands -> games -> memory -> game_over",
     "labels": "unassigned",
@@ -32809,7 +32825,7 @@
   },
   {
     "identifier": "commands.games.memory.not_your_game",
-    "source_string": "This is not your game!",
+    "source_string": "Das ist nicht dein Spiel!",
     "translation": "Das ist nicht dein Spiel!",
     "context": "commands -> games -> memory -> not_your_game",
     "labels": "unassigned",
@@ -32825,7 +32841,7 @@
   },
   {
     "identifier": "games_memory_description",
-    "source_string": "Play a memory matching game",
+    "source_string": "Spiele ein Memory-Spiel",
     "translation": "Spiele ein Memory-Spiel",
     "context": "games -> memory -> description",
     "labels": "unassigned",
@@ -32833,7 +32849,7 @@
   },
   {
     "identifier": "games_memory_params_user_description",
-    "source_string": "The user to play against",
+    "source_string": "Der Benutzer, gegen den gespielt wird",
     "translation": "Der Benutzer, gegen den gespielt wird",
     "context": "games -> memory -> params -> user -> description",
     "labels": "unassigned",
@@ -33017,7 +33033,7 @@
   },
   {
     "identifier": "logs_blacklistv_description",
-    "source_string": "Manage the voice channel blacklist for logging",
+    "source_string": "Verwalte die Blacklist für Sprachkanäle in den Protokollen",
     "translation": "Verwalte die Blacklist für Sprachkanäle in den Protokollen",
     "context": "logs -> blacklist -> voice -> description",
     "labels": "unassigned",
@@ -33033,7 +33049,7 @@
   },
   {
     "identifier": "logs_blacklistv_add_name",
-    "source_string": "add-voice",
+    "source_string": "sprachkanal-hinzufügen",
     "translation": "sprachkanal-hinzufügen",
     "context": "logs -> blacklist -> voice -> add -> name",
     "labels": "unassigned",
@@ -33049,7 +33065,7 @@
   },
   {
     "identifier": "logs_blacklistv_add_description",
-    "source_string": "Blacklist a voice channel from logs",
+    "source_string": "Einen Sprachkanal von der Protokollierung ausschließen",
     "translation": "Einen Sprachkanal von der Protokollierung ausschließen",
     "context": "logs -> blacklist -> voice -> add -> description",
     "labels": "unassigned",
@@ -33065,7 +33081,7 @@
   },
   {
     "identifier": "logs_blacklistv_add_params_channel_description",
-    "source_string": "The voice channel to blacklist",
+    "source_string": "Der Sprachkanal, der auf die Blacklist gesetzt werden soll",
     "translation": "Der Sprachkanal, der auf die Blacklist gesetzt werden soll",
     "context": "logs -> blacklist -> voice -> add -> params -> channel -> description",
     "labels": "unassigned",
@@ -33081,7 +33097,7 @@
   },
   {
     "identifier": "logs_blacklistv_remove_name",
-    "source_string": "remove-voice",
+    "source_string": "sprachkanal-entfernen",
     "translation": "sprachkanal-entfernen",
     "context": "logs -> blacklist -> voice -> remove -> name",
     "labels": "unassigned",
@@ -33097,7 +33113,7 @@
   },
   {
     "identifier": "logs_blacklistv_remove_description",
-    "source_string": "Remove a voice channel from the log blacklist",
+    "source_string": "Einen Sprachkanal von der Blacklist entfernen",
     "translation": "Einen Sprachkanal von der Blacklist entfernen",
     "context": "logs -> blacklist -> voice -> remove -> description",
     "labels": "unassigned",
@@ -33113,7 +33129,7 @@
   },
   {
     "identifier": "logs_blacklistv_remove_params_channel_description",
-    "source_string": "The voice channel to remove from blacklist",
+    "source_string": "Der Sprachkanal, der von der Blacklist entfernt werden soll",
     "translation": "Der Sprachkanal, der von der Blacklist entfernt werden soll",
     "context": "logs -> blacklist -> voice -> remove -> params -> channel -> description",
     "labels": "unassigned",
@@ -33129,7 +33145,7 @@
   },
   {
     "identifier": "logs_blacklistv_show_name",
-    "source_string": "list-voice",
+    "source_string": "sprachkanäle-auflisten",
     "translation": "sprachkanäle-auflisten",
     "context": "logs -> blacklist -> voice -> show -> name",
     "labels": "unassigned",
@@ -33145,7 +33161,7 @@
   },
   {
     "identifier": "logs_blacklistv_show_description",
-    "source_string": "Show blacklisted voice channels",
+    "source_string": "Die Sprachkanal-Blacklist anzeigen",
     "translation": "Die Sprachkanal-Blacklist anzeigen",
     "context": "logs -> blacklist -> voice -> show -> description",
     "labels": "unassigned",
@@ -33153,7 +33169,7 @@
   },
   {
     "identifier": "commands.logs.blacklistVoiceChannel.missingPermission.title",
-    "source_string": "Missing Permissions",
+    "source_string": "Fehlende Berechtigungen",
     "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistVoiceChannel -> missingPermission -> title",
     "labels": "unassigned",
@@ -33161,7 +33177,7 @@
   },
   {
     "identifier": "commands.logs.blacklistVoiceChannel.missingPermission.description",
-    "source_string": "You need the administrator permission to use this command.",
+    "source_string": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistVoiceChannel -> missingPermission -> description",
     "labels": "unassigned",
@@ -33169,7 +33185,7 @@
   },
   {
     "identifier": "commands.logs.blacklistVoiceChannel.alreadyBlacklisted.title",
-    "source_string": "Already Blacklisted",
+    "source_string": "Bereits auf der Blacklist",
     "translation": "Bereits auf der Blacklist",
     "context": "commands -> logs -> blacklistVoiceChannel -> alreadyBlacklisted -> title",
     "labels": "unassigned",
@@ -33177,7 +33193,7 @@
   },
   {
     "identifier": "commands.logs.blacklistVoiceChannel.alreadyBlacklisted.description",
-    "source_string": "This voice channel is already blacklisted.",
+    "source_string": "Dieser Sprachkanal ist bereits auf der Blacklist.",
     "translation": "Dieser Sprachkanal ist bereits auf der Blacklist.",
     "context": "commands -> logs -> blacklistVoiceChannel -> alreadyBlacklisted -> description",
     "labels": "unassigned",
@@ -33185,7 +33201,7 @@
   },
   {
     "identifier": "commands.logs.blacklistVoiceChannel.blacklisted.title",
-    "source_string": "Blacklisted",
+    "source_string": "Auf Blacklist gesetzt",
     "translation": "Auf Blacklist gesetzt",
     "context": "commands -> logs -> blacklistVoiceChannel -> blacklisted -> title",
     "labels": "unassigned",
@@ -33193,7 +33209,7 @@
   },
   {
     "identifier": "commands.logs.blacklistVoiceChannel.blacklisted.description",
-    "source_string": "The voice channel has been blacklisted from logs.",
+    "source_string": "Der Sprachkanal wurde von der Protokollierung ausgeschlossen.",
     "translation": "Der Sprachkanal wurde von der Protokollierung ausgeschlossen.",
     "context": "commands -> logs -> blacklistVoiceChannel -> blacklisted -> description",
     "labels": "unassigned",
@@ -33201,15 +33217,15 @@
   },
   {
     "identifier": "commands.logs.blacklistVoiceChannel.missingChannel.title",
-    "source_string": "Missing Channel",
-    "translation": "Missing Channel",
+    "source_string": "Fehlender Kanal",
+    "translation": "Fehlender Kanal",
     "context": "commands -> logs -> blacklistVoiceChannel -> missingChannel -> title",
     "labels": "unassigned",
     "max_length": null
   },
   {
     "identifier": "commands.logs.blacklistVoiceChannel.missingChannel.description",
-    "source_string": "Please specify a voice channel.",
+    "source_string": "Bitte gib einen Sprachkanal an.",
     "translation": "Bitte gib einen Sprachkanal an.",
     "context": "commands -> logs -> blacklistVoiceChannel -> missingChannel -> description",
     "labels": "unassigned",
@@ -33217,7 +33233,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingPermission.title",
-    "source_string": "Missing Permissions",
+    "source_string": "Fehlende Berechtigungen",
     "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingPermission -> title",
     "labels": "unassigned",
@@ -33225,7 +33241,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingPermission.description",
-    "source_string": "You need the administrator permission to use this command.",
+    "source_string": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingPermission -> description",
     "labels": "unassigned",
@@ -33233,7 +33249,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.notBlacklisted.title",
-    "source_string": "Not Blacklisted",
+    "source_string": "Nicht auf der Blacklist",
     "translation": "Nicht auf der Blacklist",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> notBlacklisted -> title",
     "labels": "unassigned",
@@ -33241,7 +33257,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.notBlacklisted.description",
-    "source_string": "This voice channel is not blacklisted.",
+    "source_string": "Dieser Sprachkanal ist nicht auf der Blacklist.",
     "translation": "Dieser Sprachkanal ist nicht auf der Blacklist.",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> notBlacklisted -> description",
     "labels": "unassigned",
@@ -33249,7 +33265,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.success.title",
-    "source_string": "Removed",
+    "source_string": "Entfernt",
     "translation": "Entfernt",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> success -> title",
     "labels": "unassigned",
@@ -33257,7 +33273,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.success.description",
-    "source_string": "The voice channel has been removed from the log blacklist.",
+    "source_string": "Der Sprachkanal wurde von der Blacklist entfernt.",
     "translation": "Der Sprachkanal wurde von der Blacklist entfernt.",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> success -> description",
     "labels": "unassigned",
@@ -33265,15 +33281,15 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingChannel.title",
-    "source_string": "Missing Channel",
-    "translation": "Missing Channel",
+    "source_string": "Fehlender Kanal",
+    "translation": "Fehlender Kanal",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingChannel -> title",
     "labels": "unassigned",
     "max_length": null
   },
   {
     "identifier": "commands.logs.blacklistRemoveVoiceChannel.missingChannel.description",
-    "source_string": "Please specify a voice channel.",
+    "source_string": "Bitte gib einen Sprachkanal an.",
     "translation": "Bitte gib einen Sprachkanal an.",
     "context": "commands -> logs -> blacklistRemoveVoiceChannel -> missingChannel -> description",
     "labels": "unassigned",
@@ -33281,7 +33297,7 @@
   },
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.missingPermission.title",
-    "source_string": "Missing Permissions",
+    "source_string": "Fehlende Berechtigungen",
     "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistListVoiceChannel -> missingPermission -> title",
     "labels": "unassigned",
@@ -33289,7 +33305,7 @@
   },
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.missingPermission.description",
-    "source_string": "You need the administrator permission to use this command.",
+    "source_string": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistListVoiceChannel -> missingPermission -> description",
     "labels": "unassigned",
@@ -33297,7 +33313,7 @@
   },
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.title",
-    "source_string": "Blacklisted Voice Channels",
+    "source_string": "Blockierte Sprachkanäle",
     "translation": "Blockierte Sprachkanäle",
     "context": "commands -> logs -> blacklistListVoiceChannel -> title",
     "labels": "unassigned",
@@ -33305,7 +33321,7 @@
   },
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.addChannel.placeholder",
-    "source_string": "Select a voice channel to add to the blacklist",
+    "source_string": "Wähle einen Sprachkanal aus, um ihn zur Blacklist hinzuzufügen",
     "translation": "Wähle einen Sprachkanal aus, um ihn zur Blacklist hinzuzufügen",
     "context": "commands -> logs -> blacklistListVoiceChannel -> addChannel -> placeholder",
     "labels": "unassigned",
@@ -33313,7 +33329,7 @@
   },
   {
     "identifier": "commands.logs.blacklistListVoiceChannel.noBlacklistedChannels",
-    "source_string": "No voice channels are blacklisted.",
+    "source_string": "Keine Sprachkanäle sind auf der Blacklist.",
     "translation": "Keine Sprachkanäle sind auf der Blacklist.",
     "context": "commands -> logs -> blacklistListVoiceChannel -> noBlacklistedChannels",
     "labels": "unassigned",
@@ -33321,7 +33337,7 @@
   },
   {
     "identifier": "logs_blacklistcat_name",
-    "source_string": "category-blacklist",
+    "source_string": "Kategorie-Blacklist",
     "translation": "Kategorie-Blacklist",
     "context": "logs -> blacklist -> category -> name",
     "labels": "unassigned",
@@ -33329,7 +33345,7 @@
   },
   {
     "identifier": "logs_blacklistcat_description",
-    "source_string": "Manage the category blacklist for logging",
+    "source_string": "Verwalte die Blacklist für Kategorien in den Protokollen",
     "translation": "Verwalte die Blacklist für Kategorien in den Protokollen",
     "context": "logs -> blacklist -> category -> description",
     "labels": "unassigned",
@@ -33337,7 +33353,7 @@
   },
   {
     "identifier": "logs_blacklistcat_add_name",
-    "source_string": "add-category",
+    "source_string": "kategorie-hinzufügen",
     "translation": "kategorie-hinzufügen",
     "context": "logs -> blacklist -> category -> add -> name",
     "labels": "unassigned",
@@ -33345,7 +33361,7 @@
   },
   {
     "identifier": "logs_blacklistcat_add_description",
-    "source_string": "Blacklist a category from logs",
+    "source_string": "Eine Kategorie von der Protokollierung ausschließen",
     "translation": "Eine Kategorie von der Protokollierung ausschließen",
     "context": "logs -> blacklist -> category -> add -> description",
     "labels": "unassigned",
@@ -33353,7 +33369,7 @@
   },
   {
     "identifier": "logs_blacklistcat_add_params_channel_description",
-    "source_string": "The category to blacklist",
+    "source_string": "Die Kategorie, die auf die Blacklist gesetzt werden soll",
     "translation": "Die Kategorie, die auf die Blacklist gesetzt werden soll",
     "context": "logs -> blacklist -> category -> add -> params -> channel -> description",
     "labels": "unassigned",
@@ -33361,7 +33377,7 @@
   },
   {
     "identifier": "logs_blacklistcat_remove_name",
-    "source_string": "remove-category",
+    "source_string": "kategorie-entfernen",
     "translation": "kategorie-entfernen",
     "context": "logs -> blacklist -> category -> remove -> name",
     "labels": "unassigned",
@@ -33369,7 +33385,7 @@
   },
   {
     "identifier": "logs_blacklistcat_remove_description",
-    "source_string": "Remove a category from the log blacklist",
+    "source_string": "Eine Kategorie von der Blacklist entfernen",
     "translation": "Eine Kategorie von der Blacklist entfernen",
     "context": "logs -> blacklist -> category -> remove -> description",
     "labels": "unassigned",
@@ -33377,7 +33393,7 @@
   },
   {
     "identifier": "logs_blacklistcat_remove_params_channel_description",
-    "source_string": "The category to remove from blacklist",
+    "source_string": "Die Kategorie, die von der Blacklist entfernt werden soll",
     "translation": "Die Kategorie, die von der Blacklist entfernt werden soll",
     "context": "logs -> blacklist -> category -> remove -> params -> channel -> description",
     "labels": "unassigned",
@@ -33385,7 +33401,7 @@
   },
   {
     "identifier": "logs_blacklistcat_show_name",
-    "source_string": "list-category",
+    "source_string": "kategorien-auflisten",
     "translation": "kategorien-auflisten",
     "context": "logs -> blacklist -> category -> show -> name",
     "labels": "unassigned",
@@ -33393,7 +33409,7 @@
   },
   {
     "identifier": "logs_blacklistcat_show_description",
-    "source_string": "Show blacklisted categories",
+    "source_string": "Die Kategorie-Blacklist anzeigen",
     "translation": "Die Kategorie-Blacklist anzeigen",
     "context": "logs -> blacklist -> category -> show -> description",
     "labels": "unassigned",
@@ -33401,7 +33417,7 @@
   },
   {
     "identifier": "commands.logs.blacklistCategory.missingPermission.title",
-    "source_string": "Missing Permissions",
+    "source_string": "Fehlende Berechtigungen",
     "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistCategory -> missingPermission -> title",
     "labels": "unassigned",
@@ -33409,7 +33425,7 @@
   },
   {
     "identifier": "commands.logs.blacklistCategory.missingPermission.description",
-    "source_string": "You need the administrator permission to use this command.",
+    "source_string": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistCategory -> missingPermission -> description",
     "labels": "unassigned",
@@ -33417,7 +33433,7 @@
   },
   {
     "identifier": "commands.logs.blacklistCategory.alreadyBlacklisted.title",
-    "source_string": "Already Blacklisted",
+    "source_string": "Bereits auf der Blacklist",
     "translation": "Bereits auf der Blacklist",
     "context": "commands -> logs -> blacklistCategory -> alreadyBlacklisted -> title",
     "labels": "unassigned",
@@ -33425,7 +33441,7 @@
   },
   {
     "identifier": "commands.logs.blacklistCategory.alreadyBlacklisted.description",
-    "source_string": "This category is already blacklisted.",
+    "source_string": "Diese Kategorie ist bereits auf der Blacklist.",
     "translation": "Diese Kategorie ist bereits auf der Blacklist.",
     "context": "commands -> logs -> blacklistCategory -> alreadyBlacklisted -> description",
     "labels": "unassigned",
@@ -33433,7 +33449,7 @@
   },
   {
     "identifier": "commands.logs.blacklistCategory.blacklisted.title",
-    "source_string": "Blacklisted",
+    "source_string": "Auf Blacklist gesetzt",
     "translation": "Auf Blacklist gesetzt",
     "context": "commands -> logs -> blacklistCategory -> blacklisted -> title",
     "labels": "unassigned",
@@ -33441,7 +33457,7 @@
   },
   {
     "identifier": "commands.logs.blacklistCategory.blacklisted.description",
-    "source_string": "The category has been blacklisted from logs.",
+    "source_string": "Die Kategorie wurde von der Protokollierung ausgeschlossen.",
     "translation": "Die Kategorie wurde von der Protokollierung ausgeschlossen.",
     "context": "commands -> logs -> blacklistCategory -> blacklisted -> description",
     "labels": "unassigned",
@@ -33449,23 +33465,23 @@
   },
   {
     "identifier": "commands.logs.blacklistCategory.missingChannel.title",
-    "source_string": "Missing Category",
-    "translation": "Missing Category",
+    "source_string": "Fehlende Kategorie",
+    "translation": "Fehlende Kategorie",
     "context": "commands -> logs -> blacklistCategory -> missingChannel -> title",
     "labels": "unassigned",
     "max_length": null
   },
   {
     "identifier": "commands.logs.blacklistCategory.missingChannel.description",
-    "source_string": "Please specify a category.",
-    "translation": "Please specify a category.",
+    "source_string": "Bitte gib eine Kategorie an.",
+    "translation": "Bitte gib eine Kategorie an.",
     "context": "commands -> logs -> blacklistCategory -> missingChannel -> description",
     "labels": "unassigned",
     "max_length": null
   },
   {
     "identifier": "commands.logs.blacklistRemoveCategory.missingPermission.title",
-    "source_string": "Missing Permissions",
+    "source_string": "Fehlende Berechtigungen",
     "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistRemoveCategory -> missingPermission -> title",
     "labels": "unassigned",
@@ -33473,7 +33489,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveCategory.missingPermission.description",
-    "source_string": "You need the administrator permission to use this command.",
+    "source_string": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistRemoveCategory -> missingPermission -> description",
     "labels": "unassigned",
@@ -33481,7 +33497,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveCategory.notBlacklisted.title",
-    "source_string": "Not Blacklisted",
+    "source_string": "Nicht auf der Blacklist",
     "translation": "Nicht auf der Blacklist",
     "context": "commands -> logs -> blacklistRemoveCategory -> notBlacklisted -> title",
     "labels": "unassigned",
@@ -33489,7 +33505,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveCategory.notBlacklisted.description",
-    "source_string": "This category is not blacklisted.",
+    "source_string": "Diese Kategorie ist nicht auf der Blacklist.",
     "translation": "Diese Kategorie ist nicht auf der Blacklist.",
     "context": "commands -> logs -> blacklistRemoveCategory -> notBlacklisted -> description",
     "labels": "unassigned",
@@ -33497,7 +33513,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveCategory.success.title",
-    "source_string": "Removed",
+    "source_string": "Entfernt",
     "translation": "Entfernt",
     "context": "commands -> logs -> blacklistRemoveCategory -> success -> title",
     "labels": "unassigned",
@@ -33505,7 +33521,7 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveCategory.success.description",
-    "source_string": "The category has been removed from the log blacklist.",
+    "source_string": "Die Kategorie wurde von der Blacklist entfernt.",
     "translation": "Die Kategorie wurde von der Blacklist entfernt.",
     "context": "commands -> logs -> blacklistRemoveCategory -> success -> description",
     "labels": "unassigned",
@@ -33513,23 +33529,23 @@
   },
   {
     "identifier": "commands.logs.blacklistRemoveCategory.missingChannel.title",
-    "source_string": "Missing Category",
-    "translation": "Missing Category",
+    "source_string": "Fehlende Kategorie",
+    "translation": "Fehlende Kategorie",
     "context": "commands -> logs -> blacklistRemoveCategory -> missingChannel -> title",
     "labels": "unassigned",
     "max_length": null
   },
   {
     "identifier": "commands.logs.blacklistRemoveCategory.missingChannel.description",
-    "source_string": "Please specify a category.",
-    "translation": "Please specify a category.",
+    "source_string": "Bitte gib eine Kategorie an.",
+    "translation": "Bitte gib eine Kategorie an.",
     "context": "commands -> logs -> blacklistRemoveCategory -> missingChannel -> description",
     "labels": "unassigned",
     "max_length": null
   },
   {
     "identifier": "commands.logs.blacklistListCategory.missingPermission.title",
-    "source_string": "Missing Permissions",
+    "source_string": "Fehlende Berechtigungen",
     "translation": "Fehlende Berechtigungen",
     "context": "commands -> logs -> blacklistListCategory -> missingPermission -> title",
     "labels": "unassigned",
@@ -33537,7 +33553,7 @@
   },
   {
     "identifier": "commands.logs.blacklistListCategory.missingPermission.description",
-    "source_string": "You need the administrator permission to use this command.",
+    "source_string": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "translation": "Du benötigst die Administrator-Berechtigung, um diesen Befehl zu verwenden.",
     "context": "commands -> logs -> blacklistListCategory -> missingPermission -> description",
     "labels": "unassigned",
@@ -33545,7 +33561,7 @@
   },
   {
     "identifier": "commands.logs.blacklistListCategory.title",
-    "source_string": "Blacklisted Categories",
+    "source_string": "Blockierte Kategorien",
     "translation": "Blockierte Kategorien",
     "context": "commands -> logs -> blacklistListCategory -> title",
     "labels": "unassigned",
@@ -33553,7 +33569,7 @@
   },
   {
     "identifier": "commands.logs.blacklistListCategory.addCategory.placeholder",
-    "source_string": "Select a category to add to the blacklist",
+    "source_string": "Wähle eine Kategorie aus, um sie zur Blacklist hinzuzufügen",
     "translation": "Wähle eine Kategorie aus, um sie zur Blacklist hinzuzufügen",
     "context": "commands -> logs -> blacklistListCategory -> addCategory -> placeholder",
     "labels": "unassigned",
@@ -33561,7 +33577,7 @@
   },
   {
     "identifier": "commands.logs.blacklistListCategory.noBlacklistedCategories",
-    "source_string": "No categories are blacklisted.",
+    "source_string": "Keine Kategorien sind auf der Blacklist.",
     "translation": "Keine Kategorien sind auf der Blacklist.",
     "context": "commands -> logs -> blacklistListCategory -> noBlacklistedCategories",
     "labels": "unassigned",

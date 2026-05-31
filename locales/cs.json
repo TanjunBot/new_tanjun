@@ -31824,22 +31824,6 @@
     "max_length": null
   },
   {
-    "identifier": "errors.guildOnly.title",
-    "source_string": "Guild-only command",
-    "translation": "Guild-only command",
-    "context": "errors -> guildOnly -> title",
-    "labels": "unassigned",
-    "max_length": null
-  },
-  {
-    "identifier": "errors.guildOnly.description",
-    "source_string": "This command can only be used in a server.",
-    "translation": "This command can only be used in a server.",
-    "context": "errors -> guildOnly -> description",
-    "labels": "unassigned",
-    "max_length": null
-  },
-  {
     "identifier": "errors.http_error.title",
     "source_string": "Discord API-Fehler",
     "translation": "Discord API error",
