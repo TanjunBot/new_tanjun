@@ -172,7 +172,7 @@ class MathService:
             "exp": math.exp,
             "abs": abs,
             "trunc": lambda x: float(math.trunc(x)),
-            "round": round,
+            "round": lambda x: float(round(x)),
             "sgn": lambda a: abs(a) > 1e-12 and float(self._cmp(a, 0)) or 0.0,
             "sqrt": math.sqrt,
             "factorial": lambda x: float(math.factorial(int(x))),
@@ -216,13 +216,13 @@ class MathService:
         if op in "+-*/^":
             op2 = self._evaluate_stack(s)
             op1 = self._evaluate_stack(s)
-            return self._opn[op](op1, op2)
+            return float(self._opn[op](op1, op2))
         if op == "PI":
             return math.pi
         if op == "E":
             return math.e
         if op in self._fn:
-            return self._fn[op](self._evaluate_stack(s))
+            return float(self._fn[op](self._evaluate_stack(s)))
         if op in self._constants:
             return self._constants[op]
         if op[0].isalpha():

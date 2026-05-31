@@ -20,6 +20,7 @@ Usage::
 
 from __future__ import annotations
 
+import asyncio
 import time
 from collections import OrderedDict
 from collections.abc import Awaitable, Callable
@@ -210,3 +211,44 @@ class TTLCache(Generic[K, V]):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(ttl={self._ttl}, maxsize={self._maxsize}, size={self.size})"
+
+
+class StampedeProtectedCache(Generic[K, V]):
+    """TTL cache with per-key ``asyncio.Lock`` to prevent concurrent cache-miss stampedes."""
+
+    __slots__ = ("_cache", "_locks")
+
+    def __init__(self, ttl: float, maxsize: int | None = None) -> None:
+        self._cache = TTLCache[K, V](ttl=ttl, maxsize=maxsize)
+        self._locks: dict[K, asyncio.Lock] = {}
+
+    @property
+    def ttl(self) -> float:
+        return self._cache.ttl
+
+    def get(self, key: K) -> V | None:
+        return self._cache.get(key)
+
+    def set(self, key: K, value: V, *, ttl: float | None = None) -> None:
+        self._cache.set(key, value, ttl=ttl)
+
+    def invalidate(self, key: K) -> None:
+        self._cache.invalidate(key)
+
+    def clear(self) -> None:
+        self._cache.clear()
+        self._locks.clear()
+
+    async def get_or_fetch(self, key: K, fetch: Callable[[], Awaitable[V]]) -> V:
+        cached = self._cache.get(key)
+        if cached is not None:
+            return cached
+
+        lock = self._locks.setdefault(key, asyncio.Lock())
+        async with lock:
+            cached = self._cache.get(key)
+            if cached is not None:
+                return cached
+            value = await fetch()
+            self._cache.set(key, value)
+            return value
