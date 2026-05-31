@@ -88,11 +88,18 @@ async def test_admin_warn_group_has_3_commands():
     assert len(get_subcommand_names(group)) == 3
 
 
-async def test_admin_role_group_has_6_commands():
+async def test_admin_role_group_has_2_commands():
     bot = await load_extension_bot(EXTENSION)
     group = find_tree_group(bot, "admin_role_name")
     assert group is not None
-    assert len(get_subcommand_names(group)) == 6
+    assert len(get_subcommand_names(group)) == 2
+
+
+async def test_admin_rolemanage_group_has_4_commands():
+    bot = await load_extension_bot(EXTENSION)
+    group = find_tree_group(bot, "admin_rolemanage_name")
+    assert group is not None
+    assert len(get_subcommand_names(group)) == 4
 
 
 async def test_admin_report_group_has_4_commands():
@@ -158,88 +165,88 @@ async def test_admin_moderation_nickname_name_registered():
     assert "admin_nickname_name" in get_subcommand_names(group)
 
 
-async def test_admin_moderation_lock_name_registered():
+async def test_admin_channels_lock_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
+    group = find_tree_group(bot, "admin_channels_name")
     assert group is not None
     assert "admin_lock_name" in get_subcommand_names(group)
 
 
-async def test_admin_moderation_unlock_name_registered():
+async def test_admin_channels_unlock_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
+    group = find_tree_group(bot, "admin_channels_name")
     assert group is not None
     assert "admin_unlock_name" in get_subcommand_names(group)
 
 
-async def test_admin_moderation_slowmode_name_registered():
+async def test_admin_channels_slowmode_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
+    group = find_tree_group(bot, "admin_channels_name")
     assert group is not None
     assert "admin_slowmode_name" in get_subcommand_names(group)
 
 
-async def test_admin_moderation_purge_name_registered():
+async def test_admin_channels_nuke_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
-    assert group is not None
-    assert "admin_purge_name" in get_subcommand_names(group)
-
-
-async def test_admin_moderation_nuke_name_registered():
-    bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
+    group = find_tree_group(bot, "admin_channels_name")
     assert group is not None
     assert "admin_nuke_name" in get_subcommand_names(group)
 
 
-async def test_admin_moderation_say_name_registered():
+async def test_admin_purgegroup_purge_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
+    group = find_tree_group(bot, "admin_purgegroup_name")
+    assert group is not None
+    assert "admin_purge_name" in get_subcommand_names(group)
+
+
+async def test_admin_messaging_say_name_registered():
+    bot = await load_extension_bot(EXTENSION)
+    group = find_tree_group(bot, "admin_messaging_name")
     assert group is not None
     assert "admin_say_name" in get_subcommand_names(group)
 
 
-async def test_admin_moderation_embed_name_registered():
+async def test_admin_messaging_embed_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
+    group = find_tree_group(bot, "admin_messaging_name")
     assert group is not None
     assert "admin_embed_name" in get_subcommand_names(group)
 
 
-async def test_admin_moderation_claimboosterrole_name_registered():
+async def test_admin_emoji_createemoji_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
+    group = find_tree_group(bot, "admin_emoji_name")
     assert group is not None
-    assert "admin_boosterrole_name" in get_subcommand_names(group)
+    assert "admin_createemoji_name" in get_subcommand_names(group)
 
 
-async def test_admin_moderation_createticket_name_registered():
+async def test_admin_emoji_copyemoji_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
-    assert group is not None
-    assert "admin_createticket_name" in get_subcommand_names(group)
-
-
-async def test_admin_moderation_setlocale_name_registered():
-    bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
-    assert group is not None
-    assert "admin_setlocale_name" in get_subcommand_names(group)
-
-
-async def test_admin_moderation_copyemoji_name_registered():
-    bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
+    group = find_tree_group(bot, "admin_emoji_name")
     assert group is not None
     assert "admin_copyemoji_name" in get_subcommand_names(group)
 
 
-async def test_admin_moderation_createemoji_name_registered():
+async def test_admin_emoji_boosterrole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_moderation_name")
+    group = find_tree_group(bot, "admin_emoji_name")
     assert group is not None
-    assert "admin_createemoji_name" in get_subcommand_names(group)
+    assert "admin_boosterrole_name" in get_subcommand_names(group)
+
+
+async def test_admin_setup_createticket_name_registered():
+    bot = await load_extension_bot(EXTENSION)
+    group = find_tree_group(bot, "admin_setup_name")
+    assert group is not None
+    assert "admin_createticket_name" in get_subcommand_names(group)
+
+
+async def test_admin_localegroup_setlocale_name_registered():
+    bot = await load_extension_bot(EXTENSION)
+    group = find_tree_group(bot, "admin_localegroup_name")
+    assert group is not None
+    assert "admin_setlocale_name" in get_subcommand_names(group)
 
 
 async def test_admin_warn_add_name_registered():
@@ -277,30 +284,30 @@ async def test_admin_role_removerole_name_registered():
     assert "admin_removerole_name" in get_subcommand_names(group)
 
 
-async def test_admin_role_createrole_name_registered():
+async def test_admin_rolemanage_createrole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_role_name")
+    group = find_tree_group(bot, "admin_rolemanage_name")
     assert group is not None
     assert "admin_createrole_name" in get_subcommand_names(group)
 
 
-async def test_admin_role_deleterole_name_registered():
+async def test_admin_rolemanage_deleterole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_role_name")
+    group = find_tree_group(bot, "admin_rolemanage_name")
     assert group is not None
     assert "admin_deleterole_name" in get_subcommand_names(group)
 
 
-async def test_admin_role_moverole_name_registered():
+async def test_admin_rolemanage_moverole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_role_name")
+    group = find_tree_group(bot, "admin_rolemanage_name")
     assert group is not None
     assert "admin_moverole_name" in get_subcommand_names(group)
 
 
-async def test_admin_role_copyrole_name_registered():
+async def test_admin_rolemanage_copyrole_name_registered():
     bot = await load_extension_bot(EXTENSION)
-    group = find_tree_group(bot, "admin_role_name")
+    group = find_tree_group(bot, "admin_rolemanage_name")
     assert group is not None
     assert "admin_copyrole_name" in get_subcommand_names(group)
 

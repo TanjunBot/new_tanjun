@@ -36,7 +36,6 @@ UTILITY_DIRECT_COMMANDS = [
     "utility_feedback_name",
     "utility_afk_name",
     "utility_report_name",
-    "utility_help_name",
 ]
 
 # Sub-groups under utilitycmd_name
@@ -98,7 +97,7 @@ async def test_root_command_name_is_utilitycmd_name():
     assert "utilitycmd_name" in names
 
 
-async def test_utilitycmd_group_has_13_entries():
+async def test_utilitycmd_group_has_12_entries():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "utilitycmd_name")
     assert root is not None

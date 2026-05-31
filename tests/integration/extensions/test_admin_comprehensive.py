@@ -6,10 +6,17 @@ import pytest
 
 import extensions.admin as admin_ext
 from extensions.admin import (
-    AdministrationCommands,
+    AdminChannelCommands,
+    AdminEmojiCommands,
+    AdminLocaleCommands,
+    AdminMessagingCommands,
+    AdminModerationCommands,
+    AdminPurgeCommands,
+    AdminSetupCommands,
     JoinToCreateCommands,
     ReportCommands,
     RoleCommands,
+    RoleManageCommands,
     TriggerMessagesCommands,
     WarnCommands,
 )
@@ -58,10 +65,10 @@ def _choice(value: str) -> MagicMock:
         (WarnCommands, "config", {}),
         (RoleCommands, "addrole", {"user": make_member(), "role": make_role()}),
         (RoleCommands, "removerole", {"user": make_member(), "role": make_role()}),
-        (RoleCommands, "createrole", {"name": "NewRole"}),
-        (RoleCommands, "deleterole", {"role": make_role(), "reason": "cleanup"}),
+        (RoleManageCommands, "createrole", {"name": "NewRole"}),
+        (RoleManageCommands, "deleterole", {"role": make_role(), "reason": "cleanup"}),
         (
-            RoleCommands,
+            RoleManageCommands,
             "moverole",
             {
                 "role": make_role(),
@@ -70,7 +77,7 @@ def _choice(value: str) -> MagicMock:
             },
         ),
         (
-            RoleCommands,
+            RoleManageCommands,
             "copyrole",
             {"role": make_role(), "copymembers": _choice("false")},
         ),
@@ -102,7 +109,7 @@ async def test_report_commands(mock_cmds) -> None:
 
 
 async def test_administration_moderation(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminModerationCommands(name="a", description="a")
     member = make_member()
     await invoke_interaction_command(group.kick, extra_kwargs={"user": member, "reason": "kick"})
     await invoke_interaction_command(
@@ -116,12 +123,13 @@ async def test_administration_moderation(mock_cmds) -> None:
     )
     await invoke_interaction_command(group.removetimeout, extra_kwargs={"user": member, "reason": "ok"})
     await invoke_interaction_command(group.nickname, extra_kwargs={"user": member, "nickname": "nick"})
-    await invoke_interaction_command(group.lock, extra_kwargs={"channel": make_text_channel()})
-    await invoke_interaction_command(group.unlock, extra_kwargs={"channel": make_text_channel()})
+    channel_group = AdminChannelCommands(name="a", description="a")
+    await invoke_interaction_command(channel_group.lock, extra_kwargs={"channel": make_text_channel()})
+    await invoke_interaction_command(channel_group.unlock, extra_kwargs={"channel": make_text_channel()})
 
 
 async def test_administration_channel_ops(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
+    group = AdminChannelCommands(name="a", description="a")
     channel = make_text_channel()
     await invoke_interaction_command(group.lock, extra_kwargs={"channel": channel})
     await invoke_interaction_command(group.unlock, extra_kwargs={"channel": channel})
@@ -129,10 +137,12 @@ async def test_administration_channel_ops(mock_cmds) -> None:
 
 
 async def test_administration_roles_and_misc(mock_cmds) -> None:
-    group = AdministrationCommands(name="a", description="a")
-    await invoke_interaction_command(group.claimboosterrole, extra_kwargs={"role": make_role()})
+    emoji_group = AdminEmojiCommands(name="a", description="a")
+    await invoke_interaction_command(emoji_group.claimboosterrole, extra_kwargs={"role": make_role()})
+    await invoke_interaction_command(emoji_group.copy_emoji, extra_kwargs={"emoji": ":e:"})
+    setup_group = AdminSetupCommands(name="a", description="a")
     await invoke_interaction_command(
-        group.create_ticket,
+        setup_group.create_ticket,
         extra_kwargs={
             "name": "ticket",
             "description": "desc",
@@ -142,8 +152,8 @@ async def test_administration_roles_and_misc(mock_cmds) -> None:
             "introduction": "hi",
         },
     )
-    await invoke_interaction_command(group.set_locale, extra_kwargs={"locale": "en"})
-    await invoke_interaction_command(group.copy_emoji, extra_kwargs={"emoji": ":e:"})
+    locale_group = AdminLocaleCommands(name="a", description="a")
+    await invoke_interaction_command(locale_group.set_locale, extra_kwargs={"locale": "en"})
 
 
 async def test_admin_cog_on_ready(mock_cmds) -> None:
