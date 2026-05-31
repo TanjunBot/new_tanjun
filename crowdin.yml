@@ -48,24 +48,24 @@ files:
     dest: "/locales/en.json"
     languages_mapping:
       locale:
-        bg-BG: bg
-        cs-CZ: cs
-        da-DK: da
-        de-DE: de
-        el-GR: el
+        bg: bg
+        cs: cs
+        da: da
+        de: de
+        el: el
         es-419: es-419
-        fi-FI: fi
-        fr-FR: fr
-        hi-IN: hi
-        hr-HR: hr
-        hu-HU: hu
-        id-ID: id
-        it-IT: it
-        ja-JP: ja
-        ko-KR: ko
-        lt-LT: lt
-        nl-NL: nl
-        vi-VN: vi
+        fi: fi
+        fr: fr
+        hi: hi
+        hr: hr
+        hu: hu
+        id: id
+        it: it
+        ja: ja
+        ko: ko
+        lt: lt
+        nl: nl
+        vi: vi
         zh-CN: zh-CN
         zh-TW: zh-TW
 
