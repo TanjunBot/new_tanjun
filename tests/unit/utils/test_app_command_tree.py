@@ -23,7 +23,7 @@ def test_add_command_skips_when_already_registered() -> None:
 
     tree.add_command(command)
 
-    tree.get_command.assert_called_once_with("levelcommands_name", guild=None)
+    tree.get_command.assert_called_once_with("levelcommands_name")
     assert calls == []
 
 
