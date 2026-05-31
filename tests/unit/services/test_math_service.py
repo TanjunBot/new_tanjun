@@ -64,8 +64,8 @@ class TestMathService:
         result = service.evaluate("degrees(1)")
         assert result.error is None
 
-    def test_evaluate_fac_error(self, service: MathService):
-        result = service.evaluate("fac(5)")
+    def test_evaluate_unknown_function_error(self, service: MathService):
+        result = service.evaluate("unknownfn(5)")
         assert result.error is not None
 
     def test_evaluate_generic_exception(self, service: MathService):

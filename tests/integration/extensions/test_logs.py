@@ -60,11 +60,11 @@ async def test_root_command_name_is_logs_name():
     assert get_tree_command_names(bot) == ["logs_name"]
 
 
-async def test_root_group_has_6_entries():
+async def test_root_group_has_8_entries():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "logs_name")
     assert root is not None
-    assert len(get_subcommand_names(root)) == 6
+    assert len(get_subcommand_names(root)) == 8
 
 
 async def test_subcommand_logs_set_name_registered():
