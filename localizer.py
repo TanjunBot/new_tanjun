@@ -73,6 +73,8 @@ class LocalizerService:
             return "de"
         if raw.startswith("ko"):
             return "ko"
+        if raw.startswith("hr"):
+            return "hr"
         if raw.startswith("bg"):
             return "bg"
         if raw.startswith("it"):
