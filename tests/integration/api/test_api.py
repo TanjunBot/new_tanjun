@@ -295,6 +295,7 @@ class TestCheckPoolHealth:
         with env_patch, patch("asyncmy.connect", new=asyncmy_connect):
             result = await check_pool_health()
         assert result is False
+        asyncmy_connect.assert_awaited_once()
 
 
 # ---------------------------------------------------------------------------
