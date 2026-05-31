@@ -75,6 +75,8 @@ class LocalizerService:
             return "ko"
         if raw.startswith("nl"):
             return "nl"
+        if raw in ("zh-CN", "zh-TW", "zh-Hans", "zh-Hant"):
+            return "en"
         return raw
 
     @staticmethod
