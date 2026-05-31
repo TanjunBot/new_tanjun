@@ -423,7 +423,3 @@ def freeze() -> None:
     global _ready
     _ready = True
     log.info("Dispatcher frozen with %d handler(s)", len(_handlers))
-
-
-HandlerRegistry = type("HandlerRegistry", (), {})
-register_handler = register
