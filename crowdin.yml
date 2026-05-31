@@ -46,6 +46,28 @@ files:
   - source: "/locales/en.json"
     translation: "/locales/%locale%.json"
     dest: "/locales/en.json"
+    languages_mapping:
+      locale:
+        bg-BG: bg
+        cs-CZ: cs
+        da-DK: da
+        de-DE: de
+        el-GR: el
+        es-419: es-419
+        fi-FI: fi
+        fr-FR: fr
+        hi-IN: hi
+        hr-HR: hr
+        hu-HU: hu
+        id-ID: id
+        it-IT: it
+        ja-JP: ja
+        ko-KR: ko
+        lt-LT: lt
+        nl-NL: nl
+        vi-VN: vi
+        zh-CN: zh-CN
+        zh-TW: zh-TW
 
 # Bundle configuration
 # Bundle ID 4 defines the files and languages synced through
