@@ -1,8 +1,5 @@
 """Locale file integrity health check for Tanjun bot.
 
-Verifies that locale files listed in LOCALES exist, are valid JSON,
-contain all required translation keys, and are not missing any keys
-compared to the primary language (en.json).
 """
 
 from __future__ import annotations
@@ -17,7 +14,6 @@ class LocaleFileHealthCheck(HealthCheck):
     """Health check for locale file integrity.
 
     Checks:
-    1. All locale files in LOCALES exist
     2. All files parse as valid JSON
     3. All required translation keys are present in all files
     4. No missing translations compared to en.json (warning only)
@@ -31,7 +27,6 @@ class LocaleFileHealthCheck(HealthCheck):
     ]
 
     LOCALE_DIR = "locales"
-    LOCALES = ["en", "de", "ko", "zh-CN", "da"]
 
     @property
     def name(self) -> str:
@@ -99,10 +94,13 @@ class LocaleFileHealthCheck(HealthCheck):
                 sample = sorted(missing_from_other)[:20]
                 if len(missing_from_other) > 20:
                     warnings.append(
-                        f"en.json has {len(missing_from_other)} entries not in {other_locale}.json (showing first 20): {', '.join(sample)}"
+                        f"en.json has {len(missing_from_other)} entries not in "
+                        f"{other_locale}.json (showing first 20): {', '.join(sample)}"
                     )
                 else:
-                    warnings.append(f"en.json has {len(missing_from_other)} entries not in {other_locale}.json: {', '.join(sample)}")
+                    warnings.append(
+                        f"en.json has {len(missing_from_other)} entries not in {other_locale}.json: {', '.join(sample)}"
+                    )
 
         issues: list[str] = []
         status = HealthStatus.HEALTHY
