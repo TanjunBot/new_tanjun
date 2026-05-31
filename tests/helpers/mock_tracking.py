@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Any, cast
 from unittest.mock import AsyncMock
 
 
@@ -18,11 +19,11 @@ class CallCounter:
                     idx = min(self.count - 1, len(original) - 1)
                     result: object = original[idx]
                     if asyncio_iscoroutine(result):
-                        return await result
+                        return await cast(Any, result)
                     return result
                 result = original(*args, **kwargs)
                 if asyncio_iscoroutine(result):
-                    return await result
+                    return await cast(Any, result)
                 return result
             return mock.return_value
 
@@ -36,9 +37,9 @@ def asyncio_iscoroutine(value: object) -> bool:
     return asyncio.iscoroutine(value)
 
 
-def count_matching_calls(mock: AsyncMock, predicate: Callable[[tuple, dict], bool]) -> int:
-    return sum(
-        1
-        for call in mock.await_args_list
-        if predicate(call.args, call.kwargs)
-    )
+def count_matching_calls(mock: AsyncMock, predicate: Callable[[tuple[Any, ...], dict[str, Any]], bool]) -> int:
+    total = 0
+    for call in mock.await_args_list:
+        if predicate(call.args, dict(call.kwargs)):
+            total += 1
+    return total

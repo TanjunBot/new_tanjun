@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import os
-from collections.abc import AsyncIterator, Sequence
+from collections.abc import AsyncIterator, Iterator, Sequence
 from typing import Any
 from unittest.mock import patch
 
@@ -39,7 +39,7 @@ LIVE_GUILD = "88888888888888881"
 
 
 @pytest.fixture(autouse=True)
-def _reset_caches() -> None:
+def _reset_caches() -> Iterator[None]:
     clear_db_read_caches()
     yield
     clear_db_read_caches()

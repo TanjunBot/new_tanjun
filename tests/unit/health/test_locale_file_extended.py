@@ -50,8 +50,8 @@ async def test_cross_locale_warnings():
     de_data = list(base)
 
     with patch.object(Path, "exists", return_value=True), patch(
-        "json.load", side_effect=[en_data, de_data, de_data]
-    ):
+        "json.load", side_effect=[en_data, de_data]
+    ), patch.object(check, "LOCALES", ["en", "de"]):
         result = await check.run()
     assert result.status == HealthStatus.HEALTHY
     assert "Warnings" in result.message or (result.details and "warnings" in result.details)
