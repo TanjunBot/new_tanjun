@@ -14,7 +14,7 @@ import functools
 import math
 import operator as op
 import re
-from typing import Any, cast
+from typing import Any
 
 from pydantic import BaseModel
 from pyparsing import (
@@ -211,13 +211,13 @@ class MathService:
         if op in "+-*/^":
             op2 = self._evaluate_stack(s)
             op1 = self._evaluate_stack(s)
-            return cast(float, self._opn[op](op1, op2))
+            return float(self._opn[op](op1, op2))
         if op == "PI":
             return math.pi
         if op == "E":
             return math.e
         if op in self._fn:
-            return cast(float, self._fn[op](self._evaluate_stack(s)))
+            return float(self._fn[op](self._evaluate_stack(s)))
         if op[0].isalpha():
             raise UndefinedVariable(f"Unknown identifier: {op}")
         # Handle variables that are numbers
