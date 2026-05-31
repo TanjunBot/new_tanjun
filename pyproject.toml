@@ -289,6 +289,20 @@ module = [
 ignore_errors = true
 
 [[tool.mypy.overrides]]
+module = [
+    "commands.*",
+    "extensions.*",
+    "loops.*",
+    "main",
+    "minigames.*",
+    "scripts.*",
+    "services.*",
+    "utils.checks",
+    "tests.*",
+]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
 disallow_untyped_calls = false
