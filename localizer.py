@@ -87,8 +87,10 @@ class LocalizerService:
             return "it"
         if raw.startswith("cs"):
             return "cs"
-        if raw in ("zh-CN", "zh-TW", "zh-Hans", "zh-Hant"):
-            return "en"
+        if raw in ("zh-CN", "zh-Hans"):
+            return "zh-CN"
+        if raw in ("zh-TW", "zh-Hant"):
+            return "zh-TW"
         return raw
 
     @staticmethod
@@ -287,4 +289,4 @@ class LocalizerService:
 
 # Backward-compatible alias so ``from localizer import tanjunLocalizer``
 # continues to work without changes across 120+ import sites.
-tanjunLocalizer = LocalizerService()
+tanjunLocalizer = LocalizerService()  # noqa: N816
