@@ -137,9 +137,15 @@ intents.presences = False
 bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)  # type: ignore[arg-type]
 
 
+def _bot_ready_path() -> Path:
+    return Path(os.environ.get("BOT_READY_FILE", "/usr/local/app/.bot_ready"))
+
+
 @bot.event
 async def on_ready() -> None:
-    Path(tempfile.gettempdir(), "bot_ready").touch()
+    ready_path = _bot_ready_path()
+    ready_path.parent.mkdir(parents=True, exist_ok=True)
+    ready_path.touch()
     user = bot.user
     if user is not None:
         print(f"Logged in as {user} (ID: {user.id})")
