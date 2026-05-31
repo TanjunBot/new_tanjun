@@ -3,7 +3,10 @@
 #
 # This project uses Crowdin for translation management.
 #
-# Locale files use the "Crowdin JSON with identifiers" format (i18n_json):
+# Locale files use Crowdin's multilingual JSON format (array of objects with
+# identifier, source_string, translation, context, labels, max_length).
+# Do not set `type` here — the file type is configured in the Crowdin project
+# (must match the format used by bundle 4 / the existing en.json file entry).
 #   /locales/<language_code>.json
 #
 # Each file contains an array of translation entries with the following fields:
@@ -42,7 +45,6 @@ preserve_hierarchy: true
 files:
   - source: "/locales/en.json"
     translation: "/locales/%locale%.json"
-    type: "i18n_json"
     dest: "/locales/en.json"
 
 # Bundle configuration
