@@ -18,6 +18,8 @@ def _identity_loop(**kwargs):
     def decorator(func):
         func.start = MagicMock()
         func.coro = func
+        func.before_loop = lambda f: f
+        func.after_loop = lambda f: f
         return func
 
     return decorator

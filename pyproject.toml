@@ -112,7 +112,7 @@ dev = [
     "referencing==0.37.0",
     "rpds-py==0.30.0",
     "stack-data==0.6.3",
-    "tinycss2>=1.1.0,<1.5",
+    "tinycss2>=1.4.0,<1.5",
     "tornado==6.5.6",
     "tqdm==4.67.3",
     "traitlets==5.15.0",
@@ -130,7 +130,7 @@ dev = [
     "freezegun>=1.4",
     "hypothesis>=6.100",
     "mypy>=1.11",
-    "ruff==0.11.5",
+    "ruff==0.15.15",
 ]
 
 [project.urls]
@@ -139,7 +139,7 @@ dev = [
 "Bug Tracker" = "https://github.com/TanjunBot/new_tanjun/issues"
 
 [tool.setuptools]
-py-modules = ["api", "config", "localizer", "utility", "models", "translator", "main", "healthcheck", "health_check"]
+py-modules = ["api", "config", "localizer", "utility", "models", "translator", "main", "healthcheck"]
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -278,10 +278,14 @@ exclude = [
 ]
 
 [[tool.mypy.overrides]]
-# Legacy files with too many type errors; fix incrementally
 module = [
     "utility",
     "api",
     "models",
 ]
 ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_untyped_calls = false

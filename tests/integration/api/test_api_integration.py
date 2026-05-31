@@ -23,7 +23,6 @@ from datetime import datetime, timedelta
 import pytest
 
 import tests.mock_config as mock_config
-from exceptions import DatabaseError
 
 mock_config.patch_config_module()
 
@@ -69,60 +68,9 @@ _created_tables = False
 
 
 @pytest.fixture(scope="session")
-async def integration_pool():
-    """Create a real database connection pool for integration tests."""
-    global _created_tables
-    try:
-        import asyncmy
-
-        pool = await asyncmy.create_pool(
-            host=TEST_DB_HOST,
-            port=TEST_DB_PORT,
-            user=TEST_DB_USER,
-            password=TEST_DB_PASSWORD,
-            db=TEST_DB_NAME,
-            minsize=1,
-            maxsize=2,
-            autocommit=False,
-        )
-    except Exception as exc:
-        pytest.skip(f"Test database not available at {TEST_DB_HOST}:{TEST_DB_PORT}: {exc}")
-        return
-
-    # Create tables once per session
-    if not _created_tables:
-        try:
-            async with pool.acquire() as conn:
-                async with conn.cursor() as cursor:
-                    for table_name, ddl in _get_table_definitions().items():
-                        await cursor.execute(ddl)
-                await conn.commit()
-            _created_tables = True
-        except Exception as exc:
-            pool.close()
-            await pool.wait_closed()
-            pytest.skip(f"Failed to initialize test database tables: {exc}")
-            return
-
-    yield pool
-
-    # Session cleanup: drop all created tables
-    try:
-        async with pool.acquire() as conn, conn.cursor() as cursor:
-            await cursor.execute(
-                "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') "
-                "FROM information_schema.tables "
-                "WHERE table_schema = %s",
-                (TEST_DB_NAME,),
-            )
-            for (stmt,) in await cursor.fetchall():
-                await cursor.execute(stmt)
-            await conn.commit()
-    except (DatabaseError, Exception):
-        pass
-
-    pool.close()
-    await pool.wait_closed()
+async def integration_pool(integration_db_pool):
+    """Reuse the root session-scoped integration_db_pool fixture."""
+    return integration_db_pool
 
 
 @pytest.fixture
@@ -882,3 +830,216 @@ async def test_warning_reasons(bot_with_integration_pool, reason: str):
     await add_warning(guild_id, user_id, reason, "mod", expires)
     warnings = await get_warnings(guild_id, user_id)
     assert any(w.reason == reason for w in warnings)
+
+
+class TestWordleIntegration:
+    async def test_get_wordle_stats_none_for_new_user(self, bot_with_integration_pool):
+        stats = await api.get_wordle_stats("wordle_user_new", "wordle_guild_1")
+        assert stats is None
+
+    async def test_upsert_wordle_win(self, bot_with_integration_pool):
+        user_id = "wordle_user_win"
+        guild_id = "wordle_guild_win"
+        result = await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=3)
+        assert result["games_played"] == 1
+        assert result["games_won"] == 1
+        assert result["current_streak"] == 1
+        assert result["max_streak"] == 1
+
+    async def test_upsert_wordle_loss_resets_streak(self, bot_with_integration_pool):
+        user_id = "wordle_user_loss"
+        guild_id = "wordle_guild_loss"
+        await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=2)
+        result = await api.upsert_wordle_stats(user_id, guild_id, won=False, guesses=6)
+        assert result["current_streak"] == 0
+        assert result["games_played"] == 2
+        assert result["games_won"] == 1
+
+    async def test_upsert_wordle_hard_mode(self, bot_with_integration_pool):
+        user_id = "wordle_user_hard"
+        guild_id = "wordle_guild_hard"
+        result = await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=1, hard_mode=True)
+        assert result["hard_mode_games_played"] == 1
+        assert result["hard_mode_games_won"] == 1
+
+    async def test_upsert_wordle_guess_distribution(self, bot_with_integration_pool):
+        user_id = "wordle_user_dist"
+        guild_id = "wordle_guild_dist"
+        await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=4)
+        stats = await api.get_wordle_stats(user_id, guild_id)
+        dist = [int(x) for x in stats["guess_distribution"].split(",")]
+        assert dist[3] == 1
+
+
+class TestBrawlstarsIntegration:
+    async def test_link_and_unlink_account(self, bot_with_integration_pool):
+        user_id = "brawl_int_user_1"
+        tag = "#INTTEST1"
+        await api.add_brawlstars_linked_account(user_id, tag)
+        assert await api.get_brawlstars_linked_account(user_id) == tag
+        await api.remove_brawlstars_linked_account(user_id)
+        assert await api.get_brawlstars_linked_account(user_id) is None
+
+    async def test_link_multiple_users(self, bot_with_integration_pool):
+        await api.add_brawlstars_linked_account("brawl_int_user_2", "#TAG2")
+        await api.add_brawlstars_linked_account("brawl_int_user_3", "#TAG3")
+        assert await api.get_brawlstars_linked_account("brawl_int_user_2") == "#TAG2"
+        assert await api.get_brawlstars_linked_account("brawl_int_user_3") == "#TAG3"
+
+    async def test_relink_after_remove(self, bot_with_integration_pool):
+        user_id = "brawl_int_user_4"
+        await api.add_brawlstars_linked_account(user_id, "#OLD")
+        await api.remove_brawlstars_linked_account(user_id)
+        await api.add_brawlstars_linked_account(user_id, "#NEW")
+        assert await api.get_brawlstars_linked_account(user_id) == "#NEW"
+
+    async def test_get_missing_account_returns_none(self, bot_with_integration_pool):
+        assert await api.get_brawlstars_linked_account("brawl_int_missing") is None
+
+
+class TestScheduledMessageIntegration:
+    async def test_add_and_get_scheduled_message(self, bot_with_integration_pool):
+        user_id = "sched_user_1"
+        send_time = datetime.now() + timedelta(hours=2)
+        await api.add_scheduled_message(
+            "sched_guild_1", "66666666666666661", user_id, "hello", send_time
+        )
+        messages = await api.get_scheduled_messages(user_id)
+        assert any(m.content == "hello" for m in messages)
+
+    async def test_remove_scheduled_message(self, bot_with_integration_pool):
+        user_id = "sched_user_2"
+        send_time = datetime.now() + timedelta(hours=3)
+        await api.add_scheduled_message(
+            "sched_guild_2", "66666666666666662", user_id, "remove me", send_time
+        )
+        messages = await api.get_scheduled_messages(user_id)
+        target = next(m for m in messages if m.content == "remove me")
+        await api.remove_scheduled_message(target.message_id)
+        after = await api.get_scheduled_messages(user_id)
+        assert not any(m.message_id == target.message_id for m in after)
+
+    async def test_update_scheduled_content(self, bot_with_integration_pool):
+        user_id = "sched_user_3"
+        send_time = datetime.now() + timedelta(hours=4)
+        await api.add_scheduled_message(
+            "sched_guild_3", "66666666666666663", user_id, "old", send_time
+        )
+        messages = await api.get_scheduled_messages(user_id)
+        msg_id = next(m.message_id for m in messages if m.content == "old")
+        await api.update_scheduled_message_content(msg_id, "new content")
+        updated = await api.get_scheduled_messages(user_id)
+        assert any(m.message_id == msg_id and m.content == "new content" for m in updated)
+
+    async def test_update_repeat_amount(self, bot_with_integration_pool):
+        user_id = "sched_user_4"
+        send_time = datetime.now() + timedelta(hours=5)
+        await api.add_scheduled_message(
+            "sched_guild_4",
+            "66666666666666664",
+            user_id,
+            "repeat",
+            send_time,
+            repeat_interval=3600,
+            repeat_amount=3,
+        )
+        messages = await api.get_scheduled_messages(user_id)
+        msg_id = next(m.message_id for m in messages if m.content == "repeat")
+        await api.update_scheduled_message_repeat_amount(msg_id, 5)
+        updated = await api.get_scheduled_messages(user_id)
+        match = next(m for m in updated if m.message_id == msg_id)
+        assert match.repeat_amount == 5
+
+    async def test_get_in_timeframe(self, bot_with_integration_pool):
+        user_id = "sched_user_5"
+        send_time = datetime.now() + timedelta(hours=6)
+        await api.add_scheduled_message(
+            "sched_guild_5", "66666666666666665", user_id, "timeframe", send_time
+        )
+        start = datetime.now()
+        end = datetime.now() + timedelta(days=1)
+        found = await api.get_user_scheduled_messages_in_timeframe(user_id, start, end)
+        assert any(m.content == "timeframe" for m in found)
+
+    async def test_multiple_scheduled_for_user(self, bot_with_integration_pool):
+        user_id = "sched_user_6"
+        for i in range(3):
+            await api.add_scheduled_message(
+                f"sched_guild_6_{i}",
+                f"6666666666666666{i}",
+                user_id,
+                f"msg_{i}",
+                datetime.now() + timedelta(hours=7 + i),
+            )
+        messages = await api.get_scheduled_messages(user_id)
+        contents = {m.content for m in messages}
+        assert {"msg_0", "msg_1", "msg_2"}.issubset(contents)
+
+
+class TestTicketIntegration:
+    async def test_create_and_get_ticket_message(self, bot_with_integration_pool):
+        guild_id = "ticket_guild_1"
+        config_id = await api.create_ticket_message(
+            guild_id,
+            "55555555555555551",
+            "Welcome",
+            "77777777777777771",
+            "Support",
+            "Help desk",
+        )
+        assert config_id is not None
+        configs = await api.get_ticket_messages(guild_id)
+        assert any(c.id == config_id and c.name == "Support" for c in configs)
+
+    async def test_delete_ticket_message(self, bot_with_integration_pool):
+        guild_id = "ticket_guild_2"
+        config_id = await api.create_ticket_message(
+            guild_id, "55555555555555552", "Hi", None, "Delete", "desc"
+        )
+        await api.delete_ticket_message(guild_id, config_id)
+        configs = await api.get_ticket_messages(guild_id)
+        assert not any(c.id == config_id for c in configs)
+
+    async def test_open_and_get_ticket(self, bot_with_integration_pool):
+        guild_id = "ticket_guild_3"
+        channel_id = "55555555555555553"
+        config_id = await api.create_ticket_message(
+            guild_id, "55555555555555554", "Hi", None, "Open", "desc"
+        )
+        await api.open_ticket(guild_id, "88888888888888881", str(config_id), channel_id)
+        ticket = await api.get_ticket_by_channel_id(guild_id, channel_id)
+        assert ticket is not None
+        assert ticket.opener_id == "88888888888888881"
+        assert ticket.ticket_message_id == config_id
+
+    async def test_close_ticket(self, bot_with_integration_pool):
+        guild_id = "ticket_guild_4"
+        channel_id = "55555555555555555"
+        config_id = await api.create_ticket_message(
+            guild_id, "55555555555555556", "Hi", None, "Close", "desc"
+        )
+        await api.open_ticket(guild_id, "88888888888888882", str(config_id), channel_id)
+        await api.close_ticket(guild_id, channel_id, "88888888888888883")
+        ticket = await api.get_ticket_by_channel_id(guild_id, channel_id)
+        assert ticket is not None
+        assert ticket.closed is True
+        assert ticket.closed_by == "88888888888888883"
+
+    async def test_get_tickets_list(self, bot_with_integration_pool):
+        guild_id = "ticket_guild_5"
+        config_id = await api.create_ticket_message(
+            guild_id, "55555555555555557", "Hi", None, "List", "desc"
+        )
+        await api.open_ticket(guild_id, "88888888888888884", str(config_id), "55555555555555558")
+        tickets = await api.get_tickets(guild_id)
+        assert any(t.ticket_message_id == config_id for t in tickets)
+
+    async def test_get_ticket_messages_by_id(self, bot_with_integration_pool):
+        guild_id = "ticket_guild_6"
+        config_id = await api.create_ticket_message(
+            guild_id, "55555555555555559", "Intro", None, "ById", "desc"
+        )
+        config = await api.get_ticket_messages_by_id(str(config_id))
+        assert config is not None
+        assert config.name == "ById"
+        assert config.guild_id == guild_id
