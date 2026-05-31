@@ -1,6 +1,6 @@
 """Locale file integrity health check for Tanjun bot.
 
-Verifies that locale files (en.json, de.json, ko.json, bg.json, hr.json, it.json, zh-TW.json, da.json) exist, are valid JSON,
+Verifies that locale files (en.json, de.json, ko.json, bg.json, hr.json, it.json, zh-TW.json, da.json, lt.json) exist, are valid JSON,
 contain all required translation keys, and are not missing any keys
 compared to the primary language (en.json).
 """
@@ -17,7 +17,7 @@ class LocaleFileHealthCheck(HealthCheck):
     """Health check for locale file integrity.
 
     Checks:
-    1. en.json, de.json, ko.json, bg.json, hr.json, cs.json, it.json, zh-TW.json, and da.json files exist
+    1. en.json, de.json, ko.json, bg.json, hr.json, cs.json, it.json, zh-TW.json, da.json, and lt.json files exist
     2. All files parse as valid JSON
     3. All required translation keys are present in all files
     4. No missing translations compared to en.json (warning only)
@@ -31,7 +31,7 @@ class LocaleFileHealthCheck(HealthCheck):
     ]
 
     LOCALE_DIR = "locales"
-    LOCALES = ["en", "de", "ko", "bg", "hr", "it", "zh-TW", "da"]
+    LOCALES = ["en", "de", "ko", "bg", "hr", "it", "zh-TW", "da", "lt"]
 
     @property
     def name(self) -> str:
