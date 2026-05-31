@@ -85,6 +85,7 @@ class TestCommandInfo:
         command = MagicMock()
         message = make_message()
         perms = MagicMock()
+        reply = AsyncMock()
         info = CommandInfo(
             user=make_member(),
             channel=channel,
@@ -93,12 +94,14 @@ class TestCommandInfo:
             locale="de",
             message=message,
             permissions=perms,
+            reply=reply,
             client=client,
         )
         assert info.channel is channel
         assert info.command is command
         assert info.message is message
         assert info.permissions is perms
+        assert info.reply is reply
         assert info.client is client
 
 

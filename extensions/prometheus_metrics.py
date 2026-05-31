@@ -88,7 +88,7 @@ class PrometheusMetricsCog(commands.Cog):
             # Update process metrics synchronously before serving.
             update_process_metrics()
             data = generate_latest()
-            return web.Response(body=data, content_type=CONTENT_TYPE_LATEST)
+            return web.Response(body=data, headers={"Content-Type": CONTENT_TYPE_LATEST})
 
         async def health_handler(request: web.Request) -> web.Response:
             return web.Response(text="OK", content_type="text/plain")

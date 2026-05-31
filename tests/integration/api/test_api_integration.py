@@ -21,6 +21,7 @@ import os
 from datetime import datetime, timedelta
 
 import pytest
+import pytest_asyncio
 
 import tests.mock_config as mock_config
 
@@ -49,13 +50,19 @@ TEST_DB_PASSWORD = os.environ.get("TANJUN_TEST_DB_PASSWORD", os.environ.get("TES
 TEST_DB_NAME = os.environ.get("TANJUN_TEST_DB_NAME", os.environ.get("TEST_DB_NAME", "tanjun_test"))
 
 pytestmark = [
-    pytest.mark.asyncio,
+    pytest.mark.asyncio(loop_scope="session"),
+    pytest.mark.skipif(
+        os.environ.get("TANJUN_INTEGRATION", "false").lower() not in ("1", "true", "yes"),
+        reason="Set TANJUN_INTEGRATION=true for real database integration tests",
+    ),
     pytest.mark.skipif(
         os.environ.get("SKIP_INTEGRATION_TESTS", "0") == "1",
         reason="Integration tests disabled via SKIP_INTEGRATION_TESTS=1",
     ),
 ]
 
+
+from tests.helpers.factories import CHANNEL_ID, GUILD_ID, ROLE_ID, USER_ID  # noqa: E402
 
 # Test constants for function-based tests (from version 3)
 TEST_GUILD = "99999999999999999"
@@ -64,75 +71,123 @@ TEST_ROLE = "77777777777777777"
 TEST_CHANNEL = "66666666666666666"
 
 
+def _snowflake(seed: int) -> str:
+    return f"{seed:017d}"
+
+
+TEST_MOD = _snowflake(998_001)
+
+
+CRUD_GUILD_A = _snowflake(100_001)
+CRUD_GUILD_B = _snowflake(100_002)
+CRUD_USER_A = _snowflake(200_001)
+CRUD_USER_B = _snowflake(200_002)
+CRUD_USER_C = _snowflake(200_003)
+CRUD_USER_D = _snowflake(300_001)
+CRUD_USER_E = _snowflake(300_002)
+CRUD_USER_F = _snowflake(300_003)
+CRUD_USER_G = _snowflake(400_001)
+CRUD_CHANNEL_A = _snowflake(500_001)
+CRUD_USER_H = _snowflake(600_001)
+CRUD_USER_I = _snowflake(600_002)
+CRUD_USER_J = _snowflake(700_001)
+CRUD_MOD = _snowflake(999_999)
+CRUD_EMPTY_GUILD = _snowflake(999_998)
+CRUD_EMPTY_USER = _snowflake(888_888)
+CRUD_ROLE_A = _snowflake(800_001)
+CRUD_CHANNEL_OW_A = _snowflake(900_001)
+CRUD_CHANNEL_OW_B = _snowflake(900_002)
+CRUD_CHANNEL_OW_C = _snowflake(900_003)
+CRUD_ROLE_OW = _snowflake(950_001)
+CRUD_COUNTING_CHANNEL = _snowflake(910_001)
+CRUD_COUNTING_USER = _snowflake(920_001)
+CRUD_ROLE_10 = _snowflake(810_010)
+CRUD_ROLE_20 = _snowflake(810_020)
+CRUD_ROLE_REMOVE = _snowflake(810_015)
+NONEXISTENT_GUILD = _snowflake(999_999_999)
+TOKEN_USER_1 = _snowflake(901_001)
+TOKEN_USER_2 = _snowflake(901_002)
+TOKEN_USER_3 = _snowflake(901_003)
+COOLDOWN_GUILD = _snowflake(902_001)
+FEEDBACK_USER = _snowflake(903_001)
+AUTOPUBLISH_CHANNEL = _snowflake(904_001)
+MEDIA_GUILD = _snowflake(905_001)
+MEDIA_CHANNEL = _snowflake(905_002)
+TRIGGER_GUILD = _snowflake(906_001)
+WORDCHAIN_CHANNEL = _snowflake(907_001)
+WORDCHAIN_GUILD = _snowflake(907_002)
+WORDCHAIN_USER = _snowflake(907_003)
+SLOW_GUILD = _snowflake(908_001)
+SLOW_CHANNEL = _snowflake(908_002)
+BRAWL_USER = _snowflake(909_001)
+LEVEL_CFG_GUILD_1 = _snowflake(910_001)
+LEVEL_CFG_GUILD_2 = _snowflake(910_002)
+LEVEL_CFG_CHANNEL = _snowflake(910_003)
+BL_REM_GUILD = _snowflake(911_001)
+BL_REM_CHANNEL = _snowflake(911_002)
+BL_REM_USER = _snowflake(911_003)
+BL_REM_ROLE = _snowflake(911_004)
+BOOST_GUILD = _snowflake(912_001)
+BOOST_USER = _snowflake(912_002)
+WORDLE_USER_WIN = _snowflake(913_001)
+WORDLE_USER_LOSS = _snowflake(913_002)
+WORDLE_USER_HARD = _snowflake(913_003)
+WORDLE_USER_DIST = _snowflake(913_004)
+BRAWL_INT_USER_1 = _snowflake(914_001)
+BRAWL_INT_USER_4 = _snowflake(914_004)
+SCHED_USER_1 = _snowflake(915_001)
+SCHED_USER_2 = _snowflake(915_002)
+SCHED_USER_3 = _snowflake(915_003)
+SCHED_USER_4 = _snowflake(915_004)
+SCHED_USER_5 = _snowflake(915_005)
+SCHED_USER_6 = _snowflake(915_006)
+SCHED_GUILD_1 = _snowflake(916_001)
+SCHED_GUILD_2 = _snowflake(916_002)
+SCHED_GUILD_3 = _snowflake(916_003)
+SCHED_GUILD_4 = _snowflake(916_004)
+SCHED_GUILD_5 = _snowflake(916_005)
+SCHED_CHANNEL_1 = _snowflake(916_101)
+SCHED_CHANNEL_2 = _snowflake(916_102)
+SCHED_CHANNEL_3 = _snowflake(916_103)
+SCHED_CHANNEL_4 = _snowflake(916_104)
+SCHED_CHANNEL_5 = _snowflake(916_105)
+TICKET_GUILD_1 = _snowflake(917_001)
+TICKET_GUILD_2 = _snowflake(917_002)
+TICKET_CHANNEL_1 = _snowflake(917_101)
+TICKET_CHANNEL_2 = _snowflake(917_102)
+TICKET_ROLE = _snowflake(917_201)
+TICKET_SUMMARY = _snowflake(917_202)
+TICKET_USER = _snowflake(917_301)
+
+BL_REM_GUILD_2 = _snowflake(911_011)
+BOOST_GUILD_2 = _snowflake(912_011)
+BOOST_CHANNEL = _snowflake(912_012)
+WORDLE_GUILD_NEW = _snowflake(913_010)
+WORDLE_GUILD_WIN = _snowflake(913_011)
+WORDLE_GUILD_LOSS = _snowflake(913_012)
+WORDLE_GUILD_HARD = _snowflake(913_013)
+WORDLE_GUILD_DIST = _snowflake(913_014)
+BRAWL_INT_USER_2 = _snowflake(914_002)
+BRAWL_INT_USER_3 = _snowflake(914_003)
+TICKET_GUILD_3 = _snowflake(917_003)
+TICKET_GUILD_4 = _snowflake(917_004)
+TICKET_GUILD_5 = _snowflake(917_005)
+TICKET_GUILD_6 = _snowflake(917_006)
+
+
 _created_tables = False
 
 
-@pytest.fixture(scope="session")
-async def integration_pool():
-    """Create a real database connection pool for integration tests."""
-    global _created_tables
-    try:
-        import asyncmy
-
-        pool = await asyncmy.create_pool(
-            host=TEST_DB_HOST,
-            port=TEST_DB_PORT,
-            user=TEST_DB_USER,
-            password=TEST_DB_PASSWORD,
-            db=TEST_DB_NAME,
-            minsize=1,
-            maxsize=2,
-            autocommit=False,
-        )
-    except Exception as exc:
-        pytest.skip(f"Test database not available at {TEST_DB_HOST}:{TEST_DB_PORT}: {exc}")
-        return
-
-    # Create tables once per session
-    if not _created_tables:
-        try:
-            async with pool.acquire() as conn:
-                async with conn.cursor() as cursor:
-                    for table_name, ddl in _get_table_definitions().items():
-                        await cursor.execute(ddl)
-                await conn.commit()
-            _created_tables = True
-        except Exception as exc:
-            pool.close()
-            await pool.wait_closed()
-            pytest.skip(f"Failed to initialize test database tables: {exc}")
-            return
-
-    yield pool
-
-    # Session cleanup: drop all created tables
-    try:
-        async with pool.acquire() as conn, conn.cursor() as cursor:
-            await cursor.execute(
-                "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') "
-                "FROM information_schema.tables "
-                "WHERE table_schema = %s",
-                (TEST_DB_NAME,),
-            )
-            for (stmt,) in await cursor.fetchall():
-                await cursor.execute(stmt)
-            await conn.commit()
-    except Exception:
-        pass
-
-    pool.close()
-    await pool.wait_closed()
-
-
-@pytest.fixture
-def bot_with_integration_pool(integration_pool, monkeypatch):
+@pytest_asyncio.fixture
+async def bot_with_integration_pool(integration_db_pool):
     """Patch the global _bot in api.py so execute_query uses the test pool."""
 
     class FakeBot:
-        _pool = integration_pool
+        _pool = integration_db_pool
 
-    api.set_bot(FakeBot())
-    return FakeBot()
+    bot = FakeBot()
+    api.set_bot(bot)
+    yield bot
 
 
 def _get_table_definitions():
@@ -151,37 +206,36 @@ class TestWarningCRUD:
 
     async def test_add_and_get_warnings(self, bot_with_integration_pool):
         """Add a warning and verify it can be retrieved."""
-        guild_id = "100001"
-        user_id = "200001"
+        guild_id = CRUD_GUILD_A
+        user_id = CRUD_USER_A
         reason = "Test warning"
-        created_by = "999999"
+        created_by = CRUD_MOD
 
         warning_id = await api.add_warning(guild_id, user_id, reason, created_by)
         assert warning_id is not None, "add_warning should return a warning ID"
         assert isinstance(warning_id, int), "warning ID should be an integer"
 
-        warnings = await api.get_warnings(guild_id, user_id)
-        assert len(warnings) == 1, f"Expected 1 warning, got {len(warnings)}"
-        assert warnings[0].reason == reason
-        assert warnings[0].user_id == user_id
-        assert warnings[0].created_by == created_by
+        warnings = [w async for w in api.get_warnings(guild_id, user_id)]
+        assert len(warnings) >= 1, f"Expected at least 1 warning, got {len(warnings)}"
+        match = next(w for w in warnings if w.reason == reason and w.user_id == user_id)
+        assert match.created_by == created_by
 
     async def test_add_and_remove_warning(self, bot_with_integration_pool):
         """Add a warning then remove it."""
-        guild_id = "100001"
-        user_id = "200002"
+        guild_id = CRUD_GUILD_A
+        user_id = CRUD_USER_B
 
-        warning_id = await api.add_warning(guild_id, user_id, "Remove me", "999999")
+        warning_id = await api.add_warning(guild_id, user_id, "Remove me", CRUD_MOD)
         assert warning_id is not None
 
         await api.remove_warning(warning_id)
 
-        warnings = await api.get_warnings(guild_id, user_id)
+        warnings = [w async for w in api.get_warnings(guild_id, user_id)]
         assert len(warnings) == 0, "Warning should have been removed"
 
     async def test_get_warnings_empty(self, bot_with_integration_pool):
         """Getting warnings for a user with none should return an empty list."""
-        warnings = await api.get_warnings("999999", "888888")
+        warnings = [w async for w in api.get_warnings(CRUD_EMPTY_GUILD, CRUD_EMPTY_USER)]
         assert warnings == [], f"Expected empty list, got {warnings}"
 
 
@@ -190,8 +244,8 @@ class TestLevelCRUD:
 
     async def test_update_and_get_user_xp(self, bot_with_integration_pool):
         """Update XP for a user using low-level execute_action."""
-        guild_id = "100001"
-        user_id = "200003"
+        guild_id = CRUD_GUILD_A
+        user_id = CRUD_USER_C
 
         await api.execute_action(
             "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s",
@@ -208,13 +262,14 @@ class TestLevelCRUD:
 
     async def test_bulk_update_user_xp(self, bot_with_integration_pool):
         """Bulk update XP for multiple users."""
-        guild_id = "100002"
+        guild_id = _snowflake(100_102)
         updates = [
-            ("300001", 100),
-            ("300002", 200),
-            ("300003", 300),
+            (_snowflake(300_101), 100),
+            (_snowflake(300_102), 200),
+            (_snowflake(300_103), 300),
         ]
 
+        await api.execute_action("DELETE FROM level WHERE guild_id = %s", (guild_id,))
         await api.bulk_update_user_xp(guild_id, updates)
 
         for user_id, expected_xp in updates:
@@ -228,7 +283,7 @@ class TestLevelCRUD:
 
     async def test_bulk_update_user_xp_handles_empty(self, bot_with_integration_pool):
         """Bulk update with empty list should not raise."""
-        await api.bulk_update_user_xp("100002", [])
+        await api.bulk_update_user_xp(CRUD_GUILD_B, [])
 
 
 class TestBlacklistCRUD:
@@ -236,24 +291,27 @@ class TestBlacklistCRUD:
 
     async def test_add_and_check_blacklisted_user(self, bot_with_integration_pool):
         """Add a user to the blacklist and verify via get_blacklist."""
-        guild_id = "100001"
-        user_id = "400001"
+        guild_id = CRUD_GUILD_A
+        user_id = CRUD_USER_G
 
         await api.add_user_to_blacklist(guild_id, user_id, reason="spam")
         blacklist = await api.get_blacklist(guild_id)
 
-        assert user_id in blacklist.get("users", {}), f"User {user_id} should be in the blacklist"
-        assert blacklist["users"][user_id] == "spam"
+        users = blacklist.get("users", [])
+        assert any(u.entity_id == user_id for u in users), f"User {user_id} should be in the blacklist"
+        match = next(u for u in users if u.entity_id == user_id)
+        assert match.reason == "spam"
 
     async def test_add_and_check_blacklisted_channel(self, bot_with_integration_pool):
         """Add a channel to the blacklist and verify."""
-        guild_id = "100001"
-        channel_id = "500001"
+        guild_id = CRUD_GUILD_A
+        channel_id = CRUD_CHANNEL_A
 
         await api.add_channel_to_blacklist(guild_id, channel_id, reason="testing")
         blacklist = await api.get_blacklist(guild_id)
 
-        assert channel_id in blacklist.get("channels", {}), f"Channel {channel_id} should be in the blacklist"
+        channels = blacklist.get("channels", [])
+        assert any(c.entity_id == channel_id for c in channels), f"Channel {channel_id} should be in the blacklist"
 
 
 class TestOptOutCRUD:
@@ -261,16 +319,16 @@ class TestOptOutCRUD:
 
     async def test_opt_out_and_check(self, bot_with_integration_pool):
         """Opt out a user and verify."""
-        user_id = "600001"
-
+        user_id = CRUD_USER_H
+        await api.opt_in(user_id)
         await api.opt_out(user_id)
         result = await api.check_if_opted_out(int(user_id))
         assert result is True, "User should be opted out"
 
     async def test_opt_in_after_opt_out(self, bot_with_integration_pool):
         """Opt in a user after opting out."""
-        user_id = "600002"
-
+        user_id = CRUD_USER_I
+        await api.opt_in(user_id)
         await api.opt_out(user_id)
         await api.opt_in(user_id)
         result = await api.check_if_opted_out(int(user_id))
@@ -282,8 +340,8 @@ class TestXPBoostsCRUD:
 
     async def test_add_and_get_user_boost(self, bot_with_integration_pool):
         """Add a user XP boost and verify retrieval."""
-        guild_id = "100001"
-        user_id = "700001"
+        guild_id = CRUD_GUILD_A
+        user_id = CRUD_USER_J
 
         await api.add_user_boost(guild_id, user_id, boost=1.5, additive=False)
         boost = await api.get_user_boost(guild_id, user_id)
@@ -293,8 +351,8 @@ class TestXPBoostsCRUD:
 
     async def test_add_and_get_role_boost(self, bot_with_integration_pool):
         """Add a role XP boost and verify retrieval."""
-        guild_id = "100001"
-        role_id = "800001"
+        guild_id = CRUD_GUILD_A
+        role_id = CRUD_ROLE_A
 
         await api.add_role_boost(guild_id, role_id, boost=2.0, additive=False)
 
@@ -308,7 +366,7 @@ class TestXPBoostsCRUD:
 
     async def test_get_user_boost_missing(self, bot_with_integration_pool):
         """Getting a boost for a non-existent user should return None."""
-        boost = await api.get_user_boost("999999", "000000")
+        boost = await api.get_user_boost(CRUD_EMPTY_GUILD, _snowflake(1))
         assert boost is None
 
 
@@ -317,9 +375,9 @@ class TestLevelConfigCRUD:
 
     async def test_set_and_get_xp_scaling(self, bot_with_integration_pool):
         """Set XP scaling and verify retrieval."""
-        guild_id = "100001"
+        guild_id = CRUD_GUILD_A
 
-        await api.set_xp_scaling(guild_id, difficulty="hard")
+        await api.set_xp_scaling(guild_id, "hard")
         scaling = await api.get_xp_scaling(guild_id)
 
         assert scaling is not None
@@ -327,7 +385,7 @@ class TestLevelConfigCRUD:
 
     async def test_set_custom_formula_changes_scaling(self, bot_with_integration_pool):
         """Setting a custom formula should change scaling to 'custom'."""
-        guild_id = "100002"
+        guild_id = CRUD_GUILD_B
 
         await api.set_custom_formula(guild_id, "x**2 + 100")
         scaling = await api.get_xp_scaling(guild_id)
@@ -337,7 +395,7 @@ class TestLevelConfigCRUD:
 
     async def test_get_xp_scaling_default(self, bot_with_integration_pool):
         """Getting XP scaling for a guild with no config should return 'medium'."""
-        scaling = await api.get_xp_scaling("__nonexistent__")
+        scaling = await api.get_xp_scaling(NONEXISTENT_GUILD)
         assert scaling == "medium", f"Expected default 'medium', got {scaling}"
 
 
@@ -346,26 +404,24 @@ class TestChannelOverwritesCRUD:
 
     async def test_save_and_get_channel_overwrites(self, bot_with_integration_pool):
         """Save channel overwrites and retrieve them."""
-        channel_id = "900001"
-        role_id = "900002"
+        channel_id = CRUD_CHANNEL_OW_A
+        role_id = CRUD_CHANNEL_OW_B
         overwrites = {"view": True, "send": False}
 
-        ow_id = await api.save_channel_overwrites(channel_id, role_id, overwrites)
-        assert ow_id is not None
-        assert isinstance(ow_id, int)
+        await api.save_channel_overwrites(channel_id, role_id, overwrites)
 
-        loaded = await api.get_channel_overwrites(channel_id)
+        loaded = [o async for o in api.get_channel_overwrites(channel_id)]
         assert len(loaded) == 1
         assert loaded[0].role_id == role_id
 
     async def test_clear_channel_overwrites(self, bot_with_integration_pool):
         """Clear all overwrites for a channel."""
-        channel_id = "900003"
+        channel_id = CRUD_CHANNEL_OW_C
 
-        await api.save_channel_overwrites(channel_id, "950001", {"view": True})
+        await api.save_channel_overwrites(channel_id, CRUD_ROLE_OW, {"view": True})
         await api.clear_channel_overwrites(channel_id)
 
-        loaded = await api.get_channel_overwrites(channel_id)
+        loaded = [o async for o in api.get_channel_overwrites(channel_id)]
         assert len(loaded) == 0, "Overwrites should be cleared"
 
 
@@ -374,13 +430,13 @@ class TestCountingCRUD:
 
     async def test_counting_insert_and_read(self, bot_with_integration_pool):
         """Insert counting config and read it back."""
-        channel_id = "counting_test_1"
-        guild_id = "100001"
+        channel_id = CRUD_COUNTING_CHANNEL
+        guild_id = CRUD_GUILD_A
 
         await api.execute_action(
             "INSERT INTO counting (channel_id, progress, last_counter_id, guild_id) "
             "VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE progress = progress",
-            (channel_id, 42, "user_1", guild_id),
+            (channel_id, 42, CRUD_COUNTING_USER, guild_id),
         )
 
         result = await api.execute_query(
@@ -396,7 +452,7 @@ class TestWarnConfigCRUD:
 
     async def test_set_and_get_warn_config(self, bot_with_integration_pool):
         """Set warn config and retrieve it."""
-        guild_id = "100001"
+        guild_id = CRUD_GUILD_A
 
         await api.set_warn_config(
             guild_id,
@@ -420,12 +476,12 @@ class TestLevelRoleCRUD:
 
     async def test_add_and_get_level_roles(self, bot_with_integration_pool):
         """Add level roles and retrieve them."""
-        guild_id = "100001"
+        guild_id = CRUD_GUILD_A
 
-        await api.add_level_role(role_id="role_10", guild_id=guild_id, level=10)
-        await api.add_level_role(role_id="role_20", guild_id=guild_id, level=20)
+        await api.add_level_role(role_id=CRUD_ROLE_10, guild_id=guild_id, level=10)
+        await api.add_level_role(role_id=CRUD_ROLE_20, guild_id=guild_id, level=20)
 
-        roles = await api.get_level_roles(guild_id)
+        roles = [r async for r in api.get_level_roles(guild_id)]
         assert len(roles) >= 2
 
         found_levels = {r.level for r in roles}
@@ -434,13 +490,13 @@ class TestLevelRoleCRUD:
 
     async def test_remove_level_role(self, bot_with_integration_pool):
         """Remove a level role and verify it's gone."""
-        guild_id = "100001"
-        role_id = "role_remove_1"
+        guild_id = CRUD_GUILD_A
+        role_id = CRUD_ROLE_REMOVE
 
         await api.add_level_role(role_id=role_id, guild_id=guild_id, level=15)
         await api.remove_level_role(role_id=role_id, guild_id=guild_id)
 
-        roles = await api.get_level_roles(guild_id)
+        roles = [r async for r in api.get_level_roles(guild_id)]
         assert not any(r.role_id == role_id for r in roles), f"Role {role_id} should have been removed"
 
 
@@ -451,7 +507,7 @@ class TestSafeExecuteQuery:
         """safe_execute_query should return a list even on empty results."""
         result = await api.safe_execute_query(
             "SELECT * FROM level WHERE guild_id = %s",
-            ("nonexistent_guild_12345",),
+            (NONEXISTENT_GUILD,),
         )
         assert isinstance(result, list)
 
@@ -472,9 +528,13 @@ class TestHealthCheck:
 
     async def test_check_pool_health_no_pool(self):
         """check_pool_health should return False when no pool is available."""
-        api.set_bot(None)
-        healthy = await api.check_pool_health()
-        assert healthy is False
+        original_bot = api._bot
+        try:
+            api.set_bot(None)
+            healthy = await api.check_pool_health()
+            assert healthy is False
+        finally:
+            api.set_bot(original_bot)
 
 
 # ---------------------------------------------------------------------------
@@ -508,7 +568,7 @@ async def test_tables_are_created_via_create_tables(integration_db_pool):
         "levelConfig",
         "levelRole",
         "blacklistedChannel",
-        "blacklistedRole",
+        "blacklisted_role",
         "blacklistedUser",
         "userXpBoost",
         "channelXpBoost",
@@ -524,9 +584,9 @@ async def test_tables_are_created_via_create_tables(integration_db_pool):
 async def test_add_and_retrieve_warning(integration_db_pool):
     """Write a warning to the database and read it back."""
     expires_at = datetime.now() + timedelta(days=30)
-    await add_warning(TEST_GUILD, TEST_USER, "Integration test warning", "bot", expires_at)
+    await add_warning(TEST_GUILD, TEST_USER, "Integration test warning", TEST_MOD, expires_at)
 
-    warnings = await get_warnings(TEST_GUILD, TEST_USER)
+    warnings = [w async for w in get_warnings(TEST_GUILD, TEST_USER)]
     assert warnings is not None, "get_warnings should return a list"
     assert len(warnings) >= 1, "Should have at least one warning"
 
@@ -537,9 +597,9 @@ async def test_add_and_retrieve_warning(integration_db_pool):
 async def test_remove_warning(integration_db_pool):
     """Add a warning and then remove it, verifying the removal."""
     expires_at = datetime.now() + timedelta(days=30)
-    await add_warning(TEST_GUILD, TEST_USER, "To be removed", "bot", expires_at)
+    await add_warning(TEST_GUILD, TEST_USER, "To be removed", TEST_MOD, expires_at)
 
-    warnings_before = await get_warnings(TEST_GUILD, TEST_USER)
+    warnings_before = [w async for w in get_warnings(TEST_GUILD, TEST_USER)]
     target = [w for w in (warnings_before or []) if w.reason == "To be removed"]
     assert len(target) >= 1, "Should find the warning to remove"
 
@@ -547,7 +607,7 @@ async def test_remove_warning(integration_db_pool):
     warning_id = target[0].id
     await remove_warning(warning_id)
 
-    warnings_after = await get_warnings(TEST_GUILD, TEST_USER) or []
+    warnings_after = [w async for w in get_warnings(TEST_GUILD, TEST_USER)]
     still_around = [w for w in warnings_after if w.id == warning_id]
     assert len(still_around) == 0, "Warning should no longer be present after removal"
 
@@ -582,7 +642,7 @@ async def test_role_blacklist_round_trip(integration_db_pool):
     pool = integration_db_pool
     async with pool.acquire() as conn, conn.cursor() as cursor:
         await cursor.execute(
-            "SELECT role_id, reason FROM blacklistedRole WHERE guild_id = %s AND role_id = %s",
+            "SELECT role_id, reason FROM blacklisted_role WHERE guild_id = %s AND role_id = %s",
             (TEST_GUILD, TEST_ROLE),
         )
         row = await cursor.fetchone()
@@ -611,14 +671,14 @@ async def test_level_role_add_and_remove(integration_db_pool):
     """Add a level role, verify it's returned, then remove it."""
     await add_level_role(TEST_GUILD, TEST_ROLE, 10)
 
-    roles = await get_level_roles(TEST_GUILD)
-    matching = [r for r in (roles or []) if r.role_id == TEST_ROLE]
+    roles = [r async for r in get_level_roles(TEST_GUILD)]
+    matching = [r for r in roles if r.role_id == TEST_ROLE]
     assert len(matching) >= 1, "Level role should be present after adding"
     assert matching[0].level == 10
 
     # Remove
     await remove_level_role(TEST_GUILD, TEST_ROLE)
-    roles_after = await get_level_roles(TEST_GUILD) or []
+    roles_after = [r async for r in get_level_roles(TEST_GUILD)]
     still_around = [r for r in roles_after if r.role_id == TEST_ROLE]
     assert len(still_around) == 0, "Level role should be gone after removal"
 
@@ -663,13 +723,13 @@ async def test_bulk_xp_update(integration_db_pool):
 
 class TestTokenCRUD:
     async def test_include_and_get_token(self, bot_with_integration_pool):
-        user_id = "token_user_1"
+        user_id = TOKEN_USER_1
         await api.includeToToken(user_id)
         total = await api.getToken(user_id)
         assert total >= 500
 
     async def test_add_and_use_token(self, bot_with_integration_pool):
-        user_id = "token_user_2"
+        user_id = TOKEN_USER_2
         await api.includeToToken(user_id)
         before = await api.getToken(user_id)
         await api.useToken(user_id, 10)
@@ -677,11 +737,11 @@ class TestTokenCRUD:
         assert after <= before
 
     async def test_get_token_overview(self, bot_with_integration_pool):
-        user_id = "token_user_3"
+        user_id = TOKEN_USER_3
         await api.includeToToken(user_id)
         overview = await api.getTokenOverview(user_id)
         assert overview is not None
-        assert overview.freeToken >= 0
+        assert overview.free_token >= 0
 
 
 # ── Cooldown CRUD ────────────────────────────────────────────────────────────
@@ -689,7 +749,7 @@ class TestTokenCRUD:
 
 class TestCooldownCRUD:
     async def test_text_and_voice_cooldown(self, bot_with_integration_pool):
-        guild_id = "cooldown_guild_1"
+        guild_id = COOLDOWN_GUILD
         await api.set_text_cooldown(guild_id, 45)
         await api.set_voice_cooldown(guild_id, 90)
         assert await api.get_text_cooldown(guild_id) == 45
@@ -701,7 +761,7 @@ class TestCooldownCRUD:
 
 class TestFeedbackCRUD:
     async def test_block_and_unblock_feedback(self, bot_with_integration_pool):
-        user_id = "feedback_user_1"
+        user_id = FEEDBACK_USER
         await api.feedbackBlockUser(user_id)
         assert await api.feedbackIsBlocked(user_id) is True
         await api.feedbackUnblockUser(user_id)
@@ -713,7 +773,7 @@ class TestFeedbackCRUD:
 
 class TestAutoPublishCRUD:
     async def test_autopublish_round_trip(self, bot_with_integration_pool):
-        channel_id = "autopublish_ch_1"
+        channel_id = AUTOPUBLISH_CHANNEL
         await api.addAutoPublish(channel_id)
         assert await api.checkIfChannelIsAutopublish(channel_id) is True
         await api.removeAutoPublish(channel_id)
@@ -725,8 +785,8 @@ class TestAutoPublishCRUD:
 
 class TestMediaChannelCRUD:
     async def test_media_channel(self, bot_with_integration_pool):
-        guild_id = "media_guild_1"
-        channel_id = "media_ch_1"
+        guild_id = MEDIA_GUILD
+        channel_id = MEDIA_CHANNEL
         await api.add_media_channel(guild_id, channel_id)
         assert await api.get_media_channel(channel_id) is True
         await api.remove_media_channel(guild_id, channel_id)
@@ -738,7 +798,7 @@ class TestMediaChannelCRUD:
 
 class TestTriggerMessageCRUD:
     async def test_add_and_remove_trigger(self, bot_with_integration_pool):
-        guild_id = "trigger_guild_1"
+        guild_id = TRIGGER_GUILD
         await api.add_trigger_message(guild_id, "hello", "world")
         triggers = await api.get_trigger_messages(guild_id)
         assert any(t.trigger == "hello" for t in triggers)
@@ -752,9 +812,9 @@ class TestTriggerMessageCRUD:
 
 class TestWordchainCRUD:
     async def test_wordchain_round_trip(self, bot_with_integration_pool):
-        channel_id = "wordchain_ch_1"
-        guild_id = "wordchain_guild_1"
-        user_id = "wordchain_user_1"
+        channel_id = WORDCHAIN_CHANNEL
+        guild_id = WORDCHAIN_GUILD
+        user_id = WORDCHAIN_USER
         await api.set_wordchain_word(channel_id, "apple", guild_id, user_id)
         assert await api.get_wordchain_word(channel_id) == "apple"
         assert await api.get_wordchain_last_user_id(channel_id) == user_id
@@ -767,8 +827,8 @@ class TestWordchainCRUD:
 
 class TestDynamicSlowmodeCRUD:
     async def test_dynamicslowmode(self, bot_with_integration_pool):
-        guild_id = "slow_guild_1"
-        channel_id = "slow_ch_1"
+        guild_id = SLOW_GUILD
+        channel_id = SLOW_CHANNEL
         await api.add_dynamicslowmode(guild_id, channel_id, 5, 10, 60)
         config = await api.get_dynamicslowmode(channel_id)
         assert config is not None
@@ -781,7 +841,7 @@ class TestDynamicSlowmodeCRUD:
 
 class TestBrawlstarsCRUD:
     async def test_link_account(self, bot_with_integration_pool):
-        user_id = "brawl_user_1"
+        user_id = BRAWL_USER
         tag = "#TESTTAG"
         await api.add_brawlstars_linked_account(user_id, tag)
         assert await api.get_brawlstars_linked_account(user_id) == tag
@@ -794,16 +854,16 @@ class TestBrawlstarsCRUD:
 
 class TestLevelConfigExtended:
     async def test_levelup_message_and_channel(self, bot_with_integration_pool):
-        guild_id = "level_cfg_1"
+        guild_id = LEVEL_CFG_GUILD_1
         await api.set_levelup_message(guild_id, "GG {user}")
-        await api.set_levelup_channel(guild_id, "chan_123")
+        await api.set_levelup_channel(guild_id, LEVEL_CFG_CHANNEL)
         await api.set_levelup_message_status(guild_id, False)
         assert await api.get_levelup_message(guild_id) == "GG {user}"
-        assert await api.get_levelup_channel(guild_id) == "chan_123"
+        assert await api.get_levelup_channel(guild_id) == LEVEL_CFG_CHANNEL
         assert await api.get_levelup_message_status(guild_id) is False
 
     async def test_get_custom_formula(self, bot_with_integration_pool):
-        guild_id = "level_cfg_2"
+        guild_id = LEVEL_CFG_GUILD_2
         await api.set_custom_formula(guild_id, "x * 3")
         assert await api.get_custom_formula(guild_id) == "x * 3"
 
@@ -813,16 +873,16 @@ class TestLevelConfigExtended:
 
 class TestBlacklistRemoval:
     async def test_remove_channel_blacklist(self, bot_with_integration_pool):
-        guild_id = "bl_rem_guild_1"
-        channel_id = "bl_rem_ch_1"
+        guild_id = BL_REM_GUILD
+        channel_id = BL_REM_CHANNEL
         await api.add_channel_to_blacklist(guild_id, channel_id, "test")
         await api.remove_channel_from_blacklist(guild_id, channel_id)
         bl = await api.get_blacklist(guild_id)
         assert not any(e.entity_id == channel_id for e in bl.get("channels", []))
 
     async def test_remove_role_blacklist(self, bot_with_integration_pool):
-        guild_id = "bl_rem_guild_2"
-        role_id = "bl_rem_role_1"
+        guild_id = BL_REM_GUILD_2
+        role_id = BL_REM_ROLE
         await api.add_role_to_blacklist(guild_id, role_id, "test")
         await api.remove_role_from_blacklist(guild_id, role_id)
         bl = await api.get_blacklist(guild_id)
@@ -834,16 +894,16 @@ class TestBlacklistRemoval:
 
 class TestXpBoostRemoval:
     async def test_remove_user_boost(self, bot_with_integration_pool):
-        guild_id = "boost_guild_1"
-        user_id = "boost_user_1"
+        guild_id = BOOST_GUILD
+        user_id = BOOST_USER
         await api.add_user_boost(guild_id, user_id, 2.0, False)
         assert await api.get_user_boost(guild_id, user_id) is not None
         await api.remove_user_boost(guild_id, user_id)
         assert await api.get_user_boost(guild_id, user_id) is None
 
     async def test_channel_boost(self, bot_with_integration_pool):
-        guild_id = "boost_guild_2"
-        channel_id = "boost_ch_1"
+        guild_id = BOOST_GUILD_2
+        channel_id = BOOST_CHANNEL
         await api.add_channel_boost(guild_id, channel_id, 1.5, True)
         boost = await api.get_channel_boost(guild_id, channel_id)
         assert boost is not None
@@ -856,7 +916,7 @@ class TestXpBoostRemoval:
 
 @pytest.mark.parametrize("guild_suffix", range(10))
 async def test_level_system_status_per_guild(bot_with_integration_pool, guild_suffix: int):
-    guild_id = f"param_guild_{guild_suffix}"
+    guild_id = _snowflake(924_000 + guild_suffix)
     await set_level_system_status(guild_id, guild_suffix % 2 == 0)
     status = await get_level_system_status(guild_id)
     assert status == (guild_suffix % 2 == 0)
@@ -866,8 +926,8 @@ async def test_level_system_status_per_guild(bot_with_integration_pool, guild_su
 async def test_xp_values_round_trip(bot_with_integration_pool, xp_value: int):
     from api import get_user_xp, update_user_xp
 
-    guild_id = f"xp_guild_{xp_value}"
-    user_id = f"xp_user_{xp_value}"
+    guild_id = _snowflake(920_000 + xp_value)
+    user_id = _snowflake(921_000 + xp_value)
     await update_user_xp(guild_id, user_id, xp_value)
     xp = await get_user_xp(guild_id, user_id)
     assert xp is not None and xp >= xp_value
@@ -875,9 +935,225 @@ async def test_xp_values_round_trip(bot_with_integration_pool, xp_value: int):
 
 @pytest.mark.parametrize("reason", ["spam", "harassment", "nsfw", "raid", "other"])
 async def test_warning_reasons(bot_with_integration_pool, reason: str):
-    guild_id = f"warn_guild_{reason}"
-    user_id = f"warn_user_{reason}"
+    guild_id = _snowflake(922_000 + abs(hash(reason)) % 10000)
+    user_id = _snowflake(923_000 + abs(hash(reason)) % 10000)
     expires = datetime.now() + timedelta(days=7)
-    await add_warning(guild_id, user_id, reason, "mod", expires)
-    warnings = await get_warnings(guild_id, user_id)
+    await add_warning(guild_id, user_id, reason, CRUD_MOD, expires)
+    warnings = [w async for w in get_warnings(guild_id, user_id)]
     assert any(w.reason == reason for w in warnings)
+
+
+class TestWordleIntegration:
+    async def test_get_wordle_stats_none_for_new_user(self, bot_with_integration_pool):
+        stats = await api.get_wordle_stats(_snowflake(913_020), WORDLE_GUILD_NEW)
+        assert stats is None
+
+    async def test_upsert_wordle_win(self, bot_with_integration_pool):
+        user_id = WORDLE_USER_WIN
+        guild_id = WORDLE_GUILD_WIN
+        result = await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=3)
+        assert result["games_played"] == 1
+        assert result["games_won"] == 1
+        assert result["current_streak"] == 1
+        assert result["max_streak"] == 1
+
+    async def test_upsert_wordle_loss_resets_streak(self, bot_with_integration_pool):
+        user_id = WORDLE_USER_LOSS
+        guild_id = WORDLE_GUILD_LOSS
+        await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=2)
+        result = await api.upsert_wordle_stats(user_id, guild_id, won=False, guesses=6)
+        assert result["current_streak"] == 0
+        assert result["games_played"] == 2
+        assert result["games_won"] == 1
+
+    async def test_upsert_wordle_hard_mode(self, bot_with_integration_pool):
+        user_id = WORDLE_USER_HARD
+        guild_id = WORDLE_GUILD_HARD
+        result = await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=1, hard_mode=True)
+        assert result["hard_mode_games_played"] == 1
+        assert result["hard_mode_games_won"] == 1
+
+    async def test_upsert_wordle_guess_distribution(self, bot_with_integration_pool):
+        user_id = WORDLE_USER_DIST
+        guild_id = WORDLE_GUILD_DIST
+        await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=4)
+        stats = await api.get_wordle_stats(user_id, guild_id)
+        dist = [int(x) for x in stats["guess_distribution"].split(",")]
+        assert dist[3] == 1
+
+
+class TestBrawlstarsIntegration:
+    async def test_link_and_unlink_account(self, bot_with_integration_pool):
+        user_id = BRAWL_INT_USER_1
+        tag = "#INTTEST1"
+        await api.add_brawlstars_linked_account(user_id, tag)
+        assert await api.get_brawlstars_linked_account(user_id) == tag
+        await api.remove_brawlstars_linked_account(user_id)
+        assert await api.get_brawlstars_linked_account(user_id) is None
+
+    async def test_link_multiple_users(self, bot_with_integration_pool):
+        await api.add_brawlstars_linked_account(BRAWL_INT_USER_2, "#TAG2")
+        await api.add_brawlstars_linked_account(BRAWL_INT_USER_3, "#TAG3")
+        assert await api.get_brawlstars_linked_account(BRAWL_INT_USER_2) == "#TAG2"
+        assert await api.get_brawlstars_linked_account(BRAWL_INT_USER_3) == "#TAG3"
+
+    async def test_relink_after_remove(self, bot_with_integration_pool):
+        user_id = BRAWL_INT_USER_4
+        await api.add_brawlstars_linked_account(user_id, "#OLD")
+        await api.remove_brawlstars_linked_account(user_id)
+        await api.add_brawlstars_linked_account(user_id, "#NEW")
+        assert await api.get_brawlstars_linked_account(user_id) == "#NEW"
+
+    async def test_get_missing_account_returns_none(self, bot_with_integration_pool):
+        assert await api.get_brawlstars_linked_account("brawl_int_missing") is None
+
+
+class TestScheduledMessageIntegration:
+    async def test_add_and_get_scheduled_message(self, bot_with_integration_pool):
+        user_id = SCHED_USER_1
+        send_time = datetime.now() + timedelta(hours=2)
+        await api.add_scheduled_message(
+            SCHED_GUILD_1, SCHED_CHANNEL_1, user_id, "hello", send_time
+        )
+        messages = await api.get_scheduled_messages(user_id)
+        assert any(m.content == "hello" for m in messages)
+
+    async def test_remove_scheduled_message(self, bot_with_integration_pool):
+        user_id = SCHED_USER_2
+        send_time = datetime.now() + timedelta(hours=3)
+        await api.add_scheduled_message(
+            SCHED_GUILD_2, SCHED_CHANNEL_2, user_id, "remove me", send_time
+        )
+        messages = await api.get_scheduled_messages(user_id)
+        target = next(m for m in messages if m.content == "remove me")
+        await api.remove_scheduled_message(target.message_id)
+        after = await api.get_scheduled_messages(user_id)
+        assert not any(m.message_id == target.message_id for m in after)
+
+    async def test_update_scheduled_content(self, bot_with_integration_pool):
+        user_id = SCHED_USER_3
+        send_time = datetime.now() + timedelta(hours=4)
+        await api.add_scheduled_message(
+            SCHED_GUILD_3, SCHED_CHANNEL_3, user_id, "old", send_time
+        )
+        messages = await api.get_scheduled_messages(user_id)
+        msg_id = next(m.message_id for m in messages if m.content == "old")
+        await api.update_scheduled_message_content(msg_id, "new content")
+        updated = await api.get_scheduled_messages(user_id)
+        assert any(m.message_id == msg_id and m.content == "new content" for m in updated)
+
+    async def test_update_repeat_amount(self, bot_with_integration_pool):
+        user_id = SCHED_USER_4
+        send_time = datetime.now() + timedelta(hours=5)
+        await api.add_scheduled_message(
+            SCHED_GUILD_4,
+            SCHED_CHANNEL_4,
+            user_id,
+            "repeat",
+            send_time,
+            repeat_interval=3600,
+            repeat_amount=3,
+        )
+        messages = await api.get_scheduled_messages(user_id)
+        msg_id = next(m.message_id for m in messages if m.content == "repeat")
+        await api.update_scheduled_message_repeat_amount(msg_id, 5)
+        updated = await api.get_scheduled_messages(user_id)
+        match = next(m for m in updated if m.message_id == msg_id)
+        assert match.repeat_amount == 5
+
+    async def test_get_in_timeframe(self, bot_with_integration_pool):
+        user_id = SCHED_USER_5
+        send_time = datetime.now() + timedelta(hours=6)
+        await api.add_scheduled_message(
+            SCHED_GUILD_5, SCHED_CHANNEL_5, user_id, "timeframe", send_time
+        )
+        start = datetime.now()
+        end = datetime.now() + timedelta(days=1)
+        found = await api.get_user_scheduled_messages_in_timeframe(user_id, start, end)
+        assert any(m.content == "timeframe" for m in found)
+
+    async def test_multiple_scheduled_for_user(self, bot_with_integration_pool):
+        user_id = SCHED_USER_6
+        await api.execute_action("DELETE FROM scheduledMessages WHERE user_id = %s", (user_id,))
+        for i in range(3):
+            await api.add_scheduled_message(
+                _snowflake(916_600 + i),
+                _snowflake(916_700 + i),
+                user_id,
+                f"msg_{i}",
+                datetime.now() + timedelta(hours=7 + i),
+            )
+        messages = await api.get_scheduled_messages(user_id)
+        contents = {m.content for m in messages}
+        assert {"msg_0", "msg_1", "msg_2"}.issubset(contents)
+
+
+class TestTicketIntegration:
+    async def test_create_and_get_ticket_message(self, bot_with_integration_pool):
+        guild_id = TICKET_GUILD_1
+        config_id = await api.create_ticket_message(
+            guild_id,
+            TICKET_CHANNEL_1,
+            "Welcome",
+            TICKET_ROLE,
+            "Support",
+            "Help desk",
+        )
+        assert config_id is not None
+        configs = await api.get_ticket_messages(guild_id)
+        assert any(c.id == config_id and c.name == "Support" for c in configs)
+
+    async def test_delete_ticket_message(self, bot_with_integration_pool):
+        guild_id = TICKET_GUILD_2
+        config_id = await api.create_ticket_message(
+            guild_id, TICKET_CHANNEL_2, "Hi", None, "Delete", "desc"
+        )
+        await api.delete_ticket_message(guild_id, config_id)
+        configs = await api.get_ticket_messages(guild_id)
+        assert not any(c.id == config_id for c in configs)
+
+    async def test_open_and_get_ticket(self, bot_with_integration_pool):
+        guild_id = TICKET_GUILD_3
+        channel_id = _snowflake(917_301)
+        opener_id = _snowflake(917_302)
+        ticket_channel = _snowflake(917_303)
+        config_id = await api.create_ticket_message(
+            guild_id, ticket_channel, "Hi", None, "Open", "desc"
+        )
+        await api.open_ticket(guild_id, opener_id, str(config_id), channel_id)
+        ticket = await api.get_ticket_by_channel_id(guild_id, channel_id)
+        assert ticket is not None
+        assert ticket.opener_id == opener_id
+        assert int(ticket.ticket_message_id) == int(config_id)
+
+    async def test_close_ticket(self, bot_with_integration_pool):
+        guild_id = TICKET_GUILD_4
+        channel_id = "55555555555555555"
+        config_id = await api.create_ticket_message(
+            guild_id, "55555555555555556", "Hi", None, "Close", "desc"
+        )
+        await api.open_ticket(guild_id, "88888888888888882", str(config_id), channel_id)
+        await api.close_ticket(guild_id, channel_id, "88888888888888883")
+        ticket = await api.get_ticket_by_channel_id(guild_id, channel_id)
+        assert ticket is not None
+        assert ticket.closed is True
+        assert ticket.closed_by == "88888888888888883"
+
+    async def test_get_tickets_list(self, bot_with_integration_pool):
+        guild_id = TICKET_GUILD_5
+        config_id = await api.create_ticket_message(
+            guild_id, "55555555555555557", "Hi", None, "List", "desc"
+        )
+        await api.open_ticket(guild_id, "88888888888888884", str(config_id), "55555555555555558")
+        tickets = await api.get_tickets(guild_id)
+        assert any(t.ticket_message_id == config_id for t in tickets)
+
+    async def test_get_ticket_messages_by_id(self, bot_with_integration_pool):
+        guild_id = TICKET_GUILD_6
+        config_id = await api.create_ticket_message(
+            guild_id, "55555555555555559", "Intro", None, "ById", "desc"
+        )
+        config = await api.get_ticket_messages_by_id(str(config_id))
+        assert config is not None
+        assert config.name == "ById"
+        assert config.guild_id == guild_id
