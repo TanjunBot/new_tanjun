@@ -33,6 +33,10 @@ class TestCheckHealth:
         ready_file.touch()
         assert hc.check_health() is True
 
+    def test_succeeds_when_metrics_health_ok(self, ready_file, monkeypatch):
+        with patch.object(hc, "check_metrics_health", return_value=True):
+            assert hc.check_health() is True
+
     def test_directory_named_bot_ready_is_not_ready(self, ready_file, monkeypatch):
         ready_file.mkdir()
         assert hc.check_health() is False
@@ -51,8 +55,8 @@ class TestHealthcheckMain:
                 hc.main()
         assert exc.value.code == 1
 
-    def test_ready_file_path_under_tempdir(self):
-        assert "bot_ready" in str(hc.READY_FILE)
+    def test_ready_file_default_path(self):
+        assert str(hc.READY_FILE).endswith(".bot_ready")
 
     def test_main_entrypoint(self):
         assert hc.__name__ == "healthcheck"

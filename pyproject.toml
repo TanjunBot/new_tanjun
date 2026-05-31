@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tanjun_5.0"
-version = "1.1.4"
+dynamic = ["version"]
 description = "The Officila Tanjun Discord Bot!"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -112,7 +112,7 @@ dev = [
     "referencing==0.37.0",
     "rpds-py==2026.5.1",
     "stack-data==0.6.3",
-    "tinycss2>=1.4.0,<1.5",
+    "tinycss2>=1.4.0,<1.6",
     "tornado==6.5.6",
     "tqdm==4.67.3",
     "traitlets==5.15.0",
@@ -141,6 +141,9 @@ dev = [
 [tool.setuptools]
 py-modules = ["api", "config", "localizer", "utility", "models", "translator", "main", "healthcheck"]
 
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["ai*", "loops*", "assets*", "health*", "locales*", "commands*", "minigames*", "extensions*", "utils*"]
@@ -151,6 +154,7 @@ pythonpath = ["."]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
 markers = [
     "unit: unit tests (mocked dependencies)",
     "integration: integration tests (may require database)",

@@ -1258,7 +1258,7 @@
   {
     "identifier": "admin.purge.params.setting.all",
     "source_string": "alle Nachrichten löschen",
-    "translation": "alle Nachrichten löschen",
+    "translation": "Alle Nachrichten",
     "context": "admin -> purge -> params -> setting -> all",
     "labels": "de.json",
     "max_length": 100
@@ -1266,7 +1266,7 @@
   {
     "identifier": "admin.purge.params.setting.bot",
     "source_string": "nur Nachrichten von Bots löschen",
-    "translation": "nur Nachrichten von Bots löschen",
+    "translation": "Nur Bots",
     "context": "admin -> purge -> params -> setting -> bot",
     "labels": "de.json",
     "max_length": 100
@@ -1274,7 +1274,7 @@
   {
     "identifier": "admin.purge.params.setting.botNotPinned",
     "source_string": "nur nicht angeheftete Nachrichten von Bots löschen",
-    "translation": "nur nicht angeheftete Nachrichten von Bots löschen",
+    "translation": "Bots, unpinned",
     "context": "admin -> purge -> params -> setting -> botNotPinned",
     "labels": "de.json",
     "max_length": 100
@@ -1282,7 +1282,7 @@
   {
     "identifier": "admin.purge.params.setting.description",
     "source_string": "Welche Nachrichten gelöscht werden sollen",
-    "translation": "Welche Nachrichten gelöscht werden sollen",
+    "translation": "Zu löschende Nachrichten",
     "context": "admin -> purge -> params -> setting -> description",
     "labels": "command_description, de.json",
     "max_length": 100
@@ -1290,7 +1290,7 @@
   {
     "identifier": "admin.purge.params.setting.embeds",
     "source_string": "nur Nachrichten mit Embed löschen",
-    "translation": "nur Nachrichten mit Embed löschen",
+    "translation": "Mit Embeds",
     "context": "admin -> purge -> params -> setting -> embeds",
     "labels": "de.json",
     "max_length": 100
@@ -1298,7 +1298,7 @@
   {
     "identifier": "admin.purge.params.setting.files",
     "source_string": "nur Nachrichten mit Dateianhängen löschen",
-    "translation": "nur Nachrichten mit Dateianhängen löschen",
+    "translation": "Mit Dateien",
     "context": "admin -> purge -> params -> setting -> files",
     "labels": "de.json",
     "max_length": 100
@@ -1306,7 +1306,7 @@
   {
     "identifier": "admin.purge.params.setting.notAdmin",
     "source_string": "nur Nachrichten von Nicht-Administratoren löschen (inkl. Bots)",
-    "translation": "nur Nachrichten von Nicht-Administratoren löschen (inkl. Bots)",
+    "translation": "Non-Admins",
     "context": "admin -> purge -> params -> setting -> notAdmin",
     "labels": "de.json",
     "max_length": 100
@@ -1314,7 +1314,7 @@
   {
     "identifier": "admin.purge.params.setting.notAdminNotPinned",
     "source_string": "nur nicht angeheftete Nachrichten von Nicht-Administratoren löschen (inkl. Bots)",
-    "translation": "nur nicht angeheftete Nachrichten von Nicht-Administratoren löschen (inkl. Bots)",
+    "translation": "Non-Admins, unpinned",
     "context": "admin -> purge -> params -> setting -> notAdminNotPinned",
     "labels": "de.json",
     "max_length": 100
@@ -1322,7 +1322,7 @@
   {
     "identifier": "admin.purge.params.setting.notPinned",
     "source_string": "nur nicht angeheftete Nachrichten löschen",
-    "translation": "nur nicht angeheftete Nachrichten löschen",
+    "translation": "Nur unpinned",
     "context": "admin -> purge -> params -> setting -> notPinned",
     "labels": "de.json",
     "max_length": 100
@@ -1330,7 +1330,7 @@
   {
     "identifier": "admin.purge.params.setting.notUserAdmin",
     "source_string": "nur Nachrichten von Nicht-Administratoren löschen außer Bots",
-    "translation": "nur Nachrichten von Nicht-Administratoren löschen außer Bots",
+    "translation": "Non-Admins (ohne Bots)",
     "context": "admin -> purge -> params -> setting -> notUserAdmin",
     "labels": "de.json",
     "max_length": 100
@@ -1338,7 +1338,7 @@
   {
     "identifier": "admin.purge.params.setting.user",
     "source_string": "nur Nachrichten von usern löschen",
-    "translation": "nur Nachrichten von usern löschen",
+    "translation": "Nur User",
     "context": "admin -> purge -> params -> setting -> user",
     "labels": "de.json",
     "max_length": 100
@@ -1346,7 +1346,7 @@
   {
     "identifier": "admin.purge.params.setting.userNotPinned",
     "source_string": "nur nicht angeheftete Nachrichten von Nutzern löschen",
-    "translation": "nur nicht angeheftete Nachrichten von Nutzern löschen",
+    "translation": "User, unpinned",
     "context": "admin -> purge -> params -> setting -> userNotPinned",
     "labels": "de.json",
     "max_length": 100
@@ -34510,5 +34510,221 @@
     "context": " -> ✨POGGERS✨",
     "labels": "de.json",
     "max_length": 32
+  },
+  {
+    "identifier": "utility.schedulemessage.params.attachment.description",
+    "source_string": "Optional file attachment",
+    "translation": "Anhang (optional)",
+    "context": "utility -> schedulemessage -> params -> attachment -> description",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment1",
+    "source_string": "attachment_1",
+    "translation": "datei_1",
+    "context": "utility -> schedulemessage -> attachment1",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment2",
+    "source_string": "attachment_2",
+    "translation": "datei_2",
+    "context": "utility -> schedulemessage -> attachment2",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment3",
+    "source_string": "attachment_3",
+    "translation": "datei_3",
+    "context": "utility -> schedulemessage -> attachment3",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment4",
+    "source_string": "attachment_4",
+    "translation": "datei_4",
+    "context": "utility -> schedulemessage -> attachment4",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment5",
+    "source_string": "attachment_5",
+    "translation": "datei_5",
+    "context": "utility -> schedulemessage -> attachment5",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment6",
+    "source_string": "attachment_6",
+    "translation": "datei_6",
+    "context": "utility -> schedulemessage -> attachment6",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment7",
+    "source_string": "attachment_7",
+    "translation": "datei_7",
+    "context": "utility -> schedulemessage -> attachment7",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment8",
+    "source_string": "attachment_8",
+    "translation": "datei_8",
+    "context": "utility -> schedulemessage -> attachment8",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment9",
+    "source_string": "attachment_9",
+    "translation": "datei_9",
+    "context": "utility -> schedulemessage -> attachment9",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment10",
+    "source_string": "attachment_10",
+    "translation": "datei_10",
+    "context": "utility -> schedulemessage -> attachment10",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.moderation.name",
+    "source_string": "mod",
+    "translation": "mod",
+    "context": "admin -> moderation -> name",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.moderation.description",
+    "source_string": "Moderation commands",
+    "translation": "Moderation commands",
+    "context": "admin -> moderation -> description",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.channels.name",
+    "source_string": "channels",
+    "translation": "channels",
+    "context": "admin -> channels -> name",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.channels.description",
+    "source_string": "Channel management",
+    "translation": "Channel management",
+    "context": "admin -> channels -> description",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.messaging.name",
+    "source_string": "messaging",
+    "translation": "messaging",
+    "context": "admin -> messaging -> name",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.messaging.description",
+    "source_string": "Messaging commands",
+    "translation": "Messaging commands",
+    "context": "admin -> messaging -> description",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.emoji.name",
+    "source_string": "emoji",
+    "translation": "emoji",
+    "context": "admin -> emoji -> name",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.emoji.description",
+    "source_string": "Emoji commands",
+    "translation": "Emoji commands",
+    "context": "admin -> emoji -> description",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.setup.name",
+    "source_string": "setup",
+    "translation": "setup",
+    "context": "admin -> setup -> name",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.setup.description",
+    "source_string": "Server setup commands",
+    "translation": "Server setup commands",
+    "context": "admin -> setup -> description",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.rolemanage.name",
+    "source_string": "role_manage",
+    "translation": "role_manage",
+    "context": "admin -> rolemanage -> name",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.rolemanage.description",
+    "source_string": "Advanced role management",
+    "translation": "Advanced role management",
+    "context": "admin -> rolemanage -> description",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.purgegroup.name",
+    "source_string": "purge",
+    "translation": "purge",
+    "context": "Purge messages group",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.purgegroup.description",
+    "source_string": "Purge messages",
+    "translation": "Purge messages",
+    "context": "Purge messages group description",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.localegroup.name",
+    "source_string": "locale",
+    "translation": "locale",
+    "context": "Server locale group",
+    "labels": "de.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.localegroup.description",
+    "source_string": "Server language",
+    "translation": "Server language",
+    "context": "Server locale group description",
+    "labels": "de.json",
+    "max_length": 100
   }
 ]
