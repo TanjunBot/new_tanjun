@@ -10,6 +10,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
+from utils.app_command_tree import make_add_command_idempotent
 from utils.exception_reporter import handle_asyncio_exception, install_exception_reporter
 
 install_exception_reporter()
@@ -139,6 +140,7 @@ intents.invites = True
 intents.presences = False
 
 bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)  # type: ignore[arg-type]
+make_add_command_idempotent(bot.tree)
 
 
 def _bot_ready_path() -> Path:
