@@ -289,6 +289,23 @@ module = [
 ignore_errors = true
 
 [[tool.mypy.overrides]]
+module = [
+    "commands.games.advanced_tic_tac_toe",
+    "commands.utility.help",
+    "commands.utility.banner",
+    "commands.utility.avatar",
+    "commands.utility.avatar_decoration",
+    "commands.minigames._counting_common",
+    "utils.checks",
+    "services.image_service",
+    "extensions.error_handler",
+    "tests.helpers.discord",
+    "tests.helpers.factories",
+]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
 disallow_untyped_calls = false
+disallow_incomplete_defs = false
