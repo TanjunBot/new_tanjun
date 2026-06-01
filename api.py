@@ -286,7 +286,7 @@ async def _execute_with_retry(
             err_str = str(e).lower()
             if is_write and ("duplicate column" in err_str or "duplicate key name" in err_str):
                 raise
-            retryable = "deadlock" in err_str or "abort" in err_str
+            retryable = "deadlock" in err_str or "abort" in err_str or "restart transaction" in err_str
             if not is_write:
                 retryable = retryable or "connection" in err_str or "timeout" in err_str
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
