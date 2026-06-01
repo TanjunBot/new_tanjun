@@ -171,7 +171,7 @@ class TestTestBot:
         ctx.send = AsyncMock(return_value=sent)
         with patch.object(admin_mod, "DIAGNOSTICS_AVAILABLE", False):
             await cog.test_bot(ctx)
-        assert sent.edit.await_count >= 1
+        sent.edit.assert_awaited()
 
     async def test_diagnostics_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
@@ -197,17 +197,17 @@ class TestTestBot:
         sent.create_thread = AsyncMock(return_value=MagicMock(send=AsyncMock()))
         sent.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
+        mock_runner = MagicMock()
+        mock_runner.run_all = AsyncMock()
         with (
             patch.object(admin_mod, "DIAGNOSTICS_AVAILABLE", True),
             patch(
                 "extensions.administration.DiagnosticsRunner",
-                autospec=True,
-            ) as mock_runner_cls,
+                return_value=mock_runner,
+            ),
         ):
-            mock_runner = mock_runner_cls.return_value
-            mock_runner.run_all = AsyncMock()
             await cog.test_bot(ctx)
-        sent.edit.assert_awaited()
+        mock_runner.run_all.assert_awaited_once()
 
 
 @pytest.mark.asyncio
