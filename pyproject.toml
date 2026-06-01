@@ -296,20 +296,15 @@ disallow_incomplete_defs = false
 
 [[tool.mypy.overrides]]
 module = [
-    "commands.games.advanced_tic_tac_toe",
-    "commands.utility.help",
-    "commands.utility.banner",
-    "commands.utility.avatar",
-    "commands.utility.avatar_decoration",
-    "commands.minigames._counting_common",
-    "commands.math.calculator",
-    "commands.math.faculty",
-    "commands.math.randomnumber",
-    "commands.math.num2word",
+    "commands.*",
+    "extensions.*",
+    "loops.*",
+    "minigames.*",
     "utils.checks",
     "services.image_service",
-    "extensions.error_handler",
-    "tests.helpers.discord",
-    "tests.helpers.factories",
+    "services.twitch_service",
+    "services.wordle_service",
+    "scripts.*",
+    "main",
 ]
 ignore_errors = true

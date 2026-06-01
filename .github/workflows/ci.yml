@@ -84,12 +84,12 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      - run: COVERAGE_FILE=.coverage.unit pytest tests/unit/ -n auto --cov=. --cov-report=xml:coverage-unit.xml --cov-fail-under=0 -q
+      - run: COVERAGE_FILE=coverage-unit.dat pytest tests/unit/ -n auto --cov=. --cov-report=xml:coverage-unit.xml --cov-fail-under=0 -q
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-unit
           path: |
-            .coverage.unit
+            coverage-unit.dat
             coverage-unit.xml
 
   test-integration:
@@ -107,12 +107,12 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      - run: COVERAGE_FILE=.coverage.integration pytest tests/integration/ -m "not slow and not live_discord" --cov=. --cov-report=xml:coverage-integration.xml --cov-fail-under=0 -q
+      - run: COVERAGE_FILE=coverage-integration.dat pytest tests/integration/ -m "not slow and not live_discord" --cov=. --cov-report=xml:coverage-integration.xml --cov-fail-under=0 -q
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-integration
           path: |
-            .coverage.integration
+            coverage-integration.dat
             coverage-integration.xml
 
   test:
@@ -213,7 +213,7 @@ jobs:
           path: coverage-parts
       - run: |
           cd coverage-parts
-          coverage combine .coverage.*
+          coverage combine coverage-*.dat
           coverage xml -o ../coverage.xml
           coverage json -o ../coverage.json
           cd ..
