@@ -20,6 +20,7 @@ def _identity_loop(**kwargs):
         func.coro = func
         func.before_loop = lambda f: f
         func.after_loop = lambda f: f
+        func.is_running = MagicMock(return_value=False)
         return func
 
     return decorator
