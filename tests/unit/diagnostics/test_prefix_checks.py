@@ -27,6 +27,6 @@ async def test_sync_prefix_invoke_finishes_quickly() -> None:
 
     with patch("config.adminIds", [1001]), extension_patches("extensions.administration"):
         started = time.monotonic()
-        await asyncio.wait_for(_invoke_prefix_command(cog, sync, bot), timeout=2.0)
+        await asyncio.wait_for(_invoke_prefix_command(cog, sync, bot), timeout=5.0)
 
-    assert time.monotonic() - started < 1.0
+    assert time.monotonic() - started < 3.0

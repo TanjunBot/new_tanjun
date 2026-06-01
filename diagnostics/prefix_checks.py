@@ -44,12 +44,15 @@ async def _invoke_prefix_command(cog: Any, command: Any, bot: Any) -> None:
     ctx.send = AsyncMock(return_value=status_message)
     ctx.message = type("Msg", (), {"attachments": [], "content": "diag", "guild": guild})()
 
-    kwargs = _build_prefix_kwargs(command.callback)
-    params = list(inspect.signature(command.callback).parameters)
+    # command may be a Command object (with .callback) from cog.get_commands(),
+    # or already a raw callable (bound method) passed directly in tests
+    callback = getattr(command, "callback", command)
+    kwargs = _build_prefix_kwargs(callback)
+    params = list(inspect.signature(callback).parameters)
     if params and params[0] == "self":
-        await command.callback(cog, ctx, **kwargs)
+        await callback(cog, ctx, **kwargs)
     else:
-        await command.callback(ctx, **kwargs)
+        await callback(ctx, **kwargs)
 
 
 async def run_prefix_command_checks(bot: Any) -> list[CheckOutcome]:
