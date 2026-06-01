@@ -68,6 +68,7 @@
     "ai_name ai_askcustom_name",
     "ai_name ai_askgpt_name",
     "ai_name ai_asktanjuwun_name",
+    "ai_name ai_tokens_name",
     "ai_name ai_customsituations_name ai_createcustom_name",
     "ai_name ai_customsituations_name ai_deletecustom_name",
     "channel_name channel_ds_name channel_ds_add_name",

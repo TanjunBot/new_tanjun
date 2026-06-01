@@ -2416,6 +2416,22 @@
     "max_length": 100
   },
   {
+    "identifier": "ai.tokens.description",
+    "source_string": "View your AI token balance",
+    "translation": "View your AI token balance",
+    "context": "AI / ChatGPT command parameter or UI label (ai.tokens). English: \"View your AI token balance\". Used in `extensions/ai.py`.",
+    "labels": "ai, description",
+    "max_length": 100
+  },
+  {
+    "identifier": "ai.tokens.name",
+    "source_string": "tokens",
+    "translation": "tokens",
+    "context": "AI / ChatGPT command parameter or UI label (ai.tokens). English: \"tokens\". Used in `extensions/ai.py`.",
+    "labels": "ai",
+    "max_length": 32
+  },
+  {
     "identifier": "ai.createcustom.description",
     "source_string": "Creates a custom AI",
     "translation": "Creates a custom AI",
@@ -8940,6 +8956,22 @@
     "source_string": "Reply from ${name}",
     "translation": "Reply from ${name}",
     "context": "Title of the reply embed for `/ai ask` when the command completed successfully. Used in `commands/ai/ask_gpt.py`.",
+    "labels": "commands, embed_title, success",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.ai.tokens.success.description",
+    "source_string": "You have **${total}** tokens available (${free} free, ${plus} plus, ${paid} purchased). You have used **${used}** tokens in total. Each AI request needs at least 20 tokens.",
+    "translation": "You have **${total}** tokens available (${free} free, ${plus} plus, ${paid} purchased). You have used **${used}** tokens in total. Each AI request needs at least 20 tokens.",
+    "context": "Description body of the reply embed for `/ai tokens`. Used in `commands/ai/show_tokens.py`.",
+    "labels": "commands, embed_description, success",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.ai.tokens.success.title",
+    "source_string": "AI token balance",
+    "translation": "AI token balance",
+    "context": "Title of the reply embed for `/ai tokens`. Used in `commands/ai/show_tokens.py`.",
     "labels": "commands, embed_title, success",
     "max_length": 256
   },
