@@ -373,3 +373,91 @@ class TestOnPrefixCommandError:
         with patch.object(cog, "_on_prefix_command_error") as mock_prefix:
             await cog.on_command_error(ctx, commands.CommandNotFound("missing"))
         mock_prefix.assert_awaited_once()
+
+    async def test_send_prefix_fails_dm_succeeds(self) -> None:
+        """Prefix: ctx.send raises Forbidden, fallback DM succeeds."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.send = AsyncMock(side_effect=discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.author.send = AsyncMock()
+        await cog._on_prefix_command_error(ctx, discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.send.assert_awaited_once()
+        ctx.author.send.assert_awaited_once()
+
+    async def test_send_prefix_fails_dm_also_fails(self) -> None:
+        """Prefix: ctx.send and DM both raise exceptions."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.send = AsyncMock(side_effect=discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.author.send = AsyncMock(side_effect=RuntimeError("dm failed"))
+        await cog._on_prefix_command_error(ctx, discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.send.assert_awaited_once()
+        ctx.author.send.assert_awaited_once()
+
+    async def test_send_prefix_http_40060_silent(self) -> None:
+        """Prefix: _send_prefix_command_error catches HTTP 40060 silently."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        exc = discord.HTTPException(MagicMock(), "40060")
+        exc.status = 400
+        exc.code = 40060
+        ctx.send = AsyncMock(side_effect=exc)
+        cause = discord.HTTPException(MagicMock(), "something")
+        cause.status = 503
+        await cog._on_prefix_command_error(ctx, cause)
+        # Should not crash — 40060 is handled in _send_prefix_command_error
+
+    async def test_prefix_unexpected_no_guild(self) -> None:
+        """Prefix: unexpected error with no guild (no sentry)."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.guild = None
+        with patch("extensions.error_handler.sentry_dsn", ""):
+            await cog._on_prefix_command_error(ctx, RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
+
+    async def test_prefix_unexpected_no_command(self) -> None:
+        """Prefix: unexpected error with no command name."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.command = None
+        with patch("extensions.error_handler.sentry_dsn", ""):
+            await cog._on_prefix_command_error(ctx, RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
+
+    async def test_prefix_unexpected_no_guild_with_sentry(self) -> None:
+        """Prefix: unexpected error with sentry and no guild."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.guild = None
+        ctx.command = None
+        with (
+            patch("extensions.error_handler.sentry_dsn", "https://example@sentry.io/1"),
+            patch("sentry_sdk.push_scope") as push_scope,
+        ):
+            scope = MagicMock()
+            scope.__enter__ = MagicMock(return_value=scope)
+            scope.__exit__ = MagicMock(return_value=False)
+            push_scope.return_value = scope
+            await cog._on_prefix_command_error(ctx, RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
+
+    async def test_app_command_forbidden_wrapped_in_invoke_error(self) -> None:
+        """App command: Forbidden wrapped in CommandInvokeError."""
+        cog = await _cog()
+        ix = _interaction()
+        inner = discord.Forbidden(MagicMock(), "forbidden")
+        wrapped = app_commands.CommandInvokeError(inner)
+        await cog._on_app_command_error(ix, wrapped)
+        ix.response.send_message.assert_awaited_once()
+
+    async def test_app_command_unexpected_sentry_scope_fails_app_command(self) -> None:
+        """App command: unexpected error with sentry but push_scope raises."""
+        cog = await _cog()
+        ix = _interaction()
+        with (
+            patch("extensions.error_handler.sentry_dsn", "https://example@sentry.io/1"),
+            patch("sentry_sdk.push_scope", side_effect=RuntimeError("scope fail")),
+        ):
+            await cog._on_app_command_error(ix, RuntimeError("boom"))
+        ix.response.send_message.assert_awaited_once()
