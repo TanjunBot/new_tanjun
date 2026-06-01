@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+from contextlib import ExitStack
 from typing import Any
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from diagnostics.models import CheckOutcome
 from diagnostics.patches import extension_patches
@@ -38,8 +39,10 @@ async def _invoke_prefix_command(cog: Any, command: Any, bot: Any) -> None:
     ctx.guild = guild
     ctx.channel = channel
     ctx.bot = bot
-    ctx.send = AsyncMock()
-    ctx.message = type("Msg", (), {"attachments": [], "content": "diag"})()
+    status_message = MagicMock()
+    status_message.edit = AsyncMock()
+    ctx.send = AsyncMock(return_value=status_message)
+    ctx.message = type("Msg", (), {"attachments": [], "content": "diag", "guild": guild})()
 
     kwargs = _build_prefix_kwargs(command.callback)
     params = list(inspect.signature(command.callback).parameters)
@@ -76,7 +79,21 @@ async def run_prefix_command_checks(bot: Any) -> list[CheckOutcome]:
             continue
         try:
             with extension_patches("extensions.administration"):
-                await asyncio.wait_for(_invoke_prefix_command(cog, command, bot), timeout=30.0)
+                with ExitStack() as stack:
+                    if name == "bsaccdata":
+                        stack.enter_context(
+                            patch.object(
+                                cog,
+                                "getAccData",
+                                AsyncMock(return_value={"brawlers": [{}, {}]}),
+                            )
+                        )
+                    if name == "sync":
+                        bot.tree.sync = AsyncMock(return_value=[])
+                        stack.enter_context(
+                            patch("extensions.administration.asyncio.sleep", new_callable=AsyncMock)
+                        )
+                    await asyncio.wait_for(_invoke_prefix_command(cog, command, bot), timeout=30.0)
         except TimeoutError:
             outcomes.append(CheckOutcome(check_id, False, "Timed out after 30s"))
         except Exception as exc:

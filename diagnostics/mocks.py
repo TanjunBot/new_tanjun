@@ -3,19 +3,19 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
+import discord
+
 
 def make_guild(guild_id: int = 123456789, *, with_me: bool = True) -> MagicMock:
     guild = MagicMock()
     guild.id = guild_id
     guild.name = "Diagnostics Guild"
     guild.preferred_locale = "en-US"
+    guild.edit = AsyncMock()
     guild.get_member = MagicMock(return_value=None)
     guild.get_role = MagicMock(return_value=None)
     guild.get_channel = MagicMock(return_value=None)
-    default_role = MagicMock()
-    default_role.id = 222222222
-    default_role.name = "@everyone"
-    guild.default_role = default_role
+    guild.default_role = discord.Object(id=guild_id)
     if with_me:
         me = MagicMock()
         me.id = 999999999
