@@ -7,6 +7,7 @@ that verify SQL query generation, return types, error handling, and edge cases.
 from collections.abc import Iterator
 from datetime import datetime
 from typing import Any, TypeVar
+import os
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
