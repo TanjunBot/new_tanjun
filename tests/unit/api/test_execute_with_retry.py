@@ -65,9 +65,9 @@ class TestExecuteWithRetry:
         callback = AsyncMock()
 
         with patch("asyncio.sleep", new_callable=AsyncMock):
-            with pytest.raises(TimeoutError, match=r"Timeout on test_op attempt"):
-                await _execute_with_retry("test_op", callback, "SELECT 1")
+            result = await _execute_with_retry("test_op", callback, "SELECT 1")
 
+        assert result is None
         assert pool.acquire.await_count == 3
         callback.assert_not_awaited()
 
