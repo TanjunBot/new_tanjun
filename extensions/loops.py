@@ -227,7 +227,8 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
             self.sendPokemonWerbung,
         ]
         for loop in loop_starts:
-            loop.start()  # type: ignore[unused-awaitable]
+            if not loop.is_running():
+                loop.start()  # type: ignore[unused-awaitable]
             await asyncio.sleep(0.25)
 
 

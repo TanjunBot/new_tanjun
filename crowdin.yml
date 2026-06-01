@@ -3,11 +3,12 @@
 #
 # This project uses Crowdin for translation management.
 #
-# Locale files use Crowdin's multilingual JSON format (array of objects with
-# identifier, source_string, translation, context, labels, max_length).
-# Do not set `type` here — the file type is configured in the Crowdin project
-# (must match the format used by bundle 4 / the existing en.json file entry).
-#   /locales/<language_code>.json
+# Runtime locale files are JSON arrays (identifier, source_string, translation,
+# context, labels, max_length). Crowdin sync uses CSV with a column scheme so
+# only source_phrase is translated (generic JSON would import every field).
+# CI converts JSON <-> CSV around crowdin/github-action (see crowdin_locale_csv.py).
+#   /locales/<language_code>.json  (bot)
+#   /locales/<language_code>.csv   (Crowdin upload/download, gitignored)
 #
 # Each file contains an array of translation entries with the following fields:
 #   identifier    - Unique dot-separated key for the translation string
@@ -43,9 +44,12 @@ base_url: "https://api.crowdin.com"
 preserve_hierarchy: true
 
 files:
-  - source: "/locales/en.json"
-    translation: "/locales/%locale%.json"
-    dest: "/locales/en.json"
+  - source: "/locales/en.csv"
+    translation: "/locales/%locale%.csv"
+    dest: "/locales/en.csv"
+    type: csv
+    first_line_contains_header: true
+    scheme: "identifier,source_phrase,translation,context,labels,max_length"
     languages_mapping:
       locale:
         bg: bg
@@ -72,8 +76,8 @@ files:
 # Bundle configuration
 # Bundle ID 4 defines the files and languages synced through
 # Crowdin's GitHub integration (configured at https://crowdin.com/):
-#   - Source file: /locales/en.json
-#   - Translation files: /locales/<locale>.json (e.g. de, fi, es-419, zh-CN)
+#   - Source file: /locales/en.csv (from en.json via CI)
+#   - Translation files: /locales/<locale>.csv (converted back to .json in CI)
 #   - Languages: all locales listed in health/checks/locales.py
 #   - Label filter: (none — all strings included)
 #

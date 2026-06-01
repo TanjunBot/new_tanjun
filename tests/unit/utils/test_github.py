@@ -34,6 +34,15 @@ class TestShouldReportException:
     def test_skips_not_found(self):
         assert should_report_exception(discord.NotFound(MagicMock(), "missing")) is False
 
+    def test_skips_client_connection_reset(self):
+        class ClientConnectionResetError(Exception):
+            pass
+
+        assert should_report_exception(ClientConnectionResetError("Cannot write to closing transport")) is False
+
+    def test_skips_task_already_launched(self):
+        assert should_report_exception(RuntimeError("Task is already launched and is not completed.")) is False
+
 
 class TestReportBotException:
     @pytest.mark.asyncio
