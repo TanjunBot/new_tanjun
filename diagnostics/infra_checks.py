@@ -7,9 +7,9 @@ from diagnostics.models import CheckOutcome
 
 
 async def check_ping(ctx: Any, latency_limit_ms: float = 5000) -> CheckOutcome:
-    start = time.time()
+    start = time.monotonic()
     msg = await ctx.send("ping")
-    end = time.time()
+    end = time.monotonic()
     latency = round((end - start) * 1000, 2)
     await msg.edit(content=f"Pong! ({latency}ms)")
     if latency > latency_limit_ms:

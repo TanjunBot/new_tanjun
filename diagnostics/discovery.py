@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import importlib
 import inspect
-from typing import Any
+from typing import Any, Optional
 
 from discord import app_commands
 
@@ -33,7 +33,7 @@ SLASH_EXTENSIONS = (
 )
 
 
-def _instantiate_group(group_cls: type) -> Any:
+def _instantiate_group(group_cls: type) -> Optional[Any]:
     from unittest.mock import MagicMock
 
     try:
@@ -44,7 +44,10 @@ def _instantiate_group(group_cls: type) -> Any:
         return group_cls()
     except TypeError:
         pass
-    return group_cls(MagicMock())
+    try:
+        return group_cls(MagicMock())
+    except TypeError:
+        return None
 
 
 def _find_group_classes(module: Any) -> list[type]:
@@ -78,6 +81,8 @@ def discover_extension_specs(extension: str) -> list[CommandBehaviorSpec]:
 
     for group_cls in _find_group_classes(module):
         group = _instantiate_group(group_cls)
+        if group is None:
+            continue
         command_entries: list[tuple[str, Any]] = []
         if hasattr(group, "walk_commands"):
             for command in group.walk_commands():
@@ -100,7 +105,7 @@ def discover_extension_specs(extension: str) -> list[CommandBehaviorSpec]:
 
             spec_id = f"{ext_short}.{group_cls.__name__}.{method_name}"
             skip_reason = SPEC_SKIPS.get(spec_id)
-            handler = getattr(group, method_name)
+            handler = callback
             specs.append(
                 CommandBehaviorSpec(
                     id=spec_id,

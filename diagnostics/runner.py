@@ -35,6 +35,7 @@ EXPECTED_COGS = frozenset(
 
 CONCURRENCY = 8
 SPEC_PROGRESS_INTERVAL = 10
+FAIL_FLUSH_SIZE = 10
 
 
 class DiagnosticsRunner:
@@ -68,12 +69,18 @@ class DiagnosticsRunner:
         started = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
         await self._thread_send(f"Diagnostics run started at {started}")
 
-        await self._run_phase_a_infra()
-        await self._run_phase_b_health()
-        await self._run_phase_c_loops()
-        await self._run_phase_d_tree()
-        await self._run_phase_f_extensions()
-        await self._run_phase_e_handlers()
+        for phase_fn in (
+            self._run_phase_a_infra,
+            self._run_phase_b_health,
+            self._run_phase_c_loops,
+            self._run_phase_d_tree,
+            self._run_phase_f_extensions,
+            self._run_phase_e_handlers,
+        ):
+            try:
+                await phase_fn()
+            except Exception as exc:
+                await self._thread_send(f"Phase `{phase_fn.__name__}` aborted: {exc}")
 
         await self._finalize()
         return self.summary
@@ -105,18 +112,23 @@ class DiagnosticsRunner:
         else:
             from health.checks import HealthStatus
 
-            results = await manager.run_all()
-            for result in results:
-                ok = result.status != HealthStatus.CRITICAL
-                phase.outcomes.append(
-                    CheckOutcome(
-                        f"health.{result.check_name}",
-                        ok,
-                        result.message,
+            try:
+                results = await manager.run_all()
+            except Exception as exc:
+                phase.outcomes.append(CheckOutcome("health.manager", False, str(exc)))
+                await self._thread_send(f"FAIL `health.manager`: {exc}")
+            else:
+                for result in results:
+                    ok = result.status != HealthStatus.CRITICAL
+                    phase.outcomes.append(
+                        CheckOutcome(
+                            f"health.{result.check_name}",
+                            ok,
+                            result.message,
+                        )
                     )
-                )
-                if not ok:
-                    await self._thread_send(f"FAIL `health.{result.check_name}`: {result.message}")
+                    if not ok:
+                        await self._thread_send(f"FAIL `health.{result.check_name}`: {result.message}")
 
         self.summary.phases.append(phase)
         await self._update_parent("Bot Diagnostics", f"Phase B complete — {phase.failed} failed")
@@ -146,17 +158,34 @@ class DiagnosticsRunner:
         phase = PhaseResult("D", "Command tree manifest")
         await self._thread_send("## Phase D: Command tree manifest")
 
-        missing, extra = compare_tree_to_manifest(self.bot)
-        if missing:
-            for path in sorted(missing):
-                phase.outcomes.append(CheckOutcome(f"tree.missing.{path}", False, "Not registered"))
-                await self._thread_send(f"FAIL tree missing: `{path}`")
-        if extra:
-            for path in sorted(extra):
-                phase.outcomes.append(CheckOutcome(f"tree.extra.{path}", False, "Unexpected command"))
-                await self._thread_send(f"WARN tree extra: `{path}`")
-        if not missing and not extra:
-            phase.outcomes.append(CheckOutcome("tree.manifest", True, "Tree matches manifest"))
+        try:
+            missing, extra, missing_sub, extra_sub = compare_tree_to_manifest(self.bot)
+        except Exception as exc:
+            phase.outcomes.append(CheckOutcome("tree.manifest", False, str(exc)))
+            await self._thread_send(f"FAIL `tree.manifest`: {exc}")
+        else:
+            if missing:
+                for path in sorted(missing):
+                    phase.outcomes.append(CheckOutcome(f"tree.missing.{path}", False, "Not registered"))
+                    await self._thread_send(f"FAIL tree missing: `{path}`")
+            if extra:
+                for path in sorted(extra):
+                    phase.outcomes.append(
+                        CheckOutcome(f"tree.extra.{path}", True, "Unexpected command", skipped=True)
+                    )
+                    await self._thread_send(f"WARN tree extra: `{path}`")
+            if missing_sub:
+                for name in sorted(missing_sub):
+                    phase.outcomes.append(CheckOutcome(f"tree.subgroup.missing.{name}", False, "Not registered"))
+                    await self._thread_send(f"FAIL minigame subgroup missing: `{name}`")
+            if extra_sub:
+                for name in sorted(extra_sub):
+                    phase.outcomes.append(
+                        CheckOutcome(f"tree.subgroup.extra.{name}", True, "Unexpected subgroup", skipped=True)
+                    )
+                    await self._thread_send(f"WARN minigame subgroup extra: `{name}`")
+            if not missing and not extra and not missing_sub and not extra_sub:
+                phase.outcomes.append(CheckOutcome("tree.manifest", True, "Tree matches manifest"))
 
         self.summary.phases.append(phase)
 
@@ -186,18 +215,30 @@ class DiagnosticsRunner:
                 return await run_spec(spec, self.bot)
 
         tasks = [asyncio.create_task(_run_one(spec)) for spec in specs]
+        fail_buffer: list[str] = []
+
+        async def _flush_fails() -> None:
+            if not fail_buffer:
+                return
+            await self._thread_send("\n".join(fail_buffer))
+            fail_buffer.clear()
+
         for coro in asyncio.as_completed(tasks):
             outcome = await coro
             phase.outcomes.append(outcome)
             self._spec_done += 1
             if not outcome.passed and not outcome.skipped:
-                await self._thread_send(f"FAIL `{outcome.check_id}`: {outcome.message}")
+                fail_buffer.append(f"FAIL `{outcome.check_id}`: {outcome.message}")
+                if len(fail_buffer) >= FAIL_FLUSH_SIZE:
+                    await _flush_fails()
             if self._spec_done % SPEC_PROGRESS_INTERVAL == 0:
+                await _flush_fails()
                 await self._update_parent(
                     "Bot Diagnostics",
                     f"Phase E: {self._spec_done}/{total} specs ({phase.failed} failed)",
                 )
 
+        await _flush_fails()
         self.summary.phases.append(phase)
         await self._update_parent("Bot Diagnostics", f"Phase E complete — {phase.failed} failed, {phase.skipped} skipped")
 

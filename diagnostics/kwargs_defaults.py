@@ -72,12 +72,10 @@ _PARAM_DEFAULTS: dict[str, Any] = {
     "response": "ok",
     "personality": "default",
     "giveawayid": 1,
-    "giveaway_id": 1,
 }
 
 
 def _make_role() -> Any:
-    role = make_member().__class__()
     role = make_member()
     role.id = 555555555
     role.name = "TestRole"

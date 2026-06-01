@@ -4,27 +4,20 @@ from unittest.mock import MagicMock
 
 import pytest
 
+import diagnostics.registry as registry_mod
 from diagnostics.registry import all_specs, run_spec
 
 pytestmark = pytest.mark.asyncio
 
 
 def test_discovers_many_behavior_specs() -> None:
-    """Discover specs without requiring full discord.py mock setup."""
-    import sys
-
-    # Patch app_commands before discovery runs to prevent issubclass errors
-    patched_app_commands = MagicMock()
-    patched_app_commands.Group = object  # a real class for issubclass
-    sys.modules.setdefault("discord.app_commands", patched_app_commands)
-
+    registry_mod._specs_cache = None
     specs = all_specs()
     assert isinstance(specs, list)
-    # We check type, not count, since discovery depends on installed extensions
+    assert len(specs) > 50
 
 
 async def test_run_spec_handles_unknown_spec() -> None:
-    """run_spec gracefully handles a spec whose group cannot be instantiated."""
     from diagnostics.models import CheckOutcome, CommandBehaviorSpec
 
     spec = CommandBehaviorSpec(
@@ -35,4 +28,4 @@ async def test_run_spec_handles_unknown_spec() -> None:
     )
     outcome = await run_spec(spec, MagicMock())
     assert isinstance(outcome, CheckOutcome)
-    assert not outcome.passed  # Should fail gracefully
+    assert not outcome.passed

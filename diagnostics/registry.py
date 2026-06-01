@@ -42,14 +42,12 @@ async def run_spec(spec: CommandBehaviorSpec, bot: Any) -> CheckOutcome:
     from diagnostics.discovery import _instantiate_group
 
     group = _instantiate_group(spec.group_cls)
-    handler = getattr(group, spec.method_name)
-    extra = spec.extra_kwargs
-    if callable(extra) and not isinstance(extra, dict):
-        extra_kwargs = extra()
-    elif isinstance(extra, dict):
-        extra_kwargs = dict(extra)
-    else:
-        extra_kwargs = {}
+    if group is None:
+        return CheckOutcome(spec.id, False, "Could not instantiate command group")
+    handler = getattr(group, spec.method_name, None)
+    if handler is None:
+        return CheckOutcome(spec.id, False, f"Handler {spec.method_name!r} not found on group")
+    extra_kwargs = _resolve_kwargs(spec, handler)
 
     try:
         with extension_patches(spec.extension, spec.patch_targets) as mocks:

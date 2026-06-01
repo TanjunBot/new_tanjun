@@ -133,10 +133,11 @@ class AdministrationCog(commands.Cog):
             )
             return
 
-        thread_name = f"bot-diagnostics-{ctx.message.id}"
-        thread = await message.create_thread(name=thread_name[:100])
-        runner = DiagnosticsRunner(self.bot, ctx, thread, message, locale=locale)
+        thread = None
         try:
+            thread_name = f"bot-diagnostics-{ctx.message.id}"
+            thread = await message.create_thread(name=thread_name[:100])
+            runner = DiagnosticsRunner(self.bot, ctx, thread, message, locale=locale)
             await runner.run_all()
         except Exception as e:
             await message.edit(
@@ -147,7 +148,8 @@ class AdministrationCog(commands.Cog):
                     title="Bot Diagnostics",
                 )
             )
-            await thread.send(f"Diagnostics aborted: {e}")
+            if thread is not None:
+                await thread.send(f"Diagnostics aborted: {e}")
 
     @commands.command()
     async def test_translation(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]

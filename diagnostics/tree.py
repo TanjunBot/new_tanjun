@@ -35,14 +35,28 @@ def load_manifest() -> dict[str, Any]:
     return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
 
 
-def compare_tree_to_manifest(bot: Any) -> tuple[set[str], set[str]]:
+def collect_minigame_subgroups(bot: Any) -> set[str]:
+    if not getattr(bot, "tree", None):
+        return set()
+    for cmd in bot.tree.get_commands():
+        if getattr(cmd, "name", None) == "minigame_name":
+            return {getattr(c, "name", str(c)) for c in getattr(cmd, "commands", [])}
+    return set()
+
+
+def compare_tree_to_manifest(bot: Any) -> tuple[set[str], set[str], set[str], set[str]]:
     manifest = load_manifest()
+    expected_subgroups = set(manifest.get("minigame_subgroups") or [])
+    actual_subgroups = collect_minigame_subgroups(bot)
+    missing_subgroups = expected_subgroups - actual_subgroups
+    extra_subgroups = actual_subgroups - expected_subgroups
+
     expected_paths = set(manifest.get("paths") or [])
     if not expected_paths:
         expected_roots = set(manifest.get("roots") or [])
         actual_roots = {getattr(c, "name", "") for c in (bot.tree.get_commands() if bot.tree else [])}
         missing = expected_roots - actual_roots
         extra = actual_roots - expected_roots
-        return missing, extra
+        return missing, extra, missing_subgroups, extra_subgroups
     actual = collect_tree_paths(bot)
-    return expected_paths - actual, actual - expected_paths
+    return expected_paths - actual, actual - expected_paths, missing_subgroups, extra_subgroups

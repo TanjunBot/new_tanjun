@@ -35,6 +35,12 @@ def default_channel_kwargs() -> dict[str, Any]:
     return {"channel": make_text_channel()}
 
 
+def default_role_kwargs() -> dict[str, Any]:
+    from diagnostics.kwargs_defaults import _make_role
+
+    return {"role": _make_role()}
+
+
 def default_image_kwargs() -> dict[str, Any]:
     return {"image": make_attachment()}
 
