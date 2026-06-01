@@ -216,6 +216,7 @@ jobs:
           coverage combine coverage-*.dat
           coverage xml -o ../coverage.xml
           coverage json -o ../coverage.json
+          mv .coverage ../
           cd ..
           coverage report --fail-under=85
           python scripts/check_coverage_per_file.py --min 85 --coverage-json coverage.json
