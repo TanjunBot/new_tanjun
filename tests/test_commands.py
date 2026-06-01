@@ -8,16 +8,22 @@ from discord.ext import commands
 
 __test__ = False
 
-
-# Critical command groups that must be registered
-_REQUIRED_COMMAND_GROUPS = {
-    "image",
-    "games",
-    "counting",
-    "counting challenge",
-    "counting modes",
-    "giveaway",
+_REQUIRED_ROOT_GROUPS = {
+    "image_name",
+    "games_name",
+    "minigame_name",
+    "giveaway_name",
 }
+
+_MINIGAME_SUBGROUPS = {
+    "minigames_countingcmds_name",
+    "minigames_cchcmds_name",
+    "minigames_cmodescmds_name",
+}
+
+
+def _command_names(commands_list: list[object]) -> set[str]:
+    return {getattr(cmd, "name", str(cmd)) for cmd in commands_list}
 
 
 async def test_commands(self: commands.Cog, ctx: commands.Context) -> None:
@@ -26,11 +32,20 @@ async def test_commands(self: commands.Cog, ctx: commands.Context) -> None:
     if tree is None:
         raise RuntimeError("Command tree not available")
 
-    commands_list = tree.get_commands()
-    command_names = {cmd.name for cmd in commands_list}
+    root_commands = tree.get_commands()
+    root_names = _command_names(root_commands)
 
-    missing = _REQUIRED_COMMAND_GROUPS - command_names
-    if missing:
-        raise AssertionError(f"Missing required command groups: {', '.join(sorted(missing))}")
+    missing_roots = _REQUIRED_ROOT_GROUPS - root_names
+    if missing_roots:
+        raise AssertionError(f"Missing required command groups: {', '.join(sorted(missing_roots))}")
 
-    await ctx.send(f"✅ All {len(_REQUIRED_COMMAND_GROUPS)} critical command groups registered")
+    minigame_group = next(cmd for cmd in root_commands if getattr(cmd, "name", None) == "minigame_name")
+    sub_names = _command_names(list(getattr(minigame_group, "commands", [])))
+    missing_subs = _MINIGAME_SUBGROUPS - sub_names
+    if missing_subs:
+        raise AssertionError(f"Missing required minigame subcommands: {', '.join(sorted(missing_subs))}")
+
+    await ctx.send(
+        f"✅ All {len(_REQUIRED_ROOT_GROUPS)} critical command groups and "
+        f"{len(_MINIGAME_SUBGROUPS)} minigame subcommands registered"
+    )
