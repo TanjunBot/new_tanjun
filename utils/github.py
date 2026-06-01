@@ -62,6 +62,26 @@ def _exception_fingerprint(exc: BaseException) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+def _bot_exception_title_prefix(exc_name: str, source: str) -> str:
+    return f"[Bot Exception] {exc_name} in {source}:"
+
+
+def _open_bot_exception_issue_exists(
+    g: Github,
+    fingerprint: str,
+    exc_name: str,
+    source: str,
+) -> bool:
+    fingerprint_query = f'repo:{_REPO} is:issue is:open label:"bot exception" "{fingerprint}"'
+    if g.search_issues(fingerprint_query).totalCount > 0:
+        return True
+
+    title_prefix = _bot_exception_title_prefix(exc_name, source)
+    escaped_prefix = title_prefix.replace('"', '\\"')
+    title_query = f'repo:{_REPO} is:issue is:open in:title "{escaped_prefix}"'
+    return g.search_issues(title_query).totalCount > 0
+
+
 def _dedup_allows_report(fingerprint: str) -> bool:
     now = time.monotonic()
     expired = [key for key, seen_at in _recent_reports.items() if now - seen_at >= _DEDUP_TTL_SEC]
@@ -113,13 +133,14 @@ def _sync_create_bot_exception_issue(
     tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
     exc_name = type(exc).__name__
     exc_message = str(exc) or "(no message)"
-    title = f"[Bot Exception] {exc_name} in {source}: {exc_message}"
+    title = f"{_bot_exception_title_prefix(exc_name, source)} {exc_message}"
     if len(title) > 240:
         title = title[:237] + "..."
 
     environment = sentry_environment or "unknown"
     body = f"""## Bot Exception Report
 
+**Fingerprint:** `{fingerprint}`
 **Source:** `{source}`
 **Exception:** `{exc_name}: {exc_message}`
 **Version:** `{version}`
@@ -136,6 +157,9 @@ def _sync_create_bot_exception_issue(
 
     try:
         g = Github(GithubAuthToken)
+        if _open_bot_exception_issue_exists(g, fingerprint, exc_name, source):
+            return
+
         repo = g.get_repo(_REPO)
         labels = _resolve_labels(repo)
         repo.create_issue(title=title, body=body, labels=labels)
@@ -177,8 +201,19 @@ def _missing_localization_issue_exists(g: Github, locale: str, key: str) -> bool
     return g.search_issues(query).totalCount > 0
 
 
+def _missing_localization_resolved(locale: str, key: str) -> bool:
+    from localizer import tanjunLocalizer
+
+    entries = tanjunLocalizer.load_translations(locale)
+    entry = tanjunLocalizer.get_translation(entries, key)
+    return entry is not None and bool(entry.translation.strip())
+
+
 def _sync_create_missing_localization_issue(locale: str, key: str) -> None:
     if not GithubAuthToken:
+        return
+
+    if _missing_localization_resolved(locale, key):
         return
 
     title = _missing_localization_issue_title(locale, key)
