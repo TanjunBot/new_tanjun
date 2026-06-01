@@ -34750,5 +34750,45 @@
     "context": "UI copy for twitch.username. English: \"twitch_username\".",
     "labels": "",
     "max_length": 32
+  },
+  {
+    "identifier": "channel.name",
+    "source_string": "channel",
+    "translation": "channel",
+    "context": "Display name for `/channel` command group. Used in `extensions/channel.py`.",
+    "labels": "",
+    "max_length": 32
+  },
+  {
+    "identifier": "games.advanced.ttt.name",
+    "source_string": "advanced_ttt",
+    "translation": "advanced_ttt",
+    "context": "Display name for `/games advanced_ttt`. Used in `extensions/games.py`.",
+    "labels": "commands, embed_title",
+    "max_length": 32
+  },
+  {
+    "identifier": "games.advanced.ttt.description",
+    "source_string": "Play Ultimate Tic-Tac-Toe (9 boards in a 3x3 grid)",
+    "translation": "Play Ultimate Tic-Tac-Toe (9 boards in a 3x3 grid)",
+    "context": "Description for `/games advanced_ttt`. Used in `extensions/games.py`.",
+    "labels": "description",
+    "max_length": 100
+  },
+  {
+    "identifier": "games.advanced.ttt.params.user.name",
+    "source_string": "user",
+    "translation": "user",
+    "context": "Option name for `user` on `/games advanced_ttt`. Used in `extensions/games.py`.",
+    "labels": "command_option_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "games.advanced.ttt.params.user.description",
+    "source_string": "${reporter} has reported ${user}.\nReason: ${reason}",
+    "translation": "${reporter} has reported ${user}.\nReason: ${reason}",
+    "context": "Option description for `user` on `/games advanced_ttt`. Used in `extensions/games.py`.",
+    "labels": "command_option_description",
+    "max_length": 100
   }
 ]
