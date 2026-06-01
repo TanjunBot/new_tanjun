@@ -290,5 +290,20 @@ ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = "tests.*"
-disallow_untyped_defs = false
-disallow_untyped_calls = false
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+# TODO(#2815): gradually remove modules and add type hints
+module = [
+    "commands.*",
+    "extensions.*",
+    "loops.*",
+    "minigames.*",
+    "utils.checks",
+    "services.image_service",
+    "services.twitch_service",
+    "services.wordle_service",
+    "scripts.*",
+    "main",
+]
+ignore_errors = true
