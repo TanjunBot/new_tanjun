@@ -9,7 +9,7 @@ from diagnostics.specs._helpers import (
     register_kwargs,
     register_method_commands,
 )
-from diagnostics.specs.overrides import SPEC_CUSTOM_ASSERTIONS
+from diagnostics.specs.overrides import SPEC_CUSTOM_ASSERTIONS, SPEC_PATCH_EXCLUDE
 
 
 def register() -> None:
@@ -103,11 +103,11 @@ def register() -> None:
             "avatar": "avatarCommand",
             "banner": "bannerCommand",
             "avatardecoration": "avatarDecorationCommand",
-            "feedback": "feedbackCommand",
             "afk": "afkCommand",
             "report": "reportCommand",
         },
     )
+    SPEC_PATCH_EXCLUDE["utility.UtilityCommands.feedback"] = ("feedbackCommand",)
     SPEC_CUSTOM_ASSERTIONS["utility.UtilityCommands.feedback"] = expect_interaction_or_modal
 
     register_method_commands(

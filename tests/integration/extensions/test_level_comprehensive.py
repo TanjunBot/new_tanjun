@@ -20,7 +20,7 @@ COMMAND_PATCHES = (
     "show_level_roles_command",
     "give_xp_command",
     "take_xp_command",
-    "leaderboard",
+    "leaderboard_command",
     "add_channel_to_blacklist_command",
     "add_role_to_blacklist_command",
     "add_user_to_blacklist_command",
