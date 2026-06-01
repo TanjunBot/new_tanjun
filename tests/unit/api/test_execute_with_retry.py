@@ -10,7 +10,7 @@ import tests.mock_config as mock_config
 
 mock_config.patch_config_module()
 
-from api import _execute_with_retry, set_bot  # noqa: E402
+from api import _MAX_DB_RETRIES, _execute_with_retry, set_bot  # noqa: E402
 from tests.helpers.db import make_mock_pool  # noqa: E402
 
 pytestmark = pytest.mark.unit
@@ -68,7 +68,7 @@ class TestExecuteWithRetry:
             result = await _execute_with_retry("test_op", callback, "SELECT 1")
 
         assert result is None
-        assert pool.acquire.await_count == 3
+        assert pool.acquire.await_count == _MAX_DB_RETRIES
         callback.assert_not_awaited()
 
     @pytest.mark.asyncio
