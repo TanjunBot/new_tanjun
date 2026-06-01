@@ -610,7 +610,7 @@ class LogsCog(commands.Cog):
         log_enable = after.guild and (await get_log_enable(after.guild.id)).guild_update
         if not log_enable:
             return
-        locale = after.locale if hasattr(after, 'preferred_locale') else 'en_US'
+        locale = after.locale if hasattr(after, 'locale') else 'en_US'
         description_parts = []
         keiner_locale = l10n.logs.guildUpdate.none(locale)
         if before.afk_channel != after.afk_channel:
@@ -996,7 +996,7 @@ class LogsCog(commands.Cog):
         for blacklisted_role in blacklisted_roles:
             if any((str(role.id) == blacklisted_role for role in after.author.roles)):
                 return
-        locale = after.guild.preferred_locale if hasattr(after, 'preferred_locale') else 'en_US'
+        locale = after.guild.preferred_locale
         description_parts = []
         description_parts.append(l10n.logs.messageEdit.name(locale, user=after.author.mention, url=after.jump_url))
         if before.content != after.content:
