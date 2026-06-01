@@ -110,7 +110,7 @@ def check_bot_hierarchy(command_info: CommandInfo, target: discord.Member) -> _C
     if guild is None:
         raise ValueError('Guild is missing in command_info')
     if guild.me.top_role <= target.top_role:
-        return ('targetTooHighBot', ErrorEmbedCategory.PERMISSION, False)
+        return ('targetTooHigh', ErrorEmbedCategory.PERMISSION, False)
     return None
 
 def can_moderate(command_info: CommandInfo, target: discord.Member, user_permission: Literal['ban_members', 'kick_members', 'moderate_members'], bot_permission: Literal['ban_members', 'kick_members', 'moderate_members'], *, use_guild_permissions: bool=True) -> _CheckResult:

@@ -1,4 +1,4 @@
-from locale_keys import locale
+from locale_keys import locale as _locale
 import discord
 from api import check_if_opted_out, clear_wordchain, get_wordchain_last_user_id, get_wordchain_word, set_wordchain_word
 from utility import DiscordSafe, EmbedColor, tanjunEmbed
@@ -11,9 +11,9 @@ async def wordchain(message: discord.Message) -> None:
     wordchain_word = await get_wordchain_word(message.channel.id)
     if wordchain_word is None:
         return
-    locale = str(message.guild.preferred_locale) if hasattr(message.guild, 'preferred_locale') else 'en_US'
+    locale_str = str(message.guild.preferred_locale) if hasattr(message.guild, 'preferred_locale') else 'en_US'
     if await check_if_opted_out(message.author.id):
-        await DiscordSafe.send_dm(message.author, locale.minigames.wordchain.opted_out(locale))
+        await DiscordSafe.send_dm(message.author, _locale.minigames.wordchain.opted_out(locale_str))
         await DiscordSafe.delete(message)
         return
     content = message.content
@@ -31,7 +31,7 @@ async def wordchain(message: discord.Message) -> None:
         if char in end_chars:
             await clear_wordchain(message.channel.id)
             await set_wordchain_word(channel_id=message.channel.id, guild_id=message.guild.id, word='', worder_id='nobody')
-            embed = tanjunEmbed(colour=EmbedColor.SUCCESS, title=locale.minigames.wordchain.finished.title(locale), description=locale.minigames.wordchain.finished.description(locale, sentence=wordchain_word + content))
+            embed = tanjunEmbed(colour=EmbedColor.SUCCESS, title=_locale.minigames.wordchain.finished.title(locale_str), description=_locale.minigames.wordchain.finished.description(locale_str, sentence=wordchain_word + content))
             await DiscordSafe.send(message.channel, embed=embed)
             return
     if content == ',':

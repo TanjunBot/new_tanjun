@@ -5,7 +5,7 @@ into a single TwitchService class with typed Pydantic models.
 """
 from __future__ import annotations
 
-from locale_keys import locale
+from locale_keys import locale as _locale
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -191,10 +191,10 @@ class TwitchService:
             embed.set_image(url=stream_data['thumbnail_url'].replace('{width}', '1920').replace('{height}', '1080'))
             await channel.send(message, embed=embed)
 
-    def parse_notification_message(self, message: str | None, locale: str, twitch_name: str) -> str:
+    def parse_notification_message(self, message: str | None, locale_str: str, twitch_name: str) -> str:
         """Parse a notification message template, replacing {name} with the Twitch user's name."""
         if not message:
-            return locale.commands.utility.twitch.defaultNotificationMessage(locale).replace('{name}', twitch_name)
+            return _locale.commands.utility.twitch.defaultNotificationMessage(locale_str).replace('{name}', twitch_name)
         return message.replace('{name}', twitch_name)
 _twitch_service: TwitchService | None = None
 

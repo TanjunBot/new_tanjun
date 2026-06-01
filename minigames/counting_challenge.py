@@ -1,19 +1,19 @@
-from locale_keys import locale
+from locale_keys import locale as _locale
 import discord
 from minigames._counting_common import counting as _counting_base
 from services.counting_repository import CountingMode, CountingRepository
 from utility import DiscordSafe, EmbedColor, tanjunEmbed
 _repo = CountingRepository
 
-async def _challenge_failure(message: discord.Message, locale: str, _correct_number: int) -> None:
+async def _challenge_failure(message: discord.Message, locale_str: str, _correct_number: int) -> None:
     await DiscordSafe.add_reaction(message, '💀')
-    embed = tanjunEmbed(colour=EmbedColor.ERROR, title=locale.minigames.counting.failed.title(locale), description=locale.minigames.counting.failed.description(locale))
+    embed = tanjunEmbed(colour=EmbedColor.ERROR, title=_locale.minigames.counting.failed.title(locale_str), description=_locale.minigames.counting.failed.description(locale_str))
     await DiscordSafe.reply(message, embed=embed)
     await _repo.set_progress(CountingMode.CHALLENGE, message.channel.id, 0, 0)
 
-async def _challenge_double_count(message: discord.Message, locale: str, _correct_number: int) -> None:
+async def _challenge_double_count(message: discord.Message, locale_str: str, _correct_number: int) -> None:
     await DiscordSafe.add_reaction(message, '💀')
-    embed = tanjunEmbed(colour=EmbedColor.ERROR, title=locale.minigames.counting.failed_double.title(locale), description=locale.minigames.counting.failed_double.description(locale))
+    embed = tanjunEmbed(colour=EmbedColor.ERROR, title=_locale.minigames.counting.failed_double.title(locale_str), description=_locale.minigames.counting.failed_double.description(locale_str))
     await DiscordSafe.reply(message, embed=embed)
     await _repo.set_progress(CountingMode.CHALLENGE, message.channel.id, 0, 0)
 
