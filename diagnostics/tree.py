@@ -32,7 +32,7 @@ def collect_tree_paths(bot: Any) -> set[str]:
 def load_manifest() -> dict[str, Any]:
     if not MANIFEST_PATH.is_file():
         return {"roots": [], "paths": [], "minigame_subgroups": []}
-    return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))  # type: ignore[no-any-return]
 
 
 def collect_minigame_subgroups(bot: Any) -> set[str]:

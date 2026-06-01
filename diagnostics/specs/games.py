@@ -5,17 +5,17 @@ from diagnostics.specs._helpers import register_kwargs, register_method_commands
 
 
 def register() -> None:
-    def _member():
+    def _member() -> MagicMock:
         return make_member()
 
-    register_kwargs("games.GameCommands.tic_tac_toe_cmd", lambda: {"user": _member()})
-    register_kwargs("games.GameCommands.connect4_cmd", lambda: {"user": _member(), "size": make_choice("7,6")})
-    register_kwargs("games.GameCommands.akinator_cmd", lambda: {"theme": make_choice("characters")})
-    register_kwargs("games.GameCommands.wordle_cmd", lambda: {"language": make_choice("own")})
-    register_kwargs("games.GameCommands.hangman_cmd", lambda: {"language": make_choice("own")})
-    register_kwargs("games.GameCommands.rps_cmd", lambda: {"user": _member()})
-    register_kwargs("games.GameCommands.battleship_cmd", lambda: {"user": _member()})
-    register_kwargs("games.GameCommands.advanced_ttt_cmd", lambda: {"user": _member()})
+    register_kwargs("games.GameCommands.tic_tac_toe_cmd", lambda: {"user": _member()})  # type: ignore[no-untyped-call]
+    register_kwargs("games.GameCommands.connect4_cmd", lambda: {"user": _member(), "size": make_choice("7,6")})  # type: ignore[no-untyped-call]
+    register_kwargs("games.GameCommands.akinator_cmd", lambda: {"theme": make_choice("characters")})  # type: ignore[no-untyped-call]
+    register_kwargs("games.GameCommands.wordle_cmd", lambda: {"language": make_choice("own")})  # type: ignore[no-untyped-call]
+    register_kwargs("games.GameCommands.hangman_cmd", lambda: {"language": make_choice("own")})  # type: ignore[no-untyped-call]
+    register_kwargs("games.GameCommands.rps_cmd", lambda: {"user": _member()})  # type: ignore[no-untyped-call]
+    register_kwargs("games.GameCommands.battleship_cmd", lambda: {"user": _member()})  # type: ignore[no-untyped-call]
+    register_kwargs("games.GameCommands.advanced_ttt_cmd", lambda: {"user": _member()})  # type: ignore[no-untyped-call]
     register_kwargs("games.GameCommands.flag_quiz_cmd", {})
     register_kwargs("games.GameCommands.memory_cmd", {})
 
