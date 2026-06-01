@@ -5,7 +5,7 @@ from utility import DiscordSafe, EmbedColor, tanjunEmbed
 
 async def wordchain(message: discord.Message) -> None:
     if message.guild is None:
-        embed: discord.Embed = tanjunEmbed(colour=EmbedColor.ERROR, title=locale.errors.guildonly.title('en_US'), description=locale.errors.guildonly.description('en_US'))
+        embed: discord.Embed = tanjunEmbed(colour=EmbedColor.ERROR, title=_locale.errors.guildonly.title('en_US'), description=_locale.errors.guildonly.description('en_US'))
         await DiscordSafe.send(message.channel, embed=embed)
         return
     wordchain_word = await get_wordchain_word(message.channel.id)
