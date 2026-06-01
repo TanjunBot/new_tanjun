@@ -84,11 +84,13 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      - run: pytest tests/unit/ -n auto --cov=. --cov-report=xml:coverage-unit.xml -q
+      - run: COVERAGE_FILE=coverage-unit.dat pytest tests/unit/ -n auto --cov=. --cov-report=xml:coverage-unit.xml --cov-fail-under=0 -q
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-unit
-          path: coverage-unit.xml
+          path: |
+            coverage-unit.dat
+            coverage-unit.xml
 
   test-integration:
     name: Integration Tests
@@ -105,11 +107,13 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      - run: pytest tests/integration/ -m "not slow and not live_discord" --cov=. --cov-report=xml:coverage-integration.xml -q
+      - run: COVERAGE_FILE=coverage-integration.dat pytest tests/integration/ -m "not slow and not live_discord" --cov=. --cov-report=xml:coverage-integration.xml --cov-fail-under=0 -q
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-integration
-          path: coverage-integration.xml
+          path: |
+            coverage-integration.dat
+            coverage-integration.xml
 
   test:
     name: Tests (pytest with coverage)
@@ -209,17 +213,18 @@ jobs:
           path: coverage-parts
       - run: |
           cd coverage-parts
-          coverage combine coverage-*.xml || coverage combine *.xml
+          coverage combine coverage-*.dat
           coverage xml -o ../coverage.xml
           coverage json -o ../coverage.json
-          cd ..
           coverage report --fail-under=85
+          mv .coverage ../
+          cd ..
           python scripts/check_coverage_per_file.py --min 85 --coverage-json coverage.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results-${{ github.run_id }}
-          path: coverage-parts/coverage.xml
+          path: coverage.xml
       - uses: codecov/codecov-action@v5
         if: github.event_name == 'pull_request'
         with:

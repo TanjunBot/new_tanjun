@@ -295,42 +295,43 @@ def parse_identifier(identifier: str) -> ParsedKey:
     if "params" in lower:
         idx = lower.index("params")
         param_name = parts[idx + 1] if idx + 1 < len(parts) else ""
-        field = parts[-1].lower() if parts[-1].lower() in STANDARD_FIELDS else None
+        option_field = parts[-1].lower() if parts[-1].lower() in STANDARD_FIELDS else None
         return ParsedKey(
             parts=parts,
-            field=field,
+            field=option_field,
             param_name=param_name,
             is_params=True,
             kind="slash_option",
         )
 
-    field: str | None = None
-    subfield: str | None = None
     work = list(parts)
 
+    parsed_field: str | None = None
+    subfield: str | None = None
+
     if len(work) >= 2 and work[-2].lower() == "description" and work[-1].lower() not in STANDARD_FIELDS:
-        field = "description"
+        parsed_field = "description"
         subfield = work[-1]
         work = work[:-2]
     elif work[-1].lower() in STANDARD_FIELDS:
-        field = work[-1].lower()
+        parsed_field = work[-1].lower()
         work = work[:-1]
 
     result_key: str | None = None
-    if field and work:
+    if parsed_field and work:
         root = work[0]
         if work[0] == "commands" and len(work) >= 3:
             tail = work[1:]
             if _looks_like_result_key(tail[-1], tail, root=root):
                 result_key = tail[-1]
                 work = [work[0], *tail[:-1]]
-        elif work[0] != "commands" and len(work) >= 2 and field in {"title", "description"}:
+        elif work[0] != "commands" and len(work) >= 2 and parsed_field in {"title", "description"}:
             tail = work
             if _looks_like_result_key(tail[-1], tail, root=root):
                 result_key = tail[-1]
                 work = tail[:-1]
 
-    pk = ParsedKey(parts=work, field=field, subfield=subfield, result_key=result_key)
+    pk = ParsedKey(parts=work, field=parsed_field, subfield=subfield, result_key=result_key)
 
     if not work:
         pk.kind = "leaf"
@@ -383,8 +384,8 @@ def slash_ref(pk: ParsedKey) -> str:
             return base
         return f"`/{parts[1]}`"
     if parts[0] == "channel" and len(parts) >= 2:
-        rest = humanize_token(" ".join(parts[1:]))
-        return f"`/channel` ({rest})"
+        channel_rest = humanize_token(" ".join(parts[1:]))
+        return f"`/channel` ({channel_rest})"
     if parts[0] == "admin" and len(parts) >= 2:
         return f"`/{parts[1]}`"
     if len(parts) >= 2:
