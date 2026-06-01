@@ -1,6 +1,7 @@
 import asyncio
 import difflib
 import logging
+from collections.abc import Callable
 
 import discord
 from discord import app_commands
@@ -75,6 +76,22 @@ async def _is_channel_or_category_blacklisted(guild_id: str, channel: discord.ab
         return True
 
     return False
+
+
+async def _find_audit_log_entry(
+    guild: discord.Guild,
+    action: discord.AuditLogAction,
+    predicate: Callable[[discord.AuditLogEntry], bool],
+    *,
+    limit: int = 5,
+) -> discord.AuditLogEntry | None:
+    try:
+        async for entry in guild.audit_logs(limit=limit, action=action):
+            if predicate(entry):
+                return entry
+    except discord.Forbidden:
+        pass
+    return None
 
 
 embeds = {}  # type: ignore[var-annotated]
@@ -740,12 +757,12 @@ class LogsCog(commands.Cog):
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        updater = None
-
-        async for entry in rule.guild.audit_logs(limit=5, action=discord.AuditLogAction.automod_rule_update):
-            if entry.target.id == rule.id:  # type: ignore[union-attr]
-                updater = entry.user.mention  # type: ignore[union-attr]
-                break
+        entry = await _find_audit_log_entry(
+            rule.guild,
+            discord.AuditLogAction.automod_rule_update,
+            lambda e: e.target.id == rule.id,  # type: ignore[union-attr]
+        )
+        updater = entry.user.mention if entry else None  # type: ignore[union-attr]
 
         # Basic info
         if updater:
@@ -911,12 +928,12 @@ class LogsCog(commands.Cog):
         locale = rule.guild.preferred_locale if hasattr(rule.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        updater = None
-
-        async for entry in rule.guild.audit_logs(limit=5, action=discord.AuditLogAction.automod_rule_delete):
-            if entry.target.id == rule.id:  # type: ignore[union-attr]
-                updater = entry.user.mention  # type: ignore[union-attr]
-                break
+        entry = await _find_audit_log_entry(
+            rule.guild,
+            discord.AuditLogAction.automod_rule_delete,
+            lambda e: e.target.id == rule.id,  # type: ignore[union-attr]
+        )
+        updater = entry.user.mention if entry else None  # type: ignore[union-attr]
 
         # Basic info
         if updater:
@@ -1165,11 +1182,12 @@ class LogsCog(commands.Cog):
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        deleter = None
-        async for entry in channel.guild.audit_logs(limit=5, action=discord.AuditLogAction.channel_delete):
-            if entry.target.id == channel.id:  # type: ignore[union-attr]
-                deleter = entry.user.mention  # type: ignore[union-attr]
-                break
+        entry = await _find_audit_log_entry(
+            channel.guild,
+            discord.AuditLogAction.channel_delete,
+            lambda e: e.target.id == channel.id,  # type: ignore[union-attr]
+        )
+        deleter = entry.user.mention if entry else None  # type: ignore[union-attr]
 
         if deleter:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guild_channelDelete.deleted_by", deleter=deleter))
@@ -1259,11 +1277,12 @@ class LogsCog(commands.Cog):
 
         locale = channel.guild.preferred_locale if hasattr(channel.guild, "preferred_locale") else "en_US"
         description_parts = []
-        creator = None
-        async for entry in channel.guild.audit_logs(limit=5, action=discord.AuditLogAction.channel_create):
-            if entry.target.id == channel.id:  # type: ignore[union-attr]
-                creator = entry.user.mention  # type: ignore[union-attr]
-                break
+        entry = await _find_audit_log_entry(
+            channel.guild,
+            discord.AuditLogAction.channel_create,
+            lambda e: e.target.id == channel.id,  # type: ignore[union-attr]
+        )
+        creator = entry.user.mention if entry else None  # type: ignore[union-attr]
 
         if creator:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guild_channelCreate.created_by", creator=creator))
@@ -1336,11 +1355,12 @@ class LogsCog(commands.Cog):
         locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"
         description_parts = []
 
-        updater = None
-        async for entry in after.guild.audit_logs(limit=5, action=discord.AuditLogAction.channel_update):
-            if entry.target.id == after.id:  # type: ignore[union-attr]
-                updater = entry.user.mention  # type: ignore[union-attr]
-                break
+        entry = await _find_audit_log_entry(
+            after.guild,
+            discord.AuditLogAction.channel_update,
+            lambda e: e.target.id == after.id,  # type: ignore[union-attr]
+        )
+        updater = entry.user.mention if entry else None  # type: ignore[union-attr]
 
         if updater:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guild_channelUpdate.updated_by", updater=updater))
@@ -2513,11 +2533,13 @@ class LogsCog(commands.Cog):
 
         description_parts.append(tanjunLocalizer.localize(locale, "logs.memberBan.name", user=user.mention))
 
-        banner = None
-        async for log in user.guild.audit_logs(limit=1, action=discord.AuditLogAction.ban):
-            if log.target == user:
-                banner = log.user
-                break
+        ban_entry = await _find_audit_log_entry(
+            user.guild,
+            discord.AuditLogAction.ban,
+            lambda e: e.target == user,
+            limit=1,
+        )
+        banner = ban_entry.user if ban_entry else None
 
         if banner:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.memberBan.banned_by", banner=banner.mention))
@@ -2546,11 +2568,13 @@ class LogsCog(commands.Cog):
 
         description_parts.append(tanjunLocalizer.localize(locale, "logs.memberUnban.name", user=user.mention))
 
-        unbanned_by = None
-        async for log in guild.audit_logs(limit=1, action=discord.AuditLogAction.unban):
-            if log.target == user:
-                unbanned_by = log.user
-                break
+        unban_entry = await _find_audit_log_entry(
+            guild,
+            discord.AuditLogAction.unban,
+            lambda e: e.target == user,
+            limit=1,
+        )
+        unbanned_by = unban_entry.user if unban_entry else None
 
         if unbanned_by:
             description_parts.append(
@@ -2801,14 +2825,14 @@ class LogsCog(commands.Cog):
                 channel=message.channel.mention,  # type: ignore[union-attr]
             )
         )
-        deleted_by = None
-
         send_log = False
 
-        async for log in message.guild.audit_logs(limit=5, action=discord.AuditLogAction.message_delete):  # type: ignore[union-attr]
-            if log.target.id == message.author.id and log.extra.channel.id == message.channel.id:  # type: ignore[union-attr]
-                deleted_by = log.user
-                break
+        delete_entry = await _find_audit_log_entry(
+            message.guild,  # type: ignore[union-attr]
+            discord.AuditLogAction.message_delete,
+            lambda e: e.target.id == message.author.id and e.extra.channel.id == message.channel.id,  # type: ignore[union-attr]
+        )
+        deleted_by = delete_entry.user if delete_entry else None
         if deleted_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -2964,11 +2988,12 @@ class LogsCog(commands.Cog):
 
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleCreate.name", role=role.mention))
 
-        created_by = None
-        async for log in role.guild.audit_logs(limit=5, action=discord.AuditLogAction.role_create):
-            if log.target.id == role.id:  # type: ignore[union-attr]
-                created_by = log.user
-                break
+        create_entry = await _find_audit_log_entry(
+            role.guild,
+            discord.AuditLogAction.role_create,
+            lambda e: e.target.id == role.id,  # type: ignore[union-attr]
+        )
+        created_by = create_entry.user if create_entry else None
         if created_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -3044,11 +3069,12 @@ class LogsCog(commands.Cog):
 
         description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleDelete.name", role=role.name))
 
-        deleted_by = None
-        async for log in role.guild.audit_logs(limit=5, action=discord.AuditLogAction.role_delete):
-            if log.target.id == role.id:  # type: ignore[union-attr]
-                deleted_by = log.user
-                break
+        delete_entry = await _find_audit_log_entry(
+            role.guild,
+            discord.AuditLogAction.role_delete,
+            lambda e: e.target.id == role.id,  # type: ignore[union-attr]
+        )
+        deleted_by = delete_entry.user if delete_entry else None
         if deleted_by:
             description_parts.append(
                 tanjunLocalizer.localize(
@@ -3127,11 +3153,12 @@ class LogsCog(commands.Cog):
         if before.name != after.name:
             description_parts.append(tanjunLocalizer.localize(locale, "logs.guildRoleUpdate.name", role=after.name))
 
-        updated_by = None
-        async for log in after.guild.audit_logs(limit=5, action=discord.AuditLogAction.role_update):
-            if log.target.id == after.id:  # type: ignore[union-attr]
-                updated_by = log.user
-                break
+        update_entry = await _find_audit_log_entry(
+            after.guild,
+            discord.AuditLogAction.role_update,
+            lambda e: e.target.id == after.id,  # type: ignore[union-attr]
+        )
+        updated_by = update_entry.user if update_entry else None
         if updated_by:
             description_parts.append(
                 tanjunLocalizer.localize(
