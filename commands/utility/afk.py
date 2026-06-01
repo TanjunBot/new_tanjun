@@ -21,19 +21,19 @@ async def checkIfAfkHasToBeRemoved(message: discord.Message) -> None:
     if await check_if_opted_out(message.author.id) or message.guild is None:
         return
     if await afk_service.is_afk(message.author.id):
-        locale = str(message.guild.preferred_locale) if hasattr(message.guild, 'preferred_locale') else 'en_US'
+        locale_str = str(message.guild.preferred_locale) if hasattr(message.guild, 'preferred_locale') else 'en_US'
         mentions = await afk_service.clear_and_notify(message.author.id)
         if not mentions:
-            embed = tanjunEmbed(title=locale.commands.utility.afk.removed_no_messages.title(locale), description=locale.commands.utility.afk.removed_no_messages.description(locale))
+            embed = tanjunEmbed(title=locale.commands.utility.afk.removed_no_messages.title(locale_str), description=locale.commands.utility.afk.removed_no_messages.description(locale_str))
             await message.channel.send(embed=embed)
             return
-        embed = tanjunEmbed(title=locale.commands.utility.afk.removed.title(locale), description=locale.commands.utility.afk.removed.description(locale, messages='\n'.join([f'- https://discord.com/channels/{message.guild.id}/{msg.channel_id}/{msg.message_id}' for msg in mentions])))
+        embed = tanjunEmbed(title=locale.commands.utility.afk.removed.title(locale_str), description=locale.commands.utility.afk.removed.description(locale_str, messages='\n'.join([f'- https://discord.com/channels/{message.guild.id}/{msg.channel_id}/{msg.message_id}' for msg in mentions])))
         await message.channel.send(embed=embed)
 
 async def checkIfMentionsAreAfk(message: discord.Message) -> None:
     if await check_if_opted_out(message.author.id) or message.guild is None:
         return
-    locale = str(message.guild.preferred_locale) if hasattr(message.guild, 'preferred_locale') else 'en_US'
+    locale_str = str(message.guild.preferred_locale) if hasattr(message.guild, 'preferred_locale') else 'en_US'
     afk_users = []
     reasons = []
     for mention in message.mentions:
@@ -44,8 +44,8 @@ async def checkIfMentionsAreAfk(message: discord.Message) -> None:
             await afk_service.track_mention(mention.id, message.id, message.channel.id)
     if afk_users:
         if len(afk_users) == 1:
-            embed = tanjunEmbed(title=locale.commands.utility.afk.mentions_one.title(locale, user=afk_users[0].display_name), description=locale.commands.utility.afk.mentions_one.description(locale, user=afk_users[0].mention, reason=reasons[0]))
+            embed = tanjunEmbed(title=locale.commands.utility.afk.mentions_one.title(locale_str, user=afk_users[0].display_name), description=locale.commands.utility.afk.mentions_one.description(locale_str, user=afk_users[0].mention, reason=reasons[0]))
             await message.channel.send(embed=embed)
             return
-        embed = tanjunEmbed(title=locale.commands.utility.afk.mentions.title(locale), description=locale.commands.utility.afk.mentions.description(locale, users=(f'- {user.mention}\n' for user in afk_users)))
+        embed = tanjunEmbed(title=locale.commands.utility.afk.mentions.title(locale_str), description=locale.commands.utility.afk.mentions.description(locale_str, users=(f'- {user.mention}\n' for user in afk_users)))
         await message.channel.send(embed=embed)

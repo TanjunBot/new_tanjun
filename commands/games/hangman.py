@@ -22,9 +22,9 @@ def wrong_letters(guesses: list[str], word):
     return len([x for x in guesses if len(x) == 1 and x != word and (x not in word)])
 
 async def hangman(command_info: utility.command_info, language: str='own'):
-    locale = str(command_info.locale)
+    locale_str = str(command_info.locale)
     if language == 'own':
-        language = locale
+        language = locale_str
     if language in ['en-US', 'en-GB']:
         language = 'en'
     elif language in ['zh-CH', 'zh-TW']:

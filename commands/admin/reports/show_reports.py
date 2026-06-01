@@ -100,18 +100,18 @@ async def show_reports(command_info: utility.CommandInfo, user: discord.Member |
             accepted_at = str(report.accepted_at)
             resolved = bool(report.resolved)
             resolved_at = str(report.resolved_at)
-            locale = str(command_info.locale)
-            description = locale.commands.admin.reports.show_reports.report.description(locale, user=user_str, reporter=reporter_str, reason=reason, created_at=created_at)
-            description += '\n' + locale.commands.admin.reports.show_reports.report.status(locale, status=status)
+            locale_str = str(command_info.locale)
+            description = locale.commands.admin.reports.show_reports.report.description(locale_str, user=user_str, reporter=reporter_str, reason=reason, created_at=created_at)
+            description += '\n' + locale.commands.admin.reports.show_reports.report.status(locale_str, status=status)
             if accepted:
-                description += '\n' + locale.commands.admin.reports.show_reports.report.accepted(locale, accepted_at=accepted_at)
+                description += '\n' + locale.commands.admin.reports.show_reports.report.accepted(locale_str, accepted_at=accepted_at)
             else:
-                description += '\n' + locale.commands.admin.reports.show_reports.report.not_accepted(locale)
+                description += '\n' + locale.commands.admin.reports.show_reports.report.not_accepted(locale_str)
             if resolved:
-                description += '\n' + locale.commands.admin.reports.show_reports.report.resolved(locale, resolved_at=resolved_at)
+                description += '\n' + locale.commands.admin.reports.show_reports.report.resolved(locale_str, resolved_at=resolved_at)
             else:
-                description += '\n' + locale.commands.admin.reports.show_reports.report.not_resolved(locale)
-            embed = utility.tanjunEmbed(title=locale.commands.admin.reports.show_reports.report.title(locale, index=self.page + 1, total=len(self.reports)), description=description)
+                description += '\n' + locale.commands.admin.reports.show_reports.report.not_resolved(locale_str)
+            embed = utility.tanjunEmbed(title=locale.commands.admin.reports.show_reports.report.title(locale_str, index=self.page + 1, total=len(self.reports)), description=description)
             return embed
     view = ReportsView(reports)
     await command_info.reply(embed=view.get_embed(), view=view)

@@ -80,9 +80,9 @@ async def generate_wordle_image(guesses: list[str], word: str, language: str='en
     return buf
 
 async def wordle(command_info: utility.CommandInfo, language: str='own') -> None:
-    locale = str(command_info.locale)
+    locale_str = str(command_info.locale)
     if language == 'own':
-        language = locale
+        language = locale_str
     if language in ('en-US', 'en-GB'):
         language = 'en'
     elif language in ('zh-CH', 'zh-TW'):

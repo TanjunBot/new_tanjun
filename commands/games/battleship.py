@@ -107,7 +107,7 @@ class Battleship:
         header = '  ' + COL_LABELS
         return header + '\n' + '\n'.join(rows)
 
-    def _format_battle_embed(self, locale: str, viewer: discord.Member | str | None=None) -> discord.Embed:
+    def _format_battle_embed(self, locale_str: str, viewer: discord.Member | str | None=None) -> discord.Embed:
         """Build the battle phase embed showing both boards, personalized for the viewer."""
         p1_name = self.player1.display_name
         p2_name = self.player2.display_name if self.player2 != 'tanjun' else 'Tanjun'
@@ -124,15 +124,15 @@ class Battleship:
         if self.game_over:
             if self.winner:
                 winner_name = self.winner.display_name if hasattr(self.winner, 'display_name') else 'Tanjun'
-                desc += f'**{locale.commands.games.battleship.winner(locale, player=winner_name)}**'
+                desc += f'**{locale.commands.games.battleship.winner(locale_str, player=winner_name)}**'
             else:
-                desc += f'**{locale.commands.games.battleship.gameOver(locale)}**'
+                desc += f'**{locale.commands.games.battleship.gameOver(locale_str)}**'
         else:
             current = self.current_player.mention if self.current_player != 'tanjun' else 'Tanjun'
-            desc += locale.commands.games.battleship.currentTurn(locale, player=current)
-        legend = locale.commands.games.battleship.legend(locale, water=WATER, hit=HIT, miss=MISS, sunk=SHIP_SUNK)
+            desc += locale.commands.games.battleship.currentTurn(locale_str, player=current)
+        legend = locale.commands.games.battleship.legend(locale_str, water=WATER, hit=HIT, miss=MISS, sunk=SHIP_SUNK)
         desc += f'\n**{legend}**'
-        title = locale.commands.games.battleship.battleTitle(locale)
+        title = locale.commands.games.battleship.battleTitle(locale_str)
         return utility.tanjunEmbed(title=title, description=desc)
 
     async def _bot_turn(self, interaction: discord.Interaction) -> None:
@@ -163,11 +163,11 @@ class Battleship:
 
     async def show_board(self, interaction: discord.Interaction | utility.CommandInfo, initial: bool=False) -> None:
         """Display the current game state."""
-        locale = str(interaction.locale)
+        locale_str = str(interaction.locale)
         viewer = None
         if hasattr(interaction, 'user'):
             viewer = interaction.user
-        embed = self._format_battle_embed(locale, viewer=viewer)
+        embed = self._format_battle_embed(locale_str, viewer=viewer)
         view = BattleshipView(self, self.game_over)
         if initial:
             if hasattr(interaction, 'reply'):
@@ -189,21 +189,21 @@ class AttackModal(discord.ui.Modal, title='Enter Attack Coordinates'):
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         coord_str = self.coordinate.value.upper().strip()
-        locale = str(interaction.locale)
+        locale_str = str(interaction.locale)
         if len(coord_str) < 2:
-            await interaction.response.send_message(locale.commands.games.battleship.error.invalidCoordinate(locale), ephemeral=True)
+            await interaction.response.send_message(locale.commands.games.battleship.error.invalidCoordinate(locale_str), ephemeral=True)
             return
         row_char = coord_str[0]
         col_str = coord_str[1:]
         if row_char not in ROW_LABELS:
-            await interaction.response.send_message(locale.commands.games.battleship.error.invalidRow(locale), ephemeral=True)
+            await interaction.response.send_message(locale.commands.games.battleship.error.invalidRow(locale_str), ephemeral=True)
             return
         try:
             col = int(col_str)
             if col < 0 or col >= BOARD_SIZE:
                 raise ValueError
         except ValueError:
-            await interaction.response.send_message(locale.commands.games.battleship.error.invalidColumn(locale), ephemeral=True)
+            await interaction.response.send_message(locale.commands.games.battleship.error.invalidColumn(locale_str), ephemeral=True)
             return
         row = ROW_LABELS.index(row_char)
         view = BattleshipView(self.game, self.game.game_over)
@@ -289,16 +289,16 @@ class BattleshipView(discord.ui.View):
 
     async def _help_callback(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        locale = str(interaction.locale)
+        locale_str = str(interaction.locale)
         p1_name = self.game.player1.display_name
         p2_name = self.game.player2.display_name if self.game.player2 != 'tanjun' else 'Tanjun'
         if interaction.user not in (self.game.player1, self.game.player2 if isinstance(self.game.player2, discord.Member) else None):
-            await interaction.followup.send(locale.commands.games.battleship.notYourGame(locale), ephemeral=True)
+            await interaction.followup.send(locale.commands.games.battleship.notYourGame(locale_str), ephemeral=True)
             return
         current_turn = self.game.current_player.display_name if hasattr(self.game.current_player, 'display_name') else 'Tanjun'
-        enemy_board_text = locale.commands.games.battleship.helpEnemyBoard(locale, hit=HIT, miss=MISS, sunk=SHIP_SUNK)
-        legend_text = locale.commands.games.battleship.legend(locale, water=WATER, hit=HIT, miss=MISS, sunk=SHIP_SUNK)
-        msg = f'**{locale.commands.games.battleship.helpTitle(locale)}**\n\n📋 **{locale.commands.games.battleship.helpBoards(locale)}**\n- {locale.commands.games.battleship.helpYourBoard(locale)}\n- {enemy_board_text}\n\n🎯 **{locale.commands.games.battleship.helpToAttack(locale)}** {locale.commands.games.battleship.helpAttackInstruction(locale)}\n\n🏳️ **{locale.commands.games.battleship.helpGiveUp(locale)}** {locale.commands.games.battleship.helpGiveUpInstruction(locale)}\n\n📖 **{legend_text}**\n\n**{locale.commands.games.battleship.helpPlayers(locale)}** {locale.commands.games.battleship.helpPlayersValue(locale, p1=p1_name, p2=p2_name)}\n**{locale.commands.games.battleship.helpCurrentTurn(locale)}** {current_turn}'
+        enemy_board_text = locale.commands.games.battleship.helpEnemyBoard(locale_str, hit=HIT, miss=MISS, sunk=SHIP_SUNK)
+        legend_text = locale.commands.games.battleship.legend(locale_str, water=WATER, hit=HIT, miss=MISS, sunk=SHIP_SUNK)
+        msg = f'**{locale.commands.games.battleship.helpTitle(locale_str)}**\n\n📋 **{locale.commands.games.battleship.helpBoards(locale_str)}**\n- {locale.commands.games.battleship.helpYourBoard(locale_str)}\n- {enemy_board_text}\n\n🎯 **{locale.commands.games.battleship.helpToAttack(locale_str)}** {locale.commands.games.battleship.helpAttackInstruction(locale_str)}\n\n🏳️ **{locale.commands.games.battleship.helpGiveUp(locale_str)}** {locale.commands.games.battleship.helpGiveUpInstruction(locale_str)}\n\n📖 **{legend_text}**\n\n**{locale.commands.games.battleship.helpPlayers(locale_str)}** {locale.commands.games.battleship.helpPlayersValue(locale_str, p1=p1_name, p2=p2_name)}\n**{locale.commands.games.battleship.helpCurrentTurn(locale_str)}** {current_turn}'
         await interaction.followup.send(msg, ephemeral=True)
 
     async def on_timeout(self) -> None:

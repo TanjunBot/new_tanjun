@@ -6,10 +6,10 @@ import utility
 from commands.games.country_flags.flags import random_flag
 
 async def flag_quiz(command_info: utility.command_info):
-    locale = str(command_info.locale)
+    locale_str = str(command_info.locale)
     flag_file = random_flag()
     country_field = flag_file.replace('.png', '')
-    correct_country = getattr(locale.countries, country_field)(locale)
+    correct_country = getattr(locale.countries, country_field)(locale_str)
     guesses = []
     hints_used = 0
 
