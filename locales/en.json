@@ -27800,6 +27800,14 @@
     "max_length": null
   },
   {
+    "identifier": "logs.guildChannelUpdate.permissionOverwriteRemoved",
+    "source_string": "Permission overwrite removed: ${target}",
+    "translation": "Permission overwrite removed: ${target}",
+    "context": "Logging feature copy: guild Channel Update.permission Overwrite Removed.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
     "identifier": "logs.guildChannelUpdate.permissionOverwriteRemovedAllow",
     "source_string": "✅ Allowed Removed: ${permissions}",
     "translation": "✅ Allowed Removed: ${permissions}",
