@@ -49,8 +49,8 @@
   },
   {
     "identifier": "Get help with the bot",
-    "source_string": "get_help_with_the_bot",
-    "translation": "get_help_with_the_bot",
+    "source_string": "get_help",
+    "translation": "tanjun_support",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Get help with the bot\".",
     "labels": "command_name",
     "max_length": 32

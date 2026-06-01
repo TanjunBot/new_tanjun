@@ -49,7 +49,7 @@
   },
   {
     "identifier": "Get help with the bot",
-    "source_string": "get_help_with_the_bot",
+    "source_string": "get_help",
     "translation": "get_help_with_the_bot",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Get help with the bot\".",
     "labels": "command_name",

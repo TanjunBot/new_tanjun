@@ -2,7 +2,7 @@
   {
     "identifier": "Administrate the Server",
     "source_string": "manage_the_server",
-    "translation": "manage_the_server",
+    "translation": "server_verwalten",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage the server\".",
     "labels": "command_name",
     "max_length": 32
@@ -34,7 +34,7 @@
   {
     "identifier": "Blacklist Commands",
     "source_string": "blacklist_commands",
-    "translation": "blacklist_commands",
+    "translation": "befehle_blacklisten",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Blacklist commands\".",
     "labels": "command_name",
     "max_length": 32
@@ -42,15 +42,15 @@
   {
     "identifier": "Fun Commands",
     "source_string": "fun_commands",
-    "translation": "fun_commands",
+    "translation": "fun_befehle",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Fun commands\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Get help with the bot",
-    "source_string": "get_help_with_the_bot",
-    "translation": "get_help_with_the_bot",
+    "source_string": "get_help",
+    "translation": "get_help",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Get help with the bot\".",
     "labels": "command_name",
     "max_length": 32
@@ -178,7 +178,7 @@
   {
     "identifier": "additive",
     "source_string": "additive",
-    "translation": "additive",
+    "translation": "additiv",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"additive\".",
     "labels": "command_name",
     "max_length": 32
@@ -186,7 +186,7 @@
   {
     "identifier": "admin.addrole.description",
     "source_string": "Adds a role to a user",
-    "translation": "Adds a role to a user",
+    "translation": "Fügt einem Nutzer eine Rolle hinzu",
     "context": "Short description of `/addrole` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
     "labels": "admin,command_description",
     "max_length": 100
@@ -194,7 +194,7 @@
   {
     "identifier": "admin.addrole.name",
     "source_string": "add_role",
-    "translation": "add_role",
+    "translation": "rolle_hinzufügen",
     "context": "Slash command name for `/addrole` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
     "labels": "command_name,admin",
     "max_length": 32
@@ -202,7 +202,7 @@
   {
     "identifier": "admin.addrole.params.role.description",
     "source_string": "The role to be added",
-    "translation": "The role to be added",
+    "translation": "Die Rolle, die hinzugefügt werden soll",
     "context": "Help text describing the `role` option on `/addrole` (shown when the user focuses that option).",
     "labels": "admin,command_option_description",
     "max_length": 100
@@ -210,7 +210,7 @@
   {
     "identifier": "admin.addrole.params.role.name",
     "source_string": "role",
-    "translation": "role",
+    "translation": "rolle",
     "context": "Display name of the `role` option on `/addrole` (shown in Discord's slash command option list). Used in `extensions/admin.py`.",
     "labels": "admin,command_option_name",
     "max_length": 32
@@ -218,7 +218,7 @@
   {
     "identifier": "admin.addrole.params.user.description",
     "source_string": "The user to whom the role is to be added",
-    "translation": "The user to whom the role is to be added",
+    "translation": "Der Nutzer, dem die Rolle hinzugefügt werden soll",
     "context": "Help text describing the `user` option on `/addrole` (shown when the user focuses that option).",
     "labels": "admin,command_option_description",
     "max_length": 100
@@ -226,7 +226,7 @@
   {
     "identifier": "admin.addrole.params.user.name",
     "source_string": "user",
-    "translation": "user",
+    "translation": "nutzer",
     "context": "Display name of the `user` option on `/addrole` (shown in Discord's slash command option list). Used in `extensions/admin.py`.",
     "labels": "admin,command_option_name",
     "max_length": 32
@@ -234,7 +234,7 @@
   {
     "identifier": "admin.ban.description",
     "source_string": "Bans a member from the server",
-    "translation": "Bans a member from the server",
+    "translation": "Bannt ein Mitglied vom Server",
     "context": "Short description of `/ban` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
     "labels": "admin,command_description",
     "max_length": 100
@@ -250,7 +250,7 @@
   {
     "identifier": "admin.ban.params.deletemessagedays.description",
     "source_string": "Number of days for which messages are to be deleted (0-7, optional)",
-    "translation": "Number of days for which messages are to be deleted (0-7, optional)",
+    "translation": "Anzahl der Tage, für die Nachrichten gelöscht werden sollen (0-7, optional)",
     "context": "Help text describing the `deletemessagedays` option on `/ban` (shown when the user focuses that option). Used in `extensions/admin.py`.",
     "labels": "admin,command_option_description",
     "max_length": 100
@@ -266,7 +266,7 @@
   {
     "identifier": "admin.ban.params.reason.description",
     "source_string": "The reason for the ban (optional)",
-    "translation": "The reason for the ban (optional)",
+    "translation": "Der Grund für den Bann (optional)",
     "context": "Help text describing the `reason` option on `/ban` (shown when the user focuses that option). Used in `extensions/admin.py`.",
     "labels": "admin,command_option_description",
     "max_length": 100
