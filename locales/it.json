@@ -3486,7 +3486,31 @@
     "context": "User-visible message for `/admin administration` (test bot) (tests unavailable). English: \"⚠️ Test functions not available. Skipping tests.\".",
     "labels": "commands",
     "max_length": null
+  },,
+  {
+    "identifier": "commands.admin.administration.benchmark_bot.starting",
+    "source_string": "Starting deep benchmarks...",
+    "translation": "Starting deep benchmarks...",
+    "context": "User-visible message for administration benchmark_bot (starting).",
+    "labels": "commands",
+    "max_length": null
   },
+  {
+    "identifier": "commands.admin.administration.benchmark_bot.unavailable",
+    "source_string": "Benchmark module not available. Skipping.",
+    "translation": "Benchmark module not available. Skipping.",
+    "context": "User-visible message for administration benchmark_bot (unavailable).",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.administration.benchmark_bot.error",
+    "source_string": "Benchmark failed: ${error}",
+    "translation": "Benchmark failed: ${error}",
+    "context": "User-visible message for administration benchmark_bot (error).",
+    "labels": "commands",
+    "max_length": null
+  }
   {
     "identifier": "commands.admin.administration.update.connection_failed",
     "source_string": "Failed to connect to update service: ${error}",
