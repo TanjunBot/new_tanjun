@@ -19,7 +19,7 @@ async def refill_ai_token(client: Client) -> None:
             plus_sku = sku
 
     if plus_sku:
-        entitlements = await client.entitlements(skus=[plus_sku]).flatten()
+        entitlements = [e async for e in client.entitlements(skus=[plus_sku])]
         await AiService.refill(entitlements)
     else:
         await AiService.refill()
