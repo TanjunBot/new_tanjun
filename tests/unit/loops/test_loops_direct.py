@@ -21,8 +21,20 @@ async def test_ping_server_no_user():
     await alivemonitor.ping_server(client)
 
 
+@patch("loops.alivemonitor.config.UPTIME_KUMA_PUSH_TOKEN", "")
+async def test_ping_server_skipped_when_token_unset():
+    client = MagicMock()
+    client.user = MagicMock(id=1)
+    client.latency = 0.1
+    with patch("loops.alivemonitor.aiohttp.ClientSession") as mock_session_cls:
+        await alivemonitor.ping_server(client)
+        mock_session_cls.assert_not_called()
+
+
+@patch("loops.alivemonitor.config.UPTIME_KUMA_STATUS_URL", "https://status.example.test")
+@patch("loops.alivemonitor.config.UPTIME_KUMA_PUSH_TOKEN", "test-push-token")
 @patch("loops.alivemonitor.aiohttp.ClientSession")
-async def test_ping_server_success(mock_session_cls):
+async def test_ping_server_push_success(mock_session_cls):
     client = MagicMock()
     client.user = MagicMock(id=1)
     client.latency = 0.1
@@ -31,13 +43,19 @@ async def test_ping_server_success(mock_session_cls):
     resp.__aenter__ = AsyncMock(return_value=resp)
     resp.__aexit__ = AsyncMock(return_value=None)
     session = AsyncMock()
-    session.post = MagicMock(return_value=resp)
+    session.get = MagicMock(return_value=resp)
     session.__aenter__ = AsyncMock(return_value=session)
     session.__aexit__ = AsyncMock(return_value=None)
     mock_session_cls.return_value = session
     await alivemonitor.ping_server(client)
+    call_url = session.get.call_args[0][0]
+    assert "/api/push/test-push-token" in call_url
+    assert "status=up" in call_url
+    assert "ping=100" in call_url
 
 
+@patch("loops.alivemonitor.config.UPTIME_KUMA_STATUS_URL", "https://status.example.test")
+@patch("loops.alivemonitor.config.UPTIME_KUMA_PUSH_TOKEN", "test-push-token")
 @patch("loops.alivemonitor.aiohttp.ClientSession")
 async def test_ping_server_failure_status(mock_session_cls):
     client = MagicMock()
@@ -48,7 +66,7 @@ async def test_ping_server_failure_status(mock_session_cls):
     resp.__aenter__ = AsyncMock(return_value=resp)
     resp.__aexit__ = AsyncMock(return_value=None)
     session = AsyncMock()
-    session.post = MagicMock(return_value=resp)
+    session.get = MagicMock(return_value=resp)
     session.__aenter__ = AsyncMock(return_value=session)
     session.__aexit__ = AsyncMock(return_value=None)
     mock_session_cls.return_value = session

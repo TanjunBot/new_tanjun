@@ -82,6 +82,10 @@ class Settings(BaseSettings, cli_parse_args=False):
     # ── Metrics ───────────────────────────────────────────────────────────────
     metrics_port: int = Field(default=8001, alias="METRICS_PORT")
 
+    # ── Uptime Kuma (status page push heartbeat) ──────────────────────────────
+    uptime_kuma_push_token: SecretStr = Field(default=SecretStr(""), alias="UPTIME_KUMA_PUSH_TOKEN")
+    uptime_kuma_status_url: str = Field(default="https://status.tanjun.bot", alias="UPTIME_KUMA_STATUS_URL")
+
     # ── Activity ──────────────────────────────────────────────────────────────
     activity: str = "Tanjun {version}"
 
@@ -151,7 +155,8 @@ sentry_dsn: str = settings.sentry_dsn
 sentry_traces_sample_rate: float = settings.sentry_traces_sample_rate
 sentry_environment: str = settings.sentry_environment
 metrics_port: int = settings.metrics_port
-
+UPTIME_KUMA_PUSH_TOKEN: str = settings.uptime_kuma_push_token.get_secret_value()
+UPTIME_KUMA_STATUS_URL: str = settings.uptime_kuma_status_url.rstrip("/")
 
 # ── Emoji identifiers for calculator ─────────────────────────────────────────
 
