@@ -128,7 +128,8 @@ async def configure_logs(command_info: utility.command_info):
         async def on_timeout(self):
             for item in self.children:
                 item.disabled = True
-            await self.message.edit(view=self)
+            if self.message:
+                await self.message.edit(view=self)
 
         async def regenerate_embed(self, interaction: discord.Interaction):
             description = await build_log_settings_embed(self.locale, self.guild, self.selected_index)
@@ -152,4 +153,6 @@ async def configure_logs(command_info: utility.command_info):
         title=tanjunLocalizer.localize(command_info.locale, "commands.logs.configureLogs.title"),
         description=configuration_embed,
     )
-    await command_info.reply(embed=embed, view=view)
+    message = await command_info.reply(embed=embed, view=view)
+    if message:
+        view.message = message
