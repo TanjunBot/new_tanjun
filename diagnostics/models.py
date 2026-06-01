@@ -11,6 +11,7 @@ class CheckOutcome:
     passed: bool
     message: str = ""
     skipped: bool = False
+    skip_allowed: bool = False
 
 
 @dataclass
@@ -25,7 +26,11 @@ class PhaseResult:
 
     @property
     def failed(self) -> int:
-        return sum(1 for o in self.outcomes if not o.passed and not o.skipped)
+        return sum(
+            1
+            for o in self.outcomes
+            if not o.passed and not (o.skipped and o.skip_allowed)
+        )
 
     @property
     def skipped(self) -> int:
@@ -49,8 +54,17 @@ class DiagnosticsSummary:
         return sum(p.skipped for p in self.phases)
 
     @property
+    def unauthorized_skips(self) -> int:
+        return sum(
+            1
+            for phase in self.phases
+            for outcome in phase.outcomes
+            if outcome.skipped and not outcome.skip_allowed
+        )
+
+    @property
     def ok(self) -> bool:
-        return self.total_failed == 0
+        return self.total_failed == 0 and self.unauthorized_skips == 0
 
 
 AssertionFn = Callable[[Any, dict[str, Any]], Awaitable[None]]
@@ -63,7 +77,9 @@ class CommandBehaviorSpec:
     extension: str
     group_cls: type
     method_name: str
+    tree_path: str = ""
     extra_kwargs: dict[str, Any] | KwargsFactory | None = None
     skip_reason: str | None = None
     assertions: AssertionFn | None = None
     patch_targets: tuple[str, ...] = ()
+    patch_exclude: tuple[str, ...] = ()

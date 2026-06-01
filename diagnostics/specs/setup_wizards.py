@@ -1,10 +1,20 @@
 from __future__ import annotations
 
-from diagnostics.specs._helpers import register_skip
+from diagnostics.specs._helpers import register_patch_return, register_patch_targets
 
 
 def register() -> None:
-    register_skip("setup_wizards.SetupWizardCommands.level", "Interactive wizard blocks on view.wait()")
-    register_skip("setup_wizards.SetupWizardCommands.giveaway", "Launches full giveaway builder UI")
-    register_skip("setup_wizards.SetupWizardCommands.logs", "Interactive channel-select view")
-    register_skip("setup_wizards.SetupWizardCommands.booster", "Interactive booster setup view")
+    register_patch_return("extensions.setup_wizards.api_get_log_channel", 999)
+    register_patch_return("extensions.setup_wizards.api_get_level_system_status", True)
+    register_patch_targets(
+        "setup_wizards.SetupWizardCommands.logs",
+        "api_get_log_channel",
+    )
+    register_patch_targets(
+        "setup_wizards.SetupWizardCommands.level",
+        "api_get_level_system_status",
+    )
+    register_patch_targets(
+        "setup_wizards.SetupWizardCommands.giveaway",
+        "commands.giveaway.start.start_giveaway",
+    )

@@ -17,6 +17,20 @@ async def check_ping(ctx: Any, latency_limit_ms: float = 5000) -> CheckOutcome:
     return CheckOutcome("infra.ping", True, f"Pong! ({latency}ms)")
 
 
+def check_gateway_latency(bot: Any, *, limit_ms: float = 1000.0) -> CheckOutcome:
+    latency = getattr(bot, "latency", None)
+    if latency is None:
+        return CheckOutcome("infra.gateway_latency", False, "bot.latency unavailable")
+    ms = round(latency * 1000, 2)
+    if ms > limit_ms:
+        return CheckOutcome("infra.gateway_latency", False, f"Gateway latency too high: {ms}ms")
+    shard_count = len(getattr(bot, "shards", {}) or {})
+    detail = f"{ms}ms"
+    if shard_count:
+        detail += f", shards={shard_count}"
+    return CheckOutcome("infra.gateway_latency", True, detail)
+
+
 async def check_database(bot: Any) -> CheckOutcome:
     pool = getattr(bot, "_pool", None)
     if pool is None:

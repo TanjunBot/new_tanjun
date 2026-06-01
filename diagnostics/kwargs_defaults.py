@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import inspect
-from typing import Any
+import typing
+from typing import Any, get_args, get_origin
 
 from diagnostics.mocks import make_attachment, make_choice, make_member, make_text_channel
 
@@ -73,6 +74,12 @@ _PARAM_DEFAULTS: dict[str, Any] = {
     "response": "ok",
     "personality": "default",
     "giveawayid": 1,
+    "temperature": 1.0,
+    "topp": 1.0,
+    "frequencypenalty": 0.0,
+    "presencepenalty": 0.0,
+    "setting": lambda: make_choice("all"),
+    "imageurl": "https://example.com/x.png",
 }
 
 
@@ -85,6 +92,26 @@ def _make_role() -> Any:
     return role
 
 
+def _default_from_annotation(annotation: Any) -> Any:
+    if annotation is inspect.Parameter.empty:
+        return "test"
+    origin = get_origin(annotation)
+    if origin is typing.Union or str(origin) == "typing.Union":
+        args = [a for a in get_args(annotation) if a is not type(None)]
+        if args:
+            return _default_from_annotation(args[0])
+        return None
+    if annotation in (int, "int"):
+        return 1
+    if annotation in (float, "float"):
+        return 1.0
+    if annotation in (bool, "bool"):
+        return False
+    if annotation in (str, "str"):
+        return "test"
+    return "test"
+
+
 def build_kwargs_for_handler(handler: Any) -> dict[str, Any]:
     try:
         sig = inspect.signature(getattr(handler, "callback", handler))
@@ -94,9 +121,11 @@ def build_kwargs_for_handler(handler: Any) -> dict[str, Any]:
     for name, param in sig.parameters.items():
         if name in ("self", "interaction", "ctx"):
             continue
-        if param.default is not inspect.Parameter.empty and param.default is None:
-            continue
-        factory = _PARAM_DEFAULTS.get(name)
-        if factory is not None:
+        if name in _PARAM_DEFAULTS:
+            factory = _PARAM_DEFAULTS[name]
             kwargs[name] = factory() if callable(factory) else factory
+            continue
+        if param.default is not inspect.Parameter.empty:
+            continue
+        kwargs[name] = _default_from_annotation(param.annotation)
     return kwargs

@@ -3,7 +3,7 @@
 from diagnostics.benchmark_models import BenchmarkPhase, BenchmarkResult, BenchmarkSummary
 from diagnostics.benchmark_runner import BenchmarkRunner
 from diagnostics.models import CheckOutcome, CommandBehaviorSpec, DiagnosticsSummary, PhaseResult
-from diagnostics.registry import all_specs, run_spec
+from diagnostics.registry import all_specs, clear_spec_cache, run_spec
 from diagnostics.runner import DiagnosticsRunner
 
 __all__ = [
@@ -17,5 +17,6 @@ __all__ = [
     "DiagnosticsSummary",
     "PhaseResult",
     "all_specs",
+    "clear_spec_cache",
     "run_spec",
 ]

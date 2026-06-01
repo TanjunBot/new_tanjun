@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 from diagnostics.mocks import make_choice, make_member
-from diagnostics.specs._helpers import register_kwargs, register_method_commands, register_skip
+from diagnostics.specs._helpers import register_kwargs, register_method_commands
 
 
 def register() -> None:
-    register_skip("games.GameCommands.akinator_cmd", "Interactive multi-step game session")
-    register_skip("games.GameCommands.connect4_cmd", "Interactive multi-step game session")
-    register_skip("games.GameCommands.battleship_cmd", "Interactive multi-step game session")
-    register_skip("games.GameCommands.advanced_ttt_cmd", "Interactive multi-step game session")
     register_kwargs("games.GameCommands.tic_tac_toe_cmd", lambda: {"user": make_member()})
     register_kwargs("games.GameCommands.connect4_cmd", lambda: {"user": make_member(), "size": make_choice("7,6")})
     register_kwargs("games.GameCommands.akinator_cmd", lambda: {"theme": make_choice("characters")})

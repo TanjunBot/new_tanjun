@@ -12,6 +12,10 @@ def make_guild(guild_id: int = 123456789, *, with_me: bool = True) -> MagicMock:
     guild.get_member = MagicMock(return_value=None)
     guild.get_role = MagicMock(return_value=None)
     guild.get_channel = MagicMock(return_value=None)
+    default_role = MagicMock()
+    default_role.id = 222222222
+    default_role.name = "@everyone"
+    guild.default_role = default_role
     if with_me:
         me = MagicMock()
         me.id = 999999999
