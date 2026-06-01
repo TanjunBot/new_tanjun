@@ -17,3 +17,4 @@ def register() -> None:
     register_defer_and_mock("admin.AdminMessagingCommands.say", "sayCommand")
     register_defer_and_mock("admin.AdminMessagingCommands.embed", "createEmbedCommand")
     register_defer_and_mock("admin.AdminSetupCommands.create_ticket", "createTicketCommand")
+    register_defer_only("admin.AdminEmojiCommands.createemoji")
