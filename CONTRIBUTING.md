@@ -162,6 +162,8 @@ pytest tests/integration/
 pytest tests/e2e/
 ```
 
+CI runs unit tests, integration tests (excluding `slow` and `live_discord`), and mock E2E tests (`tests/e2e/`). Database integration tests run in a separate workflow job with Docker MariaDB.
+
 ### Coverage (85% total + per-file gate)
 
 CI merges coverage from separate pytest runs. Locally:

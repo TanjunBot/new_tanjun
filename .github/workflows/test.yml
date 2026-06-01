@@ -23,6 +23,8 @@ jobs:
         run: |
           pytest tests/integration -m "not slow and not live_discord" \
             --cov --cov-append --cov-report=term-missing --cov-fail-under=85 -q
+      - name: Run mock E2E tests
+        run: pytest tests/e2e/ -m "not slow" -q
       - name: Check command test coverage mapping
         run: python scripts/check_command_test_coverage.py
       - name: Check diagnostics command tree manifest

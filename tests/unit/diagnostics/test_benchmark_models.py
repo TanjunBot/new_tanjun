@@ -14,3 +14,12 @@ def test_benchmark_result_summary_with_samples() -> None:
 def test_benchmark_result_summary_error() -> None:
     result = BenchmarkResult("test.fail", error="boom")
     assert result.summary() == "test.fail: ERROR — boom"
+
+
+def test_benchmark_result_ok_false_on_error() -> None:
+    assert not BenchmarkResult("x", error="fail").ok
+
+
+def test_benchmark_result_p95_single_sample() -> None:
+    result = BenchmarkResult("x", samples_ms=[42.0])
+    assert result.p95_ms == 42.0
