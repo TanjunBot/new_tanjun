@@ -3486,7 +3486,7 @@
     "context": "User-visible message for `/admin administration` (test bot) (tests unavailable). English: \"⚠️ Test functions not available. Skipping tests.\".",
     "labels": "commands",
     "max_length": null
-  },,
+  },
   {
     "identifier": "commands.admin.administration.benchmark_bot.starting",
     "source_string": "Starting deep benchmarks...",
@@ -3510,7 +3510,7 @@
     "context": "User-visible message for administration benchmark_bot (error).",
     "labels": "commands",
     "max_length": null
-  }
+  },
   {
     "identifier": "commands.admin.administration.update.connection_failed",
     "source_string": "Failed to connect to update service: ${error}",
