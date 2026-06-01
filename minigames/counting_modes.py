@@ -1,4 +1,4 @@
-from locale_keys import locale
+from locale_keys import locale as _locale
 import random
 from math import sqrt
 import discord
@@ -10,7 +10,7 @@ from utility import DiscordSafe, EmbedColor, tanjunEmbed
 repo = CountingRepository
 MODE = _CountingDBMode.MODES
 modeMap = {CountingMode.NORMAL: 'normal', CountingMode.NEGATIVE: 'negative', CountingMode.REVERSE: 'reverse', CountingMode.PRIME: 'prime', CountingMode.EVEN: 'even', CountingMode.ODD: 'odd', CountingMode.FIBONACCI: 'fibonacci', CountingMode.DOUBLE: 'double', CountingMode.TRIPLE: 'triple', CountingMode.HUNDREDS: 'houndreds', CountingMode.BINARY: 'binary', CountingMode.ROMEAN: 'romean', CountingMode.SQUARE: 'square', CountingMode.CUBE: 'cube'}
-_mode_locales = locale.minigames.counting.modes.modes
+_mode_locales = _locale.minigames.counting.modes.modes
 
 def _mode_labels(loc: str, mode: CountingMode) -> tuple[str, str]:
     entry = getattr(_mode_locales, modeMap[mode])
@@ -176,13 +176,13 @@ async def counting(message: discord.Message, config: dict | None=None) -> None:
         mode = CountingMode(mode_raw)
     else:
         mode = mode_raw
-    locale = message.guild.preferred_locale if hasattr(message.guild, 'preferred_locale') else 'en_US'
+    locale_str = message.guild.preferred_locale if hasattr(message.guild, 'preferred_locale') else 'en_US'
     if not progress and progress != 0:
         return
     if mode == CountingMode.ROMEAN:
         progress = number_to_romeal(progress)
     if await check_if_opted_out(message.author.id):
-        await DiscordSafe.send_dm(message.author, locale.minigames.counting.opted_out(locale))
+        await DiscordSafe.send_dm(message.author, _locale.minigames.counting.opted_out(locale_str))
         await DiscordSafe.delete(message)
         return
     content = message.content
@@ -194,7 +194,7 @@ async def counting(message: discord.Message, config: dict | None=None) -> None:
         await DiscordSafe.add_reaction(message, '💀')
         new_mode = random.choice(list(modeMap))
         goal = get_goal(new_mode)
-        embed = tanjunEmbed(colour=EmbedColor.ERROR, title=locale.minigames.counting.modes.failed.title(locale), description=locale.minigames.counting.modes.failed.description(locale, number=correct_number, mode_name=_mode_labels(locale, new_mode)[0], mode_description=_mode_labels(locale, new_mode)[1], goal=goal))
+        embed = tanjunEmbed(colour=EmbedColor.ERROR, title=_locale.minigames.counting.modes.failed.title(locale_str), description=_locale.minigames.counting.modes.failed.description(locale_str, number=correct_number, mode_name=_mode_labels(locale_str, new_mode)[0], mode_description=_mode_labels(locale_str, new_mode)[1], goal=goal))
         await repo.clear(MODE, message.channel.id)
         if new_mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
@@ -208,7 +208,7 @@ async def counting(message: discord.Message, config: dict | None=None) -> None:
         await DiscordSafe.add_reaction(message, '💀')
         new_mode = random.choice(list(modeMap))
         goal = get_goal(new_mode)
-        embed = tanjunEmbed(colour=EmbedColor.ERROR, title=locale.minigames.counting.modes.failed.title(locale), description=locale.minigames.counting.modes.failed.description(locale, number=correct_number, mode_name=_mode_labels(locale, new_mode)[0], mode_description=_mode_labels(locale, new_mode)[1], goal=goal))
+        embed = tanjunEmbed(colour=EmbedColor.ERROR, title=_locale.minigames.counting.modes.failed.title(locale_str), description=_locale.minigames.counting.modes.failed.description(locale_str, number=correct_number, mode_name=_mode_labels(locale_str, new_mode)[0], mode_description=_mode_labels(locale_str, new_mode)[1], goal=goal))
         await repo.clear(MODE, message.channel.id)
         if new_mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
@@ -220,7 +220,7 @@ async def counting(message: discord.Message, config: dict | None=None) -> None:
         await DiscordSafe.add_reaction(message, '💀')
         new_mode = random.choice(list(modeMap))
         goal = get_goal(new_mode)
-        embed = tanjunEmbed(colour=EmbedColor.ERROR, title=locale.minigames.counting.modes.failed.title(locale), description=locale.minigames.counting.modes.failed.description(locale, number=correct_number, mode_name=_mode_labels(locale, new_mode)[0], mode_description=_mode_labels(locale, new_mode)[1], goal=goal))
+        embed = tanjunEmbed(colour=EmbedColor.ERROR, title=_locale.minigames.counting.modes.failed.title(locale_str), description=_locale.minigames.counting.modes.failed.description(locale_str, number=correct_number, mode_name=_mode_labels(locale_str, new_mode)[0], mode_description=_mode_labels(locale_str, new_mode)[1], goal=goal))
         await repo.clear(MODE, message.channel.id)
         if new_mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
@@ -234,7 +234,7 @@ async def counting(message: discord.Message, config: dict | None=None) -> None:
         await DiscordSafe.add_reaction(message, '💀')
         new_mode = random.choice(list(modeMap))
         goal = get_goal(new_mode)
-        embed = tanjunEmbed(colour=EmbedColor.ERROR, title=locale.minigames.counting.modes.failed_double.title(locale), description=locale.minigames.counting.modes.failed_double.description(locale, number=correct_number, mode_name=_mode_labels(locale, new_mode)[0], mode_description=_mode_labels(locale, new_mode)[1], goal=goal))
+        embed = tanjunEmbed(colour=EmbedColor.ERROR, title=_locale.minigames.counting.modes.failed_double.title(locale_str), description=_locale.minigames.counting.modes.failed_double.description(locale_str, number=correct_number, mode_name=_mode_labels(locale_str, new_mode)[0], mode_description=_mode_labels(locale_str, new_mode)[1], goal=goal))
         await repo.clear(MODE, message.channel.id)
         if new_mode == CountingMode.ROMEAN:
             goal = romeal_to_number(goal)
@@ -252,7 +252,7 @@ async def counting(message: discord.Message, config: dict | None=None) -> None:
         new_goal = get_goal(new_mode)
         if new_mode == CountingMode.ROMEAN:
             new_goal = romeal_to_number(new_goal)
-        embed = tanjunEmbed(colour=EmbedColor.SUCCESS, title=locale.minigames.counting.modes.won.title(locale), description=locale.minigames.counting.modes.won.description(locale, mode_name=_mode_labels(locale, new_mode)[0], mode_description=_mode_labels(locale, new_mode)[1], goal=goal, new_goal=new_goal))
+        embed = tanjunEmbed(colour=EmbedColor.SUCCESS, title=_locale.minigames.counting.modes.won.title(locale_str), description=_locale.minigames.counting.modes.won.description(locale_str, mode_name=_mode_labels(locale_str, new_mode)[0], mode_description=_mode_labels(locale_str, new_mode)[1], goal=goal, new_goal=new_goal))
         await repo.clear(MODE, message.channel.id)
         starter = get_first_number(new_mode)
         await repo.set_mode_progress(channel_id=message.channel.id, progress=starter, guild_id=message.guild.id, mode=new_mode, goal=new_goal, counter_id='nobody')

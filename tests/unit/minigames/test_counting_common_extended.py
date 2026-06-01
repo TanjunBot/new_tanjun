@@ -22,7 +22,7 @@ async def test_cmd_require_moderate_members_denied():
     channel = make_text_channel(guild=guild)
     channel.permissions_for = MagicMock(return_value=perms)
     info = make_command_info(user=user, guild=guild, channel=channel, reply=AsyncMock())
-    assert await cmd_common.require_moderate_members(info, "prefix") is True
+    assert await cmd_common.require_moderate_members(info, "minigames.setcountingchannel") is True
 
 
 async def test_pkg_handle_guild_check_dm():
