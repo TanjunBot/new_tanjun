@@ -8,6 +8,7 @@ from diagnostics.harness import invoke_interaction_command
 from diagnostics.kwargs_defaults import build_kwargs_for_handler
 from diagnostics.models import CheckOutcome, CommandBehaviorSpec
 from diagnostics.patches import extension_patches
+from diagnostics.strict_skips import is_allowed_slash_skip
 
 _specs_cache: list[CommandBehaviorSpec] | None = None
 
@@ -26,6 +27,11 @@ def all_specs() -> list[CommandBehaviorSpec]:
     return _specs_cache
 
 
+def clear_spec_cache() -> None:
+    global _specs_cache
+    _specs_cache = None
+
+
 def _resolve_kwargs(spec: CommandBehaviorSpec, handler: Any) -> dict[str, Any]:
     extra = spec.extra_kwargs
     if callable(extra):
@@ -37,7 +43,13 @@ def _resolve_kwargs(spec: CommandBehaviorSpec, handler: Any) -> dict[str, Any]:
 
 async def run_spec(spec: CommandBehaviorSpec, bot: Any) -> CheckOutcome:
     if spec.skip_reason:
-        return CheckOutcome(spec.id, True, spec.skip_reason, skipped=True)
+        if is_allowed_slash_skip(spec.id):
+            return CheckOutcome(spec.id, True, spec.skip_reason, skipped=True, skip_allowed=True)
+        return CheckOutcome(
+            spec.id,
+            False,
+            f"Undocumented skip (register in SLASH_SKIP_ALLOWLIST or remove skip): {spec.skip_reason}",
+        )
 
     from diagnostics.discovery import _instantiate_group
 
@@ -57,7 +69,12 @@ async def run_spec(spec: CommandBehaviorSpec, bot: Any) -> CheckOutcome:
                 extension_patches(spec.extension, spec.patch_targets, spec.patch_exclude)
             )
             interaction = await asyncio.wait_for(
-                invoke_interaction_command(handler, owner=group, extra_kwargs=extra_kwargs),
+                invoke_interaction_command(
+                    handler,
+                    owner=group,
+                    extra_kwargs=extra_kwargs,
+                    bot=bot,
+                ),
                 timeout=30.0,
             )
             if spec.assertions:

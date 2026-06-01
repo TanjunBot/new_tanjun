@@ -16,6 +16,7 @@ async def invoke_interaction_command(
     user: Any | None = None,
     guild: Any | None = None,
     channel: Any | None = None,
+    bot: Any | None = None,
     extra_kwargs: dict[str, Any] | None = None,
 ) -> Any:
     guild = guild or make_guild()
@@ -23,6 +24,8 @@ async def invoke_interaction_command(
     user = user or make_member(guild=guild)
     interaction = make_interaction(user=user, guild=guild, channel=channel)
     interaction.channel = channel
+    if bot is not None:
+        interaction.client = bot
 
     call_target = getattr(handler, "callback", handler)
     if getattr(handler, "callback", None) is not None and owner is not None:

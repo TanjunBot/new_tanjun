@@ -18,7 +18,11 @@ async def expect_interaction_response(interaction: Any, _mocks: dict[str, Any]) 
         return
     if interaction.response.send_modal.await_count > 0:
         return
-    raise AssertionError("Expected defer, send_message, followup.send, or send_modal")
+    if interaction.edit_original_response.await_count > 0:
+        return
+    raise AssertionError(
+        "Expected defer, send_message, followup.send, send_modal, or edit_original_response"
+    )
 
 
 async def expect_defer(interaction: Any, _mocks: dict[str, Any]) -> None:

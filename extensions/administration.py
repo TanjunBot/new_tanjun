@@ -32,11 +32,13 @@ from minigames.counting_modes import get_correct_next_number, get_first_number
 import contextlib
 
 try:
+    from diagnostics.benchmark_runner import BenchmarkRunner
     from diagnostics.runner import DiagnosticsRunner
 
     DIAGNOSTICS_AVAILABLE = True
 except ImportError:
     DIAGNOSTICS_AVAILABLE = False
+    BenchmarkRunner = None  # type: ignore[misc, assignment]
 
 from utility import addFeedback, embed_or_wrap, error_embed, missingLocalization, success_embed, tanjunEmbed, warning_embed
 
@@ -212,6 +214,48 @@ class AdministrationCog(commands.Cog):
             )
             if thread is not None:
                 await thread.send(f"Diagnostics aborted: {e}")
+
+    @commands.command()
+    async def benchmark_bot(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]
+        if ctx.author.id not in config.adminIds:
+            return
+
+        locale = self._locale(ctx)
+        message = await ctx.send(
+            embed=tanjunEmbed(
+                title="Bot Benchmarks",
+                description=tanjunLocalizer.localize(locale, "commands.admin.administration.benchmark_bot.starting"),
+            )
+        )
+
+        if not DIAGNOSTICS_AVAILABLE or BenchmarkRunner is None:
+            await message.edit(
+                embed=tanjunEmbed(
+                    title="Bot Benchmarks",
+                    description=tanjunLocalizer.localize(
+                        locale, "commands.admin.administration.benchmark_bot.unavailable"
+                    ),
+                )
+            )
+            return
+
+        thread = None
+        try:
+            thread_name = f"bot-benchmarks-{ctx.message.id}"
+            thread = await message.create_thread(name=thread_name[:100])
+            runner = BenchmarkRunner(self.bot, ctx, thread, message, locale=locale)
+            await runner.run_all()
+        except Exception as e:
+            await message.edit(
+                embed=error_embed(
+                    tanjunLocalizer.localize(
+                        locale, "commands.admin.administration.benchmark_bot.error", error=e
+                    ),
+                    title="Bot Benchmarks",
+                )
+            )
+            if thread is not None:
+                await thread.send(f"Benchmark aborted: {e}")
 
     @commands.command()
     async def test_translation(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]

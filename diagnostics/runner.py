@@ -7,8 +7,11 @@ from typing import Any
 
 from discord.ext import commands
 
-from diagnostics.infra_checks import check_database, check_ping
+from diagnostics.coverage import check_duplicate_spec_ids, check_manifest_spec_coverage
+from diagnostics.infra_checks import check_database, check_gateway_latency, check_ping
+from diagnostics.locale_checks import check_locale_files, check_localizer_samples
 from diagnostics.models import CheckOutcome, DiagnosticsSummary, PhaseResult
+from diagnostics.prefix_checks import run_prefix_command_checks
 from diagnostics.registry import all_specs, run_spec
 from diagnostics.tree import compare_tree_to_manifest
 
@@ -77,10 +80,10 @@ class DiagnosticsRunner:
             await self._thread_send("\n".join(chunk))
 
     def _outcome_label(self, outcome: CheckOutcome) -> str:
-        if outcome.skipped and outcome.passed:
-            return "WARN"
-        if outcome.skipped:
+        if outcome.skipped and outcome.skip_allowed:
             return "SKIP"
+        if outcome.skipped:
+            return "FAIL"
         return "PASS" if outcome.passed else "FAIL"
 
     def _format_outcome_line(self, outcome: CheckOutcome) -> str:
@@ -122,15 +125,18 @@ class DiagnosticsRunner:
 
     async def run_all(self) -> DiagnosticsSummary:
         started = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
-        await self._thread_send(f"Diagnostics run started at {started}")
+        await self._thread_send(f"Diagnostics run started at {started} (strict mode)")
 
         for phase_fn in (
             self._run_phase_a_infra,
             self._run_phase_b_health,
             self._run_phase_c_loops,
             self._run_phase_d_tree,
+            self._run_phase_g_coverage,
             self._run_phase_f_extensions,
             self._run_phase_e_handlers,
+            self._run_phase_h_locales,
+            self._run_phase_i_prefix,
         ):
             try:
                 await phase_fn()
@@ -145,6 +151,7 @@ class DiagnosticsRunner:
         await self._thread_send("## Phase A: Infrastructure")
 
         phase.outcomes.append(await check_ping(self.ctx))
+        phase.outcomes.append(check_gateway_latency(self.bot))
         phase.outcomes.append(await check_database(self.bot))
 
         self.summary.phases.append(phase)
@@ -214,7 +221,7 @@ class DiagnosticsRunner:
             if extra:
                 for path in sorted(extra):
                     phase.outcomes.append(
-                        CheckOutcome(f"tree.extra.{path}", True, "Unexpected command", skipped=True)
+                        CheckOutcome(f"tree.extra.{path}", False, "Unexpected command in live tree")
                     )
             if missing_sub:
                 for name in sorted(missing_sub):
@@ -222,10 +229,20 @@ class DiagnosticsRunner:
             if extra_sub:
                 for name in sorted(extra_sub):
                     phase.outcomes.append(
-                        CheckOutcome(f"tree.subgroup.extra.{name}", True, "Unexpected subgroup", skipped=True)
+                        CheckOutcome(f"tree.subgroup.extra.{name}", False, "Unexpected subgroup in live tree")
                     )
             if not missing and not extra and not missing_sub and not extra_sub:
                 phase.outcomes.append(CheckOutcome("tree.manifest", True, "Tree matches manifest"))
+
+        self.summary.phases.append(phase)
+        await self._report_phase(phase)
+
+    async def _run_phase_g_coverage(self) -> None:
+        phase = PhaseResult("G", "Spec coverage")
+        await self._thread_send("## Phase G: Spec coverage vs manifest")
+
+        phase.outcomes.extend(check_manifest_spec_coverage())
+        phase.outcomes.extend(check_duplicate_spec_ids())
 
         self.summary.phases.append(phase)
         await self._report_phase(phase)
@@ -243,10 +260,10 @@ class DiagnosticsRunner:
         await self._report_phase(phase)
 
     async def _run_phase_e_handlers(self) -> None:
-        phase = PhaseResult("E", "Handler behaviors")
+        phase = PhaseResult("E", "Slash handler behaviors")
         specs = all_specs()
         total = len(specs)
-        await self._thread_send(f"## Phase E: Handler behaviors ({total} specs)")
+        await self._thread_send(f"## Phase E: Slash handler behaviors ({total} specs)")
 
         sem = asyncio.Semaphore(CONCURRENCY)
 
@@ -270,6 +287,25 @@ class DiagnosticsRunner:
         await self._report_phase(phase, compact_passed=True)
         await self._update_parent("Bot Diagnostics", f"Phase E complete — {phase.failed} failed, {phase.skipped} skipped")
 
+    async def _run_phase_h_locales(self) -> None:
+        phase = PhaseResult("H", "Localization")
+        await self._thread_send("## Phase H: Localization")
+
+        phase.outcomes.extend(check_locale_files())
+        phase.outcomes.extend(check_localizer_samples(self.locale))
+
+        self.summary.phases.append(phase)
+        await self._report_phase(phase, compact_passed=True)
+
+    async def _run_phase_i_prefix(self) -> None:
+        phase = PhaseResult("I", "Admin prefix commands")
+        await self._thread_send("## Phase I: Administration prefix commands")
+
+        phase.outcomes.extend(await run_prefix_command_checks(self.bot))
+
+        self.summary.phases.append(phase)
+        await self._report_phase(phase, compact_passed=True)
+
     async def _finalize(self) -> None:
         s = self.summary
         phase_lines = [
@@ -280,6 +316,7 @@ class DiagnosticsRunner:
             "## Summary",
             *phase_lines,
             f"**Total:** {s.total_passed} passed, {s.total_failed} failed, {s.total_skipped} skipped",
+            f"**Unauthorized skips:** {s.unauthorized_skips}",
             f"**Status:** {'OK' if s.ok else 'FAILED'}",
         ]
         await self._thread_send("\n".join(lines))
@@ -290,7 +327,8 @@ class DiagnosticsRunner:
             [
                 f"Passed: {s.total_passed}",
                 f"Failed: {s.total_failed}",
-                f"Skipped: {s.total_skipped}",
+                f"Skipped (allowed): {s.total_skipped}",
+                f"Unauthorized skips: {s.unauthorized_skips}",
                 f"Status: {'OK' if s.ok else 'FAILED'}",
             ]
         )

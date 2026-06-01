@@ -86,6 +86,7 @@ class TestNonAdminEarlyReturn:
             ("blockFeedback", {"user": make_member()}),
             ("unblockFeedback", {"user": make_member()}),
             ("test_bot", {}),
+            ("benchmark_bot", {}),
             ("test_translation", {}),
             ("update", {}),
             ("welcome", {}),
@@ -225,6 +226,48 @@ class TestTestBot:
             ),
         ):
             await cog.test_bot(ctx)
+        mock_runner.run_all.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+class TestBenchmarkBot:
+    async def test_benchmark_unavailable(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, "DIAGNOSTICS_AVAILABLE", False):
+            await cog.benchmark_bot(ctx)
+        sent.edit.assert_awaited()
+
+    async def test_benchmark_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        sent.create_thread = AsyncMock(return_value=MagicMock(send=AsyncMock()))
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with (
+            patch.object(admin_mod, "DIAGNOSTICS_AVAILABLE", True),
+            patch.object(admin_mod, "BenchmarkRunner", autospec=True) as mock_runner_cls,
+        ):
+            mock_runner = mock_runner_cls.return_value
+            mock_runner.run_all = AsyncMock(side_effect=RuntimeError("benchmark fail"))
+            await cog.benchmark_bot(ctx)
+        sent.edit.assert_awaited()
+
+    async def test_benchmark_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        sent.create_thread = AsyncMock(return_value=MagicMock(send=AsyncMock()))
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        mock_runner = MagicMock()
+        mock_runner.run_all = AsyncMock()
+        with (
+            patch.object(admin_mod, "DIAGNOSTICS_AVAILABLE", True),
+            patch.object(admin_mod, "BenchmarkRunner", return_value=mock_runner),
+        ):
+            await cog.benchmark_bot(ctx)
         mock_runner.run_all.assert_awaited_once()
 
 

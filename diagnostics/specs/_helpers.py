@@ -4,7 +4,8 @@ from typing import Any
 
 from diagnostics.assertions import expect_defer, expect_interaction_response, expect_mock_called
 from diagnostics.mocks import make_attachment, make_choice, make_member, make_text_channel
-from diagnostics.specs.overrides import SPEC_CUSTOM_ASSERTIONS, SPEC_OVERRIDES, SPEC_SKIPS
+from diagnostics.patches import PATCH_RETURN_VALUES
+from diagnostics.specs.overrides import SPEC_CUSTOM_ASSERTIONS, SPEC_OVERRIDES, SPEC_PATCH_TARGETS, SPEC_SKIPS
 
 
 def register_kwargs(spec_id: str, kwargs: dict[str, Any] | Any) -> None:
@@ -13,6 +14,14 @@ def register_kwargs(spec_id: str, kwargs: dict[str, Any] | Any) -> None:
 
 def register_skip(spec_id: str, reason: str) -> None:
     SPEC_SKIPS[spec_id] = reason
+
+
+def register_patch_targets(spec_id: str, *targets: str) -> None:
+    SPEC_PATCH_TARGETS[spec_id] = targets
+
+
+def register_patch_return(patch_path: str, return_value: Any) -> None:
+    PATCH_RETURN_VALUES[patch_path] = return_value
 
 
 def register_defer_and_mock(spec_id: str, mock_name: str) -> None:
