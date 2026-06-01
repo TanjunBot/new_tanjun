@@ -52,8 +52,14 @@ def _instantiate_group(group_cls: type) -> Optional[Any]:
 
 def _find_group_classes(module: Any) -> list[type]:
     classes: list[type] = []
+    group_base = app_commands.Group
+    if not isinstance(group_base, type):
+        return classes
     for _name, obj in inspect.getmembers(module, inspect.isclass):
-        if not issubclass(obj, app_commands.Group):
+        try:
+            if not issubclass(obj, group_base):
+                continue
+        except TypeError:
             continue
         if obj is app_commands.Group:
             continue

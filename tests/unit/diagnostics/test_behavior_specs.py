@@ -4,20 +4,25 @@ from unittest.mock import MagicMock
 
 import pytest
 
+import diagnostics.registry as registry_mod
+
 pytestmark = pytest.mark.asyncio
 
 
 async def test_all_specs_returns_list() -> None:
-    """all_specs() returns a list (may be empty or have specs depending on env)."""
+    from discord import app_commands
     from diagnostics.registry import all_specs
 
+    if not isinstance(app_commands.Group, type):
+        pytest.skip("discord.app_commands.Group is not a real class in this test environment")
+
+    registry_mod._specs_cache = None
     specs = all_specs()
     assert isinstance(specs, list)
 
 
 async def test_run_spec_skips_specs_with_reason() -> None:
-    """run_spec returns a skipped outcome when spec has skip_reason."""
-    from diagnostics.models import CommandBehaviorSpec, CheckOutcome
+    from diagnostics.models import CheckOutcome, CommandBehaviorSpec
     from diagnostics.registry import run_spec
 
     spec = CommandBehaviorSpec(
@@ -32,8 +37,22 @@ async def test_run_spec_skips_specs_with_reason() -> None:
     assert outcome.skipped
 
 
+async def test_run_spec_handles_unknown_spec() -> None:
+    from diagnostics.models import CheckOutcome, CommandBehaviorSpec
+    from diagnostics.registry import run_spec
+
+    spec = CommandBehaviorSpec(
+        id="test.UnknownGroup.unknown_method",
+        extension="extensions.administration",
+        group_cls=object,
+        method_name="nope",
+    )
+    outcome = await run_spec(spec, MagicMock())
+    assert isinstance(outcome, CheckOutcome)
+    assert not outcome.passed
+
+
 async def test_phase_result_counts() -> None:
-    """PhaseResult correctly tracks passed/failed/skipped."""
     from diagnostics.models import CheckOutcome, PhaseResult
 
     phase = PhaseResult("test", "Test Phase")
@@ -47,7 +66,6 @@ async def test_phase_result_counts() -> None:
 
 
 async def test_diagnostics_summary_ok() -> None:
-    """DiagnosticsSummary.ok is True when nothing failed."""
     from diagnostics.models import CheckOutcome, DiagnosticsSummary, PhaseResult
 
     s = DiagnosticsSummary()
@@ -63,7 +81,6 @@ async def test_diagnostics_summary_ok() -> None:
 
 
 async def test_diagnostics_summary_failed() -> None:
-    """DiagnosticsSummary.ok is False when anything failed."""
     from diagnostics.models import CheckOutcome, DiagnosticsSummary, PhaseResult
 
     s = DiagnosticsSummary()
