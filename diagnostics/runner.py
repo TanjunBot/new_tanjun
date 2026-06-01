@@ -11,6 +11,7 @@ from diagnostics.coverage import check_duplicate_spec_ids, check_manifest_spec_c
 from diagnostics.infra_checks import check_database, check_gateway_latency, check_ping
 from diagnostics.locale_checks import check_locale_files, check_localizer_samples
 from diagnostics.models import CheckOutcome, DiagnosticsSummary, PhaseResult
+from diagnostics.prefix_checks import run_prefix_command_checks
 from diagnostics.registry import all_specs, run_spec
 from diagnostics.tree import compare_tree_to_manifest
 
@@ -39,7 +40,6 @@ EXPECTED_COGS = frozenset(
 CONCURRENCY = 8
 SPEC_PROGRESS_INTERVAL = 10
 PROGRESS_BAR_WIDTH = 12
-
 _PHASE_PLAN: tuple[tuple[str, str], ...] = (
     ("A", "Infrastructure"),
     ("B", "Platform health"),
@@ -47,10 +47,10 @@ _PHASE_PLAN: tuple[tuple[str, str], ...] = (
     ("D", "Command tree manifest"),
     ("E", "Slash handler behaviors"),
     ("F", "Extensions loaded"),
+    ("I", "Prefix commands"),
     ("G", "Spec coverage"),
     ("H", "Localization"),
 )
-
 
 class DiagnosticsRunner:
     def __init__(
@@ -160,6 +160,7 @@ class DiagnosticsRunner:
             self._run_phase_d_tree,
             self._run_phase_e_handlers,
             self._run_phase_f_extensions,
+            self._run_phase_i_prefix,
             self._run_phase_g_coverage,
             self._run_phase_h_locales,
         )
@@ -272,6 +273,14 @@ class DiagnosticsRunner:
         self.summary.phases.append(phase)
         await self._report_phase(phase)
         await self._update_progress(phase_index, "D: Command tree manifest", f"Complete — {phase.failed} failed")
+
+    async def _run_phase_i_prefix(self, phase_index: int) -> None:
+        phase = PhaseResult("I", "Prefix commands")
+        await self._thread_send("## Phase I: Prefix commands")
+        phase.outcomes.extend(await run_prefix_command_checks(self.bot))
+        self.summary.phases.append(phase)
+        await self._report_phase(phase, compact_passed=True)
+        await self._update_progress(phase_index, "I: Prefix commands", f"Complete — {phase.failed} failed")
 
     async def _run_phase_g_coverage(self, phase_index: int) -> None:
         phase = PhaseResult("G", "Spec coverage")
