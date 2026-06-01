@@ -147,6 +147,7 @@ class LogsGuildChannelUpdate:
     permissionOverwriteModified: LocalizedString
     permissionOverwriteNeutral: LocalizedString
     permissionOverwriteNew: LocalizedString
+    permissionOverwriteRemoved: LocalizedString
     permissionOverwriteRemovedAllow: LocalizedString
     permissionOverwriteRemovedDeny: LocalizedString
     permissionOverwriteRemovedNeutral: LocalizedString
@@ -1276,6 +1277,7 @@ def build_logs() -> Logs:
         permissionOverwriteModified=LocalizedString('logs.guildChannelUpdate.permissionOverwriteModified'),
         permissionOverwriteNeutral=LocalizedString('logs.guildChannelUpdate.permissionOverwriteNeutral'),
         permissionOverwriteNew=LocalizedString('logs.guildChannelUpdate.permissionOverwriteNew'),
+        permissionOverwriteRemoved=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemoved'),
         permissionOverwriteRemovedAllow=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemovedAllow'),
         permissionOverwriteRemovedDeny=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemovedDeny'),
         permissionOverwriteRemovedNeutral=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemovedNeutral'),

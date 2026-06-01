@@ -3475,6 +3475,7 @@ LocaleKey = Literal[
     'logs.guildChannelUpdate.permissionOverwriteModified',
     'logs.guildChannelUpdate.permissionOverwriteNeutral',
     'logs.guildChannelUpdate.permissionOverwriteNew',
+    'logs.guildChannelUpdate.permissionOverwriteRemoved',
     'logs.guildChannelUpdate.permissionOverwriteRemovedAllow',
     'logs.guildChannelUpdate.permissionOverwriteRemovedDeny',
     'logs.guildChannelUpdate.permissionOverwriteRemovedNeutral',
