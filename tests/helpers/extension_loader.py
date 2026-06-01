@@ -58,6 +58,9 @@ def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
 
     async def _add_cog(cog: Any) -> None:
         bot.cogs[cog.__class__.__name__] = cog
+        # Register app commands defined on the cog via @app_commands.command
+        for cmd in getattr(cog, "__cog_app_commands__", []):
+            bot.tree.add_command(cmd)
 
     bot.add_cog = AsyncMock(side_effect=_add_cog)
     bot.get_cog = lambda name: bot.cogs.get(name)

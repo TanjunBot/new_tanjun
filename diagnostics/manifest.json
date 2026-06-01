@@ -192,6 +192,7 @@
     "setup_name setup_giveaway_name",
     "setup_name setup_level_name",
     "setup_name setup_logs_name",
+    "utility_help_name",
     "utility_scheduledmessage_name utility_listscheduled_name",
     "utility_scheduledmessage_name utility_removescheduled_name",
     "utility_scheduledmessage_name utility_schedulemessage_name",
@@ -221,8 +222,7 @@
     "utilitycmd_name utility_messagetracking_name utility_messageoptout_name",
     "utilitycmd_name utility_report_name",
     "utilitycmd_name utility_twitch_name utility_twitch_add_name",
-    "utilitycmd_name utility_twitch_name utility_twitch_see_name",
-    "utility_help_name"
+    "utilitycmd_name utility_twitch_name utility_twitch_see_name"
   ],
   "minigame_subgroups": [
     "minigames_cchcmds_name",
