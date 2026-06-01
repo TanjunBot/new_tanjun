@@ -67,3 +67,4 @@ class CommandBehaviorSpec:
     skip_reason: str | None = None
     assertions: AssertionFn | None = None
     patch_targets: tuple[str, ...] = ()
+    patch_exclude: tuple[str, ...] = ()

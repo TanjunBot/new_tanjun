@@ -16,6 +16,7 @@ def api_patches() -> Iterator[dict[str, AsyncMock]]:
         patch("api.execute_action", new_callable=AsyncMock, return_value=0),
         patch("api.safe_execute_query", new_callable=AsyncMock, return_value=[]),
         patch("api.execute_insert_and_get_id", new_callable=AsyncMock, return_value=1),
+        patch("api.feedbackIsBlocked", new_callable=AsyncMock, return_value=False),
     ]
     for p in patches:
         p.start()
@@ -27,15 +28,20 @@ def api_patches() -> Iterator[dict[str, AsyncMock]]:
 
 
 @contextmanager
-def extension_patches(extension: str, extra_targets: tuple[str, ...] = ()) -> Iterator[dict[str, AsyncMock]]:
+def extension_patches(
+    extension: str,
+    extra_targets: tuple[str, ...] = (),
+    patch_exclude: tuple[str, ...] = (),
+) -> Iterator[dict[str, AsyncMock]]:
     mocks: dict[str, AsyncMock] = {}
     module = importlib.import_module(extension)
+    excluded = set(patch_exclude)
 
     with ExitStack() as stack:
         stack.enter_context(api_patches())
 
         for name, obj in vars(module).items():
-            if name.startswith("_"):
+            if name.startswith("_") or name in excluded:
                 continue
             if not inspect.iscoroutinefunction(obj):
                 continue

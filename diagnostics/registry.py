@@ -53,7 +53,9 @@ async def run_spec(spec: CommandBehaviorSpec, bot: Any) -> CheckOutcome:
         from contextlib import ExitStack
 
         with ExitStack() as stack:
-            mocks = stack.enter_context(extension_patches(spec.extension, spec.patch_targets))
+            mocks = stack.enter_context(
+                extension_patches(spec.extension, spec.patch_targets, spec.patch_exclude)
+            )
             interaction = await asyncio.wait_for(
                 invoke_interaction_command(handler, owner=group, extra_kwargs=extra_kwargs),
                 timeout=30.0,

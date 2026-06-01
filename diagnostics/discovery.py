@@ -12,6 +12,7 @@ from diagnostics.models import CommandBehaviorSpec
 from diagnostics.specs.overrides import (
     SPEC_CUSTOM_ASSERTIONS,
     SPEC_OVERRIDES,
+    SPEC_PATCH_EXCLUDE,
     SPEC_PATCH_TARGETS,
     SPEC_SKIPS,
 )
@@ -120,6 +121,7 @@ def discover_extension_specs(extension: str) -> list[CommandBehaviorSpec]:
                     skip_reason=skip_reason,
                     assertions=SPEC_CUSTOM_ASSERTIONS.get(spec_id, expect_interaction_response),
                     patch_targets=SPEC_PATCH_TARGETS.get(spec_id, ()),
+                    patch_exclude=SPEC_PATCH_EXCLUDE.get(spec_id, ()),
                 )
             )
     return specs

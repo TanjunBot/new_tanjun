@@ -8,4 +8,6 @@ SPEC_OVERRIDES: dict[str, dict[str, Any] | Any] = {}
 
 SPEC_PATCH_TARGETS: dict[str, tuple[str, ...]] = {}
 
+SPEC_PATCH_EXCLUDE: dict[str, tuple[str, ...]] = {}
+
 SPEC_CUSTOM_ASSERTIONS: dict[str, Any] = {}
