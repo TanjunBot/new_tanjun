@@ -641,9 +641,14 @@ async def check_pool_health(bot=None) -> bool:
         db = os.environ.get("MARIADB_DATABASE") or os.environ.get("MYSQL_DATABASE")
 
         if not all((host, user, password, db)):
-            # No DB config available — just verify pool was initialized
+            # No DB config available — use pool-based health check as fallback
             pool = _get_pool()
-            return pool is not None
+            if pool is None:
+                return False
+            async with pool.acquire() as conn:
+                async with conn.cursor() as cursor:
+                    await asyncio.wait_for(cursor.execute("SELECT 1"), timeout=5)
+            return True
 
         conn = await asyncio.wait_for(
             asyncmy.connect(
