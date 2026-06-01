@@ -1,21 +1,22 @@
 from __future__ import annotations
 
 from diagnostics.mocks import make_choice, make_member
-from diagnostics.specs._helpers import register_kwargs, register_method_commands
+from diagnostics.specs._helpers import register_kwargs, register_method_commands, register_skip
 
 
 def register() -> None:
-    def _member() -> MagicMock:
-        return make_member()
-
-    register_kwargs("games.GameCommands.tic_tac_toe_cmd", lambda: {"user": _member()})  # type: ignore[no-untyped-call]
-    register_kwargs("games.GameCommands.connect4_cmd", lambda: {"user": _member(), "size": make_choice("7,6")})  # type: ignore[no-untyped-call]
-    register_kwargs("games.GameCommands.akinator_cmd", lambda: {"theme": make_choice("characters")})  # type: ignore[no-untyped-call]
-    register_kwargs("games.GameCommands.wordle_cmd", lambda: {"language": make_choice("own")})  # type: ignore[no-untyped-call]
-    register_kwargs("games.GameCommands.hangman_cmd", lambda: {"language": make_choice("own")})  # type: ignore[no-untyped-call]
-    register_kwargs("games.GameCommands.rps_cmd", lambda: {"user": _member()})  # type: ignore[no-untyped-call]
-    register_kwargs("games.GameCommands.battleship_cmd", lambda: {"user": _member()})  # type: ignore[no-untyped-call]
-    register_kwargs("games.GameCommands.advanced_ttt_cmd", lambda: {"user": _member()})  # type: ignore[no-untyped-call]
+    register_skip("games.GameCommands.akinator_cmd", "Interactive multi-step game session")
+    register_skip("games.GameCommands.connect4_cmd", "Interactive multi-step game session")
+    register_skip("games.GameCommands.battleship_cmd", "Interactive multi-step game session")
+    register_skip("games.GameCommands.advanced_ttt_cmd", "Interactive multi-step game session")
+    register_kwargs("games.GameCommands.tic_tac_toe_cmd", lambda: {"user": make_member()})
+    register_kwargs("games.GameCommands.connect4_cmd", lambda: {"user": make_member(), "size": make_choice("7,6")})
+    register_kwargs("games.GameCommands.akinator_cmd", lambda: {"theme": make_choice("characters")})
+    register_kwargs("games.GameCommands.wordle_cmd", lambda: {"language": make_choice("own")})
+    register_kwargs("games.GameCommands.hangman_cmd", lambda: {"language": make_choice("own")})
+    register_kwargs("games.GameCommands.rps_cmd", lambda: {"user": make_member()})
+    register_kwargs("games.GameCommands.battleship_cmd", lambda: {"user": make_member()})
+    register_kwargs("games.GameCommands.advanced_ttt_cmd", lambda: {"user": make_member()})
     register_kwargs("games.GameCommands.flag_quiz_cmd", {})
     register_kwargs("games.GameCommands.memory_cmd", {})
 

@@ -9,16 +9,34 @@ import diagnostics.registry as registry_mod
 pytestmark = pytest.mark.asyncio
 
 
-async def test_all_specs_returns_list() -> None:
+def _can_discover_specs() -> bool:
     from discord import app_commands
+
+    return isinstance(app_commands.Group, type)
+
+
+def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
+    if "behavior_spec" not in metafunc.fixturenames:
+        return
+    if not _can_discover_specs():
+        return
+    registry_mod._specs_cache = None
     from diagnostics.registry import all_specs
 
-    if not isinstance(app_commands.Group, type):
+    specs = all_specs()
+    metafunc.parametrize("behavior_spec", specs, ids=[s.id for s in specs])
+
+
+async def test_all_specs_returns_list() -> None:
+    from diagnostics.registry import all_specs
+
+    if not _can_discover_specs():
         pytest.skip("discord.app_commands.Group is not a real class in this test environment")
 
     registry_mod._specs_cache = None
     specs = all_specs()
     assert isinstance(specs, list)
+    assert len(specs) > 50
 
 
 async def test_run_spec_skips_specs_with_reason() -> None:
@@ -50,6 +68,16 @@ async def test_run_spec_handles_unknown_spec() -> None:
     outcome = await run_spec(spec, MagicMock())
     assert isinstance(outcome, CheckOutcome)
     assert not outcome.passed
+
+
+async def test_behavior_spec(behavior_spec: object) -> None:
+    from diagnostics.registry import run_spec
+
+    if not _can_discover_specs():
+        pytest.skip("discord.app_commands.Group is not a real class in this test environment")
+
+    outcome = await run_spec(behavior_spec, MagicMock())  # type: ignore[arg-type]
+    assert outcome.passed or outcome.skipped, f"{behavior_spec.id}: {outcome.message}"  # type: ignore[attr-defined]
 
 
 async def test_phase_result_counts() -> None:

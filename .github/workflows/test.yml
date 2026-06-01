@@ -25,6 +25,8 @@ jobs:
             --cov --cov-append --cov-report=term-missing --cov-fail-under=85 -q
       - name: Check command test coverage mapping
         run: python scripts/check_command_test_coverage.py
+      - name: Check diagnostics command tree manifest
+        run: python scripts/check_diagnostics_manifest.py
 
   integration-db:
     runs-on: ubuntu-latest
