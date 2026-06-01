@@ -5,9 +5,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import discord
 import pytest
 from discord import app_commands
+from discord.ext import commands
 
-from extensions.error_handler import ErrorHandlerCog, _get_locale, _set_sentry_context
-from tests.helpers.discord import make_guild, make_interaction, make_member
+from extensions.error_handler import ErrorHandlerCog, _get_locale, _get_locale_from_context, _set_sentry_context
+from tests.helpers.discord import make_guild, make_interaction, make_member, make_text_channel
 from tests.integration.extensions.conftest import load_extension_bot
 
 pytestmark = pytest.mark.asyncio
@@ -146,11 +147,6 @@ class TestOnAppCommandError:
     async def test_transformer_error(self) -> None:
         await self._handle(app_commands.TransformerError(MagicMock(), app_commands.AppCommandOptionType.string, ValueError()))
 
-    async def test_command_invoke_error_wrapper(self) -> None:
-        inner = RuntimeError("boom")
-        wrapped = app_commands.CommandInvokeError(inner)
-        await self._handle(wrapped)
-
     async def test_unexpected_error_no_sentry(self) -> None:
         with patch("extensions.error_handler.sentry_dsn", ""):
             await self._handle(RuntimeError("unexpected"))
@@ -181,3 +177,73 @@ class TestOnAppCommandError:
         ix = _interaction()
         ix.response.send_message = AsyncMock(side_effect=RuntimeError("send failed"))
         await cog._on_app_command_error(ix, app_commands.CheckFailure("x"))
+
+
+def _prefix_context(*, guild_locale: str = "en-US") -> MagicMock:
+    guild = make_guild()
+    guild.preferred_locale = guild_locale
+    channel = make_text_channel(guild=guild)
+    author = make_member()
+    ctx = MagicMock()
+    ctx.author = author
+    ctx.guild = guild
+    ctx.channel = channel
+    ctx.command = MagicMock()
+    ctx.command.qualified_name = "test_bot"
+    ctx.message = MagicMock()
+    ctx.message.id = 999
+    ctx.send = AsyncMock()
+    author.send = AsyncMock()
+    return ctx
+
+
+class TestGetLocaleFromContext:
+    def test_guild_locale_de_de(self) -> None:
+        ctx = _prefix_context(guild_locale="de-DE")
+        assert _get_locale_from_context(ctx) == "de"
+
+    def test_no_guild_defaults_en(self) -> None:
+        ctx = _prefix_context()
+        ctx.guild = None
+        assert _get_locale_from_context(ctx) == "en"
+
+
+class TestOnPrefixCommandError:
+    async def _handle(self, error: Exception) -> MagicMock:
+        cog = await _cog()
+        ctx = _prefix_context()
+        await cog._on_prefix_command_error(ctx, error)
+        return ctx
+
+    async def test_forbidden(self) -> None:
+        ctx = await self._handle(discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.send.assert_awaited_once()
+
+    async def test_command_invoke_error_forbidden(self) -> None:
+        inner = discord.Forbidden(MagicMock(), "forbidden")
+        wrapped = commands.CommandInvokeError(inner)
+        ctx = await self._handle(wrapped)
+        ctx.send.assert_awaited_once()
+
+    async def test_command_invoke_error_forbidden_dm_fallback(self) -> None:
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.send = AsyncMock(side_effect=discord.Forbidden(MagicMock(), "forbidden"))
+        inner = discord.Forbidden(MagicMock(), "forbidden")
+        await cog._on_prefix_command_error(ctx, commands.CommandInvokeError(inner))
+        ctx.author.send.assert_awaited_once()
+
+    async def test_command_not_found_silent(self) -> None:
+        cog = await _cog()
+        ctx = _prefix_context()
+        await cog._on_prefix_command_error(ctx, commands.CommandNotFound("missing"))
+        ctx.send.assert_not_called()
+
+    async def test_missing_permissions(self) -> None:
+        ctx = await self._handle(commands.MissingPermissions(["send_messages"]))
+        ctx.send.assert_awaited_once()
+
+    async def test_unexpected_error(self) -> None:
+        with patch("extensions.error_handler.sentry_dsn", ""):
+            ctx = await self._handle(RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
