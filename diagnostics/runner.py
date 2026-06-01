@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections import defaultdict
 from datetime import UTC, datetime
 from typing import Any
 
@@ -35,7 +36,6 @@ EXPECTED_COGS = frozenset(
 
 CONCURRENCY = 8
 SPEC_PROGRESS_INTERVAL = 10
-FAIL_FLUSH_SIZE = 10
 
 
 class DiagnosticsRunner:
@@ -59,6 +59,61 @@ class DiagnosticsRunner:
         if len(content) > 1900:
             content = content[:1900] + "…"
         await self.thread.send(content)
+
+    async def _thread_send_lines(self, lines: list[str]) -> None:
+        if not lines:
+            return
+        chunk: list[str] = []
+        size = 0
+        for line in lines:
+            line_len = len(line) + 1
+            if chunk and size + line_len > 1900:
+                await self._thread_send("\n".join(chunk))
+                chunk = []
+                size = 0
+            chunk.append(line)
+            size += line_len
+        if chunk:
+            await self._thread_send("\n".join(chunk))
+
+    def _outcome_label(self, outcome: CheckOutcome) -> str:
+        if outcome.skipped and outcome.passed:
+            return "WARN"
+        if outcome.skipped:
+            return "SKIP"
+        return "PASS" if outcome.passed else "FAIL"
+
+    def _format_outcome_line(self, outcome: CheckOutcome) -> str:
+        label = self._outcome_label(outcome)
+        detail = outcome.message or "OK"
+        return f"{label} `{outcome.check_id}`: {detail}"
+
+    async def _report_phase(self, phase: PhaseResult, *, compact_passed: bool = False) -> None:
+        header = (
+            f"**Phase {phase.phase_id}: {phase.title}** — "
+            f"{phase.passed} passed, {phase.failed} failed, {phase.skipped} skipped"
+        )
+        await self._thread_send(header)
+
+        lines: list[str] = []
+        passed_by_group: dict[str, int] = defaultdict(int)
+
+        for outcome in phase.outcomes:
+            if outcome.passed and not outcome.skipped:
+                if compact_passed:
+                    group = outcome.check_id.split(".", 1)[0]
+                    passed_by_group[group] += 1
+                else:
+                    lines.append(self._format_outcome_line(outcome))
+            else:
+                lines.append(self._format_outcome_line(outcome))
+
+        if compact_passed and passed_by_group:
+            for group in sorted(passed_by_group):
+                count = passed_by_group[group]
+                lines.append(f"PASS `{group}`: {count} spec{'s' if count != 1 else ''}")
+
+        await self._thread_send_lines(lines)
 
     async def _update_parent(self, title: str, description: str) -> None:
         from utility import tanjunEmbed
@@ -89,17 +144,11 @@ class DiagnosticsRunner:
         phase = PhaseResult("A", "Infrastructure")
         await self._thread_send("## Phase A: Infrastructure")
 
-        ping = await check_ping(self.ctx)
-        phase.outcomes.append(ping)
-        if not ping.passed:
-            await self._thread_send(f"FAIL `{ping.check_id}`: {ping.message}")
-
-        db = await check_database(self.bot)
-        phase.outcomes.append(db)
-        if not db.passed:
-            await self._thread_send(f"FAIL `{db.check_id}`: {db.message}")
+        phase.outcomes.append(await check_ping(self.ctx))
+        phase.outcomes.append(await check_database(self.bot))
 
         self.summary.phases.append(phase)
+        await self._report_phase(phase)
         await self._update_parent("Bot Diagnostics", f"Phase A complete — {phase.failed} failed")
 
     async def _run_phase_b_health(self) -> None:
@@ -116,7 +165,6 @@ class DiagnosticsRunner:
                 results = await manager.run_all()
             except Exception as exc:
                 phase.outcomes.append(CheckOutcome("health.manager", False, str(exc)))
-                await self._thread_send(f"FAIL `health.manager`: {exc}")
             else:
                 for result in results:
                     ok = result.status != HealthStatus.CRITICAL
@@ -127,10 +175,9 @@ class DiagnosticsRunner:
                             result.message,
                         )
                     )
-                    if not ok:
-                        await self._thread_send(f"FAIL `health.{result.check_name}`: {result.message}")
 
         self.summary.phases.append(phase)
+        await self._report_phase(phase)
         await self._update_parent("Bot Diagnostics", f"Phase B complete — {phase.failed} failed")
 
     async def _run_phase_c_loops(self) -> None:
@@ -146,13 +193,11 @@ class DiagnosticsRunner:
 
             ok = result.status != HealthStatus.CRITICAL
             phase.outcomes.append(CheckOutcome("loops.background", ok, result.message))
-            if not ok:
-                await self._thread_send(f"FAIL `loops.background`: {result.message}")
         except Exception as exc:
             phase.outcomes.append(CheckOutcome("loops.background", False, str(exc)))
-            await self._thread_send(f"FAIL `loops.background`: {exc}")
 
         self.summary.phases.append(phase)
+        await self._report_phase(phase)
 
     async def _run_phase_d_tree(self) -> None:
         phase = PhaseResult("D", "Command tree manifest")
@@ -162,32 +207,28 @@ class DiagnosticsRunner:
             missing, extra, missing_sub, extra_sub = compare_tree_to_manifest(self.bot)
         except Exception as exc:
             phase.outcomes.append(CheckOutcome("tree.manifest", False, str(exc)))
-            await self._thread_send(f"FAIL `tree.manifest`: {exc}")
         else:
             if missing:
                 for path in sorted(missing):
                     phase.outcomes.append(CheckOutcome(f"tree.missing.{path}", False, "Not registered"))
-                    await self._thread_send(f"FAIL tree missing: `{path}`")
             if extra:
                 for path in sorted(extra):
                     phase.outcomes.append(
                         CheckOutcome(f"tree.extra.{path}", True, "Unexpected command", skipped=True)
                     )
-                    await self._thread_send(f"WARN tree extra: `{path}`")
             if missing_sub:
                 for name in sorted(missing_sub):
                     phase.outcomes.append(CheckOutcome(f"tree.subgroup.missing.{name}", False, "Not registered"))
-                    await self._thread_send(f"FAIL minigame subgroup missing: `{name}`")
             if extra_sub:
                 for name in sorted(extra_sub):
                     phase.outcomes.append(
                         CheckOutcome(f"tree.subgroup.extra.{name}", True, "Unexpected subgroup", skipped=True)
                     )
-                    await self._thread_send(f"WARN minigame subgroup extra: `{name}`")
             if not missing and not extra and not missing_sub and not extra_sub:
                 phase.outcomes.append(CheckOutcome("tree.manifest", True, "Tree matches manifest"))
 
         self.summary.phases.append(phase)
+        await self._report_phase(phase)
 
     async def _run_phase_f_extensions(self) -> None:
         phase = PhaseResult("F", "Extensions loaded")
@@ -197,10 +238,9 @@ class DiagnosticsRunner:
         for cog_name in sorted(EXPECTED_COGS):
             ok = cog_name in loaded
             phase.outcomes.append(CheckOutcome(f"cog.{cog_name}", ok, "loaded" if ok else "missing"))
-            if not ok:
-                await self._thread_send(f"FAIL cog missing: `{cog_name}`")
 
         self.summary.phases.append(phase)
+        await self._report_phase(phase)
 
     async def _run_phase_e_handlers(self) -> None:
         phase = PhaseResult("E", "Handler behaviors")
@@ -215,48 +255,47 @@ class DiagnosticsRunner:
                 return await run_spec(spec, self.bot)
 
         tasks = [asyncio.create_task(_run_one(spec)) for spec in specs]
-        fail_buffer: list[str] = []
-
-        async def _flush_fails() -> None:
-            if not fail_buffer:
-                return
-            await self._thread_send("\n".join(fail_buffer))
-            fail_buffer.clear()
 
         for coro in asyncio.as_completed(tasks):
             outcome = await coro
             phase.outcomes.append(outcome)
             self._spec_done += 1
-            if not outcome.passed and not outcome.skipped:
-                fail_buffer.append(f"FAIL `{outcome.check_id}`: {outcome.message}")
-                if len(fail_buffer) >= FAIL_FLUSH_SIZE:
-                    await _flush_fails()
             if self._spec_done % SPEC_PROGRESS_INTERVAL == 0:
-                await _flush_fails()
                 await self._update_parent(
                     "Bot Diagnostics",
                     f"Phase E: {self._spec_done}/{total} specs ({phase.failed} failed)",
                 )
 
-        await _flush_fails()
         self.summary.phases.append(phase)
+        await self._report_phase(phase, compact_passed=True)
         await self._update_parent("Bot Diagnostics", f"Phase E complete — {phase.failed} failed, {phase.skipped} skipped")
 
     async def _finalize(self) -> None:
         s = self.summary
+        phase_lines = [
+            f"- Phase {p.phase_id}: {p.passed} passed, {p.failed} failed, {p.skipped} skipped"
+            for p in s.phases
+        ]
         lines = [
             "## Summary",
-            f"Passed: {s.total_passed}",
-            f"Failed: {s.total_failed}",
-            f"Skipped: {s.total_skipped}",
-            f"Status: {'OK' if s.ok else 'FAILED'}",
+            *phase_lines,
+            f"**Total:** {s.total_passed} passed, {s.total_failed} failed, {s.total_skipped} skipped",
+            f"**Status:** {'OK' if s.ok else 'FAILED'}",
         ]
         await self._thread_send("\n".join(lines))
 
         from utility import error_embed, success_embed
 
+        summary_body = "\n".join(
+            [
+                f"Passed: {s.total_passed}",
+                f"Failed: {s.total_failed}",
+                f"Skipped: {s.total_skipped}",
+                f"Status: {'OK' if s.ok else 'FAILED'}",
+            ]
+        )
         if s.ok:
-            embed = success_embed("\n".join(lines[1:]), title="Bot Diagnostics")
+            embed = success_embed(summary_body, title="Bot Diagnostics")
         else:
-            embed = error_embed("\n".join(lines[1:]), title="Bot Diagnostics")
+            embed = error_embed(summary_body, title="Bot Diagnostics")
         await self.status_message.edit(embed=embed)

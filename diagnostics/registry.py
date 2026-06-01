@@ -52,11 +52,7 @@ async def run_spec(spec: CommandBehaviorSpec, bot: Any) -> CheckOutcome:
     try:
         from contextlib import ExitStack
 
-        from diagnostics.patches import utility_permission_patches
-
         with ExitStack() as stack:
-            if spec.extension == "extensions.utility":
-                stack.enter_context(utility_permission_patches())
             mocks = stack.enter_context(extension_patches(spec.extension, spec.patch_targets))
             interaction = await asyncio.wait_for(
                 invoke_interaction_command(handler, owner=group, extra_kwargs=extra_kwargs),

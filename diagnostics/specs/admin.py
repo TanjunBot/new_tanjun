@@ -14,10 +14,13 @@ _BROKEN_CTX_HANDLERS = (
 
 
 def register() -> None:
-    from diagnostics.assertions import expect_interaction_or_modal
+    from diagnostics.assertions import expect_mock_called
     from diagnostics.specs.overrides import SPEC_CUSTOM_ASSERTIONS
 
-    SPEC_CUSTOM_ASSERTIONS["admin.WarnCommands.config"] = expect_interaction_or_modal
+    async def _assert_warn_config(_interaction: object, mocks: dict[str, object]) -> None:
+        await expect_mock_called("warnConfigCommand", mocks)
+
+    SPEC_CUSTOM_ASSERTIONS["admin.WarnCommands.config"] = _assert_warn_config
     register_skip("admin.AdminPurgeCommands.purge", "Destructive bulk message deletion")
     for spec_id in _BROKEN_CTX_HANDLERS:
         register_skip(spec_id, "Handler parameter/body mismatch (ctx vs interaction)")

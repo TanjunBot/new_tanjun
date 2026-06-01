@@ -52,12 +52,3 @@ def extension_patches(extension: str, extra_targets: tuple[str, ...] = ()) -> It
             stack.enter_context(patch(f"{extension}.{target}", mock))
 
         yield mocks
-
-
-@contextmanager
-def utility_permission_patches() -> Iterator[None]:
-    with (
-        patch("utility.require_moderate_members", new_callable=AsyncMock, return_value=False),
-        patch("utility.require_administrator", new_callable=AsyncMock, return_value=False),
-    ):
-        yield
