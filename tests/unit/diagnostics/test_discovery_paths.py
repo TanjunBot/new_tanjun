@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-import types
-
 from diagnostics.discovery import (
-    _find_group_classes,
     _manifest_paths_by_leaf,
     _resolve_manifest_tree_path,
 )
