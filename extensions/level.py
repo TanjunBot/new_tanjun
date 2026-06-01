@@ -23,7 +23,7 @@ from commands.level.enable_levelup_message import (
     enable_levelup_message as enableLevelupMessageCommand,
 )
 from commands.level.give_xp import give_xp_command
-from commands.level.leaderboard import leaderboard
+from commands.level.leaderboard import leaderboard as leaderboard_command
 from commands.level.level_blacklist import (
     add_channel_to_blacklist_command,
     add_role_to_blacklist_command,
@@ -828,7 +828,7 @@ class levelCommands(discord.app_commands.Group):
             reply=interaction.followup.send,
             client=interaction.client,
         )
-        await leaderboard(command_info, page)
+        await leaderboard_command(command_info, page)
 
 
 class levelCog(commands.Cog):

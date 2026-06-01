@@ -98,7 +98,7 @@ def register() -> None:
         {
             "rankcard": "show_rankcard_command",
             "set_background": "set_background_command",
-            "leaderboard": "leaderboard",
+            "leaderboard": "leaderboard_command",
         },
     )
     register_kwargs("level.levelCommands.set_background", default_image_kwargs)

@@ -24,6 +24,7 @@
     "math_name",
     "minigame_name",
     "setup_name",
+    "utility_help_name",
     "utility_scheduledmessage_name",
     "utilitycmd_name"
   ],
@@ -220,7 +221,8 @@
     "utilitycmd_name utility_messagetracking_name utility_messageoptout_name",
     "utilitycmd_name utility_report_name",
     "utilitycmd_name utility_twitch_name utility_twitch_add_name",
-    "utilitycmd_name utility_twitch_name utility_twitch_see_name"
+    "utilitycmd_name utility_twitch_name utility_twitch_see_name",
+    "utility_help_name"
   ],
   "minigame_subgroups": [
     "minigames_cchcmds_name",

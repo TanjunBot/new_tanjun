@@ -91,5 +91,6 @@ def make_interaction(
     interaction.response.send_modal = AsyncMock()
     interaction.followup = MagicMock()
     interaction.followup.send = AsyncMock()
+    interaction.original_response = AsyncMock(return_value=MagicMock())
     interaction.edit_original_response = AsyncMock()
     return interaction
