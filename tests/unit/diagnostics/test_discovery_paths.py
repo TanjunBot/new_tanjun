@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import types
+
 from diagnostics.discovery import (
     _find_group_classes,
     _manifest_paths_by_leaf,
@@ -31,16 +33,12 @@ def test_find_group_classes_dedupes_same_class_twice() -> None:
     from discord import app_commands
 
     class AliasGroup(app_commands.Group):
-        __module__ = "fake_admin"
+        pass
 
-    module = type(
-        "fake_admin",
-        (),
-        {
-            "__name__": "fake_admin",
-            "Moderation": AliasGroup,
-            "Administration": AliasGroup,
-        },
-    )()
+    module = types.ModuleType("fake_admin")
+    AliasGroup.__module__ = "fake_admin"
+    module.Moderation = AliasGroup
+    module.Administration = AliasGroup
+
     classes = _find_group_classes(module)
     assert len(classes) == 1

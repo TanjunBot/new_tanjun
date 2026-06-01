@@ -20,7 +20,7 @@ async def test_sync_prefix_invoke_finishes_quickly() -> None:
     bot.tree.sync = AsyncMock(return_value=[])
 
     cog = AdministrationCog(bot)
-    sync = cog.get_command("sync")
+    sync = next((c for c in cog.get_commands() if c.name == "sync"), None)
     assert sync is not None
 
     with patch("config.adminIds", [1001]), extension_patches("extensions.administration"):
