@@ -1,4 +1,4 @@
-from locale_keys import locale
+from locale_keys import locale as l10n
 import logging
 import discord
 from discord.ext import commands
@@ -83,22 +83,22 @@ class ListenerCog(commands.Cog):
                 await closeTicketListener(interaction)
                 return
         except discord.Forbidden:
-            locale = interaction.locale
-            error_msg = locale.listeners.interaction.error.forbidden(locale)
+            locale_str = interaction.locale
+            error_msg = l10n.listeners.interaction.error.forbidden(locale_str)
             await self._send_error(interaction, error_msg)
         except discord.NotFound:
-            locale = interaction.locale
-            error_msg = locale.listeners.interaction.error.notfound(locale)
+            locale_str = interaction.locale
+            error_msg = l10n.listeners.interaction.error.notfound(locale_str)
             await self._send_error(interaction, error_msg)
         except discord.HTTPException as e:
-            locale = interaction.locale
-            error_msg = locale.listeners.interaction.error.http(locale, status=e.status)
+            locale_str = interaction.locale
+            error_msg = l10n.listeners.interaction.error.http(locale_str, status=e.status)
             await self._send_error(interaction, error_msg)
         except Exception as exc:
             logging.exception('Unexpected error in on_interaction listener')
             await report_bot_exception(exc, source='on_interaction', context={'custom_id': custom_id, 'interaction_id': str(interaction.id), 'channel_id': str(interaction.channel_id), 'user': str(interaction.user), 'user_id': str(interaction.user.id), 'guild_id': str(interaction.guild_id) if interaction.guild_id else 'dm'})
-            locale = interaction.locale
-            error_msg = locale.listeners.interaction.error.unexpected(locale)
+            locale_str = interaction.locale
+            error_msg = l10n.listeners.interaction.error.unexpected(locale_str)
             await self._send_error(interaction, error_msg)
 
     async def _send_error(self, interaction: discord.Interaction, message: str) -> None:
