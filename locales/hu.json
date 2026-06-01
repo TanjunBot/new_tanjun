@@ -33742,5 +33742,1013 @@
     "context": "UI copy for twitch.username. English: \"twitch_username\".",
     "labels": "",
     "max_length": 32
+  },
+  {
+    "identifier": "admin.localegroup.description",
+    "source_string": "Server language",
+    "translation": "Server language",
+    "context": "Short description of `/localegroup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.localegroup.name",
+    "source_string": "locale",
+    "translation": "locale",
+    "context": "Slash command name for `/localegroup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.setup.description",
+    "source_string": "Server setup commands",
+    "translation": "Server setup commands",
+    "context": "Short description of `/setup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.setup.name",
+    "source_string": "setup",
+    "translation": "setup",
+    "context": "Slash command name for `/setup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment1",
+    "source_string": "file_1",
+    "translation": "file_1",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_1\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment2",
+    "source_string": "file_2",
+    "translation": "file_2",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_2\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment3",
+    "source_string": "file_3",
+    "translation": "file_3",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_3\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment4",
+    "source_string": "file_4",
+    "translation": "file_4",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_4\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment5",
+    "source_string": "file_5",
+    "translation": "file_5",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_5\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment6",
+    "source_string": "file_6",
+    "translation": "file_6",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_6\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment7",
+    "source_string": "file_7",
+    "translation": "file_7",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_7\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment8",
+    "source_string": "file_8",
+    "translation": "file_8",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_8\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment9",
+    "source_string": "file_9",
+    "translation": "file_9",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_9\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment10",
+    "source_string": "file_10",
+    "translation": "file_10",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_10\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "utility.schedulemessage.params.attachment.description",
+    "source_string": "Attachment (optional)",
+    "translation": "Attachment (optional)",
+    "context": "Help text describing the `attachment` option on `/utility schedulemessage` (shown when the user focuses that option). Used in `extensions/utility.py`.",
+    "labels": "utility, command_option_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "commands.admin.create_ticket.error.description",
+    "source_string": "An error occurred while trying to create the ticket.",
+    "translation": "An error occurred while trying to create the ticket.",
+    "context": "Description body of the reply embed for `/admin create_ticket` when the command failed with a generic error.",
+    "labels": "commands, embed_description, error",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.admin.create_ticket.error.title",
+    "source_string": "Error creating ticket",
+    "translation": "Error creating ticket",
+    "context": "Title of the reply embed for `/admin create_ticket` when the command failed with a generic error.",
+    "labels": "commands, embed_title, error",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.admin.open_ticket.error.ticketNotCreated",
+    "source_string": "The ticket could not be created.",
+    "translation": "The ticket could not be created.",
+    "context": "User-visible message for `/admin open_ticket` (error) (ticket Not Created). English: \"The ticket could not be created.\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.missingPermission.description",
+    "source_string": "You do not have the required permissions to remove this channel.",
+    "translation": "You do not have the required permissions to remove this channel.",
+    "context": "Description body of the reply embed for `/admin reports` (remove channel) when the user who ran the command lacks the required permission.",
+    "labels": "commands, embed_description, warning",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.missingPermission.title",
+    "source_string": "Missing Permission",
+    "translation": "Missing Permission",
+    "context": "Title of the reply embed for `/admin reports` (remove channel) when the user who ran the command lacks the required permission.",
+    "labels": "commands, embed_title, warning",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.noChannel.description",
+    "source_string": "No report channel was found for this server.",
+    "translation": "No report channel was found for this server.",
+    "context": "Description body of the reply embed for `/admin reports` (remove channel) (no Channel).",
+    "labels": "commands, embed_description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.admin.reports.remove_channel.success.description",
+    "source_string": "The report channel has been successfully removed.",
+    "translation": "The report channel has been successfully removed.",
+    "context": "Description body of the reply embed for `/admin reports` (remove channel) when the command completed successfully.",
+    "labels": "commands, embed_description, success",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.admin.reports.show_reports.not_your_reports",
+    "source_string": "These are not your reports.",
+    "translation": "These are not your reports.",
+    "context": "User-visible message for `/admin reports` (show reports) (not your reports). English: \"These are not your reports.\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.reports.show_reports.unblock.label",
+    "source_string": "Unblock",
+    "translation": "Unblock",
+    "context": "Button or component label on `/admin reports` (show reports unblock).",
+    "labels": "commands, ui_label",
+    "max_length": 100
+  },
+  {
+    "identifier": "commands.admin.trigger_messages.configure.modal.case_sensitive.label",
+    "source_string": "Case sensitive",
+    "translation": "Case sensitive",
+    "context": "Button or component label on `/admin trigger_messages` (configure modal case sensitive).",
+    "labels": "commands, ui_label",
+    "max_length": 100
+  },
+  {
+    "identifier": "commands.admin.trigger_messages.configure.modal.case_sensitive.placeholder",
+    "source_string": "Yes or No",
+    "translation": "Yes or No",
+    "context": "Placeholder text inside a Discord select menu on `/admin trigger_messages` (configure modal case sensitive) (grey hint before the user chooses an option).",
+    "labels": "commands, ui_placeholder",
+    "max_length": 100
+  },
+  {
+    "identifier": "commands.admin.trigger_messages.configure.trigger.case_sensitive",
+    "source_string": "Case sensitive: ${case_sensitive}",
+    "translation": "Case sensitive: ${case_sensitive}",
+    "context": "User-visible message for `/admin trigger_messages` (configure trigger) (case sensitive). English: \"Case sensitive: ${case_sensitive}\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.cellAlreadyTaken",
+    "source_string": "This cell is already taken.",
+    "translation": "This cell is already taken.",
+    "context": "User-visible message for `/games tic_tac_toe` (cell Already Taken). English: \"This cell is already taken.\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.currentTurn",
+    "source_string": "Current turn: ${player}",
+    "translation": "Current turn: ${player}",
+    "context": "User-visible message for `/games tic_tac_toe` (current Turn). English: \"Current turn: ${player}\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.description",
+    "source_string": "Player 1: ${player1}\nPlayer 2: ${player2}",
+    "translation": "Player 1: ${player1}\nPlayer 2: ${player2}",
+    "context": "Description text for `/games tic_tac_toe` (response embed or command help). English: \"Player 1: ${player1} Player 2: ${player2}\".",
+    "labels": "commands, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.descriptionBotEnemy",
+    "source_string": "Difficulty: ${difficulty}",
+    "translation": "Difficulty: ${difficulty}",
+    "context": "User-visible message for `/games tic_tac_toe` (description Bot Enemy). English: \"Difficulty: ${difficulty}\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.games.tic_tac_toe.winner",
+    "source_string": "Winner: ${winner}",
+    "translation": "Winner: ${winner}",
+    "context": "User-visible message for `/games tic_tac_toe` (winner). English: \"Winner: ${winner}\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.builder.add_channel_requirement.removed",
+    "source_string": "Channel requirement has been removed.",
+    "translation": "Channel requirement has been removed.",
+    "context": "User-visible message for `/giveaway builder` (add channel requirement) (removed). English: \"Channel requirement has been removed.\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.builder.add_channel_requirement.value.description",
+    "source_string": "Select the channels the user must have sent a message in.",
+    "translation": "Select the channels the user must have sent a message in.",
+    "context": "Description text for `/giveaway builder` (add channel requirement value) (response embed or command help). English: \"Select the channels the user must have sent a message in.\".",
+    "labels": "commands, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.giveaway.builder.channel_selected",
+    "source_string": "Channel selected: ${channel}",
+    "translation": "Channel selected: ${channel}",
+    "context": "User-visible message for `/giveaway builder` (channel selected). English: \"Channel selected: ${channel}\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.deleted.description",
+    "source_string": "The giveaway has been ended and the message deleted.",
+    "translation": "The giveaway has been ended and the message deleted.",
+    "context": "Description text for `/giveaway end_giveaway_command` (deleted) (response embed or command help). English: \"The giveaway has been ended and the message deleted.\".",
+    "labels": "commands, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.deleted.title",
+    "source_string": "Giveaway ended",
+    "translation": "Giveaway ended",
+    "context": "Title of a reply embed for `/giveaway end_giveaway_command` (deleted).",
+    "labels": "commands, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.alreadyEnded.description",
+    "source_string": "This giveaway has already been ended.",
+    "translation": "This giveaway has already been ended.",
+    "context": "Description body of the reply embed for `/giveaway end_giveaway_command` (error) when the giveaway has already ended.",
+    "labels": "commands, embed_description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.alreadyEnded.title",
+    "source_string": "Already ended",
+    "translation": "Already ended",
+    "context": "Title of the reply embed for `/giveaway end_giveaway_command` (error) when the giveaway has already ended.",
+    "labels": "commands, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.missingPermission.description",
+    "source_string": "You don't have permission to end this giveaway.",
+    "translation": "You don't have permission to end this giveaway.",
+    "context": "Description body of the reply embed for `/giveaway end_giveaway_command` (error) when the user who ran the command lacks the required permission.",
+    "labels": "commands, embed_description, warning",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.missingPermission.title",
+    "source_string": "Missing permission",
+    "translation": "Missing permission",
+    "context": "Title of the reply embed for `/giveaway end_giveaway_command` (error) when the user who ran the command lacks the required permission.",
+    "labels": "commands, embed_title, warning",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.notFound.description",
+    "source_string": "The specified giveaway was not found.",
+    "translation": "The specified giveaway was not found.",
+    "context": "Description body of the reply embed for `/giveaway end_giveaway_command` (error) when the resource was not found.",
+    "labels": "commands, embed_description, error",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.giveaway.end_giveaway_command.error.notFound.title",
+    "source_string": "Not found",
+    "translation": "Not found",
+    "context": "Title of the reply embed for `/giveaway end_giveaway_command` (error) when the resource was not found.",
+    "labels": "commands, embed_title, error",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.giveaway.endedGiveaway.winnerDM",
+    "source_string": "Congratulations! You won the giveaway **${title}** on **${guild_name}**!",
+    "translation": "Congratulations! You won the giveaway **${title}** on **${guild_name}**!",
+    "context": "User-visible message for `/giveaway endedGiveaway` (winner DM). English: \"Congratulations! You won the giveaway **${title}** on **${guild_name}**!\". Used in `commands/giveaway/utility.py`.",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.image.error.unknown_filter.description",
+    "source_string": "The specified filter was not found.",
+    "translation": "The specified filter was not found.",
+    "context": "Description text for `/image error` (unknown filter) (response embed or command help). English: \"The specified filter was not found.\".",
+    "labels": "commands, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.image.error.unknown_filter.title",
+    "source_string": "Unknown Filter",
+    "translation": "Unknown Filter",
+    "context": "Title of a reply embed for `/image error` (unknown filter).",
+    "labels": "commands, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.level.blacklist.show.error.no_permission.description",
+    "source_string": "You don't have permission to view the blacklist.",
+    "translation": "You don't have permission to view the blacklist.",
+    "context": "Description body of the reply embed for `/level blacklist` (show error) when the user lacks permission.",
+    "labels": "commands, embed_description, warning",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.level.blacklist.show.error.no_permission.title",
+    "source_string": "No permission",
+    "translation": "No permission",
+    "context": "Title of the reply embed for `/level blacklist` (show error) when the user lacks permission.",
+    "labels": "commands, embed_title, warning",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.level.disablelevelsystem.cancel.description",
+    "source_string": "Leveling system was not disabled.",
+    "translation": "Leveling system was not disabled.",
+    "context": "Description text for `/level disablelevelsystem` (cancel) (response embed or command help). English: \"Leveling system was not disabled.\". Used in `commands/level/disable_level_system.py`.",
+    "labels": "commands, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.level.leaderboard.notYourEmbed",
+    "source_string": "This is not your leaderboard.",
+    "translation": "This is not your leaderboard.",
+    "context": "User-visible message for `/level leaderboard` (not Your Embed). English: \"This is not your leaderboard.\". Used in `commands/level/leaderboard.py`.",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.blacklistListChannel.missingPermission.description",
+    "source_string": "You don't have permission to view the log blacklist.",
+    "translation": "You don't have permission to view the log blacklist.",
+    "context": "Description body of the reply embed for `/logs blacklistListChannel` when the user who ran the command lacks the required permission. Used in `commands/logs/blacklist_channel/blacklist_list_channel.py`.",
+    "labels": "commands, embed_description, warning",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.logs.blacklistListChannel.missingPermission.title",
+    "source_string": "Missing permission",
+    "translation": "Missing permission",
+    "context": "Title of the reply embed for `/logs blacklistListChannel` when the user who ran the command lacks the required permission. Used in `commands/logs/blacklist_channel/blacklist_list_channel.py`.",
+    "labels": "commands, embed_title, warning",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.activate",
+    "source_string": "Activate",
+    "translation": "Activate",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (activate). English: \"Activate\".",
+    "labels": "commands",
+    "max_length": 80
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.deactivate",
+    "source_string": "Deactivate",
+    "translation": "Deactivate",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (deactivate). English: \"Deactivate\".",
+    "labels": "commands",
+    "max_length": 80
+  },
+  {
+    "identifier": "commands.math.plotfunction.error",
+    "source_string": "Error plotting the function: ${error}",
+    "translation": "Error plotting the function: ${error}",
+    "context": "User-visible message for `/math plotfunction` (error). English: \"Error plotting the function: ${error}\". Used in `commands/math/plot_function.py`.",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.math.plotfunction.no_functions_to_rename",
+    "source_string": "There are no functions to rename.",
+    "translation": "There are no functions to rename.",
+    "context": "User-visible message for `/math plotfunction` (no functions to rename). English: \"There are no functions to rename.\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.math.plotfunction.unexpected_error",
+    "source_string": "An unexpected error occurred: ${error}",
+    "translation": "An unexpected error occurred: ${error}",
+    "context": "User-visible message for `/math plotfunction` (unexpected error). English: \"An unexpected error occurred: ${error}\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.battle_time",
+    "source_string": "Battle time: ${timestamp}",
+    "translation": "Battle time: ${timestamp}",
+    "context": "Text for embed field `battle_time` in a `/utility brawlstars` (battlelog) response. English: \"Battle time: ${timestamp}\".",
+    "labels": "commands, embed_field",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.game_map",
+    "source_string": "Map: ${game_map}",
+    "translation": "Map: ${game_map}",
+    "context": "Text for embed field `game_map` in a `/utility brawlstars` (battlelog) response. English: \"Map: ${game_map}\".",
+    "labels": "commands, embed_field",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.game_mode",
+    "source_string": "Game mode: ${game_mode}",
+    "translation": "Game mode: ${game_mode}",
+    "context": "Text for embed field `game_mode` in a `/utility brawlstars` (battlelog) response. English: \"Game mode: ${game_mode}\".",
+    "labels": "commands, embed_field",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.star_player",
+    "source_string": "Star Player: ${name} (${tag})",
+    "translation": "Star Player: ${name} (${tag})",
+    "context": "Text for embed field `star_player` in a `/utility brawlstars` (battlelog) response. English: \"Star Player: ${name} (${tag})\".",
+    "labels": "commands, embed_field",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.brawlstars.battlelog.description.trophy_change",
+    "source_string": "Trophy change: ${trophy_change}",
+    "translation": "Trophy change: ${trophy_change}",
+    "context": "Text for embed field `trophy_change` in a `/utility brawlstars` (battlelog) response. English: \"Trophy change: ${trophy_change}\".",
+    "labels": "commands, embed_field",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.brawlstars.brawlers.description.star_power",
+    "source_string": "**STAR POWER**",
+    "translation": "**STAR POWER**",
+    "context": "Text for embed field `star_power` in a `/utility brawlstars` (brawlers) response. English: \"**STAR POWER**\".",
+    "labels": "commands, embed_field",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.brawlstars.brawlers.description.star_powers",
+    "source_string": "**STAR POWERS**",
+    "translation": "**STAR POWERS**",
+    "context": "Text for embed field `star_powers` in a `/utility brawlstars` (brawlers) response. English: \"**STAR POWERS**\".",
+    "labels": "commands, embed_field",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.brawlstars.club.error.notFound",
+    "source_string": "The club was not found.",
+    "translation": "The club was not found.",
+    "context": "User-visible message for `/utility brawlstars` (club error) (not Found). English: \"The club was not found.\". Used in `commands/utility/brawlstars/club.py`.",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.events.error.notFound",
+    "source_string": "No events could be found.",
+    "translation": "No events could be found.",
+    "context": "User-visible message for `/utility brawlstars` (events error) (not Found). English: \"No events could be found.\". Used in `commands/utility/brawlstars/events.py`.",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.brawlstars.playerinfo.description.highest_trophies",
+    "source_string": "Highest trophies: ${highest_trophies}",
+    "translation": "Highest trophies: ${highest_trophies}",
+    "context": "Text for embed field `highest_trophies` in a `/utility brawlstars` (playerinfo) response. English: \"Highest trophies: ${highest_trophies}\".",
+    "labels": "commands, embed_field",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.brawlstars.playerinfo.error.notFound",
+    "source_string": "The player was not found.",
+    "translation": "The player was not found.",
+    "context": "User-visible message for `/utility brawlstars` (playerinfo error) (not Found). English: \"The player was not found.\". Used in `commands/utility/brawlstars/playerinfo.py`.",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.utility.claimboosterchannel.no_booster_role.description",
+    "source_string": "You don't have a booster role to perform this action.",
+    "translation": "You don't have a booster role to perform this action.",
+    "context": "Description text for `/utility claimboosterchannel` (no booster role) (response embed or command help). English: \"You don't have a booster role to perform this action.\".",
+    "labels": "commands, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.claimboosterchannel.no_booster_role.title",
+    "source_string": "No booster role",
+    "translation": "No booster role",
+    "context": "Title of a reply embed for `/utility claimboosterchannel` (no booster role).",
+    "labels": "commands, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.utility.deleteboosterchannel.missingPermission.description",
+    "source_string": "You don't have permission to delete the booster channel.",
+    "translation": "You don't have permission to delete the booster channel.",
+    "context": "Description body of the reply embed for `/utility deleteboosterchannel` when the user who ran the command lacks the required permission. Used in `commands/utility/delete_booster_channel.py`.",
+    "labels": "commands, embed_description, warning",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.deleteboosterchannel.missingPermission.title",
+    "source_string": "Missing permission",
+    "translation": "Missing permission",
+    "context": "Title of the reply embed for `/utility deleteboosterchannel` when the user who ran the command lacks the required permission. Used in `commands/utility/delete_booster_channel.py`.",
+    "labels": "commands, embed_title, warning",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_modal.content_label",
+    "source_string": "Message",
+    "translation": "Message",
+    "context": "User-visible message for `/utility listscheduled` (edit modal) (content label). English: \"Message\".",
+    "labels": "commands",
+    "max_length": 100
+  },
+  {
+    "identifier": "commands.utility.listscheduled.edit_modal.title",
+    "source_string": "Edit message",
+    "translation": "Edit message",
+    "context": "Title of a reply embed for `/utility listscheduled` (edit modal).",
+    "labels": "commands, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.utility.noBanner.title",
+    "source_string": "${user} has no banner.",
+    "translation": "${user} has no banner.",
+    "context": "Title of the reply embed for `/utility` (no Banner). Used in `commands/utility/banner.py`.",
+    "labels": "commands, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.no_messages.description",
+    "source_string": "There are no scheduled messages to delete.",
+    "translation": "There are no scheduled messages to delete.",
+    "context": "Description body of the reply embed for `/utility removescheduled` (error) when no messages matched the criteria.",
+    "labels": "commands, embed_description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.no_messages.title",
+    "source_string": "No messages",
+    "translation": "No messages",
+    "context": "Title of the reply embed for `/utility removescheduled` (error) when no messages matched the criteria.",
+    "labels": "commands, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.not_found.description",
+    "source_string": "The message with ID ${id} was not found.",
+    "translation": "The message with ID ${id} was not found.",
+    "context": "Description text for `/utility removescheduled` (error not found) (response embed or command help). English: \"The message with ID ${id} was not found.\".",
+    "labels": "commands, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.not_found.title",
+    "source_string": "Not found",
+    "translation": "Not found",
+    "context": "Title of a reply embed for `/utility removescheduled` (error not found).",
+    "labels": "commands, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.utility.removescheduled.error.timeout.description",
+    "source_string": "The action took too long and was cancelled.",
+    "translation": "The action took too long and was cancelled.",
+    "context": "Description body of the reply embed for `/utility removescheduled` (error) when a select menu or interaction timed out. Used in `commands/utility/removescheduled.py`.",
+    "labels": "commands, embed_description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.report.reporter_blocked.description",
+    "source_string": "This reporter has been blocked from using the report system.",
+    "translation": "This reporter has been blocked from using the report system.",
+    "context": "Description text for `/utility report` (reporter blocked) (response embed or command help). English: \"This reporter has been blocked from using the report system.\".",
+    "labels": "commands, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.missingBotPermissions.description",
+    "source_string": "The bot needs 'Send Messages' and 'Embed Links' permissions to perform this action.",
+    "translation": "The bot needs 'Send Messages' and 'Embed Links' permissions to perform this action.",
+    "context": "Description body of the reply embed for `/utility twitch` (add Twitch Live Notification error) (missing Bot Permissions). Used in `commands/utility/twitch/add_twitch_live_notification.py`.",
+    "labels": "commands, embed_description, warning",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.missingBotPermissions.title",
+    "source_string": "Missing bot permission",
+    "translation": "Missing bot permission",
+    "context": "Title of the reply embed for `/utility twitch` (add Twitch Live Notification error) (missing Bot Permissions). Used in `commands/utility/twitch/add_twitch_live_notification.py`.",
+    "labels": "commands, embed_title, warning",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.missingPermissions.description",
+    "source_string": "You need administrator permissions to perform this action.",
+    "translation": "You need administrator permissions to perform this action.",
+    "context": "Description body of the reply embed for `/utility twitch` (add Twitch Live Notification error) when required permissions are missing. Used in `commands/utility/twitch/add_twitch_live_notification.py`.",
+    "labels": "commands, embed_description, warning",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.missingPermissions.title",
+    "source_string": "Missing permission",
+    "translation": "Missing permission",
+    "context": "Title of the reply embed for `/utility twitch` (add Twitch Live Notification error) when required permissions are missing. Used in `commands/utility/twitch/add_twitch_live_notification.py`.",
+    "labels": "commands, embed_title, warning",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.twitchNameNotFound.description",
+    "source_string": "The Twitch name ${twitch_name} was not found.",
+    "translation": "The Twitch name ${twitch_name} was not found.",
+    "context": "Description body of the reply embed for `/utility twitch` (add Twitch Live Notification error) (twitch Name Not Found). Used in `commands/utility/twitch/add_twitch_live_notification.py`.",
+    "labels": "commands, embed_description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "commands.utility.twitch.addTwitchLiveNotification.error.twitchNameNotFound.title",
+    "source_string": "Twitch name not found",
+    "translation": "Twitch name not found",
+    "context": "Title of the reply embed for `/utility twitch` (add Twitch Live Notification error) (twitch Name Not Found). Used in `commands/utility/twitch/add_twitch_live_notification.py`.",
+    "labels": "commands, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "commands.utility.twitch.listTwitchLiveNotifications.error.notYourNotification.description",
+    "source_string": "You are not allowed to interact with this notification.",
+    "translation": "You are not allowed to interact with this notification.",
+    "context": "Description body of the reply embed for `/utility twitch` (list Twitch Live Notifications error) (not Your Notification). Used in `commands/utility/twitch/see_twitch_live_notifications.py`.",
+    "labels": "commands, embed_description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "errors.guildOnly.description",
+    "source_string": "This command can only be used in a server.",
+    "translation": "This command can only be used in a server.",
+    "context": "Description of the global guild Only error embed. May use $variables. English: \"This command can only be used in a server.\". Used in `commands/utility/autopublish.py`.",
+    "labels": "errors, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "errors.guildOnly.title",
+    "source_string": "Guild Only",
+    "translation": "Guild Only",
+    "context": "Title of the global guild Only error embed (shown by the error handler, not one command). Used in `commands/utility/autopublish.py`.",
+    "labels": "errors, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "errors.noChannel.description",
+    "source_string": "No channel was found. Please specify a valid channel.",
+    "translation": "No channel was found. Please specify a valid channel.",
+    "context": "Description of the global no Channel error embed. May use $variables. English: \"No channel was found. Please specify a valid channel.\". Used in `commands/utility/autopublish.py`.",
+    "labels": "errors, description",
+    "max_length": 4096
+  },
+  {
+    "identifier": "errors.noChannel.title",
+    "source_string": "No Channel",
+    "translation": "No Channel",
+    "context": "Title of the global no Channel error embed (shown by the error handler, not one command). Used in `commands/utility/autopublish.py`.",
+    "labels": "errors, embed_title",
+    "max_length": 256
+  },
+  {
+    "identifier": "logs.guildRoleUpdate.icon",
+    "source_string": "Icon",
+    "translation": "Icon",
+    "context": "Logging feature copy: guild Role Update.icon. Used in `extensions/logs.py`.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildUpdate.defaultNotifications",
+    "source_string": "Default notifications changed: \n<:empty:1312126155897442416>Before: ${before}\n<:empty:1312126155897442416>After: ${after}",
+    "translation": "Default notifications changed: \n<:empty:1312126155897442416>Before: ${before}\n<:empty:1312126155897442416>After: ${after}",
+    "context": "Logging feature copy: guild Update.default Notifications. Used in `extensions/logs.py`.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildUpdate.name",
+    "source_string": "Name",
+    "translation": "Name",
+    "context": "Logging feature copy: guild Update. Used in `extensions/logs.py`.",
+    "labels": "logs",
+    "max_length": 32
+  },
+  {
+    "identifier": "logs.guildUpdate.owner",
+    "source_string": "Owner",
+    "translation": "Owner",
+    "context": "Logging feature copy: guild Update.owner. Used in `extensions/logs.py`.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildUpdate.verificationLevel",
+    "source_string": "Verification level changed: \n<:empty:1312126155897442416>Before: ${before}\n<:empty:1312126155897442416>After: ${after}",
+    "translation": "Verification level changed: \n<:empty:1312126155897442416>Before: ${before}\n<:empty:1312126155897442416>After: ${after}",
+    "context": "Logging feature copy: guild Update.verification Level. Used in `extensions/logs.py`.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.category",
+    "source_string": "Category: ${category}",
+    "translation": "Category: ${category}",
+    "context": "Logging feature copy: guild channel Create.category.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.created_at",
+    "source_string": "Created at: ${created_at}",
+    "translation": "Created at: ${created_at}",
+    "context": "Logging feature copy: guild channel Create.created at.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelCreate.type",
+    "source_string": "Type: ${type}",
+    "translation": "Type: ${type}",
+    "context": "Logging feature copy: guild channel Create.type.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.category",
+    "source_string": "Category: ${category}",
+    "translation": "Category: ${category}",
+    "context": "Logging feature copy: guild channel Delete.category.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.created_at",
+    "source_string": "Created at: ${created_at}",
+    "translation": "Created at: ${created_at}",
+    "context": "Logging feature copy: guild channel Delete.created at.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.permissionOverwriteAllowed",
+    "source_string": "Allowed: ${permissions}",
+    "translation": "Allowed: ${permissions}",
+    "context": "Logging feature copy: guild channel Delete.permission Overwrite Allowed.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.permissionOverwriteDenied",
+    "source_string": "Denied: ${permissions}",
+    "translation": "Denied: ${permissions}",
+    "context": "Logging feature copy: guild channel Delete.permission Overwrite Denied.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.permissionOverwriteTarget",
+    "source_string": "Target: ${target}",
+    "translation": "Target: ${target}",
+    "context": "Logging feature copy: guild channel Delete.permission Overwrite Target.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelDelete.type",
+    "source_string": "Type: ${type}",
+    "translation": "Type: ${type}",
+    "context": "Logging feature copy: guild channel Delete.type.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.category",
+    "source_string": "Category",
+    "translation": "Category",
+    "context": "Logging feature copy: guild channel Update.category.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.defaultAutoArchiveDuration",
+    "source_string": "Default auto archive duration",
+    "translation": "Default auto archive duration",
+    "context": "Logging feature copy: guild channel Update.default Auto Archive Duration.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.defaultThreadAutoArchiveDuration",
+    "source_string": "Default thread auto archive duration",
+    "translation": "Default thread auto archive duration",
+    "context": "Logging feature copy: guild channel Update.default Thread Auto Archive Duration.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.name",
+    "source_string": "Name",
+    "translation": "Name",
+    "context": "Logging feature copy: guild channel Update.",
+    "labels": "logs",
+    "max_length": 32
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.nsfw",
+    "source_string": "NSFW: ${nsfw}",
+    "translation": "NSFW: ${nsfw}",
+    "context": "Logging feature copy: guild channel Update.nsfw.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteAddedAllow",
+    "source_string": "Added (allowed): ${permissions}",
+    "translation": "Added (allowed): ${permissions}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Added Allow.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteAddedDeny",
+    "source_string": "Added (denied): ${permissions}",
+    "translation": "Added (denied): ${permissions}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Added Deny.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteAddedNeutral",
+    "source_string": "Added (neutral): ${permissions}",
+    "translation": "Added (neutral): ${permissions}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Added Neutral.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteAllowed",
+    "source_string": "Allowed: ${permissions}",
+    "translation": "Allowed: ${permissions}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Allowed.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteDenied",
+    "source_string": "Denied: ${permissions}",
+    "translation": "Denied: ${permissions}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Denied.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteModified",
+    "source_string": "Permission overwrite modified: ${target}",
+    "translation": "Permission overwrite modified: ${target}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Modified.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteNeutral",
+    "source_string": "Neutral: ${permissions}",
+    "translation": "Neutral: ${permissions}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Neutral.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteNew",
+    "source_string": "New permission overwrite: ${target}",
+    "translation": "New permission overwrite: ${target}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite New.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteRemoved",
+    "source_string": "Permission overwrite removed: ${target}",
+    "translation": "Permission overwrite removed: ${target}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Removed.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteRemovedAllow",
+    "source_string": "Removed (allowed): ${permissions}",
+    "translation": "Removed (allowed): ${permissions}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Removed Allow.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteRemovedDeny",
+    "source_string": "Removed (denied): ${permissions}",
+    "translation": "Removed (denied): ${permissions}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Removed Deny.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.permissionOverwriteRemovedNeutral",
+    "source_string": "Removed (neutral): ${permissions}",
+    "translation": "Removed (neutral): ${permissions}",
+    "context": "Logging feature copy: guild channel Update.permission Overwrite Removed Neutral.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.slowmodeDelay",
+    "source_string": "Slowmode",
+    "translation": "Slowmode",
+    "context": "Logging feature copy: guild channel Update.slowmode Delay.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.topic",
+    "source_string": "Topic",
+    "translation": "Topic",
+    "context": "Logging feature copy: guild channel Update.topic.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guild_channelUpdate.type",
+    "source_string": "Type: ${type}",
+    "translation": "Type: ${type}",
+    "context": "Logging feature copy: guild channel Update.type.",
+    "labels": "logs",
+    "max_length": null
   }
 ]
