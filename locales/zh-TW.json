@@ -34514,7 +34514,7 @@
   {
     "identifier": "admin.channels.description",
     "source_string": "Channel management",
-    "translation": "通道管理",
+    "translation": "頻道管理",
     "context": "Short description of `/channels` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
     "labels": "zh-TW.json",
     "max_length": 100
@@ -34522,7 +34522,7 @@
   {
     "identifier": "admin.channels.name",
     "source_string": "channels",
-    "translation": "通道",
+    "translation": "頻道",
     "context": "Slash command name for `/channels` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
     "labels": "zh-TW.json",
     "max_length": 32
