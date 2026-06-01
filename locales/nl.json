@@ -7568,10 +7568,26 @@
     "max_length": 256
   },
   {
+    "identifier": "commands.admin.sync.in_progress",
+    "source_string": "Syncing ${command_count} slash commands with Discord… ${spinner} (${elapsed}s)",
+    "translation": "${command_count} slash-commando's synchroniseren met Discord… ${spinner} (${elapsed}s)",
+    "context": "User-visible message for `t.sync` while the command tree is being synced. Used in `extensions/administration.py`.",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
     "identifier": "commands.admin.sync.completed",
-    "source_string": "${count} commands have been synced.",
-    "translation": "${count} commands have been synced.",
-    "context": "User-visible message for `/admin sync` (completed). English: \"${count} commands have been synced.\". Used in `extensions/administration.py`.",
+    "source_string": "${count} commands synced in ${duration}s.",
+    "translation": "${count} commando's gesynchroniseerd in ${duration}s.",
+    "context": "User-visible message for `t.sync` (completed). Used in `extensions/administration.py`.",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.admin.sync.failed",
+    "source_string": "Command sync failed: ${error}",
+    "translation": "Commandsynchronisatie mislukt: ${error}",
+    "context": "User-visible message for `t.sync` when syncing fails. Used in `extensions/administration.py`.",
     "labels": "commands",
     "max_length": null
   },
