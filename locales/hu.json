@@ -33626,17 +33626,17 @@
   {
     "identifier": "admin.channels.description",
     "source_string": "Channel management",
-    "translation": "Channel management",
+    "translation": "Csatornák kezelése",
     "context": "Short description of `/channels` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
+    "labels": "hu.json",
     "max_length": 100
   },
   {
     "identifier": "admin.channels.name",
     "source_string": "channels",
-    "translation": "channels",
+    "translation": "csatornák",
     "context": "Slash command name for `/channels` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
+    "labels": "hu.json",
     "max_length": 32
   },
   {
