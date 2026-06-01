@@ -30,7 +30,9 @@ from minigames.counting_modes import get_correct_next_number, get_first_number
 
 # Import test functions only if they exist
 try:
-    from tests import test_commands, test_database, test_ping
+    from tests.test_commands import test_commands
+    from tests.test_database import test_database
+    from tests.test_ping import test_ping
 
     TEST_FUNCTIONS_AVAILABLE = True
 except ImportError:
