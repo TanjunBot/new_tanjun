@@ -146,22 +146,32 @@ def load_font(path: str, size: int) -> ImageFont.FreeTypeFont:
     return ImageFont.truetype(path, size)
 
 
+def _frame_for_palette_quantize(frame: Image.Image) -> Image.Image:
+    """Convert a frame to RGB/L so Pillow can apply a shared palette."""
+    if frame.mode in ("RGB", "L"):
+        return frame
+    if frame.mode == "RGBA":
+        background = Image.new("RGB", frame.size, (0, 0, 0))
+        background.paste(frame, mask=frame.split()[3])
+        return background
+    return frame.convert("RGB")
+
+
 def _quantize_frames(frames: list[Image.Image], palette_size: int = 256) -> list[Image.Image]:
-    """Quantize RGBA frames to an optimised palette for smaller GIF output.
+    """Quantize frames to an optimised palette for smaller GIF output.
 
     When there are frames, convert to 'P' mode with a shared adaptive palette
     so the GIF is smaller and renders consistently across viewers.
-    Uses FASTOCTREE for RGBA-safe quantization.
     """
     if len(frames) <= 1:
         return frames
-    # Build a shared palette from the first frame using FASTOCTREE (RGBA-safe)
-    pal = frames[0].quantize(colors=min(palette_size, 256), method=Image.Quantize.FASTOCTREE)
+    prep = [_frame_for_palette_quantize(f) for f in frames]
+    pal = prep[0].quantize(colors=min(palette_size, 256), method=Image.Quantize.FASTOCTREE)
     palette_data = pal.getpalette()
     if palette_data is None:
         return frames
     quantized: list[Image.Image] = []
-    for frame in frames:
+    for frame in prep:
         q = frame.quantize(colors=min(palette_size, 256), palette=pal, method=Image.Quantize.FASTOCTREE)
         quantized.append(q)
     return quantized

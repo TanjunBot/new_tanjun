@@ -66,6 +66,12 @@ class TestFrameHelpers:
             result = _quantize_frames(frames)
         assert result == frames
 
+    def test_quantize_rgba_frames(self):
+        frames = [_rgba((20, 20), (255, 0, 0, 255)), _rgba((20, 20), (0, 255, 0, 128))]
+        result = _quantize_frames(frames)
+        assert len(result) == 2
+        assert all(f.mode == "P" for f in result)
+
 
 class TestCircularMask:
     def test_mask_size_matches_input(self):
@@ -198,6 +204,11 @@ class TestOverlayAndGif:
         frames = [Image.new("RGB", (20, 20), (i * 20, 0, 0)) for i in range(1, 5)]
         buf = save_optimized_gif(frames, duration=50, quantize=True, loop=2)
         assert len(buf.getvalue()) > 0
+
+    def test_save_optimized_gif_multi_frame_rgba_quantized(self):
+        frames = [_rgba((20, 20), (255, 0, 0, 255)), _rgba((20, 20), (0, 255, 0, 200))]
+        buf = save_optimized_gif(frames, duration=50, quantize=True)
+        assert buf.getvalue().startswith(b"GIF")
 
     def test_save_optimized_gif_extends_short_frame_list(self):
         frames = [_rgba(), _rgba((30, 30), (0, 255, 0, 255))]
