@@ -30,15 +30,18 @@ def test_resolve_manifest_tree_path_nested_utility() -> None:
 
 
 def test_find_group_classes_dedupes_same_class_twice() -> None:
+    """_find_group_classes should return a class only once even if it appears
+    under multiple names in the same module."""
     from discord import app_commands
+
+    mod = types.ModuleType("fake_admin")
 
     class AliasGroup(app_commands.Group):
         pass
 
-    module = types.ModuleType("fake_admin")
-    AliasGroup.__module__ = "fake_admin"
-    module.Moderation = AliasGroup
-    module.Administration = AliasGroup
+    AliasGroup.__module__ = mod.__name__
+    mod.Moderation = AliasGroup
+    mod.Administration = AliasGroup
 
-    classes = _find_group_classes(module)
+    classes = _find_group_classes(mod)
     assert len(classes) == 1
