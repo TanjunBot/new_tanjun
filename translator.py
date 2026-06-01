@@ -13,6 +13,7 @@ _DISCORD_NAME_LOCATION_NAMES = frozenset({"command_name", "group_name", "paramet
 
 def _normalize_discord_command_name(name: str) -> str | None:
     normalized = re.sub(r"\s+", "_", name.strip().lower())
+    normalized = re.sub(r"[^\w\-]", "", normalized, flags=re.UNICODE)
     if not normalized:
         return None
     return normalized[:32]
