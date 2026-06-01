@@ -38,16 +38,14 @@ def _choice(value: str) -> MagicMock:
     return choice
 
 
-async def _invoke_ctx_command(group, method_name: str, **kwargs):
-    interaction = make_interaction()
-    interaction.response.defer = AsyncMock()
-    interaction.followup.send = AsyncMock()
-    if "channel" not in kwargs or kwargs.get("channel") is None:
-        interaction.channel = make_text_channel()
-    admin_ext.interaction = interaction
-    admin_ext.ctx = interaction
+async def _invoke_group_command(group, method_name: str, **kwargs):
     handler = getattr(group, method_name)
-    await invoke_interaction_command(handler, extra_kwargs=kwargs)
+    channel = kwargs.get("channel")
+    await invoke_interaction_command(
+        handler,
+        channel=channel if channel is not None else make_text_channel(),
+        extra_kwargs=kwargs,
+    )
 
 
 @pytest.mark.parametrize(
@@ -63,15 +61,12 @@ async def test_report_set_channel(extra, mock_cmds) -> None:
 
 async def test_report_set_channel_default_channel(mock_cmds) -> None:
     group = ReportCommands(name="r", description="r")
-    interaction = make_interaction()
-    interaction.channel = make_text_channel()
-    admin_ext.ctx = interaction
     await invoke_interaction_command(group.set_channel, extra_kwargs={})
 
 
 async def test_purge_all_setting(mock_cmds) -> None:
     group = AdminPurgeCommands(name="a", description="a")
-    await _invoke_ctx_command(
+    await _invoke_group_command(
         group,
         "purge",
         limit=25,
@@ -82,7 +77,7 @@ async def test_purge_all_setting(mock_cmds) -> None:
 
 async def test_purge_choice_setting(mock_cmds) -> None:
     group = AdminPurgeCommands(name="a", description="a")
-    await _invoke_ctx_command(
+    await _invoke_group_command(
         group,
         "purge",
         limit=10,
@@ -93,12 +88,12 @@ async def test_purge_choice_setting(mock_cmds) -> None:
 
 async def test_slowmode(mock_cmds) -> None:
     group = AdminChannelCommands(name="a", description="a")
-    await _invoke_ctx_command(group, "slowmode", seconds=30, channel=make_text_channel())
+    await _invoke_group_command(group, "slowmode", seconds=30, channel=make_text_channel())
 
 
 async def test_say_with_explicit_channel(mock_cmds) -> None:
     group = AdminMessagingCommands(name="a", description="a")
-    await _invoke_ctx_command(
+    await _invoke_group_command(
         group,
         "say",
         message="hello world",
@@ -108,27 +103,27 @@ async def test_say_with_explicit_channel(mock_cmds) -> None:
 
 async def test_say_defaults_channel(mock_cmds) -> None:
     group = AdminMessagingCommands(name="a", description="a")
-    await _invoke_ctx_command(group, "say", message="default channel", channel=None)
+    await _invoke_group_command(group, "say", message="default channel", channel=None)
 
 
 async def test_embed_with_channel(mock_cmds) -> None:
     group = AdminMessagingCommands(name="a", description="a")
-    await _invoke_ctx_command(group, "embed", title="Title", channel=make_text_channel())
+    await _invoke_group_command(group, "embed", title="Title", channel=make_text_channel())
 
 
 async def test_embed_defaults_channel(mock_cmds) -> None:
     group = AdminMessagingCommands(name="a", description="a")
-    await _invoke_ctx_command(group, "embed", title="Default", channel=None)
+    await _invoke_group_command(group, "embed", title="Default", channel=None)
 
 
 async def test_nuke_defaults_channel(mock_cmds) -> None:
     group = AdminChannelCommands(name="a", description="a")
-    await _invoke_ctx_command(group, "nuke", channel=None)
+    await _invoke_group_command(group, "nuke", channel=None)
 
 
 async def test_create_ticket_defaults_channel(mock_cmds) -> None:
     group = AdminSetupCommands(name="a", description="a")
-    await _invoke_ctx_command(
+    await _invoke_group_command(
         group,
         "create_ticket",
         name="support",
@@ -142,13 +137,11 @@ async def test_create_ticket_defaults_channel(mock_cmds) -> None:
 
 async def test_createemoji_sends_role_select(mock_cmds) -> None:
     group = AdminEmojiCommands(name="a", description="a")
-    interaction = make_interaction()
-    interaction.guild.default_role = make_role()
-    interaction.followup.send = AsyncMock()
-    admin_ext.interaction = interaction
-    admin_ext.ctx = interaction
-    await invoke_interaction_command(
+    guild = make_interaction().guild
+    guild.default_role = make_role()
+    interaction = await invoke_interaction_command(
         group.createemoji,
+        guild=guild,
         extra_kwargs={"name": "emoji1", "imageurl": "https://example.com/e.png"},
     )
     interaction.followup.send.assert_awaited_once()

@@ -386,7 +386,7 @@ class ReportCommands(discord.app_commands.Group):
         )
 
         if not channel:  # type: ignore[truthy-bool]
-            channel = ctx.channel  # type: ignore[name-defined]
+            channel = interaction.channel
 
         await setReportChannelCommand(command_info=command_info, channel=channel)
         return
@@ -834,22 +834,22 @@ class AdminPurgeCommands(discord.app_commands.Group):
     )
     async def purge(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         limit: app_commands.Range[int, 1, 1000],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
         setting: app_commands.Choice[str] = "all",  # type: ignore[assignment]
     ) -> None:
-        await interaction.response.defer(ephemeral=True)  # type: ignore[name-defined]
+        await interaction.response.defer(ephemeral=True)
         command_info = utility.CommandInfo(
-            user=interaction.user,  # type: ignore[name-defined]
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
-            guild=interaction.guild,  # type: ignore[name-defined]
-            command=interaction.command,  # type: ignore[name-defined]
-            locale=interaction.locale,  # type: ignore[name-defined]
-            message=interaction.message,  # type: ignore[name-defined]
-            permissions=interaction.permissions,  # type: ignore[name-defined]
-            reply=interaction.followup.send,  # type: ignore[name-defined]
-            client=interaction.client,  # type: ignore[name-defined]
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
         await purgeCommand(
@@ -872,21 +872,21 @@ class AdminChannelCommands(discord.app_commands.Group):
     )
     async def slowmode(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         seconds: app_commands.Range[int, 1, 21600],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
-        await interaction.response.defer()  # type: ignore[name-defined]
+        await interaction.response.defer()
         command_info = utility.CommandInfo(
-            user=interaction.user,  # type: ignore[name-defined]
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
-            guild=interaction.guild,  # type: ignore[name-defined]
-            command=interaction.command,  # type: ignore[name-defined]
-            locale=interaction.locale,  # type: ignore[name-defined]
-            message=interaction.message,  # type: ignore[name-defined]
-            permissions=interaction.permissions,  # type: ignore[name-defined]
-            reply=interaction.followup.send,  # type: ignore[name-defined]
-            client=interaction.client,  # type: ignore[name-defined]
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
         await setSlowmodeCommand(command_info=command_info, seconds=seconds, channel=channel)
@@ -962,7 +962,7 @@ class AdminChannelCommands(discord.app_commands.Group):
         )
 
         if not channel:  # type: ignore[truthy-bool]
-            channel = ctx.channel  # type: ignore[name-defined]
+            channel = interaction.channel
 
         await nukeChannelCommand(command_info=command_info, channel=channel)
         return
@@ -979,25 +979,25 @@ class AdminMessagingCommands(discord.app_commands.Group):
     )
     async def say(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         message: app_commands.Range[str, 1, 2000],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
-        await interaction.response.defer(ephemeral=True)  # type: ignore[name-defined]
+        await interaction.response.defer(ephemeral=True)
         command_info = utility.CommandInfo(
-            user=interaction.user,  # type: ignore[name-defined]
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
-            guild=interaction.guild,  # type: ignore[name-defined]
-            command=interaction.command,  # type: ignore[name-defined]
-            locale=interaction.locale,  # type: ignore[name-defined]
-            message=interaction.message,  # type: ignore[name-defined]
-            permissions=interaction.permissions,  # type: ignore[name-defined]
-            reply=interaction.followup.send,  # type: ignore[name-defined]
-            client=interaction.client,  # type: ignore[name-defined]
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
         if not channel:  # type: ignore[truthy-bool]
-            channel = ctx.channel
+            channel = interaction.channel
 
         await sayCommand(command_info=command_info, channel=channel, message=message)
         return
@@ -1012,25 +1012,25 @@ class AdminMessagingCommands(discord.app_commands.Group):
     )
     async def embed(  # type: ignore[no-untyped-def]
         self,
-        ctx,
+        interaction: discord.Interaction,
         title: app_commands.Range[str, 1, 256],
         channel: discord.TextChannel = None,  # type: ignore[assignment]
     ) -> None:
-        await interaction.response.defer(ephemeral=True)  # type: ignore[name-defined]
+        await interaction.response.defer(ephemeral=True)
         command_info = utility.CommandInfo(
-            user=interaction.user,  # type: ignore[name-defined]
-            channel=cast(discord.abc.GuildChannel, interaction.channel),  # type: ignore[name-defined]
-            guild=interaction.guild,  # type: ignore[name-defined]
-            command=interaction.command,  # type: ignore[name-defined]
-            locale=interaction.locale,  # type: ignore[name-defined]
-            message=interaction.message,  # type: ignore[name-defined]
-            permissions=interaction.permissions,  # type: ignore[name-defined]
-            reply=interaction.followup.send,  # type: ignore[name-defined]
-            client=interaction.client,  # type: ignore[name-defined]
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
         )
 
         if channel is None:
-            channel = ctx.channel  # type: ignore[unreachable]
+            channel = interaction.channel
 
         await createEmbedCommand(command_info=command_info, channel=channel, title=title)
         return
@@ -1061,22 +1061,22 @@ class AdminEmojiCommands(discord.app_commands.Group):
 
         view = discord.ui.View()
         role_select = discord.ui.RoleSelect(  # type: ignore[var-annotated]
-            placeholder=tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.role_selectPlaceholder"),  # type: ignore[name-defined]
-            default_values=[ctx.guild.default_role],  # type: ignore[name-defined]
+            placeholder=tanjunLocalizer.localize(interaction.locale, "commands.admin.createEmoji.role_selectPlaceholder"),
+            default_values=[interaction.guild.default_role],
             min_values=1,
             max_values=25,
         )
 
-        async def role_select_callback(interaction: discord.Interaction) -> None:
-            roles = [ctx.guild.get_role(int(r)) for r in interaction.data["values"]]  # type: ignore[typeddict-item, name-defined, index]
-            command_info.message = interaction.message
-            command_info.reply = interaction.response.send_message  # type: ignore[assignment]
+        async def role_select_callback(select_interaction: discord.Interaction) -> None:
+            roles = [interaction.guild.get_role(int(r)) for r in select_interaction.data["values"]]  # type: ignore[typeddict-item, index]
+            command_info.message = select_interaction.message
+            command_info.reply = select_interaction.response.send_message  # type: ignore[assignment]
             await createEmojiCommand(command_info=command_info, name=name, image_url=imageurl, roles=roles)
 
         role_select.callback = role_select_callback  # type: ignore[method-assign]
         view.add_item(role_select)
-        await ctx.followup.send(  # type: ignore[name-defined]
-            tanjunLocalizer.localize(ctx.locale, "commands.admin.createEmoji.role_select"),  # type: ignore[name-defined]
+        await interaction.followup.send(
+            tanjunLocalizer.localize(interaction.locale, "commands.admin.createEmoji.role_select"),
             view=view,
         )
 
@@ -1188,7 +1188,7 @@ class AdminSetupCommands(discord.app_commands.Group):
         )
 
         if not channel:  # type: ignore[truthy-bool]
-            channel = ctx.channel
+            channel = interaction.channel
 
         await createTicketCommand(
             command_info=command_info,
