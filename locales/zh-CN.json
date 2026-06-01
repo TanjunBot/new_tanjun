@@ -1258,7 +1258,7 @@
   {
     "identifier": "admin.purge.params.setting.all",
     "source_string": "All messages",
-    "translation": "All messages",
+    "translation": "Delete all messages",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1266,7 +1266,7 @@
   {
     "identifier": "admin.purge.params.setting.bot",
     "source_string": "Bots only",
-    "translation": "Bots only",
+    "translation": "only delete messages from bots",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1274,7 +1274,7 @@
   {
     "identifier": "admin.purge.params.setting.botNotPinned",
     "source_string": "Bots, unpinned",
-    "translation": "Bots, unpinned",
+    "translation": "only delete unattached messages from bots",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1282,7 +1282,7 @@
   {
     "identifier": "admin.purge.params.setting.description",
     "source_string": "Messages to delete",
-    "translation": "Messages to delete",
+    "translation": "Which messages should be deleted",
     "context": "Help text describing the `setting` option on `/purge` (shown when the user focuses that option). Used in `extensions/admin.py`.",
     "labels": "admin, command_option_description",
     "max_length": 100
@@ -1290,7 +1290,7 @@
   {
     "identifier": "admin.purge.params.setting.embeds",
     "source_string": "With embeds",
-    "translation": "With embeds",
+    "translation": "only delete messages with embed",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1298,7 +1298,7 @@
   {
     "identifier": "admin.purge.params.setting.files",
     "source_string": "With files",
-    "translation": "With files",
+    "translation": "only delete messages with file attachments",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1306,7 +1306,7 @@
   {
     "identifier": "admin.purge.params.setting.notAdmin",
     "source_string": "Non-admins",
-    "translation": "Non-admins",
+    "translation": "only delete messages from non-administrators (incl. bots)",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1314,7 +1314,7 @@
   {
     "identifier": "admin.purge.params.setting.notAdminNotPinned",
     "source_string": "Non-admins, unpinned",
-    "translation": "Non-admins, unpinned",
+    "translation": "only delete unattached messages from non-administrators (incl. bots)",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1322,7 +1322,7 @@
   {
     "identifier": "admin.purge.params.setting.notPinned",
     "source_string": "Unpinned only",
-    "translation": "Unpinned only",
+    "translation": "Delete only unattached messages",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1330,7 +1330,7 @@
   {
     "identifier": "admin.purge.params.setting.notUserAdmin",
     "source_string": "Non-admins (no bots)",
-    "translation": "Non-admins (no bots)",
+    "translation": "only delete messages from non-administrators except bots",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1338,7 +1338,7 @@
   {
     "identifier": "admin.purge.params.setting.user",
     "source_string": "Users only",
-    "translation": "Users only",
+    "translation": "only delete messages from users",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -1346,7 +1346,7 @@
   {
     "identifier": "admin.purge.params.setting.userNotPinned",
     "source_string": "Users, unpinned",
-    "translation": "Users, unpinned",
+    "translation": "only delete unattached messages from users",
     "context": "Option text for `setting` on `/purge`. Used in `extensions/admin.py`.",
     "labels": "admin",
     "max_length": 100
@@ -33290,7 +33290,7 @@
   {
     "identifier": "utility.autopublish.name",
     "source_string": "add",
-    "translation": "add",
+    "translation": "hinzufügen",
     "context": "Display name (utility.autopublish). Used in `extensions/utility.py`.",
     "labels": "utility",
     "max_length": 32
@@ -34512,12 +34512,156 @@
     "max_length": 32
   },
   {
-    "identifier": "utility.schedulemessage.params.attachment.description",
-    "source_string": "Attachment (optional)",
-    "translation": "Attachment (optional)",
-    "context": "Help text describing the `attachment` option on `/utility schedulemessage` (shown when the user focuses that option). Used in `extensions/utility.py`.",
-    "labels": "utility, command_option_description",
+    "identifier": "admin.channels.description",
+    "source_string": "Channel management",
+    "translation": "Channel management",
+    "context": "Short description of `/channels` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
     "max_length": 100
+  },
+  {
+    "identifier": "admin.channels.name",
+    "source_string": "channels",
+    "translation": "channels",
+    "context": "Slash command name for `/channels` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.emoji.description",
+    "source_string": "Emoji commands",
+    "translation": "表情命令",
+    "context": "Short description of `/emoji` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "zh-CN.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.emoji.name",
+    "source_string": "emoji",
+    "translation": "表情",
+    "context": "Slash command name for `/emoji` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "zh-CN.json",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.messaging.description",
+    "source_string": "Messaging commands",
+    "translation": "消息命令",
+    "context": "Short description of `/messaging` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "zh-CN.json",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.messaging.name",
+    "source_string": "messaging",
+    "translation": "消息",
+    "context": "Slash command name for `/messaging` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "zh-CN.json",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.moderation.description",
+    "source_string": "Moderation commands",
+    "translation": "Moderation commands",
+    "context": "Short description of `/moderation` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.moderation.name",
+    "source_string": "mod",
+    "translation": "mod",
+    "context": "Slash command name for `/moderation` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.purgegroup.description",
+    "source_string": "Purge messages",
+    "translation": "Purge messages",
+    "context": "Short description of `/purgegroup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.purgegroup.name",
+    "source_string": "purge",
+    "translation": "purge",
+    "context": "Slash command name for `/purgegroup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.rolemanage.description",
+    "source_string": "Advanced role management",
+    "translation": "Advanced role management",
+    "context": "Short description of `/rolemanage` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.rolemanage.name",
+    "source_string": "role_manage",
+    "translation": "role_manage",
+    "context": "Slash command name for `/rolemanage` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.copy7tv.name",
+    "source_string": "copy_7tv",
+    "translation": "copy_7tv",
+    "context": "Slash command name for `/copy7tv` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.copy7tv.params.twitch.username.name",
+    "source_string": "twitch_username",
+    "translation": "twitch_username",
+    "context": "Display name of the `twitch` option on `/copy7tv` (shown in Discord's slash command option list).",
+    "labels": "admin, command_option_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "twitch.username",
+    "source_string": "twitch_username",
+    "translation": "twitch_username",
+    "context": "UI copy for twitch.username. English: \"twitch_username\".",
+    "labels": "",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.localegroup.description",
+    "source_string": "Server language",
+    "translation": "Server language",
+    "context": "Short description of `/localegroup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.localegroup.name",
+    "source_string": "locale",
+    "translation": "locale",
+    "context": "Slash command name for `/localegroup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.setup.description",
+    "source_string": "Server setup commands",
+    "translation": "Server setup commands",
+    "context": "Short description of `/setup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.setup.name",
+    "source_string": "setup",
+    "translation": "setup",
+    "context": "Slash command name for `/setup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
   },
   {
     "identifier": "attachment1",
@@ -34600,155 +34744,27 @@
     "max_length": 32
   },
   {
-    "identifier": "admin.moderation.name",
-    "source_string": "mod",
-    "translation": "mod",
-    "context": "Slash command name for `/moderation` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "admin.moderation.description",
-    "source_string": "Moderation commands",
-    "translation": "Moderation commands",
-    "context": "Short description of `/moderation` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
+    "identifier": "utility.schedulemessage.params.attachment.description",
+    "source_string": "Attachment (optional)",
+    "translation": "Attachment (optional)",
+    "context": "Help text describing the `attachment` option on `/utility schedulemessage` (shown when the user focuses that option). Used in `extensions/utility.py`.",
+    "labels": "utility, command_option_description",
     "max_length": 100
   },
   {
-    "identifier": "admin.channels.name",
-    "source_string": "channels",
-    "translation": "channels",
-    "context": "Slash command name for `/channels` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
+    "identifier": "anonymous",
+    "source_string": "anonymous",
+    "translation": "anonymous",
+    "context": "Display name for the `anonymous` option on `/utility report`.",
+    "labels": "command_option_name",
     "max_length": 32
   },
   {
-    "identifier": "admin.channels.description",
-    "source_string": "Channel management",
-    "translation": "Channel management",
-    "context": "Short description of `/channels` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
-    "max_length": 100
-  },
-  {
-    "identifier": "admin.messaging.name",
-    "source_string": "messaging",
-    "translation": "messaging",
-    "context": "Slash command name for `/messaging` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "admin.messaging.description",
-    "source_string": "Messaging commands",
-    "translation": "Messaging commands",
-    "context": "Short description of `/messaging` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
-    "max_length": 100
-  },
-  {
-    "identifier": "admin.emoji.name",
-    "source_string": "emoji",
-    "translation": "emoji",
-    "context": "Slash command name for `/emoji` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "admin.emoji.description",
-    "source_string": "Emoji commands",
-    "translation": "Emoji commands",
-    "context": "Short description of `/emoji` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
-    "max_length": 100
-  },
-  {
-    "identifier": "admin.setup.name",
-    "source_string": "setup",
-    "translation": "setup",
-    "context": "Slash command name for `/setup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "admin.setup.description",
-    "source_string": "Server setup commands",
-    "translation": "Server setup commands",
-    "context": "Short description of `/setup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
-    "max_length": 100
-  },
-  {
-    "identifier": "admin.rolemanage.name",
-    "source_string": "role_manage",
-    "translation": "role_manage",
-    "context": "Slash command name for `/rolemanage` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "admin.rolemanage.description",
-    "source_string": "Advanced role management",
-    "translation": "Advanced role management",
-    "context": "Short description of `/rolemanage` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
-    "max_length": 100
-  },
-  {
-    "identifier": "admin.purgegroup.name",
-    "source_string": "purge",
-    "translation": "purge",
-    "context": "Slash command name for `/purgegroup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "admin.purgegroup.description",
-    "source_string": "Purge messages",
-    "translation": "Purge messages",
-    "context": "Short description of `/purgegroup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
-    "max_length": 100
-  },
-  {
-    "identifier": "admin.localegroup.name",
-    "source_string": "locale",
-    "translation": "locale",
-    "context": "Slash command name for `/localegroup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "admin.localegroup.description",
-    "source_string": "Server language",
-    "translation": "Server language",
-    "context": "Short description of `/localegroup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
-    "max_length": 100
-  },
-  {
-    "identifier": "admin.copy7tv.name",
-    "source_string": "copy_7tv",
-    "translation": "copy_7tv",
-    "context": "Slash command name for `/copy7tv` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "admin.copy7tv.params.twitch.username.name",
-    "source_string": "twitch_username",
-    "translation": "twitch_username",
-    "context": "Display name of the `twitch` option on `/copy7tv` (shown in Discord's slash command option list).",
-    "labels": "admin, command_option_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "twitch.username",
-    "source_string": "twitch_username",
-    "translation": "twitch_username",
-    "context": "UI copy for twitch.username. English: \"twitch_username\".",
-    "labels": "",
+    "identifier": "attachment",
+    "source_string": "attachment",
+    "translation": "attachment",
+    "context": "Display name for the `attachment` option on `/utility report`.",
+    "labels": "command_option_name",
     "max_length": 32
   },
   {
@@ -34756,14 +34772,6 @@
     "source_string": "channel",
     "translation": "channel",
     "context": "Display name for `/channel` command group. Used in `extensions/channel.py`.",
-    "labels": "",
-    "max_length": 32
-  },
-  {
-    "identifier": "games.advanced.ttt.name",
-    "source_string": "advanced_ttt",
-    "translation": "advanced_ttt",
-    "context": "Display name for `/games advanced_ttt`. Used in `extensions/games.py`.",
     "labels": "",
     "max_length": 32
   },
@@ -34776,11 +34784,11 @@
     "max_length": 100
   },
   {
-    "identifier": "games.advanced.ttt.params.user.name",
-    "source_string": "user",
-    "translation": "user",
-    "context": "Option name for `user` on `/games advanced_ttt`. Used in `extensions/games.py`.",
-    "labels": "command_option_name",
+    "identifier": "games.advanced.ttt.name",
+    "source_string": "advanced_ttt",
+    "translation": "advanced_ttt",
+    "context": "Display name for `/games advanced_ttt`. Used in `extensions/games.py`.",
+    "labels": "",
     "max_length": 32
   },
   {
@@ -34792,34 +34800,18 @@
     "max_length": 100
   },
   {
-    "identifier": "attachment",
-    "source_string": "attachment",
-    "translation": "attachment",
-    "context": "Display name for the `attachment` option on `/utility report`.",
+    "identifier": "games.advanced.ttt.params.user.name",
+    "source_string": "user",
+    "translation": "user",
+    "context": "Option name for `user` on `/games advanced_ttt`. Used in `extensions/games.py`.",
     "labels": "command_option_name",
     "max_length": 32
   },
   {
-    "identifier": "anonymous",
-    "source_string": "anonymous",
-    "translation": "anonymous",
-    "context": "Display name for the `anonymous` option on `/utility report`.",
-    "labels": "command_option_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "utility.report.params.attachment.name",
-    "source_string": "attachment",
-    "translation": "attachment",
-    "context": "Display name of the `attachment` option on `/utility report`. Used in `extensions/utility.py`.",
-    "labels": "command_option_name",
-    "max_length": 32
-  },
-  {
-    "identifier": "utility.report.params.attachment.description",
-    "source_string": "Evidence file for the report (optional)",
-    "translation": "Evidence file for the report (optional)",
-    "context": "Help text for the `attachment` option on `/utility report`. Used in `extensions/utility.py`.",
+    "identifier": "utility.report.params.anonymous.description",
+    "source_string": "Submit the report without revealing your identity (optional)",
+    "translation": "Submit the report without revealing your identity (optional)",
+    "context": "Help text for the `anonymous` option on `/utility report`. Used in `extensions/utility.py`.",
     "labels": "command_option_description",
     "max_length": 100
   },
@@ -34832,11 +34824,19 @@
     "max_length": 32
   },
   {
-    "identifier": "utility.report.params.anonymous.description",
-    "source_string": "Submit the report without revealing your identity (optional)",
-    "translation": "Submit the report without revealing your identity (optional)",
-    "context": "Help text for the `anonymous` option on `/utility report`. Used in `extensions/utility.py`.",
+    "identifier": "utility.report.params.attachment.description",
+    "source_string": "Evidence file for the report (optional)",
+    "translation": "Evidence file for the report (optional)",
+    "context": "Help text for the `attachment` option on `/utility report`. Used in `extensions/utility.py`.",
     "labels": "command_option_description",
     "max_length": 100
+  },
+  {
+    "identifier": "utility.report.params.attachment.name",
+    "source_string": "attachment",
+    "translation": "attachment",
+    "context": "Display name of the `attachment` option on `/utility report`. Used in `extensions/utility.py`.",
+    "labels": "command_option_name",
+    "max_length": 32
   }
 ]
