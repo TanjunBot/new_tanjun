@@ -28,17 +28,14 @@ from loops.create_database_backup import create_database_backup
 from minigames.add_level_xp import update_user_roles
 from minigames.counting_modes import get_correct_next_number, get_first_number
 
-# Import test functions only if they exist
-try:
-    from tests.test_commands import test_commands
-    from tests.test_database import test_database
-    from tests.test_ping import test_ping
-
-    TEST_FUNCTIONS_AVAILABLE = True
-except ImportError:
-    TEST_FUNCTIONS_AVAILABLE = False
-    print("Warning: Test functions not available in tests module")
 import contextlib
+
+try:
+    from diagnostics.runner import DiagnosticsRunner
+
+    DIAGNOSTICS_AVAILABLE = True
+except ImportError:
+    DIAGNOSTICS_AVAILABLE = False
 
 from utility import addFeedback, embed_or_wrap, error_embed, missingLocalization, success_embed, tanjunEmbed, warning_embed
 
@@ -122,79 +119,35 @@ class AdministrationCog(commands.Cog):
         locale = self._locale(ctx)
         message = await ctx.send(
             embed=tanjunEmbed(
-                title="Bot Tests",
+                title="Bot Diagnostics",
                 description=tanjunLocalizer.localize(locale, "commands.admin.administration.test_bot.starting"),
             )
         )
 
-        if not TEST_FUNCTIONS_AVAILABLE:
+        if not DIAGNOSTICS_AVAILABLE:
             await message.edit(
                 embed=tanjunEmbed(
-                    title="Bot Tests",
+                    title="Bot Diagnostics",
                     description=tanjunLocalizer.localize(locale, "commands.admin.administration.test_bot.tests_unavailable"),
                 )
             )
             return
 
-        await message.edit(
-            embed=tanjunEmbed(
-                title="Bot Tests",
-                description=tanjunLocalizer.localize(locale, "commands.admin.administration.test_bot.current_test_ping"),
-            )
-        )
+        thread_name = f"bot-diagnostics-{ctx.message.id}"
+        thread = await message.create_thread(name=thread_name[:100])
+        runner = DiagnosticsRunner(self.bot, ctx, thread, message, locale=locale)
         try:
-            await test_ping(self, ctx)
+            await runner.run_all()
         except Exception as e:
             await message.edit(
                 embed=error_embed(
                     tanjunLocalizer.localize(
-                        locale, "commands.admin.administration.test_bot.error", test_name="Ping", error=e
+                        locale, "commands.admin.administration.test_bot.error", test_name="Diagnostics", error=e
                     ),
-                    title="Bot Tests",
+                    title="Bot Diagnostics",
                 )
             )
-            return
-        await message.edit(
-            embed=tanjunEmbed(
-                title="Bot Tests",
-                description=tanjunLocalizer.localize(locale, "commands.admin.administration.test_bot.current_test_db"),
-            )
-        )
-        try:
-            await test_database(self, ctx)
-        except Exception as e:
-            await message.edit(
-                embed=error_embed(
-                    tanjunLocalizer.localize(
-                        locale, "commands.admin.administration.test_bot.error", test_name="Database", error=e
-                    ),
-                    title="Bot Tests",
-                )
-            )
-            return
-        await message.edit(
-            embed=tanjunEmbed(
-                title="Bot Tests",
-                description=tanjunLocalizer.localize(locale, "commands.admin.administration.test_bot.current_test_cmds"),
-            )
-        )
-        try:
-            await test_commands(self, ctx)
-        except Exception as e:
-            await message.edit(
-                embed=error_embed(
-                    tanjunLocalizer.localize(
-                        locale, "commands.admin.administration.test_bot.error", test_name="Commands", error=e
-                    ),
-                    title="Bot Tests",
-                )
-            )
-            return
-        await message.edit(
-            embed=success_embed(
-                tanjunLocalizer.localize(locale, "commands.admin.administration.test_bot.all_completed"), title="Bot Tests"
-            )
-        )
+            await thread.send(f"Diagnostics aborted: {e}")
 
     @commands.command()
     async def test_translation(self, ctx: commands.Context) -> None:  # type: ignore[type-arg]

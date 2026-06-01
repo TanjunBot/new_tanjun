@@ -327,6 +327,10 @@ async def main() -> None:
     health_manager.register(ImgBBHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(BytebinHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(GitHubAPIHealthCheck(), interval=3600)  # 60 minutes
+    from extensions.health_check import BackgroundLoopHealthCheck
+
+    health_manager.register(BackgroundLoopHealthCheck(bot))
+    bot.health_manager = health_manager
     ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.
