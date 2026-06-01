@@ -334,7 +334,7 @@ class TestMiscCommands:
 
     async def test_setguildlocale(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        with patch('extensions.administration.tanjunLocalizer.localize', return_value='locale set'):
+        with patch('localizer.tanjunLocalizer.localize', return_value='locale set'):
             await cog.setguildlocale(ctx, locale='de')
         ctx.guild.edit.assert_awaited_once()
         ctx.send.assert_awaited_once()

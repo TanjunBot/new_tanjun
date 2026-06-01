@@ -114,7 +114,7 @@ async def test_on_app_command_error_matrix(
         return key
 
     with (
-        patch("extensions.error_handler.tanjunLocalizer.localize", side_effect=_capture),
+        patch("localizer.tanjunLocalizer.localize", side_effect=_capture),
         patch("extensions.error_handler.sentry_dsn", ""),
     ):
         await cog._on_app_command_error(ix, error)
@@ -145,7 +145,7 @@ async def test_unknown_error_reports_to_sentry_when_configured() -> None:
     with (
         patch("extensions.error_handler.sentry_dsn", "https://example@sentry.io/1"),
         patch("sentry_sdk.push_scope", return_value=push_scope),
-        patch("extensions.error_handler.tanjunLocalizer.localize", side_effect=lambda _l, k, **kw: k),
+        patch("localizer.tanjunLocalizer.localize", side_effect=lambda _l, k, **kw: k),
     ):
         await cog._on_app_command_error(ix, RuntimeError("boom"))
 
@@ -263,7 +263,7 @@ async def test_on_prefix_command_error_matrix(
         return key
 
     with (
-        patch("extensions.error_handler.tanjunLocalizer.localize", side_effect=_capture),
+        patch("localizer.tanjunLocalizer.localize", side_effect=_capture),
         patch("extensions.error_handler.sentry_dsn", ""),
     ):
         await cog._on_prefix_command_error(ctx, error)

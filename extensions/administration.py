@@ -2,6 +2,7 @@
 THE COMMANDS IN THIS FILE ARE FOR ADMINISTRATIVE PURPOSES ONLY. THEY ARE NOT TO BE SHARED WITH ANYONE ELSE!
 """
 from locale_keys import locale as l10n
+from localizer import tanjunLocalizer
 import asyncio
 import json
 import os

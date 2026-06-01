@@ -2,7 +2,7 @@
 Interactive setup wizards for complex features.
 Provides guided, step-by-step configuration using modals and buttons.
 """
-from locale_keys import locale
+from locale_keys import locale as l10n
 from typing import Any, cast
 import discord
 from discord import app_commands
@@ -28,7 +28,7 @@ def _require_admin(interaction: discord.Interaction) -> bool:
 
 async def _not_admin_reply(interaction: discord.Interaction) -> None:
     """Send a permission-denied embed."""
-    embed = utility.tanjunEmbed(title=locale.commands.admin.embed.missingPermission.title('en_US'), description=locale.commands.admin.embed.missingPermission.description('en_US'))
+    embed = utility.tanjunEmbed(title=l10n.commands.admin.embed.missingPermission.title('en_US'), description=l10n.commands.admin.embed.missingPermission.description('en_US'))
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 def _loc_or_en(interaction: discord.Interaction) -> str:
@@ -408,10 +408,10 @@ class SetupWizardCommands(discord.app_commands.Group):
     """Group for setup wizard commands."""
 
     def __init__(self, bot: commands.Bot) -> None:
-        super().__init__(name=locale.setup.name.discord_key, description=locale.setup.description.discord_key)
+        super().__init__(name=l10n.setup.name.discord_key, description=l10n.setup.description.discord_key)
         self.bot = bot
 
-    @app_commands.command(name=locale.setup.logs.name.discord_key, description=locale.setup.logs.description.discord_key)
+    @app_commands.command(name=l10n.setup.logs.name.discord_key, description=l10n.setup.logs.description.discord_key)
     async def logs(self, interaction: discord.Interaction) -> None:
         """Interactive wizard to configure logging."""
         if not _require_admin(interaction):
@@ -427,7 +427,7 @@ class SetupWizardCommands(discord.app_commands.Group):
         view = LogChannelSelectView(_loc_or_en(interaction), interaction.guild)
         await interaction.response.send_message(embed=embed, view=view)
 
-    @app_commands.command(name=locale.setup.level.name.discord_key, description=locale.setup.level.description.discord_key)
+    @app_commands.command(name=l10n.setup.level.name.discord_key, description=l10n.setup.level.description.discord_key)
     async def level(self, interaction: discord.Interaction) -> None:
         """Interactive wizard to configure the leveling system."""
         if not _require_admin(interaction):
@@ -446,7 +446,7 @@ class SetupWizardCommands(discord.app_commands.Group):
         if view.completed:
             await api_set_level_system_status(str(interaction.guild.id), True)
 
-    @app_commands.command(name=locale.setup.giveaway.name.discord_key, description=locale.setup.giveaway.description.discord_key)
+    @app_commands.command(name=l10n.setup.giveaway.name.discord_key, description=l10n.setup.giveaway.description.discord_key)
     async def giveaway(self, interaction: discord.Interaction) -> None:
         """Interactive wizard to create a giveaway."""
         if not _require_admin(interaction):
@@ -460,7 +460,7 @@ class SetupWizardCommands(discord.app_commands.Group):
         embed = utility.tanjunEmbed(title='🎉 Giveaway Wizard Opened', description='The giveaway builder has opened. Use the buttons above to configure your giveaway!')
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name=locale.setup.booster.name.discord_key, description=locale.setup.booster.description.discord_key)
+    @app_commands.command(name=l10n.setup.booster.name.discord_key, description=l10n.setup.booster.description.discord_key)
     async def booster(self, interaction: discord.Interaction) -> None:
         """Interactive guide for booster perks configuration."""
         if not _require_admin(interaction):

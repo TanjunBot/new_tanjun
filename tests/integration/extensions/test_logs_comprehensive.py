@@ -799,7 +799,7 @@ async def test_message_edit_truncated_description(log_api_mocks, logs_cog):
     after.content = "b" + "x" * 5000
     before.attachments = after.attachments = []
     after.jump_url = "https://discord.com/1"
-    with patch("extensions.logs.tanjunLocalizer.localize", side_effect=lambda _l, _k, **kw: kw.get("diff", "d") * 500):
+    with patch("localizer.tanjunLocalizer.localize", side_effect=lambda _l, _k, **kw: kw.get("diff", "d") * 500):
         await cog.on_message_edit(before, after)
 
 

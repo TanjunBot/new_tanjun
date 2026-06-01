@@ -3,7 +3,12 @@ import discord
 import utility
 
 async def fun_command(command_info: utility.CommandInfo, fun_type: str, member: discord.Member, message: str | None) -> None:
-    fun_entry = getattr(locale.commands.fun, fun_type)
+    try:
+        fun_entry = getattr(locale.commands.fun, fun_type)
+    except AttributeError:
+        embed = utility.tanjunEmbed(title="Invalid action")
+        await command_info.reply(embed=embed)
+        return
     embed = utility.tanjunEmbed(title=fun_entry.title(command_info.locale, member=member.name, user=command_info.user.name), description=message)
     if fun_type == 'poke':
         fun_type = 'poking at someone'
