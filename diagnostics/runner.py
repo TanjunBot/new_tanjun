@@ -11,7 +11,6 @@ from diagnostics.coverage import check_duplicate_spec_ids, check_manifest_spec_c
 from diagnostics.infra_checks import check_database, check_gateway_latency, check_ping
 from diagnostics.locale_checks import check_locale_files, check_localizer_samples
 from diagnostics.models import CheckOutcome, DiagnosticsSummary, PhaseResult
-from diagnostics.prefix_checks import run_prefix_command_checks
 from diagnostics.registry import all_specs, run_spec
 from diagnostics.tree import compare_tree_to_manifest
 
@@ -46,11 +45,10 @@ _PHASE_PLAN: tuple[tuple[str, str], ...] = (
     ("B", "Platform health"),
     ("C", "Background loops"),
     ("D", "Command tree manifest"),
-    ("G", "Spec coverage"),
-    ("F", "Extensions loaded"),
     ("E", "Slash handler behaviors"),
+    ("F", "Extensions loaded"),
+    ("G", "Spec coverage"),
     ("H", "Localization"),
-    ("I", "Admin prefix commands"),
 )
 
 
@@ -160,11 +158,10 @@ class DiagnosticsRunner:
             self._run_phase_b_health,
             self._run_phase_c_loops,
             self._run_phase_d_tree,
-            self._run_phase_g_coverage,
-            self._run_phase_f_extensions,
             self._run_phase_e_handlers,
+            self._run_phase_f_extensions,
+            self._run_phase_g_coverage,
             self._run_phase_h_locales,
-            self._run_phase_i_prefix,
         )
         for phase_index, ((phase_id, phase_title), phase_fn) in enumerate(
             zip(_PHASE_PLAN, phase_runners, strict=True), start=1
@@ -343,16 +340,6 @@ class DiagnosticsRunner:
         self.summary.phases.append(phase)
         await self._report_phase(phase, compact_passed=True)
         await self._update_progress(phase_index, "H: Localization", f"Complete — {phase.failed} failed")
-
-    async def _run_phase_i_prefix(self, phase_index: int) -> None:
-        phase = PhaseResult("I", "Admin prefix commands")
-        await self._thread_send("## Phase I: Administration prefix commands")
-
-        phase.outcomes.extend(await run_prefix_command_checks(self.bot))
-
-        self.summary.phases.append(phase)
-        await self._report_phase(phase, compact_passed=True)
-        await self._update_progress(phase_index, "I: Admin prefix commands", f"Complete — {phase.failed} failed")
 
     async def _finalize(self) -> None:
         s = self.summary

@@ -6,6 +6,7 @@ from collections.abc import Iterator
 from typing import Any, Optional
 
 from discord import app_commands
+from discord.ext import commands
 
 from diagnostics.assertions import expect_interaction_response
 from diagnostics.kwargs_defaults import build_kwargs_for_handler
@@ -51,6 +52,26 @@ def _instantiate_group(group_cls: type) -> Optional[Any]:
         return group_cls(MagicMock())
     except TypeError:
         return None
+
+
+def _find_cog_classes(module: Any) -> list[type]:
+    classes: list[type] = []
+    seen: set[type] = set()
+    for _name, obj in inspect.getmembers(module, inspect.isclass):
+        try:
+            if not issubclass(obj, commands.Cog):
+                continue
+        except TypeError:
+            continue
+        if obj is commands.Cog:
+            continue
+        if obj.__module__ != module.__name__:
+            continue
+        if obj in seen:
+            continue
+        seen.add(obj)
+        classes.append(obj)
+    return classes
 
 
 def _find_group_classes(module: Any) -> list[type]:
@@ -152,12 +173,52 @@ def _tree_path_for_command(command: Any, method_name: str) -> str:
     return " ".join(parts)
 
 
+def _discover_cog_specs(
+    extension: str,
+    ext_short: str,
+    paths_by_leaf: dict[str, list[str]],
+) -> list[CommandBehaviorSpec]:
+    module = importlib.import_module(extension)
+    specs: list[CommandBehaviorSpec] = []
+    for cog_cls in _find_cog_classes(module):
+        seen_ids: set[str] = set()
+        for command in getattr(cog_cls, "__cog_app_commands__", ()) or ():
+            callback = command.callback
+            method_name = getattr(callback, "__name__", "unknown")
+            if method_name in ("interaction_check", "on_error"):
+                continue
+            spec_id = f"{ext_short}.{cog_cls.__name__}.{method_name}"
+            if spec_id in seen_ids:
+                continue
+            seen_ids.add(spec_id)
+            leaf = _locale_name(command.name)
+            manifest_path = _resolve_manifest_tree_path(leaf, leaf, paths_by_leaf)
+            skip_reason = SPEC_SKIPS.get(spec_id)
+            specs.append(
+                CommandBehaviorSpec(
+                    id=spec_id,
+                    extension=extension,
+                    group_cls=cog_cls,
+                    method_name=method_name,
+                    tree_path=manifest_path,
+                    extra_kwargs=_resolve_extra_kwargs(spec_id, callback),
+                    skip_reason=skip_reason,
+                    assertions=SPEC_CUSTOM_ASSERTIONS.get(spec_id, expect_interaction_response),
+                    patch_targets=SPEC_PATCH_TARGETS.get(spec_id, ()),
+                    patch_exclude=SPEC_PATCH_EXCLUDE.get(spec_id, ()),
+                )
+            )
+    return specs
+
+
 def discover_extension_specs(extension: str) -> list[CommandBehaviorSpec]:
     module = importlib.import_module(extension)
     specs: list[CommandBehaviorSpec] = []
     ext_short = extension.rsplit(".", 1)[-1]
 
     paths_by_leaf = _manifest_paths_by_leaf()
+
+    specs.extend(_discover_cog_specs(extension, ext_short, paths_by_leaf))
 
     for group_cls in _find_group_classes(module):
         group = _instantiate_group(group_cls)
