@@ -39,6 +39,19 @@ EXPECTED_COGS = frozenset(
 
 CONCURRENCY = 8
 SPEC_PROGRESS_INTERVAL = 10
+PROGRESS_BAR_WIDTH = 12
+
+_PHASE_PLAN: tuple[tuple[str, str], ...] = (
+    ("A", "Infrastructure"),
+    ("B", "Platform health"),
+    ("C", "Background loops"),
+    ("D", "Command tree manifest"),
+    ("G", "Spec coverage"),
+    ("F", "Extensions loaded"),
+    ("E", "Slash handler behaviors"),
+    ("H", "Localization"),
+    ("I", "Admin prefix commands"),
+)
 
 
 class DiagnosticsRunner:
@@ -57,6 +70,21 @@ class DiagnosticsRunner:
         self.locale = locale
         self.summary = DiagnosticsSummary()
         self._spec_done = 0
+        self._phase_total = len(_PHASE_PLAN)
+
+    @staticmethod
+    def _progress_bar(current: int, total: int, width: int = PROGRESS_BAR_WIDTH) -> str:
+        if total <= 0:
+            return f"[{'░' * width}] 0/0"
+        filled = min(width, round(width * current / total))
+        return f"[{'█' * filled}{'░' * (width - filled)}] {current}/{total}"
+
+    async def _update_progress(self, phase_index: int, phase_title: str, detail: str = "") -> None:
+        bar = self._progress_bar(phase_index, self._phase_total)
+        description = f"{bar}\n**Phase {phase_title}**"
+        if detail:
+            description = f"{description}\n{detail}"
+        await self._update_parent("Bot Diagnostics", description)
 
     async def _thread_send(self, content: str) -> None:
         if len(content) > 1900:
@@ -127,7 +155,7 @@ class DiagnosticsRunner:
         started = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
         await self._thread_send(f"Diagnostics run started at {started} (strict mode)")
 
-        for phase_fn in (
+        phase_runners = (
             self._run_phase_a_infra,
             self._run_phase_b_health,
             self._run_phase_c_loops,
@@ -137,16 +165,25 @@ class DiagnosticsRunner:
             self._run_phase_e_handlers,
             self._run_phase_h_locales,
             self._run_phase_i_prefix,
+        )
+        for phase_index, ((phase_id, phase_title), phase_fn) in enumerate(
+            zip(_PHASE_PLAN, phase_runners, strict=True), start=1
         ):
+            label = f"{phase_id}: {phase_title}"
+            await self._update_progress(phase_index, label, "Running…")
             try:
-                await phase_fn()
+                await phase_fn(phase_index)
             except Exception as exc:
-                await self._thread_send(f"Phase `{phase_fn.__name__}` aborted: {exc}")
+                self.summary.aborted = True
+                self.summary.abort_message = str(exc)
+                await self._thread_send(f"Phase {phase_id} ({phase_title}) aborted: {exc}")
+                await self._update_progress(phase_index, label, f"Aborted: {exc}")
+                break
 
         await self._finalize()
         return self.summary
 
-    async def _run_phase_a_infra(self) -> None:
+    async def _run_phase_a_infra(self, phase_index: int) -> None:
         phase = PhaseResult("A", "Infrastructure")
         await self._thread_send("## Phase A: Infrastructure")
 
@@ -156,9 +193,9 @@ class DiagnosticsRunner:
 
         self.summary.phases.append(phase)
         await self._report_phase(phase)
-        await self._update_parent("Bot Diagnostics", f"Phase A complete — {phase.failed} failed")
+        await self._update_progress(phase_index, "A: Infrastructure", f"Complete — {phase.failed} failed")
 
-    async def _run_phase_b_health(self) -> None:
+    async def _run_phase_b_health(self, phase_index: int) -> None:
         phase = PhaseResult("B", "Platform health")
         await self._thread_send("## Phase B: Platform health")
 
@@ -185,9 +222,9 @@ class DiagnosticsRunner:
 
         self.summary.phases.append(phase)
         await self._report_phase(phase)
-        await self._update_parent("Bot Diagnostics", f"Phase B complete — {phase.failed} failed")
+        await self._update_progress(phase_index, "B: Platform health", f"Complete — {phase.failed} failed")
 
-    async def _run_phase_c_loops(self) -> None:
+    async def _run_phase_c_loops(self, phase_index: int) -> None:
         phase = PhaseResult("C", "Background loops")
         await self._thread_send("## Phase C: Background loops")
 
@@ -205,8 +242,9 @@ class DiagnosticsRunner:
 
         self.summary.phases.append(phase)
         await self._report_phase(phase)
+        await self._update_progress(phase_index, "C: Background loops", f"Complete — {phase.failed} failed")
 
-    async def _run_phase_d_tree(self) -> None:
+    async def _run_phase_d_tree(self, phase_index: int) -> None:
         phase = PhaseResult("D", "Command tree manifest")
         await self._thread_send("## Phase D: Command tree manifest")
 
@@ -236,8 +274,9 @@ class DiagnosticsRunner:
 
         self.summary.phases.append(phase)
         await self._report_phase(phase)
+        await self._update_progress(phase_index, "D: Command tree manifest", f"Complete — {phase.failed} failed")
 
-    async def _run_phase_g_coverage(self) -> None:
+    async def _run_phase_g_coverage(self, phase_index: int) -> None:
         phase = PhaseResult("G", "Spec coverage")
         await self._thread_send("## Phase G: Spec coverage vs manifest")
 
@@ -246,8 +285,9 @@ class DiagnosticsRunner:
 
         self.summary.phases.append(phase)
         await self._report_phase(phase)
+        await self._update_progress(phase_index, "G: Spec coverage", f"Complete — {phase.failed} failed")
 
-    async def _run_phase_f_extensions(self) -> None:
+    async def _run_phase_f_extensions(self, phase_index: int) -> None:
         phase = PhaseResult("F", "Extensions loaded")
         await self._thread_send("## Phase F: Extensions loaded")
 
@@ -258,8 +298,9 @@ class DiagnosticsRunner:
 
         self.summary.phases.append(phase)
         await self._report_phase(phase)
+        await self._update_progress(phase_index, "F: Extensions loaded", f"Complete — {phase.failed} failed")
 
-    async def _run_phase_e_handlers(self) -> None:
+    async def _run_phase_e_handlers(self, phase_index: int) -> None:
         phase = PhaseResult("E", "Slash handler behaviors")
         specs = all_specs()
         total = len(specs)
@@ -278,16 +319,21 @@ class DiagnosticsRunner:
             phase.outcomes.append(outcome)
             self._spec_done += 1
             if self._spec_done % SPEC_PROGRESS_INTERVAL == 0:
-                await self._update_parent(
-                    "Bot Diagnostics",
-                    f"Phase E: {self._spec_done}/{total} specs ({phase.failed} failed)",
+                await self._update_progress(
+                    phase_index,
+                    "E: Slash handler behaviors",
+                    f"Specs {self._spec_done}/{total} ({phase.failed} failed)",
                 )
 
         self.summary.phases.append(phase)
         await self._report_phase(phase, compact_passed=True)
-        await self._update_parent("Bot Diagnostics", f"Phase E complete — {phase.failed} failed, {phase.skipped} skipped")
+        await self._update_progress(
+            phase_index,
+            "E: Slash handler behaviors",
+            f"Complete — {phase.failed} failed, {phase.skipped} skipped",
+        )
 
-    async def _run_phase_h_locales(self) -> None:
+    async def _run_phase_h_locales(self, phase_index: int) -> None:
         phase = PhaseResult("H", "Localization")
         await self._thread_send("## Phase H: Localization")
 
@@ -296,8 +342,9 @@ class DiagnosticsRunner:
 
         self.summary.phases.append(phase)
         await self._report_phase(phase, compact_passed=True)
+        await self._update_progress(phase_index, "H: Localization", f"Complete — {phase.failed} failed")
 
-    async def _run_phase_i_prefix(self) -> None:
+    async def _run_phase_i_prefix(self, phase_index: int) -> None:
         phase = PhaseResult("I", "Admin prefix commands")
         await self._thread_send("## Phase I: Administration prefix commands")
 
@@ -305,6 +352,7 @@ class DiagnosticsRunner:
 
         self.summary.phases.append(phase)
         await self._report_phase(phase, compact_passed=True)
+        await self._update_progress(phase_index, "I: Admin prefix commands", f"Complete — {phase.failed} failed")
 
     async def _finalize(self) -> None:
         s = self.summary
@@ -317,21 +365,24 @@ class DiagnosticsRunner:
             *phase_lines,
             f"**Total:** {s.total_passed} passed, {s.total_failed} failed, {s.total_skipped} skipped",
             f"**Unauthorized skips:** {s.unauthorized_skips}",
-            f"**Status:** {'OK' if s.ok else 'FAILED'}",
         ]
+        if s.aborted:
+            lines.append(f"**Aborted:** {s.abort_message}")
+        lines.append(f"**Status:** {'OK' if s.ok else 'FAILED'}")
         await self._thread_send("\n".join(lines))
 
         from utility import error_embed, success_embed
 
-        summary_body = "\n".join(
-            [
-                f"Passed: {s.total_passed}",
-                f"Failed: {s.total_failed}",
-                f"Skipped (allowed): {s.total_skipped}",
-                f"Unauthorized skips: {s.unauthorized_skips}",
-                f"Status: {'OK' if s.ok else 'FAILED'}",
-            ]
-        )
+        summary_lines = [
+            f"Passed: {s.total_passed}",
+            f"Failed: {s.total_failed}",
+            f"Skipped (allowed): {s.total_skipped}",
+            f"Unauthorized skips: {s.unauthorized_skips}",
+        ]
+        if s.aborted:
+            summary_lines.append(f"Aborted: {s.abort_message}")
+        summary_lines.append(f"Status: {'OK' if s.ok else 'FAILED'}")
+        summary_body = "\n".join(summary_lines)
         if s.ok:
             embed = success_embed(summary_body, title="Bot Diagnostics")
         else:

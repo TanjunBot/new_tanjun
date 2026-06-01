@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from diagnostics.specs._helpers import register_defer_and_mock
+from diagnostics.specs._helpers import register_defer_and_mock, register_defer_only
 
 
 def register() -> None:
