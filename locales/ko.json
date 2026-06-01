@@ -1,160 +1,160 @@
 [
   {
     "identifier": "Administrate the Server",
-    "source_string": "Manage the server",
-    "translation": "Manage the server",
+    "source_string": "manage_the_server",
+    "translation": "manage_the_server",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage the server\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Ask Chat GPT something",
-    "source_string": "Chat GPT ask something",
-    "translation": "Chat GPT ask something",
+    "source_string": "chat_gpt_ask_something",
+    "translation": "chat_gpt_ask_something",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Chat GPT ask something\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Ask a custom situation",
-    "source_string": "Request a user-defined situation",
-    "translation": "Request a user-defined situation",
+    "source_string": "request_a_user-defined_situation",
+    "translation": "request_a_user-defined_situation",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Request a user-defined situation\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Awst Tanjuwun something uwu",
-    "source_string": "Awst Tanjuwun somethim uwu",
-    "translation": "Awst Tanjuwun somethim uwu",
+    "source_string": "awst_tanjuwun_somethim_uwu",
+    "translation": "awst_tanjuwun_somethim_uwu",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Awst Tanjuwun somethim uwu\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Blacklist Commands",
-    "source_string": "Blacklist commands",
-    "translation": "Blacklist commands",
+    "source_string": "blacklist_commands",
+    "translation": "blacklist_commands",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Blacklist commands\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Fun Commands",
-    "source_string": "Fun commands",
-    "translation": "Fun commands",
+    "source_string": "fun_commands",
+    "translation": "fun_commands",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Fun commands\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Get help with the bot",
-    "source_string": "Get help with the bot",
-    "translation": "Get help with the bot",
+    "source_string": "get_help_with_the_bot",
+    "translation": "get_help_with_the_bot",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Get help with the bot\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Giveaway Commands",
-    "source_string": "Giveaway commands",
-    "translation": "Giveaway commands",
+    "source_string": "giveaway_commands",
+    "translation": "giveaway_commands",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Giveaway commands\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Level Commands",
-    "source_string": "Level commands",
-    "translation": "Level commands",
+    "source_string": "level_commands",
+    "translation": "level_commands",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Level commands\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Manage Channels",
-    "source_string": "Manage channel",
-    "translation": "Manage channel",
+    "source_string": "manage_channel",
+    "translation": "manage_channel",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage channel\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Manage Join-to-Create Channels",
-    "source_string": "Join To Create Manage channels",
-    "translation": "Join To Create Manage channels",
+    "source_string": "join_to_create_manage_channels",
+    "translation": "join_to_create_manage_channels",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Join To Create Manage channels\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Manage Reports",
-    "source_string": "Manage reports",
-    "translation": "Manage reports",
+    "source_string": "manage_reports",
+    "translation": "manage_reports",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage reports\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Manage Trigger Messages",
-    "source_string": "Manage trigger messages",
-    "translation": "Manage trigger messages",
+    "source_string": "manage_trigger_messages",
+    "translation": "manage_trigger_messages",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage trigger messages\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Manage Warns",
-    "source_string": "Manage warnings",
-    "translation": "Manage warnings",
+    "source_string": "manage_warnings",
+    "translation": "manage_warnings",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage warnings\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Math is fun!",
-    "source_string": "Math is fun!",
-    "translation": "Math is fun!",
+    "source_string": "math_is_fun",
+    "translation": "math_is_fun",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Math is fun!\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "Minigame Commands",
-    "source_string": "Minigame commands",
-    "translation": "Minigame commands",
+    "source_string": "minigame_commands",
+    "translation": "minigame_commands",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Minigame commands\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "The frequency penalty setting",
-    "source_string": "The frequency penalty setting",
-    "translation": "The frequency penalty setting",
+    "source_string": "the_frequency_penalty_setting",
+    "translation": "the_frequency_penalty_setting",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The frequency penalty setting\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "The personality description",
-    "source_string": "The personality description",
-    "translation": "The personality description",
+    "source_string": "the_personality_description",
+    "translation": "the_personality_description",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The personality description\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "The presence penalty setting",
-    "source_string": "The presence penalty setting",
-    "translation": "The presence penalty setting",
+    "source_string": "the_presence_penalty_setting",
+    "translation": "the_presence_penalty_setting",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The presence penalty setting\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "The temperature setting",
-    "source_string": "The temperature setting",
-    "translation": "The temperature setting",
+    "source_string": "the_temperature_setting",
+    "translation": "the_temperature_setting",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The temperature setting\".",
     "labels": "command_name",
     "max_length": 32
@@ -169,8 +169,8 @@
   },
   {
     "identifier": "Utility Commands",
-    "source_string": "Various commands",
-    "translation": "Various commands",
+    "source_string": "various_commands",
+    "translation": "various_commands",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Various commands\".",
     "labels": "command_name",
     "max_length": 32
@@ -1113,8 +1113,8 @@
   },
   {
     "identifier": "admin.moverole.params.targetrole.name",
-    "source_string": "target role",
-    "translation": "target role",
+    "source_string": "target_role",
+    "translation": "target_role",
     "context": "Display name of the `targetrole` option on `/moverole` (shown in Discord's slash command option list).",
     "labels": "admin, command_option_name",
     "max_length": 32
@@ -10889,8 +10889,8 @@
   },
   {
     "identifier": "commands.giveaway.builder.sponsor.select.name",
-    "source_string": "Select sponsor",
-    "translation": "Select sponsor",
+    "source_string": "select_sponsor",
+    "translation": "select_sponsor",
     "context": "Slash subcommand or option name for `/giveaway builder` (sponsor select).",
     "labels": "commands, command_name",
     "max_length": 32
@@ -13521,8 +13521,8 @@
   },
   {
     "identifier": "commands.level.settextcooldown.params.cooldown.name",
-    "source_string": "cooldown time",
-    "translation": "cooldown time",
+    "source_string": "cooldown_time",
+    "translation": "cooldown_time",
     "context": "Display name of the `cooldown` option on `/level settextcooldown` (params cooldown name) (shown in Discord's slash command option list).",
     "labels": "commands, command_option_name",
     "max_length": 32
@@ -13601,8 +13601,8 @@
   },
   {
     "identifier": "commands.level.setvoicecooldown.params.cooldown.name",
-    "source_string": "cooldown time",
-    "translation": "cooldown time",
+    "source_string": "cooldown_time",
+    "translation": "cooldown_time",
     "context": "Display name of the `cooldown` option on `/level setvoicecooldown` (params cooldown name) (shown in Discord's slash command option list).",
     "labels": "commands, command_option_name",
     "max_length": 32
@@ -14081,8 +14081,8 @@
   },
   {
     "identifier": "commands.logs.blacklist.remove.name",
-    "source_string": "Remove",
-    "translation": "Remove",
+    "source_string": "remove",
+    "translation": "remove",
     "context": "Slash subcommand or option name for `/logs blacklist` (remove).",
     "labels": "commands, command_name",
     "max_length": 32
@@ -22441,8 +22441,8 @@
   },
   {
     "identifier": "fun.boop.params.message.name",
-    "source_string": "Message",
-    "translation": "Message",
+    "source_string": "message",
+    "translation": "message",
     "context": "Display name of the `message` option on `/fun boop` (shown in Discord's slash command option list).",
     "labels": "fun, command_option_name",
     "max_length": 32
@@ -22497,8 +22497,8 @@
   },
   {
     "identifier": "fun.hug.params.message.name",
-    "source_string": "Message",
-    "translation": "Message",
+    "source_string": "message",
+    "translation": "message",
     "context": "Display name of the `message` option on `/fun hug` (shown in Discord's slash command option list).",
     "labels": "fun, command_option_name",
     "max_length": 32
@@ -22545,8 +22545,8 @@
   },
   {
     "identifier": "fun.kiss.params.message.name",
-    "source_string": "Message",
-    "translation": "Message",
+    "source_string": "message",
+    "translation": "message",
     "context": "Display name of the `message` option on `/fun kiss` (shown in Discord's slash command option list).",
     "labels": "fun, command_option_name",
     "max_length": 32
@@ -22593,8 +22593,8 @@
   },
   {
     "identifier": "fun.laugh.params.message.name",
-    "source_string": "Message",
-    "translation": "Message",
+    "source_string": "message",
+    "translation": "message",
     "context": "Display name of the `message` option on `/fun laugh` (shown in Discord's slash command option list).",
     "labels": "fun, command_option_name",
     "max_length": 32
@@ -22649,8 +22649,8 @@
   },
   {
     "identifier": "fun.pat.params.message.name",
-    "source_string": "Message",
-    "translation": "Message",
+    "source_string": "message",
+    "translation": "message",
     "context": "Display name of the `message` option on `/fun pat` (shown in Discord's slash command option list).",
     "labels": "fun, command_option_name",
     "max_length": 32
@@ -22697,8 +22697,8 @@
   },
   {
     "identifier": "fun.poke.params.message.name",
-    "source_string": "Message",
-    "translation": "Message",
+    "source_string": "message",
+    "translation": "message",
     "context": "Display name of the `message` option on `/fun poke` (shown in Discord's slash command option list).",
     "labels": "fun, command_option_name",
     "max_length": 32
@@ -22745,8 +22745,8 @@
   },
   {
     "identifier": "fun.slap.params.message.name",
-    "source_string": "Message",
-    "translation": "Message",
+    "source_string": "message",
+    "translation": "message",
     "context": "Display name of the `message` option on `/fun slap` (shown in Discord's slash command option list).",
     "labels": "fun, command_option_name",
     "max_length": 32
@@ -22793,8 +22793,8 @@
   },
   {
     "identifier": "fun.tickle.params.message.name",
-    "source_string": "Message",
-    "translation": "Message",
+    "source_string": "message",
+    "translation": "message",
     "context": "Display name of the `message` option on `/fun tickle` (shown in Discord's slash command option list).",
     "labels": "fun, command_option_name",
     "max_length": 32
@@ -22841,8 +22841,8 @@
   },
   {
     "identifier": "fun.wave.params.message.name",
-    "source_string": "Message",
-    "translation": "Message",
+    "source_string": "message",
+    "translation": "message",
     "context": "Display name of the `message` option on `/fun wave` (shown in Discord's slash command option list).",
     "labels": "fun, command_option_name",
     "max_length": 32
@@ -23569,8 +23569,8 @@
   },
   {
     "identifier": "games_memory_description",
-    "source_string": "Play a memory matching game",
-    "translation": "Play a memory matching game",
+    "source_string": "play_a_memory_matching_game",
+    "translation": "play_a_memory_matching_game",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Play a memory matching game\".",
     "labels": "command_name",
     "max_length": 32
@@ -23585,8 +23585,8 @@
   },
   {
     "identifier": "games_memory_params_user_description",
-    "source_string": "The user to play against",
-    "translation": "The user to play against",
+    "source_string": "the_user_to_play_against",
+    "translation": "the_user_to_play_against",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The user to play against\".",
     "labels": "command_name",
     "max_length": 32
@@ -23937,8 +23937,8 @@
   },
   {
     "identifier": "help",
-    "source_string": "Help",
-    "translation": "Help",
+    "source_string": "help",
+    "translation": "help",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Help\".",
     "labels": "command_name",
     "max_length": 32
@@ -29457,8 +29457,8 @@
   },
   {
     "identifier": "logs_blacklistcat_add_description",
-    "source_string": "Blacklist a category from logs",
-    "translation": "Blacklist a category from logs",
+    "source_string": "blacklist_a_category_from_logs",
+    "translation": "blacklist_a_category_from_logs",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Blacklist a category from logs\".",
     "labels": "command_name",
     "max_length": 32
@@ -29473,16 +29473,16 @@
   },
   {
     "identifier": "logs_blacklistcat_add_params_channel_description",
-    "source_string": "The category to blacklist",
-    "translation": "The category to blacklist",
+    "source_string": "the_category_to_blacklist",
+    "translation": "the_category_to_blacklist",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The category to blacklist\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "logs_blacklistcat_description",
-    "source_string": "Manage the category blacklist for logging",
-    "translation": "Manage the category blacklist for logging",
+    "source_string": "manage_the_category_blacklist_fo",
+    "translation": "manage_the_category_blacklist_fo",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage the category blacklist for logging\".",
     "labels": "command_name",
     "max_length": 32
@@ -29497,8 +29497,8 @@
   },
   {
     "identifier": "logs_blacklistcat_remove_description",
-    "source_string": "Remove a category from the log blacklist",
-    "translation": "Remove a category from the log blacklist",
+    "source_string": "remove_a_category_from_the_log_b",
+    "translation": "remove_a_category_from_the_log_b",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Remove a category from the log blacklist\".",
     "labels": "command_name",
     "max_length": 32
@@ -29513,16 +29513,16 @@
   },
   {
     "identifier": "logs_blacklistcat_remove_params_channel_description",
-    "source_string": "The category to remove from blacklist",
-    "translation": "The category to remove from blacklist",
+    "source_string": "the_category_to_remove_from_blac",
+    "translation": "the_category_to_remove_from_blac",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The category to remove from blacklist\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "logs_blacklistcat_show_description",
-    "source_string": "Show blacklisted categories",
-    "translation": "Show blacklisted categories",
+    "source_string": "show_blacklisted_categories",
+    "translation": "show_blacklisted_categories",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Show blacklisted categories\".",
     "labels": "command_name",
     "max_length": 32
@@ -29537,8 +29537,8 @@
   },
   {
     "identifier": "logs_blacklistv_add_description",
-    "source_string": "Blacklist a voice channel from logs",
-    "translation": "Blacklist a voice channel from logs",
+    "source_string": "blacklist_a_voice_channel_from_l",
+    "translation": "blacklist_a_voice_channel_from_l",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Blacklist a voice channel from logs\".",
     "labels": "command_name",
     "max_length": 32
@@ -29553,16 +29553,16 @@
   },
   {
     "identifier": "logs_blacklistv_add_params_channel_description",
-    "source_string": "The voice channel to blacklist",
-    "translation": "The voice channel to blacklist",
+    "source_string": "the_voice_channel_to_blacklist",
+    "translation": "the_voice_channel_to_blacklist",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The voice channel to blacklist\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "logs_blacklistv_description",
-    "source_string": "Manage the voice channel blacklist for logging",
-    "translation": "Manage the voice channel blacklist for logging",
+    "source_string": "manage_the_voice_channel_blackli",
+    "translation": "manage_the_voice_channel_blackli",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage the voice channel blacklist for logging\".",
     "labels": "command_name",
     "max_length": 32
@@ -29577,8 +29577,8 @@
   },
   {
     "identifier": "logs_blacklistv_remove_description",
-    "source_string": "Remove a voice channel from the log blacklist",
-    "translation": "Remove a voice channel from the log blacklist",
+    "source_string": "remove_a_voice_channel_from_the_",
+    "translation": "remove_a_voice_channel_from_the_",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Remove a voice channel from the log blacklist\".",
     "labels": "command_name",
     "max_length": 32
@@ -29593,16 +29593,16 @@
   },
   {
     "identifier": "logs_blacklistv_remove_params_channel_description",
-    "source_string": "The voice channel to remove from blacklist",
-    "translation": "The voice channel to remove from blacklist",
+    "source_string": "the_voice_channel_to_remove_from",
+    "translation": "the_voice_channel_to_remove_from",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The voice channel to remove from blacklist\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "logs_blacklistv_show_description",
-    "source_string": "Show blacklisted voice channels",
-    "translation": "Show blacklisted voice channels",
+    "source_string": "show_blacklisted_voice_channels",
+    "translation": "show_blacklisted_voice_channels",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Show blacklisted voice channels\".",
     "labels": "command_name",
     "max_length": 32
@@ -32017,8 +32017,8 @@
   },
   {
     "identifier": "setup_booster_description",
-    "source_string": "Interactive wizard for booster perks configuration",
-    "translation": "Interactive wizard for booster perks configuration",
+    "source_string": "interactive_wizard_for_booster_p",
+    "translation": "interactive_wizard_for_booster_p",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive wizard for booster perks configuration\".",
     "labels": "command_name",
     "max_length": 32
@@ -32033,16 +32033,16 @@
   },
   {
     "identifier": "setup_description",
-    "source_string": "Interactive setup wizards",
-    "translation": "Interactive setup wizards",
+    "source_string": "interactive_setup_wizards",
+    "translation": "interactive_setup_wizards",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive setup wizards\".",
     "labels": "command_name",
     "max_length": 32
   },
   {
     "identifier": "setup_giveaway_description",
-    "source_string": "Interactive wizard to create a giveaway",
-    "translation": "Interactive wizard to create a giveaway",
+    "source_string": "interactive_wizard_to_create_a_g",
+    "translation": "interactive_wizard_to_create_a_g",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive wizard to create a giveaway\".",
     "labels": "command_name",
     "max_length": 32
@@ -32057,8 +32057,8 @@
   },
   {
     "identifier": "setup_level_description",
-    "source_string": "Interactive wizard to configure the leveling system",
-    "translation": "Interactive wizard to configure the leveling system",
+    "source_string": "interactive_wizard_to_configure_",
+    "translation": "interactive_wizard_to_configure_",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive wizard to configure the leveling system\".",
     "labels": "command_name",
     "max_length": 32
@@ -32073,8 +32073,8 @@
   },
   {
     "identifier": "setup_logs_description",
-    "source_string": "Interactive wizard to configure logging",
-    "translation": "Interactive wizard to configure logging",
+    "source_string": "interactive_wizard_to_configure_",
+    "translation": "interactive_wizard_to_configure_",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive wizard to configure logging\".",
     "labels": "command_name",
     "max_length": 32
@@ -32193,8 +32193,8 @@
   },
   {
     "identifier": "triggermessages",
-    "source_string": "trigger news",
-    "translation": "trigger news",
+    "source_string": "trigger_news",
+    "translation": "trigger_news",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"trigger news\".",
     "labels": "command_name",
     "max_length": 32
@@ -33497,8 +33497,8 @@
   },
   {
     "identifier": "✨POGGERS✨",
-    "source_string": "Ai commands",
-    "translation": "Ai commands",
+    "source_string": "ai_commands",
+    "translation": "ai_commands",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Ai commands\".",
     "labels": "command_name",
     "max_length": 32

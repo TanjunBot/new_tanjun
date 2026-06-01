@@ -603,6 +603,7 @@ class TestTanjunTranslator:
     def test_normalize_discord_command_name(self) -> None:
         assert _normalize_discord_command_name("Utilisateur") == "utilisateur"
         assert _normalize_discord_command_name("cooldown time") == "cooldown_time"
+        assert _normalize_discord_command_name("Math is fun!") == "math_is_fun"
         assert _normalize_discord_command_name("  ") is None
 
     def test_translate_normalizes_command_names(self, service: LocalizerService, locale_dir: Path) -> None:
