@@ -36,6 +36,8 @@ def patch_config_module() -> MagicMock:
     mock_config_module_instance.sentry_dsn = None
     mock_config_module_instance.sentry_environment = None
     mock_config_module_instance.sentry_traces_sample_rate = 0.0
+    mock_config_module_instance.UPTIME_KUMA_PUSH_TOKEN = ""
+    mock_config_module_instance.UPTIME_KUMA_STATUS_URL = "https://status.tanjun.bot"
 
     mock_env_dict = {
         "token": mock_config_module_instance.token,
