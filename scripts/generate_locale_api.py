@@ -265,6 +265,15 @@ def _build_tree(keys: dict[str, tuple[str, ...]], dynamic: dict[str, dict[str, s
         for child in node.bracket_children.values():
             _merge_groups_into_children(child)
 
+    def _promote_leaf_to_text(node: TreeNode) -> None:
+        for seg in list(node.children):
+            if seg in node.leaves:
+                node.children[seg].leaves["_text"] = node.leaves.pop(seg)
+        for child in node.children.values():
+            _promote_leaf_to_text(child)
+        for child in node.bracket_children.values():
+            _promote_leaf_to_text(child)
+
     def _finalize_conflicts(node: TreeNode) -> None:
         for group_seg, fields in list(node.groups.items()):
             if group_seg in node.leaves:
@@ -276,6 +285,7 @@ def _build_tree(keys: dict[str, tuple[str, ...]], dynamic: dict[str, dict[str, s
 
     _prune(root)
     _merge_groups_into_children(root)
+    _promote_leaf_to_text(root)
     _finalize_conflicts(root)
 
     for prefix, suffix_map in dynamic.items():

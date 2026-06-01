@@ -50,6 +50,7 @@ class Logs:
 
 @dataclass(frozen=True, slots=True)
 class LogsAutomodRuleCreate:
+    _text: LocalizedString
     actions: LocalizedString
     allow_list: LocalizedString
     block_member_interaction: LocalizedString
@@ -208,6 +209,7 @@ class LogsMemberUpdate:
 
 @dataclass(frozen=True, slots=True)
 class LogsPermissions:
+    _text: LocalizedString
     add_reaction: LocalizedString
     add_reactions: LocalizedString
     administrator: LocalizedString
@@ -957,6 +959,7 @@ def build_logs() -> Logs:
     )
     _n_logs_automodRuleCreate = LogsAutomodRuleCreate(
         AutoModRuleTriggerType=_n_logs_automodRuleCreate_AutoModRuleTriggerType,
+        _text=LocalizedString('logs.automodRuleCreate.'),
         actions=LocalizedString('logs.automodRuleCreate.actions'),
         allow_list=LocalizedString('logs.automodRuleCreate.allow_list'),
         block_member_interaction=LocalizedString('logs.automodRuleCreate.block_member_interaction'),
@@ -1733,6 +1736,7 @@ def build_logs() -> Logs:
         },
     )
     _n_logs_permissions = LogsPermissions(
+        _text=LocalizedString('logs.permissions.'),
         add_reaction=LocalizedString('logs.permissions.add_reaction'),
         add_reactions=LocalizedString('logs.permissions.add_reactions'),
         administrator=LocalizedString('logs.permissions.administrator'),
