@@ -34910,5 +34910,197 @@
     "context": "Help text for the `anonymous` option on `/utility report`. Used in `extensions/utility.py`.",
     "labels": "command_option_description",
     "max_length": 100
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.automodRuleCreate",
+    "source_string": "Create AutoMod rule",
+    "translation": "Create AutoMod rule",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (automod Rule Create). English: \"Create AutoMod rule\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.automodRuleUpdate",
+    "source_string": "Update AutoMod rule",
+    "translation": "Update AutoMod rule",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (automod Rule Update). English: \"Update AutoMod rule\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.automodRuleDelete",
+    "source_string": "Delete AutoMod rule",
+    "translation": "Delete AutoMod rule",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (automod Rule Delete). English: \"Delete AutoMod rule\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.automodAction",
+    "source_string": "AutoMod action",
+    "translation": "AutoMod action",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (automod Action). English: \"AutoMod action\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guild_channelDelete",
+    "source_string": "Delete channel",
+    "translation": "Delete channel",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Channel Delete). English: \"Delete channel\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guild_channelCreate",
+    "source_string": "Create channel",
+    "translation": "Create channel",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Channel Create). English: \"Create channel\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guild_channelUpdate",
+    "source_string": "Update channel",
+    "translation": "Update channel",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Channel Update). English: \"Update channel\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guildUpdate",
+    "source_string": "Update server",
+    "translation": "Update server",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Update). English: \"Update server\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.inviteCreate",
+    "source_string": "Create invitation",
+    "translation": "Create invitation",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (invite Create). English: \"Create invitation\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.inviteDelete",
+    "source_string": "Delete invitation",
+    "translation": "Delete invitation",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (invite Delete). English: \"Delete invitation\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberJoin",
+    "source_string": "Add member",
+    "translation": "Add member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Join). English: \"Add member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberLeave",
+    "source_string": "Remove member",
+    "translation": "Remove member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Leave). English: \"Remove member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberUpdate",
+    "source_string": "Update member",
+    "translation": "Update member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Update). English: \"Update member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.userUpdate",
+    "source_string": "Update user",
+    "translation": "Update user",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (user Update). English: \"Update user\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberBan",
+    "source_string": "Block member",
+    "translation": "Block member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Ban). English: \"Block member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberUnban",
+    "source_string": "Unlock member",
+    "translation": "Unlock member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Unban). English: \"Unlock member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.presenceUpdate",
+    "source_string": "Update status",
+    "translation": "Update status",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (presence Update). English: \"Update status\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.messageEdit",
+    "source_string": "Edit message",
+    "translation": "Edit message",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (message Edit). English: \"Edit message\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.messageDelete",
+    "source_string": "Delete message",
+    "translation": "Delete message",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (message Delete). English: \"Delete message\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.reactionAdd",
+    "source_string": "Add reaction",
+    "translation": "Add reaction",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (reaction Add). English: \"Add reaction\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.reactionRemove",
+    "source_string": "Remove reaction",
+    "translation": "Remove reaction",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (reaction Remove). English: \"Remove reaction\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guildRoleCreate",
+    "source_string": "Create role",
+    "translation": "Create role",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Role Create). English: \"Create role\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guildRoleDelete",
+    "source_string": "Delete role",
+    "translation": "Delete role",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Role Delete). English: \"Delete role\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guildRoleUpdate",
+    "source_string": "Update role",
+    "translation": "Update role",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Role Update). English: \"Update role\".",
+    "labels": "commands",
+    "max_length": null
   }
 ]
