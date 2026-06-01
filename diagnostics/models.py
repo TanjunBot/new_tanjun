@@ -40,6 +40,8 @@ class PhaseResult:
 @dataclass
 class DiagnosticsSummary:
     phases: list[PhaseResult] = field(default_factory=list)
+    aborted: bool = False
+    abort_message: str = ""
 
     @property
     def total_passed(self) -> int:
@@ -64,7 +66,11 @@ class DiagnosticsSummary:
 
     @property
     def ok(self) -> bool:
-        return self.total_failed == 0 and self.unauthorized_skips == 0
+        return (
+            not self.aborted
+            and self.total_failed == 0
+            and self.unauthorized_skips == 0
+        )
 
 
 AssertionFn = Callable[[Any, dict[str, Any]], Awaitable[None]]

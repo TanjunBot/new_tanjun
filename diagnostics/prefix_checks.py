@@ -89,10 +89,12 @@ async def run_prefix_command_checks(bot: Any) -> list[CheckOutcome]:
                             )
                         )
                     if name == "sync":
-                        bot.tree.sync = AsyncMock(return_value=[])
-                        stack.enter_context(
-                            patch("extensions.administration.asyncio.sleep", new_callable=AsyncMock)
-                        )
+                        tree = getattr(bot, "tree", None)
+                        if tree is None:
+                            tree = MagicMock()
+                            bot.tree = tree
+                        tree.walk_commands = MagicMock(return_value=[])
+                        tree.sync = AsyncMock(return_value=[])
                     await asyncio.wait_for(_invoke_prefix_command(cog, command, bot), timeout=30.0)
         except TimeoutError:
             outcomes.append(CheckOutcome(check_id, False, "Timed out after 30s"))
