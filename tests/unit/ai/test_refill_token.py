@@ -30,9 +30,10 @@ class TestRefillAiToken:
         plus_sku = MagicMock(name="Tanjun Plus")
         plus_sku.name = "Tanjun Plus"
         client = _client_with_skus([plus_sku])
-        entitlements = MagicMock()
-        entitlements.flatten = AsyncMock(return_value=["ent1"])
-        client.entitlements = MagicMock(return_value=entitlements)
+        async def _iter_ents(*args, **kwargs):
+            yield "ent1"
+        client.entitlements = MagicMock()
+        client.entitlements.return_value = _iter_ents()
         with (
             patch("ai.refill_token.datetime") as dt_mod,
             patch("ai.refill_token.AiService.refill", new=AsyncMock()) as refill_mock,
@@ -85,9 +86,11 @@ class TestRefillAiToken:
         plus_sku = MagicMock()
         plus_sku.name = "Tanjun Plus"
         client = _client_with_skus([plus_sku, MagicMock(name="Tanjun Plus 2")])
-        entitlements = MagicMock()
-        entitlements.flatten = AsyncMock(return_value=[])
-        client.entitlements = MagicMock(return_value=entitlements)
+        async def _iter_empty(*args, **kwargs):
+            if False:
+                yield  # pragma: no cover
+        client.entitlements = MagicMock()
+        client.entitlements.return_value = _iter_empty()
         with (
             patch("ai.refill_token.datetime") as dt_mod,
             patch("ai.refill_token.AiService.refill", new=AsyncMock()) as refill_mock,
