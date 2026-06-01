@@ -47,8 +47,9 @@ class TanjunTranslator(app_commands.Translator):
 
         location_name = getattr(context.location, "name", None)
         if location_name in _DISCORD_NAME_LOCATION_NAMES:
-            current = _normalize_discord_command_name(current)
-            if current is None:
+            normalized = _normalize_discord_command_name(current)
+            if normalized is None:
                 return None
+            current = normalized
 
         return current
