@@ -317,8 +317,8 @@ async def _execute_with_retry(
             record_db_query(operation, _elapsed, error=True)
         except ImportError:
             pass
-        print(f"All retries exhausted for {operation}: {safe_id}")
-        raise last_exception
+        print(f"All retries exhausted for {operation}: {safe_id} — returning None to avoid crash")
+        return None
 
 
 # ── Cache System ──────────────────────────────────────────────────────────────
