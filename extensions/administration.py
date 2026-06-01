@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import tempfile
+import time
 from typing import Any
 
 import aiohttp
@@ -77,10 +78,71 @@ class AdministrationCog(commands.Cog):
             return
         if not ctx.bot.tree:
             return
-        fmt = await ctx.bot.tree.sync()
-        await ctx.send(
-            embed=success_embed(tanjunLocalizer.localize(self._locale(ctx), "commands.admin.sync.completed", count=len(fmt)))
+
+        locale = self._locale(ctx)
+        command_count = sum(1 for _ in ctx.bot.tree.walk_commands())
+        started = time.monotonic()
+        spinner_frames = ("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏")
+        tick = 0
+
+        status_msg = await ctx.send(
+            embed=embed_or_wrap(
+                tanjunLocalizer.localize(
+                    locale,
+                    "commands.admin.sync.in_progress",
+                    command_count=command_count,
+                    elapsed=0,
+                    spinner=spinner_frames[0],
+                ),
+                title="Command Sync",
+            )
         )
+
+        sync_task = asyncio.create_task(ctx.bot.tree.sync())
+        try:
+            while not sync_task.done():
+                await asyncio.sleep(2)
+                if sync_task.done():
+                    break
+                tick += 1
+                elapsed = int(time.monotonic() - started)
+                await status_msg.edit(
+                    embed=embed_or_wrap(
+                        tanjunLocalizer.localize(
+                            locale,
+                            "commands.admin.sync.in_progress",
+                            command_count=command_count,
+                            elapsed=elapsed,
+                            spinner=spinner_frames[tick % len(spinner_frames)],
+                        ),
+                        title="Command Sync",
+                    )
+                )
+
+            fmt = await sync_task
+            duration = round(time.monotonic() - started, 1)
+            await status_msg.edit(
+                embed=success_embed(
+                    tanjunLocalizer.localize(
+                        locale,
+                        "commands.admin.sync.completed",
+                        count=len(fmt),
+                        duration=duration,
+                    ),
+                    title="Command Sync",
+                )
+            )
+        except Exception as e:
+            if not sync_task.done():
+                sync_task.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await sync_task
+            await status_msg.edit(
+                embed=error_embed(
+                    tanjunLocalizer.localize(locale, "commands.admin.sync.failed", error=e),
+                    title="Command Sync",
+                )
+            )
 
     @commands.command()
     async def feedback(self, ctx: commands.Context, *, content: str) -> None:  # type: ignore[type-arg]

@@ -130,10 +130,28 @@ class TestSync:
 
     async def test_sync_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
         bot.tree = MagicMock()
+        bot.tree.walk_commands = MagicMock(return_value=[MagicMock(), MagicMock(), MagicMock()])
         bot.tree.sync = AsyncMock(return_value=[MagicMock(), MagicMock()])
+        status_msg = MagicMock()
+        status_msg.edit = AsyncMock()
         ctx = make_context(bot)
+        ctx.send = AsyncMock(return_value=status_msg)
         await cog.sync(ctx)
         ctx.send.assert_awaited_once()
+        bot.tree.sync.assert_awaited_once()
+        status_msg.edit.assert_awaited()
+
+    async def test_sync_failure(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        bot.tree = MagicMock()
+        bot.tree.walk_commands = MagicMock(return_value=[])
+        bot.tree.sync = AsyncMock(side_effect=RuntimeError("discord down"))
+        status_msg = MagicMock()
+        status_msg.edit = AsyncMock()
+        ctx = make_context(bot)
+        ctx.send = AsyncMock(return_value=status_msg)
+        await cog.sync(ctx)
+        status_msg.edit.assert_awaited()
+        assert status_msg.edit.await_args.kwargs["embed"] is not None
 
 
 @pytest.mark.asyncio
