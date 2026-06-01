@@ -34530,17 +34530,17 @@
   {
     "identifier": "admin.channels.description",
     "source_string": "Channel management",
-    "translation": "Channel management",
+    "translation": "チャンネル管理",
     "context": "Short description of `/channels` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
+    "labels": "ja.json",
     "max_length": 100
   },
   {
     "identifier": "admin.channels.name",
     "source_string": "channels",
-    "translation": "channels",
+    "translation": "チャンネル",
     "context": "Slash command name for `/channels` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
+    "labels": "ja.json",
     "max_length": 32
   },
   {
@@ -34562,17 +34562,17 @@
   {
     "identifier": "admin.messaging.description",
     "source_string": "Messaging commands",
-    "translation": "Messaging commands",
+    "translation": "メッセージコマンド",
     "context": "Short description of `/messaging` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
+    "labels": "ja.json",
     "max_length": 100
   },
   {
     "identifier": "admin.messaging.name",
     "source_string": "messaging",
-    "translation": "messaging",
+    "translation": "メッセージング",
     "context": "Slash command name for `/messaging` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
+    "labels": "ja.json",
     "max_length": 32
   },
   {
@@ -34646,5 +34646,125 @@
     "context": "UI copy for twitch.username. English: \"twitch_username\".",
     "labels": "",
     "max_length": 32
+  },
+  {
+    "identifier": "admin.localegroup.description",
+    "source_string": "Server language",
+    "translation": "Server language",
+    "context": "Short description of `/localegroup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.localegroup.name",
+    "source_string": "locale",
+    "translation": "locale",
+    "context": "Slash command name for `/localegroup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.setup.description",
+    "source_string": "Server setup commands",
+    "translation": "Server setup commands",
+    "context": "Short description of `/setup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.setup.name",
+    "source_string": "setup",
+    "translation": "setup",
+    "context": "Slash command name for `/setup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment1",
+    "source_string": "file_1",
+    "translation": "file_1",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_1\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment2",
+    "source_string": "file_2",
+    "translation": "file_2",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_2\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment3",
+    "source_string": "file_3",
+    "translation": "file_3",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_3\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment4",
+    "source_string": "file_4",
+    "translation": "file_4",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_4\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment5",
+    "source_string": "file_5",
+    "translation": "file_5",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_5\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment6",
+    "source_string": "file_6",
+    "translation": "file_6",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_6\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment7",
+    "source_string": "file_7",
+    "translation": "file_7",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_7\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment8",
+    "source_string": "file_8",
+    "translation": "file_8",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_8\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment9",
+    "source_string": "file_9",
+    "translation": "file_9",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_9\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "attachment10",
+    "source_string": "file_10",
+    "translation": "file_10",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_10\".",
+    "labels": "command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "utility.schedulemessage.params.attachment.description",
+    "source_string": "Attachment (optional)",
+    "translation": "Attachment (optional)",
+    "context": "Help text describing the `attachment` option on `/utility schedulemessage` (shown when the user focuses that option). Used in `extensions/utility.py`.",
+    "labels": "utility, command_option_description",
+    "max_length": 100
   }
 ]

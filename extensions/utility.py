@@ -887,7 +887,7 @@ class UtilityCog(commands.Cog):
             client=interaction.client,
         )
 
-        await helpCommand(command_info=command_info)
+        await helpCommand(command_info=command_info, ctx=interaction)
         return
 
     @commands.Cog.listener()
