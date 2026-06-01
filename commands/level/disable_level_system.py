@@ -17,7 +17,7 @@ async def disable_level_system(command_info: command_info):
             self.value = True
             self.stop()
 
-        @discord.ui.button(label=locale.commands.level.disablelevelsystem.cancel(command_info.locale), style=discord.ButtonStyle.secondary)
+        @discord.ui.button(label=locale.commands.level.disablelevelsystem.cancel._text(command_info.locale), style=discord.ButtonStyle.secondary)
         async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
             self.value = False
             self.stop()

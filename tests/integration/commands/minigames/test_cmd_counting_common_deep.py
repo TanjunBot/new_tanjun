@@ -13,7 +13,7 @@ pytestmark = pytest.mark.asyncio
 async def test_require_moderate_members_no_guild(admin_command_info):
     admin_command_info.guild = None
     admin_command_info.reply = AsyncMock()
-    assert await common.require_moderate_members(admin_command_info, "prefix") is True
+    assert await common.require_moderate_members(admin_command_info, "minigames.setcountingchallengeprogress") is True
     admin_command_info.reply.assert_not_awaited()
 
 
@@ -67,16 +67,16 @@ async def test_require_bot_permissions_no_view():
 
 async def test_require_counting_channel_missing():
     info = make_command_info(reply=AsyncMock())
-    result = await common.require_counting_channel(info, 1, AsyncMock(return_value=None), "prefix")
+    result = await common.require_counting_channel(info, 1, AsyncMock(return_value=None), "minigames.setcountingchallengeprogress")
     assert result is None
     info.reply.assert_awaited_once()
 
 
 async def test_require_valid_progress_negative():
     info = make_command_info(reply=AsyncMock())
-    assert await common.require_valid_progress(info, -1, "prefix") is True
+    assert await common.require_valid_progress(info, -1, "minigames.setcountingchallengeprogress") is True
 
 
 async def test_require_valid_progress_too_high():
     info = make_command_info(reply=AsyncMock())
-    assert await common.require_valid_progress(info, 2_000_000_000, "prefix") is True
+    assert await common.require_valid_progress(info, 2_000_000_000, "minigames.setcountingchallengeprogress") is True

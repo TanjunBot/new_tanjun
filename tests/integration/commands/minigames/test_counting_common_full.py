@@ -44,12 +44,12 @@ async def test_require_moderate_members_denied():
     user = make_member()
     user.guild_permissions = perms
     info = make_command_info(user=user, guild=guild, channel=channel, reply=AsyncMock())
-    assert await common.require_moderate_members(info, "pfx") is True
+    assert await common.require_moderate_members(info, "minigames.setcountingchallengeprogress") is True
     info.reply.assert_awaited_once()
 
 
 async def test_require_moderate_members_ok(admin_command_info):
-    assert await common.require_moderate_members(admin_command_info, "pfx") is False
+    assert await common.require_moderate_members(admin_command_info, "minigames.setcountingchallengeprogress") is False
 
 
 async def test_require_bot_permissions_no_client_user(admin_command_info):
@@ -96,21 +96,21 @@ async def test_require_bot_permissions_ok(admin_command_info):
 
 async def test_require_counting_channel_missing(admin_command_info):
     with patch("commands.minigames._counting_common.tanjunEmbed", return_value=MagicMock()):
-        result = await common.require_counting_channel(admin_command_info, 1, AsyncMock(return_value=None), "pfx")
+        result = await common.require_counting_channel(admin_command_info, 1, AsyncMock(return_value=None), "minigames.setcountingchallengeprogress")
     assert result is None
     admin_command_info.reply.assert_awaited_once()
 
 
 async def test_require_counting_channel_found(admin_command_info):
-    result = await common.require_counting_channel(admin_command_info, 1, AsyncMock(return_value=7), "pfx")
+    result = await common.require_counting_channel(admin_command_info, 1, AsyncMock(return_value=7), "minigames.setcountingchallengeprogress")
     assert result == 7
 
 
 @pytest.mark.parametrize("progress", [-1, 2_000_000_000])
 async def test_require_valid_progress_invalid(admin_command_info, progress):
-    assert await common.require_valid_progress(admin_command_info, progress, "pfx") is True
+    assert await common.require_valid_progress(admin_command_info, progress, "minigames.setcountingchallengeprogress") is True
     admin_command_info.reply.assert_awaited_once()
 
 
 async def test_require_valid_progress_ok(admin_command_info):
-    assert await common.require_valid_progress(admin_command_info, 10, "pfx") is False
+    assert await common.require_valid_progress(admin_command_info, 10, "minigames.setcountingchallengeprogress") is False

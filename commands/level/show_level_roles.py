@@ -135,7 +135,7 @@ async def show_level_roles_command(command_info: command_info):
 
         async def on_select(self, interaction: discord.Interaction):
             self.selected_roles = interaction.data['values']
-            await interaction.response.send_message(locale.commands.level.showlevelroles.remove_role_confirm(self.command_info.locale, count=len(self.selected_roles)), view=RemoveRoleConfirmView(self.command_info, self.selected_roles), ephemeral=True)
+            await interaction.response.send_message(locale.commands.level.showlevelroles.remove_role_confirm._text(self.command_info.locale, count=len(self.selected_roles)), view=RemoveRoleConfirmView(self.command_info, self.selected_roles), ephemeral=True)
 
         async def previous_page(self, interaction: discord.Interaction):
             self.current_page = max(0, self.current_page - 1)

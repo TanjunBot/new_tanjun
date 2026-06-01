@@ -3735,6 +3735,7 @@ class CommandsLevelShowlevelrolesError:
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelShowlevelrolesRemove_role_confirm:
+    _text: LocalizedString
     cancel_button: LocalizedString
     confirm_button: LocalizedString
 
@@ -9523,6 +9524,7 @@ def build_commands() -> Commands:
         title=LocalizedString('commands.level.showlevelroles.no_roles.title'),
     )
     _n_commands_level_showlevelroles_remove_role_confirm = CommandsLevelShowlevelrolesRemove_role_confirm(
+        _text=LocalizedString('commands.level.showlevelroles.remove_role_confirm'),
         cancel_button=LocalizedString('commands.level.showlevelroles.remove_role_confirm.cancel_button'),
         confirm_button=LocalizedString('commands.level.showlevelroles.remove_role_confirm.confirm_button'),
     )

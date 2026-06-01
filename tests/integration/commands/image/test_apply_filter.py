@@ -15,7 +15,7 @@ from tests.integration.commands.conftest import embed_from_reply
 async def test_apply_filter_validation_error():
     image = MagicMock()
     info = make_command_info()
-    with patch("commands.image._filter.ImageService.validate_attachment", return_value="invalid"):
+    with patch("commands.image._filter.ImageService.validate_attachment", return_value="typenotsupported"):
         await command_fn(info, image, "blur")
     embed_from_reply(info.reply)
 

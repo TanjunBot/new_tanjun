@@ -1,3 +1,4 @@
+from locale_keys.nav import field_name
 from locale_keys import locale
 import difflib
 import random
@@ -8,7 +9,7 @@ from commands.games.country_flags.flags import random_flag
 async def flag_quiz(command_info: utility.command_info):
     locale_str = str(command_info.locale)
     flag_file = random_flag()
-    country_field = flag_file.replace('.png', '')
+    country_field = field_name(flag_file.replace('.png', ''))
     correct_country = getattr(locale.countries, country_field)(locale_str)
     guesses = []
     hints_used = 0

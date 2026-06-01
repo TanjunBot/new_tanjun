@@ -15,7 +15,7 @@ async def setCountingChannel(command_info: CommandInfo, channel: discord.TextCha
     if await require_bot_permissions(command_info, channel):
         return
     await _repo.set_challenge_progress(CountingMode.CHALLENGE, channel_id=channel.id, progress=0, guild_id=command_info.guild.id)
-    introduction_embed = tanjunEmbed(title=_NS.challengeintroduction.title(command_info.locale), description=_NS.challengeintroduction.description(command_info.locale))
+    introduction_embed = tanjunEmbed(title=_NS.introduction.title(command_info.locale), description=_NS.introduction.description(command_info.locale))
     await channel.send(embed=introduction_embed)
     embed = tanjunEmbed(title=_NS.success.title(str(command_info.locale)), description=_NS.success.description(command_info.locale, channel=channel.mention))
     await command_info.reply(embed=embed)

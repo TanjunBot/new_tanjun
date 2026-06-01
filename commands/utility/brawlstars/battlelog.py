@@ -47,7 +47,11 @@ async def battlelog(command_info: command_info, player_tag: str=None):
             description += locale.commands.utility.brawlstars.battlelog.description.game_mode(self.command_info.locale, game_mode=game_mode_locale)
             description += '\n'
             if item.map:
-                map_locale = getattr(locale.commands.utility.brawlstars.maps, field_name(item.map))(self.command_info.locale)
+                map_locale = getattr(locale.commands.utility.brawlstars.maps, field_name(item.map), None)
+                if map_locale is not None:
+                    map_locale = map_locale(self.command_info.locale)
+                else:
+                    map_locale = item.map
                 description += locale.commands.utility.brawlstars.battlelog.description.game_map(self.command_info.locale, game_map=map_locale)
                 description += '\n'
             if item.trophy_change is not None:

@@ -96,7 +96,7 @@ async def test_wordle_starts(mock_choice, admin_command_info):
     await wordle(admin_command_info, language='en')
     admin_command_info.reply.assert_awaited_once()
 
-@patch('commands.games.flag_quiz.random_flag', return_value='united_states.png')
+@patch('commands.games.flag_quiz.random_flag', return_value='United_States.png')
 async def test_flag_quiz_starts(mock_flag, admin_command_info):
     await flag_quiz(admin_command_info)
     admin_command_info.reply.assert_awaited_once()
